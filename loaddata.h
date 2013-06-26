@@ -57,6 +57,6 @@ void reloadUnitValues();
 /**
 * Splits a string s by "word" according to one of separators seps.
 */
-void Split(const std::string& s, const char* seps, std::vector<std::string>& words);
+void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
 
 #endif

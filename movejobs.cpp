@@ -809,7 +809,7 @@ void cServerMoveJob::doEndMoveVehicle()
 void cServerMoveJob::calcNextDir()
 {
 	if (!Waypoints || !Waypoints->next) return;
-#define TESTXY_CND(a,b) if( Waypoints->X a Waypoints->next->X && Waypoints->Y b Waypoints->next->Y )
+#define TESTXY_CND(a, b) if (Waypoints->X a Waypoints->next->X && Waypoints->Y b Waypoints->next->Y)
 	TESTXY_CND ( == , >) iNextDir = 0;
 	else TESTXY_CND (<,>) iNextDir = 1;
 	else TESTXY_CND ( < , ==) iNextDir = 2;
@@ -1260,7 +1260,7 @@ void cClientMoveJob::doEndMoveVehicle()
 void cClientMoveJob::calcNextDir()
 {
 	if (!Waypoints || !Waypoints->next) return;
-#define TESTXY_CND(a,b) if( Waypoints->X a Waypoints->next->X && Waypoints->Y b Waypoints->next->Y )
+#define TESTXY_CND(a,b) if (Waypoints->X a Waypoints->next->X && Waypoints->Y b Waypoints->next->Y)
 	TESTXY_CND ( == , >) iNextDir = 0;
 	else TESTXY_CND (<,>) iNextDir = 1;
 	else TESTXY_CND ( < , ==) iNextDir = 2;
@@ -1274,7 +1274,7 @@ void cClientMoveJob::calcNextDir()
 void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial)
 {
 	int iIndex = -1;
-#define TESTXY_DP(a,b) if( Dest.x a LastDest->x && Dest.y b LastDest->y )
+#define TESTXY_DP(a, b) if (Dest.x a LastDest->x && Dest.y b LastDest->y)
 	TESTXY_DP ( > , <) iIndex = 0;
 	else TESTXY_DP ( == , <) iIndex = 1;
 	else TESTXY_DP ( < , <) iIndex = 2;

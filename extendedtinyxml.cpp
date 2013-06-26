@@ -40,7 +40,7 @@ XMLElement* XmlGetFirstElementVa (XMLDocument& xmlDoc, const char* first, va_lis
 	}
 
 	char* elementName;
-	while ((elementName = va_arg (vaList, char*)) != NULL)
+	while ( (elementName = va_arg (vaList, char*)) != NULL)
 	{
 		xmlElement = xmlElement->FirstChildElement (elementName);
 		if (xmlElement == NULL)
@@ -78,14 +78,14 @@ XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path)
 	while (j != path.length());
 
 	XMLElement* xmlElement = NULL;
-	XMLElement* lastElement = xmlDoc.FirstChildElement(parts[0].c_str());
+	XMLElement* lastElement = xmlDoc.FirstChildElement (parts[0].c_str());
 	if (lastElement == NULL)
-		lastElement = xmlDoc.LinkEndChild (xmlDoc.NewElement(parts[0].c_str()))->ToElement();
+		lastElement = xmlDoc.LinkEndChild (xmlDoc.NewElement (parts[0].c_str()))->ToElement();
 
 	for (unsigned i = 1; i < parts.size(); ++i)
 	{
 		xmlElement = lastElement->FirstChildElement (parts[i].c_str());
-		if (xmlElement == NULL) 
+		if (xmlElement == NULL)
 			xmlElement = lastElement->LinkEndChild (xmlDoc.NewElement (parts[i].c_str()))->ToElement();
 		lastElement = xmlElement;
 	}
@@ -105,17 +105,17 @@ int getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* first, ...)
 	if (element == NULL) return 0;
 
 
-	if (element->Attribute ("Num")) 
+	if (element->Attribute ("Num"))
 	{
 		return element->IntAttribute ("Num");
 	}
 	else
 	{
 		va_start (list, first);
-		string pathText = string(first);
+		string pathText = string (first);
 		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string("~") + elementName;
+		while ( (elementName = va_arg (list, char*)) != NULL)
+			pathText += string ("~") + elementName;
 		va_end (list);
 
 		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
@@ -133,17 +133,17 @@ float getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* first, 
 
 	if (element == NULL) return 0;
 
-	if (element->Attribute ("Num")) 
+	if (element->Attribute ("Num"))
 	{
 		return element->FloatAttribute ("Num");
 	}
 	else
 	{
 		va_start (list, first);
-		string pathText = string(first);
+		string pathText = string (first);
 		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string("~") + elementName;
+		while ( (elementName = va_arg (list, char*)) != NULL)
+			pathText += string ("~") + elementName;
 		va_end (list);
 
 		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
@@ -165,10 +165,10 @@ string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attri
 	if (text == NULL)
 	{
 		va_start (list, first);
-		string pathText = string(first);
+		string pathText = string (first);
 		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string("~") + elementName;
+		while ( (elementName = va_arg (list, char*)) != NULL)
+			pathText += string ("~") + elementName;
 		va_end (list);
 
 		Log.write ( ( (string) "Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
@@ -188,18 +188,18 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 
 	if (element == NULL) return false;
 
-	
-	if (element->Attribute ("YN")) 
+
+	if (element->Attribute ("YN"))
 	{
 		return element->BoolAttribute ("YN");
 	}
 	else
 	{
 		va_start (list, first);
-		string pathText = string(first);
+		string pathText = string (first);
 		char* elementName;
-		while ((elementName = va_arg (list, char*)) != NULL)
-			pathText += string("~") + elementName;
+		while ( (elementName = va_arg (list, char*)) != NULL)
+			pathText += string ("~") + elementName;
 		va_end (list);
 
 		Log.write ( ( (string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);

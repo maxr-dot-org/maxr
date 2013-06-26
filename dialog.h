@@ -150,7 +150,7 @@ class cDialogPreferences : public cMenu
 
 	void saveValues();
 public:
-	explicit cDialogPreferences(cPlayer* player_);
+	explicit cDialogPreferences (cPlayer* player_);
 
 private:
 	static void okReleased (void* parent);

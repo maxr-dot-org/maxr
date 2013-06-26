@@ -55,7 +55,7 @@ void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players)
 		message->pushInt16 (player->getColorIndex());
 		message->pushString (player->getName());
 	}
-	message->pushInt16 ((int) players.size());
+	message->pushInt16 ( (int) players.size());
 	cMenu::sendMessage (network, message);
 }
 

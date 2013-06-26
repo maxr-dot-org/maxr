@@ -42,13 +42,13 @@ static std::string TakeScreenShot()
 	char timestr[18];
 	tTime = time (NULL);
 	tmTime = localtime (&tTime);
-	strftime (timestr, sizeof(timestr), "%Y-%m-%d_%H%M%S", tmTime);
+	strftime (timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
 	std::string screenshotfile;
-	short int counter=0;
+	short int counter = 0;
 	do
 	{
 		counter += 1;
-		screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + iToStr(counter) + ".bmp";
+		screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + iToStr (counter) + ".bmp";
 	}
 	while (FileExists (screenshotfile.c_str()));
 	Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
@@ -158,9 +158,9 @@ void cEventHandling::HandleEvents (cMenu& activeMenu, cClient* client)
 void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
 {
 	//do not read client messages, until client is started
-	if ( !client && eventQueue.size() > 0 && eventQueue.peep()->getClass() == NET_MSG_CLIENT )
+	if (!client && eventQueue.size() > 0 && eventQueue.peep()->getClass() == NET_MSG_CLIENT)
 	{
-		Log.write("Netmessage for Client received, but no client active. Net event handling paused", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write ("Netmessage for Client received, but no client active. Net event handling paused", cLog::eLOG_TYPE_NET_DEBUG);
 		return;
 	}
 

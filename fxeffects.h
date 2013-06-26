@@ -42,25 +42,25 @@ protected:
 class cFxMuzzleBig : public cFxMuzzle
 {
 public:
-	cFxMuzzleBig(int x, int y, int dir_);
+	cFxMuzzleBig (int x, int y, int dir_);
 };
 
 class cFxMuzzleMed : public cFxMuzzle
 {
 public:
-	cFxMuzzleMed(int x, int y, int dir_);
+	cFxMuzzleMed (int x, int y, int dir_);
 };
 
 class cFxMuzzleMedLong : public cFxMuzzle
 {
 public:
-	cFxMuzzleMedLong(int x, int y, int dir_);
+	cFxMuzzleMedLong (int x, int y, int dir_);
 };
 
 class cFxMuzzleSmall : public cFxMuzzle
 {
 public:
-	cFxMuzzleSmall(int x, int y, int dir_);
+	cFxMuzzleSmall (int x, int y, int dir_);
 };
 
 class cFxExplo : public cFx
@@ -71,48 +71,48 @@ protected:
 
 	SDL_Surface** image;
 	const int frames; //TODO: frames could be calculated (frames = w / h), if the width and height
-	                  //of the grapics for one frame would be equal (which they aren't yet).
+	//of the grapics for one frame would be equal (which they aren't yet).
 };
 
 class cFxExploSmall : public cFxExplo
 {
 public:
-	cFxExploSmall(int x, int y); //x, y is the center of the explosion
+	cFxExploSmall (int x, int y); //x, y is the center of the explosion
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
-	cFxExploBig(int x, int y);
+	cFxExploBig (int x, int y);
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxExploAir : public cFxExplo
 {
 public:
-	cFxExploAir(int x, int y);
+	cFxExploAir (int x, int y);
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
-	cFxExploWater(int x, int y);
+	cFxExploWater (int x, int y);
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxHit : public cFxExplo
 {
 public:
-	cFxHit(int x, int y);
+	cFxHit (int x, int y);
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
-	cFxAbsorb(int x, int y);
+	cFxAbsorb (int x, int y);
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
@@ -131,13 +131,13 @@ protected:
 class cFxSmoke : public cFxFade
 {
 public:
-	cFxSmoke(int x, int y, bool bottom); //x, y is the center of the effect
+	cFxSmoke (int x, int y, bool bottom); //x, y is the center of the effect
 };
 
 class cFxCorpse : public cFxFade
 {
 public:
-	cFxCorpse(int x, int y);
+	cFxCorpse (int x, int y);
 };
 
 class cFxTracks : public cFx
@@ -148,7 +148,7 @@ private:
 	const int alphaEnd;
 	const int dir;
 public:
-	cFxTracks(int x, int y, int dir_);
+	cFxTracks (int x, int y, int dir_);
 	void draw (const cGameGUI& gameGUI) const;
 };
 
@@ -171,7 +171,7 @@ public:
 	void draw (const cGameGUI& gameGUI) const;
 	void run ();
 	bool isFinished () const; //return true, when the last smoke effect is finished.
-	                          //getLength() returns only the time until the rocket has reached the destiantion
+	//getLength() returns only the time until the rocket has reached the destiantion
 };
 
 class cFxDarkSmoke : public cFx

@@ -38,10 +38,10 @@ tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const c
  */
 tinyxml2::XMLElement* getOrCreateXmlElement (tinyxml2::XMLDocument& xmlDoc, const std::string& path);
 
-int         getXMLAttributeInt    (tinyxml2::XMLDocument& document, const char* first, ...);
-float       getXMLAttributeFloat  (tinyxml2::XMLDocument& document, const char* first, ...);
+int         getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* first, ...);
+float       getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* first, ...);
 std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* first, ...);
-bool        getXMLAttributeBool   (tinyxml2::XMLDocument& document, const char* first, ...);
+bool        getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ...);
 
 
 #endif

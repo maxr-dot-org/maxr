@@ -184,7 +184,7 @@ template<typename T> void insert_after_in_intrusivelist (T*& root, T* it, T& ele
 {
 	if (it == NULL)
 	{
-		push_front_into_intrusivelist(root, elem);
+		push_front_into_intrusivelist (root, elem);
 		return;
 	}
 	elem.next = it->next;
@@ -193,7 +193,7 @@ template<typename T> void insert_after_in_intrusivelist (T*& root, T* it, T& ele
 	elem.prev = it;
 }
 
-template <typename T> T* get_last_of_intrusivelist(T* root)
+template <typename T> T* get_last_of_intrusivelist (T* root)
 {
 	if (root == NULL) return NULL;
 	T* it = root;

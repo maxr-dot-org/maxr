@@ -22,18 +22,15 @@
 --align-reference=type
 --mode=c
 
-
 # extra options
 
 # do not modify 'extern' files
 --exclude=SDL_flic.c
 --exclude=SDL_flic.h
---exclude=tinystr.cpp
---exclude=tinystr.h
---exclude=tinyxml.cpp
---exclude=tinyxml.h
---exclude=tinyxmlerror.cpp
---exclude=tinyxmlparser.cpp
+--exclude=mveplayer.cpp
+--exclude=mveplayer.h
+--exclude=tinyxml2.cpp
+--exclude=tinyxml2.h
 
 --ignore-exclude-errors-x
 

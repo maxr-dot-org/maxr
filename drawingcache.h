@@ -78,7 +78,7 @@ public:
 	cDrawingCache();
 	~cDrawingCache();
 
-	void setGameGUI(const cGameGUI& gameGUI);
+	void setGameGUI (const cGameGUI& gameGUI);
 
 	/**
 	* This method looks for a cached image, that matches the properties of the passed building.

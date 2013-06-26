@@ -228,7 +228,7 @@ public:
 	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, std::vector<cVehicle*>* group = NULL);
 
 	cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle);
-//	cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle);
+	//	cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle);
 	~cClientMoveJob();
 	cMap* Map;
 	cVehicle* Vehicle;

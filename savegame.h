@@ -239,7 +239,7 @@ private:
 	* recalculates the subbase values after loading all units
 	*@author eiko
 	*/
-	void recalcSubbases(cServer& server);
+	void recalcSubbases (cServer& server);
 	/**
 	* calculates and adds the movejobs after all units has been loaded
 	*@author alzi alias DoctorDeath
@@ -283,6 +283,6 @@ private:
 /**
 * Splits a string s by "word" according to one of separators seps.
 */
-void Split(const std::string& s, const char* seps, std::vector<std::string>& words);
+void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
 
 #endif // savegameH

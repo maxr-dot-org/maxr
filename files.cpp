@@ -171,7 +171,7 @@ std::string getUserScreenshotsDir()
 #endif
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-		screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
+	screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
 #ifdef WIN32
 	if (!DirExists (screenshotsFolder))
 	{
@@ -250,35 +250,35 @@ void copyFile (const std::string& source, const std::string& dest)
 {
 	long int size;
 	unsigned char* buffer;
-	SDL_RWops *sourceFile = NULL;
-	SDL_RWops *destFile = NULL;
-	sourceFile = SDL_RWFromFile ( source.c_str(), "rb" );
+	SDL_RWops* sourceFile = NULL;
+	SDL_RWops* destFile = NULL;
+	sourceFile = SDL_RWFromFile (source.c_str(), "rb");
 
-	destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
-	if ( destFile == NULL )
+	destFile = SDL_RWFromFile (dest.c_str(), "wb");
+	if (destFile == NULL)
 	{
 		return;
 	}
 
-	SDL_RWseek( sourceFile, 0, SEEK_END );
-	size = SDL_RWtell( sourceFile );
+	SDL_RWseek (sourceFile, 0, SEEK_END);
+	size = SDL_RWtell (sourceFile);
 
-	buffer = (unsigned char*) malloc( size );
-	if ( buffer == NULL )
+	buffer = (unsigned char*) malloc (size);
+	if (buffer == NULL)
 	{
 		std::cout << "Out of memory\n";
 		exit (-1);
 	}
 
-	SDL_RWseek( sourceFile, 0, SEEK_SET);
-	SDL_RWread( sourceFile, buffer, 1, size );
+	SDL_RWseek (sourceFile, 0, SEEK_SET);
+	SDL_RWread (sourceFile, buffer, 1, size);
 
-	SDL_RWwrite( destFile, buffer, 1, size );
+	SDL_RWwrite (destFile, buffer, 1, size);
 
-	free ( buffer );
+	free (buffer);
 
 
-	if (sourceFile) SDL_RWclose( sourceFile );
-	if (destFile)   SDL_RWclose( destFile );
+	if (sourceFile) SDL_RWclose (sourceFile);
+	if (destFile)   SDL_RWclose (destFile);
 
 }

@@ -75,13 +75,13 @@ SDL_Surface* sPlayer::getColorSurface() const
 //------------------------------------------------------------------------------
 void sPlayer::setToNextColorIndex()
 {
-	setColorIndex ((colorIndex + 1) % PLAYERCOLORS);
+	setColorIndex ( (colorIndex + 1) % PLAYERCOLORS);
 }
 
 //------------------------------------------------------------------------------
 void sPlayer::setToPrevColorIndex()
 {
-	setColorIndex ((colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
+	setColorIndex ( (colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
 }
 
 //------------------------------------------------------------------------------
@@ -360,7 +360,7 @@ void cPlayer::addSentry (cUnit* u)
 	{
 		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapAir, mapSize);
 	}
-	if ((u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
+	if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
 	{
 		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapGround, mapSize);
 	}
@@ -374,7 +374,7 @@ void cPlayer::deleteSentry (cUnit* u)
 	{
 		refreshSentryAir();
 	}
-	else if ((u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
+	else if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
 	{
 		refreshSentryGround();
 	}
@@ -823,8 +823,8 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
-				if (!Contains (resultUpgradedUnitDatas, &(VehicleData[i])))
-					resultUpgradedUnitDatas.push_back (&(VehicleData[i]));
+				if (!Contains (resultUpgradedUnitDatas, & (VehicleData[i])))
+					resultUpgradedUnitDatas.push_back (& (VehicleData[i]));
 			}
 		}
 		if (incrementVersion)
@@ -871,8 +871,8 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
-				if (!Contains (resultUpgradedUnitDatas, &(BuildingData[i])))
-					resultUpgradedUnitDatas.push_back (&(BuildingData[i]));
+				if (!Contains (resultUpgradedUnitDatas, & (BuildingData[i])))
+					resultUpgradedUnitDatas.push_back (& (BuildingData[i]));
 			}
 		}
 		if (incrementVersion)

@@ -750,7 +750,7 @@ static void FlipSurfaceHorizontally (SDL_Surface* surface)
 
 	for (int h = 0; h != surface->h; ++h)
 		for (int w = 0; w != surface->w / 2; ++w)
-			std::swap (p[h * surface->w + w], p [(h + 1) * surface->w - w - 1]);
+			std::swap (p[h * surface->w + w], p [ (h + 1) * surface->w - w - 1]);
 
 	if (SDL_MUSTLOCK (surface)) SDL_UnlockSurface (surface);
 }
@@ -785,7 +785,7 @@ void cDialogTransfer::setCargos()
 	}
 	transferLabel.setText (iToStr (abs (transferValue)));
 
-	resBar->setCurrentValue ((int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
+	resBar->setCurrentValue ( (int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
 }
 
 void cDialogTransfer::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)

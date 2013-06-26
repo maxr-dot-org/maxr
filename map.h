@@ -114,7 +114,7 @@ public:
 	bool isValidPos (int x, int y) const;
 
 	bool isWater (int x, int y) const;
-	bool isBlocked(int offset) const;
+	bool isBlocked (int offset) const;
 	bool isCoast (int offset) const;
 	bool isWater (int offset) const;
 
@@ -150,7 +150,7 @@ public:
 	bool isValidPos (int x, int y) const { return staticMap->isValidPos (x, y); }
 	bool isValidOffset (int offset) const;
 
-	bool isBlocked(int offset) const { return staticMap->isBlocked (offset); }
+	bool isBlocked (int offset) const { return staticMap->isBlocked (offset); }
 	bool isCoast (int offset) const { return staticMap->isCoast (offset); }
 	bool isWater (int offset) const { return staticMap->isWater (offset); }
 	bool isCoast (int x, int y) const { return staticMap->isCoast (getOffset (x, y)); }

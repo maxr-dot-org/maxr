@@ -856,7 +856,7 @@ public:
 	virtual void draw();
 
 	void setOwner (cPlayer* owner_);
-	void setSelection (const cClient &client_, cVehicle* vehicle, cBuilding* building);
+	void setSelection (const cClient& client_, cVehicle* vehicle, cBuilding* building);
 };
 
 /**

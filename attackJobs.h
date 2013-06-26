@@ -101,14 +101,14 @@ public:
 	* @author Eiko
 	*/
 	static void lockTarget (cClient& client, cNetMessage* message);
-	static void handleAttackJobs(cClient& client, cMenu* activeMenu);
+	static void handleAttackJobs (cClient& client, cMenu* activeMenu);
 	static void makeImpact (cClient& client, int offset, int remainingHP, int id);
 
 	cClientAttackJob (cClient* client, cNetMessage* message);
 
 	void rotate();
-	void playMuzzle(cClient& client, cMenu* activeMenu);
-	void sendFinishMessage(cClient& client);
+	void playMuzzle (cClient& client, cMenu* activeMenu);
+	void sendFinishMessage (cClient& client);
 };
 
 

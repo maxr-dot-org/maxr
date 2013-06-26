@@ -263,7 +263,7 @@ void cAutoMJob::PlanLongMove()
 			// just to avoid or by-pass an impassable rocky terrain)
 			factor = (float) (D * distanceOP + E * distanceSurv + F * distancesSurv);
 
-			if ((factor < minValue) || (minValue == 0))
+			if ( (factor < minValue) || (minValue == 0))
 			{
 				minValue = factor;
 				bestX = x;

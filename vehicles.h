@@ -164,7 +164,7 @@ public:
 	* Takes the main image from the cache or calls cVehicle::render()
 	*/
 	void draw (SDL_Rect screenPosition, cGameGUI& gameGUI);
-	void Select(cGameGUI& gameGUI);
+	void Select (cGameGUI& gameGUI);
 
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
@@ -178,7 +178,7 @@ public:
 	void DrawPath (cGameGUI& gameGUI);
 	std::string getStatusStr (const cGameGUI& gameGUI) const;
 	int playStream (const cGameGUI& gameGUI);
-	void StartMoveSound(cGameGUI& gameGUI);
+	void StartMoveSound (cGameGUI& gameGUI);
 	void DecSpeed (int value);
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);

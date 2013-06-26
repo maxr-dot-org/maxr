@@ -40,19 +40,19 @@ cUnit* selectTarget (int x, int y, char attackMode, cMap* map)
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;
 	int offset = map->getOffset (x, y);
-	cMapField& mapField = (*map)[offset];
+	cMapField& mapField = (*map) [offset];
 
 
 	//planes
 	targetVehicle = mapField.getPlane();
-	if (targetVehicle && targetVehicle->FlightHigh >  0 && !(attackMode & TERRAIN_AIR)   ) targetVehicle = NULL;
-	if (targetVehicle && targetVehicle->FlightHigh == 0 && !(attackMode & TERRAIN_GROUND)) targetVehicle = NULL;
+	if (targetVehicle && targetVehicle->FlightHigh >  0 && ! (attackMode & TERRAIN_AIR)) targetVehicle = NULL;
+	if (targetVehicle && targetVehicle->FlightHigh == 0 && ! (attackMode & TERRAIN_GROUND)) targetVehicle = NULL;
 
 	//vehicles
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y) && !(attackMode & AREA_SUB)) targetVehicle = NULL;
+		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y) && ! (attackMode & AREA_SUB)) targetVehicle = NULL;
 	}
 
 	//buildings
@@ -357,7 +357,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	int remainingHP = 0;
 	int id = 0;
 	cPlayer* owner = 0;
-	bool isAir = (target && target->isVehicle() && static_cast<cVehicle*>(target)->FlightHigh > 0);
+	bool isAir = (target && target->isVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
 	// in the time between the first locking and the impact, it is possible that a vehicle drove onto the target field
 	// so relock the target, to ensure synchronity
@@ -405,9 +405,9 @@ void cServerAttackJob::makeImpact (int x, int y)
 	if (target && target->data.hitpointsCur <= 0)
 	{
 		if (target->isBuilding())
-			server->destroyUnit (static_cast<cBuilding*>(target));
+			server->destroyUnit (static_cast<cBuilding*> (target));
 		else
-			server->destroyUnit (static_cast<cVehicle*>(target));
+			server->destroyUnit (static_cast<cVehicle*> (target));
 
 		target = 0;
 	}
@@ -978,7 +978,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
-		// TODO:  PlayFX ( SoundData.hit );
+		// TODO:  PlayFX (SoundData.hit);
 		client.addFx (new cFxHit (x * 64 + offX + 32, y * 64 + offY + 32));
 	}
 

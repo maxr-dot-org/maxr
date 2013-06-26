@@ -46,7 +46,7 @@ void cJobContainer::addJob (cJob& job)
 
 void cJobContainer::run (cGameTimer& gameTimer)
 {
-	for (std::vector<cJob*>::iterator it = jobs.begin(); it != jobs.end(); )
+	for (std::vector<cJob*>::iterator it = jobs.begin(); it != jobs.end();)
 	{
 		cJob* job = *it;
 
@@ -70,7 +70,7 @@ std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iter
 
 void cJobContainer::onRemoveUnit (cUnit* unit)
 {
-	for (std::vector<cJob*>::iterator it = jobs.begin(); it != jobs.end(); )
+	for (std::vector<cJob*>::iterator it = jobs.begin(); it != jobs.end();)
 	{
 		cJob* job = *it;
 		if (job->vehicle == unit) it = releaseJob (it);

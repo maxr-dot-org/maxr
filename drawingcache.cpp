@@ -54,7 +54,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 	{
 		isOnWaterAndNotCoast = false;
 	}
-	if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.size() == 0 && vehicle.owner == gameGUI.getClient()->getActivePlayer())
+	if ( (vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.size() == 0 && vehicle.owner == gameGUI.getClient()->getActivePlayer())
 		stealth = true;
 	else
 		stealth = false;
@@ -227,7 +227,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 			isOnWaterAndNotCoast = false;
 		}
 
-		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.size() == 0 && vehicle.owner == gameGUI->getClient()->getActivePlayer())
+		if ( (vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.size() == 0 && vehicle.owner == gameGUI->getClient()->getActivePlayer())
 			stealth = true;
 
 		if (entry.stealth != stealth) continue;
@@ -328,7 +328,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 
 bool cDrawingCache::canCache (const cVehicle& vehicle)
 {
-	if ((vehicle.IsBuilding || vehicle.IsClearing) && vehicle.job)
+	if ( (vehicle.IsBuilding || vehicle.IsClearing) && vehicle.job)
 	{
 		notCached++;
 		return false;

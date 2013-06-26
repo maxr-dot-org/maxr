@@ -349,7 +349,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int i)
 	//calc the optimum amount of energy stations and generators
 	int energy = EnergyProd + i;
 
-	int stations   = min ((energy + 3) / 6, availableStations);
+	int stations   = min ( (energy + 3) / 6, availableStations);
 	int generators = max (energy - stations * 6, 0);
 
 	if (generators > availableGenerators)
@@ -1037,7 +1037,7 @@ sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 	if (b && b->owner == building.owner && b->SubBase)
 	{
 		b->CheckNeighbours (map);
-		return b->SubBase ;
+		return b->SubBase;
 	}
 	else return NULL;
 }

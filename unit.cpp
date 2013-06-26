@@ -969,7 +969,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 int cUnit::getScreenPosX (const cGameGUI& gameGUI, bool movementOffset) const
 {
 	const int offset = movementOffset ? getMovementOffsetX() : 0;
-	return 180 - ((int) ((gameGUI.getOffsetX() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosX;
+	return 180 - ( (int) ( (gameGUI.getOffsetX() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosX;
 }
 
 //------------------------------------------------------------------------------
@@ -978,7 +978,7 @@ int cUnit::getScreenPosX (const cGameGUI& gameGUI, bool movementOffset) const
 int cUnit::getScreenPosY (const cGameGUI& gameGUI, bool movementOffset) const
 {
 	const int offset = movementOffset ? getMovementOffsetY() : 0;
-	return 18 - ((int) ((gameGUI.getOffsetY() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosY;
+	return 18 - ( (int) ( (gameGUI.getOffsetY() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosY;
 }
 
 //------------------------------------------------------------------------------
@@ -1001,7 +1001,7 @@ void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 
 	SDL_Rect r1, r2;
 	r1.x = screenPos.x + gameGUI.getTileSize() / 10 + 1;
-	r1.w = gameGUI.getTileSize() * 8 / 10 ;
+	r1.w = gameGUI.getTileSize() * 8 / 10;
 	r1.h = gameGUI.getTileSize() / 8;
 	r1.y = screenPos.y + gameGUI.getTileSize() / 10 + gameGUI.getTileSize() / 8;
 
@@ -1033,7 +1033,7 @@ void cUnit::drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) c
 {
 	SDL_Rect r1, r2;
 	r1.x = screenPos.x + gameGUI.getTileSize() / 10 + 1;
-	r1.w = gameGUI.getTileSize() * 8 / 10 ;
+	r1.w = gameGUI.getTileSize() * 8 / 10;
 	r1.h = gameGUI.getTileSize() / 8;
 	r1.y = screenPos.y + gameGUI.getTileSize() / 10;
 

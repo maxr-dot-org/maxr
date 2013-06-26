@@ -254,7 +254,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		cSettings::getInstance().isDamageEffects() &&
 		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
-		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
+		int intense = (int) (200 - 200 * ( (float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir ()));
 
 		if (data.isBig && intense > 50)
@@ -342,11 +342,11 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw the mark, when a build order is finished
-	if (((BuildList && BuildList->size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
+	if ( ( (BuildList && BuildList->size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		SDL_Rect d, t;
 		int max, nr;
-		nr = 0xFF00 - ((gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
+		nr = 0xFF00 - ( (gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
 		max = (int) (gameGUI.getTileSize() - 2) * 2;
 		d.x = dest.x + 2;
 		d.y = dest.y + 2;

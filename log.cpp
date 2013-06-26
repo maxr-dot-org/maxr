@@ -115,7 +115,7 @@ bool cLog::open (int TYPE)
 
 int cLog::write (const char* str, int TYPE)
 {
-	return write (std::string (str) , TYPE);
+	return write (std::string (str), TYPE);
 }
 
 int cLog::write (const std::string& s, int TYPE)
@@ -130,17 +130,17 @@ int cLog::write (const std::string& s, int TYPE)
 
 	if (open (TYPE))
 	{
-		switch (TYPE)   //Attach log message type to tmp
+		switch (TYPE)  //Attach log message type to tmp
 		{
 			case LOG_TYPE_NET_WARNING :
-			case LOG_TYPE_WARNING : str = str.insert (0 , WW); break;
+			case LOG_TYPE_WARNING : str = str.insert (0, WW); break;
 			case LOG_TYPE_NET_ERROR :
-			case LOG_TYPE_ERROR :   str = str.insert (0 , EE); std::cout << str << "\n"; break;
+			case LOG_TYPE_ERROR :   str = str.insert (0, EE); std::cout << str << "\n"; break;
 			case LOG_TYPE_NET_DEBUG :
-			case LOG_TYPE_DEBUG :   str = str.insert (0 , DD); break;
-			case LOG_TYPE_INFO :    str = str.insert (0 , II); break;
-			case LOG_TYPE_MEM :	 str = str.insert (0 , MM); break;
-			default :				str = str.insert (0 , II);
+			case LOG_TYPE_DEBUG :   str = str.insert (0, DD); break;
+			case LOG_TYPE_INFO :    str = str.insert (0, II); break;
+			case LOG_TYPE_MEM :     str = str.insert (0, MM); break;
+			default :               str = str.insert (0, II);
 		}
 		str += TEXT_FILE_LF;
 		return writeMessage (str);   //add log message itself to tmp and send it for writing
@@ -150,7 +150,7 @@ int cLog::write (const std::string& s, int TYPE)
 
 int cLog::write (const char* str)
 {
-	return write (std::string (str) , LOG_TYPE_INFO);
+	return write (std::string (str), LOG_TYPE_INFO);
 }
 
 void cLog::mark()

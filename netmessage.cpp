@@ -64,9 +64,9 @@ char* cNetMessage::serialize()
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
 	Sint16* data16 = reinterpret_cast<Sint16*> (data + 1);
 	//write iLenght to byte array
-	*data16 = SDL_SwapLE16 ((Sint16) iLength);
+	*data16 = SDL_SwapLE16 ( (Sint16) iLength);
 	//write iType to byte array
-	*(data16 + 1) = SDL_SwapLE16 ((Sint16) iType);
+	* (data16 + 1) = SDL_SwapLE16 ( (Sint16) iType);
 	//write iPlayernr to byte array
 	data[5] = (char) iPlayerNr;
 
@@ -290,10 +290,10 @@ void cNetMessage::pushFloat (float f)
 	significand = Uint32 (fnorm * ( (1LL << significandbits) + 0.5f));
 
 	// get the biased exponent
-	exp = shift + ((1 << (EXPBITS - 1)) - 1);      // shift + bias
+	exp = shift + ( (1 << (EXPBITS - 1)) - 1);     // shift + bias
 
 	//store result in netMessage
-	pushInt32 ((sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
+	pushInt32 ( (sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
 }
 
 float cNetMessage::popFloat()
@@ -309,13 +309,13 @@ float cNetMessage::popFloat()
 	if (i == 0) return 0.0f;
 
 	// pull the significand
-	result = float (i & ((1LL << significandbits) - 1));     // mask
+	result = float (i & ( (1LL << significandbits) - 1));    // mask
 	result /= (1LL << significandbits);   // convert back to float
 	result += 1.0f; // add the one back on
 
 	// deal with the exponent
 	bias = (1 << (EXPBITS - 1)) - 1;
-	shift = ((i >> significandbits) & ((1LL << EXPBITS) - 1)) - bias;
+	shift = ( (i >> significandbits) & ( (1LL << EXPBITS) - 1)) - bias;
 	while (shift > 0)
 	{
 		result *= 2.0f;
@@ -328,7 +328,7 @@ float cNetMessage::popFloat()
 	}
 
 	// sign it
-	result *= ((i >> (BITS - 1)) & 1) ? -1.0f : 1.0f;
+	result *= ( (i >> (BITS - 1)) & 1) ? -1.0f : 1.0f;
 
 	return result;
 }

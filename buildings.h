@@ -161,7 +161,7 @@ public:
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
 	*/
 	void draw (SDL_Rect* dest, cGameGUI& gameGUI);
-	void Select(cGameGUI& gameGUI);
+	void Select (cGameGUI& gameGUI);
 
 	int playStream();
 	std::string getStatusStr (const cGameGUI& gameGUI) const;
@@ -180,7 +180,7 @@ public:
 	void ClientStopWork (cGameGUI& gameGUI);
 	/** check whether a transfer to a unit on the field is possible */
 	bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const;
-	void CheckRessourceProd(const cServer& server);
+	void CheckRessourceProd (const cServer& server);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;

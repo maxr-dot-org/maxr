@@ -93,7 +93,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	gameTimer.start ();
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
-		(*PlayerList)[i]->initMaps (*Map);
+		(*PlayerList) [i]->initMaps (*Map);
 	}
 }
 
@@ -166,7 +166,7 @@ void cClient::initPlayer (cPlayer* Player)
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
 		if ( (*PlayerList) [i] == ActivePlayer) continue;
-		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ((*PlayerList) [i]));
+		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ( (*PlayerList) [i]));
 	}
 }
 
@@ -199,7 +199,7 @@ void cClient::startGroupMove()
 
 	// copy the selected-units-list
 	std::vector<cVehicle*> group;
-	for (unsigned int i = 0; i < gameGUI.getSelVehiclesGroup()->size(); i++) group.push_back ((*gameGUI.getSelVehiclesGroup()) [i]);
+	for (unsigned int i = 0; i < gameGUI.getSelVehiclesGroup()->size(); i++) group.push_back ( (*gameGUI.getSelVehiclesGroup()) [i]);
 
 	// go trough all vehicles in the list
 	while (group.size())
@@ -226,7 +226,7 @@ void cClient::startGroupMove()
 		// add the movejob to the destination of the unit.
 		// the formation of the vehicle group will stay as destination formation.
 		int destX = mainDestX + vehicle->PosX - mainPosX;
-		int destY = mainDestY + vehicle->PosY - mainPosY ;
+		int destY = mainDestY + vehicle->PosY - mainPosY;
 		addMoveJob (vehicle, destX, destY, gameGUI.getSelVehiclesGroup());
 		// delete the unit from the copyed list
 		group.erase (group.begin() + shortestWayVehNum);
@@ -475,7 +475,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 		Log.write ("######### Round " + iToStr (iTurn) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 		for (unsigned int i = 0; i < getPlayerList().size(); i++)
 		{
-			getPlayerList()[i]->bFinishedTurn = false;
+			getPlayerList() [i]->bFinishedTurn = false;
 		}
 	}
 
@@ -559,7 +559,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (!Vehicle)
 		{
-			Log.write (" Client: Unknown vehicle with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Client: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 			// TODO: Request sync of vehicle
 			return;
 		}
@@ -607,7 +607,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Building = getBuildingFromID (iID);
 		if (!Building)
 		{
-			Log.write (" Client: Unknown building with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Client: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 			// TODO: Request sync of building
 			return;
 		}
@@ -685,7 +685,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (iID);
 	if (building == NULL)
 	{
-		Log.write (" Client: Can't start work of building: Unknown building with id: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (" Client: Can't start work of building: Unknown building with id: " + iToStr (iID), cLog::eLOG_TYPE_NET_ERROR);
 		// TODO: Request sync of building
 		return;
 	}
@@ -701,7 +701,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (iID);
 	if (building == NULL)
 	{
-		Log.write (" Client: Can't stop work of building: Unknown building with id: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't stop work of building: Unknown building with id: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of building
 		return;
 	}
@@ -808,7 +808,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	Vehicle = getVehicleFromID (iID);
 	if (Vehicle == NULL)
 	{
-		Log.write (" Client: Vehicle can't start building: Unknown vehicle with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Vehicle can't start building: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of vehicle
 		return;
 	}
@@ -828,7 +828,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 			{
 				msgString =  lngPack.i18n ("Text~Comp~Path_interrupted");
 				gameGUI.addCoords (msgString, Vehicle->PosX, Vehicle->PosY);
-				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID , Vehicle->PosX, Vehicle->PosY);
+				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
 			}
 		}
 		Vehicle->BuildRounds = 0;
@@ -891,7 +891,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle == NULL)
 	{
-		Log.write (" Client: Can't stop building: Unknown vehicle with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't stop building: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of vehicle
 		return;
 	}
@@ -922,7 +922,7 @@ void cClient::HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message)
 	sSubBase* SubBase = getSubBaseFromID (iID);
 	if (SubBase == NULL)
 	{
-		Log.write (" Client: Can't add subbase values: Unknown subbase with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't add subbase values: Unknown subbase with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of subbases
 		return;
 	}
@@ -967,7 +967,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 	cBuilding* Building = getBuildingFromID (iID);
 	if (Building == NULL)
 	{
-		Log.write (" Client: Can't set buildlist: Unknown building with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't set buildlist: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of building
 		return;
 	}
@@ -999,7 +999,7 @@ void cClient::HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message
 	cBuilding* Building = getBuildingFromID (iID);
 	if (Building == NULL)
 	{
-		Log.write (" Client: Can't set produce values of building: Unknown building with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't set produce values of building: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of building
 		return;
 	}
@@ -1107,7 +1107,7 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 		cVehicle* DestVehicle = getVehicleFromID (iID);
 		if (!DestVehicle)
 		{
-			Log.write (" Client: Can't supply vehicle: Unknown vehicle with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Client: Can't supply vehicle: Unknown vehicle with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 			// TODO: Request sync of vehicle
 			return;
 		}
@@ -1141,7 +1141,7 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 		cBuilding* DestBuilding = getBuildingFromID (iID);
 		if (!DestBuilding)
 		{
-			Log.write (" Client: Can't supply building: Unknown building with ID: "  + iToStr (iID) , cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Client: Can't supply building: Unknown building with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 			// TODO: Request sync of building
 			return;
 		}
@@ -1244,7 +1244,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 		break;
 		case 1:
 			// TODO: add blocked message
-			// gameGUI.addMessage ( "blocked" );
+			// gameGUI.addMessage ("blocked");
 			break;
 		case 2:
 			Log.write ("Client: warning on start of clearing", LOG_TYPE_NET_WARNING);
@@ -1467,7 +1467,7 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message, 
 
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& Player = *getPlayerList()[i];
+		cPlayer& Player = *getPlayerList() [i];
 
 		for (cVehicle* vehicle = Player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -1559,7 +1559,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 			cBuilding* building = getBuildingFromID (buildingID);
 			if (!building)
 			{
-				Log.write (" Client: Unknown building with ID: "  + iToStr (buildingID) , cLog::eLOG_TYPE_NET_ERROR);
+				Log.write (" Client: Unknown building with ID: " + iToStr (buildingID), cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
 			if (!scanNecessary && building->data.scan < ActivePlayer->BuildingData[building->typ->nr].scan)
@@ -1596,7 +1596,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message, 
 			cVehicle* vehicle = getVehicleFromID (vehicleID);
 			if (!vehicle)
 			{
-				Log.write (" Client: Unknown vehicle with ID: "  + iToStr (vehicleID) , cLog::eLOG_TYPE_NET_ERROR);
+				Log.write (" Client: Unknown vehicle with ID: " + iToStr (vehicleID), cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
 			vehicle->upgradeToCurrentVersion();
@@ -1942,7 +1942,7 @@ cPlayer* cClient::getPlayerFromNumber (int iNum)
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& p = *getPlayerList()[i];
+		cPlayer& p = *getPlayerList() [i];
 		if (p.getNr() == iNum) return &p;
 	}
 	return NULL;
@@ -2191,7 +2191,7 @@ cVehicle* cClient::getVehicleFromID (unsigned int iID)
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& player = *getPlayerList()[i];
+		cPlayer& player = *getPlayerList() [i];
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
 			if (vehicle->iID == iID) return vehicle;
@@ -2204,7 +2204,7 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID)
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& player = *getPlayerList()[i];
+		cPlayer& player = *getPlayerList() [i];
 
 		for (cBuilding* building = player.BuildingList; building; building = building->next)
 		{
@@ -2312,7 +2312,7 @@ void cClient::deletePlayer (cPlayer* player)
 	{
 		if (player == (*getPlayerList()) [i])
 		{
-			delete (*getPlayerList())[i];
+			delete (*getPlayerList()) [i];
 			getPlayerList()->Delete (i);
 		}
 	}

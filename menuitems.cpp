@@ -281,7 +281,7 @@ cMenuItemContainer::cMenuItemContainer (int x, int y) : cMenuItem (x, y)
 
 void cMenuItemContainer::draw()
 {
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		itemList[i]->draw();
 	}
@@ -290,7 +290,7 @@ void cMenuItemContainer::draw()
 void cMenuItemContainer::clicked (void* parent)
 {
 	preClicked();
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->clicked (this);
 	}
@@ -298,7 +298,7 @@ void cMenuItemContainer::clicked (void* parent)
 
 void cMenuItemContainer::released (void* parent)
 {
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->released (this);
 		else itemList[i]->somewhereReleased();
@@ -307,7 +307,7 @@ void cMenuItemContainer::released (void* parent)
 
 void cMenuItemContainer::hoveredOn (void* parent)
 {
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredOn (this);
 	}
@@ -315,7 +315,7 @@ void cMenuItemContainer::hoveredOn (void* parent)
 
 void cMenuItemContainer::hoveredAway (void* parent)
 {
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		itemList[i]->hoveredAway (this);
 	}
@@ -323,7 +323,7 @@ void cMenuItemContainer::hoveredAway (void* parent)
 
 void cMenuItemContainer::movedMouseOver (int lastMouseX, int lastMouseY, void* parent)
 {
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		if (itemList[i]->overItem (lastMouseX, lastMouseY) && !itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredAway (this);
 		else if (!itemList[i]->overItem (lastMouseX, lastMouseY) && itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredOn (this);
@@ -333,7 +333,7 @@ void cMenuItemContainer::movedMouseOver (int lastMouseX, int lastMouseY, void* p
 
 void cMenuItemContainer::somewhereReleased()
 {
-	for (unsigned int i = 0; i < itemList.size() ; i++)
+	for (unsigned int i = 0; i < itemList.size(); i++)
 	{
 		itemList[i]->somewhereReleased();
 	}
@@ -1899,7 +1899,7 @@ void cMenuUnitDetails::draw()
 	if (unit == NULL) return;
 	const sUnitData* data = &unit->data;
 	const cPlayer* unitOwner = unit->owner;
-	const cBuilding* building = unit->isBuilding() ? static_cast<cBuilding*> (unit): NULL;
+	const cBuilding* building = unit->isBuilding() ? static_cast<cBuilding*> (unit) : NULL;
 
 	// Die Hitpoints anzeigen:
 	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax);
@@ -2118,7 +2118,7 @@ void cMenuUnitDetailsBig::draw()
 	const int DETAIL_COLUMN_1 = dest.x + 27;
 	const int DETAIL_COLUMN_2 = dest.x + 42;
 	const int DETAIL_COLUMN_3 = dest.x + 95;
-#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect ( buffer, &dest, 0xFC0000 ); y += 19;
+#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect (buffer, &dest, 0xFC0000); y += 19;
 
 	if (data->canAttack)
 	{
@@ -2889,8 +2889,8 @@ void cMenuLineEdit::doPosIncrease (int& value, int pos)
 	if (pos < (int) text.length())
 	{
 		unsigned char c = text[pos];
-		if ((c & 0xE0) == 0xE0) value += 3;
-		else if ((c & 0xC0) == 0xC0) value += 2;
+		if ( (c & 0xE0) == 0xE0) value += 3;
+		else if ( (c & 0xC0) == 0xC0) value += 2;
 		else value += 1;
 	}
 }
@@ -2900,7 +2900,7 @@ void cMenuLineEdit::doPosDecrease (int& pos)
 	if (pos > 0)
 	{
 		unsigned char c = text[pos - 1];
-		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
+		while ( ( (c & 0xE0) != 0xE0) && ( (c & 0xC0) != 0xC0) && ( (c & 0x80) == 0x80))
 		{
 			pos--;
 			c = text[pos - 1];
@@ -3168,7 +3168,7 @@ void cMenuPlayersBox::draw()
 			else playerReadys[index]->setImage (notReadySurface);
 
 			AutoSurface colorSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-			SDL_BlitSurface ((*players) [i]->getColorSurface(), &src, colorSurface, NULL);
+			SDL_BlitSurface ( (*players) [i]->getColorSurface(), &src, colorSurface, NULL);
 			playerColors[index]->setImage (colorSurface);
 
 			playerNames[index]->setText ( (*players) [i]->getName());
@@ -3196,7 +3196,7 @@ bool cMenuPlayersBox::preClicked()
 			if (i >= (int) players->size()) break;
 			if (mouse->y > position.y + 12 + 14 * (i - scrollBar->offset) && mouse->y < position.y + 12 + 14 * (i - scrollBar->offset) + 10)
 			{
-				parentMenu->playerReadyClicked ((*players)[i]);
+				parentMenu->playerReadyClicked ( (*players) [i]);
 			}
 		}
 	}
@@ -3557,7 +3557,7 @@ void cMenuScrollerHandler::draw()
 void cMenuScrollerHandler::setValue (int value)
 {
 	currentValue = value;
-	int pos = position.x + ((position.w - 14) * currentValue) / maxValue;
+	int pos = position.x + ( (position.w - 14) * currentValue) / maxValue;
 	scroller->move (pos);
 }
 
@@ -3885,14 +3885,14 @@ void cMenuReportsScreen::drawScoreGraph()
 	}
 	if (points_lim && points_lim > min_points && points_lim < max_points)
 	{
-		const int y = y1 - (int) ((points_lim - min_points) * pix_per_point);
+		const int y = y1 - (int) ( (points_lim - min_points) * pix_per_point);
 
 		drawLine (buffer, x0, y, x1, y, limit_colour);
 		font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
 	}
 
 	// Draw Labels
-	int my = y1 - (int) ((max_points - min_points) * pix_per_point);
+	int my = y1 - (int) ( (max_points - min_points) * pix_per_point);
 
 	font->showTextCentered (x0,    y1 + 8, iToStr (min_turns), FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered (now_x, y1 + 8, iToStr (now),       FONT_LATIN_SMALL_WHITE);
@@ -4163,7 +4163,7 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 
 	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
-	//SDL_FillRect ( surface, NULL, 0xFF00FF );
+	//SDL_FillRect (surface, NULL, 0xFF00FF);
 
 	if (unit->isBuilding())
 	{

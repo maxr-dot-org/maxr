@@ -830,7 +830,7 @@ cStartMenu::cStartMenu()
 	exitButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (exitButton);
 
-	PlayMusic ((cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
+	PlayMusic ( (cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -1384,8 +1384,8 @@ void cPlanetsSelectionMenu::loadMaps()
 		AutoPtr<std::vector<std::string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
 		for (unsigned int i = 0; userMaps != 0 && i < userMaps->size(); i++)
 		{
-			if (!Contains (*maps, (*userMaps)[i]))
-				maps->push_back ((*userMaps)[i]);
+			if (!Contains (*maps, (*userMaps) [i]))
+				maps->push_back ( (*userMaps) [i]);
 		}
 	}
 	for (unsigned int i = 0; i < maps->size(); i++)
@@ -1519,7 +1519,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 
 	delete menu->gameDataContainer->map;
 	menu->gameDataContainer->map = new cStaticMap(); // TODO: fix memory leak
-	menu->gameDataContainer->map->loadMap ((*menu->maps) [menu->selectedMapIndex]);
+	menu->gameDataContainer->map->loadMap ( (*menu->maps) [menu->selectedMapIndex]);
 	if (!menu->gameDataContainer->map) return;
 
 	menu->end = true;
@@ -1843,7 +1843,7 @@ cAdvListHangarMenu::cAdvListHangarMenu (const cClient* client_, SDL_Surface* bac
 //------------------------------------------------------------------------------
 void cAdvListHangarMenu::secondListUpReleased (void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	menu->secondList->scrollUp();
 }
@@ -1851,7 +1851,7 @@ void cAdvListHangarMenu::secondListUpReleased (void* parent)
 //------------------------------------------------------------------------------
 void cAdvListHangarMenu::secondListDownReleased (void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	menu->secondList->scrollDown();
 }
@@ -1859,7 +1859,7 @@ void cAdvListHangarMenu::secondListDownReleased (void* parent)
 //------------------------------------------------------------------------------
 bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cHangarMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cHangarMenu*) parent);
 	if (!menu || menu->selectedUnit == NULL) return false;
 	if (menu->selectedUnit != menu->selectionList->getSelectedUnit()) return false;
 
@@ -1878,7 +1878,7 @@ bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* paren
 //------------------------------------------------------------------------------
 bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cHangarMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cHangarMenu*) parent);
 	if (!menu || menu->selectedUnit == NULL) return false;
 	if (menu->selectedUnit != menu->secondList->getSelectedUnit()) return false;
 	if (menu->selectedUnit->getFixedStatus()) return false;
@@ -2096,7 +2096,7 @@ void cStartupHangarMenu::updateUnitData()
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::doneReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 
 	menu->updateUnitData();
@@ -2126,7 +2126,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::subButtonsChanged (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	menu->generateSelectionList();
 	menu->draw();
@@ -2134,7 +2134,7 @@ void cStartupHangarMenu::subButtonsChanged (void* parent)
 
 void cStartupHangarMenu::materialBarUpReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	if (!menu->secondList->getSelectedUnit()) return;
 	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
@@ -2156,7 +2156,7 @@ void cStartupHangarMenu::materialBarUpReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::materialBarDownReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	if (!menu->secondList->getSelectedUnit()) return;
 	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
@@ -2178,14 +2178,14 @@ void cStartupHangarMenu::materialBarDownReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::materialBarClicked (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	if (!menu->secondList->getSelectedUnit()) return;
 	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
 	if (vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		int newCargo = (int) ((float) (menu->position.y + 301 + 115 - mouse->y) / 115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion (menu->player)->storageResMax);
+		int newCargo = (int) ( (float) (menu->position.y + 301 + 115 - mouse->y) / 115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion (menu->player)->storageResMax);
 		if (newCargo % 5 < 3) newCargo -= newCargo % 5;
 		else newCargo += 5 - newCargo % 5;
 
@@ -2334,8 +2334,8 @@ void cStartupHangarMenu::handleNetMessage (cNetMessage* message)
 void cStartupHangarMenu::selectionChanged (void* parent)
 {
 	cStartupHangarMenu* menu;
-	menu = dynamic_cast<cStartupHangarMenu*> ((cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cStartupHangarMenu*> ((cStartupHangarMenu*) parent);
+	menu = dynamic_cast<cStartupHangarMenu*> ( (cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cStartupHangarMenu*> ( (cStartupHangarMenu*) parent);
 	if (!menu) return;
 	const sVehicle* vehicle;
 	if (menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player)) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
@@ -2442,11 +2442,11 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	float fakx = (float) ((Video.getResolutionX() - 192.0) / menu->map->getSize()); //pixel per field in x direction
-	float faky = (float) ((Video.getResolutionY() - 32.0) / menu->map->getSize()); //pixel per field in y direction
+	float fakx = (float) ( (Video.getResolutionX() - 192.0) / menu->map->getSize()); //pixel per field in x direction
+	float faky = (float) ( (Video.getResolutionY() - 32.0) / menu->map->getSize()); //pixel per field in y direction
 
-	menu->landData.iLandX = (int) ((mouse->x - 180) / (448.0 / menu->map->getSize()) * (448.0 / (Video.getResolutionX() - 192)));
-	menu->landData.iLandY = (int) ((mouse->y - 18) / (448.0 / menu->map-> getSize()) * (448.0 / (Video.getResolutionY() - 32)));
+	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0 / menu->map->getSize()) * (448.0 / (Video.getResolutionX() - 192)));
+	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0 / menu->map-> getSize()) * (448.0 / (Video.getResolutionY() - 32)));
 	menu->landData.landingState = LANDING_POSITION_OK;
 	menu->backButton->setLocked (true);
 	{
@@ -2458,8 +2458,8 @@ void cLandingMenu::mapClicked (void* parent)
 		int posY = (int) (menu->landData.iLandY * faky);
 		//for non 4:3 screen resolutions, the size of the circles is
 		//only correct in x dimension, because I don't draw an ellipse
-		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
-		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
+		drawCircle (posX, posY, (int) ( (LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
+		drawCircle (posX, posY, (int) ( (LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
 
 		menu->circlesImage->setImage (circleSurface);
 	}
@@ -2479,7 +2479,7 @@ void cLandingMenu::mouseMoved (void* parent)
 	if (menu->mapImage->overItem (mouse->x, mouse->y))
 	{
 		const sTerrain* terrain = menu->getMapTile (mouse->x - 180, mouse->y - 18);
-		if (terrain && !(terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
+		if (terrain && ! (terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
 		else mouse->SetCursor (CNo);
 	}
 	else mouse->SetCursor (CHand);
@@ -2677,7 +2677,7 @@ cNetworkMenu::~cNetworkMenu()
 void cNetworkMenu::showSettingsText()
 {
 	string text = lngPack.i18n ("Text~Main~Version", PACKAGE_VERSION) + "\n";
-	//text += "Checksum: " + iToStr( cSettings::getInstance().Checksum ) + "\n\n";
+	//text += "Checksum: " + iToStr (cSettings::getInstance().Checksum) + "\n\n";
 
 	if (!saveGameString.empty()) text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameString + "\n";
 
@@ -2702,7 +2702,7 @@ void cNetworkMenu::showSettingsText()
 			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + settings->getResFreqString() + "\n";
 			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (settings->credits) + "\n";
 			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + (settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ("Text~Option~Definite") : lngPack.i18n ("Text~Option~Mobile")) + "\n";
-			//text += lngPack.i18n ( "Text~Title~Alien_Tech" ) + ": " + ( settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
+			//text += lngPack.i18n ("Text~Title~Alien_Tech") + ": " + (settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += string ("Clans") + ": " + (settings->clans == SETTING_CLANS_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
 		}
@@ -2716,9 +2716,9 @@ void cNetworkMenu::showMap()
 {
 	if (!gameDataContainer.map) return;
 	int size;
-	SDL_RWops* fp = SDL_RWFromFile ((cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getName()).c_str(), "rb");
+	SDL_RWops* fp = SDL_RWFromFile ( (cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getName()).c_str(), "rb");
 	if (fp == NULL && !getUserMapsDir().empty())
-		fp = SDL_RWFromFile ((getUserMapsDir() + gameDataContainer.map->getName()).c_str(), "rb");
+		fp = SDL_RWFromFile ( (getUserMapsDir() + gameDataContainer.map->getName()).c_str(), "rb");
 	if (fp != NULL)
 	{
 		SDL_RWseek (fp, 5, SEEK_SET);
@@ -3003,13 +3003,13 @@ void cNetworkHostMenu::okReleased (void* parent)
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 
 	int playerNr;
-	if ((!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->gameDataContainer.savegame.empty())
+	if ( (!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->gameDataContainer.savegame.empty())
 	{
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
 		menu->draw();
 		return;
 	}
-	else if ((playerNr = menu->checkAllPlayersReady()) != -1)
+	else if ( (playerNr = menu->checkAllPlayersReady()) != -1)
 	{
 		menu->chatBox->addLine (menu->players[playerNr]->getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
 		menu->draw();
@@ -4189,8 +4189,8 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 //------------------------------------------------------------------------------
 void cBuildingsBuildMenu::selectionChanged (void* parent)
 {
-	cBuildingsBuildMenu* menu = dynamic_cast<cBuildingsBuildMenu*> ((cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cBuildingsBuildMenu*> ((cBuildingsBuildMenu*) parent);
+	cBuildingsBuildMenu* menu = dynamic_cast<cBuildingsBuildMenu*> ( (cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cBuildingsBuildMenu*> ( (cBuildingsBuildMenu*) parent);
 	if (!menu->selectedUnit) return;
 
 	const sUnitData* buildingData = menu->player->getUnitDataCurrentVersion (menu->selectedUnit->getUnitID());
@@ -4288,7 +4288,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 			std::vector<cBuilding*>::iterator b_it = buildings.begin();
 			std::vector<cBuilding*>::iterator b_end = buildings.end();
 
-			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
+			while (b_it != b_end && ( (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
 			if (!map.isWaterOrCoast (x, y) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
 			else if (map.isWaterOrCoast (x, y) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
@@ -4336,7 +4336,7 @@ void cVehiclesBuildMenu::createBuildList()
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::doneReleased (void* parent)
 {
-	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ((cMenu*) parent);
+	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	std::vector<sBuildList> buildList;
 	for (int i = 0; i < menu->secondList->getSize(); i++)
@@ -4354,8 +4354,8 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::selectionChanged (void* parent)
 {
-	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ((cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cVehiclesBuildMenu*> ((cVehiclesBuildMenu*) parent);
+	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ( (cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cVehiclesBuildMenu*> ( (cVehiclesBuildMenu*) parent);
 	if (!menu) return;
 
 	if (!menu->selectedUnit) return;
@@ -4557,7 +4557,7 @@ cUpgradeMenu::cUpgradeMenu (cClient& client_, cPlayer* player)
 //------------------------------------------------------------------------------
 void cUpgradeMenu::doneReleased (void* parent)
 {
-	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cMenu*) parent);
+	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
 	if (!menu) return;
 	sendTakenUpgrades (*menu->client, menu->unitUpgrades, menu->player);
 	menu->end = true;
@@ -4566,8 +4566,8 @@ void cUpgradeMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cUpgradeMenu::selectionChanged (void* parent)
 {
-	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cUpgradeMenu*> ((cUpgradeMenu*) parent);
+	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cUpgradeMenu*> ( (cUpgradeMenu*) parent);
 	if (!menu) return;
 	menu->upgradeButtons->setSelection (menu->selectedUnit);
 	menu->draw();
@@ -4691,7 +4691,7 @@ void cUnitHelpMenu::init (sID unitID)
 //------------------------------------------------------------------------------
 void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
 {
-	if ((&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData()) terminate = true;
+	if ( (&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData()) terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4883,7 +4883,7 @@ void cStorageMenu::resetInfos()
 		metalBar->setCurrentValue (metalValue);
 	}
 
-	if ((offset + 1) * maxX * 2 < unitData.storageUnitsMax && (offset + 1) * maxX * 2 < (int) storageList.size()) downButton->setLocked (false);
+	if ( (offset + 1) * maxX * 2 < unitData.storageUnitsMax && (offset + 1) * maxX * 2 < (int) storageList.size()) downButton->setLocked (false);
 	else downButton->setLocked (true);
 
 	upButton->setLocked (offset <= 0);
@@ -5003,10 +5003,10 @@ void cStorageMenu::activateAllReleased (void* parent)
 			for (int xpos = unitXPos - 1; xpos <= unitXPos + (isBig ? 2 : 1); xpos++, poscount++)
 			{
 				if (xpos < 0 || xpos >= map.getSize()) continue;
-				if (((ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
-					((xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
-				if (((menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
-					(menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
+				if ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
+					 ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
+				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
+					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
 					 && !hasCheckedPlace[poscount])
 				{
 					sendWantActivate (*menu->client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
@@ -5330,17 +5330,17 @@ void cMineManagerMenu::barReleased (void* parent)
 	cMineManagerMenu* menu = reinterpret_cast<cMineManagerMenu*> (parent);
 	if (menu->metalBars[0]->overItem (mouse->x, mouse->y))
 	{
-		int metal = Round ((mouse->x - menu->metalBars[0]->getPosition().x) * (menu->subBase.getMaxMetalProd() / (float) menu->metalBars[0]->getPosition().w));
+		int metal = Round ( (mouse->x - menu->metalBars[0]->getPosition().x) * (menu->subBase.getMaxMetalProd() / (float) menu->metalBars[0]->getPosition().w));
 		menu->subBase.setMetalProd (metal);
 	}
 	else if (menu->oilBars[0]->overItem (mouse->x, mouse->y))
 	{
-		int oil = Round ((mouse->x - menu->oilBars[0]->getPosition().x) * (menu->subBase.getMaxOilProd() / (float) menu->oilBars[0]->getPosition().w));
+		int oil = Round ( (mouse->x - menu->oilBars[0]->getPosition().x) * (menu->subBase.getMaxOilProd() / (float) menu->oilBars[0]->getPosition().w));
 		menu->subBase.setOilProd (oil);
 	}
 	else if (menu->goldBars[0]->overItem (mouse->x, mouse->y))
 	{
-		int gold = Round ((mouse->x - menu->goldBars[0]->getPosition().x) * (menu->subBase.getMaxGoldProd() / (float) menu->goldBars[0]->getPosition().w));
+		int gold = Round ( (mouse->x - menu->goldBars[0]->getPosition().x) * (menu->subBase.getMaxGoldProd() / (float) menu->goldBars[0]->getPosition().w));
 		menu->subBase.setGoldProd (gold);
 	}
 	menu->setBarValues();

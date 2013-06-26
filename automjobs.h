@@ -71,7 +71,7 @@ public:
 	bool playerMJob;	//the player has changed the move job
 
 	static void handleAutoMoveJobs();
-	cAutoMJob (cClient &client, cVehicle* vehicle);
+	cAutoMJob (cClient& client, cVehicle* vehicle);
 	~cAutoMJob();
 };
 

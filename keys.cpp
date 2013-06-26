@@ -35,7 +35,7 @@ using namespace tinyxml2;
 static void LoadSingleKey (XMLDocument& KeysXml, const char* keyString, SDLKey& key, const char* defaultKeyString)
 {
 	XMLElement* xmlElement = XmlGetFirstElement (KeysXml, "Controles", "Keys", keyString, NULL);
-	string value = xmlElement->Attribute("Text");
+	string value = xmlElement->Attribute ("Text");
 
 	if (!value.empty())
 		key = GetKeyFromString (value);
@@ -67,7 +67,7 @@ int LoadKeys()
 	{
 		Log.write ("User key-file in use", LOG_TYPE_INFO);
 	}
-	
+
 	XMLDocument KeysXml;
 	if (KeysXml.LoadFile (KEYS_XMLUsers) != XML_NO_ERROR)
 	{
@@ -129,8 +129,8 @@ int LoadKeys()
 	LoadSingleKey (KeysXml, "KeyUnitMenuUpgrade", KeysList.KeyUnitMenuUpgrade, "U");
 	LoadSingleKey (KeysXml, "KeyUnitMenuDestroy", KeysList.KeyUnitMenuDestroy, "D");
 
-	XMLElement* element = XmlGetFirstElement(KeysXml, "Controles", "Mouse", "MOUSE_STYLE", NULL);
-	if (element->Attribute("Text", "OLD_SCHOOL"))
+	XMLElement* element = XmlGetFirstElement (KeysXml, "Controles", "Mouse", "MOUSE_STYLE", NULL);
+	if (element->Attribute ("Text", "OLD_SCHOOL"))
 		MouseStyle = OldSchool;
 	else
 		MouseStyle = Modern;

@@ -172,7 +172,7 @@ void sendWantBuildList (const cClient& client, const cBuilding& building, const 
 	{
 		message->pushID (buildList[i].type);
 	}
-	message->pushInt16 ((int) buildList.size());
+	message->pushInt16 ( (int) buildList.size());
 	message->pushInt16 (buildSpeed);
 	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);

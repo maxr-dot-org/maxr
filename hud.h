@@ -234,7 +234,7 @@ private:
 
 	void preDrawFunction();
 
-	void drawAttackCursor(int x, int y) const;
+	void drawAttackCursor (int x, int y) const;
 	void drawTerrain (int zoomOffX, int zoomOffY);
 	void drawGrid (int zoomOffX, int zoomOffY);
 	void drawBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
@@ -479,7 +479,7 @@ public:
 	int getOffsetX() const { return offX; }
 	int getOffsetY() const { return offY; }
 
-	SDL_Rect calcScreenPos(int x, int y) const;
+	SDL_Rect calcScreenPos (int x, int y) const;
 
 	void setZoom (float newZoom, bool setScroller, bool centerToMouse);
 	float getZoom() const;

@@ -477,7 +477,7 @@ void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 	src.y = 0;
 	src.w = image[1]->w / frames;
 	src.h = image[1]->h;
-	dest = gameGUI.calcScreenPos ((int) (posX + tick * dx), (int) (posY + tick * dy));
+	dest = gameGUI.calcScreenPos ( (int) (posX + tick * dx), (int) (posY + tick * dy));
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);

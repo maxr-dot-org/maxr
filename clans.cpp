@@ -69,7 +69,7 @@ string cClanUnitStat::getClanStatsDescription() const
 		{
 			if (!first)
 				result += ", ";
-			result += lngPack.i18n ("Text~Hud~Range")/*here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot */ + " +" + iToStr (getModificationValue ("Range") - data->range);
+			result += lngPack.i18n ("Text~Hud~Range") /*here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot */ + " +" + iToStr (getModificationValue ("Range") - data->range);
 			first = false;
 		}
 		if (hasModification ("Armor"))

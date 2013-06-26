@@ -176,7 +176,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
+		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
 		{
 			if (StartUp > 100) StartUp = 0;
 		}
@@ -255,7 +255,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	{
 		SDL_Rect d, t;
 		int max, nr;
-		nr = 0xFF00 - ((gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
+		nr = 0xFF00 - ( (gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
 
 		if (data.isBig)
 			max = (gameGUI.getTileSize() * 2) - 3;
@@ -449,7 +449,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 	SDL_Rect src, tmp;
 
 	//draw working engineers and bulldozers:
-	if ((IsBuilding || (IsClearing && data.isBig)) && job == NULL && client)
+	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL && client)
 	{
 		//draw beton if nessesary
 		tmp = dest;
@@ -515,7 +515,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow && !((data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY)))
+	if (drawShadow && ! ( (data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY)))
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
 		else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
@@ -1091,28 +1091,28 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 
 	//check, which positions are available
 	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
-	if (   map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY - 1)
+	if (map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX    , PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY))
 	{
 		pos[0] = true;
 	}
 
-	if (   map.possiblePlaceBuilding (BuildingType, PosX    , PosY - 1)
+	if (map.possiblePlaceBuilding (BuildingType, PosX    , PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX + 1, PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX + 1, PosY))
 	{
 		pos[1] = true;
 	}
 
-	if (   map.possiblePlaceBuilding (BuildingType, PosX + 1, PosY)
+	if (map.possiblePlaceBuilding (BuildingType, PosX + 1, PosY)
 		&& map.possiblePlaceBuilding (BuildingType, PosX + 1, PosY + 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX    , PosY + 1))
 	{
 		pos[2] = true;
 	}
 
-	if (   map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY)
+	if (map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY)
 		&& map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY + 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX    , PosY + 1))
 	{
@@ -1756,7 +1756,7 @@ bool cVehicle::clearMine (cServer& server)
 //-----------------------------------------------------------------------------
 bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) const
 {
-	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
+	if ( (steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
 
 	if (isNextTo (x, y) == false || data.shotsCur == 0)
@@ -2010,18 +2010,18 @@ void cVehicle::makeDetection (cServer& server)
 
 			if (vehicle && vehicle->owner != owner)
 			{
-				if ((data.canDetectStealthOn & TERRAIN_GROUND) && owner->hasLandDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
+				if ( (data.canDetectStealthOn & TERRAIN_GROUND) && owner->hasLandDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
 				{
 					vehicle->setDetectedByPlayer (server, owner);
 				}
-				if ((data.canDetectStealthOn & TERRAIN_SEA) && owner->hasSeaDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_SEA))
+				if ( (data.canDetectStealthOn & TERRAIN_SEA) && owner->hasSeaDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_SEA))
 				{
 					vehicle->setDetectedByPlayer (server, owner);
 				}
 			}
 			if (building && building->owner != owner)
 			{
-				if ((data.canDetectStealthOn & AREA_EXP_MINE) && owner->hasMineDetection (offset) && (building->data.isStealthOn & AREA_EXP_MINE))
+				if ( (data.canDetectStealthOn & AREA_EXP_MINE) && owner->hasMineDetection (offset) && (building->data.isStealthOn & AREA_EXP_MINE))
 				{
 					building->setDetectedByPlayer (server, owner);
 				}
@@ -2218,7 +2218,7 @@ bool cVehicle::canLand (const cMap& map) const
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	for (; b_it != buildings.end(); ++b_it)
 	{
-		if ((*b_it)->data.canBeLandedOn)
+		if ( (*b_it)->data.canBeLandedOn)
 			break;
 	}
 	if (b_it == buildings.end()) return false;
@@ -2236,7 +2236,7 @@ bool cVehicle::canLand (const cMap& map) const
 	//can stay on an enemy landing pad until it is moved
 	if (FlightHigh == 0) return true;
 
-	if ((*b_it)->owner != owner) return false;
+	if ( (*b_it)->owner != owner) return false;
 
 	return true;
 }

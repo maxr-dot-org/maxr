@@ -65,7 +65,7 @@
 #define MAXPLAYER_HOTSEAT 8
 
 #ifdef _MSC_VER
-# define CHECK_MEMORY //_ASSERTE( _CrtCheckMemory( ) );
+# define CHECK_MEMORY //_ASSERTE (_CrtCheckMemory());
 #else
 # define CHECK_MEMORY
 #endif

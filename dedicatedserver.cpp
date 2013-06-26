@@ -302,7 +302,7 @@ string cDedicatedServer::getAvailableMapsString() const
 			for (unsigned int i = 0; i < userMaps->size(); i++)
 			{
 				if (Contains (*maps, (*userMaps) [i]) == false)
-					maps->push_back ((*userMaps) [i]);
+					maps->push_back ( (*userMaps) [i]);
 			}
 			delete userMaps;
 		}

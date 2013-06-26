@@ -131,7 +131,7 @@ static int LoadVoices (const char* path);
 
 /**
  * Loads the unitdata from the data.xml in the unitfolder
- * @param directory Unitdirectory , relative to the main game directory
+ * @param directory Unitdirectory, relative to the main game directory
  */
 static void LoadUnitData (sUnitData*, char const* directory, int iID);
 
@@ -150,10 +150,10 @@ int LoadData (void* data)
 	if (!DEDICATED_SERVER)
 	{
 		const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
-		if (!FileExists ((fontPath + "latin_normal.pcx").c_str())
-			|| !FileExists ((fontPath + "latin_big.pcx").c_str())
-			|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
-			|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
+		if (!FileExists ( (fontPath + "latin_normal.pcx").c_str())
+			|| !FileExists ( (fontPath + "latin_big.pcx").c_str())
+			|| !FileExists ( (fontPath + "latin_big_gold.pcx").c_str())
+			|| !FileExists ( (fontPath + "latin_small.pcx").c_str()))
 		{
 			Log.write ("Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR);
 			loadingState = LOAD_ERROR;
@@ -593,13 +593,13 @@ static int LoadLanguage()
 	if (lngPack.SetCurrentLanguage (cSettings::getInstance().getLanguage()) != 0) // Set the language code
 	{
 		// Not a valid language code, critical fail!
-		Log.write ("Not a valid language code!" , cLog::eLOG_TYPE_ERROR);
+		Log.write ("Not a valid language code!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	if (lngPack.ReadLanguagePack() != 0) // Load the translations
 	{
 		// Could not load the language, critical fail!
-		Log.write ("Could not load the language!" , cLog::eLOG_TYPE_ERROR);
+		Log.write ("Could not load the language!", cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	return 1;
@@ -648,7 +648,7 @@ static int LoadMusic (const char* path)
 	}
 	XMLElement* xmlElement;
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "main", NULL);
-	if (!xmlElement || !xmlElement->Attribute("Text"))
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't find \"main\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
@@ -656,7 +656,7 @@ static int LoadMusic (const char* path)
 	MainMusicFile = xmlElement->Attribute ("Text");
 
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "credits", NULL);
-	if (!xmlElement || !xmlElement->Attribute("Text"))
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
@@ -669,18 +669,18 @@ static int LoadMusic (const char* path)
 		Log.write ("Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
-	int const MusicAnz = xmlElement->IntAttribute("Num");
+	int const MusicAnz = xmlElement->IntAttribute ("Num");
 	for (int i = 1; i <= MusicAnz; i++)
 	{
-		std::string name = "bkg" + iToStr(i);
+		std::string name = "bkg" + iToStr (i);
 		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", name.c_str(), NULL);
-		if (xmlElement && xmlElement->Attribute("Text"))
+		if (xmlElement && xmlElement->Attribute ("Text"))
 		{
-			name = string(path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
+			name = string (path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
 		}
 		else
 		{
-			Log.write ("Can't find \"bkg" + iToStr(i) + "\" in music.xml", LOG_TYPE_WARNING);
+			Log.write ("Can't find \"bkg" + iToStr (i) + "\" in music.xml", LOG_TYPE_WARNING);
 			continue;
 		}
 		if (!FileExists (name.c_str()))
@@ -962,7 +962,7 @@ static int LoadVehicles()
 		Log.write ("Can't load vehicles.xml!", LOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement = XmlGetFirstElement(VehiclesXml, "VehicleData", "Vehicles", NULL);
+	XMLElement* xmlElement = XmlGetFirstElement (VehiclesXml, "VehicleData", "Vehicles", NULL);
 	if (xmlElement == NULL)
 	{
 		Log.write ("Can't read \"VehicleData->Vehicles\" node!", LOG_TYPE_ERROR);
@@ -979,7 +979,7 @@ static int LoadVehicles()
 			VehicleList.push_back (directory);
 		else
 		{
-			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 
@@ -987,7 +987,7 @@ static int LoadVehicles()
 			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			string msg = string("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 	}
@@ -1004,7 +1004,7 @@ static int LoadVehicles()
 			VehicleList.push_back (directory);
 		else
 		{
-			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 
@@ -1012,7 +1012,7 @@ static int LoadVehicles()
 			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			string msg = string("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 	}
@@ -1343,7 +1343,7 @@ static int LoadVehicles()
 		LoadUnitSoundfile (v.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
-	for (unsigned int i = 0 ; i < UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
+	for (unsigned int i = 0; i < UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
 
 	UnitsData.initializeIDData();
 
@@ -1374,7 +1374,7 @@ static void translateClanData (int num)
 
 	for (xmlElement = xmlElement->FirstChildElement(); xmlElement; xmlElement = xmlElement->NextSiblingElement())
 	{
-		if (xmlElement->IntAttribute("ID") != num)
+		if (xmlElement->IntAttribute ("ID") != num)
 			continue;
 
 		Log.write ("Found clan translation for clan id " + iToStr (num), LOG_TYPE_DEBUG);
@@ -1397,28 +1397,28 @@ static void translateClanData (int num)
 static bool translateUnitData (sID ID, bool vehicle)
 {
 	sUnitData* Data = NULL;
-	if (vehicle) 
-	{ 
-		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i) 
-		{ 
-			if (UnitsData.vehicle[i].data.ID == ID) 
-			{ 
-				Data = &UnitsData.vehicle[i].data; 
-				break; 
-			} 
-		} 
-	} 
-	else 
-	{ 
-		for (size_t i = 0; i != UnitsData.building.size(); ++i) 
-		{ 
-			if (UnitsData.building[i].data.ID == ID) 
-			{ 
-				Data = &UnitsData.building[i].data; 
-				break; 
-			} 
+	if (vehicle)
+	{
+		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
+		{
+			if (UnitsData.vehicle[i].data.ID == ID)
+			{
+				Data = &UnitsData.vehicle[i].data;
+				break;
+			}
 		}
-	} 
+	}
+	else
+	{
+		for (size_t i = 0; i != UnitsData.building.size(); ++i)
+		{
+			if (UnitsData.building[i].data.ID == ID)
+			{
+				Data = &UnitsData.building[i].data;
+				break;
+			}
+		}
+	}
 	if (Data == NULL) return false;
 
 	XMLElement* xmlElement = LanguageFile.RootElement()->FirstChildElement ("Units");
@@ -1430,9 +1430,9 @@ static bool translateUnitData (sID ID, bool vehicle)
 		const char* value = xmlElement->Attribute ("ID");
 		if (value == NULL) return false;
 
-		int idFirst = atoi(value);
+		int idFirst = atoi (value);
 		string idString = value;
-		int idSecond = atoi(idString.substr(idString.find(" ")).c_str());
+		int idSecond = atoi (idString.substr (idString.find (" ")).c_str());
 
 		if (idFirst == ID.iFirstPart && idSecond == ID.iSecondPart)
 		{
@@ -1447,12 +1447,12 @@ static bool translateUnitData (sID ID, bool vehicle)
 
 			value =  xmlElement->GetText();
 			if (value  == NULL) return false;
-			
+
 			Data->description = value;
 			size_t pos;
-			while ( (pos = Data->description.find("\\n")) != string::npos)
+			while ( (pos = Data->description.find ("\\n")) != string::npos)
 			{
-				Data->description.replace(pos, 2, "\n");
+				Data->description.replace (pos, 2, "\n");
 			}
 			return true;
 		}
@@ -1480,7 +1480,7 @@ static int LoadBuildings()
 		Log.write ("Can't load buildings.xml!", LOG_TYPE_ERROR);
 		return 0;
 	}
-	XMLElement* xmlElement = XmlGetFirstElement(BuildingsXml, "BuildingsData", "Buildings", NULL); 
+	XMLElement* xmlElement = XmlGetFirstElement (BuildingsXml, "BuildingsData", "Buildings", NULL);
 	if (xmlElement == NULL)
 	{
 		Log.write ("Can't read \"BuildingData->Building\" node!", LOG_TYPE_ERROR);
@@ -1494,13 +1494,13 @@ static int LoadBuildings()
 		Log.write ("There are no buildings in the buildings.xml defined", LOG_TYPE_ERROR);
 		return 1;
 	}
-	
+
 	const char* directory = xmlElement->Attribute ("directory");
 	if (directory != NULL)
 		BuildingList.push_back (directory);
 	else
 	{
-		string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node"; 
+		string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 		Log.write (msg, LOG_TYPE_WARNING);
 	}
 
@@ -1508,7 +1508,7 @@ static int LoadBuildings()
 		IDList.push_back (xmlElement->IntAttribute ("num"));
 	else
 	{
-		string msg = string("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node"; 
+		string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 		Log.write (msg, LOG_TYPE_WARNING);
 	}
 
@@ -1516,7 +1516,7 @@ static int LoadBuildings()
 	if (spezial != NULL)
 	{
 		string specialString = spezial;
-		if      (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
+		if (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
 		else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList[IDList.size() - 1];
 		else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList[IDList.size() - 1];
 		else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList[IDList.size() - 1];
@@ -1524,7 +1524,7 @@ static int LoadBuildings()
 		else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList[IDList.size() - 1];
 		else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 	}
-	
+
 	while (xmlElement != NULL)
 	{
 		xmlElement = xmlElement->NextSiblingElement();
@@ -1536,15 +1536,15 @@ static int LoadBuildings()
 			BuildingList.push_back (directory);
 		else
 		{
-			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
-		
+
 		if (xmlElement->Attribute ("num"))
 			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 
@@ -1552,7 +1552,7 @@ static int LoadBuildings()
 		if (spezial != NULL)
 		{
 			string specialString = spezial;
-			if      (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
+			if (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
 			else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList[IDList.size() - 1];
 			else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList[IDList.size() - 1];
 			else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList[IDList.size() - 1];
@@ -1713,8 +1713,8 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		return ;
 	}
 	// Read minimal game version
-	string gameVersion = getXMLAttributeString(unitDataXml, "text", "Unit", "Header", "Game_Version", NULL);
-	
+	string gameVersion = getXMLAttributeString (unitDataXml, "text", "Unit", "Header", "Game_Version", NULL);
+
 	//TODO check game version
 
 	//read id
@@ -1962,7 +1962,7 @@ static int LoadClans()
 		return 0;
 	}
 
-	for (XMLElement* clanElement = xmlElement->FirstChildElement("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
+	for (XMLElement* clanElement = xmlElement->FirstChildElement ("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
 	{
 		cClan* newClan = cClanData::instance().addClan();
 		string nameAttr = clanElement->Attribute ("Name");
@@ -1977,7 +1977,7 @@ static int LoadClans()
 
 		translateClanData (newClan->getClanID());
 
-		for (XMLElement* statsElement = clanElement->FirstChildElement("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))
+		for (XMLElement* statsElement = clanElement->FirstChildElement ("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))
 		{
 			const char* idAttr = statsElement->Attribute ("UnitID");
 			if (idAttr == 0)
@@ -2010,8 +2010,8 @@ void reloadUnitValues()
 	XMLElement* Element;
 	string path = cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml";
 	if (!FileExists (path.c_str())) return ;
-	if (UnitsXml.LoadFile ( path.c_str()) != XML_NO_ERROR) return;
-	if (! (Element = XmlGetFirstElement(UnitsXml, "VehicleData", "Vehicles", NULL))) return;
+	if (UnitsXml.LoadFile (path.c_str()) != XML_NO_ERROR) return;
+	if (! (Element = XmlGetFirstElement (UnitsXml, "VehicleData", "Vehicles", NULL))) return;
 
 	Element = Element->FirstChildElement();
 	int i = 0;
@@ -2026,9 +2026,9 @@ void reloadUnitValues()
 	}
 
 	path = cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml";
-	if (!FileExists ( path.c_str())) return ;
-	if (UnitsXml.LoadFile ( path.c_str()) != XML_NO_ERROR) return;
-	if (! (Element = XmlGetFirstElement(UnitsXml, "BuildingsData", "Buildings", NULL))) return;
+	if (!FileExists (path.c_str())) return ;
+	if (UnitsXml.LoadFile (path.c_str()) != XML_NO_ERROR) return;
+	if (! (Element = XmlGetFirstElement (UnitsXml, "BuildingsData", "Buildings", NULL))) return;
 
 	Element = Element->FirstChildElement();
 	i = 0;

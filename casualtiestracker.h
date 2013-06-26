@@ -27,7 +27,7 @@
 class cNetMessage;
 namespace tinyxml2
 {
-	class XMLElement;
+class XMLElement;
 }
 
 //-------------------------------------------------------------------------------

@@ -89,7 +89,7 @@ private:
 public:
 	bool nextMsgIsNextGameTime;
 	cGameTimerClient ();
-	void setClient(cClient* client);
+	void setClient (cClient* client);
 
 	void run (cMenu* activeMenu);
 	void handleSyncMessage (cNetMessage& message);

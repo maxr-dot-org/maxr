@@ -113,7 +113,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 int cSavegame::load (cServer** pServer, cTCP* network)
 {
 	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
-	if (SaveFile.LoadFile ( fileName.c_str()) != 0)
+	if (SaveFile.LoadFile (fileName.c_str()) != 0)
 	{
 		return 0;
 	}
@@ -638,7 +638,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 		// be downward compatible and looke for 'type' too
 		else if (element->Attribute ("type") != NULL)
 		{
-			//element->Attribute ( "type", &vehicle->BuildingTyp );
+			//element->Attribute ("type", &vehicle->BuildingTyp);
 		}
 		element->QueryIntAttribute ("turns", &vehicle->BuildRounds);
 		element->QueryIntAttribute ("costs", &vehicle->BuildCosts);
@@ -1721,7 +1721,7 @@ void cSavegame::addAttributeElement (XMLElement* node, const string& nodename, c
 //--------------------------------------------------------------------------
 XMLElement* cSavegame::addMainElement (XMLElement* node, const string& nodename)
 {
-	XMLElement* element = node->GetDocument()->NewElement(nodename.c_str());
+	XMLElement* element = node->GetDocument()->NewElement (nodename.c_str());
 	node->LinkEndChild (element);
 	return element;
 }
