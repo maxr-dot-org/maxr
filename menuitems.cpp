@@ -2093,7 +2093,7 @@ void cMenuUnitDetails::setOwner (cPlayer* owner_)
 void cMenuUnitDetails::setSelection (const cClient& client_, cVehicle* vehicle, cBuilding* building)
 {
 	client = &client_;
-	if (vehicle == NULL) unit = vehicle;
+	if (vehicle != NULL) unit = vehicle;
 	else unit = building;
 }
 
