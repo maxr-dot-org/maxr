@@ -459,11 +459,6 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/** this macro checks, wether the surface has to be rescaled, and scales it if nessesary */
-#define CHECK_SCALING (surface, surface_org, factor) \
-	if (!cSettings::getInstance().shouldDoPrescale() && ( (surface)->w != (int)((surface_org)->w * (factor)) || (surface)->h != (int)((surface_org)->h * (factor))))  \
-		scaleSurface ( (surface_org), (surface), (int)((surface_org)->w * (factor)), (int)((surface_org)->h * (factor)));
-
 /**
  * scale a surface to the overgiven sice. The scaled surface will be drawn to the destination surface.
  * If the destiniation surface is NULL a new surface will be created.
@@ -475,6 +470,16 @@ public:
  * @return returns the destination surface.
  */
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height);
+
+/** this function checks, whether the surface has to be rescaled, and scales it if nessesary */
+inline void CHECK_SCALING (SDL_Surface* surface, SDL_Surface* surface_org, float factor)
+{
+	if (!cSettings::getInstance().shouldDoPrescale() &&
+		(surface->w != (int)(surface_org->w * factor) ||
+		 surface->h != (int)(surface_org->h * (factor))))
+		scaleSurface (surface_org, surface, (int)(surface_org->w * factor), (int)(surface_org->h * factor));
+}
+
 
 SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
 
