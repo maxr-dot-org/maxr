@@ -246,14 +246,13 @@ Uint32 calcCheckSum (const char* data, size_t dataSize, Uint32 checksum)
 	return checksum;
 }
 
-void copyFile( std::string source, std::string dest )
+void copyFile (const std::string& source, const std::string& dest)
 {
 	long int size;
 	unsigned char* buffer;
 	SDL_RWops *sourceFile = NULL;
 	SDL_RWops *destFile = NULL;
 	sourceFile = SDL_RWFromFile ( source.c_str(), "rb" );
-	
 
 	destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
 	if ( destFile == NULL )

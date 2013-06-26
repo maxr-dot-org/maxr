@@ -72,7 +72,7 @@ std::string getUserMapsDir();
 std::string getUserScreenshotsDir();
 
 std::string getUserLogDir();
-void copyFile( std::string source, std::string dest );
+void copyFile (const std::string& source, const std::string& dest);
 
 /**
 * @author pagra
