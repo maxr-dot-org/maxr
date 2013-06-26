@@ -248,22 +248,16 @@ Uint32 calcCheckSum (const char* data, size_t dataSize, Uint32 checksum)
 
 void copyFile (const std::string& source, const std::string& dest)
 {
-	long int size;
-	unsigned char* buffer;
-	SDL_RWops* sourceFile = NULL;
-	SDL_RWops* destFile = NULL;
-	sourceFile = SDL_RWFromFile (source.c_str(), "rb");
-
-	destFile = SDL_RWFromFile (dest.c_str(), "wb");
+	SDL_RWops* sourceFile = SDL_RWFromFile (source.c_str(), "rb");
+	SDL_RWops* destFile = SDL_RWFromFile (dest.c_str(), "wb");
 	if (destFile == NULL)
 	{
 		return;
 	}
 
 	SDL_RWseek (sourceFile, 0, SEEK_END);
-	size = SDL_RWtell (sourceFile);
-
-	buffer = (unsigned char*) malloc (size);
+	const long int size = SDL_RWtell (sourceFile);
+	unsigned char* buffer = new unsigned char [size];
 	if (buffer == NULL)
 	{
 		std::cout << "Out of memory\n";
@@ -275,10 +269,8 @@ void copyFile (const std::string& source, const std::string& dest)
 
 	SDL_RWwrite (destFile, buffer, 1, size);
 
-	free (buffer);
-
+	delete [] buffer;
 
 	if (sourceFile) SDL_RWclose (sourceFile);
 	if (destFile)   SDL_RWclose (destFile);
-
 }

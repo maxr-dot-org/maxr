@@ -77,7 +77,7 @@ int main (int argc, char* argv[])
 		sVersion += PACKAGE_REV; sVersion += " ";
 		Log.write (sVersion, cLog::eLOG_TYPE_INFO);
 		string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
-		Log.write (sBuild , cLog::eLOG_TYPE_INFO);
+		Log.write (sBuild, cLog::eLOG_TYPE_INFO);
 #if HAVE_AUTOVERSION_H
 		string sBuildVerbose = "On: ";
 		sBuildVerbose += BUILD_UNAME_S;
@@ -93,7 +93,7 @@ int main (int argc, char* argv[])
 #endif
 		Log.mark();
 		Log.write (sVersion, cLog::eLOG_TYPE_NET_DEBUG);
-		Log.write (sBuild , cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	srand ( (unsigned) time (NULL)); // start random number generator
@@ -231,7 +231,7 @@ static int initSound()
 	if (SDL_Init (SDL_INIT_AUDIO) < 0)     //start sound
 	{
 		Log.write ("Could not init SDL_INIT_AUDIO", cLog::eLOG_TYPE_WARNING);
-		Log.write ("Sound won't  be available!", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Sound won't be available!", cLog::eLOG_TYPE_WARNING);
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		cSettings::getInstance().setSoundEnabled (false, false);
 		return -1;
@@ -240,7 +240,7 @@ static int initSound()
 	if (!InitSound (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize()))
 	{
 		Log.write ("Could not access mixer", cLog::eLOG_TYPE_WARNING);
-		Log.write ("Sound won't  be available!", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Sound won't be available!", cLog::eLOG_TYPE_WARNING);
 		cSettings::getInstance().setSoundEnabled (false, false);
 		return -1;
 	}
@@ -371,15 +371,13 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	int srcRow = 0;
 	int destRow = 0;
 	int i = 0;
-	Uint8* srcPixelData;
-	Uint8* destPixelData;
 	// go trough all rows
 	while (srcRow < scr->h)
 	{
-		srcPixelData = (Uint8*) scr->pixels + (srcRow * scr->pitch);
+		Uint8* srcPixelData = static_cast<Uint8*> (scr->pixels) + (srcRow * scr->pitch);
 		// draw the complete line
 drawline:
-		destPixelData = (Uint8*) surface->pixels + (destRow * surface->pitch);
+		Uint8* destPixelData = static_cast<Uint8*> (surface->pixels) + (destRow * surface->pitch);
 
 		// pay attention to diffrent surface formats
 		switch (scr->format->BytesPerPixel)
@@ -388,13 +386,13 @@ drawline:
 				drawStetchedLine<Uint8> (srcPixelData, scr->w, destPixelData, surface->w);
 				break;
 			case 2:
-				drawStetchedLine<Uint16> ( (Uint16*) srcPixelData, scr->w, (Uint16*) destPixelData, surface->w);
+				drawStetchedLine<Uint16> (reinterpret_cast<Uint16*> (srcPixelData), scr->w, (Uint16*) destPixelData, surface->w);
 				break;
 			case 3:
 				// not yet supported
 				break;
 			case 4:
-				drawStetchedLine<Uint32> ( (Uint32*) srcPixelData, scr->w, (Uint32*) destPixelData, surface->w);
+				drawStetchedLine<Uint32> (reinterpret_cast<Uint32*> (srcPixelData), scr->w, (Uint32*) destPixelData, surface->w);
 				break;
 		}
 		destRow++;
@@ -521,7 +519,7 @@ void setPixel (SDL_Surface* surface, int x, int y, int iColor)
 	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w ||
 		y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
 
-	static_cast<Uint32*>(surface->pixels) [x + y * surface->w] = iColor;
+	static_cast<Uint32*> (surface->pixels) [x + y * surface->w] = iColor;
 }
 
 int random (int const x)
@@ -584,7 +582,7 @@ int Round (double dValueToRound)
 string sID::getText() const
 {
 	char tmp[6];
-	sprintf (tmp, "%.2d %.2d", iFirstPart, iSecondPart);
+	snprintf (tmp, sizeof (tmp), "%.2d %.2d", iFirstPart, iSecondPart);
 	return tmp;
 }
 
@@ -921,7 +919,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 
 	//check surface formats
 	if (!dst->format->Amask) return;
-	if (src->format->Amask || !(src->flags & SDL_SRCALPHA)) return;
+	if (src->format->Amask || ! (src->flags & SDL_SRCALPHA)) return;
 
 	if (srcrect == NULL)
 	{
@@ -1020,9 +1018,9 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 			Uint32 b = (scolor & sbmask) >> bshift;
 			Uint32 dalpha = (dcolor & damask) >> ashift;
 
-			r = (((dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha) + r * srcAlpha;
-			g = (((dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
-			b = (((dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
+			r = ( ( (dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha) + r * srcAlpha;
+			g = ( ( (dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
+			b = ( ( (dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
 
 			const Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha) / 255;
 
@@ -1067,4 +1065,4 @@ sFreezeModes::sFreezeModes() :
 	pause (false),
 	waitForPlayer (false),
 	playerNumber (-1)
-{};
+{}

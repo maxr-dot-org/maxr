@@ -1047,14 +1047,14 @@ static int LoadVehicles()
 			for (int n = 0; n < 8; n++)
 			{
 				v.img[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_FillRect (v.img[n], NULL, 0xFF00FF);
+				SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
+				SDL_FillRect (v.img[n], NULL, 0x00FF00FF);
 
 				for (int j = 0; j < 13; j++)
 				{
 					sTmpString = sVehiclePath;
 					char sztmp[16];
-					sprintf (sztmp, "img%d_%.2d.pcx", n, j);
+					snprintf (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
 					sTmpString += sztmp;
 
 					if (FileExists (sTmpString.c_str()))
@@ -1073,26 +1073,25 @@ static int LoadVehicles()
 					}
 				}
 				v.img_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_FillRect (v.img_org[n], NULL, 0xFFFFFF);
+				SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
+				SDL_FillRect (v.img_org[n], NULL, 0x00FFFFFF);
 				SDL_BlitSurface (v.img[n], NULL, v.img_org[n], NULL);
 
 				v.shw[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.shw[n], SDL_SRCCOLORKEY, 0xFF00FF);
-				SDL_FillRect (v.shw[n], NULL, 0xFF00FF);
+				SDL_SetColorKey (v.shw[n], SDL_SRCCOLORKEY, 0x00FF00FF);
+				SDL_FillRect (v.shw[n], NULL, 0x00FF00FF);
 				v.shw_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF);
-				SDL_FillRect (v.shw_org[n], NULL, 0xFF00FF);
+				SDL_SetColorKey (v.shw_org[n], SDL_SRCCOLORKEY, 0x00FF00FF);
+				SDL_FillRect (v.shw_org[n], NULL, 0x00FF00FF);
 
-				int* ptr;
 				rcDest.x = 3;
 				rcDest.y = 3;
 				SDL_BlitSurface (v.img_org[n], NULL, v.shw_org[n], &rcDest);
 				SDL_LockSurface (v.shw_org[n]);
-				ptr = (int*) (v.shw_org[n]->pixels);
+				Uint32* ptr = static_cast<Uint32*> (v.shw_org[n]->pixels);
 				for (int j = 0; j < 64 * 13 * 64; j++)
 				{
-					if (*ptr != 0xFF00FF)
+					if (*ptr != 0x00FF00FF)
 						*ptr = 0;
 					ptr++;
 				}
@@ -1110,7 +1109,7 @@ static int LoadVehicles()
 				// load image
 				sTmpString = sVehiclePath;
 				char sztmp[16];
-				sprintf (sztmp, "img%d.pcx", n);
+				snprintf (sztmp, sizeof (sztmp), "img%d.pcx", n);
 				sTmpString += sztmp;
 				Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if (FileExists (sTmpString.c_str()))
@@ -1728,7 +1727,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		{
 			if (UnitsData.vehicle[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{
-				sprintf (szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
@@ -1740,7 +1739,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		{
 			if (UnitsData.building[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{
-				sprintf (szTmp, "unit with id %.2d %.2d already exists", UnitsData.building[i].data.ID.iFirstPart, UnitsData.building[i].data.ID.iSecondPart);
+				snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.building[i].data.ID.iFirstPart, UnitsData.building[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
@@ -1751,13 +1750,13 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
 	if (iID != atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 	{
-		sprintf (szTmp, "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()), directory);
+		snprintf (szTmp, sizeof (szTmp), "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()), directory);
 		Log.write (szTmp, LOG_TYPE_WARNING);
 		return ;
 	}
 	else
 	{
-		sprintf (szTmp, "ID %.2d %.2d verified", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()));
+		snprintf (szTmp, sizeof (szTmp), "ID %.2d %.2d verified", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()));
 		Log.write (szTmp, LOG_TYPE_DEBUG);
 	}
 	//read name

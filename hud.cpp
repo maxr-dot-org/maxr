@@ -972,7 +972,7 @@ SDL_Surface* cGameGUI::generateSurface()
 SDL_Surface* cGameGUI::generateMiniMapSurface()
 {
 	SDL_Surface* minimapSurface = SDL_CreateRGBSurface (SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
-	Uint32* minimap = ( (Uint32*) minimapSurface->pixels);
+	Uint32* minimap = static_cast<Uint32*> (minimapSurface->pixels);
 
 	//set zoom factor
 	const int displayedMapWidth = (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
@@ -1032,10 +1032,10 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 
 				if (!player->ScanMap[map->getOffset (terrainx, terrainy)])
 				{
-					Uint8* color = (Uint8*) &minimap[miniMapX + miniMapY * MINIMAP_SIZE];
-					color[0] = (Uint8) (color[0] * 0.6);
-					color[1] = (Uint8) (color[1] * 0.6);
-					color[2] = (Uint8) (color[2] * 0.6);
+					Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * MINIMAP_SIZE]);
+					color[0] = (Uint8) (color[0] * 0.6f);
+					color[1] = (Uint8) (color[1] * 0.6f);
+					color[2] = (Uint8) (color[2] * 0.6f);
 				}
 			}
 		}
@@ -1399,7 +1399,7 @@ void cGameGUI::updateUnderMouseObject()
 	a case where I accept an array since I don't know a better
 	method to format x and y easily with leading 0 -- beko */
 	char str[8];
-	sprintf (str, "%.3d-%.3d", x, y);
+	snprintf (str, sizeof (str), "%.3d-%.3d", x, y);
 	coordsLabel.setText (str);
 
 	if (!player->ScanMap[map->getOffset (x, y)])

@@ -284,7 +284,7 @@ sPathNode* cPathCalculator::allocNode()
 	// alloced new memory block if necessary
 	if (blocksize <= 0)
 	{
-		MemBlocks = (sPathNode**) realloc (MemBlocks, (blocknum + 1) * sizeof (sPathNode*));
+		MemBlocks = static_cast<sPathNode**> (realloc (MemBlocks, (blocknum + 1) * sizeof (sPathNode*)));
 		MemBlocks[blocknum] = new sPathNode[10];
 		blocksize = MEM_BLOCK_SIZE;
 		blocknum++;

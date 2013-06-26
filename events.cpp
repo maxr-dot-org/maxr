@@ -44,7 +44,7 @@ static std::string TakeScreenShot()
 	tmTime = localtime (&tTime);
 	strftime (timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
 	std::string screenshotfile;
-	short int counter = 0;
+	int counter = 0;
 	do
 	{
 		counter += 1;

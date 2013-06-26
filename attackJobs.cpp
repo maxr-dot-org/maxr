@@ -168,7 +168,7 @@ void cServerAttackJob::lockTarget (int offset)
 		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET);
 		if (target->isVehicle())
 		{
-			cVehicle* v = (cVehicle*) target;
+			cVehicle* v = static_cast<cVehicle*> (target);
 			message->pushChar (v->OffX);
 			message->pushChar (v->OffY);
 			message->pushInt32 (v->iID);

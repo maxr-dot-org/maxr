@@ -181,7 +181,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 Uint32 cUnicodeFont::getPixel32 (int x, int y, SDL_Surface* surface)
 {
 	//converts the Pixel to 32 bit
-	Uint32* pixels = (Uint32*) surface->pixels;
+	Uint32* pixels = static_cast<Uint32*> (surface->pixels);
 
 	//get the requested pixels
 	return pixels[ (y * surface->w) + x];

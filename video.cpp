@@ -35,7 +35,7 @@ static vector<sVidMode> vVideoMode;
 /**
  * Some possible video modes. Don't use external!'
  */
-const static sVidMode videoModes[] =
+static const sVidMode videoModes[] =
 {
 	{  MINWIDTH,  MINHEIGHT,  0 },
 	{  800,  600,  1 },
@@ -293,17 +293,17 @@ bool cVideo::doDetection()
 	Log.write ("cVideo: Screen resolution detection started. Results may vary!", cLog::eLOG_TYPE_INFO);
 
 	const SDL_VideoInfo* vInfo = SDL_GetVideoInfo();
-	SDL_Rect** rDetectedModes;
 	vVideoMode.clear();
 
-	//detect us some video modes. detection works in fullscreen only. we try HW and SW surfaces
-	rDetectedModes = SDL_ListModes (vInfo->vfmt, SDL_FULLSCREEN | getSurfaceType());
+	// detect us some video modes. detection works in fullscreen only.
+	// we try HW and SW surfaces
+	SDL_Rect** rDetectedModes = SDL_ListModes (vInfo->vfmt, SDL_FULLSCREEN | getSurfaceType());
 
-	if (rDetectedModes == (SDL_Rect**) 0)
+	if (rDetectedModes == NULL)
 	{
 		switchSurface(); //try SWSURFACE if HWSURFACE doesn't work and vice versa
 		rDetectedModes = SDL_ListModes (vInfo->vfmt, SDL_FULLSCREEN | getSurfaceType());  //try with SWSURFACE
-		if (rDetectedModes == (SDL_Rect**) 0)
+		if (rDetectedModes == NULL)
 		{
 			Log.write ("cVideo: No video modes detected. Probably bad!", cLog::eLOG_TYPE_ERROR);
 			vVideoMode.resize (getVideoNum());

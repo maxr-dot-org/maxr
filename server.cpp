@@ -78,7 +78,7 @@ int CallbackRunServerThread (void* arg)
 
 	__try
 	{
-		RaiseException (MS_VC_EXCEPTION, 0, sizeof (info) / sizeof (ULONG_PTR), (ULONG_PTR*) &info);
+		RaiseException (MS_VC_EXCEPTION, 0, sizeof (info) / sizeof (ULONG_PTR), reinterpret_cast<ULONG_PTR*> (&info));
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
@@ -453,23 +453,22 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_ATTACK);
 	//identify agressor
 	const bool bIsVehicle = message.popBool();
-	cVehicle* attackingVehicle = NULL;
-	cBuilding* attackingBuilding = NULL;
+	cUnit* attackingUnit = NULL;
 	if (bIsVehicle)
 	{
 		const int ID = message.popInt32();
-		attackingVehicle = getVehicleFromID (ID);
-		if (attackingVehicle == NULL)
+		attackingUnit = getVehicleFromID (ID);
+		if (attackingUnit == NULL)
 		{
 			Log.write (" Server: vehicle with ID " + iToStr (ID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		if (attackingVehicle->owner->getNr() != message.iPlayerNr)
+		if (attackingUnit->owner->getNr() != message.iPlayerNr)
 		{
 			Log.write (" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		if (attackingVehicle->isBeeingAttacked) return;
+		if (attackingUnit->isBeeingAttacked) return;
 	}
 	else
 	{
@@ -479,18 +478,18 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 			Log.write (" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		attackingBuilding = Map->fields[offset].getTopBuilding();
-		if (attackingBuilding == NULL)
+		attackingUnit = Map->fields[offset].getTopBuilding();
+		if (attackingUnit == NULL)
 		{
 			Log.write (" Server: No Building at agressor offset", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		if (attackingBuilding->owner->getNr() != message.iPlayerNr)
+		if (attackingUnit->owner->getNr() != message.iPlayerNr)
 		{
 			Log.write (" Server: Message was not send by building owner!", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		if (attackingBuilding->isBeeingAttacked) return;
+		if (attackingUnit->isBeeingAttacked) return;
 	}
 
 	//find target offset
@@ -521,7 +520,6 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	}
 
 	//check if attack is possible
-	cUnit* attackingUnit = bIsVehicle ? (cUnit*) attackingVehicle : (cUnit*) attackingBuilding;
 	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), Map, true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
@@ -1793,17 +1791,17 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	cBuilding* destBuilding = NULL;
 	if (message.popBool()) destVehicle = getVehicleFromID (message.popInt16());
 	else destBuilding = getBuildingFromID (message.popInt16());
-
+	cUnit* destUnit = destVehicle;
+	if (destUnit == NULL) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ( (destVehicle && srcVehicle->canDoCommandoAction (destVehicle->PosX, destVehicle->PosY, Map, steal)) ||
-			(destBuilding && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY, Map, steal)) ||
+	if (! ( (destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, Map, steal)) ||
 			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, Map, steal)) ||
 			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map, steal)) ||
 			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map, steal)))) return;
 
 	// check whether the action is successfull or not
-	const int chance = srcVehicle->calcCommandoChance (destVehicle ? (cUnit*) destVehicle : (cUnit*) destBuilding, steal);
+	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
 	bool success = false;
 	if (random (100) < chance)
 	{
@@ -1819,16 +1817,17 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		}
 		else
 		{
-			// only on disabling units the infiltartor gets exp. As higher his level is as slower he rises onto the next one.
-			// every 5 rankings he needs one succesfull disabling more, to get to the next ranking
-			srcVehicle->CommandoRank += (float) 1 / ( (int) ( ( (int) srcVehicle->CommandoRank + 5) / 5));
+			// only on disabling units the infiltartor gets exp.
+			// As higher his level is as slower he rises onto the next one.
+			// every 5 rankings he needs one succesfull disabling more,
+			// to get to the next ranking
+			srcVehicle->CommandoRank += 1.f / ( ( (int) srcVehicle->CommandoRank + 5) / 5);
 
-			const int strength = srcVehicle->calcCommandoTurns (destVehicle ? (cUnit*) destVehicle : (cUnit*) destBuilding);
+			const int strength = srcVehicle->calcCommandoTurns (destUnit);
+			// stop the unit and make it disabled
+			destUnit->turnsDisabled = strength;
 			if (destVehicle)
 			{
-				// stop the vehicle and make it disabled
-				destVehicle->turnsDisabled = strength;
-
 				//save speed and number of shots before disabling
 				destVehicle->lastSpeed = destVehicle->data.speedCur;
 				destVehicle->lastShots = destVehicle->data.shotsCur;
@@ -1836,22 +1835,11 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destVehicle->data.speedCur = 0;
 				destVehicle->data.shotsCur = 0;
 
-
 				if (destVehicle->IsBuilding) stopVehicleBuilding (destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
-				sendUnitData (*this, *destVehicle, destVehicle->owner->getNr());
-				for (unsigned int i = 0; i < destVehicle->seenByPlayerList.size(); i++)
-				{
-					sendUnitData (*this, *destVehicle, destVehicle->seenByPlayerList[i]->getNr());
-				}
-				destVehicle->owner->doScan();
-				checkPlayerUnits();
 			}
 			else if (destBuilding)
 			{
-				// stop the vehicle and make it disabled
-				destBuilding->turnsDisabled = strength;
-
 				//save number of shots before disabling
 				destBuilding->lastShots = destBuilding->data.shotsCur;
 
@@ -1859,22 +1847,23 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destBuilding->wasWorking = destBuilding->IsWorking;
 				destBuilding->ServerStopWork (*this, true);
 				sendDoStopWork (*this, *destBuilding);
-				sendUnitData (*this, *destBuilding, destBuilding->owner->getNr());
-				for (unsigned int i = 0; i < destBuilding->seenByPlayerList.size(); i++)
-				{
-					sendUnitData (*this, *destBuilding, destBuilding->seenByPlayerList[i]->getNr());
-				}
-				destBuilding->owner->doScan();
-				checkPlayerUnits();
 			}
+			sendUnitData (*this, *destUnit, destUnit->owner->getNr());
+			for (size_t i = 0; i != destUnit->seenByPlayerList.size(); ++i)
+			{
+				sendUnitData (*this, *destUnit, destUnit->seenByPlayerList[i]->getNr());
+			}
+			destUnit->owner->doScan();
+			checkPlayerUnits();
 		}
 		success = true;
 	}
 	// disabled units fail to detect infiltrator even if he screws up
-	else if ( (destBuilding && destBuilding->turnsDisabled == 0) || (destVehicle && destVehicle->turnsDisabled == 0))
+	else if (destUnit->turnsDisabled == 0)
 	{
 		// detect the infiltrator on failed action and let enemy units fire on him
-		//TODO: uncover the infiltrator for all players, or only for the owner of the target unit? --eiko
+		// TODO: uncover the infiltrator for all players,
+		// or only for the owner of the target unit? --eiko
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
 		{
 			cPlayer* player = (*PlayerList) [i];
