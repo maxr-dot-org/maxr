@@ -1637,7 +1637,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 	maxX -= src.w;
 
 	if (value2 != value1) maxX -= src.w + 3;
-	else if (value2 < value1) std::swap (value1, value2);
+	if (value2 < value1) std::swap (value1, value2);
 	int offX = src.w;
 	while (offX * value2 > maxX)
 	{
