@@ -480,7 +480,7 @@ void cServerGame::startGameServer()
 
 	// send victory conditions to clients
 	for (unsigned n = 0; n < gameData->players.size(); n++)
-		sendVictoryConditions (*server, gameData->players[n]);
+		sendVictoryConditions (*server, *gameData->players[n]);
 
 	// place resources
 	server->placeInitialResources (gameData->landData, *gameData->settings);

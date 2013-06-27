@@ -435,23 +435,14 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 	}
 }
 
-void sendVictoryConditions (cServer& server, const cPlayer* receiver)
+void sendVictoryConditions (cServer& server, const cPlayer& receiver)
 {
-	if (!receiver)
-	{
-		const std::vector<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int n = 0; n < playerList.size(); n++)
-			sendVictoryConditions (server, playerList[n]);
-	}
-	else
-	{
-		const int turnLimit = server.getTurnLimit();
-		const int scoreLimit = server.getScoreLimit();
-		cNetMessage* msg = new cNetMessage (GAME_EV_VICTORY_CONDITIONS);
-		msg->pushInt16 (turnLimit);
-		msg->pushInt16 (scoreLimit);
-		server.sendNetMessage (msg, receiver->getNr());
-	}
+	const int turnLimit = server.getTurnLimit();
+	const int scoreLimit = server.getScoreLimit();
+	cNetMessage* msg = new cNetMessage (GAME_EV_VICTORY_CONDITIONS);
+	msg->pushInt16 (turnLimit);
+	msg->pushInt16 (scoreLimit);
+	server.sendNetMessage (msg, receiver.getNr());
 }
 
 //------------------------------------------------------------------------------

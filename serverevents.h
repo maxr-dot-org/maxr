@@ -309,7 +309,7 @@ void sendCasualtiesReport (cServer& server, int player);
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* Receiver = 0);
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* Receiver = 0);
 void sendUnitScore (cServer& server, const cBuilding&);
-void sendVictoryConditions (cServer& server, const cPlayer* receiver = 0);
+void sendVictoryConditions (cServer& server, const cPlayer& receiver);
 
 void sendSelfDestroy (cServer& server, const cBuilding& building);
 

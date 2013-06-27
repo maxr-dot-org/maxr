@@ -163,7 +163,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		server->setGameSettings (*settings);
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
-			sendVictoryConditions (*server, players[n]);
+			sendVictoryConditions (*server, *players[n]);
 
 		// place resources
 		server->placeInitialResources (landData, *settings);

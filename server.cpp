@@ -104,8 +104,8 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 	this->bPlayTurns = false;
 	Map = &map;
 	this->PlayerList = PlayerList;
-	bHotSeat = false;
 	bExit = false;
+	openMapDefeat = true;
 	bStarted = false;
 	neutralBuildings = NULL;
 	iActiveTurnPlayerNr = 0;
@@ -3649,7 +3649,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendNumEcos (*this, *subj, Player);
 	}
 
-	sendVictoryConditions (*this, Player);
+	sendVictoryConditions (*this, *Player);
 
 	// send attackJobs
 	for (unsigned int i = 0; i < AJobs.size(); i++)

@@ -251,11 +251,6 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (!gameInfoNode) return;
 
 	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
-	if (XMLElement* const element = gameInfoNode->FirstChildElement ("Hotseat"))
-	{
-		server.bHotSeat = true;
-		server.iHotSeatPlayer = element->IntAttribute ("activeplayer");
-	}
 	if (XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
 		server.bPlayTurns = true;
@@ -1189,7 +1184,6 @@ void cSavegame::writeGameInfo (const cServer& server)
 	XMLElement* gemeinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
 	addAttributeElement (gemeinfoNode, "Turn", "num", iToStr (server.iTurn));
-	if (server.bHotSeat) addAttributeElement (gemeinfoNode, "Hotseat", "activeplayer", iToStr (server.iHotSeatPlayer));
 	if (server.bPlayTurns) addAttributeElement (gemeinfoNode, "PlayTurns", "activeplayer", iToStr (server.iActiveTurnPlayerNr));
 
 	addAttributeElement (gemeinfoNode, "TurnLimit", "num", iToStr (server.turnLimit));
