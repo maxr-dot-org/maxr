@@ -41,11 +41,11 @@
 			<Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
 		</Init>
 		<Title>
-			<Alien_Tech ENG="Alien remains" localized="Alienüberreste"/>
+			<Alien_Tech ENG="Alien remains" localized="Alien-Überreste"/>
 			<BridgeHead ENG="Starting Base" localized="Startbasis"/>
 			<Build ENG="Build menu" localized="Baumenü"/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
-			<Choose_Clan ENG="Choose Clan" localized="Clanauswahl"/>
+			<Choose_Clan ENG="Choose Clan" localized="Clan-Auswahl"/>
 			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
 			<Choose_Units ENG="Choose Units" localized="Einheitenauswahl"/>
 			<Clan ENG="Clan" localized="Clan"/>
@@ -53,15 +53,15 @@
 			<Color ENG="Color:" localized="Farbe:"/>
 			<Computer ENG="Computer" localized="Computer"/>
 			<Connect ENG="Connect" localized="Verbinden"/>
-			<Credits ENG="Credits" localized="Kredits"/>
-			<Credits_start ENG="Credits at gamestart" localized="Startkredit"/>
+			<Credits ENG="Credit" localized="Kredit"/>
+			<Credits_start ENG="Credit at gamestart" localized="Startkredit"/>
 			<Game_Type ENG="Game Type" localized="Spielart"/>
 			<Gold ENG="Gold" localized="Gold"/>
 			<Human ENG="Human" localized="Mensch"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Forschungsmenü"/>
-			<Load ENG="Load Menu" localized="Laden Menü"/>
-			<LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
+			<Load ENG="Load Menu" localized="Laden-Menü"/>
+			<LoadSave ENG="Load/Save Menu" localized="Laden/Speichern-Menü"/>
 			<MainMenu ENG="Main Menu" localized="Hauptmenü"/>
 			<Map ENG="Map" localized="Karte"/>
 			<Metal ENG="Raw Materials" localized="Rohstoff"/>
@@ -79,7 +79,7 @@
 			<Send ENG="Send" localized="Senden"/>
 			<Team ENG="Team" localized="Team"/>
 			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
-			<Updates ENG="Update menu" localized="Updatemenü"/>
+			<Updates ENG="Update menu" localized="Update-Menü"/>
 		</Title>
 		<Button>
 			<Active ENG="Active" localized="Aktiv"/>
@@ -111,7 +111,7 @@
 			<Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
 			<Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
 			<No ENG="No" localized="Nein"/>
-			<OK ENG="OK" localized="Ok"/>
+			<OK ENG="OK" localized="OK"/>
 			<Path ENG="Path" localized="Pfad"/>
 			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
 			<Reload ENG="Reload" localized="Aufladen"/>
@@ -423,8 +423,7 @@
 		<Unit ID="0 33" localized="Goldtransporter">Goldtransporter\n\nEinheit, um Gold von einem Ort zum nächsten zu transportieren.</Unit>
 		<Unit ID="0 34" localized="Versorgungstruck">Versorgungstruck\n\nLkw zum Transport von Rohstoff. Nützlich um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
 		<Unit ID="0 35" localized="Tankwagen">Tankwagen\n\nLkw, um Treibstoff zu transportieren.</Unit>
-		<Unit ID="1 1" localized="Kaserne">Kaserne\n\nIn einer Kaserne 
-		gibt es eine Werkstatt zum Aufrüsten und Reparieren der Anzüge von Infiltratoren und Infanterie. Außerdem ist es möglich, diese Einheiten wieder mit Munition zu versorgen. Die Kaserne benötigt zum Reparieren, Aufrüsten oder Aufladen Rohstoff, weshalb sie an eine Lagereinheit oder ein eingeschaltetes Bergwerk angeschlossen sein sollte.</Unit>
+		<Unit ID="1 1" localized="Kaserne">Kaserne\n\nIn einer Kaserne gibt es eine Werkstatt zum Aufrüsten und Reparieren der Anzüge von Infiltratoren und Infanterie. Außerdem ist es möglich, diese Einheiten wieder mit Munition zu versorgen. Die Kaserne benötigt zum Reparieren, Aufrüsten oder Aufladen Rohstoff, weshalb sie an eine Lagereinheit oder ein eingeschaltetes Bergwerk angeschlossen sein sollte.</Unit>
 		<Unit ID="1 2" localized="Betonklotz">Betonklotz\n\nGehärteter, gepanzerter Block zum Blockieren feindlicher Bewegungen.</Unit>
 		<Unit ID="1 3" localized="Brücke">Brücke\n\nPontonbrücke zum Überqueren von Wasser. Brücken blockieren im Gegensatz zu Wasserplattformen, die Bewegungen der Schiffe nicht. Zudem bewegen sich Einheiten mit doppelter Geschwindigkeit über Brücken.</Unit>
 		<Unit ID="1 4" localized="Kopplung">Kopplung\n\nGebäude müssen verbunden sein, um Rohstoff, Treibstoff und Gold zu teilen. Sie können Gebäude verbinden, indem Sie sie nebeneinander plazieren oder indem Sie Kopplungen von einem Gebäude zum Anderen bauen.</Unit>
@@ -462,7 +461,7 @@
 	</Units>
 	<Clans>
 		<Clan ID="0" localized="Auserwählte">Verbesserte Lufteinheiten</Clan>
-		<Clan ID="1" localized="Blutroter Weg">Verbesserte Meereseinheiten</Clan>
+		<Clan ID="1" localized="Blutroter Weg">Verbesserte Seeeinheiten</Clan>
 		<Clan ID="2" localized="Von Griffin">Verbesserte Aufklärung</Clan>
 		<Clan ID="3" localized="Ayers Hand">Verbesserte Langstreckenwaffen</Clan>
 		<Clan ID="4" localized="Musashi">Verbesserte Panzerung</Clan>

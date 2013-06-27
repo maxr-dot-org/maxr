@@ -445,13 +445,13 @@
 	</Units>
 	<Clans>
 		<Clan ID="0" localized="A Kiválasztottak">Jobb légi egységek</Clan>
-		<Clan ID="1" ENG="Bíbor Ösvény">Jobb vízi egységek</Clan>
-		<Clan ID="2" ENG="Von Griffin">Javított felderítés</Clan>
-		<Clan ID="3" ENG="Ayer Keze">Jobb rakétavető egységek</Clan>
-		<Clan ID="4" ENG="Musashi">Jobb páncélozott járművek</Clan>
-		<Clan ID="5" ENG="A Nyolc Szent">Jobb Gyors egységek</Clan>
-		<Clan ID="6" ENG="Hét Lovag">Jobb védelem</Clan>
-		<Clan ID="7" ENG="Axis Inc.">Extra Építőművek és Utászművek (költségvetéstől függ) </Clan>
+		<Clan ID="1" localized="Bíbor Ösvény">Jobb vízi egységek</Clan>
+		<Clan ID="2" localized="Von Griffin">Javított felderítés</Clan>
+		<Clan ID="3" localized="Ayer Keze">Jobb rakétavető egységek</Clan>
+		<Clan ID="4" localized="Musashi">Jobb páncélozott járművek</Clan>
+		<Clan ID="5" localized="A Nyolc Szent">Jobb Gyors egységek</Clan>
+		<Clan ID="6" localized="Hét Lovag">Jobb védelem</Clan>
+		<Clan ID="7" localized="Axis Inc.">Extra Építőművek és Utászművek (költségvetéstől függ) </Clan>
 	</Clans>
 	<Graphic>
 		<Dummy/>

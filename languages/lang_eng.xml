@@ -58,8 +58,8 @@
 			<Color ENG="Color:"/>
 			<Computer ENG="Computer"/>
 			<Connect ENG="Connect"/>
-			<Credits ENG="Credits"/>
-			<Credits_start ENG="Credits at gamestart"/>
+			<Credits ENG="Credit"/>
+			<Credits_start ENG="Credit at gamestart"/>
 			<Game_Type ENG="Game Type"/>
 			<Gold ENG="Gold"/>
 			<Human ENG="Human"/>
