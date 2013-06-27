@@ -1371,21 +1371,28 @@ static void translateClanData (int num)
 		return;
 	}
 
-	for (xmlElement = xmlElement->FirstChildElement(); xmlElement; xmlElement = xmlElement->NextSiblingElement())
+	for (xmlElement = xmlElement->FirstChildElement("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement("Clan"))
 	{
-		if (xmlElement->IntAttribute ("ID") != num)
-			continue;
+		int id;
+		if (xmlElement->QueryIntAttribute ("ID", &id) != XML_NO_ERROR) continue;
+		if (id != num) continue;
 
 		Log.write ("Found clan translation for clan id " + iToStr (num), LOG_TYPE_DEBUG);
 		if (cSettings::getInstance().getLanguage() != "ENG")
 		{
-			clan->setName (xmlElement->Attribute ("localized"));
+			const char* name = xmlElement->Attribute ("localized");
+			if (!name) continue;
+			clan->setName (name);
 		}
 		else
 		{
-			clan->setName (xmlElement->Attribute ("ENG"));
+			const char* name = xmlElement->Attribute ("ENG");
+			if (!name) continue;
+			clan->setName (name);
 		}
-		clan->setDescription (xmlElement->GetText());
+		const char* description = xmlElement->GetText();
+		if (description != NULL)
+			clan->setDescription (description);
 	}
 }
 
