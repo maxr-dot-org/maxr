@@ -155,13 +155,13 @@ int cSavegame::load (cServer** pServer, cTCP* network)
 
 	string gametype;
 	loadHeader (NULL, &gametype, NULL);
-	if (!gametype.compare ("IND")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE, false);
-	else if (!gametype.compare ("HOT")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_HOTSEAT, false);
-	else if (!gametype.compare ("NET")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_TCPIP, false);
+	if (!gametype.compare ("IND")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE);
+	else if (!gametype.compare ("HOT")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_HOTSEAT);
+	else if (!gametype.compare ("NET")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_TCPIP);
 	else
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
-		*pServer = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE, false);
+		*pServer = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE);
 	}
 	cServer& server = **pServer;
 	loadGameInfo (server);

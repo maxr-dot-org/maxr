@@ -83,19 +83,22 @@ class cServer : public INetMessageReceiver
 	friend class cDebugOutput;
 public:
 	/**
-	 * initialises the server class. turnLimit and scoreLimit should not
-	 both be set. If both are zero, it's last man standing.
+	 * initialises the server class.
 	 *@author alzi alias DoctorDeath
+	 *@param network_ non null for GAME_TYPE_TCPIP
 	 *@param map The Map for the game
 	 *@param PlayerList The list with all players
 	 *@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
-	 *@param turnLimit Game ends after this many turns
-	 *@param scoreLimit First player to this many points wins
 	 */
-	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
+	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType);
 	~cServer();
+
+	void setGameSettings (const sSettings& gameSettings);
 	void setDeadline (int iDeadline);
 	void stop ();
+
+	int getTurnLimit() const { return turnLimit; }
+	int getScoreLimit() const { return scoreLimit; }
 
 	void setLocalClient (cClient& client) { localClient = &client; }
 

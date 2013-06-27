@@ -160,20 +160,11 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 			serverPlayers[i]->initMaps (*serverMap);
 		}
 
-		// init server
-		int nTurns = 0, nScore = 0;
-		switch (settings->victoryType)
-		{
-			case SETTINGS_VICTORY_TURNS: nTurns = settings->duration; nScore = 0; break;
-			case SETTINGS_VICTORY_POINTS: nScore = settings->duration; nTurns = 0; break;
-			case SETTINGS_VICTORY_ANNIHILATION: nTurns = nScore = 0; break;
-			default: assert (0);
-		}
-		server = new cServer (network, *serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
-
+		server = new cServer (network, *serverMap, &serverPlayers, type);
+		server->setGameSettings (*settings);
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
-			sendVictoryConditions (*server, nTurns, nScore, players[n]);
+			sendVictoryConditions (*server, players[n]);
 
 		// place resources
 		server->placeInitialResources (landData, *settings);

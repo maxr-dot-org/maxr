@@ -476,30 +476,12 @@ void cServerGame::startGameServer()
 	}
 
 	// init server
-	int nTurns = 0;
-	int nScore = 0;
-	switch (gameData->settings->victoryType)
-	{
-		case SETTINGS_VICTORY_TURNS:
-			nTurns = gameData->settings->duration;
-			nScore = 0;
-			break;
-		case SETTINGS_VICTORY_POINTS:
-			nScore = gameData->settings->duration;
-			nTurns = 0;
-			break;
-		case SETTINGS_VICTORY_ANNIHILATION:
-			nTurns = 0;
-			nScore = 0;
-			break;
-		default:
-			assert (0);
-	}
-	server = new cServer (network, *serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
+	server = new cServer (network, *serverMap, &serverPlayers, gameData->type);
+	server->setGameSettings (*gameData->settings);
 
 	// send victory conditions to clients
 	for (unsigned n = 0; n < gameData->players.size(); n++)
-		sendVictoryConditions (*server, nTurns, nScore, gameData->players[n]);
+		sendVictoryConditions (*server, gameData->players[n]);
 
 	// place resources
 	server->placeInitialResources (gameData->landData, *gameData->settings);

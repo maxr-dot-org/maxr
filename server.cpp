@@ -91,7 +91,7 @@ int CallbackRunServerThread (void* arg)
 }
 
 //------------------------------------------------------------------------------
-cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
+cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList, eGameTypes const gameType)
 	: network (network_)
 	, localClient (NULL)
 	, gameTimer()
@@ -99,14 +99,12 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 	, executingRemainingMovements (false)
 	, casualtiesTracker (0)
 {
-	assert (! (turnLimit && scoreLimit));
-
-	this->turnLimit = turnLimit;
-	this->scoreLimit = scoreLimit;
+	this->turnLimit = 0;
+	this->scoreLimit = 0;
+	this->bPlayTurns = false;
 	Map = &map;
 	this->PlayerList = PlayerList;
 	this->gameType = gameType;
-	this->bPlayTurns = bPlayTurns;
 	bHotSeat = false;
 	bExit = false;
 	bStarted = false;
@@ -130,6 +128,22 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start ();
+}
+
+void cServer::setGameSettings (const sSettings& gameSettings)
+{
+	this->bPlayTurns = gameSettings.gameType == SETTINGS_GAMETYPE_TURNS;
+	this->turnLimit = 0;
+	this->scoreLimit = 0;
+	switch (gameSettings.victoryType)
+	{
+		case SETTINGS_VICTORY_TURNS: turnLimit = gameSettings.duration; break;
+		case SETTINGS_VICTORY_POINTS: scoreLimit = gameSettings.duration; break;
+		case SETTINGS_VICTORY_ANNIHILATION: break;
+		default: assert (0);
+	}
+
+	assert (! (turnLimit && scoreLimit));
 }
 
 void cServer::stop ()
@@ -3627,7 +3641,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendNumEcos (*this, *subj, Player);
 	}
 
-	sendVictoryConditions (*this, turnLimit, scoreLimit, Player);
+	sendVictoryConditions (*this, Player);
 
 	// send attackJobs
 	for (unsigned int i = 0; i < AJobs.size(); i++)
