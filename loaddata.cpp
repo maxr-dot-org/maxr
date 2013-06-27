@@ -1054,7 +1054,7 @@ static int LoadVehicles()
 				{
 					sTmpString = sVehiclePath;
 					char sztmp[16];
-					snprintf (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
+					TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d_%.2d.pcx", n, j);
 					sTmpString += sztmp;
 
 					if (FileExists (sTmpString.c_str()))
@@ -1109,7 +1109,7 @@ static int LoadVehicles()
 				// load image
 				sTmpString = sVehiclePath;
 				char sztmp[16];
-				snprintf (sztmp, sizeof (sztmp), "img%d.pcx", n);
+				TIXML_SNPRINTF (sztmp, sizeof (sztmp), "img%d.pcx", n);
 				sTmpString += sztmp;
 				Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if (FileExists (sTmpString.c_str()))
@@ -1727,7 +1727,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		{
 			if (UnitsData.vehicle[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{
-				snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
@@ -1739,7 +1739,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		{
 			if (UnitsData.building[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{
-				snprintf (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.building[i].data.ID.iFirstPart, UnitsData.building[i].data.ID.iSecondPart);
+				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.building[i].data.ID.iFirstPart, UnitsData.building[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
@@ -1750,13 +1750,13 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
 	if (iID != atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 	{
-		snprintf (szTmp, sizeof (szTmp), "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()), directory);
+		TIXML_SNPRINTF (szTmp, sizeof (szTmp), "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()), directory);
 		Log.write (szTmp, LOG_TYPE_WARNING);
 		return ;
 	}
 	else
 	{
-		snprintf (szTmp, sizeof (szTmp), "ID %.2d %.2d verified", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()));
+		TIXML_SNPRINTF (szTmp, sizeof (szTmp), "ID %.2d %.2d verified", atoi (idString.substr (0, idString.find (" ", 0)).c_str()), atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()));
 		Log.write (szTmp, LOG_TYPE_DEBUG);
 	}
 	//read name

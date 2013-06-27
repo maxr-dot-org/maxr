@@ -1399,7 +1399,7 @@ void cGameGUI::updateUnderMouseObject()
 	a case where I accept an array since I don't know a better
 	method to format x and y easily with leading 0 -- beko */
 	char str[8];
-	snprintf (str, sizeof (str), "%.3d-%.3d", x, y);
+	TIXML_SNPRINTF (str, sizeof (str), "%.3d-%.3d", x, y);
 	coordsLabel.setText (str);
 
 	if (!player->ScanMap[map->getOffset (x, y)])

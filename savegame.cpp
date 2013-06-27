@@ -41,7 +41,7 @@ cSavegame::cSavegame (int number) :
 {
 	this->number = number;
 	if (number > 100) return;
-	snprintf (numberstr, sizeof (numberstr), "%.3d", number);
+	TIXML_SNPRINTF (numberstr, sizeof (numberstr), "%.3d", number);
 }
 
 //--------------------------------------------------------------------------

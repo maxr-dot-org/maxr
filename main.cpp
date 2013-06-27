@@ -582,7 +582,7 @@ int Round (double dValueToRound)
 string sID::getText() const
 {
 	char tmp[6];
-	snprintf (tmp, sizeof (tmp), "%.2d %.2d", iFirstPart, iSecondPart);
+	TIXML_SNPRINTF (tmp, sizeof (tmp), "%.2d %.2d", iFirstPart, iSecondPart);
 	return tmp;
 }
 
