@@ -64,7 +64,7 @@ sMouseBox::sMouseBox() :
 bool sMouseBox::isTooSmall() const
 {
 	if (!isValid()) return true;
-	return fabsf (endX - startX) <= 0.5f || fabsf (endY - startY) <= 0.5f;
+	return fabsf (endX - startX) <= 0.5f && fabsf (endY - startY) <= 0.5f;
 }
 
 bool sMouseBox::isValid() const
@@ -1906,12 +1906,12 @@ void cGameGUI::handleMouseMove()
 	updateMouseCursor();
 
 	// update mouseboxes
-	if (savedMouseState.leftButtonPressed && !savedMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > HUD_LEFT_WIDTH)
+	if (savedMouseState.leftButtonPressed && !savedMouseState.rightButtonPressed && mouseBox.startX != -1.f && mouse->x > HUD_LEFT_WIDTH)
 	{
 		mouseBox.endX = (mouse->x - HUD_LEFT_WIDTH + (offX * getZoom())) / getTileSize();
 		mouseBox.endY = (mouse->y - HUD_TOP_HIGHT + (offY * getZoom())) / getTileSize();
 	}
-	if (savedMouseState.rightButtonPressed && !savedMouseState.leftButtonPressed && rightMouseBox.startX != -1 && mouse->x > HUD_LEFT_WIDTH)
+	if (savedMouseState.rightButtonPressed && !savedMouseState.leftButtonPressed && rightMouseBox.startX != -1.f && mouse->x > HUD_LEFT_WIDTH)
 	{
 		rightMouseBox.endX = (mouse->x - HUD_LEFT_WIDTH + (offX * getZoom())) / getTileSize();
 		rightMouseBox.endY = (mouse->y - HUD_TOP_HIGHT + (offY * getZoom())) / getTileSize();
