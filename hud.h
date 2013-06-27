@@ -90,10 +90,13 @@ struct sHudPosition
 
 struct sMouseBox
 {
+	sMouseBox();
+	bool isTooSmall() const;
+	bool isValid() const;
+	void invalidate();
+
 	float startX, startY;
 	float endX, endY;
-	bool isTooSmall() const;
-	sMouseBox();
 };
 
 enum eMouseInputMode

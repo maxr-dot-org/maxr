@@ -54,18 +54,31 @@ using namespace std;
 // appear in cGameGUI constructor
 #endif
 
-bool sMouseBox::isTooSmall() const
-{
-	if (startX == -1 || startY == -1 || endX == -1 || endY == -1) return true;
-	return ! (endX > startX + 0.5 || endX < startX - 0.5 || endY > startY + 0.5 || endY < startY - 0.5);
-}
-
 sMouseBox::sMouseBox() :
 	startX (-1),
 	startY (-1),
 	endX (-1),
 	endY (-1)
 {}
+
+bool sMouseBox::isTooSmall() const
+{
+	if (!isValid()) return true;
+	return fabsf (endX - startX) <= 0.5f || fabsf (endY - startY) <= 0.5f;
+}
+
+bool sMouseBox::isValid() const
+{
+	return startX != -1.f && startY != -1.f && endX != -1.f && endY != -1.f;
+}
+
+void sMouseBox::invalidate()
+{
+	startX = -1.f;
+	startY = -1.f;
+	endX = -1.f;
+	endY = -1.f;
+}
 
 cDebugOutput::cDebugOutput() :
 	server (0), client (0)
@@ -1895,13 +1908,13 @@ void cGameGUI::handleMouseMove()
 	// update mouseboxes
 	if (savedMouseState.leftButtonPressed && !savedMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > HUD_LEFT_WIDTH)
 	{
-		mouseBox.endX = (float) ( ( (mouse->x - HUD_LEFT_WIDTH) + (offX * getZoom())) / getTileSize());
-		mouseBox.endY = (float) ( ( (mouse->y - HUD_TOP_HIGHT) + (offY * getZoom())) / getTileSize());
+		mouseBox.endX = (mouse->x - HUD_LEFT_WIDTH + (offX * getZoom())) / getTileSize();
+		mouseBox.endY = (mouse->y - HUD_TOP_HIGHT + (offY * getZoom())) / getTileSize();
 	}
 	if (savedMouseState.rightButtonPressed && !savedMouseState.leftButtonPressed && rightMouseBox.startX != -1 && mouse->x > HUD_LEFT_WIDTH)
 	{
-		rightMouseBox.endX = (float) ( ( (mouse->x - HUD_LEFT_WIDTH) + (offX * getZoom())) / getTileSize());
-		rightMouseBox.endY = (float) ( ( (mouse->y - HUD_TOP_HIGHT) + (offY * getZoom())) / getTileSize());
+		rightMouseBox.endX = (mouse->x - HUD_LEFT_WIDTH + (offX * getZoom())) / getTileSize();
+		rightMouseBox.endY = (mouse->y - HUD_TOP_HIGHT + (offY * getZoom())) / getTileSize();
 	}
 
 	static int lastX, lastY;
@@ -2061,13 +2074,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 
 	if (mouseState.rightButtonReleased && !mouseState.leftButtonPressed)
 	{
-		rightMouseBox.startX = rightMouseBox.startY = -1;
-		rightMouseBox.endX = rightMouseBox.endY = -1;
+		rightMouseBox.invalidate();
 	}
 	else if (mouseState.rightButtonPressed && !mouseState.leftButtonPressed && rightMouseBox.startX == -1 && mouseState.x > HUD_LEFT_WIDTH && mouseState.y > 20)
 	{
-		rightMouseBox.startX = (float) ( ( (mouseState.x - HUD_LEFT_WIDTH) + (offX * getZoom())) / getTileSize());
-		rightMouseBox.startY = (float) ( ( (mouseState.y - HUD_TOP_HIGHT) + (offY * getZoom())) / getTileSize());
+		rightMouseBox.startX = (mouseState.x - HUD_LEFT_WIDTH + (offX * getZoom())) / getTileSize();
+		rightMouseBox.startY = (mouseState.y - HUD_TOP_HIGHT + (offY * getZoom())) / getTileSize();
 	}
 	if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed)
 	{
@@ -2338,13 +2350,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				player->toggelLock (overUnitField);
 		}
 
-		mouseBox.startX = mouseBox.startY = -1;
-		mouseBox.endX = mouseBox.endY = -1;
+		mouseBox.invalidate();
 	}
-	else if (mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouseState.x > HUD_LEFT_WIDTH && mouseState.y > 20)
+	else if (mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1.f && mouseState.x > HUD_LEFT_WIDTH && mouseState.y > 20)
 	{
-		mouseBox.startX = (float) ( ( (mouseState.x - HUD_LEFT_WIDTH) + (offX * getZoom())) / getTileSize());
-		mouseBox.startY = (float) ( ( (mouseState.y - HUD_TOP_HIGHT) + (offY * getZoom())) / getTileSize());
+		mouseBox.startX = (mouseState.x - HUD_LEFT_WIDTH + (offX * getZoom())) / getTileSize();
+		mouseBox.startY = (mouseState.y - HUD_TOP_HIGHT + (offY * getZoom())) / getTileSize();
 	}
 
 	// check getZoom() via mousewheel
@@ -3817,38 +3828,37 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 
 void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 {
-	if (mouseBox.startX == -1 || mouseBox.startY == -1 || mouseBox.endX == -1 || mouseBox.endY == -1) return;
+	if (!mouseBox.isValid()) return;
 
-	Uint32 color = 0xFFFF00;
+	const int mouseTopX = static_cast<int> (min (mouseBox.startX, mouseBox.endX) * getTileSize());
+	const int mouseTopY = static_cast<int> (min (mouseBox.startY, mouseBox.endY) * getTileSize());
+	const int mouseBottomX = static_cast<int> (max (mouseBox.startX, mouseBox.endX) * getTileSize());
+	const int mouseBottomY = static_cast<int> (max (mouseBox.startY, mouseBox.endY) * getTileSize());
+	const Uint32 color = 0x00FFFF00;
 	SDL_Rect d;
 
-	const int mouseStartX = (int) min (mouseBox.startX, mouseBox.endX) * getTileSize();
-	const int mouseStartY = (int) min (mouseBox.startY, mouseBox.endY) * getTileSize();
-	const int mouseEndX = (int) max (mouseBox.startX, mouseBox.endX) * getTileSize();
-	const int mouseEndY = (int) max (mouseBox.startY, mouseBox.endY) * getTileSize();
-
 	d.h = 1;
-	d.w = mouseEndX - mouseStartX;
-	d.x = mouseStartX - zoomOffX + HUD_LEFT_WIDTH;
-	d.y = mouseEndY - zoomOffY + 20;
+	d.w = mouseBottomX - mouseTopX;
+	d.x = mouseTopX - zoomOffX + HUD_LEFT_WIDTH;
+	d.y = mouseBottomY - zoomOffY + 20;
 	SDL_FillRect (buffer, &d, color);
 
 	d.h = 1;
-	d.w = mouseEndX - mouseStartX;
-	d.x = mouseStartX - zoomOffX + HUD_LEFT_WIDTH;
-	d.y = mouseStartY - zoomOffY + 20;
+	d.w = mouseBottomX - mouseTopX;
+	d.x = mouseTopX - zoomOffX + HUD_LEFT_WIDTH;
+	d.y = mouseTopY - zoomOffY + 20;
 	SDL_FillRect (buffer, &d, color);
 
-	d.h = mouseEndY - mouseStartY;
+	d.h = mouseBottomY - mouseTopY;
 	d.w = 1;
-	d.x = mouseStartX - zoomOffX + HUD_LEFT_WIDTH;
-	d.y = mouseStartY - zoomOffY + 20;
+	d.x = mouseTopX - zoomOffX + HUD_LEFT_WIDTH;
+	d.y = mouseTopY - zoomOffY + 20;
 	SDL_FillRect (buffer, &d, color);
 
-	d.h = mouseEndY - mouseStartY;
+	d.h = mouseBottomY - mouseTopY;
 	d.w = 1;
-	d.x = mouseEndX - zoomOffX + HUD_LEFT_WIDTH;
-	d.y = mouseStartY - zoomOffY + 20;
+	d.x = mouseBottomX - zoomOffX + HUD_LEFT_WIDTH;
+	d.y = mouseTopY - zoomOffY + 20;
 	SDL_FillRect (buffer, &d, color);
 }
 
