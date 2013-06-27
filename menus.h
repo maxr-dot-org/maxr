@@ -161,8 +161,6 @@ struct sSettings
 class cGameDataContainer
 {
 public:
-	/** The type of the game. See eGameTypes*/
-	eGameTypes type;
 	/** Should this instance of maxr act as the server for a TCP/IP game. */
 	bool isServer;
 

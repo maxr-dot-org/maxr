@@ -155,14 +155,11 @@ int cSavegame::load (cServer** pServer, cTCP* network)
 
 	string gametype;
 	loadHeader (NULL, &gametype, NULL);
-	if (!gametype.compare ("IND")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE);
-	else if (!gametype.compare ("HOT")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_HOTSEAT);
-	else if (!gametype.compare ("NET")) *pServer = new cServer (network, *map, PlayerList, GAME_TYPE_TCPIP);
-	else
+	if (gametype.compare ("IND") && gametype.compare ("HOT") && gametype.compare ("NET"))
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
-		*pServer = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE);
 	}
+	*pServer = new cServer (network, *map, PlayerList);
 	cServer& server = **pServer;
 	loadGameInfo (server);
 	loadUnits (server);
@@ -1164,7 +1161,7 @@ void cSavegame::writeHeader (const cServer& server, const string& saveName)
 
 	addAttributeElement (headerNode, "Game_Version", "string", PACKAGE_VERSION);
 	addAttributeElement (headerNode, "Name", "string", saveName);
-	switch (server.gameType)
+	switch (server.getGameType())
 	{
 		case GAME_TYPE_SINGLE:
 			addAttributeElement (headerNode, "Type", "string", "IND");

@@ -105,7 +105,6 @@ string sSettings::getVictoryConditionString() const
 
 //------------------------------------------------------------------------------
 cGameDataContainer::cGameDataContainer() :
-	type (GAME_TYPE_SINGLE),
 	isServer (false),
 	savegameNum (-1),
 	settings (0),
@@ -160,7 +159,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 			serverPlayers[i]->initMaps (*serverMap);
 		}
 
-		server = new cServer (network, *serverMap, &serverPlayers, type);
+		server = new cServer (network, *serverMap, &serverPlayers);
 		server->setGameSettings (*settings);
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
@@ -2104,7 +2103,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		menu->gameDataContainer->landingUnits.push_back (landingUnits); // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
 	else
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
-	if (menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false)
+	if (menu->network && menu->gameDataContainer->isServer == false)
 	{
 		sendClan (*menu->network, menu->player->getClan(), menu->player->getNr());
 		sendLandingUnits (*menu->network, *landingUnits, menu->player->getNr());
@@ -2537,23 +2536,16 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 //------------------------------------------------------------------------------
 void cLandingMenu::hitPosition()
 {
-	switch (gameDataContainer->type)
+	if (network)
 	{
-		case GAME_TYPE_SINGLE:
-		{
-			gameDataContainer->landData.push_back (new sClientLandData (landData));
-			end = true;
-		}
-		break;
-		case GAME_TYPE_TCPIP:
-		{
-			infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-			sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->isServer ? this : NULL);
-			draw();
-		}
-		break;
-		case GAME_TYPE_HOTSEAT:
-			break;
+		infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
+		sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->isServer ? this : NULL);
+		draw();
+	}
+	else
+	{
+		gameDataContainer->landData.push_back (new sClientLandData (landData));
+		end = true;
 	}
 }
 
@@ -2642,8 +2634,6 @@ cNetworkMenu::cNetworkMenu()
 	colorImage = new cMenuImage (position.x + 505, position.y + 260);
 	setColor (actPlayer->getColorIndex());
 	menuItems.push_back (colorImage);
-
-	gameDataContainer.type = GAME_TYPE_TCPIP;
 
 	network = new cTCP;
 	network->setMessageReceiver (&gameDataContainer.getEventHandler());

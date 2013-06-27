@@ -91,7 +91,7 @@ int CallbackRunServerThread (void* arg)
 }
 
 //------------------------------------------------------------------------------
-cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList, eGameTypes const gameType)
+cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList)
 	: network (network_)
 	, localClient (NULL)
 	, gameTimer()
@@ -104,7 +104,6 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 	this->bPlayTurns = false;
 	Map = &map;
 	this->PlayerList = PlayerList;
-	this->gameType = gameType;
 	bHotSeat = false;
 	bExit = false;
 	bStarted = false;
@@ -144,6 +143,13 @@ void cServer::setGameSettings (const sSettings& gameSettings)
 	}
 
 	assert (! (turnLimit && scoreLimit));
+}
+
+eGameTypes cServer::getGameType() const
+{
+	if (network) return GAME_TYPE_TCPIP;
+	if (PlayerList->size() > 1 && bPlayTurns) return GAME_TYPE_HOTSEAT;
+	return GAME_TYPE_SINGLE;
 }
 
 void cServer::stop ()
@@ -2662,6 +2668,8 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 //------------------------------------------------------------------------------
 void cServer::handleEnd (int iPlayerNum)
 {
+	const eGameTypes gameType = getGameType();
+
 	if (gameType == GAME_TYPE_SINGLE)
 	{
 		sendTurnFinished (*this, iPlayerNum, -1);

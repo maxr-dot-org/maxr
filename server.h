@@ -88,9 +88,8 @@ public:
 	 *@param network_ non null for GAME_TYPE_TCPIP
 	 *@param map The Map for the game
 	 *@param PlayerList The list with all players
-	 *@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
 	 */
-	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType);
+	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList);
 	~cServer();
 
 	void setGameSettings (const sSettings& gameSettings);
@@ -99,6 +98,8 @@ public:
 
 	int getTurnLimit() const { return turnLimit; }
 	int getScoreLimit() const { return scoreLimit; }
+	/** the type of the current game */
+	eGameTypes getGameType() const;
 
 	void setLocalClient (cClient& client) { localClient = &client; }
 
@@ -136,8 +137,6 @@ private:
 	std::string sSaveLoadFile;
 	/** index number of the savegame to load or to save */
 	int iSaveLoadNumber;
-	/** the type of the current game */
-	eGameTypes gameType;
 	/** a list with the numbers of all players who have ended theire turn */
 	std::vector<cPlayer*> PlayerEndList;
 	/** number of current turn */

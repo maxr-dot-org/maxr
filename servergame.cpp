@@ -108,7 +108,6 @@ void cServerGame::saveGame (int saveGameNumber)
 void cServerGame::prepareGameData()
 {
 	gameData = new cGameDataContainer();
-	gameData->type = GAME_TYPE_TCPIP;
 	gameData->settings = new sSettings();
 	gameData->settings->metal = SETTING_RESVAL_MUCH;
 	gameData->settings->oil = SETTING_RESVAL_NORMAL;
@@ -476,7 +475,7 @@ void cServerGame::startGameServer()
 	}
 
 	// init server
-	server = new cServer (network, *serverMap, &serverPlayers, gameData->type);
+	server = new cServer (network, *serverMap, &serverPlayers);
 	server->setGameSettings (*gameData->settings);
 
 	// send victory conditions to clients
