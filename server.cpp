@@ -348,7 +348,9 @@ void cServer::HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 	if (Player)
 	{
 		// freeze clients
-		if (DEDICATED_SERVER == false)   // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
+		// the dedicated server doesn't force to wait for reconnect,
+		// because it's expected client behaviour
+		if (DEDICATED_SERVER == false)
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 		sendChatMessageToClient (*this, "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->getName());
 
@@ -530,7 +532,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 			return;
 		}
 		const int oldOffset = targetOffset;
-		//the target offset doesn't need to match the vehicle position, when it is big
+		// the target offset doesn't need to match the vehicle position,
+		// when it is big
 		if (!targetVehicle->data.isBig)
 		{
 			targetOffset = Map->getOffset (targetVehicle->PosX, targetVehicle->PosY);
@@ -614,31 +617,31 @@ void cServer::HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILD);
-	cVehicle* Vehicle;
-	int iBuildSpeed, iBuildOff, iPathOff;
-	int iTurboBuildRounds[3];
-	int iTurboBuildCosts[3];
 
-	Vehicle = getVehicleFromID (message.popInt16());
+	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle == NULL) return;
 	if (Vehicle->IsBuilding || Vehicle->BuildPath) return;
 
 	const sID BuildingTyp = message.popID();
 	if (BuildingTyp.getUnitDataOriginalVersion() == NULL)
 	{
-		Log.write (" Server: invalid unit: " + iToStr (BuildingTyp.iFirstPart) + "."  + iToStr (BuildingTyp.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
+		Log.write (" Server: invalid unit: " + iToStr (BuildingTyp.iFirstPart) + "." + iToStr (BuildingTyp.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 	const sUnitData& Data = *BuildingTyp.getUnitDataOriginalVersion();
-	iBuildSpeed = message.popInt16();
+	const int iBuildSpeed = message.popInt16();
 	if (iBuildSpeed > 2 || iBuildSpeed < 0) return;
-	iBuildOff = message.popInt32();
+	const int iBuildOff = message.popInt32();
 
+	int iTurboBuildRounds[3];
+	int iTurboBuildCosts[3];
 	Vehicle->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Vehicle->owner->getUnitDataCurrentVersion (BuildingTyp)->buildCosts);
 
-	if (iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur || iTurboBuildRounds[iBuildSpeed] <= 0)
+	if (iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur ||
+		iTurboBuildRounds[iBuildSpeed] <= 0)
 	{
-		// TODO: differ between different aborting types ( buildposition blocked, not enough material, ... )
+		// TODO: differ between different aborting types
+		// (buildposition blocked, not enough material, ...)
 		sendBuildAnswer (*this, false, *Vehicle);
 		return;
 	}
@@ -685,7 +688,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 
 	Vehicle->BuildingTyp = BuildingTyp;
 	const bool bBuildPath = message.popBool();
-	iPathOff = message.popInt32();
+	const int iPathOff = message.popInt32();
 	if (Map->isValidOffset (iPathOff) == false) return;
 	Vehicle->BandX = iPathOff % Map->getSize();
 	Vehicle->BandY = iPathOff / Map->getSize();
@@ -753,7 +756,9 @@ void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 
 	// drive away from the building lot
 	addMoveJob (Vehicle->PosX, Vehicle->PosY, iEscapeX, iEscapeY, Vehicle);
-	Vehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
+	// begin the movement immediately,
+	// so no other unit can block the destination field
+	Vehicle->ServerMoveJob->checkMove();
 }
 
 //------------------------------------------------------------------------------
@@ -772,8 +777,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_TRANSFER);
 
-	cVehicle* SrcVehicle = NULL, *DestVehicle = NULL;
-	cBuilding* SrcBuilding = NULL, *DestBuilding = NULL;
+	cVehicle* SrcVehicle = NULL;
+	cVehicle* DestVehicle = NULL;
+	cBuilding* SrcBuilding = NULL;
+	cBuilding* DestBuilding = NULL;
 
 	if (message.popBool()) SrcVehicle = getVehicleFromID (message.popInt16());
 	else SrcBuilding = getBuildingFromID (message.popInt16());
@@ -884,20 +891,17 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
 
-	int iTurboBuildRounds[3];
-	int iTurboBuildCosts[3];
-	bool bLand = false;
-	bool bWater = false;
-
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
 	// check whether the building has water and land fields around it
 	int iX = Building->PosX - 2;
 	int iY = Building->PosY - 1;
+	bool bLand = false;
+	bool bWater = false;
 	for (int i = 0; i < 12; i++)
 	{
-		if (i == 4 ||  i == 6 || i == 8)
+		if (i == 4 || i == 6 || i == 8)
 		{
 			iX -= 3;
 			iY += 1;
@@ -947,7 +951,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		// if the first unit hasn't changed copy it to the new buildlist
 		if (Building->BuildList->size() > 0 && i == 0 && Type == (*Building->BuildList) [0]->type)
 		{
-			//recalculate costs, because build speed could have beed changed
+			// recalculate costs, because build speed could have beed changed
+			int iTurboBuildRounds[3];
+			int iTurboBuildCosts[3];
 			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, (*Building->BuildList) [0]->metall_remaining);
 			sBuildList* BuildListItem = new sBuildList;
 			BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
@@ -984,6 +990,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	{
 		if ( (*Building->BuildList) [0]->metall_remaining == -1)
 		{
+			int iTurboBuildRounds[3];
+			int iTurboBuildCosts[3];
 			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion ( (*Building->BuildList) [0]->type)->buildCosts);
 			(*Building->BuildList) [0]->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 		}
@@ -1003,17 +1011,15 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_EXIT_FIN_VEH);
 
-	sBuildList* BuildingListItem;
-
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
 	const int iX = message.popInt16();
 	const int iY = message.popInt16();
 	if (Map->isValidPos (iX, iY) == false) return;
-
 	if (Building->BuildList->size() <= 0) return;
-	BuildingListItem = (*Building->BuildList) [0];
+
+	sBuildList* BuildingListItem = (*Building->BuildList) [0];
 	if (BuildingListItem->metall_remaining > 0) return;
 
 	if (!Building->isNextTo (iX, iY)) return;
@@ -1026,7 +1032,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 
 	addUnit (iX, iY, BuildingListItem->type.getVehicle(), Building->owner, false);
 
-	//start new buildjob
+	// start new buildjob
 	Building->BuildList->erase (Building->BuildList->begin());
 	if (Building->RepeatBuild)
 	{
@@ -1059,8 +1065,6 @@ void cServer::HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CHANGE_RESOURCES);
 
-	sSubBase* SubBase;
-
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
@@ -1068,13 +1072,14 @@ void cServer::HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 	const unsigned int iOilProd = message.popInt16();
 	const unsigned int iGoldProd = message.popInt16();
 
-	SubBase = Building->SubBase;
+	sSubBase* SubBase = Building->SubBase;
 
 	SubBase->setMetalProd (0);
 	SubBase->setOilProd (0);
 	SubBase->setGoldProd (0);
 
-	//no need to verify the values. They will be reduced automatically, if nessesary
+	// no need to verify the values.
+	// They will be reduced automatically, if nessesary
 	SubBase->setMetalProd (iMetalProd);
 	SubBase->setGoldProd (iGoldProd);
 	SubBase->setOilProd (iOilProd);
@@ -1087,7 +1092,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_MANUAL_FIRE);
 
-	if (message.popBool())	// vehicle
+	if (message.popBool()) // vehicle
 	{
 		cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 		if (Vehicle == 0)
@@ -1102,7 +1107,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 		for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 			sendUnitData (*this, *Vehicle, Vehicle->seenByPlayerList[i]->getNr());
 	}
-	else	// building
+	else // building
 	{
 		cBuilding* Building = getBuildingFromID (message.popInt16());
 		if (Building == 0)
@@ -1124,7 +1129,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_SENTRY);
 
-	if (message.popBool())	// vehicle
+	if (message.popBool()) // vehicle
 	{
 		cVehicle* vehicle = getVehicleFromID (message.popInt16());
 		if (vehicle == NULL) return;
@@ -1145,7 +1150,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			sendUnitData (*this, *vehicle, vehicle->seenByPlayerList[i]->getNr());
 		}
 	}
-	else	// building
+	else // building
 	{
 		cBuilding* building = getBuildingFromID (message.popInt16());
 		if (building == NULL) return;
@@ -1183,12 +1188,13 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_SUPPLY);
 
-	cVehicle* SrcVehicle = NULL, *DestVehicle = NULL;
-	cBuilding* SrcBuilding = NULL, *DestBuilding = NULL;
-	int iType, iValue;
+	cVehicle* SrcVehicle = NULL;
+	cVehicle* DestVehicle = NULL;
+	cBuilding* SrcBuilding = NULL;
+	cBuilding* DestBuilding = NULL;
 
 	// get the units
-	iType = message.popChar();
+	const int iType = message.popChar();
 	if (iType > SUPPLY_TYPE_REPAIR) return;   // unknown type
 	if (message.popBool()) SrcVehicle = getVehicleFromID (message.popInt16());
 	else SrcBuilding = getBuildingFromID (message.popInt16());
@@ -1198,6 +1204,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	if ( (!SrcVehicle && !SrcBuilding) || (!DestVehicle && !DestBuilding)) return;
 
 	// check whether the supply is ok and reduce cargo of sourceunit
+	int iValue;
 	if (SrcVehicle)
 	{
 		if (DestVehicle && !SrcVehicle->canSupply (DestVehicle, iType)) return;
@@ -1261,7 +1268,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 
 		sendSupply (*this, DestVehicle->iID, true, iValue, iType, DestVehicle->owner->getNr());
 
-		//send unitdata to the players who are not the owner
+		// send unitdata to the players who are not the owner
 		for (unsigned int i = 0; i < DestVehicle->seenByPlayerList.size(); i++)
 			sendUnitData (*this, *DestVehicle, DestVehicle->seenByPlayerList[i]->getNr());
 	}
@@ -1272,7 +1279,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 
 		sendSupply (*this, DestBuilding->iID, false, iValue, iType, DestBuilding->owner->getNr());
 
-		//send unitdata to the players who are not the owner
+		// send unitdata to the players who are not the owner
 		for (unsigned int i = 0; i < DestBuilding->seenByPlayerList.size(); i++)
 			sendUnitData (*this, *DestBuilding, DestBuilding->seenByPlayerList[i]->getNr());
 	}
@@ -1446,8 +1453,8 @@ void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_IDENTIFICATION);
 
-	std::string playerName = message.popString();
-	int socketNumber = message.popInt16();
+	const std::string playerName = message.popString();
+	const int socketNumber = message.popInt16();
 
 	for (unsigned int i = 0; i < DisconnectedPlayerList.size(); i++)
 	{
@@ -1568,8 +1575,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
 		if (!StoringBuilding) return;
 
-		int x = message.popInt16();
-		int y = message.popInt16();
+		const int x = message.popInt16();
+		const int y = message.popInt16();
 		if (!StoringBuilding->isNextTo (x, y)) return;
 
 		//sidestep stealth units if nessesary
@@ -1629,10 +1636,11 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 		if (upgradedUnit == 0)
 			continue; // skip this upgrade, because there is no such unitData
 
-		const int costs = getUpgradeCosts (ID, player, ID.iFirstPart == 0, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
+		const int costs = getUpgradeCosts (ID, *player, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
 		if (costs <= player->Credits)
 		{
-			// update the unitData of the player and send an ack-msg for this upgrade to the player
+			// update the unitData of the player and send an ack-msg
+			// for this upgrade to the player
 			upgradedUnit->damage = newDamage;
 			upgradedUnit->shotsMax = newMaxShots;
 			upgradedUnit->range = newRange;
@@ -1881,7 +1889,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	// disabled units fail to detect infiltrator even if he screws up
 	else if (destUnit->turnsDisabled == 0)
 	{
-		// detect the infiltrator on failed action and let enemy units fire on him
+		// detect the infiltrator on failed action
+		// and let enemy units fire on him
 		// TODO: uncover the infiltrator for all players,
 		// or only for the owner of the target unit? --eiko
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -1991,13 +2000,12 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 	const int unitID = message.popInt16();
 	cUnit* unit = getUnitFromID (unitID);
 
-	if (unit != 0)
-	{
-		unit->changeName (message.popString());
-		for (unsigned int i = 0; i < unit->seenByPlayerList.size(); i++)
-			sendUnitData (*this, *unit, i);
-		sendUnitData (*this, *unit, unit->owner->getNr());
-	}
+	if (unit == 0) return;
+
+	unit->changeName (message.popString());
+	for (unsigned int i = 0; i < unit->seenByPlayerList.size(); i++)
+		sendUnitData (*this, *unit, i);
+	sendUnitData (*this, *unit, unit->owner->getNr());
 }
 
 //------------------------------------------------------------------------------
@@ -2078,13 +2086,14 @@ int cServer::HandleNetMessage (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------------
-int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
+int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 							  int newDamage, int newMaxShots, int newRange,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
 							  int newScan, int newMaxSpeed)
 {
-	const sUnitData* currentVersion = player->getUnitDataCurrentVersion (ID);
-	const sUnitData* startVersion = ID.getUnitDataOriginalVersion (player);
+	const bool bVehicle = ID.iFirstPart == 0;
+	const sUnitData* currentVersion = player.getUnitDataCurrentVersion (ID);
+	const sUnitData* startVersion = ID.getUnitDataOriginalVersion (&player);
 	if (currentVersion == 0 || startVersion == 0)
 		return 1000000; // error (unbelievably high cost...)
 
@@ -2092,7 +2101,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	if (newDamage > currentVersion->damage)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2100,7 +2109,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxShots > currentVersion->shotsMax)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->shotsMax, currentVersion->shotsMax, newMaxShots, cUpgradeCalculator::kShots, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->shotsMax, currentVersion->shotsMax, newMaxShots, cUpgradeCalculator::kShots, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2108,7 +2117,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newRange > currentVersion->range)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2116,7 +2125,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxAmmo > currentVersion->ammoMax)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->ammoMax, currentVersion->ammoMax, newMaxAmmo, cUpgradeCalculator::kAmmo, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->ammoMax, currentVersion->ammoMax, newMaxAmmo, cUpgradeCalculator::kAmmo, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2124,7 +2133,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newArmor > currentVersion->armor)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2132,7 +2141,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxHitPoints > currentVersion->hitpointsMax)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->hitpointsMax, currentVersion->hitpointsMax, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->hitpointsMax, currentVersion->hitpointsMax, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2140,7 +2149,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newScan > currentVersion->scan)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2148,7 +2157,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (bVehicle && newMaxSpeed > currentVersion->speedMax)
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->speedMax / 4, currentVersion->speedMax / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->speedMax / 4, currentVersion->speedMax / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player.researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2170,7 +2179,7 @@ void cServer::placeInitialResources (const std::vector<sClientLandData*>& landDa
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicle* Vehicle, cPlayer* Player)
+cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const sVehicle* Vehicle, cPlayer* Player)
 {
 	cVehicle* VehcilePtr = NULL;
 	for (int i = -iHeight / 2; i < iHeight / 2; i++)
@@ -2190,9 +2199,6 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicl
 //------------------------------------------------------------------------------
 void cServer::makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLandingUnit>* List, bool bFixed)
 {
-	cVehicle* Vehicle;
-	int iWidth, iHeight;
-
 	// Find place for mine if bridgehead is fixed
 	if (bFixed)
 	{
@@ -2212,12 +2218,12 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLanding
 		}
 	}
 
-	iWidth = 2;
-	iHeight = 2;
+	int iWidth = 2;
+	int iHeight = 2;
 	for (unsigned int i = 0; i < List->size(); i++)
 	{
 		const sLandingUnit& Landing = (*List) [i];
-		Vehicle = landVehicle (iX, iY, iWidth, iHeight, Landing.unitID.getVehicle(), Player);
+		cVehicle* Vehicle = landVehicle (iX, iY, iWidth, iHeight, Landing.unitID.getVehicle(), Player);
 		while (!Vehicle)
 		{
 			iWidth += 2;
@@ -2264,9 +2270,8 @@ void cServer::correctLandingPos (int& iX, int& iY)
 //------------------------------------------------------------------------------
 cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
 {
-	cVehicle* AddedVehicle;
 	// generate the vehicle:
-	AddedVehicle = Player->addVehicle (iPosX, iPosY, *Vehicle, ID ? ID : iNextUnitID);
+	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, *Vehicle, ID ? ID : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
@@ -2291,7 +2296,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 
 	sendAddUnit (*this, iPosX, iPosY, AddedVehicle->iID, true, Vehicle->data.ID, Player->getNr(), bInit);
 
-	//detection must be done, after the vehicle has been sent to clients
+	// detection must be done, after the vehicle has been sent to clients
 	AddedVehicle->makeDetection (*this);
 	return AddedVehicle;
 }
@@ -2299,20 +2304,17 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 //------------------------------------------------------------------------------
 cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cPlayer* Player, bool bInit, unsigned int ID)
 {
-	cBuilding* AddedBuilding;
 	// generate the building:
-	AddedBuilding = Player->addBuilding (iPosX, iPosY, *Building, ID ? ID : iNextUnitID);
+	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, *Building, ID ? ID : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
 	iNextUnitID++;
 
 	int iOff = Map->getOffset (iPosX, iPosY);
-
-	cBuilding* buildingToBeDeleted =  Map->fields[iOff].getTopBuilding();
+	cBuilding* buildingToBeDeleted = Map->fields[iOff].getTopBuilding();
 
 	Map->addBuilding (*AddedBuilding, iPosX, iPosY);
-
 	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->getNr(), bInit);
 
 	// integrate the building to the base:
@@ -2415,7 +2417,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		remove_from_intrusivelist (vehicle->owner->VehicleList, *vehicle);
 	}
 
-	//detach from attack job
+	// detach from attack job
 	if (unit->attacking)
 	{
 		for (unsigned int i = 0; i < AJobs.size(); i++)
@@ -2427,8 +2429,8 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 
 	helperJobs.onRemoveUnit (unit);
 
-	//detach from move job
-	if (!unit->isBuilding())
+	// detach from move job
+	if (unit->isVehicle())
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->ServerMoveJob)
@@ -2437,7 +2439,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		}
 	}
 
-	//remove from sentry list
+	// remove from sentry list
 	unit->owner->deleteSentry (unit);
 
 	// lose eco points
@@ -2613,7 +2615,7 @@ bool cServer::isPlayerDisconnected (const cPlayer* player) const
 void cServer::kickPlayer (cPlayer* player)
 {
 	// close the socket
-	int socketIndex = player->getSocketNum();
+	const int socketIndex = player->getSocketNum();
 	if (network) network->close (socketIndex);
 	for (size_t i = 0; i < PlayerList->size(); ++i)
 	{
@@ -2649,14 +2651,14 @@ cPlayer* cServer::getPlayerFromNumber (int iNum)
 //------------------------------------------------------------------------------
 cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 {
-	//first try to find player by number
+	// first try to find player by number
 	const int playerNr = atoi (playerID.c_str());
 	if (playerNr != 0 || playerID[0] == '0')
 	{
 		return getPlayerFromNumber (playerNr);
 	}
 
-	//try to find plyer by name
+	// try to find plyer by name
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
 		if ( (*PlayerList) [i]->getName().compare (playerID) == 0) return (*PlayerList) [i];
@@ -2713,7 +2715,8 @@ void cServer::handleEnd (int iPlayerNum)
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
 				sendMakeTurnEnd (*this, false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->getNr(), iPlayerNum);
-				// TODO: in hotseat: maybe send information to client about the next player
+				// TODO: in hotseat:
+				// maybe send information to client about the next player
 			}
 			else
 			{
@@ -2726,7 +2729,7 @@ void cServer::handleEnd (int iPlayerNum)
 		// send report to next player
 		sendTurnReport (*this, * (*PlayerList) [iActiveTurnPlayerNr]);
 	}
-	else // it's a simultanous TCP/IP multiplayer game
+	else // it's a simultaneous TCP/IP multiplayer game
 	{
 		// defeated player are ignored when they hit the end button
 		if (getPlayerFromNumber (iPlayerNum)->isDefeated) return;
@@ -2751,7 +2754,8 @@ void cServer::handleEnd (int iPlayerNum)
 
 		if (iWantPlayerEndNum == -1)
 		{
-			// When playing with dedicated server where a player is not connected, play without a deadline,
+			// When playing with dedicated server
+			// where a player is not connected, play without a deadline,
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.size() == 0))
 			{
@@ -2786,8 +2790,10 @@ void cServer::handleWantEnd()
 {
 	if (!gameTimer.timer50ms) return;
 
-	//wait until all clients have reported a gametime that is after the turn end.
-	//that means they have finished processing all the turn end messages, and we can start the new turn simultanously on all clients
+	// wait until all clients have reported a gametime
+	// that is after the turn end.
+	// that means they have finished processing all the turn end messages,
+	// and we can start the new turn simultanously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -2807,7 +2813,7 @@ void cServer::handleWantEnd()
 			sendTurnReport (*this, * (*PlayerList) [i]);
 		}
 
-		//begin the new turn
+		// begin the new turn
 		disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	}
 
@@ -2919,17 +2925,17 @@ void cServer::makeTurnEnd()
 			 Vehicle;
 			 Vehicle = Vehicle->next)
 		{
-			bool forceSendUnitData = false;
+			bool isModified = false;
 			if (Vehicle->turnsDisabled > 0)
 			{
 				Vehicle->turnsDisabled--;
-				forceSendUnitData = true;
+				isModified = true;
 			}
-			bool isModified = Vehicle->refreshData();
+			isModified |= Vehicle->refreshData();
 			isModified |= Vehicle->refreshData_Build (*this);
 			isModified |= Vehicle->refreshData_Clear (*this);
 
-			if (isModified || forceSendUnitData)
+			if (isModified)
 			{
 				for (unsigned int k = 0; k < Vehicle->seenByPlayerList.size(); k++)
 				{
@@ -2941,11 +2947,11 @@ void cServer::makeTurnEnd()
 		}
 	}
 
-	//hide stealth units
+	// hide stealth units
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
 		cPlayer* player = (*PlayerList) [i];
-		player->doScan(); //make sure the detection maps are up to date
+		player->doScan(); // make sure the detection maps are up to date
 
 		for (cVehicle* vehicle = player->VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -2983,11 +2989,11 @@ void cServer::makeTurnEnd()
 
 	if (DEDICATED_SERVER == false)
 	{
-		//FIXME: saving of running attack jobs does not work correctly yet.
+		// FIXME: saving of running attack jobs does not work correctly yet.
 		// make autosave
 		if (cSettings::getInstance().shouldAutosave())
 		{
-			cSavegame Savegame (10);	// autosaves are always in slot 10
+			cSavegame Savegame (10); // autosaves are always in slot 10
 			Savegame.save (*this, lngPack.i18n ("Text~Settings~Autosave") + " " + lngPack.i18n ("Text~Comp~Turn") + " " + iToStr (iTurn));
 			makeAdditionalSaveRequest (10);
 		}
@@ -3007,7 +3013,8 @@ void cServer::makeTurnEnd()
 //------------------------------------------------------------------------------
 void cServer::checkDefeats()
 {
-	std::set<cPlayer*> winners, losers;
+	std::set<cPlayer*> winners;
+	std::set<cPlayer*> losers;
 	int best_score = 0;
 
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -3074,11 +3081,10 @@ void cServer::checkDefeats()
 		}
 	}
 
-	/*
-		Handle the case where there is more than one winner. Original MAX calls
-		a draw and displays the results screen. For now we will have sudden
-		death, i.e. first player to get ahead in score wins.
-	*/
+	// Handle the case where there is more than one winner.
+	// Original MAX calls a draw and displays the results screen.
+	// For now we will have sudden death,
+	// i.e. first player to get ahead in score wins.
 	if (winners.size() > 1)
 	{
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -3089,20 +3095,19 @@ void cServer::checkDefeats()
 //------------------------------------------------------------------------------
 void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 {
-	sTurnstartReport* Report;
 	cPlayer* Player = getPlayerFromNumber (iPlayerNum);
 	if (bVehicle)
 	{
 		for (unsigned int i = 0; i < Player->ReportVehicles.size(); i++)
 		{
-			Report = Player->ReportVehicles[i];
+			sTurnstartReport* Report = Player->ReportVehicles[i];
 			if (Report->Type == Type)
 			{
 				Report->iAnz++;
 				return;
 			}
 		}
-		Report = new sTurnstartReport;
+		sTurnstartReport* Report = new sTurnstartReport;
 		Report->Type = Type;
 		Report->iAnz = 1;
 		Player->ReportVehicles.push_back (Report);
@@ -3111,14 +3116,14 @@ void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 	{
 		for (unsigned int i = 0; i < Player->ReportBuildings.size(); i++)
 		{
-			Report = Player->ReportBuildings[i];
+			sTurnstartReport* Report = Player->ReportBuildings[i];
 			if (Report->Type == Type)
 			{
 				Report->iAnz++;
 				return;
 			}
 		}
-		Report = new sTurnstartReport;
+		sTurnstartReport* Report = new sTurnstartReport;
 		Report->Type = Type;
 		Report->iAnz = 1;
 		Player->ReportBuildings.push_back (Report);
@@ -3129,28 +3134,26 @@ void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 void cServer::checkDeadline()
 {
 	if (!gameTimer.timer50ms) return;
-	Uint32 currentTicks = SDL_GetTicks();
-	if (iTurnDeadline >= 0 && iDeadlineStartTime > 0)
+	if (iTurnDeadline < 0 || iDeadlineStartTime <= 0) return;
+	const Uint32 currentTicks = SDL_GetTicks();
+
+	// stop time when waiting for reconnection
+	if (DisconnectedPlayerList.size() > 0)
+		iDeadlineStartTime = currentTicks;
+
+	if (currentTicks - iDeadlineStartTime <= (unsigned int) iTurnDeadline * 1000) return;
+
+	if (checkEndActions (-1))
 	{
-		// stop time when waiting for reconnection
-		if (DisconnectedPlayerList.size() > 0)
-			iDeadlineStartTime = currentTicks;
-
-		if (currentTicks - iDeadlineStartTime > (unsigned int) iTurnDeadline * 1000)
-		{
-			if (checkEndActions (-1))
-			{
-				iWantPlayerEndNum = -2;
-				return;
-			}
-
-			PlayerEndList.clear();
-
-			iTurn++;
-			iDeadlineStartTime = 0;
-			makeTurnEnd();
-		}
+		iWantPlayerEndNum = -2;
+		return;
 	}
+
+	PlayerEndList.clear();
+
+	iTurn++;
+	iDeadlineStartTime = 0;
+	makeTurnEnd();
 }
 
 //------------------------------------------------------------------------------
@@ -3251,7 +3254,7 @@ void cServer::handleMoveJobs()
 		}
 		else
 		{
-			//move the vehicle
+			// move the vehicle
 			if (gameTimer.timer10ms)
 			{
 				MoveJob->moveVehicle();
@@ -3264,7 +3267,7 @@ void cServer::handleMoveJobs()
 cUnit* cServer::getUnitFromID (unsigned int iID) const
 {
 	cUnit* result = getVehicleFromID (iID);
-	if (result == 0)
+	if (result == NULL)
 		result = getBuildingFromID (iID);
 	return result;
 }
@@ -3381,8 +3384,9 @@ void cServer::destroyUnit (cVehicle* vehicle)
 	if (!vehicle->data.hasCorpse)
 	{
 		value += vehicle->data.buildCosts;
+		// stored material is always added completely to the rubble
 		if (vehicle->data.storeResType == sUnitData::STORE_RES_METAL)
-			value += vehicle->data.storageResCur * 2; // stored material is always added completely to the rubble
+			value += vehicle->data.storageResCur * 2;
 	}
 
 	if (value > 0 || oldRubbleValue > 0)
@@ -3446,7 +3450,7 @@ void cServer::destroyUnit (cBuilding* b)
 //------------------------------------------------------------------------------
 void cServer::addRubble (int x, int y, int value, bool big)
 {
-	if (value <= 0) value = 1;
+	value = std::max (1, value);
 
 	if (Map->isWaterOrCoast (x, y))
 	{
@@ -3727,7 +3731,6 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	}
 	vehicle->turnsDisabled = 0;
 
-
 	// delete the unit on the clients and add it with new owner again
 	sendDeleteUnit (*this, *vehicle, oldOwner->getNr());
 	for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
@@ -3783,21 +3786,23 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, cVehicle* vehicle, int bi
 
 void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset)
 {
-	//TODO: make sure, the stealth vehicle takes the direct diagonal move. Also when two straight moves would be shorter.
+	// TODO: make sure, the stealth vehicle takes the direct diagonal move.
+	// Also when two straight moves would be shorter.
 
 	if (vehicleData.factorAir > 0) return;
 
-	//first look for an undetected stealth unit
+	// first look for an undetected stealth unit
 	cVehicle* stealthVehicle = Map->fields[Map->getOffset (PosX, PosY)].getVehicle();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->owner == vehicleOwner) return;
 	if (stealthVehicle->data.isStealthOn == TERRAIN_NONE) return;
 	if (stealthVehicle->isDetectedByPlayer (vehicleOwner)) return;
 
-	//make sure a running movement is finished, before starting the side step move
+	// make sure a running movement is finished,
+	// before starting the side step move
 	if (stealthVehicle->moving) stealthVehicle->ServerMoveJob->doEndMoveVehicle();
 
-	//found a stealth unit. Try to find a place where the unit can move
+	// found a stealth unit. Try to find a place where the unit can move
 	bool placeFound = false;
 	int minCosts = 99;
 	int bestX, bestY;
@@ -3858,10 +3863,11 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			}
 			if (detectOnDest) continue;
 
-			//take the move with the lowest costs. Decide randomly, when costs are equal
+			// take the move with the lowest costs.
+			// Decide randomly, when costs are equal
 			if (costs < minCosts || (costs == minCosts && random (2)))
 			{
-				//this is a good candidate for a destination
+				// this is a good candidate for a destination
 				minCosts = costs;
 				bestX = x;
 				bestY = y;
@@ -3873,11 +3879,13 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	if (placeFound)
 	{
 		addMoveJob (PosX, PosY, bestX, bestY, stealthVehicle);
-		stealthVehicle->ServerMoveJob->checkMove(); //begin the movment immediately, so no other unit can block the destination field
+		// begin the movment immediately,
+		// so no other unit can block the destination field
+		stealthVehicle->ServerMoveJob->checkMove();
 		return;
 	}
 
-	//sidestepping failed. Uncover the vehicle.
+	// sidestepping failed. Uncover the vehicle.
 	stealthVehicle->setDetectedByPlayer (*this, vehicleOwner);
 	checkPlayerUnits();
 }
@@ -3921,7 +3929,7 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 			break;
 		case FREEZE_WAIT_FOR_PLAYER:
 			freezeModes.waitForPlayer = true;
-			//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
+			//gameTimer.stop (); //done in cGameTimer::nextTickAllowed();
 			freezeModes.playerNumber = playerNumber;
 			break;
 		default:
@@ -3955,7 +3963,7 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 			Log.write (" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	if (! (freezeModes.pause || freezeModes.waitForReconnect))
+	if (!freezeModes.pause && !freezeModes.waitForReconnect)
 	{
 		gameTimer.start ();
 	}

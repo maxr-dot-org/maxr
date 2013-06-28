@@ -358,7 +358,7 @@ private:
 	*@param Player Player whose vehicle should be land.
 	*@return NULL if the vehicle could not be landed, else a pointer to the vehicle.
 	*/
-	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicle* Vehicle, cPlayer* Player);
+	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, const sVehicle* Vehicle, cPlayer* Player);
 
 	/**
 	* handles the pressed end of a player
@@ -407,7 +407,7 @@ private:
 	* Calculates the cost, that this upgrade would have for the given player.
 	*@author Paul Grathwohl
 	*/
-	int getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
+	int getUpgradeCosts (const sID& ID, cPlayer& player,
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
 
