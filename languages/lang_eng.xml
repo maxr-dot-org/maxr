@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
-<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
+<!-- * "\n" indicates a new line. The game will add additional line feeds, if -->
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
@@ -272,7 +272,7 @@
 			<Player_Left ENG="%s has left"/>
 			<Player_Many ENG="Too many players!"/>
 			<Player_MustHost ENG="must be host in turn based game!"/>
-			<Player_Name_Taken ENG="Playername alreday in use, please select an other names to be unique"/>
+			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique"/>
 			<Player_Turn ENG="%s's turn"/>
 			<Player_Turn_End ENG="%s ended turn"/>
 			<Player_Twice ENG="Playername exists twice: "/><!-- not used?! --nonsinn -->
@@ -325,8 +325,8 @@
 			<Destroyed ENG="destroyed"/>
 			<Detected ENG="detected"/>
 			<Disabled ENG="disabled"/>
-			<EcoSphere ENG="eco-sphere"/>
-			<EcoSpheres ENG="eco-spheres"/>
+			<EcoSphere ENG="Eco-sphere"/>
+			<EcoSpheres ENG="Eco-spheres"/>
 			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost."/>
 			<Energy_Insufficient ENG="Cannot turn on, power needed"/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed."/>
@@ -388,20 +388,20 @@
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s"/>
-			<INFO_Language_initialised ENG="Language is now initialised"/>
+			<INFO_Language_initialised ENG="Language is now initialized"/>
 			<INFO_Not_Implemented ENG="Not yet implemented"/>
 		</Error_Messages>
 	</Text>
 	<Units>
 		<Unit ID="0 1" ENG="Air Transport">Air Transport\n\nAircraft capable of holding up to three ground units.</Unit>
 		<Unit ID="0 2" ENG="Alien Assault Gun">Alien Assault Gun\n\nPowerful plasma weapon mounted on a fast, medium-armored chassis. While not as fragile as human assault guns, the alien assault gun should still avoid enemy fire whenever possible.\nAll alien units repair themselves and improve their abilities with experience.</Unit>
-		<Unit ID="0 3" ENG="Alien Attack Plane">Alien Attack Plane\n\nAlien fighter-bomber. While the alien plane is primarily desinged to attack ground targets, it can also attack other planes. Though powerful, the alien attack plane is still vulnerable to anti-aircraft fire.\nLike other alien units, alien planes repair themselves and improve their abilities with experience.</Unit>
+		<Unit ID="0 3" ENG="Alien Attack Plane">Alien Attack Plane\n\nAlien fighter-bomber. While the alien plane is primarily designed to attack ground targets, it can also attack other planes. Though powerful, the alien attack plane is still vulnerable to anti-aircraft fire.\nLike other alien units, alien planes repair themselves and improve their abilities with experience.</Unit>
 		<Unit ID="0 4" ENG="Alien Gunboat">Alien Gunboat\n\nHeavily armored and armed warship of alien design. Like the human gunboat, the alien gunboat excels at destroying other ships and land targets near the shore.\nAll alien units repair themselves and improve their abilities with experience.</Unit>
-		<Unit ID="0 5" ENG="Alien Tank">Alien Tank\n\nHeavily armored tank of alien design. An Alien tank is best used at the front of an attack to soak up enemy fire.\nAll alien units repair themselves and improve their abilities with erperience.</Unit>
+		<Unit ID="0 5" ENG="Alien Tank">Alien Tank\n\nHeavily armored tank of alien design. An Alien tank is best used at the front of an attack to soak up enemy fire.\nAll alien units repair themselves and improve their abilities with experience.</Unit>
 		<Unit ID="0 6" ENG="APC">Armored Personnel Carrier\n\nFast armored vehicle to transport infantry and infiltrators. The APC can move slowly underwater as well as on land. Only enemy corvettes can detect an APC moving under water.</Unit>
 		<Unit ID="0 7" ENG="Assault Gun">Assault Gun\n\nLightly armored vehicle with a middle-range gun, firing high-explosive shells. Fast and effective on the attack, but fragile.</Unit>
 		<Unit ID="0 8" ENG="AWACS">AWACS\n\nAirborne Warning and Control System. Basically a flying radar dish. An AWACS is essential to spot enemy anti-aircraft before your planes fly into firing range.</Unit>
-		<Unit ID="0 9" ENG="Ground Attack Plane">Ground Attack Plane\n\nA heavier plane carrying air-to-ground missiles.\nGround Attack Planes are expensive, but the advantages are worth the cost. Their great speed lets them reach any trouble spot quickly and once they arrive, only fighters and anti-aircraft can defend against them. Moreover they are able to attack submarien.</Unit>
+		<Unit ID="0 9" ENG="Ground Attack Plane">Ground Attack Plane\n\nA heavier plane carrying air-to-ground missiles.\nGround Attack Planes are expensive, but the advantages are worth the cost. Their great speed lets them reach any trouble spot quickly and once they arrive, only fighters and anti-aircraft can defend against them. Moreover they are able to attack submarine.</Unit>
 		<Unit ID="0 10" ENG="Bulldozer">Bulldozer\n\nVehicle to clear rubble of destructed buildings and units. While they clear away the rubble they are able to generate raw materials out of it.</Unit>
 		<Unit ID="0 11" ENG="Cargo Ship">Cargo Ship\n\nShip for hauling raw materials. Useful for resupplying pioneers and reload sea combat units with new ammunition.</Unit>
 		<Unit ID="0 12" ENG="Rocket Launcher">Rocket Launcher\n\nLightly armored vehicle firing medium-range rockets which affect all units within 2 squares of the target. Most effective against groups of enemy units.</Unit>
@@ -420,15 +420,15 @@
 		<Unit ID="0 25" ENG="Repair Unit">Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require raw materials. The more extensive the damage, the more raw materials are required. Depots, docks, hangars and barracks can also repair units.</Unit>
 		<Unit ID="0 26" ENG="Scanner">Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for long ranged units like missile crawlers.</Unit>
 		<Unit ID="0 27" ENG="Scout">Scout\n\nHigh speed scouting vehicle for exploration and spotting enemy units. Can cross water without a bridge but is faster on land.\n\nVery fast and good scan range but much weaker than most combat units.</Unit>
-		<Unit ID="0 28" ENG="Sea Mine Layer">Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufracture mines and convert them back into raw materials. Furthermore he can detect seamines of your enemy.</Unit>
+		<Unit ID="0 28" ENG="Sea Mine Layer">Sea Mine Layer\n\nSeaborne version of the minelayer. Like its land based counterpart, the sea minelayer can manufacture mines and convert them back into raw materials. Furthermore he can detect seamines of your enemy.</Unit>
 		<Unit ID="0 29" ENG="Sea Transport">Sea Transport\n\nHeavily armored ship with space to carry up to six land units. Sea transports are much slower than air transports, but also much more likely to survive an enemy attack.</Unit>
 		<Unit ID="0 30" ENG="Submarine">Submarine\n\nLurking beneath the surface, submarine can sneak close to the enemy to fire powerful torpedoes. Submarines do not use active sonar, which might reveal their positions. Only corvettes can spot a submarine before it fires. Only submarines, corvettes and ground attack planes can attack them.</Unit>
 		<Unit ID="0 31" ENG="Surveyor">Surveyor\n\nLight, amphibious vehicle with sophisticated sensors for detecting underground minerals and enemy mines. Unlike most amphibious units, surveyors are on water as fast as an on Land.</Unit>
-		<Unit ID="0 32" ENG="Tank">Tank\n\nHeavily armored fighting vehicle. Best used on the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers.</Unit>
+		<Unit ID="0 32" ENG="Tank">Tank\n\nHeavily armored fighting vehicle. Best used on the frontline to prevent enemy units from reaching lightly-armored support units such as assault guns and rocket launchers.</Unit>
 		<Unit ID="0 33" ENG="Gold Truck">Gold Truck\n\nUnit for moving gold from one location to an other.</Unit>
 		<Unit ID="0 34" ENG="Supply Truck">Supply Truck\n\nTruck for hauling raw materials. Useful for resupplying engineers and constructors and for supplying combat units with new ammunition.</Unit>
 		<Unit ID="0 35" ENG="Fuel Truck">Fuel Truck\n\nTruck for moving fuel.</Unit>
-		<Unit ID="1 1" ENG="Barracks">Barracks\n\nInside of a barracks is a machine shop to repair and improve the suits of your infiltrators and infantry. Furthermore is it possible to reload the ammunition of this units. The barracks needs raw materials to repair, upgrade or resupply. So it should be connected to a storage unit or a operating minig station.</Unit>
+		<Unit ID="1 1" ENG="Barracks">Barracks\n\nInside of a barracks is a machine shop to repair and improve the suits of your infiltrators and infantry. Furthermore is it possible to reload the ammunition of this units. The barracks needs raw materials to repair, upgrade or resupply. So it should be connected to a storage unit or a operating mining station.</Unit>
 		<Unit ID="1 2" ENG="Concrete Block">Concrete Block\n\nHardened, armored block for blocking enemy movement.</Unit>
 		<Unit ID="1 3" ENG="Bridge">Bridge\n\nPontoon bridge for crossing water. Bridges, unlike water platforms, do not block the movement of ships. Moreover ground units move twice as fast over bridge squares.</Unit>
 		<Unit ID="1 4" ENG="Connector">Connector\n\nBuildings must be connected to share raw materials, fuel and gold. You can connect buildings by placing them next to each other or by building connectors between them.</Unit>
@@ -438,31 +438,31 @@
 		<Unit ID="1 8" ENG="Power Generator">Power Generator\n\nA power generator consumes two fuel each turn and provides enough power for one power consumer such as mining station or factory. The power generator must be connected to a fuel source (operating mining station or fuel tank) and the building that needs the power.</Unit>
 		<Unit ID="1 9" ENG="Aircraft factory">Aircraft factory\n\nBuild all available human air units e.g fighter, ground attack plane and air transport. An aircraft factory needs three raw materials each turn to operate and power from a power generator or power station.</Unit>
 		<Unit ID="1 10" ENG="Alien Units Plant">Alien Units Plant\n\nThe alien version of a plant, unlike Mechcommanders plant, Alien can build all Units in this plant.</Unit>
-		<Unit ID="1 11" ENG="Heavy Vehicle Plant">Heavy Vehicle Plant\n\nBuild construtors, mobile scanners and the heavy fighting units: tanks, assult guns, rocket launchers and missile crawlers.\n A heavy vehicle factory needs three raw materials a turn to operate and power.</Unit>
+		<Unit ID="1 11" ENG="Heavy Vehicle Plant">Heavy Vehicle Plant\n\nBuild constructors, mobile scanners and the heavy fighting units: tanks, assault guns, rocket launchers and missile crawlers.\n A heavy vehicle factory needs three raw materials a turn to operate and power.</Unit>
 		<Unit ID="1 12" ENG="Shipyard">Shipyard\n\nShipyards manufacture ships, such as submarines, sea transporters and missile cruisers. A shipyard requires three raw materials a turn to operate, an power.</Unit>
 		<Unit ID="1 13" ENG="Light Vehicle Plant">Light Vehicle Plant\n\nBuilds light vehicles: pioneers, trucks, mobile repair units, scouts and mobile anti-aircraft units. A light vehicle plant requires three raw materials a turn to operate and power from a power generator or power station.</Unit>
-		<Unit ID="1 14" ENG="Gold Refinery">Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs each turn five gold and one energie. A mining station can mine gold if it is build above an underground gold source.</Unit>
+		<Unit ID="1 14" ENG="Gold Refinery">Gold Refinery\n\nRefinery for converting gold into credits. Credits are required to purchase unit improvements. To run, a gold refinery needs each turn five gold and one generated power. A mining station can mine gold if it is build above an underground gold source.</Unit>
 		<Unit ID="1 15" ENG="Anti-Aircraft">Anti-Aircraft\n\nSmall caliber high speed anti-aircraft cannon. Anti-aircraft make short process with planes, but cannot attack ground units.</Unit>
 		<Unit ID="1 16" ENG="Artillery">Artillery\n\nHigh powered stationary gun. Artillery is a compromise between the cheap rugged gun turret and the expensive long-range missile launcher.</Unit>
-		<Unit ID="1 17" ENG="Missile Launcher">Missile Launcher\n\nLong-range missile launcher on a fixed mount. Exellent range and firepower, but only slightly more armor than the mobile version. Best surrounded by gun turrets and anti-aircraft.</Unit>
-		<Unit ID="1 18" ENG="Gun Turret">Gun Turret\n\nHeavily armored stationary gun turret. Gun turrets have moderate firepower, heavy armor and the lowest range of defence buildings. Because they take little time to build, they are a good choice when you need defense in a hurry.</Unit>
-		<Unit ID="1 19" ENG="Habitat">Habitat\n\nA Habitat house 3 workers. Workers needed in research centers, training halls and eco-spheres. Those buildings must be connected with a habitat before you are able to put it into operation.</Unit>
+		<Unit ID="1 17" ENG="Missile Launcher">Missile Launcher\n\nLong-range missile launcher on a fixed mount. Excellent range and firepower, but only slightly more armor than the mobile version. Best surrounded by gun turrets and anti-aircraft.</Unit>
+		<Unit ID="1 18" ENG="Gun Turret">Gun Turret\n\nHeavily armored stationary gun turret. Gun turrets have moderate firepower, heavy armor and the lowest range of defense buildings. Because they take little time to build, they are a good choice when you need defense in a hurry.</Unit>
+		<Unit ID="1 19" ENG="Habitat">Habitat\n\nA Habitat house 3 workers. Workers needed in research centers, training halls and Eco-spheres. Those buildings must be connected with a habitat before you are able to put it into operation.</Unit>
 		<Unit ID="1 20" ENG="Hangar">Hangar\n\nA hangar can repair damages, manufacture ammunition and refit ships with the newest technology. All of these operations require raw materials, hence hangars should be connected to stored raw materials.</Unit>
 		<Unit ID="1 21" ENG="Land Mine">Land Mine\n\nA land mine is a small and hard to detect explosive device. Concealed under the ground and designed to destroy enemy targets while they pass over. Only surveyors, minelayers and infiltrators can spot mines. Once spotted, almost every damage will destroy it.</Unit>
 		<Unit ID="1 22" ENG="Mining Station">Mining Station\n\nExtracts subterranean resources like raw materials, fuel and gold every turn. Buildings should be connected to a mining station to use the resources produced by it. If there is no storage building to store surplus resources, they'll be lost.\nAble to mine up to 16 resource units.</Unit>
-		<Unit ID="1 23" ENG="Deep Mine">Deep Mine\n\nLike the normal mining station you can use it to extracts supterranean resources. The biggest adventage to use this type of a mining station is the abillity to extract up to [value] resource units.</Unit>
+		<Unit ID="1 23" ENG="Deep Mine">Deep Mine\n\nLike the normal mining station you can use it to extracts subterranean resources. The biggest advantage for this type of a mining station is the ability to extract up to [value] resource units.</Unit>
 		<Unit ID="1 24" ENG="Landing Pad">Landing Pad\n\nLanding facility for planes. Does not repair or resupply planes. To resupply a plane on a landing pad, use a nearby supply truck or a repair unit.</Unit>
 		<Unit ID="1 25" ENG="Water Platform">Water Platform\n\nProvides a surface over water on which you can construct other buildings. Engineers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps or when a valuable material deposit is under the bottom of the sea.</Unit>
 		<Unit ID="1 26" ENG="Radar">Radar\n\nStationary, long-range radar. Longer-range units like missile launchers and artillery cannot fire on what they cannot see, so it's important to have a scanner or radar nearby.</Unit>
-		<Unit ID="1 27" ENG="Research Center">Research Center\n\nIt examines how your units can be improved. Unlike upgrades purchased with credits, the research need time and the improvements are small. However research affects all of your units. In addition you can also reserach without a gold source. To operate a research center and a worker and power is required.</Unit>
+		<Unit ID="1 27" ENG="Research Center">Research Center\n\nIt examines how your units can be improved. Unlike upgrades purchased with credits, the research need time and the improvements are small. However research affects all of your units. In addition you can also research without a gold source. To operate a research center and a worker and power is required.</Unit>
 		<Unit ID="1 28" ENG="Road">Road\n\nUnits move twice as fast over road squares.</Unit>
 		<Unit ID="1 29" ENG="Sea Mine">Sea Mine\n\nA sea mine is a small and hard to detect explosive device. Concealed below sea level, designed to destroy enemy targets while they pass over. Only surveyors, minelayers and infiltrators (next to the coast) can spot mines. Once spotted, almost every damage will destroy it.</Unit>
 		<Unit ID="1 30" ENG="Shield">Shield\n\nProtect building around it with a shield from enemy fire.</Unit>
 		<Unit ID="1 31" ENG="Gold Vault">Gold Vault\n\nHolds gold. Mining stations produce gold every turn, if they have gold underneath them. To store unused gold, a mining station must be connected to a gold vault.</Unit>
-		<Unit ID="1 32" ENG="Storage Unit">Storage Unit\n\nHolds raw materials. Mining stations produce raw materials every turn. To store unused raw materials, a minig station must be connected to a storage unit.</Unit>
+		<Unit ID="1 32" ENG="Storage Unit">Storage Unit\n\nHolds raw materials. Mining stations produce raw materials every turn. To store more unused raw materials, a mining station should be connected to a storage unit.</Unit>
 		<Unit ID="1 33" ENG="Fuel Tank">Fuel Tank\n\nHolds fuel. Mining stations produce fuel every turn. To store unused fuel, a mining station must be connected to a fuel tank.</Unit>
 		<Unit ID="1 34" ENG="Training Hall">Training Hall\n\nTrains infiltrators who can disable or capture enemy units and infantry to guard against infiltrators. A training hall requires one worker from a habitat and power to operate.</Unit>
-		<Unit ID="1 35" ENG="Eco-sphere">Eco-sphere\n\nIf you'll win via points, your primary goal should be to construct as many as possible eco-spheres. Each eco-sphere gives you one point per turn.\n\nDefend your eco-spheres well, because if one is destroyed, you'll lose all the points it generated for you!\nEach eco-sphere need one worker of a habit and power to operate.</Unit>
+		<Unit ID="1 35" ENG="Eco-sphere">Eco-sphere\n\nIf you'll win via points, your primary goal should be to construct as many as possible Eco-spheres. Each Eco-sphere gives you one point per turn.\n\nDefend your Eco-spheres well, because if one is destroyed, you'll lose all the points it generated for you!\nEach Eco-sphere need one worker of a habit and power to operate.</Unit>
 	</Units>
 	<Clans>
 		<Clan ID="0" ENG="The Chosen">Better Air Units</Clan>
@@ -471,7 +471,7 @@
 		<Clan ID="3" ENG="Ayer's Hand">Better Missile Units</Clan>
 		<Clan ID="4" ENG="Musashi">Better Armored Vehicles</Clan>
 		<Clan ID="5" ENG="Sacred Eights">Better Fast Units</Clan>
-		<Clan ID="6" ENG="7 Knights">Better Defence</Clan>
+		<Clan ID="6" ENG="7 Knights">Better Defense</Clan>
 		<Clan ID="7" ENG="Axis Inc.">Extra Constructors and Engineers (depends on budget) </Clan>
 	</Clans>
 	<Graphic>
