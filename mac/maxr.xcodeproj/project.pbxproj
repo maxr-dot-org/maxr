@@ -12,6 +12,8 @@
 		9F0B084114D08559007F3D00 /* notifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F191B0C14CF580F002426E2 /* notifications.cpp */; };
 		9F0B084214D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
 		9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
+		9F142990177EF2490069F77B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F14298D177EF2480069F77B /* tinyxml2.cpp */; };
+		9F142992177EF2490069F77B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F14298D177EF2480069F77B /* tinyxml2.cpp */; };
 		9F1D13171711EE7C00C45BC0 /* fxeffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */; };
 		9F1D13181711EE7C00C45BC0 /* fxeffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */; };
 		9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
@@ -69,10 +71,6 @@
 		9F9BC29A12B3AF2500674C03 /* serverevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB70EE2B17400F23D2C /* serverevents.cpp */; };
 		9F9BC29C12B3AF2500674C03 /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F87B6C6101A43EA00A119FC /* settings.cpp */; };
 		9F9BC29E12B3AF2500674C03 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB90EE2B17400F23D2C /* sound.cpp */; };
-		9F9BC2A112B3AF2500674C03 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */; };
-		9F9BC2A312B3AF2500674C03 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBD0EE2B17400F23D2C /* tinyxml.cpp */; };
-		9F9BC2A512B3AF2500674C03 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBF0EE2B17400F23D2C /* tinyxmlerror.cpp */; };
-		9F9BC2A612B3AF2500674C03 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */; };
 		9F9BC2A712B3AF2500674C03 /* unifonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2DCBB0F17B2D60022714E /* unifonts.cpp */; };
 		9F9BC2A912B3AF2500674C03 /* upgradecalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC10EE2B17400F23D2C /* upgradecalculator.cpp */; };
 		9F9BC2AB12B3AF2500674C03 /* vehicles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */; };
@@ -108,10 +106,6 @@
 		9FC0DBE50EE2B17400F23D2C /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB50EE2B17400F23D2C /* server.cpp */; };
 		9FC0DBE60EE2B17400F23D2C /* serverevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB70EE2B17400F23D2C /* serverevents.cpp */; };
 		9FC0DBE70EE2B17400F23D2C /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB90EE2B17400F23D2C /* sound.cpp */; };
-		9FC0DBE80EE2B17400F23D2C /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */; };
-		9FC0DBE90EE2B17400F23D2C /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBD0EE2B17400F23D2C /* tinyxml.cpp */; };
-		9FC0DBEA0EE2B17400F23D2C /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBF0EE2B17400F23D2C /* tinyxmlerror.cpp */; };
-		9FC0DBEB0EE2B17400F23D2C /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */; };
 		9FC0DBEC0EE2B17400F23D2C /* upgradecalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC10EE2B17400F23D2C /* upgradecalculator.cpp */; };
 		9FC0DBED0EE2B17400F23D2C /* vehicles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */; };
 		9FC0DBF10EE2B1A700F23D2C /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBF00EE2B1A700F23D2C /* SDLMain.m */; };
@@ -148,6 +142,9 @@
 		9F0A67421011267D005D7516 /* mapdownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapdownload.h; path = ../mapdownload.h; sourceTree = SOURCE_ROOT; };
 		9F141F6A14CAF4C6009AC1D7 /* casualtiestracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = casualtiestracker.h; path = ../casualtiestracker.h; sourceTree = SOURCE_ROOT; };
 		9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = casualtiestracker.cpp; path = ../casualtiestracker.cpp; sourceTree = SOURCE_ROOT; };
+		9F14298A177EF2480069F77B /* autoptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autoptr.h; path = ../autoptr.h; sourceTree = SOURCE_ROOT; };
+		9F14298D177EF2480069F77B /* tinyxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml2.cpp; path = ../tinyxml2.cpp; sourceTree = SOURCE_ROOT; };
+		9F14298E177EF2480069F77B /* tinyxml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml2.h; path = ../tinyxml2.h; sourceTree = SOURCE_ROOT; };
 		9F191B0B14CF580F002426E2 /* notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = notifications.h; path = ../notifications.h; sourceTree = SOURCE_ROOT; };
 		9F191B0C14CF580F002426E2 /* notifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = notifications.cpp; path = ../notifications.cpp; sourceTree = SOURCE_ROOT; };
 		9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fxeffects.cpp; path = ../fxeffects.cpp; sourceTree = SOURCE_ROOT; };
@@ -244,12 +241,6 @@
 		9FC0DBB80EE2B17400F23D2C /* serverevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = serverevents.h; path = ../serverevents.h; sourceTree = SOURCE_ROOT; };
 		9FC0DBB90EE2B17400F23D2C /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = ../sound.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DBBA0EE2B17400F23D2C /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = ../sound.h; sourceTree = SOURCE_ROOT; };
-		9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../tinystr.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DBBC0EE2B17400F23D2C /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../tinystr.h; sourceTree = SOURCE_ROOT; };
-		9FC0DBBD0EE2B17400F23D2C /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../tinyxml.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DBBE0EE2B17400F23D2C /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../tinyxml.h; sourceTree = SOURCE_ROOT; };
-		9FC0DBBF0EE2B17400F23D2C /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DBC10EE2B17400F23D2C /* upgradecalculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = upgradecalculator.cpp; path = ../upgradecalculator.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DBC20EE2B17400F23D2C /* upgradecalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = upgradecalculator.h; path = ../upgradecalculator.h; sourceTree = SOURCE_ROOT; };
 		9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vehicles.cpp; path = ../vehicles.cpp; sourceTree = SOURCE_ROOT; };
@@ -326,6 +317,7 @@
 				9FC0DB730EE2B17400F23D2C /* automjobs.cpp */,
 				9FC0DB740EE2B17400F23D2C /* automjobs.h */,
 				9F94822D12A96526004D64FE /* autoobj.h */,
+				9F14298A177EF2480069F77B /* autoptr.h */,
 				9F94822E12A96526004D64FE /* autosurface.h */,
 				9FC0DB750EE2B17400F23D2C /* base.cpp */,
 				9FC0DB760EE2B17400F23D2C /* base.h */,
@@ -413,12 +405,8 @@
 				9FC0DBB90EE2B17400F23D2C /* sound.cpp */,
 				9FC0DBBA0EE2B17400F23D2C /* sound.h */,
 				9F8C8C9E10616BBE000571DA /* t_2.h */,
-				9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */,
-				9FC0DBBC0EE2B17400F23D2C /* tinystr.h */,
-				9FC0DBBD0EE2B17400F23D2C /* tinyxml.cpp */,
-				9FC0DBBE0EE2B17400F23D2C /* tinyxml.h */,
-				9FC0DBBF0EE2B17400F23D2C /* tinyxmlerror.cpp */,
-				9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */,
+				9F14298D177EF2480069F77B /* tinyxml2.cpp */,
+				9F14298E177EF2480069F77B /* tinyxml2.h */,
 				9FC2DCBB0F17B2D60022714E /* unifonts.cpp */,
 				9FC2DCBC0F17B2D60022714E /* unifonts.h */,
 				9F33BF7214A9EF2200379C9E /* unit.cpp */,
@@ -587,10 +575,6 @@
 				9F9BC29A12B3AF2500674C03 /* serverevents.cpp in Sources */,
 				9F9BC29C12B3AF2500674C03 /* settings.cpp in Sources */,
 				9F9BC29E12B3AF2500674C03 /* sound.cpp in Sources */,
-				9F9BC2A112B3AF2500674C03 /* tinystr.cpp in Sources */,
-				9F9BC2A312B3AF2500674C03 /* tinyxml.cpp in Sources */,
-				9F9BC2A512B3AF2500674C03 /* tinyxmlerror.cpp in Sources */,
-				9F9BC2A612B3AF2500674C03 /* tinyxmlparser.cpp in Sources */,
 				9F9BC2A712B3AF2500674C03 /* unifonts.cpp in Sources */,
 				9F9BC2A912B3AF2500674C03 /* upgradecalculator.cpp in Sources */,
 				9F9BC2AB12B3AF2500674C03 /* vehicles.cpp in Sources */,
@@ -605,6 +589,7 @@
 				9F44577016C19C0C00A80C81 /* gametimer.cpp in Sources */,
 				9F44577116C19C0C00A80C81 /* jobs.cpp in Sources */,
 				9F1D13181711EE7C00C45BC0 /* fxeffects.cpp in Sources */,
+				9F142992177EF2490069F77B /* tinyxml2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,10 +625,6 @@
 				9FC0DBE50EE2B17400F23D2C /* server.cpp in Sources */,
 				9FC0DBE60EE2B17400F23D2C /* serverevents.cpp in Sources */,
 				9FC0DBE70EE2B17400F23D2C /* sound.cpp in Sources */,
-				9FC0DBE80EE2B17400F23D2C /* tinystr.cpp in Sources */,
-				9FC0DBE90EE2B17400F23D2C /* tinyxml.cpp in Sources */,
-				9FC0DBEA0EE2B17400F23D2C /* tinyxmlerror.cpp in Sources */,
-				9FC0DBEB0EE2B17400F23D2C /* tinyxmlparser.cpp in Sources */,
 				9FC0DBEC0EE2B17400F23D2C /* upgradecalculator.cpp in Sources */,
 				9FC0DBED0EE2B17400F23D2C /* vehicles.cpp in Sources */,
 				9FC0DBF10EE2B1A700F23D2C /* SDLMain.m in Sources */,
@@ -664,6 +645,7 @@
 				9F44576E16C19C0C00A80C81 /* gametimer.cpp in Sources */,
 				9F44576F16C19C0C00A80C81 /* jobs.cpp in Sources */,
 				9F1D13171711EE7C00C45BC0 /* fxeffects.cpp in Sources */,
+				9F142990177EF2490069F77B /* tinyxml2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
