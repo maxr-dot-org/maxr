@@ -1917,11 +1917,10 @@ void cMenuUnitDetails::draw()
 	// additional values
 	if (data->canScore)
 	{
-		int score = building->points;
-		int tot = unit->owner->getScore (client->getTurn());
-		int turnLim, scoreLim;
-		client->getVictoryConditions (&turnLim, &scoreLim);
-		int lim = scoreLim ? scoreLim : tot;
+		const int score = building->points;
+		const int tot = unit->owner->getScore (client->getTurn());
+		const int scoreLim = client->getScoreLimit();
+		const int lim = scoreLim ? scoreLim : tot;
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE, buffer);
@@ -3772,8 +3771,8 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawScoreScreen()
 {
-	int turnLimit, scoreLimit;
-	client->getVictoryConditions (&turnLimit, &scoreLimit);
+	const int turnLimit = client->getTurnLimit();
+	const int scoreLimit = client->getScoreLimit();
 	{
 		std::stringstream ss;
 		if (turnLimit)
@@ -3795,8 +3794,8 @@ void cMenuReportsScreen::drawScoreScreen()
 	for (unsigned n = 0, y = 36; n < client->getPlayerList().size(); n++, y += 16)
 	{
 		const cPlayer& p = *client->getPlayerList() [n];
-		int score = p.getScore (client->getTurn());
-		int ecos = p.numEcos;
+		const int score = p.getScore (client->getTurn());
+		const int ecos = p.numEcos;
 
 		SDL_Rect r = {Sint16 (position.x + 24), Sint16 (position.y + y + 3), 8, 8};
 		SDL_FillRect (buffer, &r, getPlayerColour (&p));
@@ -3873,8 +3872,8 @@ void cMenuReportsScreen::drawScoreGraph()
 	// Draw Limits
 	drawLine (buffer, now_x, y0, now_x, y1, limit_colour);
 
-	int turn_lim, points_lim;
-	client->getVictoryConditions (&turn_lim, &points_lim);
+	const int turn_lim = client->getTurnLimit();
+	const int points_lim = client->getScoreLimit();
 
 	if (turn_lim && turn_lim > min_turns && turn_lim < max_turns)
 	{

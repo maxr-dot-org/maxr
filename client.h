@@ -47,6 +47,8 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 */
 class cClient : public INetMessageReceiver
 {
+	friend class cDebugOutput;
+	friend class cPlayer;
 public:
 	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cStaticMap& staticMap, std::vector<cPlayer*>* PlayerList);
 	~cClient();
@@ -57,40 +59,127 @@ public:
 	cEventHandling& getEventHandling() { return *eventHandling; }
 	virtual void pushEvent (cNetMessage* message);
 
+	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
+	void disableFreezeMode (eFreezeMode mode);
+	bool isFreezed () const;
+	int getFreezeInfoPlayerNumber () const;
+	bool getFreezeMode (eFreezeMode mode) const;
+
+	/**
+	* handles the end of a turn
+	*@author alzi alias DoctorDeath
+	*/
+	void handleEnd();
+
+	void addJob (cJob* job);
+
+	/**
+	* handles the game relevant actions
+	* (for example moving the current position of a rocket)
+	* of the fx-effects,
+	* so that they are handled also, when the effects are not drawn.
+	*/
+	void runFx ();
+
+	/**
+	* handles the rest-time of the current turn
+	*@author alzi alias DoctorDeath
+	*/
+	void handleTurnTime();
+
+	/**
+	* creates a new moveJob and transmits it to the server
+	* @param vehicle the vehicle to be moved
+	* @param iDestOffset the Destination
+	*/
+	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cVehicle*>* group = NULL);
+	void startGroupMove();
+	/**
+	* adds a new movejob
+	*@author alzi alias DoctorDeath
+	*@param MJob the movejob to be added
+	*/
+	void addActiveMoveJob (cClientMoveJob* MJob);
+	/**
+	* returns the player with the given number
+	*@author alzi alias DoctorDeath
+	*@param iNum The number of the player.
+	*@return The wanted player.
+	*/
+	cPlayer* getPlayerFromNumber (int iNum);
+	/**
+	* returns the player identified by playerID
+	*@author eiko
+	*@param playerID Can be a representation of the player number or player name
+	*/
+	cPlayer* getPlayerFromString (const std::string& playerID);
+	/**
+	* deletes the unit
+	*@author alzi alias DoctorDeath
+	*@param Building Building which should be deleted.
+	*@param Vehicle Vehicle which should be deleted.
+	*/
+	void deleteUnit (cBuilding* Building, cMenu* activeMenu);
+	void deleteUnit (cVehicle* Vehicle, cMenu* activeMenu);
+	/**
+	* sends the netMessage to the server.
+	* do not try to delete a message after calling this function!
+	*@author Eiko
+	*@param message The netMessage to be send.
+	*/
+	void sendNetMessage (cNetMessage* message) const;
+	/**
+	* gets the vehicle with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the vehicle
+	*/
+	cVehicle* getVehicleFromID (unsigned int iID);
+	cBuilding* getBuildingFromID (unsigned int iID);
+
+	/**
+	* initialises this client for the player.
+	*@author alzi alias DoctorDeath
+	*@param Player The player.
+	*/
+	void initPlayer (cPlayer* Player);
+
+	/**
+	* handles move and attack jobs
+	* this function should be called in all menu loops
+	*/
+	void doGameActions (cMenu* activeMenu);
+
+	/**
+	* processes everything that is need for this netMessage
+	*@author alzi alias DoctorDeath
+	*@param message The netMessage to be handled.
+	*@return 0 for success
+	*/
+	int HandleNetMessage (cNetMessage* message, cMenu* activeMenu);
+
+	void addFx (cFx* fx);
+
+	/**
+	* destroys a unit
+	* play FX, add rubble and delete Unit
+	*/
+	void destroyUnit (cVehicle* vehicle);
+	void destroyUnit (cBuilding* building);
+
+	int getTurnLimit() const { return turnLimit; }
+	int getScoreLimit() const { return scoreLimit; }
+	int getTurn() const;
+
+	void deletePlayer (cPlayer* player);
+
+	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
+	const cMap* getMap() const { return Map; }
+	cMap* getMap() { return Map; }
+	const std::vector<cPlayer*>& getPlayerList() const { return *PlayerList; }
+	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
+	const cPlayer* getActivePlayer() const { return ActivePlayer; }
+	cPlayer* getActivePlayer() { return ActivePlayer; }
 private:
-	friend class cDebugOutput;
-	friend class cPlayer;
-
-	cServer* server;
-	cTCP* network;
-	cEventHandling* eventHandling;
-	/** the map */
-	cMap* Map;
-	/** List with all players */
-	std::vector<cPlayer*>* PlayerList;
-	/** the active Player */
-	cPlayer* ActivePlayer;
-
-	cJobContainer helperJobs;
-
-	/** list with buildings without owner, e. g. rubble fields */
-	cBuilding* neutralBuildings;
-	/** number of current turn */
-	int iTurn;
-	/** true if the player has been defeated */
-	bool bDefeated;
-	/** how many seconds will be left for this turn */
-	int iTurnTime;
-	/** Ticks when the TurnTime has been started */
-	unsigned int iStartTurnTime;
-	/** this client's copy of the victory conditions **/
-	int turnLimit, scoreLimit;
-
-	cCasualtiesTracker* casualtiesTracker;
-
-	sFreezeModes freezeModes;
-
-
 	/**
 	* adds the unit to the map and player.
 	*@author alzi alias DoctorDeath
@@ -99,7 +188,7 @@ private:
 	*@param Vehicle Vehicle which should be added.
 	*@param Building Building which should be added.
 	*@param Player Player whose vehicle should be added.
-	*@param bInit true if this is a initialisation call.
+	*@param bInit true if this is an initialisation call.
 	*/
 	void addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true);
 	void addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false);
@@ -122,7 +211,7 @@ private:
 	*/
 	sSubBase* getSubBaseFromID (int iID);
 
-	void runJobs ();
+	void runJobs();
 
 	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message);
@@ -188,6 +277,36 @@ private:
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 
+private:
+	cServer* server;
+	cTCP* network;
+	cEventHandling* eventHandling;
+	/** the map */
+	cMap* Map;
+	/** List with all players */
+	std::vector<cPlayer*>* PlayerList;
+	/** the active Player */
+	cPlayer* ActivePlayer;
+
+	cJobContainer helperJobs;
+
+	/** list with buildings without owner, e. g. rubble fields */
+	cBuilding* neutralBuildings;
+	/** number of current turn */
+	int iTurn;
+	/** true if the player has been defeated */
+	bool bDefeated;
+	/** how many seconds will be left for this turn */
+	int iTurnTime;
+	/** Ticks when the TurnTime has been started */
+	unsigned int iStartTurnTime;
+	/** this client's copy of the victory conditions **/
+	int turnLimit;
+	int scoreLimit;
+
+	cCasualtiesTracker* casualtiesTracker;
+
+	sFreezeModes freezeModes;
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */
@@ -197,129 +316,12 @@ public:
 	/** List with all active movejobs */
 	std::vector<cClientMoveJob*> ActiveMJobs;
 	/** the hud */
-	cGameGUI gameGUI; //TODO: this should be a pointer to the gameGui instance, so it is possible to have a GUI-less client for ai implementation
+	// TODO: this should be a pointer to the gameGui instance,
+	// so it is possible to have a GUI-less client for ai implementation
+	cGameGUI gameGUI;
 
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;
-
-
-	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
-	void disableFreezeMode (eFreezeMode mode);
-	bool isFreezed () const;
-	int getFreezeInfoPlayerNumber () const;
-	bool getFreezeMode (eFreezeMode mode) const;
-
-	/**
-	* handles the end of a turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleEnd();
-
-	void addJob (cJob* job);
-
-	/**
-	* handles the game relevant actions (for example moving the current position of a rocket)
-	* of the fx-effects, so that they are handled also, when the effects are not drawn.
-	*/
-	void runFx ();
-
-	/**
-	* handles the rest-time of the current turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleTurnTime();
-
-	/**
-	* creates a new moveJob an transmits it to the server
-	* @param vehicle the vehicle to be moved
-	* @param iDestOffset the Destination
-	*/
-	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cVehicle*>* group = NULL);
-	void startGroupMove();
-	/**
-	* adds an new movejob
-	*@author alzi alias DoctorDeath
-	*@param MJob the movejob to be added
-	*/
-	void addActiveMoveJob (cClientMoveJob* MJob);
-	/**
-	* returns the player with the given number
-	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
-	*@return The wanted player.
-	*/
-	cPlayer* getPlayerFromNumber (int iNum);
-	/**
-	* returns the player identified by playerID
-	*@author eiko
-	*@param playerID Can be a string representation of the player number or player name
-	*/
-	cPlayer* getPlayerFromString (const std::string& playerID);
-	/**
-	* deletes the unit
-	*@author alzi alias DoctorDeath
-	*@param Building Building which should be deleted.
-	*@param Vehicle Vehicle which should be deleted.
-	*/
-	void deleteUnit (cBuilding* Building, cMenu* activeMenu);
-	void deleteUnit (cVehicle* Vehicle, cMenu* activeMenu);
-	/**
-	* sends the netMessage to the server.
-	* do not try to delete a message after calling this function!
-	*@author Eiko
-	*@param message The netMessage to be send.
-	*/
-	void sendNetMessage (cNetMessage* message) const;
-	/**
-	* gets the vehicle with the ID
-	*@author alzi alias DoctorDeath
-	*@param iID The ID of the vehicle
-	*/
-	cVehicle* getVehicleFromID (unsigned int iID);
-	cBuilding* getBuildingFromID (unsigned int iID);
-
-	/**
-	* initialises this client for the player.
-	*@author alzi alias DoctorDeath
-	*@param Player The player.
-	*/
-	void initPlayer (cPlayer* Player);
-
-	/**
-	* handles move and attack jobs
-	* this function should be called in all menu loops
-	*/
-	void doGameActions (cMenu* activeMenu);
-
-	/**
-	* processes everything that is need for this netMessage
-	*@author alzi alias DoctorDeath
-	*@param message The netMessage to be handled.
-	*@return 0 for success
-	*/
-	int HandleNetMessage (cNetMessage* message, cMenu* activeMenu);
-
-	void addFx (cFx* fx);
-
-	/**
-	*destroys a unit
-	*play FX, add rubble and delete Unit
-	*/
-	void destroyUnit (cVehicle* vehicle);
-	void destroyUnit (cBuilding* building);
-
-	void getVictoryConditions (int* turnLimit, int* scoreLimit) const;
-	int getTurn() const;
-
-	void deletePlayer (cPlayer* player);
-
-	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
-	const cMap* getMap() const { return Map; }
-	cMap* getMap() { return Map; }
-	const std::vector<cPlayer*>& getPlayerList() const { return *PlayerList; }
-	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
-	const cPlayer* getActivePlayer() const { return ActivePlayer; }
-	cPlayer* getActivePlayer() { return ActivePlayer; }
 };
 
 #endif
