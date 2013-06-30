@@ -2371,9 +2371,9 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 void cGameGUI::doScroll (int dir)
 {
 	const int step = cSettings::getInstance().getScrollSpeed();
-	//                  SW,  S, SE,  E, X, W, NW, N, NE
-	int offsetsX[9] = { -1,  0,  1, -1, 0, 1, -1, 0, 1};
-	int offsetsY[9] = { -1, -1, -1,  0, 0, 0,  1, 1, 1};
+	//                  SW, S, SE, E, X, W, NW, N, NE
+	int offsetsX[9] = { -1, 0, 1, -1, 0, 1, -1,  0,  1};
+	int offsetsY[9] = {  1, 1, 1,  0, 0, 0, -1, -1, -1};
 	--dir;
 	if (dir < 0 || dir >= 9) return;
 	setOffsetPosition (offX + offsetsX[dir] * step, offY + offsetsY[dir] * step);
