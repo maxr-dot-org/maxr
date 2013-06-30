@@ -172,7 +172,7 @@ void cClient::initPlayer (cPlayer* Player)
 	}
 }
 
-int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cVehicle*>* group)
+int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group)
 {
 	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
 	if (path)
@@ -193,15 +193,13 @@ int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cV
 	}
 }
 
-void cClient::startGroupMove()
+void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDestX, int mainDestY)
 {
-	const int mainPosX = (*gameGUI.getSelVehiclesGroup()) [0]->PosX;
-	const int mainPosY = (*gameGUI.getSelVehiclesGroup()) [0]->PosY;
-	const int mainDestX = mouse->getKachelX (gameGUI);
-	const int mainDestY = mouse->getKachelY (gameGUI);
+	const int mainPosX = group_[0]->PosX;
+	const int mainPosY = group_[0]->PosY;
 
 	// copy the selected-units-list
-	std::vector<cVehicle*> group = *gameGUI.getSelVehiclesGroup();
+	std::vector<cVehicle*> group = group_;
 
 	// go trough all vehicles in the list
 	while (group.size())
@@ -232,7 +230,7 @@ void cClient::startGroupMove()
 		// the formation of the vehicle group will stay as destination formation.
 		const int destX = mainDestX + vehicle->PosX - mainPosX;
 		const int destY = mainDestY + vehicle->PosY - mainPosY;
-		addMoveJob (vehicle, destX, destY, gameGUI.getSelVehiclesGroup());
+		addMoveJob (vehicle, destX, destY, &group_);
 		// delete the unit from the copyed list
 		group.erase (group.begin() + shortestWayVehNum);
 	}

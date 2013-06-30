@@ -92,8 +92,8 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cVehicle*>* group = NULL);
-	void startGroupMove();
+	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group = NULL);
+	void startGroupMove (const std::vector<cVehicle*>& group_, int mainDestX, int mainDestY);
 	/**
 	* adds a new movejob
 	*@author alzi alias DoctorDeath

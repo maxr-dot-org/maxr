@@ -2290,7 +2290,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else
 					{
-						if (selectedVehiclesGroup.size() > 1) client->startGroupMove();
+						if (selectedVehiclesGroup.size() > 1) client->startGroupMove (selectedVehiclesGroup, mouseMapX, mouseMapY);
 						else client->addMoveJob (selectedVehicle, mouseMapX, mouseMapY);
 					}
 				}

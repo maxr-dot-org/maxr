@@ -79,7 +79,7 @@ int cPathDestHandler::heuristicCost (int srcX, int srcY) const
 	}
 }
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, std::vector<cVehicle*>* group)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, DestX, DestY, NULL, NULL, NULL);
 	init (ScrX, ScrY, Map, Vehicle, group);
@@ -98,7 +98,7 @@ cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVe
 	init (ScrX, ScrY, Map, Vehicle, NULL);
 }
 
-void cPathCalculator::init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, std::vector<cVehicle*>* group)
+void cPathCalculator::init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group)
 {
 	this->ScrX = ScrX;
 	this->ScrY = ScrY;
@@ -994,7 +994,7 @@ bool cClientMoveJob::generateFromMessage (cNetMessage* message)
 	return true;
 }
 
-sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, std::vector<cVehicle*>* group)
+sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, const std::vector<cVehicle*>* group)
 {
 	if (SrcX == DestX && SrcY == DestY) return 0;
 

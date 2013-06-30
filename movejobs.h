@@ -87,10 +87,10 @@ public:
 
 class cPathCalculator
 {
-	void init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, std::vector<cVehicle*>* group);
+	void init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group);
 
 public:
-	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, std::vector<cVehicle*>* group = NULL);
+	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group = NULL);
 	cPathCalculator (int ScrX, int ScrY, const cVehicle* destVehicle, const cBuilding* destBuilding, const cMap* Map, const cVehicle* Vehicle, bool load);
 	cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, int attackX, int attackY);
 	~cPathCalculator();
@@ -111,7 +111,7 @@ public:
 	/* the moving vehicle */
 	const cVehicle* Vehicle;
 	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
-	std::vector<cVehicle*>* group;
+	const std::vector<cVehicle*>* group;
 	/* source and destination coords */
 	int ScrX, ScrY;
 	bool bPlane, bShip;
@@ -225,7 +225,7 @@ class cClientMoveJob
 
 	void init (int iSrcOff, cVehicle* Vehicle);
 public:
-	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, std::vector<cVehicle*>* group = NULL);
+	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, const std::vector<cVehicle*>* group = NULL);
 
 	cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle);
 	//	cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle);
