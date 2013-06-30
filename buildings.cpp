@@ -255,12 +255,12 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
 		int intense = (int) (200 - 200 * ( (float) data.hitpointsCur / data.hitpointsMax));
-		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir ()));
+		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir()));
 
 		if (data.isBig && intense > 50)
 		{
 			intense -= 50;
-			gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX2, PosY * 64 + DamageFXPointY2, intense, gameGUI.getWindDir ()));
+			gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX2, PosY * 64 + DamageFXPointY2, intense, gameGUI.getWindDir()));
 		}
 	}
 
@@ -1622,7 +1622,7 @@ sBuilding::sBuilding() :
 	shw (NULL), shw_org (NULL),
 	eff (NULL), eff_org (NULL),
 	video (NULL),
-	data (),
+	data(),
 	nr (-1),
 	info (NULL),
 	Start (NULL),

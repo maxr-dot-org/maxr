@@ -25,7 +25,7 @@ class cGameTimer
 protected:
 	static Uint32 gameTimerCallback (Uint32 interval, void* arg);
 
-	cGameTimer ();
+	cGameTimer();
 
 	/** SDL_Timer that controls the game time */
 	SDL_TimerID timerID;
@@ -34,12 +34,12 @@ protected:
 	unsigned int lastTimerCall;
 	std::vector<unsigned int> receivedTime;
 
-	void timerCallback ();
-	void handleTimer ();
-	bool popEvent ();
+	void timerCallback();
+	void handleTimer();
+	bool popEvent();
 
 public:
-	~cGameTimer ();
+	~cGameTimer();
 
 	int maxEventQueueSize;
 
@@ -53,8 +53,8 @@ public:
 	void setReceivedTime (unsigned int time, unsigned int nr = 0);
 	unsigned int getReceivedTime (unsigned int nr = 0);
 
-	void start ();
-	void stop ();
+	void start();
+	void stop();
 
 	static bool syncDebugSingleStep;
 };
@@ -67,7 +67,7 @@ private:
 
 	bool nextTickAllowed (cServer& server);
 public:
-	cGameTimerServer ();
+	cGameTimerServer();
 
 	void run (cServer& server);
 	void handleSyncMessage (cNetMessage& message);
@@ -85,10 +85,10 @@ private:
 	unsigned int debugRemoteChecksum;	//saved data for debug view only
 	int gameTimeAdjustment;				//saved data for debug view only
 
-	bool nextTickAllowed ();
+	bool nextTickAllowed();
 public:
 	bool nextMsgIsNextGameTime;
-	cGameTimerClient ();
+	cGameTimerClient();
 	void setClient (cClient* client);
 
 	void run (cMenu* activeMenu);

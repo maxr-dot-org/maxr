@@ -17,16 +17,16 @@ protected:
 	int length;
 
 public:
-	virtual ~cFx ();
+	virtual ~cFx();
 
 	const bool bottom;
 
-	virtual bool isFinished () const;
-	int getLength () const;
+	virtual bool isFinished() const;
+	int getLength() const;
 
 	virtual void draw (const cGameGUI& gameGUI) const = 0;
 	virtual void playSound (const cGameGUI& gameGUI) const;
-	virtual void run ();
+	virtual void run();
 };
 
 class cFxMuzzle : public cFx
@@ -167,10 +167,10 @@ private:
 	const int endY;
 public:
 	cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom);
-	~cFxRocket ();
+	~cFxRocket();
 	void draw (const cGameGUI& gameGUI) const;
-	void run ();
-	bool isFinished () const; //return true, when the last smoke effect is finished.
+	void run();
+	bool isFinished() const; //return true, when the last smoke effect is finished.
 	//getLength() returns only the time until the rocket has reached the destiantion
 };
 

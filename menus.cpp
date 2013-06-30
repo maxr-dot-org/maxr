@@ -203,7 +203,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	if (isServer)
 	{
-		server->stop ();
+		server->stop();
 	}
 }
 
@@ -255,7 +255,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	}
 	clientPlayerList.clear();
 
-	server->stop ();
+	server->stop();
 	delete server;
 	server = NULL;
 
@@ -596,7 +596,7 @@ int cMenu::show (cClient* client)
 			client->gameGUI.handleTimer();
 		}
 		else
-			handleNetMessages ();
+			handleNetMessages();
 
 		// check whether the resolution has been changed
 		if (!end && !terminate && (lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY()))
@@ -631,7 +631,7 @@ int cMenu::show (cClient* client)
 	}
 
 	//flush event queue before exiting menu
-	if (!client) handleNetMessages ();
+	if (!client) handleNetMessages();
 	cEventHandling::handleInputEvents (*this, client);
 
 	mouse->SetCursor (CHand);
@@ -3374,7 +3374,7 @@ bool cNetworkHostMenu::runSavedGame()
 	server->bStarted = true;
 	client->gameGUI.show (client);
 
-	server->stop ();
+	server->stop();
 	delete server;
 	server = NULL;
 

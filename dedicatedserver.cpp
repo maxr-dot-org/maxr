@@ -109,7 +109,7 @@ bool cDedicatedServer::handleInput (const string& command)
 {
 	vector<string> tokens;
 	istringstream iss (command);
-	copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
+	copy (istream_iterator<string> (iss), istream_iterator<string>(), back_inserter<vector<string> > (tokens));
 	if (tokens.empty())
 		return true;
 	if (tokens.at (0).compare ("help") == 0)
@@ -429,7 +429,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 				string command = chatText.substr (serverStringPos + 9);
 				vector<string> tokens;
 				istringstream iss (command);
-				copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
+				copy (istream_iterator<string> (iss), istream_iterator<string>(), back_inserter<vector<string> > (tokens));
 				if (tokens.size() == 1)
 				{
 					if (tokens[0].compare ("games") == 0)

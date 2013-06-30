@@ -408,7 +408,7 @@ private:
 	void setInfoTexts (const std::string& infoText, const std::string& additionalInfoText);
 
 	void drawFx (bool bottom) const;
-	void runFx ();
+	void runFx();
 
 	void selectUnit_vehicle (cVehicle& vehicle);
 	void selectUnit_building (cBuilding& building);

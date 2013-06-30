@@ -32,7 +32,7 @@ cFx::cFx (bool bottom_, int x, int y) :
 	bottom (bottom_)
 {}
 
-cFx::~cFx ()
+cFx::~cFx()
 {}
 
 int cFx::getLength() const
@@ -374,9 +374,9 @@ cFxRocket::cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, 
 	image = EffectsData.fx_rocket;
 }
 
-cFxRocket::~cFxRocket ()
+cFxRocket::~cFxRocket()
 {
-	for (unsigned int i = 0; i < subEffects.size (); i++)
+	for (unsigned int i = 0; i < subEffects.size(); i++)
 		delete subEffects[i];
 }
 
@@ -433,7 +433,7 @@ void cFxRocket::run()
 	posY = startY + speed * (endY - startY) * tick / distance;
 }
 
-bool cFxRocket::isFinished () const
+bool cFxRocket::isFinished() const
 {
 	return tick >= length && subEffects.size() == 0;
 }

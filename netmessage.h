@@ -158,7 +158,7 @@ public:
 	float popFloat();
 
 	void pushID (const sID& id);
-	sID popID ();
+	sID popID();
 
 	/** returns the string representation of iType
 	* this is only for better readability of the netlog

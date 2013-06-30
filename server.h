@@ -428,7 +428,7 @@ private:
 	 */
 	int deleteBuildings (std::vector<cBuilding*>& buildings);
 
-	void runJobs ();
+	void runJobs();
 
 	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);
 	void checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer);

@@ -74,7 +74,7 @@ template<typename T> void cRingbuffer<T>::write (const T element)
 
 }
 
-template<typename T> void cRingbuffer<T>::checkCapacity ()
+template<typename T> void cRingbuffer<T>::checkCapacity()
 {
 	int s = size();
 	if (s >= capacity - 1)

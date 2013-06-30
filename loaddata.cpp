@@ -1371,7 +1371,7 @@ static void translateClanData (int num)
 		return;
 	}
 
-	for (xmlElement = xmlElement->FirstChildElement("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement("Clan"))
+	for (xmlElement = xmlElement->FirstChildElement ("Clan"); xmlElement; xmlElement = xmlElement->NextSiblingElement ("Clan"))
 	{
 		int id;
 		if (xmlElement->QueryIntAttribute ("ID", &id) != XML_NO_ERROR) continue;

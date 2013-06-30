@@ -340,7 +340,7 @@ public:
 	 *@author alzi
 	 */
 	virtual void handleNetMessage (cNetMessage* message) {}
-	virtual void handleNetMessages () {}
+	virtual void handleNetMessages() {}
 
 	virtual void handleDestroyUnit (cBuilding* building, cVehicle* vehicle) {}
 
@@ -547,7 +547,7 @@ public:
 	int getClan() const { return clan; }
 private:
 	virtual void handleNetMessage (cNetMessage* message);
-	virtual void handleNetMessages ();
+	virtual void handleNetMessages();
 
 private:
 	static void clanSelected (void* parent);
@@ -682,7 +682,7 @@ public:
 private:
 	virtual void generateSelectionList();
 	virtual void handleNetMessage (cNetMessage* message);
-	virtual void handleNetMessages ();
+	virtual void handleNetMessages();
 
 private:
 	static void selectionChanged (void* parent);
@@ -705,7 +705,7 @@ public:
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 	virtual void handleNetMessage (cNetMessage* message);
-	virtual void handleNetMessages ();
+	virtual void handleNetMessages();
 
 protected:
 	void createHud();

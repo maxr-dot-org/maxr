@@ -19,7 +19,7 @@ Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 }
 
 cGameTimer::cGameTimer() :
-	mutex ()
+	mutex()
 {
 	gameTime = 0;
 	lastTimerCall = 0;
@@ -40,13 +40,13 @@ cGameTimer::~cGameTimer()
 	stop();
 }
 
-void cGameTimer::start ()
+void cGameTimer::start()
 {
 	if (timerID == 0)
 		timerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, this);
 }
 
-void cGameTimer::stop ()
+void cGameTimer::stop()
 {
 	if (timerID != 0)
 		SDL_RemoveTimer (timerID);
@@ -66,7 +66,7 @@ void cGameTimer::timerCallback()
 	}
 }
 
-bool cGameTimer::popEvent ()
+bool cGameTimer::popEvent()
 {
 	cMutex::Lock lock (mutex);
 
@@ -118,8 +118,8 @@ unsigned int cGameTimer::getReceivedTime (unsigned int nr)
 	return receivedTime[nr];
 }
 
-cGameTimerClient::cGameTimerClient () :
-	cGameTimer (),
+cGameTimerClient::cGameTimerClient() :
+	cGameTimer(),
 	client (0),
 	remoteChecksum (0),
 	localChecksum (0),
@@ -174,14 +174,14 @@ void cGameTimerClient::run (cMenu* activeMenu)
 	const unsigned int maxWorkingTime = 500; // 500 milliseconds
 	unsigned int startGameTime = SDL_GetTicks();
 
-	while (popEvent ())
+	while (popEvent())
 	{
 		client->getEventHandling().handleNetMessages (client, activeMenu);
 
-		if (nextTickAllowed () == false) continue;
+		if (nextTickAllowed() == false) continue;
 
 		gameTime++;
-		handleTimer ();
+		handleTimer();
 		client->doGameActions (activeMenu);
 
 		//check crc
@@ -218,7 +218,7 @@ void cGameTimerClient::run (cMenu* activeMenu)
 	}
 }
 
-cGameTimerServer::cGameTimerServer () :
+cGameTimerServer::cGameTimerServer() :
 	waitingForPlayer (-1)
 {
 }
@@ -266,11 +266,11 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 
 void cGameTimerServer::run (cServer& server)
 {
-	if (popEvent () == false) return;
+	if (popEvent() == false) return;
 	if (nextTickAllowed (server) == false) return;
 
 	gameTime++;
-	handleTimer ();
+	handleTimer();
 	server.doGameActions();
 	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (size_t i = 0; i < playerList.size(); i++)

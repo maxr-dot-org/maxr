@@ -124,7 +124,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
 		int intense = (int) (100 - 100 * ( (float) data.hitpointsCur / data.hitpointsMax));
-		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir ()));
+		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir()));
 	}
 
 	//make landing and take off of planes

@@ -61,8 +61,8 @@ public:
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
-	bool isFreezed () const;
-	int getFreezeInfoPlayerNumber () const;
+	bool isFreezed() const;
+	int getFreezeInfoPlayerNumber() const;
 	bool getFreezeMode (eFreezeMode mode) const;
 
 	/**
@@ -79,7 +79,7 @@ public:
 	* of the fx-effects,
 	* so that they are handled also, when the effects are not drawn.
 	*/
-	void runFx ();
+	void runFx();
 
 	/**
 	* handles the rest-time of the current turn

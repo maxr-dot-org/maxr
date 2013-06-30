@@ -126,7 +126,7 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 	}
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
-	gameTimer.start ();
+	gameTimer.start();
 }
 
 void cServer::setGameSettings (const sSettings& gameSettings)
@@ -152,10 +152,10 @@ eGameTypes cServer::getGameType() const
 	return GAME_TYPE_SINGLE;
 }
 
-void cServer::stop ()
+void cServer::stop()
 {
 	bExit = true;
-	gameTimer.stop ();
+	gameTimer.stop();
 
 	if (!DEDICATED_SERVER)
 	{
@@ -169,7 +169,7 @@ void cServer::stop ()
 //------------------------------------------------------------------------------
 cServer::~cServer()
 {
-	stop ();
+	stop();
 
 	delete casualtiesTracker;
 	casualtiesTracker = 0;
@@ -297,11 +297,11 @@ void cServer::run()
 
 void cServer::doGameActions()
 {
-	checkDeadline ();
-	handleMoveJobs ();
-	runJobs ();
-	handleWantEnd ();
-	checkPlayerUnits ();
+	checkDeadline();
+	handleMoveJobs();
+	runJobs();
+	handleWantEnd();
+	checkPlayerUnits();
 }
 
 //------------------------------------------------------------------------------
@@ -3907,7 +3907,7 @@ void cServer::addJob (cJob* job)
 	helperJobs.addJob (*job);
 }
 
-void cServer::runJobs ()
+void cServer::runJobs()
 {
 	helperJobs.run (gameTimer);
 }
@@ -3918,18 +3918,18 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 	{
 		case FREEZE_PAUSE:
 			freezeModes.pause = true;
-			gameTimer.stop ();
+			gameTimer.stop();
 			break;
 		case FREEZE_WAIT_FOR_RECONNECT:
 			freezeModes.waitForReconnect = true;
-			gameTimer.stop ();
+			gameTimer.stop();
 			break;
 		case FREEZE_WAIT_FOR_TURNEND:
 			freezeModes.waitForTurnEnd = true;
 			break;
 		case FREEZE_WAIT_FOR_PLAYER:
 			freezeModes.waitForPlayer = true;
-			//gameTimer.stop (); //done in cGameTimer::nextTickAllowed();
+			//gameTimer.stop(); //done in cGameTimer::nextTickAllowed();
 			freezeModes.playerNumber = playerNumber;
 			break;
 		default:
@@ -3965,6 +3965,6 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 
 	if (!freezeModes.pause && !freezeModes.waitForReconnect)
 	{
-		gameTimer.start ();
+		gameTimer.start();
 	}
 }
