@@ -161,7 +161,8 @@ class cGameGUI : public cMenu
 	friend class cDebugOutput;
 
 	cClient* client;
-	SDL_Surface* panelTopGraphic, *panelBottomGraphic;
+	SDL_Surface* panelTopGraphic;
+	SDL_Surface* panelBottomGraphic;
 
 	/** the currently selected unit */
 	cUnit* selectedUnit;
@@ -174,7 +175,8 @@ private:
 	/** list with all messages */
 	std::vector<sMessage*> messages;
 	/** Coordinates to a important message */
-	int msgCoordsX, msgCoordsY;
+	int msgCoordsX;
+	int msgCoordsY;
 
 	cPlayer* player;
 	cMap* map;
@@ -183,8 +185,10 @@ private:
 
 	float calcMinZoom();
 
-	int offX, offY;
-	int miniMapOffX, miniMapOffY;
+	int offX;
+	int offY;
+	int miniMapOffX;
+	int miniMapOffY;
 	float zoom;
 
 	/** direction from which the wind is comming */
@@ -289,7 +293,7 @@ private:
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
-	*@param iDir new direction
+	*@param iDir new direction (in degree)
 	*/
 	void setWind (int dir);
 	void changeWindDir();
@@ -298,7 +302,7 @@ private:
 	* selects all vehicles which are within the mousebox
 	*@author alzi alias DoctorDeath
 	*/
-	void selectBoxVehicles (sMouseBox& box);
+	void selectBoxVehicles (const sMouseBox& box);
 	/**
 	* deselects all group selected vehicles
 	*@author alzi alias DoctorDeath
