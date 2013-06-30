@@ -528,9 +528,9 @@ void cDialogPreferences::voicesMuteChanged (void* parent)
 	cSettings::getInstance().setVoiceMute (menu->disableVoicesChBox.isChecked());
 }
 
-cDialogTransfer::cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_) :
+cDialogTransfer::cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_) :
 	cMenu (LoadPCX (GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA),
-	client (&client_),
+	gameGUI (&gameGUI_),
 	srcBuilding (NULL),
 	destBuilding (destBuilding_),
 	srcVehicle (NULL),
@@ -596,7 +596,7 @@ cDialogTransfer::cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* d
 
 cDialogTransfer::~cDialogTransfer()
 {
-	client->gameGUI.mouseInputMode = normalInput;
+	gameGUI->mouseInputMode = normalInput;
 }
 
 void cDialogTransfer::getTransferType()
@@ -649,8 +649,8 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 	if (srcBuilding)
 	{
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (srcBuilding->data.isBig ? 128.0f : 64.0f);
-		srcBuilding->render (&client->gameGUI, unitImage1, dest, zoomFactor, false, false);
+		float zoomFactor = UNIT_IMAGE_SIZE / (srcBuilding->data.isBig ? 128.0f : 64.0f);
+		srcBuilding->render (gameGUI, unitImage1, dest, zoomFactor, false, false);
 
 		unitNameLabels[0]->setText (srcBuilding->data.name);
 		if (destVehicle)
@@ -681,9 +681,9 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else if (srcVehicle)
 	{
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
-		srcVehicle->render (client, unitImage1, dest, zoomFactor, false);
-		srcVehicle->drawOverlayAnimation (client, unitImage1, dest, zoomFactor);
+		float zoomFactor = UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
+		srcVehicle->render (gameGUI->getClient(), unitImage1, dest, zoomFactor, false);
+		srcVehicle->drawOverlayAnimation (gameGUI->getClient(), unitImage1, dest, zoomFactor);
 
 		unitNameLabels[0]->setText (srcVehicle->data.name);
 		maxSrcCargo = srcVehicle->data.storageResMax;
@@ -692,8 +692,8 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 	if (destBuilding)
 	{
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (destBuilding->data.isBig ? 128.0f : 64.0f);
-		destBuilding->render (&client->gameGUI, unitImage2, dest, zoomFactor, false, false);
+		float zoomFactor = UNIT_IMAGE_SIZE / (destBuilding->data.isBig ? 128.0f : 64.0f);
+		destBuilding->render (gameGUI, unitImage2, dest, zoomFactor, false, false);
 
 		unitNameLabels[1]->setText (destBuilding->data.name);
 		if (srcVehicle)
@@ -724,9 +724,9 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else
 	{
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
-		destVehicle->render (client, unitImage2, dest, zoomFactor, false);
-		destVehicle->drawOverlayAnimation (client, unitImage2, dest, zoomFactor);
+		float zoomFactor = UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
+		destVehicle->render (gameGUI->getClient(), unitImage2, dest, zoomFactor, false);
+		destVehicle->drawOverlayAnimation (gameGUI->getClient(), unitImage2, dest, zoomFactor);
 
 		unitNameLabels[1]->setText (destVehicle->data.name);
 		maxDestCargo = destVehicle->data.storageResMax;
@@ -785,7 +785,7 @@ void cDialogTransfer::setCargos()
 	}
 	transferLabel.setText (iToStr (abs (transferValue)));
 
-	resBar->setCurrentValue ( (int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
+	resBar->setCurrentValue ( (int) (223.f * (destCargo + transferValue) / maxDestCargo));
 }
 
 void cDialogTransfer::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
@@ -811,15 +811,16 @@ void cDialogTransfer::doneReleased (void* parent)
 
 	if (menu->transferValue != 0)
 	{
+		cClient* client = menu->gameGUI->getClient();
 		if (menu->srcBuilding)
 		{
-			if (menu->destBuilding) sendWantTransfer (*menu->client, false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
-			else sendWantTransfer (*menu->client, false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
+			if (menu->destBuilding) sendWantTransfer (*client, false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
+			else sendWantTransfer (*client, false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
 		}
 		else
 		{
-			if (menu->destBuilding) sendWantTransfer (*menu->client, true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
-			else sendWantTransfer (*menu->client, true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
+			if (menu->destBuilding) sendWantTransfer (*client, true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
+			else sendWantTransfer (*client, true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
 		}
 	}
 

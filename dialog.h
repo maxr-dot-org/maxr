@@ -167,7 +167,7 @@ private:
 
 class cDialogTransfer : public cMenu
 {
-	cClient* client;
+	cGameGUI* gameGUI;
 	cBuilding* srcBuilding, *destBuilding;
 	cVehicle* srcVehicle, *destVehicle;
 
@@ -195,7 +195,7 @@ class cDialogTransfer : public cMenu
 	void getNamesNCargoNImages();
 	void setCargos();
 public:
-	cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_);
+	cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_);
 	~cDialogTransfer();
 
 private:
