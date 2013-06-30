@@ -342,7 +342,7 @@ public:
 	virtual void handleNetMessage (cNetMessage* message) {}
 	virtual void handleNetMessages() {}
 
-	virtual void handleDestroyUnit (cBuilding* building, cVehicle* vehicle) {}
+	virtual void handleDestroyUnit (cUnit& destroyedUnit) {}
 
 	void addTimer (cMenuTimerBase* timer);
 
@@ -978,7 +978,7 @@ public:
 
 private:
 	virtual void generateSelectionList();
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
 	static void doneReleased (void* parent);
@@ -1009,7 +1009,7 @@ public:
 
 private:
 	virtual void generateSelectionList();
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
 	static void doneReleased (void* parent);
@@ -1059,7 +1059,7 @@ public:
 	cUnitHelpMenu (const cClient& client, sUnitData* unitData, cPlayer* owner);
 
 private:
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 };
 
 class cStorageMenu : public cMenu
@@ -1114,7 +1114,7 @@ private:
 	void resetInfos();
 	void playVoice (int Type);
 private:
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
 	static void upReleased (void* parent);
@@ -1165,7 +1165,7 @@ public:
 	cMineManagerMenu (const cClient& client_, cBuilding* building_);
 
 private:
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
 	static void doneReleased (void* parent);

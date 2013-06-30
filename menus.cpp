@@ -4128,9 +4128,9 @@ void cBuildingsBuildMenu::generateSelectionList()
 }
 
 //------------------------------------------------------------------------------
-void cBuildingsBuildMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cBuildingsBuildMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedVehicle == vehicle) terminate = true;
+	if (&destroyedUnit == vehicle) terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4294,9 +4294,9 @@ void cVehiclesBuildMenu::generateSelectionList()
 }
 
 //------------------------------------------------------------------------------
-void cVehiclesBuildMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cVehiclesBuildMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedBuilding == building) terminate = true;
+	if (&destroyedUnit == building) terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4670,9 +4670,9 @@ void cUnitHelpMenu::init (sID unitID)
 }
 
 //------------------------------------------------------------------------------
-void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cUnitHelpMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if ( (&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData()) terminate = true;
+	if (&destroyedUnit.data == unit->getUnitData()) terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -5059,9 +5059,9 @@ void cStorageMenu::upgradeAllReleased (void* parent)
 }
 
 //------------------------------------------------------------------------------
-void cStorageMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cStorageMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedBuilding == ownerBuilding || destroyedVehicle == ownerVehicle) terminate = true;
+	if (&destroyedUnit == ownerBuilding || &destroyedUnit == ownerVehicle) terminate = true;
 }
 //------------------------------------------------------------------------------
 void cStorageMenu::playVoice (int Type)
@@ -5330,9 +5330,11 @@ void cMineManagerMenu::barReleased (void* parent)
 }
 
 //------------------------------------------------------------------------------
-void cMineManagerMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cMineManagerMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedBuilding && destroyedBuilding->SubBase == building->SubBase) terminate = true;
+	if (destroyedUnit.isVehicle()) return;
+	cBuilding& destroyedBuilding = static_cast<cBuilding&>(destroyedUnit);
+	if (destroyedBuilding.SubBase == building->SubBase) terminate = true;
 }
 
 //------------------------------------------------------------------------------

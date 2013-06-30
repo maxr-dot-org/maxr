@@ -2096,12 +2096,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			if (overVehicle)
 			{
-				cDialogTransfer transferDialog (*this, *selectedUnit, NULL, overVehicle);
+				cDialogTransfer transferDialog (*this, *selectedUnit, *overVehicle);
 				transferDialog.show (client);
 			}
 			else if (overBuilding)
 			{
-				cDialogTransfer transferDialog (*this, *selectedUnit, overBuilding, NULL);
+				cDialogTransfer transferDialog (*this, *selectedUnit, *overBuilding);
 				transferDialog.show (client);
 			}
 		}

@@ -528,13 +528,11 @@ void cDialogPreferences::voicesMuteChanged (void* parent)
 	cSettings::getInstance().setVoiceMute (menu->disableVoicesChBox.isChecked());
 }
 
-cDialogTransfer::cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_) :
+cDialogTransfer::cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit_, cUnit& destUnit_) :
 	cMenu (LoadPCX (GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA),
 	gameGUI (&gameGUI_),
-	srcBuilding (NULL),
-	destBuilding (destBuilding_),
-	srcVehicle (NULL),
-	destVehicle (destVehicle_),
+	srcUnit (&srcUnit_),
+	destUnit (&destUnit_),
 	doneButton (position.x + 159, position.y + 200, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	cancelButton (position.x + 71, position.y + 200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	incButton (position.x + 279, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL),
@@ -542,9 +540,6 @@ cDialogTransfer::cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit, cBuilding*
 	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG),
 	arrowImage (position.x + 140, position.y + 77)
 {
-	if (srcUnit.isVehicle()) srcVehicle = static_cast<cVehicle*> (&srcUnit);
-	else srcBuilding = static_cast<cBuilding*> (&srcUnit);
-
 	menuItems.push_back (&arrowImage);
 
 	getTransferType();
@@ -599,23 +594,22 @@ cDialogTransfer::~cDialogTransfer()
 	gameGUI->mouseInputMode = normalInput;
 }
 
+/*static*/ sUnitData::eStorageResType cDialogTransfer::getCommonStorageType (const cUnit& unit1, const cUnit& unit2)
+{
+	const sUnitData::eStorageResType type1 = unit1.data.storeResType;
+	const sUnitData::eStorageResType type2 = unit2.data.storeResType;
+	if (type1 == type2) return type1;
+
+	if (unit1.isVehicle() && unit2.isBuilding()) return type1;
+	if (unit1.isBuilding() && unit2.isVehicle()) return type2;
+	return sUnitData::STORE_RES_NONE;
+}
+
 void cDialogTransfer::getTransferType()
 {
-	sUnitData::eStorageResType tmpTransferType;
+	sUnitData::eStorageResType commonTransferType = getCommonStorageType (*srcUnit, *destUnit);
 
-	if (srcVehicle) tmpTransferType = srcVehicle->data.storeResType;
-	else if (destVehicle) tmpTransferType = destVehicle->data.storeResType;
-	else
-	{
-		if (srcBuilding->data.storeResType != destBuilding->data.storeResType)
-		{
-			end = true;
-			return;
-		}
-		else tmpTransferType = destBuilding->data.storeResType;
-	}
-
-	switch (tmpTransferType)
+	switch (commonTransferType)
 	{
 		case sUnitData::STORE_RES_METAL:
 			transferType = cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_SMALL;
@@ -627,6 +621,7 @@ void cDialogTransfer::getTransferType()
 			transferType = cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_SMALL;
 			break;
 		case sUnitData::STORE_RES_NONE:
+			end = true;
 			break;
 	}
 }
@@ -634,28 +629,27 @@ void cDialogTransfer::getTransferType()
 void cDialogTransfer::getNamesNCargoNImages()
 {
 	const int UNIT_IMAGE_SIZE = 64;
-	SDL_Surface* unitImage1, *unitImage2;
 
-	unitImage1 = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_Surface* unitImage1 = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (unitImage1, NULL, 0xFF00FF);
 	SDL_SetColorKey (unitImage1, SDL_SRCCOLORKEY, 0xFF00FF);
 
-	unitImage2 = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_Surface* unitImage2 = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (unitImage2, NULL, 0xFF00FF);
 	SDL_SetColorKey (unitImage2, SDL_SRCCOLORKEY, 0xFF00FF);
 
 	SDL_Rect dest = {0, 0, 0, 0};
 
-
-	if (srcBuilding)
+	if (srcUnit->isBuilding())
 	{
+		cBuilding* srcBuilding = static_cast<cBuilding*> (srcUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (srcBuilding->data.isBig ? 128.0f : 64.0f);
 		srcBuilding->render (gameGUI, unitImage1, dest, zoomFactor, false, false);
 
 		unitNameLabels[0]->setText (srcBuilding->data.name);
-		if (destVehicle)
+		if (destUnit->isVehicle())
 		{
-			switch (destVehicle->data.storeResType)
+			switch (destUnit->data.storeResType)
 			{
 				case sUnitData::STORE_RES_METAL:
 					maxSrcCargo = srcBuilding->SubBase->MaxMetal;
@@ -679,8 +673,11 @@ void cDialogTransfer::getNamesNCargoNImages()
 			srcCargo = srcBuilding->data.storageResCur;
 		}
 	}
-	else if (srcVehicle)
+	else
 	{
+		assert (srcUnit->isVehicle());
+
+		cVehicle* srcVehicle = static_cast<cVehicle*> (srcUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
 		srcVehicle->render (gameGUI->getClient(), unitImage1, dest, zoomFactor, false);
 		srcVehicle->drawOverlayAnimation (gameGUI->getClient(), unitImage1, dest, zoomFactor);
@@ -690,15 +687,16 @@ void cDialogTransfer::getNamesNCargoNImages()
 		srcCargo = srcVehicle->data.storageResCur;
 	}
 
-	if (destBuilding)
+	if (destUnit->isBuilding())
 	{
+		cBuilding* destBuilding = static_cast<cBuilding*> (destUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (destBuilding->data.isBig ? 128.0f : 64.0f);
 		destBuilding->render (gameGUI, unitImage2, dest, zoomFactor, false, false);
 
 		unitNameLabels[1]->setText (destBuilding->data.name);
-		if (srcVehicle)
+		if (srcUnit->isVehicle())
 		{
-			switch (srcVehicle->data.storeResType)
+			switch (srcUnit->data.storeResType)
 			{
 				case sUnitData::STORE_RES_METAL:
 					maxDestCargo = destBuilding->SubBase->MaxMetal;
@@ -724,6 +722,9 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else
 	{
+		assert (destUnit->isVehicle());
+
+		cVehicle* destVehicle = static_cast<cVehicle*> (destUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
 		destVehicle->render (gameGUI->getClient(), unitImage2, dest, zoomFactor, false);
 		destVehicle->drawOverlayAnimation (gameGUI->getClient(), unitImage2, dest, zoomFactor);
@@ -812,16 +813,10 @@ void cDialogTransfer::doneReleased (void* parent)
 	if (menu->transferValue != 0)
 	{
 		cClient* client = menu->gameGUI->getClient();
-		if (menu->srcBuilding)
-		{
-			if (menu->destBuilding) sendWantTransfer (*client, false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
-			else sendWantTransfer (*client, false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
-		}
-		else
-		{
-			if (menu->destBuilding) sendWantTransfer (*client, true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
-			else sendWantTransfer (*client, true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
-		}
+		const cUnit* srcUnit = menu->srcUnit;
+		const cUnit* destUnit = menu->destUnit;
+		const sUnitData::eStorageResType transfertType = getCommonStorageType (*srcUnit, *destUnit);
+		sendWantTransfer (*client, srcUnit->isVehicle(), srcUnit->iID, destUnit->isVehicle(), destUnit->iID, menu->transferValue, transfertType);
 	}
 
 	menu->end = true;
@@ -851,10 +846,9 @@ void cDialogTransfer::barClicked (void* parent)
 	menu->draw();
 }
 
-void cDialogTransfer::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cDialogTransfer::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedBuilding == srcBuilding || destroyedVehicle == srcVehicle ||
-		destroyedBuilding == destBuilding || destroyedVehicle == destVehicle) terminate = true;
+	if (&destroyedUnit == srcUnit || &destroyedUnit == destUnit) terminate = true;
 }
 
 void drawContextItem (const string& sText, bool bPressed, int x, int y, SDL_Surface* surface)
@@ -1087,7 +1081,10 @@ void cDialogResearch::sliderClicked (void* parent)
 	menu->draw();
 }
 
-void cDialogResearch::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
+void cDialogResearch::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedBuilding && destroyedBuilding->data.canResearch && destroyedBuilding->owner == owner && destroyedBuilding->IsWorking) terminate = true;
+	if (destroyedUnit.isVehicle()) return;
+	if (destroyedUnit.owner != owner) return;
+	if (!destroyedUnit.data.canResearch) return;
+	if (static_cast<cBuilding&>(destroyedUnit).IsWorking) terminate = true;
 }

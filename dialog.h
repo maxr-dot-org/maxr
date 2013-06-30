@@ -168,8 +168,8 @@ private:
 class cDialogTransfer : public cMenu
 {
 	cGameGUI* gameGUI;
-	cBuilding* srcBuilding, *destBuilding;
-	cVehicle* srcVehicle, *destVehicle;
+	cUnit* srcUnit;
+	cUnit* destUnit;
 
 	cMenuMaterialBar::eMaterialBarTypes transferType;
 	int srcCargo, maxSrcCargo;
@@ -191,16 +191,17 @@ class cDialogTransfer : public cMenu
 	cMenuLabel transferLabel;
 	cMenuImage arrowImage;
 
+	static sUnitData::eStorageResType getCommonStorageType (const cUnit& unit1, const cUnit& unit2);
 	void getTransferType();
 	void getNamesNCargoNImages();
 	void setCargos();
 public:
-	cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_);
+	cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit_, cUnit& destUnit_);
 	~cDialogTransfer();
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
 	static void doneReleased (void* parent);
@@ -243,7 +244,7 @@ public:
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
 	static void doneReleased (void* parent);

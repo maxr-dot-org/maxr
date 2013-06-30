@@ -1954,7 +1954,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 	if (!Building) return;
 	gameGUI.callMiniMapDraw();
 
-	if (activeMenu) activeMenu->handleDestroyUnit (Building, NULL);
+	if (activeMenu) activeMenu->handleDestroyUnit (*Building);
 	getMap()->deleteBuilding (*Building);
 
 	if (!Building->owner)
@@ -1991,7 +1991,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 {
 	if (!Vehicle) return;
 
-	if (activeMenu) activeMenu->handleDestroyUnit (NULL, Vehicle);
+	if (activeMenu) activeMenu->handleDestroyUnit (*Vehicle);
 	getMap()->deleteVehicle (*Vehicle);
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
