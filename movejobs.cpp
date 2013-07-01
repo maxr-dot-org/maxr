@@ -910,28 +910,6 @@ cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVe
 	init (iSrcOff, Vehicle);
 }
 
-#if 0
-cClientMoveJob::cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle) :
-	client (client_)
-{
-	this->Waypoints = Waypoints;
-	const sWaypoint* nextWaypoint = Waypoints;
-	while (nextWaypoint)
-	{
-		if (!nextWaypoint->next)
-		{
-			DestX = nextWaypoint->X;
-			DestY = nextWaypoint->Y;
-		}
-		nextWaypoint = nextWaypoint->next;
-	}
-
-	if (Waypoints) calcNextDir();
-
-	init (iSrcOff, Vehicle);
-}
-#endif
-
 void cClientMoveJob::init (int iSrcOff, cVehicle* Vehicle)
 {
 	Map = client->getMap();
