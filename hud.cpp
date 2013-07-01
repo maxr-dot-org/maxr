@@ -485,6 +485,7 @@ cGameGUI::cGameGUI (cMap* map_) :
 	miniMapOffY (0),
 	shiftPressed (false),
 	overUnitField (NULL),
+	FxList (new cFxContainer),
 	zoomSlider (20, 274, calcMinZoom(), 1.0f, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
 	endButton (391, 4, lngPack.i18n ("Text~Hud~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL),
 	preferencesButton (86, 4, lngPack.i18n ("Text~Hud~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE),
@@ -699,10 +700,6 @@ cGameGUI::~cGameGUI()
 	for (size_t i = 0; i != messages.size(); ++i)
 	{
 		delete messages[i];
-	}
-	for (size_t i = 0; i != FxList.size(); ++i)
-	{
-		delete FxList[i];
 	}
 }
 
@@ -3412,7 +3409,7 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 
 void cGameGUI::addFx (cFx* fx)
 {
-	FxList.insert (FxList.begin(), fx);
+	FxList->push_front (fx);
 	fx->playSound (*this);
 }
 
@@ -3421,38 +3418,15 @@ void cGameGUI::drawFx (bool bottom) const
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };	SDL_SetClipRect (buffer, &clipRect);
 	SDL_SetClipRect (buffer, &clipRect);
 
-	for (unsigned int i = 0; i < client->FxList.size(); i++)
-	{
-		if (client->FxList[i]->bottom == bottom)
-		{
-			client->FxList[i]->draw (*this);
-		}
-	}
-
-	for (unsigned int i = 0; i < FxList.size(); i++)
-	{
-		if (FxList[i]->bottom == bottom)
-		{
-			FxList[i]->draw (*this);
-		}
-	}
+	client->FxList->draw (*this, bottom);
+	FxList->draw (*this, bottom);
 
 	SDL_SetClipRect (buffer, NULL);
 }
 
 void cGameGUI::runFx()
 {
-	for (unsigned int i = 0; i < FxList.size(); i++)
-	{
-		FxList[i]->run();
-
-		if (FxList[i]->isFinished())
-		{
-			delete FxList[i];
-			FxList.erase (FxList.begin() + i);
-			i--;
-		}
-	}
+	FxList->run();
 }
 
 SDL_Rect cGameGUI::calcScreenPos (int x, int y) const

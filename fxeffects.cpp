@@ -54,6 +54,53 @@ void cFx::run()
 }
 
 //------------------------------------------------------------------------------
+
+cFxContainer::~cFxContainer()
+{
+	for (size_t i = 0, size = fxs.size(); i != size; ++i)
+	{
+		delete fxs[i];
+	}
+}
+
+void cFxContainer::push_back (cFx* fx)
+{
+	fxs.push_back (fx);
+}
+
+void cFxContainer::push_front (cFx* fx)
+{
+	fxs.insert (fxs.begin(), fx);
+}
+
+void cFxContainer::draw (const cGameGUI& gameGUI, bool bottom) const
+{
+	for (size_t i = 0, size = fxs.size(); i != size; ++i)
+	{
+		if (fxs[i]->bottom == bottom)
+		{
+			fxs[i]->draw (gameGUI);
+		}
+	}
+}
+
+void cFxContainer::run()
+{
+	for (std::vector<cFx*>::iterator it = fxs.begin(); it != fxs.end(); )
+	{
+		cFx* fx = *it;
+
+		fx->run();
+		if (fx->isFinished())
+		{
+			delete fx;
+			it = fxs.erase (it);
+		}
+		else ++it;
+	}
+}
+
+//------------------------------------------------------------------------------
 cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
 	cFx (false, x, y),
 	image (NULL),

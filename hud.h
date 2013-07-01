@@ -25,10 +25,12 @@
 
 class cClient;
 class cFx;
+class cFxContainer;
 
 // TODO-list for the gameGUI:
 //
-// - change code that hud-background will not be drawn every frame (makes ~20fps on this machine!)
+// - change code that hud-background will not be drawn every frame
+//   (makes ~20fps on this machine!)
 // - find a good way do display the chat-box
 // - reimplement extra-players
 // - add documentation
@@ -41,7 +43,7 @@ class cFx;
 #define HUD_BOTTOM_HIGHT	14
 #define HUD_TOTAL_HIGHT		(HUD_TOP_HIGHT+HUD_BOTTOM_HIGHT)
 
-#define MAX_SAVE_POSITIONS	4
+#define MAX_SAVE_POSITIONS 4
 
 
 /** structure for the messages displayed in the game */
@@ -233,8 +235,8 @@ private:
 	/** Saved positions for hotkeys F5-F8 */
 	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
-	/** lists with all FX-Animations. Gui-only (= not synchonous to game time) */
-	std::vector<cFx*> FxList;
+	/** lists with all FX-Animations. Gui-only (= not synchoneous to game time) */
+	AutoPtr<cFxContainer>::type FxList;
 
 	SDL_Surface* generateMiniMapSurface();
 	bool loadPanelGraphics();

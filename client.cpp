@@ -74,6 +74,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	Map (new cMap (staticMap)),
 	PlayerList (playerList),
 	gameTimer(),
+	FxList (new cFxContainer),
 	gameGUI (Map)
 {
 	gameGUI.setClient (this);
@@ -104,10 +105,6 @@ cClient::~cClient()
 	delete casualtiesTracker;
 
 	StopFXLoop (gameGUI.iObjectStream);
-	for (size_t i = 0; i != FxList.size(); ++i)
-	{
-		delete FxList[i];
-	}
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
 		delete attackJobs[i];
@@ -238,22 +235,12 @@ void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDest
 
 void cClient::runFx()
 {
-	for (unsigned int i = 0; i < FxList.size(); i++)
-	{
-		FxList[i]->run();
-
-		if (FxList[i]->isFinished())
-		{
-			delete FxList[i];
-			FxList.erase (FxList.begin() + i);
-			i--;
-		}
-	}
+	FxList->run();
 }
 
 void cClient::addFx (cFx* fx)
 {
-	FxList.push_back (fx);
+	FxList->push_back (fx);
 	fx->playSound (gameGUI);
 }
 

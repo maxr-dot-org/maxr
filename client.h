@@ -30,7 +30,7 @@ class cCasualtiesTracker;
 class cClientAttackJob;
 class cClientMoveJob;
 class cEventHandling;
-class cFx;
+class cFxContainer;
 class cJob;
 class cMap;
 class cNetMessage;
@@ -310,7 +310,7 @@ private:
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */
-	std::vector<cFx*> FxList;
+	AutoPtr<cFxContainer>::type FxList;
 	/** list with the running clientAttackJobs */
 	std::vector<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */

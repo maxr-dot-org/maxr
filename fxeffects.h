@@ -29,6 +29,18 @@ public:
 	virtual void run();
 };
 
+class cFxContainer
+{
+public:
+	~cFxContainer();
+	void push_back (cFx* fx);
+	void push_front (cFx* fx);
+	void draw (const cGameGUI& gameGUI, bool bottom) const;
+	void run();
+private:
+	std::vector<cFx*> fxs;
+};
+
 class cFxMuzzle : public cFx
 {
 protected:
