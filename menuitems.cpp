@@ -3583,7 +3583,7 @@ cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& cli
 
 	maxItems = (position.h - 25) / 55;
 
-	unitDetails = new AutoPtr<cMenuUnitDetails>::type [maxItems];
+	unitDetails = new AutoPtr<cMenuUnitDetails> [maxItems];
 	for (int i = 0; i < maxItems; i++)
 	{
 		unitDetails[i] = new cMenuUnitDetails (position.x + 127, position.y + 17 + 55 * i, true, owner);

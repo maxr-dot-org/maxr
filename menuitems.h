@@ -901,7 +901,7 @@ protected:
 	AutoSurface surface;
 	eMaterialBarTypes materialType;
 
-	AutoPtr<cMenuLabel>::type valueLabel;
+	AutoPtr<cMenuLabel> valueLabel;
 
 	int maxValue, currentValue;
 	bool inverted;
@@ -928,9 +928,9 @@ class cMenuUpgradeHandler : public cMenuItemContainer
 	cUpgradeHangarMenu* parentMenu;
 	cMenuUnitListItem* selection;
 
-	AutoPtr<cMenuButton>::type decreaseButtons[8];
-	AutoPtr<cMenuButton>::type increaseButtons[8];
-	AutoPtr<cMenuLabel>::type costsLabel[8];
+	AutoPtr<cMenuButton> decreaseButtons[8];
+	AutoPtr<cMenuButton> increaseButtons[8];
+	AutoPtr<cMenuLabel> costsLabel[8];
 
 	cUpgradeCalculator::UpgradeTypes getUpgradeType (sUnitUpgrade upgrade);
 
@@ -998,9 +998,9 @@ protected:
 	int maximalOffset;
 	int scrollerSteps;
 
-	AutoPtr<cMenuButton>::type upButton;
-	AutoPtr<cMenuButton>::type downButton;
-	AutoPtr<cMenuScroller>::type scroller;
+	AutoPtr<cMenuButton> upButton;
+	AutoPtr<cMenuButton> downButton;
+	AutoPtr<cMenuScroller> scroller;
 
 	void createSurface();
 public:
@@ -1027,7 +1027,7 @@ protected:
 	int maxLines;
 	int maxDrawLines;
 
-	AutoPtr<cMenuScrollBar>::type scrollBar;
+	AutoPtr<cMenuScrollBar> scrollBar;
 public:
 	cMenuListBox (int x, int y, int w, int h, int maxLines_, cMenu* parentMenu_);
 
@@ -1149,7 +1149,7 @@ class cMenuPlayersBox : public cMenuItemContainer
 	std::vector<cMenuLabel*> playerNames;
 	std::vector<cMenuImage*> playerReadys;
 
-	AutoPtr<cMenuScrollBar>::type scrollBar;
+	AutoPtr<cMenuScrollBar> scrollBar;
 
 	virtual bool preClicked();
 public:
@@ -1166,10 +1166,10 @@ public:
  */
 class cMenuSaveSlot : public cMenuItem
 {
-	AutoPtr<cMenuLabel>::type saveNumber;
-	AutoPtr<cMenuLabel>::type saveType;
-	AutoPtr<cMenuLabel>::type saveTime;
-	AutoPtr<cMenuLineEdit>::type saveName;
+	AutoPtr<cMenuLabel> saveNumber;
+	AutoPtr<cMenuLabel> saveType;
+	AutoPtr<cMenuLabel> saveTime;
+	AutoPtr<cMenuLineEdit> saveName;
 public:
 	cMenuSaveSlot (int x, int y, cMenu* parent);
 
@@ -1189,10 +1189,10 @@ public:
 class cMenuBuildSpeedHandler : public cMenuItemContainer
 {
 	cMenuCheckButton* speedButtons[3];
-	AutoPtr<cMenuRadioGroup>::type speedGroup;
+	AutoPtr<cMenuRadioGroup> speedGroup;
 
-	AutoPtr<cMenuLabel>::type turnsLabels[3];
-	AutoPtr<cMenuLabel>::type costsLabels[3];
+	AutoPtr<cMenuLabel> turnsLabels[3];
+	AutoPtr<cMenuLabel> costsLabels[3];
 
 public:
 	cMenuBuildSpeedHandler (int x, int y);
@@ -1210,11 +1210,11 @@ class cMenuUpgradeFilter : public cMenuItemContainer
 {
 	cHangarMenu* parentMenu;
 
-	AutoPtr<cMenuCheckButton>::type checkButtonTank;
-	AutoPtr<cMenuCheckButton>::type checkButtonPlane;
-	AutoPtr<cMenuCheckButton>::type checkButtonShip;
-	AutoPtr<cMenuCheckButton>::type checkButtonBuilding;
-	AutoPtr<cMenuCheckButton>::type checkButtonTNT;
+	AutoPtr<cMenuCheckButton> checkButtonTank;
+	AutoPtr<cMenuCheckButton> checkButtonPlane;
+	AutoPtr<cMenuCheckButton> checkButtonShip;
+	AutoPtr<cMenuCheckButton> checkButtonBuilding;
+	AutoPtr<cMenuCheckButton> checkButtonTNT;
 
 	static void buttonChanged (void* parent);
 public:
@@ -1272,7 +1272,7 @@ protected:
 public:
 	cMenuSlider (int x, int y, float minValue_, float maxValue_, cMenu* parent_, int wight = 58, eSliderType type_ = SLIDER_TYPE_NORMAL, eSliderDirection direction_ = SLIDER_DIR_LEFTMIN);
 
-	AutoPtr<cMenuScroller>::type scroller;
+	AutoPtr<cMenuScroller> scroller;
 
 	virtual void draw();
 
@@ -1291,7 +1291,7 @@ class cMenuScrollerHandler : public cMenuItem
 	int maxValue;
 	int currentValue;
 
-	AutoPtr<cMenuScroller>::type scroller;
+	AutoPtr<cMenuScroller> scroller;
 
 public:
 	cMenuScrollerHandler (int x, int y, int w, int maxValue_);
@@ -1327,7 +1327,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 		REP_SCR_TYPE_REPORTS
 	};
 
-	AutoPtr<cMenuUnitDetails>::type* unitDetails;
+	AutoPtr<cMenuUnitDetails>* unitDetails;
 
 	eReportScreenTypes screenType;
 

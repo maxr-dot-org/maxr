@@ -273,7 +273,7 @@ void cServer::run()
 {
 	while (!bExit)
 	{
-		AutoPtr<cNetMessage>::type event (pollEvent());
+		AutoPtr<cNetMessage> event (pollEvent());
 
 		if (event)
 		{

@@ -143,9 +143,9 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	if (actPlayer == NULL)
 		return;
 
-	AutoPtr<cMap>::type serverMap (NULL);
+	AutoPtr<cMap> serverMap (NULL);
 	std::vector<cPlayer*> serverPlayers;
-	AutoPtr<cServer>::type server (NULL);
+	AutoPtr<cServer> server (NULL);
 	if (isServer)
 	{
 		serverMap = new cMap (*map);
@@ -170,7 +170,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	}
 
 	// init client and his players
-	AutoPtr<cClient>::type client (new cClient (server, network, *eventHandler, *map, &players));
+	AutoPtr<cClient> client (new cClient (server, network, *eventHandler, *map, &players));
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	client->initPlayer (actPlayer);
 
@@ -214,8 +214,8 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cSavegame savegame (savegameNum);
 	if (savegame.load (&server, network) != 1) return;
 	assert (server != NULL);
-	AutoPtr<cStaticMap>::type staticMap (server->Map->staticMap);
-	AutoPtr<cMap>::type serverMap (server->Map);
+	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
+	AutoPtr<cMap> serverMap (server->Map);
 	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
@@ -227,7 +227,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	AutoPtr<cClient>::type client (new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList));
+	AutoPtr<cClient> client (new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList));
 	client->initPlayer (clientPlayerList[player]);
 
 	// in singleplayer only the first player is important
@@ -1371,7 +1371,7 @@ void cPlanetsSelectionMenu::loadMaps()
 	maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (!getUserMapsDir().empty())
 	{
-		AutoPtr<std::vector<std::string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
+		AutoPtr<std::vector<std::string> > userMaps (getFilesOfDirectory (getUserMapsDir()));
 		for (unsigned int i = 0; userMaps != 0 && i < userMaps->size(); i++)
 		{
 			if (!Contains (*maps, (*userMaps) [i]))
@@ -3271,8 +3271,8 @@ bool cNetworkHostMenu::runSavedGame()
 	cSavegame savegame (gameDataContainer.savegameNum);
 	if (savegame.load (&server, network) != 1) return false;
 	assert (server != NULL);
-	AutoPtr<cStaticMap>::type staticMap (server->Map->staticMap);
-	AutoPtr<cMap>::type serverMap (server->Map);
+	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
+	AutoPtr<cMap> serverMap (server->Map);
 	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	// first we check whether all necessary players are connected
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
@@ -3354,7 +3354,7 @@ bool cNetworkHostMenu::runSavedGame()
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
 	}
 	// init client and his player
-	AutoPtr<cClient>::type client (new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList));
+	AutoPtr<cClient> client (new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList));
 	client->initPlayer (localPlayer);
 
 	// send data to all players
@@ -4889,7 +4889,7 @@ void cStorageMenu::downReleased (void* parent)
 }
 
 //------------------------------------------------------------------------------
-int cStorageMenu::getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons) [6])
+int cStorageMenu::getClickedButtonVehIndex (AutoPtr<cMenuButton> (&buttons) [6])
 {
 	int maxX = canStorePlanes ? 2 : 3;
 

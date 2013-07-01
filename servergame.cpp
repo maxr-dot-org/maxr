@@ -130,7 +130,7 @@ void cServerGame::run()
 {
 	while (canceled == false)
 	{
-		AutoPtr<cNetMessage>::type event (pollEvent());
+		AutoPtr<cNetMessage> event (pollEvent());
 
 		if (event)
 		{

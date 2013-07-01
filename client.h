@@ -310,7 +310,7 @@ private:
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */
-	AutoPtr<cFxContainer>::type FxList;
+	AutoPtr<cFxContainer> FxList;
 	/** list with the running clientAttackJobs */
 	std::vector<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */

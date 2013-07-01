@@ -182,12 +182,12 @@ class cDialogTransfer : public cMenu
 	cMenuButton incButton;
 	cMenuButton decButton;
 
-	AutoPtr<cMenuMaterialBar>::type resBar;
+	AutoPtr<cMenuMaterialBar> resBar;
 
-	AutoPtr<cMenuImage>::type unitImages[2];
+	AutoPtr<cMenuImage> unitImages[2];
 
-	AutoPtr<cMenuLabel>::type unitNameLabels[2];
-	AutoPtr<cMenuLabel>::type unitCargoLabels[2];
+	AutoPtr<cMenuLabel> unitNameLabels[2];
+	AutoPtr<cMenuLabel> unitCargoLabels[2];
 	cMenuLabel transferLabel;
 	cMenuImage arrowImage;
 
@@ -228,15 +228,15 @@ class cDialogResearch : public cMenu
 	cMenuButton doneButton;
 	cMenuButton cancelButton;
 
-	AutoPtr<cMenuButton>::type incButtons[cResearch::kNrResearchAreas];
-	AutoPtr<cMenuButton>::type decButtons[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuButton> incButtons[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuButton> decButtons[cResearch::kNrResearchAreas];
 
-	AutoPtr<cMenuScrollerHandler>::type scroller[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuScrollerHandler> scroller[cResearch::kNrResearchAreas];
 
-	AutoPtr<cMenuLabel>::type centerCountLabels[cResearch::kNrResearchAreas];
-	AutoPtr<cMenuLabel>::type themeNameLabels[cResearch::kNrResearchAreas];
-	AutoPtr<cMenuLabel>::type percentageLabels[cResearch::kNrResearchAreas];
-	AutoPtr<cMenuLabel>::type turnsLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel> centerCountLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel> themeNameLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel> percentageLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel> turnsLabels[cResearch::kNrResearchAreas];
 
 	void setData();
 public:

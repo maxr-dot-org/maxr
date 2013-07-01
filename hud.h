@@ -236,7 +236,7 @@ private:
 	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
 	/** lists with all FX-Animations. Gui-only (= not synchoneous to game time) */
-	AutoPtr<cFxContainer>::type FxList;
+	AutoPtr<cFxContainer> FxList;
 
 	SDL_Surface* generateMiniMapSurface();
 	bool loadPanelGraphics();

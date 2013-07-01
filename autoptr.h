@@ -7,8 +7,6 @@ template <typename T>
 class AutoPtr
 {
 public:
-	typedef AutoPtr<T> type;
-public:
 	explicit AutoPtr (T* const p_ = NULL) : p (p_) {}
 	~AutoPtr() { delete p; }
 
