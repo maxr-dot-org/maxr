@@ -3,13 +3,36 @@
 
 #include "autoobj.h"
 
-template<typename T>
-void deleteFunc (T* ptr) { delete ptr; }
-
 template <typename T>
-struct AutoPtr
+class AutoPtr
 {
-	typedef AutoObj<T, deleteFunc<T> > type;
+public:
+	typedef AutoPtr<T> type;
+public:
+	explicit AutoPtr (T* const p_ = NULL) : p (p_) {}
+	~AutoPtr() { delete p; }
+
+	T* Release()
+	{
+		T* const p_ = p;
+		p = NULL;
+		return p;
+	}
+
+	void operator = (T* const p_)
+	{
+		delete p;
+		p = p_;
+	}
+
+	T* operator ->() const { return p; }
+	operator T* () const { return p; }
+
+private:
+	T* p;
+
+	AutoPtr (const AutoPtr&)   DELETE_CPP11;  // No copy.
+	void operator = (AutoPtr&) DELETE_CPP11;  // No assignment.
 };
 
 #endif
