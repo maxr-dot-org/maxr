@@ -893,6 +893,19 @@ void cGameGUI::updateInfoTexts()
 	}
 }
 
+void cGameGUI::onRemoveUnit (cUnit& unit)
+{
+	if (getSelectedUnit() == &unit)
+	{
+		deselectUnit();
+	}
+	if (unit.isVehicle())
+	{
+		Remove (selectedVehiclesGroup, static_cast<cVehicle*>(&unit));
+	}
+	callMiniMapDraw();
+}
+
 SDL_Surface* cGameGUI::generateSurface()
 {
 	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_HWSURFACE, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);

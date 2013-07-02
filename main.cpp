@@ -685,7 +685,7 @@ unsigned int cUnitsData::getNrBuildings() const
 
 static int getConstructorIndex()
 {
-	for (unsigned int i = 0; i != UnitsData.getNrVehicles (); ++i)
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
 		const sVehicle& vehicle = UnitsData.vehicle[i];
 
@@ -713,7 +713,7 @@ static int getEngineerIndex()
 
 static int getSurveyorIndex()
 {
-	for (unsigned int i = 0; i != UnitsData.getNrVehicles (); ++i)
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
 		const sVehicle& vehicle = UnitsData.vehicle[i];
 
@@ -1066,3 +1066,53 @@ sFreezeModes::sFreezeModes() :
 	waitForPlayer (false),
 	playerNumber (-1)
 {}
+
+void sFreezeModes::enable (eFreezeMode mode, int playerNumber_)
+{
+	switch (mode)
+	{
+		case FREEZE_WAIT_FOR_SERVER: waitForServer = true; break;
+		case FREEZE_WAIT_FOR_OTHERS: waitForOthers = true; break;
+		case FREEZE_PAUSE: pause = true; break;
+		case FREEZE_WAIT_FOR_RECONNECT: waitForReconnect = true; break;
+		case FREEZE_WAIT_FOR_TURNEND: waitForTurnEnd = true; break;
+		case FREEZE_WAIT_FOR_PLAYER: waitForPlayer = true; break;
+	}
+
+	if (playerNumber_ != -1)
+		playerNumber = playerNumber_;
+}
+
+void sFreezeModes::disable (eFreezeMode mode)
+{
+	switch (mode)
+	{
+		case FREEZE_WAIT_FOR_SERVER: waitForServer = false; break;
+		case FREEZE_WAIT_FOR_OTHERS: waitForOthers = false; break;
+		case FREEZE_PAUSE: pause = false; break;
+		case FREEZE_WAIT_FOR_RECONNECT: waitForReconnect = false; break;
+		case FREEZE_WAIT_FOR_TURNEND: waitForTurnEnd = false; break;
+		case FREEZE_WAIT_FOR_PLAYER: waitForPlayer = false; break;
+	}
+}
+
+bool sFreezeModes::isFreezed() const
+{
+	return waitForServer | waitForOthers | pause |
+		   waitForReconnect | waitForTurnEnd | waitForPlayer;
+}
+
+bool sFreezeModes::isEnable (eFreezeMode mode) const
+{
+	switch (mode)
+	{
+		case FREEZE_WAIT_FOR_SERVER: return waitForServer;
+		case FREEZE_WAIT_FOR_OTHERS: return waitForOthers;
+		case FREEZE_PAUSE: return pause;
+		case FREEZE_WAIT_FOR_RECONNECT: return waitForReconnect;
+		case FREEZE_WAIT_FOR_TURNEND: return waitForTurnEnd;
+		case FREEZE_WAIT_FOR_PLAYER: return waitForPlayer;
+	}
+	assert (0); // Incorrect parameter
+	return false;
+}

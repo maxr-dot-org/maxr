@@ -1939,7 +1939,7 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 {
 	if (!Building) return;
-	gameGUI.callMiniMapDraw();
+	gameGUI.onRemoveUnit (*Building);
 
 	if (activeMenu) activeMenu->handleDestroyUnit (*Building);
 	getMap()->deleteBuilding (*Building);
@@ -1959,11 +1959,6 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 		}
 	}
 	remove_from_intrusivelist (Building->owner->BuildingList, *Building);
-
-	if (gameGUI.getSelectedUnit() == Building)
-	{
-		gameGUI.deselectUnit();
-	}
 
 	if (Building->owner == ActivePlayer)
 		Building->owner->base.deleteBuilding (Building, NULL);
@@ -1990,17 +1985,10 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 	}
 	helperJobs.onRemoveUnit (Vehicle);
 
-	gameGUI.callMiniMapDraw();
+	gameGUI.onRemoveUnit (*Vehicle);
 
 	cPlayer* owner = Vehicle->owner;
 	remove_from_intrusivelist (Vehicle->owner->VehicleList, *Vehicle);
-
-	if (gameGUI.getSelectedUnit() == Vehicle)
-	{
-		gameGUI.deselectUnit();
-	}
-	std::vector<cVehicle*>& selGroup = *gameGUI.getSelVehiclesGroup();
-	Remove (selGroup, Vehicle);
 
 	owner->lastDeletedUnit = Vehicle->iID;
 
@@ -2015,7 +2003,6 @@ void cClient::handleEnd()
 	bWantToEnd = true;
 	sendWantToEndTurn (*this);
 }
-
 
 void cClient::makeHotSeatEnd (int iNextPlayerNum)
 {
@@ -2057,7 +2044,7 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 
 void cClient::handleTurnTime()
 {
-	//TODO: rewrite to gameTime, instead of SDL_Ticks
+	// TODO: rewrite to gameTime, instead of SDL_Ticks
 	static int lastCheckTime = SDL_GetTicks();
 	if (!gameGUI.timer50ms) return;
 	// stop time when waiting for reconnection
@@ -2078,10 +2065,7 @@ void cClient::addActiveMoveJob (cClientMoveJob* MoveJob)
 {
 	MoveJob->bSuspended = false;
 	if (MoveJob->Vehicle) MoveJob->Vehicle->MoveJobActive = true;
-	for (unsigned int i = 0; i < ActiveMJobs.size(); i++)
-	{
-		if (ActiveMJobs[i] == MoveJob) return;
-	}
+	if (Contains (ActiveMJobs, MoveJob)) return;
 	ActiveMJobs.push_back (MoveJob);
 }
 
@@ -2204,7 +2188,6 @@ sSubBase* cClient::getSubBaseFromID (int iID)
 	cBuilding* building = getBuildingFromID (iID);
 	if (building)
 		return building->SubBase;
-
 	return NULL;
 }
 
@@ -2289,86 +2272,22 @@ void cClient::runJobs()
 
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
-	switch (mode)
-	{
-		case FREEZE_WAIT_FOR_SERVER:
-			freezeModes.waitForServer = true;
-			break;
-		case FREEZE_WAIT_FOR_OTHERS:
-			freezeModes.waitForOthers = true;
-			break;
-		case FREEZE_PAUSE:
-			freezeModes.pause = true;
-			break;
-		case FREEZE_WAIT_FOR_RECONNECT:
-			freezeModes.waitForReconnect = true;
-			break;
-		case FREEZE_WAIT_FOR_TURNEND:
-			freezeModes.waitForTurnEnd = true;
-			break;
-		case FREEZE_WAIT_FOR_PLAYER:
-			freezeModes.waitForPlayer = true;
-			break;
-	}
-
-	if (playerNumber != -1)
-		freezeModes.playerNumber = playerNumber;
-
+	freezeModes.enable (mode, playerNumber);
 	gameGUI.updateInfoTexts();
 }
 
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
-	switch (mode)
-	{
-		case FREEZE_WAIT_FOR_SERVER:
-			freezeModes.waitForServer = false;
-			break;
-		case FREEZE_WAIT_FOR_OTHERS:
-			freezeModes.waitForOthers = false;
-			break;
-		case FREEZE_PAUSE:
-			freezeModes.pause = false;
-			break;
-		case FREEZE_WAIT_FOR_RECONNECT:
-			freezeModes.waitForReconnect = false;
-			break;
-		case FREEZE_WAIT_FOR_TURNEND:
-			freezeModes.waitForTurnEnd = false;
-			break;
-		case FREEZE_WAIT_FOR_PLAYER:
-			freezeModes.waitForPlayer = false;
-			break;
-	}
-
+	freezeModes.disable (mode);
 	gameGUI.updateInfoTexts();
 }
 
 bool cClient::isFreezed() const
 {
-	return	freezeModes.pause ||
-			freezeModes.waitForOthers ||
-			freezeModes.waitForPlayer ||
-			freezeModes.waitForReconnect ||
-			freezeModes.waitForServer ||
-			freezeModes.waitForTurnEnd;
+	return freezeModes.isFreezed();
 }
 
 bool cClient::getFreezeMode (eFreezeMode mode) const
 {
-	switch (mode)
-	{
-		case FREEZE_PAUSE: return freezeModes.pause;
-		case FREEZE_WAIT_FOR_RECONNECT: return freezeModes.waitForReconnect;
-		case FREEZE_WAIT_FOR_OTHERS: return freezeModes.waitForOthers;
-		case FREEZE_WAIT_FOR_TURNEND: return freezeModes.waitForTurnEnd;
-		case FREEZE_WAIT_FOR_PLAYER: return freezeModes.waitForPlayer;
-		case FREEZE_WAIT_FOR_SERVER: return freezeModes.waitForServer;
-		default: return false;
-	}
-}
-
-int cClient::getFreezeInfoPlayerNumber() const
-{
-	return freezeModes.playerNumber;
+	return freezeModes.isEnable (mode);
 }

@@ -3914,49 +3914,31 @@ void cServer::runJobs()
 
 void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
+	freezeModes.enable (mode, playerNumber);
 	switch (mode)
 	{
-		case FREEZE_PAUSE:
-			freezeModes.pause = true;
-			gameTimer.stop();
-			break;
-		case FREEZE_WAIT_FOR_RECONNECT:
-			freezeModes.waitForReconnect = true;
-			gameTimer.stop();
-			break;
-		case FREEZE_WAIT_FOR_TURNEND:
-			freezeModes.waitForTurnEnd = true;
-			break;
+		case FREEZE_PAUSE: gameTimer.stop(); break;
+		case FREEZE_WAIT_FOR_RECONNECT: gameTimer.stop(); break;
+		case FREEZE_WAIT_FOR_TURNEND: break;
 		case FREEZE_WAIT_FOR_PLAYER:
-			freezeModes.waitForPlayer = true;
 			//gameTimer.stop(); //done in cGameTimer::nextTickAllowed();
-			freezeModes.playerNumber = playerNumber;
 			break;
 		default:
 			Log.write (" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	sendFreeze (*this, mode, freezeModes.playerNumber);
+	sendFreeze (*this, mode, freezeModes.getPlayerNumber());
 }
 
 void cServer::disableFreezeMode (eFreezeMode mode)
 {
+	freezeModes.disable (mode);
 	switch (mode)
 	{
 		case FREEZE_PAUSE:
-			freezeModes.pause = false;
-			sendUnfreeze (*this, mode);
-			break;
 		case FREEZE_WAIT_FOR_RECONNECT:
-			freezeModes.waitForReconnect = false;
-			sendUnfreeze (*this, mode);
-			break;
 		case FREEZE_WAIT_FOR_TURNEND:
-			freezeModes.waitForTurnEnd = false;
-			sendUnfreeze (*this, mode);
-			break;
 		case FREEZE_WAIT_FOR_PLAYER:
-			freezeModes.waitForPlayer = false;
 			sendUnfreeze (*this, mode);
 			break;
 		default:

@@ -420,27 +420,35 @@ public:
 
 } EX UnitsData;
 
-struct sFreezeModes
-{
-	sFreezeModes();
-
-	bool waitForOthers;		//waiting for the others turn, in turn based mode
-	bool waitForServer;		//waiting response from server
-	bool waitForReconnect;	//game is paused, because the connection to a player is lost
-	bool waitForTurnEnd;	//server is processing the turn end
-	bool pause;				//pause, because... pause
-	bool waitForPlayer;		//waiting for response from a client
-
-	int  playerNumber;
-};
 enum eFreezeMode
 {
-	FREEZE_WAIT_FOR_SERVER,		//waiting response from server
-	FREEZE_WAIT_FOR_OTHERS,		//waiting for the others turn, in turn based mode
-	FREEZE_PAUSE,				//pause, because... pause
-	FREEZE_WAIT_FOR_RECONNECT,	//game is paused, because the connection to a player is lost
-	FREEZE_WAIT_FOR_TURNEND,	//server is processing the turn end
-	FREEZE_WAIT_FOR_PLAYER		//waiting for response from a client
+	FREEZE_WAIT_FOR_SERVER,    // waiting response from server
+	FREEZE_WAIT_FOR_OTHERS,    // waiting for the others turn, in turn based mode
+	FREEZE_PAUSE,              // pause, because... pause
+	FREEZE_WAIT_FOR_RECONNECT, // game is paused, because the connection to a player is lost
+	FREEZE_WAIT_FOR_TURNEND,   // server is processing the turn end
+	FREEZE_WAIT_FOR_PLAYER     // waiting for response from a client
+};
+
+class sFreezeModes
+{
+public:
+	sFreezeModes();
+
+	void disable (eFreezeMode mode);
+	void enable (eFreezeMode mode, int playerNumber);
+	bool isEnable (eFreezeMode mode) const;
+	int getPlayerNumber() const { return playerNumber; }
+	bool isFreezed() const;
+public:
+	bool waitForOthers;    // waiting for the others turn, in turn based mode
+	bool waitForServer;    // waiting response from server
+	bool waitForReconnect; // paused, because the connection to a player is lost
+	bool waitForTurnEnd;   // server is processing the turn end
+	bool pause;            // pause, because... pause
+	bool waitForPlayer;    // waiting for response from a client
+private:
+	int playerNumber;
 };
 
 // OtherData - Class containing the rest of surfaces //////////////////////////

@@ -62,7 +62,7 @@ public:
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 	bool isFreezed() const;
-	int getFreezeInfoPlayerNumber() const;
+	int getFreezeInfoPlayerNumber() const { return freezeModes.getPlayerNumber(); }
 	bool getFreezeMode (eFreezeMode mode) const;
 
 	/**

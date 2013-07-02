@@ -36,15 +36,14 @@ class cFxContainer;
 // - add documentation
 //
 
-#define HUD_LEFT_WIDTH		180
-#define HUD_RIGHT_WIDTH		12
-#define HUD_TOTAL_WIDTH		(HUD_LEFT_WIDTH+HUD_RIGHT_WIDTH)
-#define HUD_TOP_HIGHT		18
-#define HUD_BOTTOM_HIGHT	14
-#define HUD_TOTAL_HIGHT		(HUD_TOP_HIGHT+HUD_BOTTOM_HIGHT)
+#define HUD_LEFT_WIDTH   180
+#define HUD_RIGHT_WIDTH  12
+#define HUD_TOTAL_WIDTH  (HUD_LEFT_WIDTH + HUD_RIGHT_WIDTH)
+#define HUD_TOP_HIGHT    18
+#define HUD_BOTTOM_HIGHT 14
+#define HUD_TOTAL_HIGHT  (HUD_TOP_HIGHT + HUD_BOTTOM_HIGHT)
 
 #define MAX_SAVE_POSITIONS 4
-
 
 /** structure for the messages displayed in the game */
 struct sMessage
@@ -81,7 +80,7 @@ struct sHudStateContainer
 	sHudStateContainer() : tntChecked (false), hitsChecked (false), lockChecked (false), surveyChecked (false),
 		statusChecked (false), scanChecked (false), rangeChecked (false), twoXChecked (false), fogChecked (false),
 		ammoChecked (false), gridChecked (false), colorsChecked (false),
-		zoom (0.0), offX (0), offY (0), selUnitID (0) {}
+		zoom (0.0f), offX (0), offY (0), selUnitID (0) {}
 };
 
 struct sHudPosition
@@ -115,10 +114,13 @@ enum eMouseInputMode
 	stealMode
 };
 
-
 /**
- * This class draws all the debug output on the screen. It is an seperate class, so you can add an "friend class cDebugOutput;" to the class,
- * which contains the data to display. So there is no need to make members public only to use them in the debug output.
+ * This class draws all the debug output on the screen.
+ * It is a seperate class,
+ * so you can add a "friend class cDebugOutput;" to the class,
+ * which contains the data to display.
+ * So there is no need to make members public
+ * only to use them in the debug output.
  *@author eiko
  */
 class cDebugOutput
@@ -193,7 +195,7 @@ private:
 	int miniMapOffY;
 	float zoom;
 
-	/** direction from which the wind is comming */
+	/** direction from which the wind is coming */
 	float windDir;
 
 	/** framecounter for the animations */
@@ -433,7 +435,7 @@ public:
 
 	void addFx (cFx* fx);
 
-	/** Adds an message to be displayed in the game */
+	/** Adds a message to be displayed in the game */
 	void addMessage (const std::string& sMsg);
 	/** displays a message with 'goto' coordinates */
 	std::string addCoords (const std::string& msg, int x, int y);
@@ -520,7 +522,6 @@ public:
 
 	void setStartup (bool startup_);
 
-	std::vector<cVehicle*>* getSelVehiclesGroup() { return &selectedVehiclesGroup; }
 	const cUnit* getSelectedUnit() const { return selectedUnit; }
 	cUnit* getSelectedUnit() { return selectedUnit; }
 	cVehicle* getSelectedVehicle();
@@ -528,6 +529,8 @@ public:
 
 	void selectUnit (cUnit& unit);
 	void deselectUnit();
+
+	void onRemoveUnit (cUnit& unit);
 
 	/**
 	* activates 'mode' if not active, activates 'normalInput' otherwise
