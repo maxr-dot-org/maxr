@@ -3289,8 +3289,8 @@ void cGameGUI::preDrawFunction()
 	// draw the map screen with everything on it
 	const int zoomOffX = (int) (offX * getZoom());
 	const int zoomOffY = (int) (offY * getZoom());
-	const int startX = ( (offX - 1) / 64) - 1 < 0 ? 0 : ( (offX - 1) / 64) - 1;
-	const int startY = ( (offY - 1) / 64) - 1 < 0 ? 0 : ( (offY - 1) / 64) - 1;
+	const int startX = std::max(0, (offX - 1) / 64 - 1);
+	const int startY = std::max(0, (offY - 1) / 64 - 1);
 	int endX = Round (offX / 64.0f + (float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getTileSize());
 	endX = std::min (endX, map->getSize() - 1);
 	int endY = Round (offY / 64.0f + (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getTileSize());

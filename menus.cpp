@@ -1565,7 +1565,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
 	, network (network_)
 	, gameDataContainer (gameDataContainer_)
-	, clan (player->getClan() >= 0 ? player->getClan() : 0)
+	, clan (std::max(0, player->getClan()))
 {
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&cMenu::doneReleased);
