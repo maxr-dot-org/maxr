@@ -20,7 +20,7 @@
 #define vehiclesH
 #include "defines.h"
 #include <SDL.h>
-#include "automjobs.h"
+
 #include "main.h" // for sUnitData
 #include "unit.h"
 #include <vector>

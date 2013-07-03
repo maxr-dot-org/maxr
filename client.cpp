@@ -21,6 +21,7 @@
 #include "client.h"
 
 #include "attackJobs.h"
+#include "automjobs.h"
 #include "buildings.h"
 #include "casualtiestracker.h"
 #include "clientevents.h"

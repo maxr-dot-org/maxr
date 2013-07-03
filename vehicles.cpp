@@ -21,6 +21,7 @@
 #include "vehicles.h"
 
 #include "attackJobs.h"
+#include "automjobs.h"
 #include "buildings.h"
 #include "client.h"
 #include "clientevents.h"
