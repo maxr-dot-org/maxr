@@ -1216,12 +1216,11 @@ void cUnit::deleteStoredUnits()
 {
 	for (size_t i = 0; i != storedUnits.size(); ++i)
 	{
-		cVehicle* unit = storedUnits[i];
-		remove_from_intrusivelist (unit->owner->VehicleList, *unit);
-		if (unit->isVehicle())
-			unit->deleteStoredUnits();
+		cVehicle* vehicle = storedUnits[i];
+		remove_from_intrusivelist (vehicle->owner->VehicleList, *vehicle);
+		vehicle->deleteStoredUnits();
 
-		delete unit;
+		delete vehicle;
 	}
 	storedUnits.clear();
 }
