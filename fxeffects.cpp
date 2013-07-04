@@ -195,19 +195,7 @@ cFxExploSmall::cFxExploSmall (int x, int y) :
 
 void cFxExploSmall::playSound (const cGameGUI& gameGUI) const
 {
-	const int nr = random (3);
-	if (nr == 0)
-	{
-		PlayFX (SoundData.EXPSmall0);
-	}
-	else if (nr == 1)
-	{
-		PlayFX (SoundData.EXPSmall1);
-	}
-	else
-	{
-		PlayFX (SoundData.EXPSmall2);
-	}
+	PlayRandomFX (SoundData.EXPSmall);
 }
 
 //------------------------------------------------------------------------------
@@ -224,34 +212,11 @@ void cFxExploBig::playSound (const cGameGUI& gameGUI) const
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (map.isWaterOrCoast (posX / 64, posY / 64))
 	{
-		if (random (2))
-		{
-			PlayFX (SoundData.EXPBigWet0);
-		}
-		else
-		{
-			PlayFX (SoundData.EXPBigWet1);
-		}
+		PlayRandomFX (SoundData.EXPBigWet);
 	}
 	else
 	{
-		const int nr = random (4);
-		if (nr == 0)
-		{
-			PlayFX (SoundData.EXPBig0);
-		}
-		else if (nr == 1)
-		{
-			PlayFX (SoundData.EXPBig1);
-		}
-		else if (nr == 2)
-		{
-			PlayFX (SoundData.EXPBig2);
-		}
-		else
-		{
-			PlayFX (SoundData.EXPBig3);
-		}
+		PlayRandomFX (SoundData.EXPBig);
 	}
 }
 
@@ -265,19 +230,7 @@ cFxExploAir::cFxExploAir (int x, int y) :
 
 void cFxExploAir::playSound (const cGameGUI& gameGUI) const
 {
-	const int nr = random (3);
-	if (nr == 0)
-	{
-		PlayFX (SoundData.EXPSmall0);
-	}
-	else if (nr == 1)
-	{
-		PlayFX (SoundData.EXPSmall1);
-	}
-	else
-	{
-		PlayFX (SoundData.EXPSmall2);
-	}
+	PlayRandomFX (SoundData.EXPSmall);
 }
 
 //------------------------------------------------------------------------------
@@ -290,19 +243,7 @@ cFxExploWater::cFxExploWater (int x, int y) :
 
 void cFxExploWater::playSound (const cGameGUI& gameGUI) const
 {
-	const int nr = random (3);
-	if (nr == 0)
-	{
-		PlayFX (SoundData.EXPSmallWet0);
-	}
-	else if (nr == 1)
-	{
-		PlayFX (SoundData.EXPSmallWet1);
-	}
-	else
-	{
-		PlayFX (SoundData.EXPSmallWet2);
-	}
+	PlayRandomFX (SoundData.EXPSmallWet);
 }
 
 //------------------------------------------------------------------------------

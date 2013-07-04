@@ -184,8 +184,7 @@ int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, const std::vec
 		// automoving surveyors must not tell this
 		if (!vehicle->autoMJob)
 		{
-			if (random (2)) PlayVoice (VoiceData.VOINoPath1);
-			else PlayVoice (VoiceData.VOINoPath2);
+			PlayRandomVoice (VoiceData.VOINoPath);
 		}
 		return 0;
 	}
@@ -1131,12 +1130,12 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 	{
 		if (iType == SUPPLY_TYPE_REARM)
 		{
-			PlayVoice (VoiceData.VOILoaded);
+			PlayVoice (VoiceData.VOILoaded[0]);
 			PlayFX (SoundData.SNDReload);
 		}
 		else
 		{
-			PlayVoice (VoiceData.VOIRepaired);
+			PlayVoice (VoiceData.VOIRepaired[0]);
 			PlayFX (SoundData.SNDRepair);
 		}
 	}
@@ -1659,13 +1658,7 @@ void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
 	}
 	else
 	{
-		const int i = random (3);
-		if (i == 0)
-			PlayVoice (VoiceData.VOICommandoFailed1);
-		else if (i == 1)
-			PlayVoice (VoiceData.VOICommandoFailed2);
-		else
-			PlayVoice (VoiceData.VOICommandoFailed3);
+		PlayRandomVoice (VoiceData.VOICommandoFailed);
 	}
 
 	/* Ignore vehicle ID. */
@@ -1891,10 +1884,8 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit,
 
 		if (AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack)
 			PlayVoice (VoiceData.VOISubDetected);
-		else if (random (2))
-			PlayVoice (VoiceData.VOIDetected1);
 		else
-			PlayVoice (VoiceData.VOIDetected2);
+			PlayRandomVoice (VoiceData.VOIDetected);
 	}
 }
 

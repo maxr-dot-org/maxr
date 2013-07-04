@@ -19,16 +19,21 @@
 #ifndef soundH
 #define soundH
 #include <string.h>
+#include "autoobj.h"
 #include "defines.h"
 #include <vector>
 
 #define sSOUND struct Mix_Chunk
 
+extern void FreesSound (sSOUND *sound);
+
+typedef AutoObj<sSOUND, FreesSound> AutoSound;
+
 // Volumes ///////////////////////////////////////////////////////////////////
-#define SOUND_CHANNEL_MIN	0
-#define SOUND_CHANNEL_MAX	2
-#define VOICE_CHANNEL_MIN	SOUND_CHANNEL_MAX+1
-#define VOICE_CHANNEL_MAX	5
+#define SOUND_CHANNEL_MIN 0
+#define SOUND_CHANNEL_MAX 2
+#define VOICE_CHANNEL_MIN (SOUND_CHANNEL_MAX + 1)
+#define VOICE_CHANNEL_MAX 5
 EX int SoundChannel;
 EX int VoiceChannel;
 EX int SoundLoopChannel;
@@ -43,113 +48,84 @@ class cSoundData
 {
 public:
 	// General
-	sSOUND* SNDHudSwitch;
-	sSOUND* SNDHudButton;
-	sSOUND* SNDMenuButton;
-	sSOUND* SNDChat;
-	sSOUND* SNDObjectMenu;
-	sSOUND* SNDArm;
-	sSOUND* SNDBuilding;
-	sSOUND* SNDClearing;
-	sSOUND* SNDQuitsch;
-	sSOUND* SNDActivate;
-	sSOUND* SNDLoad;
-	sSOUND* SNDReload;
-	sSOUND* SNDRepair;
-	sSOUND* SNDLandMinePlace;
-	sSOUND* SNDLandMineClear;
-	sSOUND* SNDSeaMinePlace;
-	sSOUND* SNDSeaMineClear;
-	sSOUND* SNDPanelOpen;
-	sSOUND* SNDPanelClose;
-	sSOUND* SNDAbsorb;
+	AutoSound SNDHudSwitch;
+	AutoSound SNDHudButton;
+	AutoSound SNDMenuButton;
+	AutoSound SNDChat;
+	AutoSound SNDObjectMenu;
+	AutoSound SNDArm;
+	AutoSound SNDBuilding;
+	AutoSound SNDClearing;
+	AutoSound SNDQuitsch;
+	AutoSound SNDActivate;
+	AutoSound SNDLoad;
+	AutoSound SNDReload;
+	AutoSound SNDRepair;
+	AutoSound SNDLandMinePlace;
+	AutoSound SNDLandMineClear;
+	AutoSound SNDSeaMinePlace;
+	AutoSound SNDSeaMineClear;
+	AutoSound SNDPanelOpen;
+	AutoSound SNDPanelClose;
+	AutoSound SNDAbsorb;
 
 	// Explosions
-	sSOUND* EXPBigWet0;
-	sSOUND* EXPBigWet1;
-	sSOUND* EXPBig0;
-	sSOUND* EXPBig1;
-	sSOUND* EXPBig2;
-	sSOUND* EXPBig3;
-	sSOUND* EXPSmallWet0;
-	sSOUND* EXPSmallWet1;
-	sSOUND* EXPSmallWet2;
-	sSOUND* EXPSmall0;
-	sSOUND* EXPSmall1;
-	sSOUND* EXPSmall2;
+	AutoSound EXPBigWet[2];
+	AutoSound EXPBig[4];
+	AutoSound EXPSmallWet[3];
+	AutoSound EXPSmall[3];
 
 	// Dummy
-	sSOUND* DummySound;
+	AutoSound DummySound;
 } EX SoundData;
 
 // Voices ////////////////////////////////////////////////////////////////////
 class cVoiceData
 {
 public:
-	sSOUND* VOIAttackingEnemy1;
-	sSOUND* VOIAttackingEnemy2;
-	sSOUND* VOINoPath1;
-	sSOUND* VOINoPath2;
-	sSOUND* VOIBuildDone1;
-	sSOUND* VOIBuildDone2;
-	sSOUND* VOIBuildDone3;
-	sSOUND* VOIBuildDone4;
-	sSOUND* VOINoSpeed;
-	sSOUND* VOIStatusRed;
-	sSOUND* VOIStatusRed2;
-	sSOUND* VOIStatusYellow;
-	sSOUND* VOIStatusYellow2;
-	sSOUND* VOIClearing;
-	sSOUND* VOILowAmmo1;
-	sSOUND* VOILowAmmo2;
-	sSOUND* VOIOK1;
-	sSOUND* VOIOK2;
-	sSOUND* VOIOK3;
-	sSOUND* VOIOK4;
-	sSOUND* VOISentry;
-	sSOUND* VOITransferDone;
-	sSOUND* VOILoaded;
-	sSOUND* VOILoaded2;
-	sSOUND* VOIRepaired;
-	sSOUND* VOIRepaired2;
-	sSOUND* VOIRepairedAll1;
-	sSOUND* VOIRepairedAll2;
-	sSOUND* VOILayingMines;
-	sSOUND* VOIClearingMines;
-	sSOUND* VOIClearingMines2;
-	sSOUND* VOIResearchComplete;
-	sSOUND* VOIUnitStolen;
-	sSOUND* VOIUnitDisabled;
-	sSOUND* VOICommandoFailed1;
-	sSOUND* VOICommandoFailed2;
-	sSOUND* VOICommandoFailed3;
-	sSOUND* VOIDisabled;
-	sSOUND* VOISaved;
-	sSOUND* VOIStartNone;
-	sSOUND* VOIStartOne;
-	sSOUND* VOIStartMore;
-	sSOUND* VOIDetected1;
-	sSOUND* VOIDetected2;
-	sSOUND* VOIAttackingUs;
-	sSOUND* VOIAttackingUs2;
-	sSOUND* VOIAttackingUs3;
-	sSOUND* VOIDestroyedUs;
-	sSOUND* VOIAttacking1;
-	sSOUND* VOIAttacking2;
-	sSOUND* VOILanding;
-	sSOUND* VOISubDetected;
-	sSOUND* VOISurveying;
-	sSOUND* VOISurveying2;
-	sSOUND* VOITurnEnd20Sec1;
-	sSOUND* VOITurnEnd20Sec2;
-	sSOUND* VOIUnitStolenByEnemy;
+	AutoSound VOIAttackingEnemy[2];
+	AutoSound VOINoPath[2];
+	AutoSound VOIBuildDone[4];
+	AutoSound VOINoSpeed;
+	AutoSound VOIStatusRed[2];
+	AutoSound VOIStatusYellow[2];
+	AutoSound VOIClearing;
+	AutoSound VOILowAmmo[2];
+	AutoSound VOIOK[4];
+	AutoSound VOISentry;
+	AutoSound VOITransferDone;
+	AutoSound VOILoaded[2];
+	AutoSound VOIRepaired[2];
+	AutoSound VOIRepairedAll[2];
+	AutoSound VOILayingMines;
+	AutoSound VOIClearingMines[2];
+	AutoSound VOIResearchComplete;
+	AutoSound VOIUnitStolen;
+	AutoSound VOIUnitDisabled;
+	AutoSound VOICommandoFailed[3];
+	AutoSound VOIDisabled;
+	AutoSound VOISaved;
+	AutoSound VOIStartNone;
+	AutoSound VOIStartOne;
+	AutoSound VOIStartMore;
+	AutoSound VOIDetected[2];
+	AutoSound VOIAttackingUs[3];
+	AutoSound VOIDestroyedUs;
+	AutoSound VOIAttacking[2];
+	AutoSound VOILanding;
+	AutoSound VOISubDetected;
+	AutoSound VOISurveying[2];
+	AutoSound VOITurnEnd20Sec[2];
+	AutoSound VOIUnitStolenByEnemy;
 } EX VoiceData;
 
 // Prototypen ////////////////////////////////////////////////////////////////
 int InitSound (int frequency, int chunksize);
 void CloseSound();
 void PlayVoice (sSOUND* snd);
+template <int N> void PlayRandomVoice (AutoSound (&snds)[N]);
 void PlayFX (sSOUND* snd);
+template <int N> void PlayRandomFX (AutoSound (&snds)[N]);
 void PlayMusic (char const* file);
 void SetMusicVol (int vol);
 void StopMusic();

@@ -1074,10 +1074,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 				if (Vehicle == client->gameGUI.getSelectedUnit())
 				{
-					if (random (2))
-						PlayVoice (VoiceData.VOINoPath1);
-					else
-						PlayVoice (VoiceData.VOINoPath2);
+					PlayRandomVoice (VoiceData.VOINoPath);
 				}
 			}
 		}

@@ -2153,8 +2153,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else
 					{
-						if (random (2)) PlayVoice (VoiceData.VOINoPath1);
-						else PlayVoice (VoiceData.VOINoPath2);
+						PlayRandomVoice (VoiceData.VOINoPath);
 					}
 				}
 			}
@@ -2172,8 +2171,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else
 					{
-						if (random (2)) PlayVoice (VoiceData.VOINoPath1);
-						else PlayVoice (VoiceData.VOINoPath2);
+						PlayRandomVoice (VoiceData.VOINoPath);
 					}
 				}
 			}
@@ -2194,8 +2192,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else
 					{
-						if (random (2)) PlayVoice (VoiceData.VOINoPath1);
-						else PlayVoice (VoiceData.VOINoPath2);
+						PlayRandomVoice (VoiceData.VOINoPath);
 					}
 				}
 			}
@@ -2213,8 +2210,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else
 					{
-						if (random (2)) PlayVoice (VoiceData.VOINoPath1);
-						else PlayVoice (VoiceData.VOINoPath2);
+						PlayRandomVoice (VoiceData.VOINoPath);
 					}
 				}
 			}
@@ -2264,8 +2260,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						}
 						else
 						{
-							if (random (2)) PlayVoice (VoiceData.VOINoPath1);
-							else PlayVoice (VoiceData.VOINoPath2);
+							PlayRandomVoice (VoiceData.VOINoPath);
 						}
 					}
 				}

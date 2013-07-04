@@ -61,6 +61,11 @@ void CloseSound()
 	Mix_CloseAudio();
 }
 
+void FreesSound (sSOUND *sound)
+{
+	Mix_FreeChunk (sound);
+}
+
 // FIXME: internal play function, should not be accessed from outside
 // and held more sanity checks and take care of sound channels
 // to e.g. open new channels if needed
@@ -86,6 +91,16 @@ void PlayVoice (sSOUND* snd)
 	if (VoiceChannel > VOICE_CHANNEL_MAX) VoiceChannel = VOICE_CHANNEL_MIN;
 }
 
+template <int N> void PlayRandomVoice (AutoSound (&snds)[N])
+{
+	PlayVoice (snds[random (N)]);
+}
+
+// Instanciate used versions
+template void PlayRandomVoice<2> (AutoSound (&snds)[2]);
+template void PlayRandomVoice<3> (AutoSound (&snds)[3]);
+template void PlayRandomVoice<4> (AutoSound (&snds)[4]);
+
 // plays fx sound
 void PlayFX (sSOUND* snd)
 {
@@ -95,6 +110,17 @@ void PlayFX (sSOUND* snd)
 	SoundChannel++;
 	if (SoundChannel > SOUND_CHANNEL_MAX) SoundChannel = SOUND_CHANNEL_MIN;
 }
+
+template <int N>
+void PlayRandomFX (AutoSound (&snds)[N])
+{
+	PlayFX (snds[random (N)]);
+}
+
+// Instanciate used versions
+template void PlayRandomFX<2> (AutoSound (&snds)[2]);
+template void PlayRandomFX<3> (AutoSound (&snds)[3]);
+template void PlayRandomFX<4> (AutoSound (&snds)[4]);
 
 // plays passed ogg/wav/mod-musicfile in a loop
 void PlayMusic (char const* const file)

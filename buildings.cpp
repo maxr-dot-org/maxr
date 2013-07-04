@@ -1546,15 +1546,7 @@ void cBuilding::Select (cGameGUI& gameGUI)
 		PlayVoice (VoiceData.VOIResearchComplete);
 	else if (factoryHasJustFinishedBuilding())
 	{
-		int i = random (4);
-		if (i == 0)
-			PlayVoice (VoiceData.VOIBuildDone1);
-		else if (i == 1)
-			PlayVoice (VoiceData.VOIBuildDone2);
-		else if (i == 2)
-			PlayVoice (VoiceData.VOIBuildDone3);
-		else
-			PlayVoice (VoiceData.VOIBuildDone4);
+		PlayRandomVoice (VoiceData.VOIBuildDone);
 	}
 	else if (!IsWorking)
 		PlayFX (SoundData.SNDHudButton);

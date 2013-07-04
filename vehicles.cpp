@@ -1222,17 +1222,11 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 		// Status green
 		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
 		{
-			if (random (2))
-				PlayVoice (VoiceData.VOIAttacking1);
-			else
-				PlayVoice (VoiceData.VOIAttacking2);
+			PlayRandomVoice (VoiceData.VOIAttacking);
 		}
 		else if (autoMJob)
 		{
-			if (random (2))
-				PlayVoice (VoiceData.VOISurveying);
-			else
-				PlayVoice (VoiceData.VOISurveying2);
+			PlayRandomVoice (VoiceData.VOISurveying);
 		}
 		else if (data.speedCur == 0)
 		{
@@ -1245,15 +1239,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 			if (!BuildRounds)
 			{
 				// Bau beendet:
-				int i = random (4);
-				if (i == 0)
-					PlayVoice (VoiceData.VOIBuildDone1);
-				else if (i == 1)
-					PlayVoice (VoiceData.VOIBuildDone2);
-				else if (i == 2)
-					PlayVoice (VoiceData.VOIBuildDone3);
-				else
-					PlayVoice (VoiceData.VOIBuildDone4);
+				PlayRandomVoice (VoiceData.VOIBuildDone);
 			}
 		}
 		else if (IsClearing)
@@ -1264,10 +1250,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 		else if (data.canAttack && !data.ammoCur)
 		{
 			// no ammo
-			if (random (2))
-				PlayVoice (VoiceData.VOILowAmmo1);
-			else
-				PlayVoice (VoiceData.VOILowAmmo2);
+			PlayRandomVoice (VoiceData.VOILowAmmo);
 		}
 		else if (sentryActive)
 		{
@@ -1276,10 +1259,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 		}
 		else if (ClearMines)
 		{
-			if (random (2))
-				PlayVoice (VoiceData.VOIClearingMines);
-			else
-				PlayVoice (VoiceData.VOIClearingMines2);
+			PlayRandomVoice (VoiceData.VOIClearingMines);
 		}
 		else if (LayMines)
 		{
@@ -1287,32 +1267,15 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 		}
 		else
 		{
-			int nr;
-			// Alles OK:
-			nr = random (4);
-
-			if (nr == 0)
-				PlayVoice (VoiceData.VOIOK1);
-			else if (nr == 1)
-				PlayVoice (VoiceData.VOIOK2);
-			else if (nr == 2)
-				PlayVoice (VoiceData.VOIOK3);
-			else
-				PlayVoice (VoiceData.VOIOK4);
+			PlayRandomVoice (VoiceData.VOIOK);
 		}
 	}
 	else if (data.hitpointsCur > data.hitpointsMax / 4)
 		// Status yellow:
-		if (random (2))
-			PlayVoice (VoiceData.VOIStatusYellow);
-		else
-			PlayVoice (VoiceData.VOIStatusYellow2);
+		PlayRandomVoice (VoiceData.VOIStatusYellow);
 	else
 		// Status red:
-		if (random (2))
-			PlayVoice (VoiceData.VOIStatusRed);
-		else
-			PlayVoice (VoiceData.VOIStatusRed2);
+		PlayRandomVoice (VoiceData.VOIStatusRed);
 }
 
 //-----------------------------------------------------------------------------

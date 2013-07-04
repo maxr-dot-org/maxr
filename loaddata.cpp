@@ -553,6 +553,14 @@ static int LoadSoundfile (sSOUND*& dest, const char* directory, const char* file
 	return 1;
 }
 
+static int LoadSoundfile (AutoSound& dest, const char* directory, const char* filename, bool localize = false)
+{
+	sSOUND* sound = NULL;
+	const int res = LoadSoundfile (sound, directory, filename, localize);
+	dest = sound;
+	return res;
+}
+
 /**
  * Loads a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
  * @param dest Destination Mix_Chunk
@@ -699,18 +707,18 @@ static int LoadSounds (const char* path)
 	LoadSoundfile (SoundData.SNDMenuButton, path, "MenuButton.ogg");
 	LoadSoundfile (SoundData.SNDChat, path, "Chat.ogg");
 	LoadSoundfile (SoundData.SNDObjectMenu, path, "ObjectMenu.ogg");
-	LoadSoundfile (SoundData.EXPBigWet0, path, "exp_big_wet0.ogg");
-	LoadSoundfile (SoundData.EXPBigWet1, path, "exp_big_wet1.ogg");
-	LoadSoundfile (SoundData.EXPBig0, path, "exp_big0.ogg");
-	LoadSoundfile (SoundData.EXPBig1, path, "exp_big1.ogg");
-	LoadSoundfile (SoundData.EXPBig2, path, "exp_big2.ogg");
-	LoadSoundfile (SoundData.EXPBig3, path, "exp_big3.ogg");
-	LoadSoundfile (SoundData.EXPSmallWet0, path, "exp_small_wet0.ogg");
-	LoadSoundfile (SoundData.EXPSmallWet1, path, "exp_small_wet1.ogg");
-	LoadSoundfile (SoundData.EXPSmallWet2, path, "exp_small_wet2.ogg");
-	LoadSoundfile (SoundData.EXPSmall0, path, "exp_small0.ogg");
-	LoadSoundfile (SoundData.EXPSmall1, path, "exp_small1.ogg");
-	LoadSoundfile (SoundData.EXPSmall2, path, "exp_small2.ogg");
+	LoadSoundfile (SoundData.EXPBigWet[0], path, "exp_big_wet0.ogg");
+	LoadSoundfile (SoundData.EXPBigWet[1], path, "exp_big_wet1.ogg");
+	LoadSoundfile (SoundData.EXPBig[0], path, "exp_big0.ogg");
+	LoadSoundfile (SoundData.EXPBig[1], path, "exp_big1.ogg");
+	LoadSoundfile (SoundData.EXPBig[2], path, "exp_big2.ogg");
+	LoadSoundfile (SoundData.EXPBig[3], path, "exp_big3.ogg");
+	LoadSoundfile (SoundData.EXPSmallWet[0], path, "exp_small_wet0.ogg");
+	LoadSoundfile (SoundData.EXPSmallWet[1], path, "exp_small_wet1.ogg");
+	LoadSoundfile (SoundData.EXPSmallWet[2], path, "exp_small_wet2.ogg");
+	LoadSoundfile (SoundData.EXPSmall[0], path, "exp_small0.ogg");
+	LoadSoundfile (SoundData.EXPSmall[1], path, "exp_small1.ogg");
+	LoadSoundfile (SoundData.EXPSmall[2], path, "exp_small2.ogg");
 	LoadSoundfile (SoundData.SNDArm, path, "arm.ogg");
 	LoadSoundfile (SoundData.SNDBuilding, path, "building.ogg");
 	LoadSoundfile (SoundData.SNDClearing, path, "clearing.ogg");
@@ -734,62 +742,62 @@ static int LoadVoices (const char* path)
 {
 	Log.write ("Loading Voices", LOG_TYPE_INFO);
 
-	LoadSoundfile (VoiceData.VOIAttackingEnemy1, path, "attacking_enemy1.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingEnemy2, path, "attacking_enemy2.ogg", true);
-	LoadSoundfile (VoiceData.VOINoPath1, path, "no_path1.ogg", true);
-	LoadSoundfile (VoiceData.VOINoPath2, path, "no_path2.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone1, path, "build_done1.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone2, path, "build_done2.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone3, path, "build_done3.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone4, path, "build_done4.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttackingEnemy[0], path, "attacking_enemy1.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttackingEnemy[1], path, "attacking_enemy2.ogg", true);
+	LoadSoundfile (VoiceData.VOINoPath[0], path, "no_path1.ogg", true);
+	LoadSoundfile (VoiceData.VOINoPath[1], path, "no_path2.ogg", true);
+	LoadSoundfile (VoiceData.VOIBuildDone[0], path, "build_done1.ogg", true);
+	LoadSoundfile (VoiceData.VOIBuildDone[1], path, "build_done2.ogg", true);
+	LoadSoundfile (VoiceData.VOIBuildDone[2], path, "build_done3.ogg", true);
+	LoadSoundfile (VoiceData.VOIBuildDone[3], path, "build_done4.ogg", true);
 	LoadSoundfile (VoiceData.VOINoSpeed, path, "no_speed.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusRed, path, "status_red.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusRed2, path, "status_red2.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusYellow, path, "status_yellow.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusYellow2, path, "status_yellow2.ogg", true);
+	LoadSoundfile (VoiceData.VOIStatusRed[0], path, "status_red.ogg", true);
+	LoadSoundfile (VoiceData.VOIStatusRed[1], path, "status_red2.ogg", true);
+	LoadSoundfile (VoiceData.VOIStatusYellow[0], path, "status_yellow.ogg", true);
+	LoadSoundfile (VoiceData.VOIStatusYellow[1], path, "status_yellow2.ogg", true);
 	LoadSoundfile (VoiceData.VOIClearing, path, "clearing.ogg", true);
-	LoadSoundfile (VoiceData.VOILowAmmo1, path, "low_ammo1.ogg", true);
-	LoadSoundfile (VoiceData.VOILowAmmo2, path, "low_ammo2.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK1, path, "ok1.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK2, path, "ok2.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK3, path, "ok3.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK4, path, "ok4.ogg", true);
+	LoadSoundfile (VoiceData.VOILowAmmo[0], path, "low_ammo1.ogg", true);
+	LoadSoundfile (VoiceData.VOILowAmmo[1], path, "low_ammo2.ogg", true);
+	LoadSoundfile (VoiceData.VOIOK[0], path, "ok1.ogg", true);
+	LoadSoundfile (VoiceData.VOIOK[1], path, "ok2.ogg", true);
+	LoadSoundfile (VoiceData.VOIOK[2], path, "ok3.ogg", true);
+	LoadSoundfile (VoiceData.VOIOK[3], path, "ok4.ogg", true);
 	LoadSoundfile (VoiceData.VOISentry, path, "sentry.ogg", true);
 	LoadSoundfile (VoiceData.VOITransferDone, path, "transfer_done.ogg", true);
-	LoadSoundfile (VoiceData.VOILoaded, path, "loaded.ogg", true);
-	LoadSoundfile (VoiceData.VOILoaded2, path, "loaded2.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepaired, path, "repaired.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepaired2, path, "repaired2.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepairedAll1, path, "repaired_all1.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepairedAll2, path, "repaired_all2.ogg", true);
+	LoadSoundfile (VoiceData.VOILoaded[0], path, "loaded.ogg", true);
+	LoadSoundfile (VoiceData.VOILoaded[1], path, "loaded2.ogg", true);
+	LoadSoundfile (VoiceData.VOIRepaired[0], path, "repaired.ogg", true);
+	LoadSoundfile (VoiceData.VOIRepaired[1], path, "repaired2.ogg", true);
+	LoadSoundfile (VoiceData.VOIRepairedAll[0], path, "repaired_all1.ogg", true);
+	LoadSoundfile (VoiceData.VOIRepairedAll[1], path, "repaired_all2.ogg", true);
 	LoadSoundfile (VoiceData.VOILayingMines, path, "laying_mines.ogg", true);
-	LoadSoundfile (VoiceData.VOIClearingMines, path, "clearing_mines.ogg", true);
-	LoadSoundfile (VoiceData.VOIClearingMines2, path, "clearing_mines2.ogg", true);
+	LoadSoundfile (VoiceData.VOIClearingMines[0], path, "clearing_mines.ogg", true);
+	LoadSoundfile (VoiceData.VOIClearingMines[1], path, "clearing_mines2.ogg", true);
 	LoadSoundfile (VoiceData.VOIResearchComplete, path, "research_complete.ogg", true);
 	LoadSoundfile (VoiceData.VOIUnitStolen, path, "unit_stolen.ogg", true);
 	LoadSoundfile (VoiceData.VOIUnitDisabled, path, "unit_disabled.ogg", true);
-	LoadSoundfile (VoiceData.VOICommandoFailed1, path, "commando_failed1.ogg", true);
-	LoadSoundfile (VoiceData.VOICommandoFailed2, path, "commando_failed2.ogg", true);
-	LoadSoundfile (VoiceData.VOICommandoFailed3, path, "commando_failed3.ogg", true);
+	LoadSoundfile (VoiceData.VOICommandoFailed[0], path, "commando_failed1.ogg", true);
+	LoadSoundfile (VoiceData.VOICommandoFailed[1], path, "commando_failed2.ogg", true);
+	LoadSoundfile (VoiceData.VOICommandoFailed[2], path, "commando_failed3.ogg", true);
 	LoadSoundfile (VoiceData.VOIDisabled, path, "disabled.ogg", true);
 	LoadSoundfile (VoiceData.VOISaved, path, "saved.ogg", true);
 	LoadSoundfile (VoiceData.VOIStartNone, path, "start_none.ogg", true);
 	LoadSoundfile (VoiceData.VOIStartOne, path, "start_one.ogg", true);
 	LoadSoundfile (VoiceData.VOIStartMore, path, "start_more.ogg", true);
-	LoadSoundfile (VoiceData.VOIDetected1, path, "detected1.ogg", true);
-	LoadSoundfile (VoiceData.VOIDetected2, path, "detected2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingUs, path, "attacking_us.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingUs2, path, "attacking_us2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingUs3, path, "attacking_us3.ogg", true);
+	LoadSoundfile (VoiceData.VOIDetected[0], path, "detected1.ogg", true);
+	LoadSoundfile (VoiceData.VOIDetected[1], path, "detected2.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttackingUs[0], path, "attacking_us.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttackingUs[1], path, "attacking_us2.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttackingUs[2], path, "attacking_us3.ogg", true);
 	LoadSoundfile (VoiceData.VOIDestroyedUs, path, "destroyed_us.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttacking1, path, "attacking1.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttacking2, path, "attacking2.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttacking[0], path, "attacking1.ogg", true);
+	LoadSoundfile (VoiceData.VOIAttacking[1], path, "attacking2.ogg", true);
 	LoadSoundfile (VoiceData.VOILanding, path, "landing.ogg", true);
 	LoadSoundfile (VoiceData.VOISubDetected, path, "sub_detected.ogg", true);
-	LoadSoundfile (VoiceData.VOISurveying, path, "surveying.ogg", true);
-	LoadSoundfile (VoiceData.VOISurveying2, path, "surveying2.ogg", true);
-	LoadSoundfile (VoiceData.VOITurnEnd20Sec1, path, "turn_end_20_sec1.ogg", true);
-	LoadSoundfile (VoiceData.VOITurnEnd20Sec2, path, "turn_end_20_sec2.ogg", true);
+	LoadSoundfile (VoiceData.VOISurveying[0], path, "surveying.ogg", true);
+	LoadSoundfile (VoiceData.VOISurveying[1], path, "surveying2.ogg", true);
+	LoadSoundfile (VoiceData.VOITurnEnd20Sec[0], path, "turn_end_20_sec1.ogg", true);
+	LoadSoundfile (VoiceData.VOITurnEnd20Sec[1], path, "turn_end_20_sec2.ogg", true);
 	LoadSoundfile (VoiceData.VOIUnitStolenByEnemy, path, "unit_stolen_by_enemy.ogg", true);
 	return 1;
 }

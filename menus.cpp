@@ -5074,26 +5074,20 @@ void cStorageMenu::playVoice (int Type)
 	{
 		PlayFX (SoundData.SNDReload);
 		if (voiceTypeAll == true)
-			PlayVoice (VoiceData.VOILoaded2);
+			PlayVoice (VoiceData.VOILoaded[1]);
 		else
-			PlayVoice (VoiceData.VOILoaded);
+			PlayVoice (VoiceData.VOILoaded[0]);
 	}
 	else
 	{
 		PlayFX (SoundData.SNDRepair);
 		if (voiceTypeAll == true)
 		{
-			if (random (2))
-				PlayVoice (VoiceData.VOIRepairedAll1);
-			else
-				PlayVoice (VoiceData.VOIRepairedAll2);
+			PlayRandomVoice (VoiceData.VOIRepairedAll);
 		}
 		else
 		{
-			if (random (2))
-				PlayVoice (VoiceData.VOIRepaired);
-			else
-				PlayVoice (VoiceData.VOIRepaired2);
+			PlayRandomVoice (VoiceData.VOIRepaired);
 		}
 	}
 }
