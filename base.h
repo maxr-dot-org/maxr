@@ -18,22 +18,20 @@
  ***************************************************************************/
 #ifndef baseH
 #define baseH
-#include <SDL.h>
-#include "defines.h"
+
 #include <vector>
 #include "main.h" // for sUnitData and sUnitData::eStorageResType
 
-class cPlayer;
 class cBuilding;
 class cMap;
+class cPlayer;
 class cServer;
 
 struct sSubBase
 {
 public:
 	sSubBase (cPlayer* owner_);
-	sSubBase (const sSubBase& sb);
-
+public:
 	std::vector<cBuilding*> buildings;
 	cPlayer* owner;
 
@@ -55,11 +53,11 @@ public:
 	int MaxOilNeed;
 	int MaxGoldNeed;
 
-
 	int HumanProd;
 	int HumanNeed;
 	int MaxHumanNeed;
 
+public:
 	/**
 	* integrates all building of the given subbase in the own one
 	* @author eiko
@@ -78,10 +76,9 @@ public:
 	* adds/substracts a ressource to/from the subbase
 	* @author eiko
 	*/
-	void addMetal (cServer& server, int i);
-	void addOil (cServer& server, int i);
-	void addGold (cServer& server, int i);
-
+	void addMetal (cServer& server, int value);
+	void addOil (cServer& server, int value);
+	void addGold (cServer& server, int value);
 
 	/**
 	* recalculates the values of all subbases
@@ -90,10 +87,11 @@ public:
 	void refresh();
 
 	/**
-	* inreases the energy production of the subbase by starting offline generators/stations
+	* inreases the energy production of the subbase by
+	* starting offline generators/stations
 	* @author eiko
 	*/
-	bool increaseEnergyProd (cServer& server, int i);
+	bool increaseEnergyProd (cServer& server, int value);
 
 	//-----------------------------------
 	//turn end manangement:
@@ -108,10 +106,12 @@ public:
 	bool checkMetalConsumer (cServer& server);
 	/**
 	* - switch off unneeded fuel consumers(=energy producers)
-	* - sets the optimal amount of generators and stations to minimize fuel consumption
+	* - sets the optimal amount of generators and stations
+	*   to minimize fuel consumption
 	* - increases oil production, if nessesary
 	* - switches off oil consumers, if to few oil is available
-	* @return: returns true, if oil consumers have been shut down, due to a lack of oil
+	* @return: returns true, if oil consumers have been shut down,
+	*          due to a lack of oil
 	* @author eiko
 	*/
 	bool checkOil (cServer& server);
@@ -122,7 +122,8 @@ public:
 	*/
 	bool checkEnergy (cServer& server);
 	/**
-	* checks, if there are consumers, that have to be shut down, due to a lack of a ressources
+	* checks, if there are consumers, that have to be shut down,
+	* due to a lack of a ressources
 	* @author eiko
 	*/
 	void prepareTurnend (cServer& server);
@@ -140,7 +141,8 @@ public:
 	int getMaxGoldProd() const;
 	int getMaxOilProd() const;
 
-	/** returns the maximum allowed production (without dereasing one of the other ones) of a ressource */
+	/** returns the maximum allowed production
+	 * (without dereasing one of the other ones) of a ressource */
 	int getMaxAllowedMetalProd() const;
 	int getMaxAllowedGoldProd() const;
 	int getMaxAllowedOilProd() const;
@@ -150,23 +152,26 @@ public:
 	int getGoldProd() const;
 	int getOilProd() const;
 
-	/** sets the production of a ressource. If i is bigger then maxAllowed, it will be reduced to the maximum allowed value */
-	void setMetalProd (int i);
-	void setGoldProd (int i);
-	void setOilProd (int i);
+	/** sets the production of a ressource.
+	 * If value is bigger then maxAllowed,
+	 * it will be reduced to the maximum allowed value */
+	void setMetalProd (int value);
+	void setGoldProd (int value);
+	void setOilProd (int value);
 
-	/** changes the production of a ressource by i. */
-	void changeMetalProd (int i);
-	void changeGoldProd (int i);
-	void changeOilProd (int i);
+	/** changes the production of a ressource by value. */
+	void changeMetalProd (int value);
+	void changeGoldProd (int value);
+	void changeOilProd (int value);
 
-	//TODO: private:
+	// TODO: private:
 	int MetalProd;
 	int OilProd;
 	int GoldProd;
 private:
 	/**
-	* calcs the maximum allowed production of a ressource, without decreasing the production of the other two
+	* calcs the maximum allowed production of a ressource,
+	* without decreasing the production of the other two
 	* @author eiko
 	*/
 	int calcMaxAllowedProd (int ressourceType) const;
@@ -176,11 +181,10 @@ private:
 	*/
 	int calcMaxProd (int ressourceType) const;
 	/**
-	* adds/substracts ressourcec of the type storeResType  to/from the subbase
+	* adds/substracts ressourcec of the type storeResType to/from the subbase
 	* @author eiko
 	*/
 	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
-
 };
 
 class cBase
