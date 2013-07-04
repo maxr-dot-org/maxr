@@ -1954,10 +1954,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
-		if (attackJobs[i]->building == Building)
-		{
-			attackJobs[i]->building = NULL;
-		}
+		attackJobs[i]->onRemoveUnit (*Building);
 	}
 	remove_from_intrusivelist (Building->owner->BuildingList, *Building);
 
@@ -1979,10 +1976,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
-		if (attackJobs[i]->vehicle == Vehicle)
-		{
-			attackJobs[i]->vehicle = NULL;
-		}
+		attackJobs[i]->onRemoveUnit (*Vehicle);
 	}
 	helperJobs.onRemoveUnit (Vehicle);
 

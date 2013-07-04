@@ -62,7 +62,8 @@ private:
 	bool isMuzzleTypeRocket() const;
 
 public:
-	std::vector<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
+	/** the clients on which the attack job is currently running */
+	std::vector<cPlayer*> executingClients;
 	cUnit* unit;
 	int iID;
 
@@ -76,17 +77,17 @@ private:
 	int iTargetOff;
 	int damage;
 	char attackMode;
-	std::vector<cUnit*> targets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
+	/** these lists are only used to sort out duplicate targets,
+	 * when making a cluster impact */
+	std::vector<cUnit*> targets;
 };
-
 
 //--------------------------------------------------------------------------
 class cClientAttackJob
 {
-public:
+private:
 	int iID;
-	cVehicle* vehicle;
-	cBuilding* building;
+	cUnit* unit;
 	int iFireDir;
 	int iMuzzleType;
 	int iAgressorOffset;
@@ -97,18 +98,21 @@ public:
 	enum eAJStates { ROTATING, PLAYING_MUZZLE, FINISHED };
 	eAJStates state;
 
+public:
 	/** prepares a mapsquare to be attacked
 	* @author Eiko
 	*/
 	static void lockTarget (cClient& client, cNetMessage* message);
 	static void handleAttackJobs (cClient& client, cMenu* activeMenu);
 	static void makeImpact (cClient& client, int offset, int remainingHP, int id);
+public:
 
 	cClientAttackJob (cClient* client, cNetMessage* message);
 
 	void rotate();
 	void playMuzzle (cClient& client, cMenu* activeMenu);
 	void sendFinishMessage (cClient& client);
+	void onRemoveUnit (cUnit& unit_) { if (unit == &unit_) unit = 0; }
 };
 
 
