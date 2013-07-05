@@ -3646,6 +3646,15 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage* 
 	draw();
 }
 //------------------------------------------------------------------------------
+class LessByNr
+{
+public:
+	bool operator () (const cPlayer* lhs, const cPlayer* rhs) const
+	{
+		return lhs->getNr() < rhs->getNr();
+	}
+};
+
 void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage* message)
 {
 	assert (message->iType == GAME_EV_RECONNECT_ANSWER);
@@ -3670,24 +3679,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 			gameDataContainer.players.push_back (new cPlayer (splayer));
 			playerCount--;
 		}
-
-		// TODO: replace this bubble sort by std::sort with correct Cmp functor
-		bool changed = false;
-		int size = (int) gameDataContainer.players.size();
-		do
-		{
-			changed = false;
-			for (int i = 0; i < size - 1; i++)
-			{
-				if (gameDataContainer.players[i]->getNr() > gameDataContainer.players[i + 1]->getNr())
-				{
-					std::swap (gameDataContainer.players[i], gameDataContainer.players[i + 1]);
-					changed = true;
-				}
-			}
-			size--;
-		}
-		while (changed && size);
+		std::sort (gameDataContainer.players.begin(), gameDataContainer.players.end(), LessByNr());
 
 		gameDataContainer.runGame (network, actPlayer->getNr(), true);
 		end = true;
@@ -5456,22 +5448,10 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 
 	if (vehicle && vehicle->Loaded)
 	{
-		//find storing unit
+		// find storing unit
 		cVehicle* storingVehicle = vehicle->getContainerVehicle();
-		if (storingVehicle)
-		{
-			client->gameGUI.selectUnit (*storingVehicle);
-			storingVehicle->center (client->gameGUI);
-			return;
-		}
-
 		cBuilding* storingBuilding = vehicle->getContainerBuilding();
-		if (storingBuilding)
-		{
-			client->gameGUI.selectUnit (*storingBuilding);
-			storingBuilding->center (client->gameGUI);
-			return;
-		}
+		doubleClicked (storingVehicle, storingBuilding);
 		return;
 	}
 
