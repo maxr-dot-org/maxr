@@ -351,9 +351,7 @@ void cPathCalculator::deleteFirstFromHeap()
 		// do the resort
 		if (u != v)
 		{
-			sPathNode* TempNode = nodesHeap[u];
-			nodesHeap[u] = nodesHeap[v];
-			nodesHeap[v] = TempNode;
+			std::swap (nodesHeap[u], nodesHeap[v]);
 		}
 		else break;
 	}

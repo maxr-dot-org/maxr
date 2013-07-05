@@ -3671,6 +3671,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 			playerCount--;
 		}
 
+		// TODO: replace this bubble sort by std::sort with correct Cmp functor
 		bool changed = false;
 		int size = (int) gameDataContainer.players.size();
 		do
@@ -3680,9 +3681,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 			{
 				if (gameDataContainer.players[i]->getNr() > gameDataContainer.players[i + 1]->getNr())
 				{
-					cPlayer* temp = gameDataContainer.players[i + 1];
-					gameDataContainer.players[i + 1] = gameDataContainer.players[i];
-					gameDataContainer.players[i] = temp;
+					std::swap (gameDataContainer.players[i], gameDataContainer.players[i + 1]);
 					changed = true;
 				}
 			}
