@@ -841,7 +841,7 @@ void cDialogTransfer::decReleased (void* parent)
 void cDialogTransfer::barClicked (void* parent)
 {
 	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*> (parent);
-	menu->transferValue = Round ( (mouse->x - menu->resBar->getPosition().x) * (menu->maxDestCargo / 223.0) - menu->destCargo);
+	menu->transferValue = Round ( (mouse->x - menu->resBar->getPosition().x) * (menu->maxDestCargo / 223.0f) - menu->destCargo);
 	menu->setCargos();
 	menu->draw();
 }

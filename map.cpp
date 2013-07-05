@@ -542,7 +542,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 	{
 		for (int i = playerCount; i < resSpotCount; i++)
 		{
-			T_2<double> d;
+			T_2<float> d;
 			for (int j = 0; j < resSpotCount; j++)
 			{
 				if (i == j) continue;
@@ -557,13 +557,13 @@ void cMap::placeRessources (int metal, int oil, int gold)
 				if (abs (diffx3) < abs (diffx1)) diffx1 = diffx3;
 				if (abs (diffy2) < abs (diffy1)) diffy1 = diffy2;
 				if (abs (diffy3) < abs (diffy1)) diffy1 = diffy3;
-				T_2<double> diff (diffx1, diffy1);
-				if (diff == T_2<double>::Zero)
+				T_2<float> diff (diffx1, diffy1);
+				if (diff == T_2<float>::Zero)
 				{
 					diff.x += 1;
 				}
-				const double dist = diff.dist();
-				d += diff * (10 / (dist * dist));
+				const float dist = diff.dist();
+				d += diff * (10.f / (dist * dist));
 
 			}
 			resSpots[i] += T_2<int> (Round (d.x), Round (d.y));
@@ -577,12 +577,12 @@ void cMap::placeRessources (int metal, int oil, int gold)
 	// Resourcen Typ bestimmen
 	for (int i = playerCount; i < resSpotCount; i++)
 	{
-		double amount[RES_COUNT] = {0, 0, 0, 0};
+		float amount[RES_COUNT] = {0.f, 0.f, 0.f, 0.f};
 		for (int j = 0; j < i; j++)
 		{
-			const double maxDist = 40;
-			double dist = sqrt ( (float) resSpots[i].distSqr (resSpots[j]));
-			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrt (dist / maxDist);
+			const float maxDist = 40.f;
+			float dist = sqrtf (resSpots[i].distSqr (resSpots[j]));
+			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
 		}
 
 		amount[RES_METAL] /= 1.0;

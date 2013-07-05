@@ -825,7 +825,7 @@ int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLev
 	else if (upgradeType == kCost)
 	{
 		// cost makes a decrease based on the formula 1/x (where x is the research level)
-		double realCost = startValue / ( (100.0f + curResearchLevel) / 100.0f);
+		float realCost = startValue / ( (100.0f + curResearchLevel) / 100.0f);
 
 		// now the real cost is rounded to the next possible cost value
 		// (Unit factories: steps of 3, Building construction: steps of 2, Infantry training: steps of 1)
@@ -852,7 +852,7 @@ int cUpgradeCalculator::getMaterialCostForUpgrading (int unitCost) const
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::getNearestPossibleCost (double realCost, int costDifference) const
+int cUpgradeCalculator::getNearestPossibleCost (float realCost, int costDifference) const
 {
 	if (costDifference <= 0)
 		return (int) realCost;

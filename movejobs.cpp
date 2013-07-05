@@ -74,7 +74,7 @@ int cPathDestHandler::heuristicCost (int srcX, int srcY) const
 			int deltaX = destX - srcX;
 			int deltaY = destY - srcY;
 
-			return Round (sqrt ( (double) deltaX * deltaX + deltaY * deltaY));
+			return Round (sqrtf (static_cast<float> (Square (deltaX) + Square (deltaY))));
 		}
 	}
 }

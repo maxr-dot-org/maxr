@@ -3595,7 +3595,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendClansToClients (*this, *PlayerList);
 	}
 	sendTurn (*this, iTurn, *Player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, iTurnDeadline - Round ( (SDL_GetTicks() - iDeadlineStartTime) / 1000), Player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, iTurnDeadline - (SDL_GetTicks() - iDeadlineStartTime) / 1000, Player);
 	sendResources (*this, *Player);
 
 	// send all units to the client

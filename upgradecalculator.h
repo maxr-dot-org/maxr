@@ -207,7 +207,7 @@ private:
 	int lookupPrice (const PriceMap& prices, int value) const;
 	void setupLookupTables();
 
-	int getNearestPossibleCost (double realCost, int costDifference) const;
+	int getNearestPossibleCost (float realCost, int costDifference) const;
 
 	void printToLog (const char* str, int value = -1000) const;
 

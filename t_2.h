@@ -173,25 +173,25 @@ public:
 	{
 		T_2<Type>
 		R;
-		R.x = Type (x + (P1.x - x) * 0.5);
-		R.y = Type (y + (P1.y - y) * 0.5);
+		R.x = Type (x + (P1.x - x) * 0.5f);
+		R.y = Type (y + (P1.y - y) * 0.5f);
 		return R;
 	}
 	void Interpolate (const T_2<Type>& P1, const T_2<Type>& P2)
 	{
-		x = (P1.x + P2.x) * 0.5;
-		y = (P1.y + P2.y) * 0.5;
+		x = (P1.x + P2.x) * 0.5f;
+		y = (P1.y + P2.y) * 0.5f;
 	}
 	Type dist() const
 	{
-		return sqrt (x * x + y * y);
+		return sqrtf (x * x + y * y);
 	}
 	Type dist (const T_2<Type>& P) const
 	{
 		float
 		DX = P.x - x,
 		DY = P.y - y;
-		return sqrt (DX * DX + DY * DY);
+		return sqrtf (DX * DX + DY * DY);
 	}
 	Type distSqr() const
 	{
@@ -207,7 +207,7 @@ public:
 	void normalize()
 	{
 		float
-		f = 1 / dist();
+		f = 1.f / dist();
 		x *= f;
 		y *= f;
 	}
@@ -241,7 +241,7 @@ public:
 		x = A.y - B.y;
 		y = B.x - A.x;
 		Type
-		_f = 1. / sqrt (x * x + y * y);
+		_f = 1.f / sqrtf (x * x + y * y);
 		x *= _f;
 		y *= _f;
 	}

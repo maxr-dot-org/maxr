@@ -2040,7 +2040,7 @@ void cClient::handleTurnTime()
 	}
 	if (iTurnTime > 0)
 	{
-		int iRestTime = iTurnTime - Round ( (SDL_GetTicks() - iStartTurnTime) / 1000);
+		int iRestTime = iTurnTime - (SDL_GetTicks() - iStartTurnTime) / 1000;
 		iRestTime = std::max (iRestTime, 0);
 		gameGUI.updateTurnTime (iRestTime);
 	}

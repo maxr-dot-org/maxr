@@ -507,9 +507,9 @@ std::string iToStr (int x);
 /**Converts integer to string in hex representation
 */
 std::string iToHex (unsigned int x);
-/**Converts double to string
+/**Converts float to string
 */
-std::string dToStr (double x);
+std::string fToStr (float x);
 /**Converts pointer to string
 */
 std::string pToStr (void* x);
@@ -526,7 +526,7 @@ std::string pToStr (void* x);
 *@param n the position after decimal point in dValueToRound, that will be rounded
 *@return rounded num
 */
-double Round (double num, unsigned int n);
+float Round (float num, unsigned int n);
 
 
 template <typename T>
@@ -542,7 +542,7 @@ T Square (T v) { return v * v; }
 *@param num number to round up
 *@return rounded num
 */
-int Round (double num);
+int Round (float num);
 
 /**
 * Works like SDL_BlittSurface. But unlike SDL it respects the destination alpha channel of the surface.

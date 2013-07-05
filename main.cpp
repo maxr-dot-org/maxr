@@ -424,17 +424,17 @@ SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, 
 {
 	SDL_Surface* sf;
 	sf = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, size, size, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (sf, SDL_SRCCOLORKEY, 0xFF00FF);
-	SDL_FillRect (sf, NULL, 0xFF00FF);
+	SDL_SetColorKey (sf, SDL_SRCCOLORKEY, 0x00FF00FF);
+	SDL_FillRect (sf, NULL, 0x00FF00FF);
 	SDL_LockSurface (sf);
 
 	const float fak = size / 64.0f;
-	p1x = (int) Round (p1x * fak);
-	p1y = (int) Round (p1y * fak);
-	p2x = (int) Round (p2x * fak);
-	p2y = (int) Round (p2y * fak);
-	p3x = (int) Round (p3x * fak);
-	p3y = (int) Round (p3y * fak);
+	p1x = Round (p1x * fak);
+	p1y = Round (p1y * fak);
+	p2x = Round (p2x * fak);
+	p2y = Round (p2y * fak);
+	p3x = Round (p3x * fak);
+	p3y = Round (p3y * fak);
 	line (p1x, p1y, p2x, p2y, color, sf);
 	line (p2x, p2y, p3x, p3y, color, sf);
 	line (p3x, p3y, p1x, p1y, color, sf);
@@ -483,7 +483,7 @@ void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
 	int d = 0;
 	int xx = 0;
 	int yy = iRadius;
-	int bry = (int) Round (0.70710678 * iRadius, 0);
+	int bry = Round (0.70710678f * iRadius);
 	while (yy > bry)
 	{
 		int da = d + (xx << 1) + 1;
@@ -541,7 +541,7 @@ string iToHex (unsigned int x)
 	return strStream.str();
 }
 
-string dToStr (double x)
+string fToStr (float x)
 {
 	stringstream strStream;
 	strStream << x;
@@ -557,18 +557,18 @@ std::string pToStr (void* x)
 
 // Round //////////////////////////////////////////////////////////////////////
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
-double Round (double dValueToRound, unsigned int iDecimalPlace)
+float Round (float dValueToRound, unsigned int iDecimalPlace)
 {
-	dValueToRound *= pow (10., (int) iDecimalPlace);
+	dValueToRound *= powf (10.f, (int) iDecimalPlace);
 	if (dValueToRound >= 0)
-		dValueToRound = floor (dValueToRound + 0.5);
+		dValueToRound = floorf (dValueToRound + 0.5f);
 	else
-		dValueToRound = ceil (dValueToRound - 0.5);
-	dValueToRound /= pow (10., (int) iDecimalPlace);
+		dValueToRound = ceilf (dValueToRound - 0.5f);
+	dValueToRound /= powf (10.f, (int) iDecimalPlace);
 	return dValueToRound;
 }
 
-int Round (double dValueToRound)
+int Round (float dValueToRound)
 {
 	return (int) Round (dValueToRound, 0);
 }

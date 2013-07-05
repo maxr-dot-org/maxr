@@ -151,7 +151,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 				string sText;
 				int iRound;
 
-				iRound = (int) ceil (buildListItem->metall_remaining / (double) MetalPerRound);
+				iRound = (int) ceilf (buildListItem->metall_remaining / (float) MetalPerRound);
 				sText = lngPack.i18n ("Text~Comp~Producing") + ": ";
 				sText += buildListItem->type.getVehicle()->data.name + " (";
 				sText += iToStr (iRound) + ")";
@@ -526,8 +526,8 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 	// read the size:
 	if (data.hasFrames)
 	{
-		src.w = Round (64.0 * zoomFactor);
-		src.h = Round (64.0 * zoomFactor);
+		src.w = Round (64.0f * zoomFactor);
+		src.h = Round (64.0f * zoomFactor);
 	}
 	else
 	{
@@ -592,11 +592,11 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 	{
 		if (data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && gameGUI)
 		{
-			src.x = (gameGUI->getAnimationSpeed() % data.hasFrames) * Round (64.0 * zoomFactor);
+			src.x = (gameGUI->getAnimationSpeed() % data.hasFrames) * Round (64.0f * zoomFactor);
 		}
 		else
 		{
-			src.x = dir * Round (64.0 * zoomFactor);
+			src.x = dir * Round (64.0f * zoomFactor);
 		}
 
 		CHECK_SCALING (typ->img, typ->img_org, zoomFactor);
@@ -762,7 +762,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 
 		//upper right field
 		src.x = 0;
-		dest.x += Round (64.0 * zoomFactor);
+		dest.x += Round (64.0f * zoomFactor);
 		if (BaseBN &&  BaseE) src.x = 8;
 		else if (BaseBN && !BaseE) src.x = 1;
 		else if (!BaseBN &&  BaseE) src.x = 2;
@@ -778,10 +778,10 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 
 		//lower right field
 		src.x = 0;
-		dest.y += Round (64.0 * zoomFactor);
-		if (BaseBE &&  BaseBS) src.x = 9;
+		dest.y += Round (64.0f * zoomFactor);
+		if (BaseBE && BaseBS) src.x = 9;
 		else if (BaseBE && !BaseBS) src.x = 2;
-		else if (!BaseBE &&  BaseBS) src.x = 3;
+		else if (!BaseBE && BaseBS) src.x = 3;
 		src.x *= src.h;
 
 		if (src.x != 0)
@@ -794,10 +794,10 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 
 		//lower left field
 		src.x = 0;
-		dest.x -= Round (64.0 * zoomFactor);
-		if (BaseS &&  BaseBW) src.x = 10;
-		else if (BaseS && !BaseBW) src.x =  3;
-		else if (!BaseS &&  BaseBW) src.x =  4;
+		dest.x -= Round (64.0f * zoomFactor);
+		if (BaseS && BaseBW) src.x = 10;
+		else if (BaseS && !BaseBW) src.x = 3;
+		else if (!BaseS && BaseBW) src.x = 4;
 		src.x *= src.h;
 
 		if (src.x != 0)
@@ -1514,12 +1514,12 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 
 
 	//calc needed Rounds
-	iTurboBuildRounds[0] = (int) ceil (iTurboBuildCosts[0] / (double) (1 * data.needsMetal));
+	iTurboBuildRounds[0] = (int) ceilf (iTurboBuildCosts[0] / (1.f * data.needsMetal));
 
 	if (data.maxBuildFactor > 1)
 	{
-		iTurboBuildRounds[1] = (int) ceil (iTurboBuildCosts[1] / (double) (4 * data.needsMetal));
-		iTurboBuildRounds[2] = (int) ceil (iTurboBuildCosts[2] / (double) (12 * data.needsMetal));
+		iTurboBuildRounds[1] = (int) ceilf (iTurboBuildCosts[1] / (4.f * data.needsMetal));
+		iTurboBuildRounds[2] = (int) ceilf (iTurboBuildCosts[2] / (12.f * data.needsMetal));
 	}
 	else
 	{

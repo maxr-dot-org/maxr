@@ -348,12 +348,10 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap* map)
 	XMLElement* hudNode = playerNode->FirstChildElement ("Hud");
 	if (hudNode)
 	{
-		double tmpDouble;
 		// save the loaded hudoptions to the "HotHud" of the player so that the server can send them later to the clients
 		Player->savedHud->offX = hudNode->FirstChildElement ("Offset")->IntAttribute ("x");
 		Player->savedHud->offY = hudNode->FirstChildElement ("Offset")->IntAttribute ("y");
-		tmpDouble = hudNode->FirstChildElement ("Zoom")->DoubleAttribute ("num");
-		Player->savedHud->zoom = (float) tmpDouble;
+		Player->savedHud->zoom = hudNode->FirstChildElement ("Zoom")->FloatAttribute ("num");
 		if (hudNode->FirstChildElement ("Colors")) Player->savedHud->colorsChecked = true;
 		if (hudNode->FirstChildElement ("Grid")) Player->savedHud->gridChecked = true;
 		if (hudNode->FirstChildElement ("Ammo")) Player->savedHud->ammoChecked = true;
@@ -604,11 +602,9 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 	loadUnitValues (unitNode, &vehicle->data);
 
 	unitNode->FirstChildElement ("Direction")->QueryIntAttribute ("num", &vehicle->dir);
-	double tmpdouble;
 	if (XMLElement* const element = unitNode->FirstChildElement ("CommandoRank"))
 	{
-		element->QueryDoubleAttribute ("num", &tmpdouble);
-		vehicle->CommandoRank = (float) tmpdouble;
+		element->QueryFloatAttribute ("num", &vehicle->CommandoRank);
 	}
 	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, x, y);
 	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &vehicle->turnsDisabled);
@@ -1026,11 +1022,9 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 		Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
 	}
 
-	double tmpdouble;
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Air"))
 	{
-		Element->QueryDoubleAttribute ("num", &tmpdouble);
-		Data->factorAir = (float) tmpdouble;
+		Element->QueryFloatAttribute ("num", &Data->factorAir);
 	}
 	else
 	{
@@ -1038,8 +1032,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	}
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Coast"))
 	{
-		Element->QueryDoubleAttribute ("num", &tmpdouble);
-		Data->factorCoast = (float) tmpdouble;
+		Element->QueryFloatAttribute ("num", &Data->factorCoast);
 	}
 	else
 	{
@@ -1047,8 +1040,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	}
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Ground"))
 	{
-		Element->QueryDoubleAttribute ("num", &tmpdouble);
-		Data->factorGround = (float) tmpdouble;
+		Element->QueryFloatAttribute ("num", &Data->factorGround);
 	}
 	else
 	{
@@ -1056,8 +1048,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	}
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Sea"))
 	{
-		Element->QueryDoubleAttribute ("num", &tmpdouble);
-		Data->factorSea = (float) tmpdouble;
+		Element->QueryFloatAttribute ("num", &Data->factorSea);
 	}
 	else
 	{
@@ -1066,8 +1057,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Sea"))
 	{
-		Element->QueryDoubleAttribute ("num", &tmpdouble);
-		Data->modifiesSpeed = (float) tmpdouble;
+		Element->QueryFloatAttribute ("num", &Data->modifiesSpeed);
 	}
 	else
 	{
@@ -1364,7 +1354,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 
 	// add additional status information
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
-	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", dToStr (vehicle.CommandoRank));
+	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", fToStr (vehicle.CommandoRank));
 	if (vehicle.data.isBig) addMainElement (unitNode, "IsBig");
 	if (vehicle.turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.turnsDisabled));
 	if (vehicle.LayMines) addMainElement (unitNode, "LayMines");
@@ -1603,12 +1593,12 @@ void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 	if (Data->surfacePosition != sUnitData::SURFACE_POS_GROUND) addAttributeElement (unitNode, "Surface_Position", "num", iToStr (Data->surfacePosition));
 	if (Data->canBeOverbuild != sUnitData::OVERBUILD_TYPE_NO) addAttributeElement (unitNode, "Can_Be_Overbuild", "num", iToStr (Data->canBeOverbuild));
 
-	if (Data->factorAir != 0.0) addAttributeElement (unitNode, "Factor_Air", "num", dToStr (Data->factorAir));
-	if (Data->factorCoast != 0.0) addAttributeElement (unitNode, "Factor_Coast", "num", dToStr (Data->factorCoast));
-	if (Data->factorGround != 0.0) addAttributeElement (unitNode, "Factor_Ground", "num", dToStr (Data->factorGround));
-	if (Data->factorSea != 0.0) addAttributeElement (unitNode, "Factor_Sea", "num", dToStr (Data->factorSea));
+	if (Data->factorAir != 0.0) addAttributeElement (unitNode, "Factor_Air", "num", fToStr (Data->factorAir));
+	if (Data->factorCoast != 0.0) addAttributeElement (unitNode, "Factor_Coast", "num", fToStr (Data->factorCoast));
+	if (Data->factorGround != 0.0) addAttributeElement (unitNode, "Factor_Ground", "num", fToStr (Data->factorGround));
+	if (Data->factorSea != 0.0) addAttributeElement (unitNode, "Factor_Sea", "num", fToStr (Data->factorSea));
 
-	if (Data->modifiesSpeed != 0.0) addAttributeElement (unitNode, "Factor_Sea", "num", dToStr (Data->modifiesSpeed));
+	if (Data->modifiesSpeed != 0.0) addAttributeElement (unitNode, "Factor_Sea", "num", fToStr (Data->modifiesSpeed));
 
 	if (Data->canBuildPath) addMainElement (unitNode, "Can_Build_Path");
 	if (Data->canBuildRepeat) addMainElement (unitNode, "Can_Build_Repeat");
@@ -1663,7 +1653,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 	XMLElement* hudNode = addMainElement (playerNode, "Hud");
 	addAttributeElement (hudNode, "SelectedUnit", "num", iToStr (hudState.selUnitID));
 	addAttributeElement (hudNode, "Offset", "x", iToStr (hudState.offX), "y", iToStr (hudState.offY));
-	addAttributeElement (hudNode, "Zoom", "num", dToStr (hudState.zoom));
+	addAttributeElement (hudNode, "Zoom", "num", fToStr (hudState.zoom));
 	if (hudState.colorsChecked) addMainElement (hudNode, "Colors");
 	if (hudState.gridChecked) addMainElement (hudNode, "Grid");
 	if (hudState.ammoChecked) addMainElement (hudNode, "Ammo");

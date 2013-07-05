@@ -431,8 +431,8 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 
 	tmp = dest;
 	src.h = src.w = (int) (typ->overlay_org->h * zoomFactor);
-	tmp.x += (int) (Round (64.0 * zoomFactor)) / 2 - src.h / 2;
-	tmp.y += (int) (Round (64.0 * zoomFactor)) / 2 - src.h / 2;
+	tmp.x += Round (64.0f * zoomFactor) / 2 - src.h / 2;
+	tmp.y += Round (64.0f * zoomFactor) / 2 - src.h / 2;
 	src.y = 0;
 	src.x = (int) (typ->overlay_org->h * frameNr * zoomFactor);
 
@@ -1037,7 +1037,7 @@ void cVehicle::calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBu
 	if (data.storageResCur >= iBuild_Costs)
 	{
 		iTurboBuildCosts[0] = iBuild_Costs;
-		iTurboBuildRounds[0] = (int) ceil (iTurboBuildCosts[0] / (double) (data.needsMetal));
+		iTurboBuildRounds[0] = (int) ceilf (iTurboBuildCosts[0] / (float) (data.needsMetal));
 	}
 
 	//step 2x
@@ -1796,13 +1796,14 @@ int cVehicle::calcCommandoChance (const cUnit* destUnit, bool steal) const
 	int factor = steal ? 1 : 4;
 	int srcLevel = (int) CommandoRank + 7;
 
-	/* The chance to disable or steal a unit depends on the infiltratorranking and the
-	buildcosts (or 'turns' in the original game) of the target unit. The chance rises
-	linearly with a higher ranking of the infiltrator. The chance of a unexperienced
-	infiltrator will be calculated like he has the ranking 7. Disabling has a 4 times
-	higher chance then stealing.
-	*/
-	int chance = Round ( (float) (8 * srcLevel) / (35 * destTurn) * factor * 100);
+	// The chance to disable or steal a unit depends on
+	// the infiltrator ranking and the buildcosts
+	// (or 'turns' in the original game) of the target unit.
+	// The chance rises linearly with a higher ranking of the infiltrator.
+	// The chance of a unexperienced infiltrator will be calculated like
+	// he has the ranking 7.
+	// Disabling has a 4 times higher chance than stealing.
+	int chance = Round ( (8.f * srcLevel) / (35 * destTurn) * factor * 100);
 	chance = std::min (90, chance);
 
 	return chance;
