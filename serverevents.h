@@ -25,14 +25,15 @@
 #include "main.h" // for sID
 #include "movejobs.h"
 
-class cResearch;
+class cBuilding;
 class cHud;
 class cMap;
 class cNetMessage;
-struct sSubBase;
-struct sSavedReportMessage;
-struct sHudStateContainer;
+class cResearch;
 class cUnit;
+struct sHudStateContainer;
+struct sSavedReportMessage;
+struct sSubBase;
 
 enum SERVER_EVENT_TYPES
 {

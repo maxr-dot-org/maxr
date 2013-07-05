@@ -22,11 +22,11 @@
 #include <SDL.h>
 #include <vector>
 
-class cBuilding;
 class cClient;
 class cMap;
 class cNetMessage;
 class cServer;
+class cUnit;
 class cVehicle;
 
 /* Size of a memory block while pathfinding */
@@ -75,11 +75,10 @@ class cPathDestHandler
 
 	const cVehicle* srcVehicle;
 
-	const cBuilding* destBuilding;
-	const cVehicle* destVehicle;
+	const cUnit* destUnit;
 	int destX, destY;
 public:
-	cPathDestHandler (ePathDestinationTypes type_, int destX, int destY, const cVehicle* srcVehicle_, const cBuilding* destBuilding_, const cVehicle* destVehicle_);
+	cPathDestHandler (ePathDestinationTypes type_, int destX, int destY, const cVehicle* srcVehicle_, const cUnit* destUnit_);
 
 	bool hasReachedDestination (int x, int y) const;
 	int heuristicCost (int srcX, int srcY) const;
@@ -87,12 +86,12 @@ public:
 
 class cPathCalculator
 {
-	void init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group);
+	void init (int ScrX, int ScrY, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
 
 public:
-	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group = NULL);
-	cPathCalculator (int ScrX, int ScrY, const cVehicle* destVehicle, const cBuilding* destBuilding, const cMap* Map, const cVehicle* Vehicle, bool load);
-	cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, int attackX, int attackY);
+	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group = NULL);
+	cPathCalculator (int ScrX, int ScrY, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load);
+	cPathCalculator (int ScrX, int ScrY, const cMap& Map, const cVehicle& Vehicle, int attackX, int attackY);
 	~cPathCalculator();
 
 	/**
@@ -129,11 +128,11 @@ private:
 	int blocksize;
 
 	/* heaplist where all nodes are sorted by there costF value */
-	sPathNode** nodesHeap;
+	std::vector<sPathNode*> nodesHeap;
 	/* open nodes map */
-	sPathNode** openList;
+	std::vector<sPathNode*> openList;
 	/* closed nodes map */
-	sPathNode** closedList;
+	std::vector<sPathNode*> closedList;
 	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
 	int heapCount;
 	/**
@@ -225,7 +224,7 @@ class cClientMoveJob
 
 	void init (int iSrcOff, cVehicle* Vehicle);
 public:
-	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, const std::vector<cVehicle*>* group = NULL);
+	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, const cVehicle& vehicle, const std::vector<cVehicle*>* group = NULL);
 
 	cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle);
 	~cClientMoveJob();

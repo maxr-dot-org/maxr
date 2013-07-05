@@ -172,7 +172,7 @@ void cClient::initPlayer (cPlayer* Player)
 
 int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group)
 {
-	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
+	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle->PosX, vehicle->PosY, DestX, DestY, *vehicle, group);
 	if (path)
 	{
 		sendMoveJob (*this, path, vehicle->iID);

@@ -17,6 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <math.h>
+
 #include "movejobs.h"
 
 #include "attackJobs.h"
@@ -25,7 +27,6 @@
 #include "clientevents.h"
 #include "clist.h"
 #include "fxeffects.h"
-#include "math.h"
 #include "netmessage.h"
 #include "player.h"
 #include "server.h"
@@ -33,11 +34,10 @@
 #include "settings.h"
 #include "vehicles.h"
 
-cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, const cVehicle* srcVehicle_, const cBuilding* destBuilding_, const cVehicle* destVehicle_) :
+cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
 	type (type_),
 	srcVehicle (srcVehicle_),
-	destBuilding (destBuilding_),
-	destVehicle (destVehicle_),
+	destUnit (destUnit_),
 	destX (destX_),
 	destY (destY_)
 {}
@@ -49,8 +49,7 @@ bool cPathDestHandler::hasReachedDestination (int x, int y) const
 		case PATH_DEST_TYPE_POS:
 			return (x == destX && y == destY);
 		case PATH_DEST_TYPE_LOAD:
-			return (destBuilding && destBuilding->isNextTo (x, y)) ||
-				   (destVehicle && destVehicle->isNextTo (x, y));
+			return (destUnit && destUnit->isNextTo (x, y));
 		case PATH_DEST_TYPE_ATTACK:
 			x -= destX;
 			y -= destY;
@@ -79,40 +78,37 @@ int cPathDestHandler::heuristicCost (int srcX, int srcY) const
 	}
 }
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
-	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, DestX, DestY, NULL, NULL, NULL);
+	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, DestX, DestY, NULL, NULL);
 	init (ScrX, ScrY, Map, Vehicle, group);
 }
 
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cVehicle* destVehicle, const cBuilding* destBuilding, const cMap* Map, const cVehicle* Vehicle, bool load)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load)
 {
-	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, 0, 0, Vehicle, destBuilding, destVehicle);
+	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, 0, 0, &Vehicle, &destUnit);
 	init (ScrX, ScrY, Map, Vehicle, NULL);
 }
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, int attackX, int attackY)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cMap& Map, const cVehicle& Vehicle, int attackX, int attackY)
 {
-	destHandler = new cPathDestHandler (PATH_DEST_TYPE_ATTACK, attackX, attackY, Vehicle, NULL, NULL);
+	destHandler = new cPathDestHandler (PATH_DEST_TYPE_ATTACK, attackX, attackY, &Vehicle, NULL);
 	init (ScrX, ScrY, Map, Vehicle, NULL);
 }
 
-void cPathCalculator::init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, const std::vector<cVehicle*>* group)
+void cPathCalculator::init (int ScrX, int ScrY, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
 	this->ScrX = ScrX;
 	this->ScrY = ScrY;
-	this->Map = Map;
-	this->Vehicle = Vehicle;
+	this->Map = &Map;
+	this->Vehicle = &Vehicle;
 	this->group = group;
-	bPlane = Vehicle->data.factorAir > 0;
-	bShip = Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0;
+	bPlane = Vehicle.data.factorAir > 0;
+	bShip = Vehicle.data.factorSea > 0 && Vehicle.data.factorGround == 0;
 
 	Waypoints = NULL;
 	MemBlocks = NULL;
-	nodesHeap = NULL;
-	openList = NULL;
-	closedList = NULL;
 
 	blocknum = 0;
 	blocksize = 0;
@@ -130,20 +126,14 @@ cPathCalculator::~cPathCalculator()
 		}
 		free (MemBlocks);
 	}
-	delete [] nodesHeap;
-	delete [] openList;
-	delete [] closedList;
 }
 
 sWaypoint* cPathCalculator::calcPath()
 {
 	// generate open and closed list
-	nodesHeap = new sPathNode*[Map->getSize() * Map->getSize() + 1];
-	openList = new sPathNode*[Map->getSize() * Map->getSize() + 1];
-	closedList = new sPathNode*[Map->getSize() * Map->getSize() + 1];
-	std::fill <sPathNode**, sPathNode*> (nodesHeap, &nodesHeap[Map->getSize() * Map->getSize() + 1], NULL);
-	std::fill <sPathNode**, sPathNode*> (openList, &openList[Map->getSize() * Map->getSize() + 1], NULL);
-	std::fill <sPathNode**, sPathNode*> (closedList, &closedList[Map->getSize() * Map->getSize() + 1], NULL);
+	nodesHeap.resize (Map->getSize() * Map->getSize() + 1, NULL);
+	openList.resize (Map->getSize() * Map->getSize() + 1, NULL);
+	closedList.resize (Map->getSize() * Map->getSize() + 1, NULL);
 
 	// generate startnode
 	sPathNode* StartNode = allocNode();
@@ -210,8 +200,6 @@ sWaypoint* cPathCalculator::calcPath()
 
 	// there is no path to the destination field
 	Waypoints = NULL;
-
-
 	return Waypoints;
 }
 
@@ -318,11 +306,10 @@ void cPathCalculator::insertToHeap (sPathNode* Node, bool exists)
 	// resort the nodes
 	while (i > 1)
 	{
+		assert (nodesHeap[i] == Node);
 		if (Node->costF < nodesHeap[i / 2]->costF)
 		{
-			sPathNode* TempNode = nodesHeap[i / 2];
-			nodesHeap[i / 2] = Node;
-			nodesHeap[i] = TempNode;
+			std::swap (nodesHeap[i / 2], nodesHeap[i]);
 			i = i / 2;
 		}
 		else break;
@@ -335,16 +322,16 @@ void cPathCalculator::deleteFirstFromHeap()
 	nodesHeap[1] = nodesHeap[heapCount];
 	nodesHeap[heapCount] = NULL;
 	heapCount--;
-	int v = 1, u;
+	int v = 1;
 	while (true)
 	{
-		u = v;
-		if (2 * u + 1 <= heapCount)	// both children in the heap exists
+		int u = v;
+		if (2 * u + 1 <= heapCount) // both children in the heap exists
 		{
 			if (nodesHeap[u]->costF >= nodesHeap[u * 2]->costF) v = 2 * u;
 			if (nodesHeap[v]->costF >= nodesHeap[u * 2 + 1]->costF) v = 2 * u + 1;
 		}
-		else if (2 * u <= heapCount)	// only one children exists
+		else if (2 * u <= heapCount) // only one children exists
 		{
 			if (nodesHeap[u]->costF >= nodesHeap[u * 2]->costF) v = 2 * u;
 		}
@@ -363,10 +350,10 @@ int cPathCalculator::calcNextCost (int srcX, int srcY, int destX, int destY) con
 	// first we check whether the unit can fly
 	if (Vehicle->data.factorAir > 0)
 	{
-		if (srcX != destX && srcY != destY) return (int) (4 * Vehicle->data.factorAir * 1.5);
+		if (srcX != destX && srcY != destY) return (int) (4 * 1.5f * Vehicle->data.factorAir);
 		else return (int) (4 * Vehicle->data.factorAir);
 	}
-	int offset = Map->getOffset (destX, destY);
+	const int offset = Map->getOffset (destX, destY);
 	const cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
 	if (Map->isWater (offset) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
@@ -380,44 +367,35 @@ int cPathCalculator::calcNextCost (int srcX, int srcY, int destX, int destY) con
 	// moving on a road is cheaper
 	if (building && building->data.modifiesSpeed != 0) costs = (int) (costs * building->data.modifiesSpeed);
 
-	// mutliplicate with the factor 1.5 for diagonal movements
-	if (srcX != destX && srcY != destY) costs = (int) (costs * 1.5);
+	// multiplicate with the factor 1.5 for diagonal movements
+	if (srcX != destX && srcY != destY) costs = (int) (costs * 1.5f);
 	return costs;
 }
 
 static void setOffset (cVehicle* Vehicle, int nextDir, int offset)
 {
-	switch (nextDir)
-	{
-		case 0:
-			Vehicle->OffY -= offset;
-			break;
-		case 1:
-			Vehicle->OffY -= offset;
-			Vehicle->OffX += offset;
-			break;
-		case 2:
-			Vehicle->OffX += offset;
-			break;
-		case 3:
-			Vehicle->OffX += offset;
-			Vehicle->OffY += offset;
-			break;
-		case 4:
-			Vehicle->OffY += offset;
-			break;
-		case 5:
-			Vehicle->OffX -= offset;
-			Vehicle->OffY += offset;
-			break;
-		case 6:
-			Vehicle->OffX -= offset;
-			break;
-		case 7:
-			Vehicle->OffX -= offset;
-			Vehicle->OffY -= offset;
-			break;
+	assert (0 <= nextDir && nextDir < 8);
+	//                       N, NE, E, SE, S, SW,  W, NW
+	const int offsetX[8] = { 0,  1, 1,  1, 0, -1, -1, -1};
+	const int offsetY[8] = {-1, -1, 0,  1, 1,  1,  0, -1};
+
+	Vehicle->OffX += offsetX[nextDir] * offset;
+	Vehicle->OffY += offsetY[nextDir] * offset;
+}
+
+static int getDir (int x, int y, int nextX, int nextY)
+{
+	const int diffX = nextX - x;
+	const int diffY = nextY - y;
+	//                       N, NE, E, SE, S, SW,  W, NW
+	const int offsetX[8] = { 0,  1, 1,  1, 0, -1, -1, -1};
+	const int offsetY[8] = {-1, -1, 0,  1, 1,  1,  0, -1};
+
+	for (int i = 0; i != 8; ++i) {
+		if (diffX == offsetX[i] && diffY == offsetY[i]) return i;
 	}
+	assert (false);
+	return -1;
 }
 
 cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int destX_, int destY_, cVehicle* vehicle) :
@@ -474,9 +452,10 @@ cServerMoveJob::~cServerMoveJob()
 
 void cServerMoveJob::stop()
 {
-	//an already started movement step will be finished
+	// an already started movement step will be finished
 
-	//delete all waypoint of the movejob except the next one, so the vehicle stops on the next field
+	// delete all waypoint of the movejob except the next one,
+	// so the vehicle stops on the next field
 	if (Waypoints && Waypoints->next && Waypoints->next->next)
 	{
 		sWaypoint* wayPoint = Waypoints->next->next;
@@ -489,7 +468,7 @@ void cServerMoveJob::stop()
 		}
 	}
 
-	//if the vehicle is not moving, it has to stop immediately
+	// if the vehicle is not moving, it has to stop immediately
 	if (!Vehicle->moving)
 	{
 		release();
@@ -530,7 +509,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 		return NULL;
 	}
 
-	//TODO: is this check really needed?
+	// TODO: is this check really needed?
 	if (vehicle->isBeeingAttacked)
 	{
 		Log.write (" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
@@ -552,7 +531,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 		return NULL;
 	}
 
-	//reconstruct path
+	// reconstruct path
 	sWaypoint* path = NULL;
 	sWaypoint* dest = NULL;
 	int iCount = 0;
@@ -606,7 +585,7 @@ bool cServerMoveJob::calcPath()
 {
 	if (SrcX == DestX && SrcY == DestY) return false;
 
-	cPathCalculator PathCalculator (SrcX, SrcY, DestX, DestY, Map, Vehicle);
+	cPathCalculator PathCalculator (SrcX, SrcY, DestX, DestY, *Map, *Vehicle);
 	Waypoints = PathCalculator.calcPath();
 	if (Waypoints)
 	{
@@ -672,7 +651,8 @@ bool cServerMoveJob::checkMove()
 		return false;
 	}
 
-	//next step can be executed. start the move and set the vehicle to the next field
+	// next step can be executed.
+	// start the move and set the vehicle to the next field
 	calcNextDir();
 	Vehicle->MoveJobActive = true;
 	Vehicle->moving = true;
@@ -807,15 +787,7 @@ void cServerMoveJob::doEndMoveVehicle()
 void cServerMoveJob::calcNextDir()
 {
 	if (!Waypoints || !Waypoints->next) return;
-#define TESTXY_CND(a, b) if (Waypoints->X a Waypoints->next->X && Waypoints->Y b Waypoints->next->Y)
-	TESTXY_CND ( == , >) iNextDir = 0;
-	else TESTXY_CND (<,>) iNextDir = 1;
-	else TESTXY_CND ( < , ==) iNextDir = 2;
-	else TESTXY_CND ( < , <) iNextDir = 3;
-	else TESTXY_CND ( == , <) iNextDir = 4;
-	else TESTXY_CND ( > , <) iNextDir = 5;
-	else TESTXY_CND ( > , ==) iNextDir = 6;
-	else TESTXY_CND ( > , >) iNextDir = 7;
+	iNextDir = getDir (Waypoints->X, Waypoints->Y, Waypoints->next->X, Waypoints->next->Y);
 }
 
 cEndMoveAction::cEndMoveAction (cVehicle* vehicle, int destID, eEndMoveActionType type)
@@ -829,15 +801,9 @@ void cEndMoveAction::execute (cServer& server)
 {
 	switch (type_)
 	{
-		case EMAT_LOAD:
-			executeLoadAction (server);
-			break;
-		case EMAT_GET_IN:
-			executeGetInAction (server);
-			break;
-		case EMAT_ATTACK:
-			executeAttackAction (server);
-			break;
+		case EMAT_LOAD: executeLoadAction (server); break;
+		case EMAT_GET_IN: executeGetInAction (server); break;
+		case EMAT_ATTACK: executeAttackAction (server); break;
 	}
 }
 
@@ -846,14 +812,13 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 	cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	if (!destVehicle) return;
 
-	if (vehicle_->canLoad (destVehicle))
-	{
-		vehicle_->storeVehicle (destVehicle, server.Map);
-		if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
+	if (vehicle_->canLoad (destVehicle) == false) return;
 
-		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, vehicle_->owner->getNr());
-	}
+	vehicle_->storeVehicle (destVehicle, server.Map);
+	if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
+
+	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
+	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, vehicle_->owner->getNr());
 }
 
 void cEndMoveAction::executeGetInAction (cServer& server)
@@ -873,14 +838,14 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 	{
 		destBuilding->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
-		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
+		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, destBuilding->owner->getNr());
 	}
 }
 
 void cEndMoveAction::executeAttackAction (cServer& server)
 {
-	//get the target unit
+	// get the target unit
 	const cUnit* destUnit = server.getVehicleFromID (destID_);
 	if (destUnit == NULL) destUnit = server.getBuildingFromID (destID_);
 	if (destUnit == NULL) return;
@@ -890,10 +855,10 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	cMap& map = *server.Map;
 	const int offset = map.getOffset (x, y);
 
-	//check, whether the attack is now possible
+	// check, whether the attack is now possible
 	if (!vehicle_->canAttackObjectAt (x, y, &map, true, true)) return;
 
-	//is the target in sight?
+	// is the target in sight?
 	if (!vehicle_->owner->canSeeAnyAreaUnder (*destUnit)) return;
 
 	server.AJobs.push_back (new cServerAttackJob (server, vehicle_, offset, false));
@@ -970,11 +935,11 @@ bool cClientMoveJob::generateFromMessage (cNetMessage* message)
 	return true;
 }
 
-sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, const std::vector<cVehicle*>* group)
+sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, const cVehicle& vehicle, const std::vector<cVehicle*>* group)
 {
 	if (SrcX == DestX && SrcY == DestY) return 0;
 
-	cPathCalculator PathCalculator (SrcX, SrcY, DestX, DestY, &map, vehicle, group);
+	cPathCalculator PathCalculator (SrcX, SrcY, DestX, DestY, map, vehicle, group);
 	sWaypoint* waypoints = PathCalculator.calcPath();
 
 	return waypoints;
@@ -1027,7 +992,6 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			Vehicle->OffX = 0;
 			Vehicle->OffY = 0;
 			setOffset (Vehicle, iNextDir, -64);
-
 		}
 		break;
 		case MJOB_STOP:
@@ -1060,7 +1024,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			}
 
 			bEndForNow = true;
-			sWaypoint* path = calcPath (*client->getMap(), Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
+			sWaypoint* path = calcPath (*client->getMap(), Vehicle->PosX, Vehicle->PosY, DestX, DestY, *Vehicle);
 			if (path)
 			{
 				sendMoveJob (*client, path, Vehicle->iID);
@@ -1192,7 +1156,7 @@ void cClientMoveJob::moveVehicle()
 
 	setOffset (Vehicle, iNextDir, iSpeed);
 
-	if (Vehicle->OffX < -70 || Vehicle->OffX > 70 || Vehicle->OffY < -70 || Vehicle->OffY > 70)
+	if (abs (Vehicle->OffX) > 70 || abs (Vehicle->OffY) > 70)
 	{
 		Log.write (" Client: Flying dutchmen detected! Unit ID: " + iToStr (Vehicle->iID) + " at position (" + iToStr (Vehicle->PosX) + ":" + iToStr (Vehicle->PosY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 	}
@@ -1233,15 +1197,7 @@ void cClientMoveJob::doEndMoveVehicle()
 void cClientMoveJob::calcNextDir()
 {
 	if (!Waypoints || !Waypoints->next) return;
-#define TESTXY_CND(a,b) if (Waypoints->X a Waypoints->next->X && Waypoints->Y b Waypoints->next->Y)
-	TESTXY_CND ( == , >) iNextDir = 0;
-	else TESTXY_CND (<,>) iNextDir = 1;
-	else TESTXY_CND ( < , ==) iNextDir = 2;
-	else TESTXY_CND ( < , <) iNextDir = 3;
-	else TESTXY_CND ( == , <) iNextDir = 4;
-	else TESTXY_CND ( > , <) iNextDir = 5;
-	else TESTXY_CND ( > , ==) iNextDir = 6;
-	else TESTXY_CND ( > , >) iNextDir = 7;
+	iNextDir = getDir (Waypoints->X, Waypoints->Y, Waypoints->next->X, Waypoints->next->Y);
 }
 
 void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial)
@@ -1283,16 +1239,15 @@ void cClientMoveJob::stopMoveSound()
 	bSoundRunning = false;
 	cGameGUI& gameGUI = client->gameGUI;
 
-	if (Vehicle == gameGUI.getSelectedUnit())
-	{
-		cBuilding* building = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getBaseBuilding();
-		bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY);
-		if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+	if (Vehicle != gameGUI.getSelectedUnit()) return;
 
-		StopFXLoop (gameGUI.iObjectStream);
-		if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->typ->StopWater);
-		else PlayFX (Vehicle->typ->Stop);
+	cBuilding* building = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getBaseBuilding();
+	bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY);
+	if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
-	}
+	StopFXLoop (gameGUI.iObjectStream);
+	if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->typ->StopWater);
+	else PlayFX (Vehicle->typ->Stop);
+
+	gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
 }

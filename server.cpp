@@ -3831,7 +3831,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			if (!Map->possiblePlace (*stealthVehicle, x, y)) continue;
 
 			//check costs of the move
-			cPathCalculator pathCalculator (0, 0, 0, 0, Map, stealthVehicle);
+			cPathCalculator pathCalculator (0, 0, 0, 0, *Map, *stealthVehicle);
 			int costs = pathCalculator.calcNextCost (PosX, PosY, x, y);
 			if (costs > stealthVehicle->data.speedCur) continue;
 

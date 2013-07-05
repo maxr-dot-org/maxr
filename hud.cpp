@@ -2144,7 +2144,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				if (selectedBuilding->isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (*client, selectedBuilding->iID, false, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, client->getMap(), overVehicle, true);
+					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, *selectedBuilding, *client->getMap(), *overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -2162,7 +2162,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				if (selectedBuilding->isNextTo (overPlane->PosX, overPlane->PosY)) sendWantLoad (*client, selectedBuilding->iID, false, overPlane->iID);
 				else
 				{
-					cPathCalculator pc (overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, client->getMap(), overPlane, true);
+					cPathCalculator pc (overPlane->PosX, overPlane->PosY, *selectedBuilding, *client->getMap(), *overPlane, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -2183,7 +2183,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				if (overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY) sendWantLoad (*client, selectedVehicle->iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, client->getMap(), selectedVehicle);
+					cPathCalculator pc (selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, *client->getMap(), *selectedVehicle);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -2201,7 +2201,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				if (selectedVehicle->isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (*client, selectedVehicle->iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, client->getMap(), overVehicle, true);
+					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, *selectedVehicle, *client->getMap(), *overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
@@ -2251,7 +2251,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else if (target)
 					{
-						cPathCalculator pc (selectedVehicle->PosX, selectedVehicle->PosY, client->getMap(), selectedVehicle, mouseMapX, mouseMapY);
+						cPathCalculator pc (selectedVehicle->PosX, selectedVehicle->PosY, *client->getMap(), *selectedVehicle, mouseMapX, mouseMapY);
 						sWaypoint* path = pc.calcPath();
 						if (path)
 						{
