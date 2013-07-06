@@ -1488,19 +1488,18 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 
 		switch (BuildSpeed)    //BuildSpeed here is the previous build speed
 		{
-
 			case 0:
-				WorkedRounds = (iTurboBuildCosts[0] - iRemainingMetal) / (float) (1 * data.needsMetal);
-				iTurboBuildCosts[0] -= (int) (1    *  1 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[1] -= (int) (0.5  *  4 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[2] -= (int) (0.25 * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (iTurboBuildCosts[0] - iRemainingMetal) / (1.f * data.needsMetal);
+				iTurboBuildCosts[0] -= (int) (1     *  1 * data.needsMetal * WorkedRounds);
+				iTurboBuildCosts[1] -= (int) (0.5f  *  4 * data.needsMetal * WorkedRounds);
+				iTurboBuildCosts[2] -= (int) (0.25f * 12 * data.needsMetal * WorkedRounds);
 				break;
 
 			case 1:
 				WorkedRounds = (iTurboBuildCosts[1] - iRemainingMetal) / (float) (4 * data.needsMetal);
-				iTurboBuildCosts[0] -= (int) (2   *  1 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[1] -= (int) (1   *  4 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[2] -= (int) (0.5 * 12 * data.needsMetal * WorkedRounds);
+				iTurboBuildCosts[0] -= (int) (2    *  1 * data.needsMetal * WorkedRounds);
+				iTurboBuildCosts[1] -= (int) (1    *  4 * data.needsMetal * WorkedRounds);
+				iTurboBuildCosts[2] -= (int) (0.5f * 12 * data.needsMetal * WorkedRounds);
 				break;
 
 			case 2:

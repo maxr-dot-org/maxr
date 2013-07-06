@@ -255,14 +255,14 @@ void cServerAttackJob::sendFireCommand()
 		else
 			r = 180 - r;
 
-		if (r >= 337.5 || r <= 22.5) fireDir = 0;
-		else if (r >= 22.5  && r <= 67.5)  fireDir = 1;
-		else if (r >= 67.5  && r <= 112.5) fireDir = 2;
-		else if (r >= 112.5 && r <= 157.5) fireDir = 3;
-		else if (r >= 157.5 && r <= 202.5) fireDir = 4;
-		else if (r >= 202.5 && r <= 247.5) fireDir = 5;
-		else if (r >= 247.5 && r <= 292.5) fireDir = 6;
-		else if (r >= 292.5 && r <= 337.5) fireDir = 7;
+		if (r >= 337.5f || r <= 22.5f) fireDir = 0;
+		else if (r >= 22.5f && r <= 67.5f) fireDir = 1;
+		else if (r >= 67.5f && r <= 112.5f) fireDir = 2;
+		else if (r >= 112.5f && r <= 157.5f) fireDir = 3;
+		else if (r >= 157.5f && r <= 202.5f) fireDir = 4;
+		else if (r >= 202.5f && r <= 247.5f) fireDir = 5;
+		else if (r >= 247.5f && r <= 292.5f) fireDir = 6;
+		else if (r >= 292.5f && r <= 337.5f) fireDir = 7;
 	}
 	unit->dir = fireDir;
 
@@ -642,10 +642,10 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		const string name = unit->getDisplayName();
 		const sID id = unit->data.ID;
 		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
-		client->gameGUI.addCoords (report);
+		client->getGameGUI().addCoords (report);
 		PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
-	client->gameGUI.checkMouseInputMode();
+	client->getGameGUI().checkMouseInputMode();
 }
 
 //--------------------------------------------------------------------------
@@ -928,7 +928,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 				playImpact = true;
 			}
 		}
-		client.gameGUI.updateMouseCursor();
+		client.getGameGUI().updateMouseCursor();
 	}
 
 	const int x = offset % map.getSize();
@@ -955,7 +955,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
 		const sSavedReportMessage& report = client.getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
-		client.gameGUI.addCoords (report);
+		client.getGameGUI().addCoords (report);
 	}
 
 	// clean up

@@ -1234,7 +1234,7 @@ void cMenuUnitListItem::init (const cClient* client)
 	}
 	else if (unitID.getBuilding())
 	{
-		const cGameGUI* gameGUI = client ? &client->gameGUI : NULL;
+		const cGameGUI* gameGUI = client ? &client->getGameGUI() : NULL;
 		cBuilding building (unitID.getBuilding(), owner, 0);
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
 		building.render (gameGUI, surface, dest, zoomFactor, false, false);
@@ -4049,7 +4049,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 			unitDetails[count - minCount]->setSelection (*client, nextVehicle, NULL);
 
 			font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextVehicle->PosX) + "," + iToStr (nextVehicle->PosY));
-			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->gameGUI));
+			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->getGameGUI()));
 			dest.y += 55; nameDest.y += 55;
 		}
 		if (vehicle && count == selected) (*vehicle) = nextVehicle;
@@ -4081,7 +4081,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 				unitDetails[count - minCount]->setSelection (*client, NULL, nextBuilding);
 
 				font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextBuilding->PosX) + "," + iToStr (nextBuilding->PosY));
-				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->gameGUI));
+				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->getGameGUI()));
 
 				dest.y += 55; nameDest.y += 55;
 			}
@@ -4168,7 +4168,7 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	if (unit->isBuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		building->render (&client->gameGUI, surface, dest, zoomFactor, false, false);
+		building->render (&client->getGameGUI(), surface, dest, zoomFactor, false, false);
 	}
 	else
 	{
@@ -4263,7 +4263,7 @@ void cMenuReportsScreen::released (void* parent)
 
 			const sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
 			parentMenu->close();
-			cGameGUI& gameGUI = client->gameGUI;
+			cGameGUI& gameGUI = client->getGameGUI();
 
 			gameGUI.addMessage (savedReport.message);
 			if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)

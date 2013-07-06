@@ -179,6 +179,8 @@ public:
 	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
 	const cPlayer* getActivePlayer() const { return ActivePlayer; }
 	cPlayer* getActivePlayer() { return ActivePlayer; }
+	const cGameGUI& getGameGUI() const { return gameGUI; }
+	cGameGUI& getGameGUI() { return gameGUI; }
 private:
 	/**
 	* adds the unit to the map and player.
@@ -307,6 +309,10 @@ private:
 	cCasualtiesTracker* casualtiesTracker;
 
 	sFreezeModes freezeModes;
+	/** the hud */
+	// TODO: this should be a pointer to the gameGui instance,
+	// so it is possible to have a GUI-less client for ai implementation
+	cGameGUI gameGUI;
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */
@@ -315,10 +321,6 @@ public:
 	std::vector<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
 	std::vector<cClientMoveJob*> ActiveMJobs;
-	/** the hud */
-	// TODO: this should be a pointer to the gameGui instance,
-	// so it is possible to have a GUI-less client for ai implementation
-	cGameGUI gameGUI;
 
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;

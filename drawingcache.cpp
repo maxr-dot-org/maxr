@@ -67,7 +67,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 	int width  = (int) std::max (vehicle.typ->img_org[vehicle.dir]->w * zoom, vehicle.typ->shw_org[vehicle.dir]->w * zoom);
 	if (vehicle.FlightHigh > 0)
 	{
-		int shwOff = ( (int) (gameGUI.getTileSize() * (vehicle.FlightHigh / 64.0)));
+		int shwOff = ( (int) (gameGUI.getTileSize() * (vehicle.FlightHigh / 64.0f)));
 		height += shwOff;
 		width  += shwOff;
 	}

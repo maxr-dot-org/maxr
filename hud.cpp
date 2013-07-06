@@ -194,7 +194,7 @@ void cDebugOutput::draw()
 #if 0
 		font->showText (DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr ( (int) FXList.size() + (int) FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ( (int) (fWindDir * 57.29577)), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ( (int) (fWindDir * 57.29577f)), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 #endif
 	}
@@ -4050,7 +4050,7 @@ void cGameGUI::drawUnitCircles()
 				SDL_Rect dest;
 				dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * v.BandX;
 				dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * v.BandY;
-				CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, (float) getTileSize() / 64.0);
+				CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getTileSize() / 64.0f);
 				SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, buffer, &dest);
 			}
 			else
@@ -4062,7 +4062,7 @@ void cGameGUI::drawUnitCircles()
 					SDL_Rect dest;
 					dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * x;
 					dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * y;
-					CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, (float) getTileSize() / 64.0);
+					CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getTileSize() / 64.0f);
 					SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, buffer, &dest);
 					v.BandX = x;
 					v.BandY = y;

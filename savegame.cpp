@@ -1592,12 +1592,12 @@ void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 	if (Data->surfacePosition != sUnitData::SURFACE_POS_GROUND) addAttributeElement (unitNode, "Surface_Position", "num", iToStr (Data->surfacePosition));
 	if (Data->canBeOverbuild != sUnitData::OVERBUILD_TYPE_NO) addAttributeElement (unitNode, "Can_Be_Overbuild", "num", iToStr (Data->canBeOverbuild));
 
-	if (Data->factorAir != 0.0) addAttributeElement (unitNode, "Factor_Air", "num", fToStr (Data->factorAir));
-	if (Data->factorCoast != 0.0) addAttributeElement (unitNode, "Factor_Coast", "num", fToStr (Data->factorCoast));
-	if (Data->factorGround != 0.0) addAttributeElement (unitNode, "Factor_Ground", "num", fToStr (Data->factorGround));
-	if (Data->factorSea != 0.0) addAttributeElement (unitNode, "Factor_Sea", "num", fToStr (Data->factorSea));
+	if (Data->factorAir != 0.0f) addAttributeElement (unitNode, "Factor_Air", "num", fToStr (Data->factorAir));
+	if (Data->factorCoast != 0.0f) addAttributeElement (unitNode, "Factor_Coast", "num", fToStr (Data->factorCoast));
+	if (Data->factorGround != 0.0f) addAttributeElement (unitNode, "Factor_Ground", "num", fToStr (Data->factorGround));
+	if (Data->factorSea != 0.0f) addAttributeElement (unitNode, "Factor_Sea", "num", fToStr (Data->factorSea));
 
-	if (Data->modifiesSpeed != 0.0) addAttributeElement (unitNode, "Factor_Sea", "num", fToStr (Data->modifiesSpeed));
+	if (Data->modifiesSpeed != 0.0f) addAttributeElement (unitNode, "Factor_Sea", "num", fToStr (Data->modifiesSpeed));
 
 	if (Data->canBuildPath) addMainElement (unitNode, "Can_Build_Path");
 	if (Data->canBuildRepeat) addMainElement (unitNode, "Can_Build_Repeat");

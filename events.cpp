@@ -80,7 +80,7 @@ static void HandleInputEvent_KEY (cMenu& activeMenu, SDL_Event& event, cClient* 
 		// Screenshot
 		const std::string screenshotfile = TakeScreenShot();
 		if (client != NULL)
-			client->gameGUI.addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
+			client->getGameGUI().addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
 	}
 	else
 	{

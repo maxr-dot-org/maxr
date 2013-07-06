@@ -426,7 +426,7 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 	int frameNr = 0;
 	if (client && turnsDisabled == 0)
 	{
-		frameNr = client->gameGUI.getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
+		frameNr = client->getGameGUI().getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
 	}
 
 	tmp = dest;
@@ -469,7 +469,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		// draw player color
 		src.y = 0;
 		src.h = src.w = (int) (typ->build_org->h * zoomFactor);
-		src.x = (client->gameGUI.getAnimationSpeed() % 4) * src.w;
+		src.x = (client->getGameGUI().getAnimationSpeed() % 4) * src.w;
 		SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 		blitWithPreScale (typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
@@ -493,7 +493,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		// draw player color
 		src.y = 0;
 		src.h = src.w = (int) (typ->clear_small_org->h * zoomFactor);
-		src.x = (client->gameGUI.getAnimationSpeed() % 4) * src.w;
+		src.x = (client->getGameGUI().getAnimationSpeed() % 4) * src.w;
 		SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 
 		blitWithPreScale (typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
@@ -525,7 +525,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		// draw shadow
 		if (FlightHigh > 0)
 		{
-			int high = ( (int) ( (int) (client->gameGUI.getTileSize()) * (FlightHigh / 64.0)));
+			int high = ( (int) ( (int) (client->getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
 			tmp.x += high;
 			tmp.y += high;
 
@@ -1831,7 +1831,7 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 		srcLevel = (int) CommandoRank + 8;
 	}
 
-	int turns = (int) (1.0 / destTurn * srcLevel);
+	int turns = (int) (1.0f / destTurn * srcLevel);
 	turns = std::max (turns, 1);
 	return turns;
 }

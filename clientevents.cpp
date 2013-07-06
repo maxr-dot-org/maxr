@@ -330,21 +330,22 @@ void sendWantResearchChange (const cClient& client, int (&newResearchSettings) [
 void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_HUD_INFO);
-	message->pushBool (client.gameGUI.tntChecked());
-	message->pushBool (client.gameGUI.hitsChecked());
-	message->pushBool (client.gameGUI.lockChecked());
-	message->pushBool (client.gameGUI.surveyChecked());
-	message->pushBool (client.gameGUI.statusChecked());
-	message->pushBool (client.gameGUI.scanChecked());
-	message->pushBool (client.gameGUI.rangeChecked());
-	message->pushBool (client.gameGUI.twoXChecked());
-	message->pushBool (client.gameGUI.fogChecked());
-	message->pushBool (client.gameGUI.ammoChecked());
-	message->pushBool (client.gameGUI.gridChecked());
-	message->pushBool (client.gameGUI.colorChecked());
-	message->pushFloat (client.gameGUI.getZoom());
-	message->pushInt16 (client.gameGUI.getOffsetY());
-	message->pushInt16 (client.gameGUI.getOffsetX());
+	const cGameGUI& gameGUI = client.getGameGUI();
+	message->pushBool (gameGUI.tntChecked());
+	message->pushBool (gameGUI.hitsChecked());
+	message->pushBool (gameGUI.lockChecked());
+	message->pushBool (gameGUI.surveyChecked());
+	message->pushBool (gameGUI.statusChecked());
+	message->pushBool (gameGUI.scanChecked());
+	message->pushBool (gameGUI.rangeChecked());
+	message->pushBool (gameGUI.twoXChecked());
+	message->pushBool (gameGUI.fogChecked());
+	message->pushBool (gameGUI.ammoChecked());
+	message->pushBool (gameGUI.gridChecked());
+	message->pushBool (gameGUI.colorChecked());
+	message->pushFloat (gameGUI.getZoom());
+	message->pushInt16 (gameGUI.getOffsetY());
+	message->pushInt16 (gameGUI.getOffsetX());
 	message->pushInt16 (selectedUnitID);
 	message->pushInt16 (ownerNr);
 	message->pushInt16 (savingID);

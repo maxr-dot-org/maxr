@@ -74,9 +74,9 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	eventHandling (&eventHandling_),
 	Map (new cMap (staticMap)),
 	PlayerList (playerList),
+	gameGUI (Map),
 	gameTimer(),
-	FxList (new cFxContainer),
-	gameGUI (Map)
+	FxList (new cFxContainer)
 {
 	gameGUI.setClient (this);
 	gameTimer.setClient (this);

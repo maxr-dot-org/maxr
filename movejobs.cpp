@@ -975,7 +975,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			{
 				startMoveSound();
 				client->addActiveMoveJob (this);
-				if (client->gameGUI.getSelectedUnit() == Vehicle) client->gameGUI.unitMenuActive = false;
+				if (client->getGameGUI().getSelectedUnit() == Vehicle) client->getGameGUI().unitMenuActive = false;
 			}
 			if (bEndForNow)
 			{
@@ -1034,7 +1034,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			{
 				bFinished = true;
 
-				if (Vehicle == client->gameGUI.getSelectedUnit())
+				if (Vehicle == client->getGameGUI().getSelectedUnit())
 				{
 					PlayRandomVoice (VoiceData.VOINoPath);
 				}
@@ -1074,14 +1074,14 @@ void cClientMoveJob::moveVehicle()
 		Vehicle->moving = true;
 
 		//restart movesound, when drinving into or out of water
-		if (Vehicle == client->gameGUI.getSelectedUnit())
+		if (Vehicle == client->getGameGUI().getSelectedUnit())
 		{
 			bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y);
 			bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y);
 
 			if (wasWater != water)
 			{
-				Vehicle->StartMoveSound (client->gameGUI);
+				Vehicle->StartMoveSound (client->getGameGUI());
 			}
 		}
 	}
@@ -1187,8 +1187,8 @@ void cClientMoveJob::doEndMoveVehicle()
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 
-	client->gameGUI.callMiniMapDraw();
-	client->gameGUI.updateMouseCursor();
+	client->getGameGUI().callMiniMapDraw();
+	client->getGameGUI().updateMouseCursor();
 	Vehicle->owner->doScan();
 
 	calcNextDir();
@@ -1217,17 +1217,17 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (bSpezial)
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->gameGUI.getTileSize()], NULL, buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->getGameGUI().getTileSize()], NULL, buffer, &Dest);
 	}
 	else
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->gameGUI.getTileSize()], NULL, buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->getGameGUI().getTileSize()], NULL, buffer, &Dest);
 	}
 }
 
 void cClientMoveJob::startMoveSound()
 {
-	cGameGUI& gameGUI = client->gameGUI;
+	cGameGUI& gameGUI = client->getGameGUI();
 	if (Vehicle == gameGUI.getSelectedUnit()) Vehicle->StartMoveSound (gameGUI);
 	bSoundRunning = true;
 }
@@ -1237,7 +1237,7 @@ void cClientMoveJob::stopMoveSound()
 	if (!bSoundRunning) return;
 
 	bSoundRunning = false;
-	cGameGUI& gameGUI = client->gameGUI;
+	cGameGUI& gameGUI = client->getGameGUI();
 
 	if (Vehicle != gameGUI.getSelectedUnit()) return;
 

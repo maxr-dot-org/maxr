@@ -237,9 +237,9 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	//generate palette for terrains with fog
 	for (int i = 0; i < 256; i++)
 	{
-		palette_shw[i].r = (unsigned char) (palette[i].r * 0.6);
-		palette_shw[i].g = (unsigned char) (palette[i].g * 0.6);
-		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6);
+		palette_shw[i].r = (unsigned char) (palette[i].r * 0.6f);
+		palette_shw[i].g = (unsigned char) (palette[i].g * 0.6f);
+		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6f);
 	}
 
 	// Load necessary Terrain Graphics
@@ -453,7 +453,7 @@ void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
 {
 	if (resSpots == NULL)
 	{
-		resSpotCount = (int) (getSize() * getSize() * 0.003 * (1.5 + frequency));
+		resSpotCount = (int) (getSize() * getSize() * 0.003f * (1.5f + frequency));
 		resCurrentSpotCount = 0;
 		resSpots = new T_2<int>[resSpotCount];
 		resSpotTypes = new int[resSpotCount];
@@ -585,9 +585,9 @@ void cMap::placeRessources (int metal, int oil, int gold)
 			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrtf (dist / maxDist);
 		}
 
-		amount[RES_METAL] /= 1.0;
-		amount[RES_OIL] /= 0.8;
-		amount[RES_GOLD] /= 0.4;
+		amount[RES_METAL] /= 1.0f;
+		amount[RES_OIL] /= 0.8f;
+		amount[RES_GOLD] /= 0.4f;
 
 		int type = RES_METAL;
 		if (amount[RES_OIL] < amount[type]) type = RES_OIL;

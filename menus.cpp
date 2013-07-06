@@ -193,7 +193,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	if (reconnect && network)
 		sendReconnectionSuccess (*network, playerNr);
-	client->gameGUI.show (client);
+	client->getGameGUI().show (client);
 
 	for (size_t i = 0; i != players.size(); ++i)
 	{
@@ -247,7 +247,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	// exit menu and start game
 	server->bStarted = true;
-	client->gameGUI.show (client);
+	client->getGameGUI().show (client);
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
 	{
@@ -593,7 +593,7 @@ int cMenu::show (cClient* client)
 		if (client)
 		{
 			client->gameTimer.run (this);
-			client->gameGUI.handleTimer();
+			client->getGameGUI().handleTimer();
 		}
 		else
 			handleNetMessages();
@@ -2416,10 +2416,10 @@ const sTerrain* cLandingMenu::getMapTile (int x, int y) const
 {
 	if (x < 0 || x >= Video.getResolutionX() - 192 || y < 0 || y >= Video.getResolutionY() - 32) return NULL;
 
-	x = (int) (x * (448.0 / (Video.getResolutionX() - 180)));
-	y = (int) (y * (448.0 / (Video.getResolutionY() - 32)));
-	x = (int) (x * map->getSize() / 448.0);
-	y = (int) (y * map->getSize() / 448.0);
+	x = (int) (x * (448.0f / (Video.getResolutionX() - 180)));
+	y = (int) (y * (448.0f / (Video.getResolutionY() - 32)));
+	x = (int) (x * map->getSize() / 448.0f);
+	y = (int) (y * map->getSize() / 448.0f);
 	return &map->getTerrain (x, y);
 }
 
@@ -2432,11 +2432,11 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	float fakx = (float) ( (Video.getResolutionX() - 192.0) / menu->map->getSize()); //pixel per field in x direction
-	float faky = (float) ( (Video.getResolutionY() - 32.0) / menu->map->getSize()); //pixel per field in y direction
+	float fakx = (Video.getResolutionX() - 192.0f) / menu->map->getSize(); //pixel per field in x direction
+	float faky = (Video.getResolutionY() - 32.0f) / menu->map->getSize(); //pixel per field in y direction
 
-	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0 / menu->map->getSize()) * (448.0 / (Video.getResolutionX() - 192)));
-	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0 / menu->map-> getSize()) * (448.0 / (Video.getResolutionY() - 32)));
+	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
+	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0f / menu->map-> getSize()) * (448.0f / (Video.getResolutionY() - 32)));
 	menu->landData.landingState = LANDING_POSITION_OK;
 	menu->backButton->setLocked (true);
 	{
@@ -3372,7 +3372,7 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// exit menu and start game
 	server->bStarted = true;
-	client->gameGUI.show (client);
+	client->getGameGUI().show (client);
 
 	server->stop();
 	delete server;
@@ -4134,14 +4134,14 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 	}
 	else
 	{
-		menu->client->gameGUI.mouseInputMode = placeBand;
+		menu->client->getGameGUI().mouseInputMode = placeBand;
 		menu->vehicle->BuildBigSavedPos = menu->client->getMap()->getOffset (menu->vehicle->PosX, menu->vehicle->PosY);
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 		menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-		menu->vehicle->FindNextband (menu->client->gameGUI);
+		menu->vehicle->FindNextband (menu->client->getGameGUI());
 	}
 	menu->end = true;
 }
@@ -4154,7 +4154,7 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-	menu->client->gameGUI.mouseInputMode = placeBand;
+	menu->client->getGameGUI().mouseInputMode = placeBand;
 	menu->end = true;
 }
 
@@ -4908,12 +4908,12 @@ void cStorageMenu::activateReleased (void* parent)
 	{
 		menu->ownerVehicle->VehicleToActivate = index;
 		if (menu->unitData.factorAir > 0) sendWantActivate (*menu->client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
-		else menu->client->gameGUI.mouseInputMode = activateVehicle;
+		else menu->client->getGameGUI().mouseInputMode = activateVehicle;
 	}
 	else if (menu->ownerBuilding)
 	{
 		menu->ownerBuilding->VehicleToActivate = index;
-		menu->client->gameGUI.mouseInputMode = activateVehicle;
+		menu->client->getGameGUI().mouseInputMode = activateVehicle;
 	}
 	menu->end = true;
 }
@@ -5457,12 +5457,12 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 
 	if (vehicle)
 	{
-		client->gameGUI.selectUnit (*vehicle);
-		vehicle->center (client->gameGUI);
+		client->getGameGUI().selectUnit (*vehicle);
+		vehicle->center (client->getGameGUI());
 	}
 	else if (building)
 	{
-		client->gameGUI.selectUnit (*building);
-		building->center (client->gameGUI);
+		client->getGameGUI().selectUnit (*building);
+		building->center (client->getGameGUI());
 	}
 }
