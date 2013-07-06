@@ -438,7 +438,7 @@ public:
 	/** Adds a message to be displayed in the game */
 	void addMessage (const std::string& sMsg);
 	/** displays a message with 'goto' coordinates */
-	std::string addCoords (const std::string& msg, int x, int y);
+	void addCoords (const sSavedReportMessage& msg);
 
 	void setClient (cClient* client);
 	virtual int show (cClient* client);

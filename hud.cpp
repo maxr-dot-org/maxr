@@ -747,15 +747,13 @@ void cGameGUI::addMessage (const string& sMsg)
 	if (cSettings::getInstance().isDebug()) Log.write (Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
-string cGameGUI::addCoords (const string& msg, int x, int y)
+void cGameGUI::addCoords (const sSavedReportMessage& msg)
 {
-	stringstream strStream;
 	//e.g. [85,22] missel MK I is under attack (F1)
-	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString (KeysList.KeyJumpToAction) << ")";
-	addMessage (strStream.str());
-	msgCoordsX = x;
-	msgCoordsY = y;
-	return strStream.str();
+	const string str = msg.getFullMessage() + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")";
+	addMessage (str);
+	msgCoordsX = msg.xPos;
+	msgCoordsY = msg.yPos;
 }
 
 int cGameGUI::show (cClient* client)

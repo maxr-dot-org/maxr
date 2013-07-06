@@ -641,7 +641,8 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		const int y = unit->PosY;
 		const string name = unit->getDisplayName();
 		const sID id = unit->data.ID;
-		client->getActivePlayer()->addSavedReport (client->gameGUI.addCoords (lngPack.i18n ("Text~Comp~AttackingEnemy", name), x, y), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
+		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
+		client->gameGUI.addCoords (report);
 		PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
 	client->gameGUI.checkMouseInputMode();
@@ -953,7 +954,8 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			message = name + " " + lngPack.i18n ("Text~Comp~Attacked");
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
-		client.getActivePlayer()->addSavedReport (client.gameGUI.addCoords (message, x, y), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
+		const sSavedReportMessage& report = client.getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
+		client.gameGUI.addCoords (report);
 	}
 
 	// clean up

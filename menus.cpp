@@ -216,7 +216,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	assert (server != NULL);
 	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
 	AutoPtr<cMap> serverMap (server->Map);
-	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
+	std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
 	std::vector<cPlayer*> clientPlayerList;

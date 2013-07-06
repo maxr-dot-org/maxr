@@ -582,7 +582,12 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer)
 		{
-			if (Vehicle->turnsDisabled > 0) ActivePlayer->addSavedReport (gameGUI.addCoords (Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+			if (Vehicle->turnsDisabled > 0)
+			{
+				const std::string msg = Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
+				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+				gameGUI.addCoords (report);
+			}
 			Vehicle->owner->doScan();
 		}
 		Data = &Vehicle->data;
@@ -609,7 +614,12 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if ( (Building->turnsDisabled > 0) != bWasDisabled && Building->owner == ActivePlayer)
 		{
-			if (Building->turnsDisabled > 0) ActivePlayer->addSavedReport (gameGUI.addCoords (Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Building->PosX, Building->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
+			if (Building->turnsDisabled > 0)
+			{
+				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
+				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
+				gameGUI.addCoords (report);
+			}
 			Building->owner->doScan();
 		}
 		Data = &Building->data;
@@ -807,8 +817,8 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 			else if (Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY)
 			{
 				const string msgString = lngPack.i18n ("Text~Comp~Path_interrupted");
-				gameGUI.addCoords (msgString, Vehicle->PosX, Vehicle->PosY);
-				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+				gameGUI.addCoords (report);
 			}
 		}
 		Vehicle->BuildRounds = 0;
@@ -1675,10 +1685,10 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	if (gameGUI.getSelectedUnit()) sendSaveHudInfo (*this, gameGUI.getSelectedUnit()->iID, ActivePlayer->getNr(), saveingID);
 	else sendSaveHudInfo (*this, -1, ActivePlayer->getNr(), saveingID);
 
-	for (int i = ActivePlayer->savedReportsList.size() - 50; i < (int) ActivePlayer->savedReportsList.size(); i++)
+	const std::vector<sSavedReportMessage>& savedReports = ActivePlayer->savedReportsList;
+	for (size_t i = std::max<int> (0, savedReports.size() - 50); i != savedReports.size(); ++i)
 	{
-		if (i < 0) continue;
-		sendSaveReportInfo (*this, ActivePlayer->savedReportsList[i], ActivePlayer->getNr(), saveingID);
+		sendSaveReportInfo (*this, savedReports[i], ActivePlayer->getNr(), saveingID);
 	}
 	sendFinishedSendSaveInfo (*this, ActivePlayer->getNr(), saveingID);
 }
@@ -1874,13 +1884,16 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit,
 	{
 		//this unit was captured by an infiltrator
 		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
-		getActivePlayer()->addSavedReport (gameGUI.addCoords (lngPack.i18n ("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
+		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName());
+		const sSavedReportMessage& report = getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
+		gameGUI.addCoords (report);
 	}
 	else if (AddedVehicle->owner != ActivePlayer)
 	{
 		// make report
 		const string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
-		getActivePlayer()->addSavedReport (gameGUI.addCoords (message, iPosX, iPosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
+		const sSavedReportMessage& report = getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
+		gameGUI.addCoords (report);
 
 		if (AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack)
 			PlayVoice (VoiceData.VOISubDetected);

@@ -20,8 +20,10 @@
 #define playerH
 
 #include <SDL.h>
-#include <vector>
 #include <assert.h>
+#include <string>
+#include <vector>
+
 #include "defines.h"
 #include "base.h"
 #include "main.h" // for sID
@@ -48,7 +50,10 @@ struct sSavedReportMessage
 		REPORT_TYPE_UNIT,
 		REPORT_TYPE_CHAT
 	};
+public:
+	std::string getFullMessage() const { if (xPos == -1) return message; else return "[" + iToStr (xPos) + "," + iToStr (yPos) + "] " + message; }
 
+public:
 	std::string message;
 	eReportTypes type;
 	sID unitID;
@@ -139,7 +144,7 @@ public:
 	void setScore (int score, int turn);
 	void clearDone();
 
-	void addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1);
+	const sSavedReportMessage& addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1);
 
 	void setClan (int newClan);
 	int getClan() const { return clan; }

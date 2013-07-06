@@ -377,8 +377,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap* map)
 			if (reportElement->Parent() != reportsNode) break;
 			sSavedReportMessage savedReport;
 			savedReport.message = reportElement->Attribute ("msg");
-			int tmpInt;
-			tmpInt = reportElement->IntAttribute ("type");
+			const int tmpInt = reportElement->IntAttribute ("type");
 			savedReport.type = (sSavedReportMessage::eReportTypes) tmpInt;
 			savedReport.xPos = reportElement->IntAttribute ("xPos");
 			savedReport.yPos = reportElement->IntAttribute ("yPos");

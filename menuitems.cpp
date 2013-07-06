@@ -3930,10 +3930,11 @@ void cMenuReportsScreen::drawScoreGraph()
 void cMenuReportsScreen::drawReportsScreen()
 {
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
-	for (unsigned int i = (index) * maxItems; i < owner->savedReportsList.size(); i++)
+
+	size_t endIndex = std::min ((index + 1u) * maxItems, owner->savedReportsList.size());
+	for (size_t i = index * maxItems; i != endIndex; ++i)
 	{
-		if ( (int) i >= (index + 1) * maxItems) break;
-		sSavedReportMessage& savedReport = owner->savedReportsList[i];
+		const sSavedReportMessage& savedReport = owner->savedReportsList[i];
 
 		switch (savedReport.type)
 		{
@@ -3967,7 +3968,7 @@ void cMenuReportsScreen::drawReportsScreen()
 				break;
 		}
 
-		font->showTextAsBlock (textDest, savedReport.message);
+		font->showTextAsBlock (textDest, savedReport.getFullMessage());
 		textDest.y += 55;
 
 		if (selected == (int) i)
@@ -3975,15 +3976,15 @@ void cMenuReportsScreen::drawReportsScreen()
 			int selIndex = selected - index * maxItems;
 			SDL_Rect selDest = { Sint16 (position.x + 15), Sint16 (position.y + 23 + 55 * selIndex), 1, 53 };
 
-			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
+			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
 			selDest.x += 450;
-			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
+			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
 			selDest.x -= 450;
 			selDest.w = 450;
 			selDest.h = 1;
-			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
+			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
 			selDest.y += 53;
-			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
+			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
 		}
 	}
 }
@@ -4194,7 +4195,7 @@ void cMenuReportsScreen::updateScrollButtons()
 			parentMenu->scrollCallback (false, false);
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			parentMenu->scrollCallback (index > 0, (index + 1) *maxItems < (int) owner->savedReportsList.size());
+			parentMenu->scrollCallback (index > 0, maxItems * (index + 1u) < owner->savedReportsList.size());
 			break;
 	}
 }
@@ -4209,11 +4210,11 @@ void cMenuReportsScreen::scrollDown()
 				index++;
 			break;
 		case REP_SCR_TYPE_DISADVA:
-			if ( (index + 1) * 10 < countDisadvantageEntries())
+			if (10 * (index + 1) < countDisadvantageEntries())
 				index++;
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			if ( (index + 1) *maxItems < (int) owner->savedReportsList.size())
+			if (maxItems * (index + 1u) < owner->savedReportsList.size())
 				index++;
 			break;
 		case REP_SCR_TYPE_SCORE:
@@ -4256,30 +4257,28 @@ void cMenuReportsScreen::released (void* parent)
 		case REP_SCR_TYPE_SCORE:
 			break;
 		case REP_SCR_TYPE_REPORTS:
+		{
 			if (clickedIndex > (int) owner->savedReportsList.size()) return;
-			if (clickedIndex == selected)
-			{
-				sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
-				parentMenu->close();
-				cGameGUI& gameGUI = client->gameGUI;
+			if (clickedIndex != selected) break;
 
-				gameGUI.addMessage (savedReport.message);
-				if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
-				{
-					int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
-					int offY = savedReport.yPos * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
-					gameGUI.setOffsetPosition (offX, offY);
-				}
-				return;
+			const sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
+			parentMenu->close();
+			cGameGUI& gameGUI = client->gameGUI;
+
+			gameGUI.addMessage (savedReport.message);
+			if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
+			{
+				int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+				int offY = savedReport.yPos * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+				gameGUI.setOffsetPosition (offX, offY);
 			}
-			break;
+			return;
+		}
 	}
 
 	selected = clickedIndex;
 	parentMenu->draw();
 }
-
-
 
 //-----------------------------------------------------------------------------
 // cMenuPlayerInfo Implementation

@@ -1042,7 +1042,7 @@ void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<cha
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::addSavedReport (const string& message, sSavedReportMessage::eReportTypes type, sID unitID, int xPos, int yPos, int colorNr)
+const sSavedReportMessage& cPlayer::addSavedReport (const string& message, sSavedReportMessage::eReportTypes type, sID unitID, int xPos, int yPos, int colorNr)
 {
 	sSavedReportMessage savedReport;
 	savedReport.message = message;
@@ -1053,4 +1053,5 @@ void cPlayer::addSavedReport (const string& message, sSavedReportMessage::eRepor
 	savedReport.colorNr = colorNr;
 
 	savedReportsList.push_back (savedReport);
+	return savedReportsList.back();
 }

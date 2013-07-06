@@ -303,15 +303,17 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 		}
 		else
 		{
-			string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
-			client->getActivePlayer()->addSavedReport (client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+			const string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
+			const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+			client->gameGUI.addCoords (report);
 			finished = true;
 		}
 	}
 	else
 	{
-		string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
-		client->getActivePlayer()->addSavedReport (client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+		const string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
+		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+		client->gameGUI.addCoords (report);
 		finished = true;
 	}
 }
