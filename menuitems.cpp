@@ -91,6 +91,43 @@ void drawLine (SDL_Surface* s, int x0, int y0, int x1, int y1, Uint32 colour)
 	}
 }
 
+void DrawRectangle (SDL_Surface* surface, const SDL_Rect& rectangle, Uint32 color)
+{
+	SDL_Rect line_h = { rectangle.x, rectangle.y, rectangle.w, 1 };
+
+	SDL_FillRect (surface, &line_h, color);
+	line_h.y += rectangle.h - 1;
+	SDL_FillRect (surface, &line_h, color);
+	SDL_Rect line_v = { rectangle.x, rectangle.y, 1, rectangle.h };
+	SDL_FillRect (surface, &line_v, color);
+	line_v.x += rectangle.w - 1;
+	SDL_FillRect (surface, &line_v, color);
+}
+
+void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint16 cornerSize, Uint32 color)
+{
+	SDL_Rect line_h = { rectangle.x, rectangle.y, cornerSize, 1 };
+
+	SDL_FillRect (surface, &line_h, color);
+	line_h.x += rectangle.w - 1 - cornerSize;
+	SDL_FillRect (surface, &line_h, color);
+	line_h.x = rectangle.x;
+	line_h.y += rectangle.h - 1;
+	SDL_FillRect (surface, &line_h, color);
+	line_h.x += rectangle.w - 1 - cornerSize;
+	SDL_FillRect (surface, &line_h, color);
+
+	SDL_Rect line_v = { rectangle.x, rectangle.y, 1, cornerSize };
+	SDL_FillRect (surface, &line_v, color);
+	line_v.y += rectangle.h - 1 - cornerSize;
+	SDL_FillRect (surface, &line_v, color);
+	line_v.x += rectangle.w - 1;
+	line_v.y = rectangle.y;
+	SDL_FillRect (surface, &line_v, color);
+	line_v.y += rectangle.h - 1 - cornerSize;
+	SDL_FillRect (surface, &line_v, color);
+}
+
 int extrapolateScore (const cPlayer* p, int currentTurn, int wantedTurn)
 {
 	if (wantedTurn <= currentTurn)
@@ -1073,16 +1110,9 @@ void cMenuCheckButton::draw()
 			font->showText (position.x, position.y, text, fontType);
 			if (checked)
 			{
-#define SELECTION_COLOR 0xE3DACF
-				SDL_Rect dest = { Sint16 (position.x + position.w + 2), Sint16 (position.y - 1), 1, Uint16 (position.h + 2) };
-				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
-				dest.x -= position.w + 4;
-				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
-				dest.h = 1;
-				dest.w = position.w + 5;
-				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
-				dest.y += position.h + 2;
-				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
+				const Uint32 selection_color(0x00E3DACF);
+				const SDL_Rect dest = {Sint16(position.x - 2), Sint16 (position.y - 1), Uint16 (position.w + 5), Uint16 (position.h + 2)};
+				DrawRectangle (buffer, dest, selection_color);
 			}
 			break;
 		case RADIOBTN_TYPE_ANGULAR_BUTTON:
@@ -1256,29 +1286,9 @@ void cMenuUnitListItem::draw()
 
 	if (selected)
 	{
-		dest.x -= 4;
-		dest.y -= 4;
-		dest.h = 1;
-		dest.w = 8;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.x += 30;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.y += 38;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.x -= 30;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.y = position.y - 4;
-		dest.w = 1;
-		dest.h = 8;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.x += 38;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.y += 31;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
-		dest.x -= 38;
-		SDL_FillRect (buffer, &dest, 0xE0E0E0);
+		const SDL_Rect dest = { Sint16 (position.x - 4), Sint16 (position.y - 4), 38, 38};
+		DrawSelectionCorner (buffer, dest, 8, 0x00E0E0E0);
 	}
-	dest.w = position.w - (32 + 4) - 12;
 
 	switch (displayType)
 	{
@@ -1289,10 +1299,9 @@ void cMenuUnitListItem::draw()
 		{
 			drawName (false);
 
-			dest.x = position.x + (32 + 4);
-			dest.y = position.y + 12;
+			const int posy = position.y + 12;
 
-			if (unitID.getVehicle()) font->showTextCentered (position.x + position.w - 12, dest.y, iToStr (owner->getUnitDataCurrentVersion (unitID)->buildCosts), FONT_LATIN_SMALL_YELLOW);
+			if (unitID.getVehicle()) font->showTextCentered (position.x + position.w - 12, posy, iToStr (owner->getUnitDataCurrentVersion (unitID)->buildCosts), FONT_LATIN_SMALL_YELLOW);
 		}
 		break;
 		default:
@@ -3636,28 +3645,11 @@ void cMenuReportsScreen::drawUnitsScreen()
 {
 	goThroughUnits (true);
 
-	if (selected >= index * maxItems && selected < (index + 1) *maxItems)
+	if (maxItems * index <= selected && selected < maxItems * (index + 1))
 	{
-		int selIndex = selected - index * maxItems;
-		SDL_Rect selDest = { Sint16 (position.x + 13), Sint16 (position.y + 26 + 55 * selIndex), 8, 1 };
-
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.x += 30;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.y += 38;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.x -= 30;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.y = position.y + 26 + 55 * selIndex;
-		selDest.w = 1;
-		selDest.h = 8;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.x += 38;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.y += 31;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
-		selDest.x -= 38;
-		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
+		const int selIndex = selected - index * maxItems;
+		const SDL_Rect rect = {Sint16 (position.x + 13), Sint16 (position.y + 26 + 55 * selIndex), 38, 38};
+		DrawSelectionCorner (buffer, rect, 8, 0x00E0E0E0);
 	}
 }
 
@@ -3973,17 +3965,8 @@ void cMenuReportsScreen::drawReportsScreen()
 		if (selected == (int) i)
 		{
 			int selIndex = selected - index * maxItems;
-			SDL_Rect selDest = { Sint16 (position.x + 15), Sint16 (position.y + 23 + 55 * selIndex), 1, 53 };
-
-			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
-			selDest.x += 450;
-			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
-			selDest.x -= 450;
-			selDest.w = 450;
-			selDest.h = 1;
-			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
-			selDest.y += 53;
-			SDL_FillRect (buffer, &selDest, 0x00E0E0E0);
+			const SDL_Rect rect = {Sint16 (position.x + 15), Sint16 (position.y + 23 + 55 * selIndex), 450, 53 };
+			DrawRectangle (buffer, rect, 0x00E0E0E0);
 		}
 	}
 }

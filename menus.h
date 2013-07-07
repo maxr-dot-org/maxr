@@ -555,7 +555,8 @@ private:
 };
 
 /**
- * A standard hangar menu with one unit selection table, unit info image, unit description, unit details window
+ * A standard hangar menu with one unit selection table,
+ * unit info image, unit description, unit details window
  * and two buttons (done and back).
  *@author alzi
  */
