@@ -1204,7 +1204,7 @@ public:
 	cReportsMenu (cClient& client, cPlayer* owner_);
 
 	void scrollCallback (bool upPossible, bool downPossible);
-	void doubleClicked (cVehicle* vehicle, cBuilding* building);
+	void doubleClicked (cUnit* unit);
 private:
 	static void upReleased (void* parent);
 	static void downReleased (void* parent);

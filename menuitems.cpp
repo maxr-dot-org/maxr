@@ -2089,11 +2089,10 @@ void cMenuUnitDetails::setOwner (cPlayer* owner_)
 	owner = owner_;
 }
 
-void cMenuUnitDetails::setSelection (const cClient& client_, cVehicle* vehicle, cBuilding* building)
+void cMenuUnitDetails::setSelection (const cClient& client_, cUnit* unit_)
 {
 	client = &client_;
-	if (vehicle != NULL) unit = vehicle;
-	else unit = building;
+	unit = unit_;
 }
 
 cMenuUnitDetailsBig::cMenuUnitDetailsBig (int x, int y) : cMenuItem (x, y)
@@ -4011,17 +4010,12 @@ bool cMenuReportsScreen::checkFilter (sUnitData& data, bool checkInclude) const
 
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehicle, cBuilding** building)
+bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 {
-	bool deleteCount = false;
 	int minCount = (index) * maxItems;
 	int maxCount = (index + 1) * maxItems;
-	if (!count_)
-	{
-		count_ = new int;
-		deleteCount = true;
-	}
-	int& count = (*count_);
+	int localCount;
+	int& count = count_ ? (*count_) : localCount;
 	count = 0;
 
 	SDL_Rect dest = { Sint16 (position.x + 17), Sint16 (position.y + 30), 0, 0 };
@@ -4034,7 +4028,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 		if (!inFilter || count < minCount)
 		{
 			nextVehicle = nextVehicle->next;
-			if (inFilter) count++;
+			if (inFilter) ++count;
 			continue;
 		}
 		if (draw)
@@ -4046,14 +4040,14 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 			}
 
 			font->showTextAsBlock (nameDest, nextVehicle->getDisplayName());
-			unitDetails[count - minCount]->setSelection (*client, nextVehicle, NULL);
+			unitDetails[count - minCount]->setSelection (*client, nextVehicle);
 
 			font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextVehicle->PosX) + "," + iToStr (nextVehicle->PosY));
 			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->getGameGUI()));
 			dest.y += 55; nameDest.y += 55;
 		}
-		if (vehicle && count == selected) (*vehicle) = nextVehicle;
-		count++;
+		if (unit && count == selected) (*unit) = nextVehicle;
+		++count;
 		nextVehicle = nextVehicle->next;
 	}
 
@@ -4078,15 +4072,15 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 				}
 
 				font->showTextAsBlock (nameDest, nextBuilding->getDisplayName());
-				unitDetails[count - minCount]->setSelection (*client, NULL, nextBuilding);
+				unitDetails[count - minCount]->setSelection (*client, nextBuilding);
 
 				font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextBuilding->PosX) + "," + iToStr (nextBuilding->PosY));
 				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->getGameGUI()));
 
 				dest.y += 55; nameDest.y += 55;
 			}
-			if (building && count == selected) (*building) = nextBuilding;
-			count++;
+			if (unit && count == selected) (*unit) = nextBuilding;
+			++count;
 			nextBuilding = nextBuilding->next;
 		}
 	}
@@ -4098,10 +4092,8 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 
 	if (count == maxCount && (nextVehicle || nextBuilding))
 	{
-		if (deleteCount) delete count_;
 		return true;
 	}
-	if (deleteCount) delete count_;
 	return false;
 }
 
@@ -4241,12 +4233,11 @@ void cMenuReportsScreen::released (void* parent)
 		case REP_SCR_TYPE_UNITS:
 		{
 			int maxDisplayedUnits;
-			cVehicle* vehicle = NULL;
-			cBuilding* building = NULL;
-			goThroughUnits (false, &maxDisplayedUnits, &vehicle, &building);
+			cUnit* unit = NULL;
+			goThroughUnits (false, &maxDisplayedUnits, &unit);
 			if (clickedIndex == selected)
 			{
-				parentMenu->doubleClicked (vehicle, building);
+				parentMenu->doubleClicked (unit);
 				return;
 			}
 			if (clickedIndex >= maxDisplayedUnits) return;

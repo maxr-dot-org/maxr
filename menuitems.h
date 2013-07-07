@@ -856,7 +856,7 @@ public:
 	virtual void draw();
 
 	void setOwner (cPlayer* owner_);
-	void setSelection (const cClient& client_, cVehicle* vehicle, cBuilding* building);
+	void setSelection (const cClient& client_, cUnit* unit_);
 };
 
 /**
@@ -1332,7 +1332,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 	eReportScreenTypes screenType;
 
 	bool checkFilter (sUnitData& data, bool checkInclude) const;
-	bool goThroughUnits (bool draw, int* count = NULL, cVehicle** vehicle = NULL, cBuilding** building = NULL);
+	bool goThroughUnits (bool draw, int* count = NULL, cUnit** unit = NULL);
 	SDL_Surface* generateUnitSurface (cUnit* unit);
 
 	int countDisadvantageEntries() const;

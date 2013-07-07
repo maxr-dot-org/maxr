@@ -55,10 +55,10 @@ using namespace std;
 #endif
 
 sMouseBox::sMouseBox() :
-	startX (-1),
-	startY (-1),
-	endX (-1),
-	endY (-1)
+	startX (-1.f),
+	startY (-1.f),
+	endX (-1.f),
+	endY (-1.f)
 {}
 
 bool sMouseBox::isTooSmall() const
@@ -107,12 +107,10 @@ void cDebugOutput::setServer (cServer* server_)
 
 void cDebugOutput::draw()
 {
-#define DEBUGOUT_X_POS (Video.getResolutionX() - 200)
-
-	int debugOff = 30;
-
+	const int DEBUGOUT_X_POS (Video.getResolutionX() - 200);
 	const cGameGUI& gui = client->gameGUI;
 	const cPlayer* player = client->gameGUI.player;
+	int debugOff = 30;
 
 	if (debugPlayers)
 	{
@@ -124,10 +122,10 @@ void cDebugOutput::draw()
 		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
 		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
 		const std::vector<cPlayer*>& playerList = *client->PlayerList;
-		for (unsigned int i = 0; i < playerList.size(); i++)
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			//HACK SHOWFINISHEDPLAYERS
-			SDL_Rect rDot = { 10, 0, 10, 10 }; //for green dot
+			// HACK SHOWFINISHEDPLAYERS
+			SDL_Rect rDot = { 10, 0, 10, 10 }; // for green dot
 
 			if (playerList[i]->bFinishedTurn /* && playerList[i] != player*/)
 			{
@@ -141,7 +139,7 @@ void cDebugOutput::draw()
 #endif
 			else
 			{
-				rDot.x = 0; //for red dot
+				rDot.x = 0; // for red dot
 				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
 			}
 
@@ -149,18 +147,21 @@ void cDebugOutput::draw()
 			if (playerList[i] == player)
 			{
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
-				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
-				SDL_FillRect (buffer, &rBlackOut, 0x000000);
+				// black out background for better recognizing
+				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
+				SDL_FillRect (buffer, &rBlackOut, 0x00000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			else
 			{
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
-				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
-				SDL_FillRect (buffer, &rBlackOut, 0x000000);
+				// black out background for better recognizing
+				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
+				SDL_FillRect (buffer, &rBlackOut, 0x00000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
-			debugOff += 10; //use 10 for pixel high of dots instead of text high
+			// use 10 for pixel high of dots instead of text high
+			debugOff += 10;
 			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
 		}
 	}
@@ -248,11 +249,10 @@ void cDebugOutput::draw()
 			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-
 			font->showText (DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (unsigned int i = 0; i < server->PlayerList->size(); i++)
+			for (size_t i = 0; i != server->PlayerList->size(); ++i)
 			{
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
 				if (server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer.gameTime)
@@ -311,14 +311,13 @@ void cDebugOutput::draw()
 	}
 }
 
-
 void cDebugOutput::trace()
 {
-	cMapField* field;
-
 	int x = mouse->getKachelX (client->gameGUI);
 	int y = mouse->getKachelY (client->gameGUI);
 	if (x < 0 || y < 0) return;
+
+	cMapField* field;
 
 	if (debugTraceServer) field = &server->Map->fields[server->Map->getOffset (x, y)];
 	else field = &client->Map->fields[client->Map->getOffset (x, y)];
@@ -377,7 +376,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	for (unsigned int i = 0; i < vehicle.storedUnits.size(); i++)
+	for (size_t i = 0; i != vehicle.storedUnits.size(); ++i)
 	{
 		const cVehicle* storedVehicle = vehicle.storedUnits[i];
 		font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
@@ -387,7 +386,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
+		for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 		{
 			tmpString += ", \"" + vehicle.seenByPlayerList[i]->getName() + "\"";
 		}
@@ -428,37 +427,32 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (building.storedUnits.size())
+	for (size_t i = 0; i != building.storedUnits.size(); ++i)
 	{
-		for (unsigned int i = 0; i < building.storedUnits.size(); i++)
-		{
-			const cVehicle* storedVehicle = building.storedUnits[i];
-			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
-			*y += 8;
-		}
+		const cVehicle* storedVehicle = building.storedUnits[i];
+		font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
+		*y += 8;
 	}
 
+	const size_t buildingBuildListSize = building.BuildList ? building.BuildList->size() : 0;
 	tmpString =
 		"build_speed: "        + iToStr (building.BuildSpeed) +
 		" repeat_build: "      + iToStr (building.RepeatBuild) +
-		" build_list_count: +" + iToStr (building.BuildList ? (int) building.BuildList->size() : 0);
+		" build_list_count: +" + iToStr ((int) buildingBuildListSize);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (building.BuildList)
+	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
-		for (unsigned int i = 0; i < building.BuildList->size(); i++)
-		{
-			const sBuildList* BuildingList = (*building.BuildList) [i];
-			font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
-			*y += 8;
-		}
+		const sBuildList* BuildingList = (*building.BuildList) [i];
+		font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
+		*y += 8;
 	}
 
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
+		for (size_t i = 0; i != building.seenByPlayerList.size(); ++i)
 		{
 			tmpString += ", \"" + building.seenByPlayerList[i]->getName() + "\"";
 		}
@@ -493,7 +487,7 @@ cGameGUI::cGameGUI (cMap* map_) :
 	playButton (146, 123, "", cMenuButton::BUTTON_TYPE_HUD_PLAY),
 	stopButton (146, 143, "", cMenuButton::BUTTON_TYPE_HUD_STOP),
 	FLCImage (10, 29, NULL),
-	unitDetails (8, 171, false, player),
+	unitDetails (8, 171, false, NULL),
 	surveyButton (2, 296, lngPack.i18n ("Text~Hud~Survey"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	hitsButton (57, 296, lngPack.i18n ("Text~Hud~Hitpoints"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	scanButton (112, 296, lngPack.i18n ("Text~Hud~Scan"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
@@ -648,7 +642,7 @@ void cGameGUI::setClient (cClient* client)
 	debugOutput.setClient (client);
 	debugOutput.setServer (client->getServer());
 
-	for (size_t i = 0; i < client->getPlayerList().size(); i++)
+	for (size_t i = 0; i != client->getPlayerList().size(); ++i)
 	{
 		cPlayer& p = *client->getPlayerList() [i];
 		const int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
@@ -778,7 +772,7 @@ int cGameGUI::show (cClient* client)
 		{
 			handleMouseMove();
 
-			for (unsigned int i = 0; i < menuItems.size(); i++)
+			for (size_t i = 0; i != menuItems.size(); ++i)
 			{
 				cMenuItem* menuItem = menuItems[i];
 				if (menuItem->overItem (lastMouseX, lastMouseY) && !menuItem->overItem (mouse->x, mouse->y)) menuItem->hoveredAway (this);
@@ -805,7 +799,7 @@ int cGameGUI::show (cClient* client)
 		handleTimer();
 		if (timer10ms)
 		{
-			//run effects, which are not synchronous to game time
+			// run effects, which are not synchronous to game time
 			runFx();
 			client->handleTurnTime(); // TODO: remove
 		}
@@ -1008,7 +1002,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 	}
 
 	// draw the landscape
-	for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++)
+	for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; ++miniMapX)
 	{
 		// calculate the field on the map
 		int terrainx = (miniMapX * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
@@ -1018,7 +1012,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 		// (for better rendering of maps < 112)
 		const int offsetx = ( (miniMapX * map->getSize()) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
-		for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++)
+		for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; ++miniMapY)
 		{
 			int terrainy = (miniMapY * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 			terrainy = std::min (terrainy, map->getSize() - 1);
@@ -1037,10 +1031,10 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 	if (player)
 	{
 		// draw the fog
-		for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++)
+		for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; ++miniMapX)
 		{
 			int terrainx = (miniMapX * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
-			for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++)
+			for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; ++miniMapY)
 			{
 				int terrainy = (miniMapY * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 
@@ -1066,11 +1060,11 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 		rect.h = size;
 		rect.w = size;
 
-		for (int mapx = 0; mapx < map->getSize(); mapx++)
+		for (int mapx = 0; mapx < map->getSize(); ++mapx)
 		{
 			rect.x = ( (mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->getSize();
 			if (rect.x < 0 || rect.x >= MINIMAP_SIZE) continue;
-			for (int mapy = 0; mapy < map->getSize(); mapy++)
+			for (int mapy = 0; mapy < map->getSize(); ++mapy)
 			{
 				rect.y = ( (mapy - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->getSize();
 				if (rect.y < 0 || rect.y >= MINIMAP_SIZE) continue;
@@ -1125,7 +1119,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 	if (endx == MINIMAP_SIZE) endx = MINIMAP_SIZE - 1;
 	if (endy == MINIMAP_SIZE) endy = MINIMAP_SIZE - 1;
 
-	for (int y = starty; y <= endy; y++)
+	for (int y = starty; y <= endy; ++y)
 	{
 		if (y < 0 || y >= MINIMAP_SIZE) continue;
 		if (startx >= 0 && startx < MINIMAP_SIZE)
@@ -1137,7 +1131,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 			minimap[y * MINIMAP_SIZE + endx] = MINIMAP_COLOR;
 		}
 	}
-	for (int x = startx; x <= endx; x++)
+	for (int x = startx; x <= endx; ++x)
 	{
 		if (x < 0 || x >= MINIMAP_SIZE) continue;
 		if (starty >= 0 && starty < MINIMAP_SIZE)
@@ -1185,7 +1179,7 @@ void cGameGUI::setZoom (float newZoom, bool setScroller, bool centerToMouse)
 	static float lastZoom = 1.f;
 	if (lastZoom != getZoom())
 	{
-		//change x screen offset
+		// change x screen offset
 		float lastScreenPixel = (Video.getResolutionX() - HUD_TOTAL_WIDTH) / lastZoom;
 		float newScreenPixel  = (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom();
 		int off;
@@ -1255,19 +1249,14 @@ void cGameGUI::setPlayer (cPlayer* player_)
 	unitDetails.setOwner (player);
 }
 
-void cGameGUI::setUnitDetailsData (cVehicle* vehicle, cBuilding* building)
+void cGameGUI::setUnitDetailsData (cUnit* unit)
 {
-	unitDetails.setSelection (*client, vehicle, building);
+	unitDetails.setSelection (*client, unit);
 
-	if (vehicle)
+	if (unit)
 	{
-		selUnitNamePrefixStr.setText (vehicle->getNamePrefix());
-		selUnitNameEdit.setText (vehicle->isNameOriginal() ? vehicle->data.name : vehicle->getName());
-	}
-	else if (building)
-	{
-		selUnitNamePrefixStr.setText (building->getNamePrefix());
-		selUnitNameEdit.setText (building->isNameOriginal() ? building->data.name : building->getName());
+		selUnitNamePrefixStr.setText (unit->getNamePrefix());
+		selUnitNameEdit.setText (unit->isNameOriginal() ? unit->data.name : unit->getName());
 	}
 	else
 	{
@@ -1555,7 +1544,7 @@ void cGameGUI::deselectUnit()
 		StopFXLoop (iObjectStream);
 		iObjectStream = -1;
 		setVideoSurface (NULL);
-		setUnitDetailsData (NULL, NULL);
+		setUnitDetailsData (NULL);
 
 		StopFXLoop (iObjectStream);
 	}

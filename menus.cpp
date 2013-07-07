@@ -5440,29 +5440,20 @@ void cReportsMenu::scrollCallback (bool upPossible, bool downPossible)
 }
 
 //------------------------------------------------------------------------------
-void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
+void cReportsMenu::doubleClicked (cUnit* unit)
 {
-	if (!vehicle && !building) return;
+	if (!unit) return;
 
 	end = true;
-
+	cVehicle* vehicle = unit->isVehicle() ? static_cast<cVehicle*>(unit) : NULL;
 	if (vehicle && vehicle->Loaded)
 	{
 		// find storing unit
-		cVehicle* storingVehicle = vehicle->getContainerVehicle();
-		cBuilding* storingBuilding = vehicle->getContainerBuilding();
-		doubleClicked (storingVehicle, storingBuilding);
+		cUnit* storingUnit = vehicle->getContainerVehicle();
+		if (storingUnit == NULL) storingUnit = vehicle->getContainerBuilding();
+		doubleClicked (storingUnit);
 		return;
 	}
-
-	if (vehicle)
-	{
-		client->getGameGUI().selectUnit (*vehicle);
-		vehicle->center (client->getGameGUI());
-	}
-	else if (building)
-	{
-		client->getGameGUI().selectUnit (*building);
-		building->center (client->getGameGUI());
-	}
+	client->getGameGUI().selectUnit (*unit);
+	unit->center (client->getGameGUI());
 }

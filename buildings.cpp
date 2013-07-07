@@ -1551,7 +1551,7 @@ void cBuilding::Select (cGameGUI& gameGUI)
 		PlayFX (SoundData.SNDHudButton);
 
 	// display the details:
-	gameGUI.setUnitDetailsData (NULL, this);
+	gameGUI.setUnitDetailsData (this);
 }
 
 //----------------------------------------------------------------

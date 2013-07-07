@@ -607,7 +607,7 @@ void cVehicle::Select (cGameGUI& gameGUI)
 	}
 
 	MakeReport (gameGUI);
-	gameGUI.setUnitDetailsData (this, NULL);
+	gameGUI.setUnitDetailsData (this);
 }
 
 bool cVehicle::refreshData_Build (cServer& server)

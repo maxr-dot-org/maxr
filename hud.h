@@ -511,7 +511,7 @@ public:
 
 	void setPlayer (cPlayer* player_);
 
-	void setUnitDetailsData (cVehicle* vehicle, cBuilding* building);
+	void setUnitDetailsData (cUnit* unit);
 
 	void updateTurn (int turn);
 	void updateTurnTime (int time);
