@@ -1215,7 +1215,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 	if (turnsDisabled > 0)
 	{
 		// Disabled:
-		PlayVoice (VoiceData.VOIDisabled);
+		PlayRandomVoice (VoiceData.VOIUnitDisabledByEnemy);
 	}
 	else if (data.hitpointsCur > data.hitpointsMax / 2)
 	{
@@ -1247,10 +1247,15 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 			// removing dirt
 			PlayVoice (VoiceData.VOIClearing);
 		}
-		else if (data.canAttack && !data.ammoCur)
+		else if (data.canAttack && data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
 		{
-			// no ammo
-			PlayRandomVoice (VoiceData.VOILowAmmo);
+			// red ammo-status but still ammo left
+			PlayRandomVoice (VoiceData.VOIAmmoLow);
+		}
+		else if (data.canAttack && data.ammoCur == 0)
+		{
+			// no ammo left
+			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
 		}
 		else if (sentryActive)
 		{
@@ -1271,11 +1276,15 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 		}
 	}
 	else if (data.hitpointsCur > data.hitpointsMax / 4)
+	{
 		// Status yellow:
 		PlayRandomVoice (VoiceData.VOIStatusYellow);
+	}
 	else
+	{
 		// Status red:
 		PlayRandomVoice (VoiceData.VOIStatusRed);
+	}
 }
 
 //-----------------------------------------------------------------------------

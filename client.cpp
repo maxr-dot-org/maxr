@@ -587,6 +587,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 				const std::string msg = Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
 				gameGUI.addCoords (report);
+				PlayVoice (VoiceData.VOIUnitDisabled);
 			}
 			Vehicle->owner->doScan();
 		}
@@ -619,6 +620,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
 				gameGUI.addCoords (report);
+				PlayVoice (VoiceData.VOIUnitDisabled);
 			}
 			Building->owner->doScan();
 		}
@@ -1140,13 +1142,13 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 	{
 		if (iType == SUPPLY_TYPE_REARM)
 		{
-			PlayVoice (VoiceData.VOILoaded[0]);
-			PlayFX (SoundData.SNDReload);
+			PlayFX (SoundData.SNDReload);// play order changed else no VOIReammo-sound - nonsinn
+			PlayVoice (VoiceData.VOIReammo);
 		}
 		else
 		{
-			PlayVoice (VoiceData.VOIRepaired[0]);
-			PlayFX (SoundData.SNDRepair);
+			PlayFX (SoundData.SNDRepair);// play order changed else no VOIRepaired-sound - nonsinn
+			PlayRandomVoice (VoiceData.VOIRepaired);
 		}
 	}
 }
@@ -1663,8 +1665,14 @@ void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
 
 	if (message.popBool())	//success?
 	{
-		if (message.popBool()) PlayVoice (VoiceData.VOIUnitStolen);
-		else PlayVoice (VoiceData.VOIUnitDisabled);
+		if (message.popBool())
+		{
+			PlayRandomVoice (VoiceData.VOIUnitStolen);
+		}
+		else
+		{
+			PlayVoice (VoiceData.VOIUnitDisabled);
+		}
 	}
 	else
 	{

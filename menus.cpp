@@ -2386,7 +2386,7 @@ cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContaine
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 
-	PlayVoice (VoiceData.VOILanding);
+	PlayRandomVoice (VoiceData.VOILanding);
 }
 
 //------------------------------------------------------------------------------
@@ -5065,9 +5065,13 @@ void cStorageMenu::playVoice (int Type)
 	{
 		PlayFX (SoundData.SNDReload);
 		if (voiceTypeAll == true)
-			PlayVoice (VoiceData.VOILoaded[1]);
+		{
+			PlayVoice (VoiceData.VOIReammoAll);
+		}
 		else
-			PlayVoice (VoiceData.VOILoaded[0]);
+		{
+			PlayVoice (VoiceData.VOIReammo);
+		}
 	}
 	else
 	{

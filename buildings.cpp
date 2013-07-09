@@ -1552,6 +1552,33 @@ void cBuilding::Select (cGameGUI& gameGUI)
 
 	// display the details:
 	gameGUI.setUnitDetailsData (this);
+
+	//some sounds for special moments
+	//running out of ammo
+	if (data.canAttack)
+	{
+		if (data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
+		/* red ammo-status but still ammo left */
+		{
+			PlayRandomVoice (VoiceData.VOIAmmoLow);
+		}
+		else if (data.ammoCur == 0)
+		/*no ammo left*/
+		{
+			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
+		}
+	}
+	//damaged
+	if (data.hitpointsCur <= data.hitpointsMax / 2 && data.hitpointsCur > data.hitpointsMax / 4)
+	{
+		// Status yellow:
+		PlayRandomVoice (VoiceData.VOIStatusYellow);
+	}
+	else if (data.hitpointsCur <= data.hitpointsMax / 4)
+	{
+		// Status red:
+		PlayRandomVoice (VoiceData.VOIStatusRed);
+	}
 }
 
 //----------------------------------------------------------------

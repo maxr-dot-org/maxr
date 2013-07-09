@@ -947,7 +947,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 		if (destroyed)
 		{
 			message = name + " " + lngPack.i18n ("Text~Comp~Destroyed");
-			PlayVoice (VoiceData.VOIDestroyedUs);
+			PlayRandomVoice (VoiceData.VOIDestroyedUs);
 		}
 		else
 		{
