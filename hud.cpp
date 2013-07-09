@@ -2961,12 +2961,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		sendChangeManualFireStatus (*client, selectedBuilding->iID, false);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player && selectedUnit->turnsDisabled < 1)
 	{
 		cStorageMenu storageMenu (*client, selectedUnit->storedUnits, *selectedUnit);
 		storageMenu.show (client);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player && selectedUnit->turnsDisabled < 1)
 	{
 		toggleMouseInputMode (loadMode);
 	}

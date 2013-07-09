@@ -332,7 +332,7 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 		result++;
 
 	// Activate / Load
-	if (data.storageUnitsMax > 0)
+	if (data.storageUnitsMax > 0 && turnsDisabled < 1)
 		result += 2;
 
 	// Research
@@ -492,7 +492,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	}
 
 	// Activate / Load:
-	if (data.storageUnitsMax > 0 && owner == client.getActivePlayer())
+	if (data.storageUnitsMax > 0 && owner == client.getActivePlayer() && turnsDisabled < 1)
 	{
 		// Activate:
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
@@ -771,7 +771,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	}
 
 	// activate/load:
-	if (data.storageUnitsMax > 0 && owner == client.getActivePlayer())
+	if (data.storageUnitsMax > 0 && owner == client.getActivePlayer() && turnsDisabled < 1)
 	{
 		// activate:
 		if (exeNr == nr)
