@@ -466,64 +466,90 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 }
 
-void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
+void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
 {
-	//Note: when changing something in this function, make sure to update the caching rules!
-	SDL_Rect src, tmp;
-	src.x = 0;
+	assert (!owner);
+
+	SDL_Rect src;
+
+	if (data.isBig)
+	{
+		if (!UnitsData.dirt_big) return;
+		src.w = src.h = (int) (UnitsData.dirt_big_org->h * zoomFactor);
+	}
+	else
+	{
+		if (!UnitsData.dirt_small) return;
+		src.w = src.h = (int) (UnitsData.dirt_small_org->h * zoomFactor);
+	}
+
+	src.x = src.w * RubbleTyp;
+	SDL_Rect tmp = dest;
 	src.y = 0;
 
-	// check, if it is dirt:
-	if (!owner)
+	// draw the shadows
+	if (drawShadow)
 	{
 		if (data.isBig)
 		{
-			if (!UnitsData.dirt_big) return;
-			src.w = src.h = (int) (UnitsData.dirt_big_org->h * zoomFactor);
+			CHECK_SCALING (UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsData.dirt_big_shw, &src, surface, &tmp);
 		}
 		else
 		{
-			if (!UnitsData.dirt_small) return;
-			src.w = src.h = (int) (UnitsData.dirt_small_org->h * zoomFactor);
+			CHECK_SCALING (UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsData.dirt_small_shw, &src, surface, &tmp);
 		}
-
-		src.x = src.w * RubbleTyp;
-		tmp = dest;
-		src.y = 0;
-
-		// draw the shadows
-		if (drawShadow)
-		{
-			if (data.isBig)
-			{
-				CHECK_SCALING (UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, zoomFactor);
-				SDL_BlitSurface (UnitsData.dirt_big_shw, &src, surface, &tmp);
-			}
-			else
-			{
-				CHECK_SCALING (UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, zoomFactor);
-				SDL_BlitSurface (UnitsData.dirt_small_shw, &src, surface, &tmp);
-			}
-		}
-
-		// draw the building
-		tmp = dest;
-
-		if (data.isBig)
-		{
-			CHECK_SCALING (UnitsData.dirt_big, UnitsData.dirt_big_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_big, &src, surface, &tmp);
-		}
-		else
-		{
-			CHECK_SCALING (UnitsData.dirt_small, UnitsData.dirt_small_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_small, &src, surface, &tmp);
-		}
-
-		return;
 	}
 
+	// draw the building
+	tmp = dest;
+
+	if (data.isBig)
+	{
+		CHECK_SCALING (UnitsData.dirt_big, UnitsData.dirt_big_org, zoomFactor);
+		SDL_BlitSurface (UnitsData.dirt_big, &src, surface, &tmp);
+	}
+	else
+	{
+		CHECK_SCALING (UnitsData.dirt_small, UnitsData.dirt_small_org, zoomFactor);
+		SDL_BlitSurface (UnitsData.dirt_small, &src, surface, &tmp);
+	}
+}
+
+void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+{
+	SDL_Rect tmp = dest;
+	if (data.isBig)
+	{
+		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
+
+		if (StartUp && cSettings::getInstance().isAlphaEffects())
+			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp);
+		else
+			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255);
+
+		SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
+	}
+	else
+	{
+		CHECK_SCALING (UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, zoomFactor);
+		if (StartUp && cSettings::getInstance().isAlphaEffects())
+			SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp);
+		else
+			SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, 255);
+
+		SDL_BlitSurface (UnitsData.ptr_small_beton, NULL, surface, &tmp);
+		SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, 255);
+	}
+}
+
+void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha)
+{
 	// read the size:
+	SDL_Rect src;
+	src.x = 0;
+	src.y = 0;
 	if (data.hasFrames)
 	{
 		src.w = Round (64.0f * zoomFactor);
@@ -535,69 +561,13 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 		src.h = (int) (typ->img_org->h * zoomFactor);
 	}
 
-	// draw the concrete
-	tmp = dest;
-	if (data.hasBetonUnderground && drawConcrete)
-	{
-		if (data.isBig)
-		{
-			CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
-
-			if (StartUp && cSettings::getInstance().isAlphaEffects())
-				SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp);
-			else
-				SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255);
-
-			SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
-		}
-		else
-		{
-			CHECK_SCALING (UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, zoomFactor);
-			if (StartUp && cSettings::getInstance().isAlphaEffects())
-				SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp);
-			else
-				SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, 255);
-
-			SDL_BlitSurface (UnitsData.ptr_small_beton, NULL, surface, &tmp);
-			SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, 255);
-		}
-	}
-
-	tmp = dest;
-
-	// draw the connector slots:
-	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic)
-	{
-		drawConnectors (surface, dest, zoomFactor, drawShadow);
-		if (data.isConnectorGraphic) return;
-	}
-
-	// draw the shadows
-	if (drawShadow)
-	{
-		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetAlpha (typ->shw, SDL_SRCALPHA, StartUp / 5);
-		else
-			SDL_SetAlpha (typ->shw, SDL_SRCALPHA, 50);
-
-		CHECK_SCALING (typ->shw, typ->shw_org, zoomFactor);
-		blittAlphaSurface (typ->shw, NULL, surface, &tmp);
-	}
-
 	// blit the players color and building graphic
 	if (data.hasPlayerColor) SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	else SDL_FillRect (GraphicsData.gfx_tmp, NULL, 0xFF00FF);
+	else SDL_FillRect (GraphicsData.gfx_tmp, NULL, 0x00FF00FF);
 
 	if (data.hasFrames)
 	{
-		if (data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && gameGUI)
-		{
-			src.x = (gameGUI->getAnimationSpeed() % data.hasFrames) * Round (64.0f * zoomFactor);
-		}
-		else
-		{
-			src.x = dir * Round (64.0f * zoomFactor);
-		}
+		src.x = frameNr * Round (64.0f * zoomFactor);
 
 		CHECK_SCALING (typ->img, typ->img_org, zoomFactor);
 		SDL_BlitSurface (typ->img, &src, GraphicsData.gfx_tmp, NULL);
@@ -615,7 +585,6 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 		if (owner->getClan() != -1)
 			src.x = (int) ( (owner->getClan() + 1) * 128 * zoomFactor);
 		SDL_BlitSurface (typ->img, &src, GraphicsData.gfx_tmp, NULL);
-
 	}
 	else
 	{
@@ -624,15 +593,65 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 	}
 
 	// draw the building
-	tmp = dest;
+	SDL_Rect tmp = dest;
 
 	src.x = 0;
 	src.y = 0;
 
-	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp);
-	else SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
-
+	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, alpha);
 	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+}
+
+
+void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
+{
+	// Note: when changing something in this function,
+	// make sure to update the caching rules!
+
+	// check, if it is dirt:
+	if (!owner)
+	{
+		render_rubble (surface, dest, zoomFactor, drawShadow);
+		return;
+	}
+
+
+	// draw the concrete
+	if (data.hasBetonUnderground && drawConcrete)
+	{
+		render_beton (surface, dest, zoomFactor);
+	}
+
+	// draw the connector slots:
+	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic)
+	{
+		drawConnectors (surface, dest, zoomFactor, drawShadow);
+		if (data.isConnectorGraphic) return;
+	}
+
+	// draw the shadows
+	if (drawShadow)
+	{
+		SDL_Rect tmp = dest;
+		if (StartUp && cSettings::getInstance().isAlphaEffects())
+			SDL_SetAlpha (typ->shw, SDL_SRCALPHA, StartUp / 5);
+		else
+			SDL_SetAlpha (typ->shw, SDL_SRCALPHA, 50);
+
+		CHECK_SCALING (typ->shw, typ->shw_org, zoomFactor);
+		blittAlphaSurface (typ->shw, NULL, surface, &tmp);
+	}
+
+	int frameNr = dir;
+	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
+		turnsDisabled == 0 && gameGUI)
+	{
+		frameNr = (gameGUI->getAnimationSpeed() % data.hasFrames);
+	}
+
+	int alpha = 255;
+	if (StartUp && cSettings::getInstance().isAlphaEffects()) alpha = StartUp;
+	render_simple (surface, dest, zoomFactor, frameNr, alpha);
 }
 
 //--------------------------------------------------------------------------

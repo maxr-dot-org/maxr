@@ -1220,7 +1220,7 @@ void cMenuRadioGroup::clicked (void* parent)
 	if (click) click (parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem (const cClient* client, sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
 	cMenuItem (0, 0),
 	displayType (displayType_),
 	parentList (parent),
@@ -1230,10 +1230,10 @@ cMenuUnitListItem::cMenuUnitListItem (const cClient* client, sID unitID_, cPlaye
 	upgrades (upgrades_),
 	fixedResValue (fixedResValue_)
 {
-	init (client);
+	init();
 }
 
-cMenuUnitListItem::cMenuUnitListItem (const cClient* client, sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
 	cMenuItem (0, 0),
 	displayType (displayType_),
 	parentList (parent),
@@ -1244,30 +1244,29 @@ cMenuUnitListItem::cMenuUnitListItem (const cClient* client, sUnitData* unitData
 {
 	if (unitData != 0)
 		unitID = unitData->ID;
-	init (client);
+	init();
 }
 
-void cMenuUnitListItem::init (const cClient* client)
+void cMenuUnitListItem::init()
 {
 	const int UNIT_IMAGE_SIZE = 32;
 	surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0x00FF00FF);
+	SDL_FillRect (surface, NULL, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
 	if (unitID.getVehicle())
 	{
 		cVehicle vehicle (unitID.getVehicle(), owner, 0);
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / 64.0f;
-		vehicle.render (client, surface, dest, zoomFactor, false);
-		vehicle.drawOverlayAnimation (client, surface, dest, zoomFactor);
+		const float zoomFactor = UNIT_IMAGE_SIZE / 64.0f;
+		vehicle.render_simple (surface, dest, zoomFactor);
+		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
 	}
 	else if (unitID.getBuilding())
 	{
-		const cGameGUI* gameGUI = client ? &client->getGameGUI() : NULL;
 		cBuilding building (unitID.getBuilding(), owner, 0);
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
-		building.render (gameGUI, surface, dest, zoomFactor, false, false);
+		const float zoomFactor = UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
+		building.render_simple (surface, dest, zoomFactor, 0);
 	}
 	else surface = NULL;
 
@@ -1319,18 +1318,18 @@ int cMenuUnitListItem::drawName (bool withNumber)
 {
 	SDL_Rect dest = { Sint16 (position.x + 32 + 4), Sint16 (position.y + 12), Uint16 (position.w - (32 + 4) - 12), 0 };
 	string name = owner->getUnitDataCurrentVersion (unitID)->name;
-	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
+	const eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
 	if (withNumber)
 	{
 		// numerate the unit.
 		int nrOfSameUnits = 1;
 		// search the landing list for other units of the same type.
-		for (int otherUnitIdx = 0; otherUnitIdx < (int) parentList->unitsList.size(); otherUnitIdx++)
+		for (size_t i = 0; i != parentList->unitsList.size(); ++i)
 		{
-			if (!parentList->unitsList[otherUnitIdx]->unitID.getVehicle()) continue;
-			if (parentList->unitsList[otherUnitIdx] == this) break;
-			if (unitID == parentList->unitsList[otherUnitIdx]->unitID) nrOfSameUnits++;
+			if (!parentList->unitsList[i]->unitID.getVehicle()) continue;
+			if (parentList->unitsList[i] == this) break;
+			if (unitID == parentList->unitsList[i]->unitID) nrOfSameUnits++;
 		}
 		name += " " + iToStr (nrOfSameUnits);
 	}
@@ -1353,15 +1352,21 @@ void cMenuUnitListItem::drawCargo (int destY)
 
 	SDL_Rect dest = { Sint16 (position.x + 32 + 4), Sint16 (destY), 0, 0 };
 
-	if (unitID.getUnitDataOriginalVersion()->storeResType != sUnitData::STORE_RES_NONE)
-	{
-		if (unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_GOLD) return;   // don't allow buying gold
+	if (unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_NONE) return;
+	if (unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_GOLD) return;   // don't allow buying gold
 
-		if (resValue == 0) font->showText (dest.x, dest.y + 10, "(empty)", FONT_LATIN_SMALL_WHITE);
-		else if (resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 4) font->showText (dest.x, dest.y + 10, " (" + iToStr (resValue) + "/" + iToStr (unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_RED);
-		else if (resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 2) font->showText (dest.x, dest.y + 10, " (" + iToStr (resValue) + "/" + iToStr (unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_YELLOW);
-		else font->showText (dest.x, dest.y + 10, " (" + iToStr (resValue) + "/" + iToStr (unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_GREEN);
+	if (resValue == 0)
+	{
+		font->showText (dest.x, dest.y + 10, "(empty)", FONT_LATIN_SMALL_WHITE);
+		return;
 	}
+	const int maxResValue = unitID.getUnitDataOriginalVersion()->storageResMax;
+	const std::string text = " (" + iToStr (resValue) + "/" + iToStr (maxResValue) + ")";
+	eUnicodeFontType fontType;
+	if (resValue <= maxResValue / 4) fontType = FONT_LATIN_SMALL_RED;
+	else if (resValue <= maxResValue / 2) fontType = FONT_LATIN_SMALL_YELLOW;
+	else fontType = FONT_LATIN_SMALL_GREEN;
+	font->showText (dest.x, dest.y + 10, text, fontType);
 }
 
 void cMenuUnitListItem::released (void* parent)
@@ -1582,16 +1587,16 @@ void cMenuUnitsList::addUnit (cMenuUnitListItem* unitItem, bool scroll)
 	if (scroll && (int) unitsList.size() > offset + maxDisplayUnits) scrollDown();
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit (const cClient* client, sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
+cMenuUnitListItem* cMenuUnitsList::addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem (client, unitData, owner, upgrades, displayType, this, fixedCargo);
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitData, owner, upgrades, displayType, this, fixedCargo);
 	addUnit (unitItem, scroll);
 	return unitItem;
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit (const cClient* client, sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
+cMenuUnitListItem* cMenuUnitsList::addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem (client, unitID, owner, upgrades, displayType, this, fixedCargo);
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitID, owner, upgrades, displayType, this, fixedCargo);
 	addUnit (unitItem, scroll);
 	return unitItem;
 }

@@ -919,8 +919,7 @@ int clanSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer
 
 int landingUnitsSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player, bool noReturn)
 {
-	const cClient* client = NULL;
-	cStartupHangarMenu startupHangarMenu (client, network, &gameDataContainer, &player, noReturn);
+	cStartupHangarMenu startupHangarMenu (network, &gameDataContainer, &player, noReturn);
 
 	if (startupHangarMenu.show (NULL) == 1) return -1;
 	return 1;
@@ -1811,9 +1810,8 @@ cMenuUnitListItem* cHangarMenu::getSelectedUnit()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cAdvListHangarMenu::cAdvListHangarMenu (const cClient* client_, SDL_Surface* background_, cPlayer* player_) :
-	cHangarMenu (background_, player_),
-	client (client_)
+cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_) :
+	cHangarMenu (background_, player_)
 {
 	secondList = new cMenuUnitsList (position.x + 330, position.y + 12, 130, 225, this, MUL_DIS_TYPE_CARGO);
 	secondList->setDoubleClickedFunction (&secondListDoubleClicked);
@@ -1856,8 +1854,8 @@ bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* paren
 	sVehicle* vehicle = menu->selectedUnit->getUnitID().getVehicle (menu->player);
 	if (vehicle && menu->checkAddOk (menu->selectedUnit))
 	{
-		if (menu->selectedUnit->getUpgrades()) menu->secondList->addUnit (menu->client, vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue());
-		else menu->secondList->addUnit (menu->client, &menu->player->VehicleData[vehicle->nr], menu->player, NULL, true);
+		if (menu->selectedUnit->getUpgrades()) menu->secondList->addUnit (vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue());
+		else menu->secondList->addUnit (&menu->player->VehicleData[vehicle->nr], menu->player, NULL, true);
 		menu->secondList->getItem (menu->secondList->getSize() - 1)->setResValue (menu->selectedUnit->getResValue(), false);
 		menu->addedCallback (menu->selectedUnit);
 		menu->draw();
@@ -1885,8 +1883,8 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStartupHangarMenu::cStartupHangarMenu (const cClient* client, cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
-	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_), cUpgradeHangarMenu (player_), cAdvListHangarMenu (client, NULL, player_),
+cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
+	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_), cUpgradeHangarMenu (player_), cAdvListHangarMenu (NULL, player_),
 	network (network_),
 	gameDataContainer (gameDataContainer_)
 {
@@ -1966,7 +1964,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 	for (size_t i = 0; i != units.size(); ++i)
 	{
 		cMenuUnitListItem* selectedUnit = selectionList->getItemByID (units[i].unitID);
-		cMenuUnitListItem* unit = secondList->addUnit (client, units[i].unitID, &player, selectedUnit->getUpgrades());
+		cMenuUnitListItem* unit = secondList->addUnit (units[i].unitID, &player, selectedUnit->getUpgrades());
 
 		credits -= unit->getUnitID().getVehicle (&player)->data.buildCosts;
 		credits -= units[i].cargo / 5;
@@ -1986,15 +1984,15 @@ void cStartupHangarMenu::generateInitialLandingUnits()
 	sUnitUpgrade* engineerUpgrades = selectionList->getItemByID (engineerID)->getUpgrades();
 	sUnitUpgrade* surveyorUpgrades = selectionList->getItemByID (surveyorID)->getUpgrades();
 
-	cMenuUnitListItem* constructor = secondList->addUnit (client, constructorID, player, constructorUpgrades);
+	cMenuUnitListItem* constructor = secondList->addUnit (constructorID, player, constructorUpgrades);
 	constructor->setMinResValue (40);
 	constructor->setFixed (true);
 
-	cMenuUnitListItem* engineer = secondList->addUnit (client, engineerID, player, engineerUpgrades);
+	cMenuUnitListItem* engineer = secondList->addUnit (engineerID, player, engineerUpgrades);
 	engineer->setMinResValue (20);
 	engineer->setFixed (true);
 
-	cMenuUnitListItem* surveyor = secondList->addUnit (client, surveyorID, player, surveyorUpgrades);
+	cMenuUnitListItem* surveyor = secondList->addUnit (surveyorID, player, surveyorUpgrades);
 	surveyor->setFixed (true);
 
 	if (gameDataContainer->settings->clans != SETTING_CLANS_ON || player->getClan() != 7) return;
@@ -2028,12 +2026,12 @@ void cStartupHangarMenu::generateInitialLandingUnits()
 
 	for (int i = 0; i != numAddConstructors; ++i)
 	{
-		cMenuUnitListItem* constructor = secondList->addUnit (client, constructorID, player, constructorUpgrades);
+		cMenuUnitListItem* constructor = secondList->addUnit (constructorID, player, constructorUpgrades);
 		constructor->setFixed (true);
 	}
 	for (int i = 0; i != numAddEngineers; ++i)
 	{
-		cMenuUnitListItem* engineer = secondList->addUnit (client, engineerID, player, engineerUpgrades);
+		cMenuUnitListItem* engineer = secondList->addUnit (engineerID, player, engineerUpgrades);
 		engineer->setFixed (true);
 	}
 }
@@ -2223,7 +2221,7 @@ void cStartupHangarMenu::generateSelectionList()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			selectionList->addUnit (client, data.ID, player, unitUpgrades[i]);
+			selectionList->addUnit (data.ID, player, unitUpgrades[i]);
 		}
 	}
 
@@ -2233,7 +2231,7 @@ void cStartupHangarMenu::generateSelectionList()
 		{
 			sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
 			if (tnt && !data.canAttack) continue;
-			selectionList->addUnit (client, data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
 		}
 	}
 
@@ -4110,7 +4108,7 @@ void cBuildingsBuildMenu::generateSelectionList()
 
 		if (vehicle->data.canBuild.compare (UnitsData.building[i].data.buildAs) != 0) continue;
 
-		selectionList->addUnit (client, &vehicle->owner->BuildingData[i], player);
+		selectionList->addUnit (&vehicle->owner->BuildingData[i], player);
 
 		if (vehicle->data.storageResCur < player->BuildingData[i].buildCosts) selectionList->getItem (selectionList->getSize() - 1)->setMarked (true);
 	}
@@ -4192,7 +4190,7 @@ bool cBuildingsBuildMenu::selListDoubleClicked (cMenuUnitsList* list, void* pare
 //------------------------------------------------------------------------------
 cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_)
 	: cHangarMenu (LoadPCX (GFXOD_FAC_BUILD_SCREEN), player_, MNU_BG_ALPHA)
-	, cAdvListHangarMenu (gameGUI_.getClient(), NULL, player_), gameGUI (&gameGUI_)
+	, cAdvListHangarMenu (NULL, player_), gameGUI (&gameGUI_)
 {
 	building = building_;
 
@@ -4277,7 +4275,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 		if (building->data.canBuild.compare (vehicle.data.buildAs) != 0) continue;
 
-		selectionList->addUnit (client, &player->VehicleData[i], player, NULL, false, false);
+		selectionList->addUnit (&player->VehicleData[i], player, NULL, false, false);
 		selectionList->getItem (selectionList->getSize() - 1)->setResValue (-1, false);
 	}
 
@@ -4295,7 +4293,7 @@ void cVehiclesBuildMenu::createBuildList()
 {
 	for (unsigned int i = 0; i < building->BuildList->size(); i++)
 	{
-		secondList->addUnit (client, (*building->BuildList) [i]->type, building->owner, NULL, true, false);
+		secondList->addUnit ((*building->BuildList) [i]->type, building->owner, NULL, true, false);
 		secondList->getItem (secondList->getSize() - 1)->setResValue ( (*building->BuildList) [i]->metall_remaining, false);
 	}
 	if (secondList->getSize() > 0)
@@ -4578,7 +4576,7 @@ void cUpgradeMenu::generateSelectionList()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			selectionList->addUnit (client, data.ID, player, unitUpgrades[i]);
+			selectionList->addUnit (data.ID, player, unitUpgrades[i]);
 		}
 	}
 
@@ -4588,7 +4586,7 @@ void cUpgradeMenu::generateSelectionList()
 		{
 			sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
 			if (tnt && !data.canAttack) continue;
-			selectionList->addUnit (client, data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
 		}
 	}
 
@@ -4612,17 +4610,17 @@ void cUpgradeMenu::generateSelectionList()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cUnitHelpMenu::cUnitHelpMenu (const cClient& client, sID unitID, cPlayer* owner)
+cUnitHelpMenu::cUnitHelpMenu (sID unitID, cPlayer* owner)
 	: cMenu (LoadPCX (GFXOD_HELP), MNU_BG_ALPHA)
 {
-	unit = new cMenuUnitListItem (&client, unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false);
+	unit = new cMenuUnitListItem (unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false);
 	init (unitID);
 }
 
 //------------------------------------------------------------------------------
-cUnitHelpMenu::cUnitHelpMenu (const cClient& client, sUnitData* unitData, cPlayer* owner) : cMenu (LoadPCX (GFXOD_HELP), MNU_BG_ALPHA)
+cUnitHelpMenu::cUnitHelpMenu (sUnitData* unitData, cPlayer* owner) : cMenu (LoadPCX (GFXOD_HELP), MNU_BG_ALPHA)
 {
-	unit = new cMenuUnitListItem (&client, unitData, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false);
+	unit = new cMenuUnitListItem (unitData, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false);
 	init (unitData->ID);
 }
 

@@ -696,10 +696,10 @@ protected:
 	void drawCargo (int destY);
 
 	virtual void released (void* parent);
-	void init (const cClient* client);
+	void init();
 public:
-	cMenuUnitListItem (const cClient* client, sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
-	cMenuUnitListItem (const cClient* client, sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
+	cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
+	cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
 	virtual void draw();
 
 	sID getUnitID() const;
@@ -800,8 +800,8 @@ public:
 	 *@param scroll if this is true the list will automatically scrolled to the new added item.
 	 *@param fixedCargo if this is true the new unit will set with a fixed cargo.
 	 */
-	cMenuUnitListItem* addUnit (const cClient* client, sID unitID, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
-	cMenuUnitListItem* addUnit (const cClient* client, sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
+	cMenuUnitListItem* addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
+	cMenuUnitListItem* addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
 	void removeUnit (cMenuUnitListItem* item);
 	void clear();
 	void setDisplayType (eMenuUnitListDisplayTypes displayType_);

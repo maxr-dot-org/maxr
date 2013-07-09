@@ -417,11 +417,25 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 }
 
-void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha)
 {
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
-	SDL_Rect src, tmp;
+	const Uint16 size = (Uint16) (typ->overlay_org->h * zoomFactor);
+	SDL_Rect src = {Sint16 (frameNr * size), 0, size, size};
+
+	SDL_Rect tmp = dest;
+	const int offset = Round (64.0f * zoomFactor) / 2 - src.h / 2;
+	tmp.x += offset;
+	tmp.y += offset;
+
+	SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, alpha);
+	blitWithPreScale (typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor);
+}
+
+void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+{
+	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
 	int frameNr = 0;
 	if (client && turnsDisabled == 0)
@@ -429,125 +443,110 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 		frameNr = client->getGameGUI().getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
 	}
 
-	tmp = dest;
-	src.h = src.w = (int) (typ->overlay_org->h * zoomFactor);
-	tmp.x += Round (64.0f * zoomFactor) / 2 - src.h / 2;
-	tmp.y += Round (64.0f * zoomFactor) / 2 - src.h / 2;
-	src.y = 0;
-	src.x = (int) (typ->overlay_org->h * frameNr * zoomFactor);
-
+	int alpha = 255;
 	if (StartUp && cSettings::getInstance().isAlphaEffects())
-		SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, StartUp);
-	else
-		SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, 255);
-
-	blitWithPreScale (typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor);
+		alpha = StartUp;
+	drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alpha);
 }
 
-void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
 {
-	//Note: when changing something in this function, make sure to update the caching rules!
-	SDL_Rect src, tmp;
-
-	//draw working engineers and bulldozers:
-	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL && client)
+	assert ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL);
+	// draw beton if nessesary
+	SDL_Rect tmp = dest;
+	const cMap& map = *client.getMap();
+	if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
 	{
-		//draw beton if nessesary
-		tmp = dest;
-		const cMap& map = *client->getMap();
-		if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
-		{
-			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha);
-			CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
-			SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
-		}
-
-		// draw shadow
-		tmp = dest;
-		if (drawShadow) blitWithPreScale (typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, zoomFactor);
-
-		// draw player color
-		src.y = 0;
-		src.h = src.w = (int) (typ->build_org->h * zoomFactor);
-		src.x = (client->getGameGUI().getAnimationSpeed() % 4) * src.w;
-		SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-		blitWithPreScale (typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
-
-		// draw vehicle
-		src.x = 0;
-		src.y = 0;
-		tmp = dest;
-		SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
-		SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
-
-		return;
+		SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha);
+		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
+		SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
 	}
-
-	if (IsClearing && !data.isBig && job == NULL && client)
-	{
-		// draw shadow
-		tmp = dest;
-		if (drawShadow)
-			blitWithPreScale (typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, zoomFactor);
-
-		// draw player color
-		src.y = 0;
-		src.h = src.w = (int) (typ->clear_small_org->h * zoomFactor);
-		src.x = (client->getGameGUI().getAnimationSpeed() % 4) * src.w;
-		SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-
-		blitWithPreScale (typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
-
-		// draw vehicle
-		src.x = 0;
-		src.y = 0;
-		tmp = dest;
-		SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
-		SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
-
-		return;
-	}
-
-	//draw all other vehicles:
-
-	// read the size:
-	src.w = (int) (typ->img_org[dir]->w * zoomFactor);
-	src.h = (int) (typ->img_org[dir]->h * zoomFactor);
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow && ! ( (data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY)))
+	if (drawShadow) blitWithPreScale (typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, zoomFactor);
+
+	// draw player color
+	SDL_Rect src;
+	src.y = 0;
+	src.h = src.w = (int) (typ->build_org->h * zoomFactor);
+	src.x = (client.getGameGUI().getAnimationSpeed() % 4) * src.w;
+	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
+	blitWithPreScale (typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
+
+	// draw vehicle
+	src.x = 0;
+	src.y = 0;
+	tmp = dest;
+	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
+	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+}
+
+void cVehicle::render_smallClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+{
+	assert (IsClearing && !data.isBig && job == NULL);
+
+	// draw shadow
+	SDL_Rect tmp = dest;
+	if (drawShadow)
+		blitWithPreScale (typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, zoomFactor);
+
+	// draw player color
+	SDL_Rect src;
+	src.y = 0;
+	src.h = src.w = (int) (typ->clear_small_org->h * zoomFactor);
+	src.x = (client.getGameGUI().getAnimationSpeed() % 4) * src.w;
+	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
+	blitWithPreScale (typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
+
+	// draw vehicle
+	src.x = 0;
+	src.y = 0;
+	tmp = dest;
+	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
+	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+}
+
+void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+{
+	if (client.getMap()->isWater (PosX, PosY) && (data.isStealthOn & TERRAIN_SEA)) return;
+
+	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
+	else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
+	SDL_Rect tmp = dest;
+
+	// draw shadow
+	if (FlightHigh > 0)
 	{
-		if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
-		else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
+		int high = ( (int) ( (int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
+		tmp.x += high;
+		tmp.y += high;
 
-
-		// draw shadow
-		if (FlightHigh > 0)
-		{
-			int high = ( (int) ( (int) (client->getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
-			tmp.x += high;
-			tmp.y += high;
-
-			blitWithPreScale (typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor);
-		}
-		else if (data.animationMovement)
-		{
-			SDL_Rect r;
-			r.h = r.w = (int) (typ->img_org[dir]->h * zoomFactor);
-			r.x = r.w * WalkFrame;
-			r.y = 0;
-			blitWithPreScale (typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, zoomFactor);
-		}
-		else
-			blitWithPreScale (typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor);
 	}
+	else if (data.animationMovement)
+	{
+		const Uint16 size = (int) (typ->img_org[dir]->h * zoomFactor);
+		SDL_Rect r = {Sint16 (WalkFrame * size), 0, size, size};
+		blitWithPreScale (typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, zoomFactor);
+	}
+	else
+		blitWithPreScale (typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor);
+}
 
+void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha)
+{
 	// draw player color
 	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 
+	// read the size:
+	SDL_Rect src;
+	src.w = (int) (typ->img_org[dir]->w * zoomFactor);
+	src.h = (int) (typ->img_org[dir]->h * zoomFactor);
+
 	if (data.animationMovement)
 	{
+		SDL_Rect tmp;
 		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h * zoomFactor);
 		tmp.x = WalkFrame * tmp.w;
 		tmp.y = 0;
@@ -559,13 +558,46 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 	// draw the vehicle
 	src.x = 0;
 	src.y = 0;
-	tmp = dest;
+	SDL_Rect tmp = dest;
 
+	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, alpha);
+	blittAlphaSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+}
+
+void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+{
+	// Note: when changing something in this function,
+	// make sure to update the caching rules!
+
+	// draw working engineers and bulldozers:
+	if (client && job == NULL)
+	{
+		if (IsBuilding || (IsClearing && data.isBig))
+		{
+			render_BuildingOrBigClearing (*client, surface, dest, zoomFactor, drawShadow);
+			return;
+		}
+		if (IsClearing && !data.isBig)
+		{
+			render_smallClearing (*client, surface, dest, zoomFactor, drawShadow);
+			return;
+		}
+	}
+
+	// draw all other vehicles:
+
+	// draw shadow
+	if (drawShadow && client)
+	{
+		render_shadow (*client, surface, dest, zoomFactor);
+	}
+
+	int alpha = 255;
 	if (client)
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
 		{
-			SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp);
+			alpha = StartUp;
 		}
 		else
 		{
@@ -577,15 +609,10 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 			cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-			if ( (data.isStealthOn & TERRAIN_SEA) && water && detectedByPlayerList.size() == 0 && owner == client->getActivePlayer()) SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 100);
-			else SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
+			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == client->getActivePlayer()) alpha = 100;
 		}
 	}
-	else
-	{
-		SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
-	}
-	blittAlphaSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+	render_simple (surface, dest, zoomFactor, alpha);
 }
 
 //-----------------------------------------------------------------------------

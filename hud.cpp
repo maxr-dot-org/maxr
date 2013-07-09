@@ -1983,7 +1983,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 							 overBuilding == selectedUnit ||
 							 overBaseBuilding == selectedUnit))
 		{
-			cUnitHelpMenu helpMenu (*client, &selectedUnit->data, selectedUnit->owner);
+			cUnitHelpMenu helpMenu (&selectedUnit->data, selectedUnit->owner);
 			helpMenu.show (client);
 		}
 		else if (overUnitField) selectUnit (overUnitField, true);
@@ -2312,22 +2312,22 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			if (overPlane)
 			{
-				cUnitHelpMenu helpMenu (*client, &overPlane->data, overPlane->owner);
+				cUnitHelpMenu helpMenu (&overPlane->data, overPlane->owner);
 				helpMenu.show (client);
 			}
 			else if (overVehicle)
 			{
-				cUnitHelpMenu helpMenu (*client, &overVehicle->data, overVehicle->owner);
+				cUnitHelpMenu helpMenu (&overVehicle->data, overVehicle->owner);
 				helpMenu.show (client);
 			}
 			else if (overBuilding)
 			{
-				cUnitHelpMenu helpMenu (*client, &overBuilding->data, overBuilding->owner);
+				cUnitHelpMenu helpMenu (&overBuilding->data, overBuilding->owner);
 				helpMenu.show (client);
 			}
 			else if (overBaseBuilding)
 			{
-				cUnitHelpMenu helpMenu (*client, &overBaseBuilding->data, overBaseBuilding->owner);
+				cUnitHelpMenu helpMenu (&overBaseBuilding->data, overBaseBuilding->owner);
 				helpMenu.show (client);
 			}
 			helpActive = false;
@@ -3004,7 +3004,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedUnit)
 	{
-		cUnitHelpMenu helpMenu (*client, &selectedUnit->data, selectedUnit->owner);
+		cUnitHelpMenu helpMenu (&selectedUnit->data, selectedUnit->owner);
 		helpMenu.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)

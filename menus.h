@@ -604,7 +604,6 @@ private:
 class cAdvListHangarMenu : virtual public cHangarMenu
 {
 protected:
-	const cClient* client;
 	AutoPtr<cMenuUnitsList> secondList;
 
 	AutoPtr<cMenuButton> secondListUpButton;
@@ -614,7 +613,7 @@ protected:
 	virtual void addedCallback (cMenuUnitListItem* item) {}
 	virtual void removedCallback (cMenuUnitListItem* item) {}
 public:
-	cAdvListHangarMenu (const cClient* client_, SDL_Surface* background_, cPlayer* player_);
+	cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_);
 
 private:
 	static bool selListDoubleClicked (cMenuUnitsList* list, void* parent);
@@ -678,7 +677,7 @@ protected:
 	void addPlayerLandingUnits (cPlayer& player);
 
 public:
-	cStartupHangarMenu (const cClient* client, cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
+	cStartupHangarMenu (cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
 
 private:
 	virtual void generateSelectionList();
@@ -1056,8 +1055,8 @@ protected:
 
 	void init (sID unitID);
 public:
-	cUnitHelpMenu (const cClient& client, sID unitID, cPlayer* owner);
-	cUnitHelpMenu (const cClient& client, sUnitData* unitData, cPlayer* owner);
+	cUnitHelpMenu (sID unitID, cPlayer* owner);
+	cUnitHelpMenu (sUnitData* unitData, cPlayer* owner);
 
 private:
 	virtual void handleDestroyUnit (cUnit& destroyedUnit);

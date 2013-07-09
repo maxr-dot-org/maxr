@@ -271,11 +271,13 @@ public:
 	* draws the main image of the vehicle onto the passed surface
 	*/
 	void render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 255);
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
 	void drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
+	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 255);
 
 	/**
 	* return the unit which contains this vehicle
@@ -284,6 +286,10 @@ public:
 	cVehicle* getContainerVehicle();
 
 private:
+	void render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+	void render_smallClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+	void render_shadow (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
+
 	//---- sentry and reaction fire helpers ---------------------------------------
 	/**
 	 * Is called after a unit moved one field; it allows opponent units to react to that movement and fire on the moving vehicle, if they can.
