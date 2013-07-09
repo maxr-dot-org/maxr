@@ -20,20 +20,21 @@
 #ifndef clansH
 #define clansH
 
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
+
+#include "main.h"
 
 //-------------------------------------------------------------------------
 class cClanUnitStat
 {
 public:
-	cClanUnitStat (int unitIdFirstPart, int unitIdSecPart) : unitIdFirstPart (unitIdFirstPart), unitIdSecPart (unitIdSecPart) {}
+	cClanUnitStat (sID unitId_) : unitId (unitId_) {}
 
 	void addModification (const std::string& area, int value);
 
-	int getUnitIdFirstPart() const { return unitIdFirstPart; }
-	int getUnitIdSecPart() const { return unitIdSecPart; }
+	sID getUnitId() const { return unitId; }
 
 	int getModificationValue (const std::string& key) const;
 	bool hasModification (const std::string& key) const;
@@ -42,8 +43,7 @@ public:
 
 	//-------------------------------------------------------------------------
 private:
-	int unitIdFirstPart;
-	int unitIdSecPart;
+	sID unitId;
 	std::map<std::string, int> modifications;
 };
 
@@ -52,7 +52,7 @@ class cClan
 {
 public:
 	cClan (int num) : num (num) {}
-	virtual ~cClan();
+	~cClan();
 
 	void setDescription (const std::string& newDescription);
 	const std::string& getDescription() const { return description; }
@@ -64,9 +64,9 @@ public:
 
 	int getClanID() const { return num; }
 
-	cClanUnitStat* getUnitStat (int idFirstPart, int idSecPart) const;
+	cClanUnitStat* getUnitStat (sID id) const;
 	cClanUnitStat* getUnitStat (unsigned int index) const;
-	cClanUnitStat* addUnitStat (int idFirstPart, int idSecPart);
+	cClanUnitStat* addUnitStat (sID id);
 	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
 	//-------------------------------------------------------------------------
@@ -82,7 +82,7 @@ class cClanData
 {
 public:
 	static cClanData& instance();
-	virtual ~cClanData();
+	~cClanData();
 
 	cClan* addClan();
 	cClan* getClan (unsigned int num);
@@ -93,6 +93,5 @@ private:
 	cClanData() {}
 	std::vector<cClan*> clans;
 };
-
 
 #endif // clansH

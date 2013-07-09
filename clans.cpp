@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "clans.h"
-#include "main.h"
 
 using namespace std;
 
@@ -32,7 +31,7 @@ void cClanUnitStat::addModification (const string& area, int value)
 //--------------------------------------------------
 bool cClanUnitStat::hasModification (const string& key) const
 {
-	return (modifications.find (key) != modifications.end());
+	return modifications.find (key) != modifications.end();
 }
 
 //--------------------------------------------------
@@ -45,71 +44,62 @@ int cClanUnitStat::getModificationValue (const string& key) const
 }
 
 //--------------------------------------------------
+static string GetModificatorString (int original, int modified)
+{
+	const int diff = modified - original;
+	if (diff > 0)
+		return " +" + iToStr (diff);
+	else if (diff < 0)
+		return " -" + iToStr (-diff);
+	else // diff == 0
+		return " =" + iToStr (modified);
+}
+
+//--------------------------------------------------
 string cClanUnitStat::getClanStatsDescription() const
 {
-	sID unitID;
-	unitID.iFirstPart = unitIdFirstPart;
-	unitID.iSecondPart = unitIdSecPart;
-	sUnitData* data = unitID.getUnitDataOriginalVersion();
-	string result = "Unknown";
-	//TODO: for positive values the › + " +" + ‹-construct should be added to the iToStr-value - if there are more mod's in future... else it is e.g. displayed: <xyz> +-<value> if you lower something -- nonsinn
-	if (data)
-	{
-		result = string (data->name) + ": ";
+	const sUnitData* data = unitId.getUnitDataOriginalVersion();
 
-		bool first = true;
-		if (hasModification ("Damage"))
-		{
-			if (!first)
-				result += ", ";
-			result += lngPack.i18n ("Text~Vehicles~Damage") + " +" + iToStr (getModificationValue ("Damage") - data->damage);
-			first = false;
-		}
-		if (hasModification ("Range"))
-		{
-			if (!first)
-				result += ", ";
-			result += lngPack.i18n ("Text~Hud~Range") /*here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot */ + " +" + iToStr (getModificationValue ("Range") - data->range);
-			first = false;
-		}
-		if (hasModification ("Armor"))
-		{
-			if (!first)
-				result += ", ";
-			result += lngPack.i18n ("Text~Vehicles~Armor") + " +" + iToStr (getModificationValue ("Armor") - data->armor);
-			first = false;
-		}
-		if (hasModification ("Hitpoints"))
-		{
-			if (!first)
-				result += ", ";
-			result += lngPack.i18n ("Text~Vehicles~Hitpoints") + " +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
-			first = false;
-		}
-		if (hasModification ("Scan"))
-		{
-			if (!first)
-				result += ", ";
-			result += lngPack.i18n ("Text~Vehicles~Scan") + " +" + iToStr (getModificationValue ("Scan") - data->scan);
-			first = false;
-		}
-		if (hasModification ("Speed"))
-		{
-			if (!first)
-				result += ", ";
-			result += lngPack.i18n ("Text~Vehicles~Speed") + " +" + iToStr (getModificationValue ("Speed") - (data->speedMax / 4));
-			first = false;
-		}
-		if (hasModification ("Built_Costs"))
-		{
-			if (!first)
-				result += ", ";
-			int nrTurns = (getModificationValue ("Built_Costs")) / (unitIdFirstPart == 0 ? 3 : 2);
-			if (data->isHuman)
-				nrTurns = getModificationValue ("Built_Costs");
-			result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
-			first = false;
-		}
+	if (data == NULL) return "Unknown";
+	// TODO: for positive values the › + " +" + ‹-construct should be added
+	// to the iToStr-value
+	// - if there are more mod's in future...
+	// else it is e.g. displayed: <xyz> +-<value>
+	// if you lower something -- nonsinn
+
+	string result = string (data->name) + ": ";
+	const char* const commaSep = ", ";
+	const char* sep = "";
+
+	struct {
+		const char* type;
+		const char* textToTranslate;
+		int originalValue;
+	} t[] = {
+		{"Damage", "Text~Vehicles~Damage", data->damage},
+		// here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot
+		{"Range", "Text~Hud~Range", data->range},
+		{"Armor", "Text~Vehicles~Armor", data->armor},
+		{"Hitpoints", "Text~Vehicles~Hitpoints", data->hitpointsMax},
+		{"Scan", "Text~Vehicles~Scan", data->scan},
+		{"Speed", "Text~Vehicles~Speed", data->speedMax / 4},
+	};
+
+	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)
+	{
+		if (hasModification (t[i].type) == false) continue;
+		result += sep;
+		result += lngPack.i18n (t[i].textToTranslate);
+		result += GetModificatorString (t[i].originalValue, getModificationValue (t[i].type));
+		sep = commaSep;
+	}
+	if (hasModification ("Built_Costs"))
+	{
+		result += sep;
+		int nrTurns = getModificationValue ("Built_Costs");
+		if (data->isHuman == false) nrTurns /= unitId.iFirstPart == 0 ? 3 : 2;
+
+		result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
 	}
 	return result;
 }
@@ -117,18 +107,17 @@ string cClanUnitStat::getClanStatsDescription() const
 //--------------------------------------------------
 cClan::~cClan()
 {
-	for (unsigned int i = 0; i < stats.size(); i++)
+	for (size_t i = 0; i != stats.size(); ++i)
 	{
 		delete stats[i];
-		stats[i] = 0;
 	}
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::getUnitStat (int idFirstPart, int idSecPart) const
+cClanUnitStat* cClan::getUnitStat (sID id) const
 {
-	for (unsigned int statIdx = 0; statIdx < stats.size(); statIdx++)
-		if (stats[statIdx]->getUnitIdFirstPart() == idFirstPart && stats[statIdx]->getUnitIdSecPart() == idSecPart)
+	for (size_t statIdx = 0; statIdx != stats.size(); ++statIdx)
+		if (stats[statIdx]->getUnitId() == id)
 			return stats[statIdx];
 	return 0;
 }
@@ -142,9 +131,9 @@ cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::addUnitStat (int idFirstPart, int idSecPart)
+cClanUnitStat* cClan::addUnitStat (sID id)
 {
-	cClanUnitStat* newStat = new cClanUnitStat (idFirstPart, idSecPart);
+	cClanUnitStat* newStat = new cClanUnitStat (id);
 	stats.push_back (newStat);
 	return newStat;
 }
@@ -164,7 +153,7 @@ void cClan::setName (const string& newName)
 vector<string> cClan::getClanStatsDescription() const
 {
 	vector<string> result;
-	for (int i = 0; i < getNrUnitStats(); i++)
+	for (int i = 0; i != getNrUnitStats(); ++i)
 	{
 		cClanUnitStat* stat = getUnitStat (i);
 		result.push_back (stat->getClanStatsDescription());
@@ -172,9 +161,8 @@ vector<string> cClan::getClanStatsDescription() const
 	return result;
 }
 
-
 //--------------------------------------------------
-cClanData& cClanData::instance()
+/*static*/ cClanData& cClanData::instance()
 {
 	static cClanData _instance;
 	return _instance;
@@ -183,10 +171,9 @@ cClanData& cClanData::instance()
 //--------------------------------------------------
 cClanData::~cClanData()
 {
-	for (unsigned int i = 0; i < clans.size(); i++)
+	for (size_t i = 0; i != clans.size(); ++i)
 	{
 		delete clans[i];
-		clans[i] = 0;
 	}
 }
 
@@ -203,6 +190,5 @@ cClan* cClanData::getClan (unsigned int num)
 {
 	if (num < clans.size())
 		return clans[num];
-
 	return NULL;
 }

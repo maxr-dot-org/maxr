@@ -123,11 +123,8 @@ int main (int argc, char* argv[])
 		}
 		while (SDL_PollEvent (&event))
 		{
-			if (event.type == SDL_ACTIVEEVENT)
-			{
-				if (!DEDICATED_SERVER)
-					SDL_UpdateRect (screen, 0, 0, 0, 0);
-			}
+			if (event.type == SDL_ACTIVEEVENT && !DEDICATED_SERVER)
+				SDL_UpdateRect (screen, 0, 0, 0, 0);
 		}
 		SDL_Delay (100);
 	}
@@ -167,7 +164,11 @@ int main (int argc, char* argv[])
 
 	SDL_WaitThread (dataThread, NULL);
 
-	if (!DEDICATED_SERVER)
+	if (DEDICATED_SERVER)
+	{
+		cDedicatedServer::instance().run();
+	}
+	else
 	{
 		Video.setResolution (Video.getResolutionX(), Video.getResolutionY(), true);
 		SDL_ShowCursor (0);
@@ -177,10 +178,6 @@ int main (int argc, char* argv[])
 		InputHandler = new cInput;
 		cStartMenu mainMenu;
 		mainMenu.show (NULL);
-	}
-	else
-	{
-		cDedicatedServer::instance().run();
 	}
 
 	Quit();
@@ -324,7 +321,7 @@ drawpixel:
 			srcPixelData++;
 		}
 		while (i >= destWidth);
-	};
+	}
 }
 
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height)
@@ -748,7 +745,7 @@ void cUnitsData::initializeClanUnitData()
 	cClanData& clanData = cClanData::instance();
 	for (int clanIdx = 0; clanIdx < clanData.getNrClans(); clanIdx++)
 	{
-		cClan* clan = clanData.getClan (clanIdx);
+		const cClan* clan = clanData.getClan (clanIdx);
 		if (clan == 0)
 			continue;
 
@@ -760,7 +757,7 @@ void cUnitsData::initializeClanUnitData()
 			const sVehicle& curVehicle = vehicle[vehicleIdx];
 			clanListVehicles.push_back (curVehicle);
 
-			cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID.iFirstPart, curVehicle.data.ID.iSecondPart);
+			const cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID);
 			if (changedStat == NULL) continue;
 
 			sVehicle& clanVehicle = clanListVehicles.back();
@@ -788,7 +785,7 @@ void cUnitsData::initializeClanUnitData()
 			const sBuilding& curBuilding = building[buildingIdx];
 			clanListBuildings.push_back (curBuilding);
 
-			cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID.iFirstPart, curBuilding.data.ID.iSecondPart);
+			const cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID);
 			if (changedStat == NULL) continue;
 			sBuilding& clanBuilding = clanListBuildings.back();
 			if (changedStat->hasModification ("Damage"))

@@ -2000,10 +2000,11 @@ static int LoadClans()
 				continue;
 			}
 			string idAttrStr (idAttr);
-			int firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
-			int secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
+			sID id;
+			id.iFirstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
+			id.iSecondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
 
-			cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
+			cClanUnitStat* newStat = newClan->addUnitStat (id);
 
 			for (XMLElement* modificationElement = statsElement->FirstChildElement(); modificationElement; modificationElement = modificationElement->NextSiblingElement())
 			{
