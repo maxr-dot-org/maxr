@@ -3489,33 +3489,30 @@ void installVoices()
 	copyWAV(sVoicePath + "F004" + waveExtension, path + "ok2" + waveExt);
 	copyWAV(sVoicePath + "F006" + waveExtension, path + "ok3" + waveExt);
 	copyWAV(sVoicePath + "F005" + waveExtension, path + "ok4" + waveExt);
-	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_failed1" + waveExt);
-	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_failed2" + waveExt);
+	copyWAV(sVoicePath + "F007" + waveExtension, path + "commando_failed1" + waveExt);
+	copyWAV(sVoicePath + "F010" + waveExtension, path + "commando_failed2" + waveExt);
 	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_failed3" + waveExt);
 	copyWAV(sVoicePath + "F013" + waveExtension, path + "saved" + waveExt);
 	copyWAV(sVoicePath + "F053" + waveExtension, path + "start_none" + waveExt);
 	copyWAV(sVoicePath + "F070" + waveExtension, path + "detected1" + waveExt);
 	copyWAV(sVoicePath + "F071" + waveExtension, path + "detected2" + waveExt);
-	copyWAV(sVoicePath + "F085" + waveExtension, path + "loaded" + waveExt);
-	copyWAV(sVoicePath + "F089" + waveExtension, path + "loaded2" + waveExt);
+	copyWAV(sVoicePath + "F085" + waveExtension, path + "reammo" + waveExt);
+	copyWAV(sVoicePath + "F089" + waveExtension, path + "reammo_all" + waveExt);
 	copyWAV(sVoicePath + "F093" + waveExtension, path + "research_complete" + waveExt);
 	copyWAV(sVoicePath + "F094" + waveExtension, path + "no_path1" + waveExt);
 	copyWAV(sVoicePath + "F095" + waveExtension, path + "no_path2" + waveExt);
-	copyWAV(sVoicePath + "F138" + waveExtension, path + "low_ammo2" + waveExt);
-	copyWAV(sVoicePath + "F142" + waveExtension, path + "low_ammo1" + waveExt);
 	copyWAV(sVoicePath + "F145" + waveExtension, path + "no_speed" + waveExt);
-	copyWAV(sVoicePath + "F150" + waveExtension, path + "status_yellow" + waveExt);
+	copyWAV(sVoicePath + "F150" + waveExtension, path + "status_yellow1" + waveExt);
 	copyWAV(sVoicePath + "F151" + waveExtension, path + "status_yellow2" + waveExt);
-	copyWAV(sVoicePath + "F154" + waveExtension, path + "status_red" + waveExt);
-	copyWAV(sVoicePath + "F155" + waveExtension, path + "status_red" + waveExt);
+	copyWAV(sVoicePath + "F154" + waveExtension, path + "status_red1" + waveExt);
+	copyWAV(sVoicePath + "F155" + waveExtension, path + "status_red2" + waveExt);
 	copyWAV(sVoicePath + "F158" + waveExtension, path + "sentry" + waveExt);
-	copyWAV(sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt);
-	copyWAV(sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt);
-	copyWAV(sVoicePath + "F166" + waveExtension, path + "start_one" + waveExt);
-	copyWAV(sVoicePath + "F169" + waveExtension, path + "build_done3" + waveExt);
-	copyWAV(sVoicePath + "F216" + waveExtension, path + "build_done4" + waveExt);
+	copyWAV(sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt);//for pio + constr
+	copyWAV(sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt);//for pio + constr
+	copyWAV(sVoicePath + "F166" + waveExtension, path + "start_one" + waveExt);// unit completed (in fac.)
+	copyWAV(sVoicePath + "F169" + waveExtension, path + "build_done3" + waveExt);//for factories
+	copyWAV(sVoicePath + "F216" + waveExtension, path + "build_done4" + waveExt);//for factories
 	copyWAV(sVoicePath + "F171" + waveExtension, path + "clearing" + waveExt);
-	copyWAV(sVoicePath + "F276" + waveExtension, path + "landing" + waveExt);
 	copyWAV(sVoicePath + "F181" + waveExtension, path + "laying_mines" + waveExt);
 	copyWAV(sVoicePath + "F186" + waveExtension, path + "clearing_mines2" + waveExt);
 	copyWAV(sVoicePath + "F187" + waveExtension, path + "clearing_mines" + waveExt);
@@ -3533,15 +3530,58 @@ void installVoices()
 	copyWAV(sVoicePath + "F229" + waveExtension, path + "attacking_us2" + waveExt);
 	copyWAV(sVoicePath + "F230" + waveExtension, path + "attacking_us3" + waveExt);
 	copyWAV(sVoicePath + "F232" + waveExtension, path + "attacking_us" + waveExt);
-	copyWAV(sVoicePath + "F234" + waveExtension, path + "destroyed_us" + waveExt);
-	copyWAV(sVoicePath + "F239" + waveExtension, path + "unit_stolen" + waveExt);
+	copyWAV(sVoicePath + "F234" + waveExtension, path + "destroyed_us1" + waveExt);
+	copyWAV(sVoicePath + "F234" + waveExtension, path + "destroyed_us2" + waveExt);
+	copyWAV(sVoicePath + "F239" + waveExtension, path + "unit_stolen1" + waveExt);
+	copyWAV(sVoicePath + "F242" + waveExtension, path + "unit_stolen2" + waveExt);
 	copyWAV(sVoicePath + "F243" + waveExtension, path + "unit_stolen_by_enemy" + waveExt);
 	copyWAV(sVoicePath + "F244" + waveExtension, path + "unit_disabled" + waveExt);
-	copyWAV(sVoicePath + "F249" + waveExtension, path + "disabled" + waveExt);
+	copyWAV(sVoicePath + "F247" + waveExtension, path + "unit_disabled_by_enemy1" + waveExt);
+	copyWAV(sVoicePath + "F249" + waveExtension, path + "unit_disabled_by_enemy2" + waveExt);
 	copyWAV(sVoicePath + "F250" + waveExtension, path + "attacking_enemy1" + waveExt);
 	copyWAV(sVoicePath + "F251" + waveExtension, path + "attacking_enemy2" + waveExt);
-	copyWAV(sVoicePath + "F271" + waveExtension, path + "turn_end_20_sec1" + waveExt);
-	copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec2" + waveExt);
+
+//-------------------------------------------------------------
+// fix differences between eng and ger original sound-files - nonsinn
+// FIMXE / TODO : French-soundfile-check
+//-------------------------------------------------------------
+	//landing screen
+		copyWAV(sVoicePath + "F176" + waveExtension, path + "landing1" + waveExt);
+	if (sLanguage != "german")
+	{
+		copyWAV(sVoicePath + "F177" + waveExtension, path + "landing2" + waveExt);
+		copyWAV(sVoicePath + "F278" + waveExtension, path + "landing3" + waveExt);
+	}else{ /* install german lang */	
+		copyWAV(sVoicePath + "F275" + waveExtension, path + "landing2" + waveExt);
+		copyWAV(sVoicePath + "F276" + waveExtension, path + "landing3" + waveExt);
+	}
+
+	//differenc of F270 (ammo low vs. empty)
+		copyWAV(sVoicePath + "F138" + waveExtension, path + "ammo_low1" + waveExt);
+		copyWAV(sVoicePath + "F142" + waveExtension, path + "ammo_empty1" + waveExt);
+	if (sLanguage != "german")
+	{
+		copyWAV(sVoicePath + "F271" + waveExtension, path + "ammo_low2" + waveExt);
+		copyWAV(sVoicePath + "F142" + waveExtension, path + "ammo_empty2" + waveExt);
+	}else{ /* install german lang */	
+		copyWAV(sVoicePath + "F138" + waveExtension, path + "ammo_low2" + waveExt);
+		copyWAV(sVoicePath + "F270" + waveExtension, path + "ammo_empty2" + waveExt);
+	}
+
+	//20 sec left
+	if (sLanguage != "german")
+	{
+		copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec1" + waveExt);//not used yet
+		copyWAV(sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec2" + waveExt);//not used yet
+		copyWAV(sVoicePath + "F275" + waveExtension, path + "turn_end_20_sec3" + waveExt);//not used yet
+	}else{ /* install german lang */	
+		copyWAV(sVoicePath + "F271" + waveExtension, path + "turn_end_20_sec1" + waveExt);//not used yet
+		copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec2" + waveExt);//not used yet
+		copyWAV(sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec3" + waveExt);//not used yet
+	}
+//-------------------------------------------------------------
+
+
 
 	if ( logFile != NULL )
 	{
