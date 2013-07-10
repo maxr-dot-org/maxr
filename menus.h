@@ -1179,7 +1179,6 @@ private:
 class cReportsMenu : public cMenu
 {
 	cClient* client;
-	cPlayer* owner;
 
 	AutoPtr<cMenuRadioGroup> typeButtonGroup;
 
@@ -1201,7 +1200,7 @@ class cReportsMenu : public cMenu
 
 	AutoPtr<cMenuReportsScreen> dataScreen;
 public:
-	cReportsMenu (cClient& client, cPlayer* owner_);
+	cReportsMenu (cClient& client);
 
 	void scrollCallback (bool upPossible, bool downPossible);
 	void doubleClicked (cUnit* unit);

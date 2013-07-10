@@ -182,7 +182,6 @@ private:
 	int msgCoordsX;
 	int msgCoordsY;
 
-	cPlayer* player;
 	cMap* map;
 
 	float minZoom;
@@ -239,6 +238,11 @@ private:
 
 	/** lists with all FX-Animations. Gui-only (= not synchoneous to game time) */
 	AutoPtr<cFxContainer> FxList;
+
+	void generateMiniMapSurface_landscape (SDL_Surface* surface, int zoomFactor);
+	void generateMiniMapSurface_fog (SDL_Surface* minimapSurface, int zoomFactor);
+	void generateMiniMapSurface_units (SDL_Surface* minimapSurface, int zoomFactor);
+	void generateMiniMapSurface_borders (SDL_Surface* minimapSurface, int zoomFactor);
 
 	SDL_Surface* generateMiniMapSurface();
 	bool loadPanelGraphics();
@@ -508,8 +512,6 @@ public:
 	bool getAJobDebugStatus() const { return debugOutput.debugAjobs; }
 
 	float getWindDir() const { return windDir; }
-
-	void setPlayer (cPlayer* player_);
 
 	void setUnitDetailsData (cUnit* unit);
 

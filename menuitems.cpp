@@ -1889,11 +1889,10 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition (eUnitDataSymbols symTyp
 	return src;
 }
 
-cMenuUnitDetails::cMenuUnitDetails (int x, int y, bool drawLines_, cPlayer* owner_) :
+cMenuUnitDetails::cMenuUnitDetails (int x, int y, bool drawLines_) :
 	cMenuItem (x, y),
 	client (NULL),
 	unit (NULL),
-	owner (owner_),
 	drawLines (drawLines_)
 {
 	position.w = 155;
@@ -1913,6 +1912,7 @@ void cMenuUnitDetails::draw()
 	}
 	if (unit == NULL) return;
 	const sUnitData* data = &unit->data;
+	const cPlayer* activePlayer = client->getActivePlayer();
 	const cPlayer* unitOwner = unit->owner;
 	const cBuilding* building = unit->isBuilding() ? static_cast<cBuilding*> (unit) : NULL;
 
@@ -1945,7 +1945,7 @@ void cMenuUnitDetails::draw()
 		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, tot, lim);
 	}
-	else if ( (data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == owner)
+	else if ( (data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == activePlayer)
 	{
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE, buffer);
 
@@ -2020,7 +2020,7 @@ void cMenuUnitDetails::draw()
 	}
 	else if (data->canAttack && !data->explodesOnContact)
 	{
-		if (unitOwner == owner)
+		if (unitOwner == activePlayer)
 		{
 			// Munition:
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->ammoCur, data->ammoMax);
@@ -2040,7 +2040,7 @@ void cMenuUnitDetails::draw()
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE, buffer);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
 
-		if (unitOwner == owner)
+		if (unitOwner == activePlayer)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
@@ -2060,7 +2060,7 @@ void cMenuUnitDetails::draw()
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE, buffer);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->produceHumans, data->produceHumans);
 
-		if (unitOwner == owner)
+		if (unitOwner == activePlayer)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
@@ -2089,7 +2089,7 @@ void cMenuUnitDetails::draw()
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, 0, data->needsHumans);
 		}
 
-		if (unitOwner == owner)
+		if (unitOwner == activePlayer)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
@@ -2097,11 +2097,6 @@ void cMenuUnitDetails::draw()
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
-}
-
-void cMenuUnitDetails::setOwner (cPlayer* owner_)
-{
-	owner = owner_;
 }
 
 void cMenuUnitDetails::setSelection (const cClient& client_, cUnit* unit_)
@@ -3579,17 +3574,17 @@ void cMenuScrollerHandler::setValue (int value)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& client_, cPlayer* owner_, cReportsMenu* parentMenu_) :
+cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& client_, cReportsMenu* parentMenu_) :
 	cMenuItem (x, y),
 	client (&client_),
-	owner (owner_),
 	parentMenu (parentMenu_)
 {
 	position.w = w;
 	position.h = h;
 
-	vehicles = owner->VehicleList;
-	buildings = owner->BuildingList;
+	const cPlayer* activePlayer = client->getActivePlayer();
+	vehicles = activePlayer->VehicleList;
+	buildings = activePlayer->BuildingList;
 	index = 0;
 	selected = -1;
 	filterPlanes = filterGround = filterSea = filterBuilding = false;
@@ -3600,7 +3595,7 @@ cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& cli
 	unitDetails = new AutoPtr<cMenuUnitDetails> [maxItems];
 	for (int i = 0; i < maxItems; i++)
 	{
-		unitDetails[i] = new cMenuUnitDetails (position.x + 127, position.y + 17 + 55 * i, true, owner);
+		unitDetails[i] = new cMenuUnitDetails (position.x + 127, position.y + 17 + 55 * i, true);
 	}
 	screenType = REP_SCR_TYPE_UNITS;
 	client->getCasualties().addNotificationListener (this);
@@ -3927,11 +3922,12 @@ void cMenuReportsScreen::drawScoreGraph()
 void cMenuReportsScreen::drawReportsScreen()
 {
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
+	const cPlayer* activePlayer = client->getActivePlayer();
 
-	size_t endIndex = std::min ((index + 1u) * maxItems, owner->savedReportsList.size());
+	size_t endIndex = std::min ((index + 1u) * maxItems, activePlayer->savedReportsList.size());
 	for (size_t i = index * maxItems; i != endIndex; ++i)
 	{
-		const sSavedReportMessage& savedReport = owner->savedReportsList[i];
+		const sSavedReportMessage& savedReport = activePlayer->savedReportsList[i];
 
 		switch (savedReport.type)
 		{
@@ -3978,7 +3974,7 @@ void cMenuReportsScreen::drawReportsScreen()
 }
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::checkFilter (sUnitData& data, bool checkInclude) const
+bool cMenuReportsScreen::checkFilter (const sUnitData& data, bool checkInclude) const
 {
 	if (checkInclude)
 	{
@@ -4127,7 +4123,8 @@ void cMenuReportsScreen::setType (bool unitsChecked, bool disadvaChecked, bool s
 	else if (scoreChecked) screenType = REP_SCR_TYPE_SCORE;
 	else if (reportsChecked)
 	{
-		index = owner->savedReportsList.size() / maxItems;
+		const cPlayer* activePlayer = client->getActivePlayer();
+		index = activePlayer->savedReportsList.size() / maxItems;
 		screenType = REP_SCR_TYPE_REPORTS;
 	}
 
@@ -4176,8 +4173,11 @@ void cMenuReportsScreen::updateScrollButtons()
 			parentMenu->scrollCallback (false, false);
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			parentMenu->scrollCallback (index > 0, maxItems * (index + 1u) < owner->savedReportsList.size());
+		{
+			const cPlayer* activePlayer = client->getActivePlayer();
+			parentMenu->scrollCallback (index > 0, maxItems * (index + 1u) < activePlayer->savedReportsList.size());
 			break;
+		}
 	}
 }
 
@@ -4195,9 +4195,13 @@ void cMenuReportsScreen::scrollDown()
 				index++;
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			if (maxItems * (index + 1u) < owner->savedReportsList.size())
+		{
+			const cPlayer* activePlayer = client->getActivePlayer();
+
+			if (maxItems * (index + 1u) < activePlayer->savedReportsList.size())
 				index++;
 			break;
+		}
 		case REP_SCR_TYPE_SCORE:
 			break;
 	}
@@ -4238,10 +4242,12 @@ void cMenuReportsScreen::released (void* parent)
 			break;
 		case REP_SCR_TYPE_REPORTS:
 		{
-			if (clickedIndex > (int) owner->savedReportsList.size()) return;
+			const cPlayer* activePlayer = client->getActivePlayer();
+
+			if (clickedIndex > (int) activePlayer->savedReportsList.size()) return;
 			if (clickedIndex != selected) break;
 
-			const sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
+			const sSavedReportMessage& savedReport = activePlayer->savedReportsList[clickedIndex];
 			parentMenu->close();
 			cGameGUI& gameGUI = client->getGameGUI();
 

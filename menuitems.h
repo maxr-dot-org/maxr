@@ -847,15 +847,12 @@ class cMenuUnitDetails : public cMenuItem
 protected:
 	const cClient* client;
 	cUnit* unit;
-
-	cPlayer* owner;
 	bool drawLines;
 
 public:
-	cMenuUnitDetails (int x, int y, bool drawLines_, cPlayer* owner_);
+	cMenuUnitDetails (int x, int y, bool drawLines_);
 	virtual void draw();
 
-	void setOwner (cPlayer* owner_);
 	void setSelection (const cClient& client_, cUnit* unit_);
 };
 
@@ -1305,7 +1302,6 @@ public:
 class cMenuReportsScreen : public cMenuItem, public INotificationListener
 {
 	cClient* client;
-	cPlayer* owner;
 	cReportsMenu* parentMenu;
 
 	cVehicle* vehicles;
@@ -1331,7 +1327,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 
 	eReportScreenTypes screenType;
 
-	bool checkFilter (sUnitData& data, bool checkInclude) const;
+	bool checkFilter (const sUnitData& data, bool checkInclude) const;
 	bool goThroughUnits (bool draw, int* count = NULL, cUnit** unit = NULL);
 	SDL_Surface* generateUnitSurface (cUnit* unit);
 
@@ -1350,7 +1346,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 
 	//-----------------------------------------------------------------------------
 public:
-	cMenuReportsScreen (int x, int y, int w, int h, cClient& client_, cPlayer* owner_, cReportsMenu* parentMenu_);
+	cMenuReportsScreen (int x, int y, int w, int h, cClient& client_, cReportsMenu* parentMenu_);
 	~cMenuReportsScreen();
 
 	virtual void draw();

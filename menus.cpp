@@ -5330,10 +5330,9 @@ void cMineManagerMenu::handleDestroyUnit (cUnit& destroyedUnit)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
+cReportsMenu::cReportsMenu (cClient& client_)
 	: cMenu (LoadPCX (GFXOD_REPORTS), MNU_BG_ALPHA)
 	, client (&client_)
-	, owner (owner_)
 {
 	typeButtonGroup = new cMenuRadioGroup();
 	menuItems.push_back (typeButtonGroup);
@@ -5389,7 +5388,7 @@ cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	menuItems.push_back (doneButton);
 
 	// its important that the screen will be added before the up and down buttons
-	dataScreen = new cMenuReportsScreen (position.x + 7, position.y + 6, 479, 467, *client, owner, this);
+	dataScreen = new cMenuReportsScreen (position.x + 7, position.y + 6, 479, 467, *client, this);
 	menuItems.push_back (dataScreen);
 
 	upButton = new cMenuButton (position.x + 492, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG);

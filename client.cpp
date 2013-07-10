@@ -160,7 +160,6 @@ void cClient::sendNetMessage (cNetMessage* message) const
 void cClient::initPlayer (cPlayer* Player)
 {
 	ActivePlayer = Player;
-	gameGUI->setPlayer (Player);
 
 	// generate subbase for enemy players
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
