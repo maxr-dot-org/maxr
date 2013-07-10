@@ -61,11 +61,6 @@ string cClanUnitStat::getClanStatsDescription() const
 	const sUnitData* data = unitId.getUnitDataOriginalVersion();
 
 	if (data == NULL) return "Unknown";
-	// TODO: for positive values the › + " +" + ‹-construct should be added
-	// to the iToStr-value
-	// - if there are more mod's in future...
-	// else it is e.g. displayed: <xyz> +-<value>
-	// if you lower something -- nonsinn
 
 	string result = string (data->name) + ": ";
 	const char* const commaSep = ", ";
