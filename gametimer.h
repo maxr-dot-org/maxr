@@ -48,7 +48,6 @@ public:
 	bool timer10ms;
 	bool timer50ms;
 	bool timer100ms;
-	bool timer400ms;
 
 	void setReceivedTime (unsigned int time, unsigned int nr = 0);
 	unsigned int getReceivedTime (unsigned int nr = 0);

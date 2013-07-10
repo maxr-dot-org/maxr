@@ -30,7 +30,6 @@ cGameTimer::cGameTimer() :
 	timer10ms = false;
 	timer50ms = false;
 	timer100ms = false;
-	timer400ms = false;
 
 	timerID = 0;
 }
@@ -86,14 +85,12 @@ void cGameTimer::handleTimer()
 	timer10ms  = false;
 	timer50ms  = false;
 	timer100ms = false;
-	timer400ms = false;
 	if (gameTime != lastTimerCall)
 	{
 		lastTimerCall = gameTime;
 		timer10ms  = true;
 		if (gameTime %  5 == 0) timer50ms  = true;
 		if (gameTime % 10 == 0) timer100ms = true;
-		if (gameTime % 40 == 0) timer400ms = true;
 	}
 }
 
