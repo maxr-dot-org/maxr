@@ -169,6 +169,8 @@ public:
 	int getTurnLimit() const { return turnLimit; }
 	int getScoreLimit() const { return scoreLimit; }
 	int getTurn() const;
+	unsigned int getRemainingTimeInSecond() const;
+	unsigned int getElapsedTimeInSecond() const;
 
 	void deletePlayer (cPlayer* player);
 
@@ -298,9 +300,9 @@ private:
 	int iTurn;
 	/** true if the player has been defeated */
 	bool bDefeated;
-	/** how many seconds will be left for this turn */
-	int iTurnTime;
-	/** Ticks when the TurnTime has been started */
+	/** serverTime when players have to finish TurnTime */
+	unsigned int iEndTurnTime;
+	/** serverTime when the TurnTime has been started */
 	unsigned int iStartTurnTime;
 	/** this client's copy of the victory conditions **/
 	int turnLimit;

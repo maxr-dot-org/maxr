@@ -86,7 +86,8 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	bDefeated = false;
 	iTurn = 1;
 	bWantToEnd = false;
-	iTurnTime = 0;
+	iEndTurnTime = 0;
+	iStartTurnTime = 0;
 	scoreLimit = 0;
 	turnLimit = 0;
 
@@ -450,10 +451,11 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	const bool bWaitForNextPlayer = message.popBool();
 	const bool bEndTurn = message.popBool();
 
+	iEndTurnTime = gameTimer.gameTime;
 	if (bEndTurn)
 	{
+		iStartTurnTime = gameTimer.gameTime;
 		iTurn++;
-		iTurnTime = 0;
 		gameGUI.updateTurn (iTurn);
 		if (!bWaitForNextPlayer) gameGUI.setEndButtonLock (false);
 		bWantToEnd = false;
@@ -508,8 +510,7 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 			gameGUI.addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 		}
-		iTurnTime = iTimeDelay;
-		iStartTurnTime = SDL_GetTicks();
+		iEndTurnTime = gameTimer.gameTime + 100 * iTimeDelay;
 	}
 	else if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 	{
@@ -2049,23 +2050,28 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 	okDialog.show (this);
 }
 
+unsigned int cClient::getRemainingTimeInSecond() const
+{
+	if (iEndTurnTime <= iStartTurnTime) return ~0; // max value
+	return (iEndTurnTime - gameTimer.gameTime) / 100;
+}
+
+unsigned int cClient::getElapsedTimeInSecond() const
+{
+	if (gameTimer.gameTime <= iStartTurnTime) return 0;
+	return (gameTimer.gameTime - iStartTurnTime) / 100;
+}
+
 void cClient::handleTurnTime()
 {
-	// TODO: rewrite to gameTime, instead of SDL_Ticks
-	static int lastCheckTime = SDL_GetTicks();
-	if (!gameGUI.timer50ms) return;
-	// stop time when waiting for reconnection
-	if (isFreezed())
+	if (iEndTurnTime > iStartTurnTime)
 	{
-		iStartTurnTime += SDL_GetTicks() - lastCheckTime;
+		gameGUI.updateTurnTime (getRemainingTimeInSecond());
 	}
-	if (iTurnTime > 0)
+	else
 	{
-		int iRestTime = iTurnTime - (SDL_GetTicks() - iStartTurnTime) / 1000;
-		iRestTime = std::max (iRestTime, 0);
-		gameGUI.updateTurnTime (iRestTime);
+		gameGUI.updateTurnTime (getElapsedTimeInSecond());
 	}
-	lastCheckTime = SDL_GetTicks();
 }
 
 void cClient::addActiveMoveJob (cClientMoveJob* MoveJob)
