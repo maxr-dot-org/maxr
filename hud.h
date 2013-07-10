@@ -182,11 +182,7 @@ private:
 	int msgCoordsX;
 	int msgCoordsY;
 
-	cMap* map;
-
-	float minZoom;
-
-	float calcMinZoom();
+	float calcMinZoom() const;
 
 	int offX;
 	int offY;
@@ -422,7 +418,7 @@ private:
 	void selectUnit_building (cBuilding& building);
 
 public:
-	explicit cGameGUI (cMap* map_);
+	cGameGUI();
 	~cGameGUI();
 
 	// this means every 100ms because iTimerTime will increase every 50ms.

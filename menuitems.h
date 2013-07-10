@@ -1275,6 +1275,8 @@ public:
 
 	void setBorders (float minValue_, float maxValue_);
 	void setValue (float value);
+	float getMinValue() const { return minValue; }
+	float getMaxValue() const { return maxValue; }
 	float getValue() const;
 	void setMoveCallback (void (*movedCallback_) (void*));
 

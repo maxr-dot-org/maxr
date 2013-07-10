@@ -74,11 +74,10 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	eventHandling (&eventHandling_),
 	Map (new cMap (staticMap)),
 	PlayerList (playerList),
-	gameGUI (new cGameGUI (Map)),
+	gameGUI (new cGameGUI ()),
 	gameTimer(),
 	FxList (new cFxContainer)
 {
-	gameGUI->setClient (this);
 	gameTimer.setClient (this);
 	if (server) server->setLocalClient (*this);
 	else network->setMessageReceiver (this);
@@ -160,6 +159,7 @@ void cClient::sendNetMessage (cNetMessage* message) const
 void cClient::initPlayer (cPlayer* Player)
 {
 	ActivePlayer = Player;
+	gameGUI->setClient (this);
 
 	// generate subbase for enemy players
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
