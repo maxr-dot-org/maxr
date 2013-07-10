@@ -25,6 +25,7 @@
 #include "client.h"
 #include "clientevents.h"
 #include "clist.h"
+#include "hud.h"
 #include "movejobs.h"
 #include "player.h"
 #include "vehicles.h"

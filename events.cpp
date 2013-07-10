@@ -17,17 +17,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "events.h"
-#include "network.h"
-#include "serverevents.h"
-#include "clientevents.h"
-#include "menuevents.h"
-#include "netmessage.h"
+
 #include "client.h"
+#include "clientevents.h"
+#include "files.h"
+#include "hud.h"
 #include "input.h"
 #include "log.h"
+#include "menuevents.h"
 #include "menus.h"
+#include "netmessage.h"
+#include "network.h"
+#include "serverevents.h"
 #include "settings.h"
-#include "files.h"
 #include "video.h"
 
 void cEventHandling::pushEvent (cNetMessage* message)

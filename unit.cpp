@@ -23,6 +23,7 @@
 #include "client.h"
 #include "clientevents.h"
 #include "dialog.h"
+#include "hud.h"
 #include "menus.h"
 #include "mouse.h"
 #include "player.h"

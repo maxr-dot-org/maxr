@@ -21,23 +21,29 @@
 
 #include "SDL_flic.h"
 #include "defines.h"
-#include "hud.h"
+#include "autoptr.h"
 #include "jobs.h"
+#include "gametimer.h"
 #include "main.h"
 #include "network.h"
 
+class cBuilding;
 class cCasualtiesTracker;
 class cClientAttackJob;
 class cClientMoveJob;
 class cEventHandling;
+class cFx;
 class cFxContainer;
+class cGameGUI;
 class cJob;
 class cMap;
+class cMenu;
 class cNetMessage;
 class cPlayer;
 class cServer;
 class cStaticMap;
 class cTCP;
+struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
@@ -181,8 +187,8 @@ public:
 	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
 	const cPlayer* getActivePlayer() const { return ActivePlayer; }
 	cPlayer* getActivePlayer() { return ActivePlayer; }
-	const cGameGUI& getGameGUI() const { return gameGUI; }
-	cGameGUI& getGameGUI() { return gameGUI; }
+	const cGameGUI& getGameGUI() const { return *gameGUI; }
+	cGameGUI& getGameGUI() { return *gameGUI; }
 private:
 	/**
 	* adds the unit to the map and player.
@@ -314,7 +320,7 @@ private:
 	/** the hud */
 	// TODO: this should be a pointer to the gameGui instance,
 	// so it is possible to have a GUI-less client for ai implementation
-	cGameGUI gameGUI;
+	AutoPtr<cGameGUI> gameGUI;
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */

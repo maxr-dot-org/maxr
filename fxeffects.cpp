@@ -20,7 +20,9 @@
 #include <SDL.h>
 
 #include "fxeffects.h"
+
 #include "client.h"
+#include "hud.h"
 #include "main.h"
 #include "player.h"
 

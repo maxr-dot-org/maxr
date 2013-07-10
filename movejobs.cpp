@@ -27,6 +27,7 @@
 #include "clientevents.h"
 #include "clist.h"
 #include "fxeffects.h"
+#include "hud.h"
 #include "netmessage.h"
 #include "player.h"
 #include "server.h"

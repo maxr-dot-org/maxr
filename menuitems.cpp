@@ -29,6 +29,7 @@
 #include "client.h"
 #include "clientevents.h"
 #include "clist.h"
+#include "hud.h"
 #include "menus.h"
 #include "mouse.h"
 #include "player.h"

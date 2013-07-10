@@ -32,6 +32,7 @@
 #include "dialog.h"
 #include "events.h"
 #include "files.h"
+#include "hud.h"
 #include "loaddata.h"
 #include "mapdownload.h"
 #include "menuevents.h"

@@ -19,24 +19,26 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <sstream>
+
 #include "dialog.h"
-#include "mouse.h"
-#include "unifonts.h"
-#include "sound.h"
-#include "pcx.h"
-#include "files.h"
-#include "log.h"
-#include "loaddata.h"
-#include "events.h"
-#include "client.h"
-#include "input.h"
-#include "clientevents.h"
-#include "sound.h"
-#include "settings.h"
-#include "video.h"
+
 #include "buildings.h"
-#include "vehicles.h"
+#include "client.h"
+#include "clientevents.h"
+#include "events.h"
+#include "files.h"
+#include "hud.h"
+#include "input.h"
+#include "loaddata.h"
+#include "log.h"
+#include "mouse.h"
+#include "pcx.h"
 #include "player.h"
+#include "settings.h"
+#include "sound.h"
+#include "unifonts.h"
+#include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 

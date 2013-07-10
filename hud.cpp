@@ -108,8 +108,8 @@ void cDebugOutput::setServer (cServer* server_)
 void cDebugOutput::draw()
 {
 	const int DEBUGOUT_X_POS (Video.getResolutionX() - 200);
-	const cGameGUI& gui = client->gameGUI;
-	const cPlayer* player = client->gameGUI.player;
+	const cGameGUI& gui = client->getGameGUI();
+	const cPlayer* player = client->getGameGUI().player;
 	int debugOff = 30;
 
 	if (debugPlayers)
@@ -313,8 +313,8 @@ void cDebugOutput::draw()
 
 void cDebugOutput::trace()
 {
-	int x = mouse->getKachelX (client->gameGUI);
-	int y = mouse->getKachelY (client->gameGUI);
+	int x = mouse->getKachelX (client->getGameGUI());
+	int y = mouse->getKachelY (client->getGameGUI());
 	if (x < 0 || y < 0) return;
 
 	cMapField* field;
@@ -684,6 +684,8 @@ void cGameGUI::recalcPosition (bool resetItemPositions)
 
 cGameGUI::~cGameGUI()
 {
+	StopFXLoop (iObjectStream);
+
 	SDL_RemoveTimer (TimerID);
 
 	if (FLC) FLI_Close (FLC);

@@ -8,6 +8,7 @@
 #include "files.h"
 #include "netmessage.h"
 #include "player.h"
+#include "server.h"
 #include "vehicles.h"
 
 bool cGameTimer::syncDebugSingleStep = false;

@@ -18,12 +18,14 @@
  ***************************************************************************/
 
 #include "drawingcache.h"
-#include "client.h"
-#include "loaddata.h"
-#include "settings.h"
+
 #include "buildings.h"
-#include "vehicles.h"
+#include "client.h"
+#include "hud.h"
+#include "loaddata.h"
 #include "player.h"
+#include "settings.h"
+#include "vehicles.h"
 
 void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 {
