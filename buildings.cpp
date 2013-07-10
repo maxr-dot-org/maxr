@@ -1560,9 +1560,9 @@ void cBuilding::Select (cGameGUI& gameGUI)
 	gameGUI.setVideoSurface (typ->video);
 
 	// play sound:
-	if (owner->researchFinished && data.canResearch)
+	if (owner->researchFinished && data.canResearch && turnsDisabled < 1)
 		PlayVoice (VoiceData.VOIResearchComplete);
-	else if (factoryHasJustFinishedBuilding())
+	else if (factoryHasJustFinishedBuilding() && turnsDisabled < 1)
 	{
 		PlayRandomVoice (VoiceData.VOIBuildDone);
 	}

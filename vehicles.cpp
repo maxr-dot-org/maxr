@@ -911,14 +911,17 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		sText += iToStr (turnsDisabled) + ")";
 		return sText;
 	}
+	else if ( !(data.canCapture || data.canDisable) && owner == gameGUI.getClient()->getActivePlayer())
+	{
+		if (ClientMoveJob)
+			return lngPack.i18n ("Text~Comp~Moving");
+		else if (manualFireActive)
+			return lngPack.i18n ("Text~Comp~ReactionFireOff");
+		else if (sentryActive)
+			return lngPack.i18n ("Text~Comp~Sentry");
+	}
 	else if (autoMJob)
 		return lngPack.i18n ("Text~Comp~Surveying");
-	else if (ClientMoveJob)
-		return lngPack.i18n ("Text~Comp~Moving");
-	else if (manualFireActive)
-		return lngPack.i18n ("Text~Comp~ReactionFireOff");
-	else if (sentryActive)
-		return lngPack.i18n ("Text~Comp~Sentry");
 	else if (IsBuilding)
 	{
 		if (owner != gameGUI.getClient()->getActivePlayer())
@@ -964,9 +967,18 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
+	
+	// for infiltrators
 	else if ( (data.canCapture || data.canDisable) && owner == gameGUI.getClient()->getActivePlayer())
 	{
-		string sTmp = lngPack.i18n ("Text~Comp~Waits") + "\n";
+		string sTmp;
+		if (ClientMoveJob)
+			sTmp = lngPack.i18n ("Text~Comp~Moving") + "\n";
+		else if (manualFireActive)
+			sTmp = lngPack.i18n ("Text~Comp~ReactionFireOff") + "\n";
+		else if (sentryActive)
+			sTmp = lngPack.i18n ("Text~Comp~Sentry") + "\n";
+		else sTmp = lngPack.i18n ("Text~Comp~Waits") + "\n";
 
 		if (CommandoRank < 1) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
 		else if (CommandoRank < 3) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");

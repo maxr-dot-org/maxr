@@ -1838,7 +1838,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == activateVehicle)
 		{
-			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->typ))
+			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->typ) && selectedUnit->turnsDisabled < 1)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1886,7 +1886,7 @@ void cGameGUI::updateMouseCursor()
 			!selectedBuilding->IsWorking &&
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), (*selectedBuilding->BuildList) [0]->type.getVehicle()))
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), (*selectedBuilding->BuildList) [0]->type.getVehicle()) && selectedUnit->turnsDisabled < 1)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1895,7 +1895,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == activateVehicle)
+		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->turnsDisabled < 1)
 		{
 			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->typ))
 			{
@@ -2899,179 +2899,191 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == SDLK_F6 && savedPositions[1].offsetX >= 0 && savedPositions[1].offsetY >= 0) jumpToSavedPos (1);
 	else if (key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0) jumpToSavedPos (2);
 	else if (key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0) jumpToSavedPos (3);
+
 	// Hotkeys for the unit menues
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedUnit && selectedUnit->data.canAttack && selectedUnit->data.shotsCur && !client->isFreezed() && selectedUnit->owner == player)
+	// disable most hotkeys while selected unit is disabled
+	else if ( (selectedUnit && selectedUnit->turnsDisabled < 1 && selectedUnit->owner == player) || ( selectedVehicle && selectedVehicle->turnsDisabled < 1 && selectedVehicle->owner == player) || ( selectedBuilding && selectedBuilding->turnsDisabled < 1 && selectedBuilding->owner == player) )
 	{
-		mouseInputMode = mouseInputAttackMode;
-		updateMouseCursor();
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		sendWantStopMove (*client, selectedVehicle->iID);
-		cBuildingsBuildMenu buildMenu (*client, player, selectedVehicle);
-		buildMenu.show (client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		cVehiclesBuildMenu buildMenu (*this, player, selectedBuilding);
-		buildMenu.show (client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		mouseInputMode = transferMode;
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		mouseInputMode = transferMode;
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+		if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedUnit && selectedUnit->data.canAttack && selectedUnit->data.shotsCur && !client->isFreezed() && selectedUnit->owner == player)
 		{
-			selectedVehiclesGroup[i]->executeAutoMoveJobCommand (*client);
+			mouseInputMode = mouseInputAttackMode;
+			updateMouseCursor();
 		}
-		selectedVehicle->executeAutoMoveJobCommand (*client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		sendWantStartWork (*client, *selectedBuilding);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)) && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		if (selectedVehicle->ClientMoveJob)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->isFreezed() && selectedVehicle->owner == player)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
-			{
-				if (selectedVehiclesGroup[i]->ClientMoveJob) sendWantStopMove (*client, selectedVehiclesGroup[i]->iID);
-			}
 			sendWantStopMove (*client, selectedVehicle->iID);
+			cBuildingsBuildMenu buildMenu (*client, player, selectedVehicle);
+			buildMenu.show (client);
 		}
-		else if (selectedVehicle->IsBuilding)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			cVehiclesBuildMenu buildMenu (*this, player, selectedBuilding);
+			buildMenu.show (client);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			mouseInputMode = transferMode;
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			mouseInputMode = transferMode;
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !client->isFreezed() && selectedVehicle->owner == player)
 		{
 			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
-				if (selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding (*client, selectedVehiclesGroup[i]->iID);
+				selectedVehiclesGroup[i]->executeAutoMoveJobCommand (*client);
 			}
-			sendWantStopBuilding (*client, selectedVehicle->iID);
+			selectedVehicle->executeAutoMoveJobCommand (*client);
 		}
-		else if (selectedVehicle->IsClearing)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			sendWantStartWork (*client, *selectedBuilding);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)) && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			if (selectedVehicle->ClientMoveJob)
+			{
+				for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+				{
+					if (selectedVehiclesGroup[i]->ClientMoveJob) sendWantStopMove (*client, selectedVehiclesGroup[i]->iID);
+				}
+				sendWantStopMove (*client, selectedVehicle->iID);
+			}
+			else if (selectedVehicle->IsBuilding)
+			{
+				for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+				{
+					if (selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding (*client, selectedVehiclesGroup[i]->iID);
+				}
+				sendWantStopBuilding (*client, selectedVehicle->iID);
+			}
+			else if (selectedVehicle->IsClearing)
+			{
+				for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+				{
+					if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, *selectedVehiclesGroup[i]);
+				}
+				sendWantStopClear (*client, *selectedVehicle);
+			}
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			sendWantStopWork (*client, *selectedBuilding);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map.fields[map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY)].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed() && selectedVehicle->owner == player)
 		{
 			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
-				if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, *selectedVehiclesGroup[i]);
+				if (selectedVehiclesGroup[i]->data.canClearArea && map.fields[map.getOffset (selectedVehiclesGroup[i]->PosX, selectedVehiclesGroup[i]->PosY)].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
 			}
-			sendWantStopClear (*client, *selectedVehicle);
+			sendWantStartClear (*client, *selectedVehicle);
 		}
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		sendWantStopWork (*client, *selectedBuilding);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map.fields[map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY)].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->isFreezed() && selectedVehicle->owner == player)
 		{
-			if (selectedVehiclesGroup[i]->data.canClearArea && map.fields[map.getOffset (selectedVehiclesGroup[i]->PosX, selectedVehiclesGroup[i]->PosY)].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
-		}
-		sendWantStartClear (*client, *selectedVehicle);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
-		{
-			if (selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive)
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
-				sendChangeSentry (*client, selectedVehiclesGroup[i]->iID, true);
+				if (selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive)
+				{
+					sendChangeSentry (*client, selectedVehiclesGroup[i]->iID, true);
+				}
 			}
+			sendChangeSentry (*client, selectedVehicle->iID, true);
 		}
-		sendChangeSentry (*client, selectedVehicle->iID, true);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->sentryActive || selectedBuilding->data.canAttack) && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		sendChangeSentry (*client, selectedBuilding->iID, false);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack) && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->sentryActive || selectedBuilding->data.canAttack) && !client->isFreezed() && selectedBuilding->owner == player)
 		{
-			if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
-				 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
+			sendChangeSentry (*client, selectedBuilding->iID, false);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack) && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
-				sendChangeManualFireStatus (*client, selectedVehiclesGroup[i]->iID, true);
+				if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
+					 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
+				{
+					sendChangeManualFireStatus (*client, selectedVehiclesGroup[i]->iID, true);
+				}
 			}
+			sendChangeManualFireStatus (*client, selectedVehicle->iID, true);
 		}
-		sendChangeManualFireStatus (*client, selectedVehicle->iID, true);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->manualFireActive || selectedBuilding->data.canAttack) && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		sendChangeManualFireStatus (*client, selectedBuilding->iID, false);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player && selectedUnit->turnsDisabled < 1)
-	{
-		cStorageMenu storageMenu (*client, selectedUnit->storedUnits, *selectedUnit);
-		storageMenu.show (client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player && selectedUnit->turnsDisabled < 1)
-	{
-		toggleMouseInputMode (loadMode);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		mouseInputMode = muniActive;
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		mouseInputMode = repairActive;
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->manualFireActive || selectedBuilding->data.canAttack) && !client->isFreezed() && selectedBuilding->owner == player)
 		{
-			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0) selectedVehiclesGroup[i]->executeLayMinesCommand (*client);
+			sendChangeManualFireStatus (*client, selectedBuilding->iID, false);
 		}
-		selectedVehicle->executeLayMinesCommand (*client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+		else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
 		{
-			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax) selectedVehiclesGroup[i]->executeClearMinesCommand (*client);
+			cStorageMenu storageMenu (*client, selectedUnit->storedUnits, *selectedUnit);
+			storageMenu.show (client);
 		}
-		selectedVehicle->executeClearMinesCommand (*client);
+		else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
+		{
+			toggleMouseInputMode (loadMode);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			mouseInputMode = muniActive;
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			mouseInputMode = repairActive;
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			{
+				if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0) selectedVehiclesGroup[i]->executeLayMinesCommand (*client);
+			}
+			selectedVehicle->executeLayMinesCommand (*client);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			{
+				if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax) selectedVehiclesGroup[i]->executeClearMinesCommand (*client);
+			}
+			selectedVehicle->executeClearMinesCommand (*client);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			mouseInputMode = disableMode;
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !client->isFreezed() && selectedVehicle->owner == player)
+		{
+			mouseInputMode = stealMode;
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			cMineManagerMenu mineManager (*client, selectedBuilding);
+			mineManager.show (client);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			cDialogResearch researchDialog (*client, selectedBuilding->owner);
+			researchDialog.show (client);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			cUpgradeMenu upgradeMenu (*client, selectedBuilding->owner);
+			upgradeMenu.show (client);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed() && selectedBuilding->owner == player)
+		{
+			cDestructMenu destructMenu;
+			if (destructMenu.show (client) == 0) sendWantSelfDestroy (*client, *selectedBuilding);
+		}
+		else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedUnit)
+		{
+			cUnitHelpMenu helpMenu (&selectedUnit->data, selectedUnit->owner);
+			helpMenu.show (client);
+		}
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		mouseInputMode = disableMode;
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !client->isFreezed() && selectedVehicle->owner == player)
-	{
-		mouseInputMode = stealMode;
-	}
+	// allowed KeyUnitMenuInfo for disabled units
 	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedUnit)
 	{
 		cUnitHelpMenu helpMenu (&selectedUnit->data, selectedUnit->owner);
 		helpMenu.show (client);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		cMineManagerMenu mineManager (*client, selectedBuilding);
-		mineManager.show (client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		cDialogResearch researchDialog (*client, selectedBuilding->owner);
-		researchDialog.show (client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		cUpgradeMenu upgradeMenu (*client, selectedBuilding->owner);
-		upgradeMenu.show (client);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed() && selectedBuilding->owner == player)
-	{
-		cDestructMenu destructMenu;
-		if (destructMenu.show (client) == 0) sendWantSelfDestroy (*client, *selectedBuilding);
-	}
+
 	// Hotkeys for the hud
 	else if (key.keysym.sym == KeysList.KeyFog) setFog (!fogChecked());
 	else if (key.keysym.sym == KeysList.KeyGrid) setGrid (!gridChecked());
@@ -4043,7 +4055,7 @@ void cGameGUI::drawUnitCircles()
 	cBuilding* selectedBuilding = getSelectedBuilding();
 	const cPlayer* player = client->getActivePlayer();
 
-	if (selectedVehicle)
+	if (selectedVehicle && selectedUnit->turnsDisabled < 1)
 	{
 		cVehicle& v = *selectedVehicle;
 		const bool movementOffset = !v.IsBuilding && !v.IsClearing;
@@ -4136,7 +4148,7 @@ void cGameGUI::drawUnitCircles()
 			v.DrawExitPoints (v.storedUnits[v.VehicleToActivate]->typ, *this);
 		}
 	}
-	else if (selectedBuilding)
+	else if (selectedBuilding && selectedUnit->turnsDisabled < 1)
 	{
 		const int spx = selectedBuilding->getScreenPosX (*this);
 		const int spy = selectedBuilding->getScreenPosY (*this);

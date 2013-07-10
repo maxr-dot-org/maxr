@@ -291,91 +291,92 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 
 	if (owner != client.getActivePlayer())
 		return result;
+	if (turnsDisabled < 1)
+	{
+		// Attack
+		if (data.canAttack && data.shotsCur)
+			result++;
 
-	// Attack
-	if (data.canAttack && data.shotsCur)
-		result++;
+		// Build
+		if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false)
+			result++;
 
-	// Build
-	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false)
-		result++;
+		// Distribute
+		if (data.canMineMaxRes > 0 && isUnitWorking())
+			result++;
 
-	// Distribute
-	if (data.canMineMaxRes > 0 && isUnitWorking())
-		result++;
+		// Transfer
+		if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false)
+			result++;
 
-	// Transfer
-	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false)
-		result++;
+		// Start
+		if (data.canWork && buildingCanBeStarted())
+			result++;
 
-	// Start
-	if (data.canWork && buildingCanBeStarted())
-		result++;
+		// Auto survey
+		if (data.canSurvey)
+			result++;
 
-	// Auto survey
-	if (data.canSurvey)
-		result++;
+		// Stop
+		if (canBeStoppedViaUnitMenu())
+			result++;
 
-	// Stop
-	if (canBeStoppedViaUnitMenu())
-		result++;
+		// Remove
+		if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false)
+			result++;
 
-	// Remove
-	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false)
-		result++;
+		// Manual Fire
+		if (manualFireActive || data.canAttack)
+			result++;
 
-	// Manual Fire
-	if (manualFireActive || data.canAttack)
-		result++;
+		// Sentry
+		if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+			result++;
 
-	// Sentry
-	if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
-		result++;
+		// Activate / Load
+		if (data.storageUnitsMax > 0)
+			result += 2;
 
-	// Activate / Load
-	if (data.storageUnitsMax > 0 && turnsDisabled < 1)
-		result += 2;
+		// Research
+		if (data.canResearch && isUnitWorking())
+			result++;
 
-	// Research
-	if (data.canResearch && isUnitWorking())
-		result++;
+		// Gold upgrades screen
+		if (data.convertsGold)
+			result++;
 
-	// Gold upgrades screen
-	if (data.convertsGold)
-		result++;
+		// Update building(s)
+		if (buildingCanBeUpgraded())
+			result += 2;
 
-	// Update building(s)
-	if (buildingCanBeUpgraded())
-		result += 2;
+		// Self destruct
+		if (data.canSelfDestroy)
+			result++;
 
-	// Self destruct
-	if (data.canSelfDestroy)
-		result++;
+		// Ammo
+		if (data.canRearm && data.storageResCur >= 1)
+			result++;
 
-	// Ammo
-	if (data.canRearm && data.storageResCur >= 1)
-		result++;
+		// Repair
+		if (data.canRepair && data.storageResCur >= 1)
+			result++;
 
-	// Repair
-	if (data.canRepair && data.storageResCur >= 1)
-		result++;
+		// Lay Mines
+		if (data.canPlaceMines && data.storageResCur > 0)
+			result++;
 
-	// Lay Mines
-	if (data.canPlaceMines && data.storageResCur > 0)
-		result++;
+		// Clear Mines
+		if (data.canPlaceMines && data.storageResCur < data.storageResMax)
+			result++;
 
-	// Clear Mines
-	if (data.canPlaceMines && data.storageResCur < data.storageResMax)
-		result++;
+		// Sabotage/disable
+		if (data.canCapture && data.shotsCur)
+			result++;
 
-	// Sabotage/disable
-	if (data.canCapture && data.shotsCur)
-		result++;
-
-	// Steal
-	if (data.canDisable && data.shotsCur)
-		result++;
-
+		// Steal
+		if (data.canDisable && data.shotsCur)
+			result++;
+	}
 	return result;
 
 }
@@ -402,225 +403,228 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 
 	bool markerPossible = (areCoordsOverMenu (gameGUI, mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
 	const cClient& client = *gameGUI.getClient();
-	// Attack:
-	if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
-		drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
 
-	// Build:
-	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == client.getActivePlayer())
+	if (turnsDisabled < 1)
 	{
+		// Attack:
+		if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Build:
+		if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Distribute:
+		if (data.canMineMaxRes > 0 && isUnitWorking() && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Transfer:
+		if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Start:
+		if (data.canWork && buildingCanBeStarted() && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Auto survey movejob of surveyor
+		if (data.canSurvey && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isAutoMoveJobActive();
+			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Stop:
+		if (canBeStoppedViaUnitMenu() && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Remove:
+		if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Manual fire
+		if ( (manualFireActive || data.canAttack) && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || manualFireActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Sentry status:
+		if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || sentryActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Activate / Load:
+		if (data.storageUnitsMax > 0 && owner == client.getActivePlayer())
+		{
+			// Activate:
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+
+			// Load:
+			isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// research
+		if (data.canResearch && isUnitWorking() && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// gold upgrades screen
+		if (data.convertsGold && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Updates:
+		if (buildingCanBeUpgraded() && owner == client.getActivePlayer())
+		{
+			// Update all buildings of this type in this subbase
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+
+			// update this building
+			isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Self destruct
+		if (data.canSelfDestroy && owner == client.getActivePlayer())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Ammo:
+		if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Repair:
+		if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Lay mines:
+		if (data.canPlaceMines && data.storageResCur > 0 && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitLayingMines();
+			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Collect/clear mines:
+		if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitClearingMines();
+			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Sabotage/disable:
+		if (data.canDisable && data.shotsCur && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+		// Steal:
+		if (data.canCapture && data.shotsCur && owner == client.getActivePlayer())
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			nr++;
+		}
+
+	}
+		// Info:
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Distribute:
-	if (data.canMineMaxRes > 0 && isUnitWorking() && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Transfer:
-	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
-		drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Start:
-	if (data.canWork && buildingCanBeStarted() && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Auto survey movejob of surveyor
-	if (data.canSurvey && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isAutoMoveJobActive();
-		drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Stop:
-	if (canBeStoppedViaUnitMenu() && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Remove:
-	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Manual fire
-	if ( (manualFireActive || data.canAttack) && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || manualFireActive;
-		drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Sentry status:
-	if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || sentryActive;
-		drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Activate / Load:
-	if (data.storageUnitsMax > 0 && owner == client.getActivePlayer() && turnsDisabled < 1)
-	{
-		// Activate:
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
+		drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 
-		// Load:
-		isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
-		drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// research
-	if (data.canResearch && isUnitWorking() && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// gold upgrades screen
-	if (data.convertsGold && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Updates:
-	if (buildingCanBeUpgraded() && owner == client.getActivePlayer())
-	{
-		// Update all buildings of this type in this subbase
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-
-		// update this building
+		// Done:
 		isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Self destruct
-	if (data.canSelfDestroy && owner == client.getActivePlayer())
-	{
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Ammo:
-	if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
-		drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Repair:
-	if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
-		drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Lay mines:
-	if (data.canPlaceMines && data.storageResCur > 0 && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitLayingMines();
-		drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Collect/clear mines:
-	if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitClearingMines();
-		drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Sabotage/disable:
-	if (data.canDisable && data.shotsCur && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
-		drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Steal:
-	if (data.canCapture && data.shotsCur && owner == client.getActivePlayer())
-	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
-		drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Info:
-	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
-	dest.y += 22;
-	nr++;
-
-	// Done:
-	isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
+		drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
 }
 
 //------------------------------------------------------------------------------
 void cUnit::menuReleased (cGameGUI& gameGUI)
 {
 	SDL_Rect dest = getMenuSize (gameGUI);
-
 	int exeNr = -1000;
 	if (areCoordsOverMenu (gameGUI, mouse->x, mouse->y))
 		exeNr = (mouse->y - dest.y) / 22;
@@ -630,7 +634,6 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		selectedMenuButtonIndex = -1;
 		return;
 	}
-
 	if (isUnitMoving() || isBeeingAttacked)
 		return;
 
@@ -640,327 +643,331 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	int nr = 0;
 	cClient& client = *gameGUI.getClient();
 
-	// attack:
-	if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
+	//no menu if something disabled - origina behavior -- nonsinn
+	if (turnsDisabled < 1)
 	{
+		// attack:
+		if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (mouseInputAttackMode);
+				return;
+			}
+			nr++;
+		}
+
+		// Build:
+		if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeBuildCommand (gameGUI);
+				return;
+			}
+			nr++;
+		}
+
+		// distribute:
+		if (data.canMineMaxRes > 0 && isUnitWorking() && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeMineManagerCommand (*gameGUI.getClient());
+				return;
+			}
+			nr++;
+		}
+
+		// transfer:
+		if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (transferMode);
+				return;
+			}
+			nr++;
+		}
+
+		// Start:
+		if (data.canWork && buildingCanBeStarted() && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendWantStartWork (client, *this);
+				return;
+			}
+			nr++;
+		}
+
+		// auto
+		if (data.canSurvey && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeAutoMoveJobCommand (client);
+				return;
+			}
+			nr++;
+		}
+
+		// stop:
+		if (canBeStoppedViaUnitMenu() && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeStopCommand (*gameGUI.getClient());
+				return;
+			}
+			nr++;
+		}
+
+		// remove:
+		if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() != 0 && isUnitClearing() == false && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				assert (this->isVehicle());
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendWantStartClear (client, static_cast<cVehicle&> (*this));
+				return;
+			}
+			nr++;
+		}
+
+		// manual Fire:
+		if ( (manualFireActive || data.canAttack) && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendChangeManualFireStatus (client, iID, isVehicle());
+				return;
+			}
+			nr++;
+		}
+
+		// sentry:
+		if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendChangeSentry (client, iID, isVehicle());
+				return;
+			}
+			nr++;
+		}
+
+		// activate/load:
+		if (data.storageUnitsMax > 0 && owner == client.getActivePlayer())
+		{
+			// activate:
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeActivateStoredVehiclesCommand (*gameGUI.getClient());
+				return;
+			}
+			nr++;
+
+			// load:
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (loadMode);
+				return;
+			}
+			nr++;
+		}
+
+		// research
+		if (data.canResearch && isUnitWorking() && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				cDialogResearch researchDialog (client, owner);
+				researchDialog.show (&client);
+				return;
+			}
+			nr++;
+		}
+
+		// gold upgrades screen
+		if (data.convertsGold && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				cUpgradeMenu upgradeMenu (client, owner);
+				upgradeMenu.show (&client);
+				return;
+			}
+			nr++;
+		}
+
+		// Updates:
+		if (buildingCanBeUpgraded() && owner == client.getActivePlayer())
+		{
+			// Update all buildings of this type in this subbase
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeUpdateBuildingCommmand (*gameGUI.getClient(), true);
+				return;
+			}
+			nr++;
+
+			// update this building
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeUpdateBuildingCommmand (*gameGUI.getClient(), false);
+				return;
+			}
+			nr++;
+		}
+
+		// Self destruct
+		if (data.canSelfDestroy && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeSelfDestroyCommand (*gameGUI.getClient());
+				return;
+			}
+			nr++;
+		}
+
+		// rearm:
+		if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (muniActive);
+				return;
+			}
+			nr++;
+		}
+
+		// repair:
+		if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (repairActive);
+				return;
+			}
+			nr++;
+		}
+
+		// lay mines:
+		if (data.canPlaceMines && data.storageResCur > 0 && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeLayMinesCommand (*gameGUI.getClient());
+				return;
+			}
+			nr++;
+		}
+
+		// clear mines:
+		if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				executeClearMinesCommand (*gameGUI.getClient());
+				return;
+			}
+			nr++;
+		}
+
+		// disable:
+		if (data.canDisable && data.shotsCur > 0 && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (disableMode);
+				return;
+			}
+			nr++;
+		}
+
+		// steal:
+		if (data.canCapture && data.shotsCur > 0 && owner == client.getActivePlayer())
+		{
+			if (exeNr == nr)
+			{
+				gameGUI.unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				gameGUI.toggleMouseInputMode (stealMode);
+				return;
+			}
+			nr++;
+		}
+
+	}
+		// help/info:
 		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (mouseInputAttackMode);
+			cUnitHelpMenu helpMenu (&data, owner);
+			helpMenu.show (gameGUI.getClient());
 			return;
 		}
 		nr++;
-	}
 
-	// Build:
-	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == client.getActivePlayer())
-	{
+		// done:
 		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeBuildCommand (gameGUI);
+			if (owner == client.getActivePlayer())
+			{
+				isMarkedAsDone = true;
+				sendMoveJobResume (client, iID);
+			}
 			return;
 		}
-		nr++;
-	}
-
-	// distribute:
-	if (data.canMineMaxRes > 0 && isUnitWorking() && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeMineManagerCommand (*gameGUI.getClient());
-			return;
-		}
-		nr++;
-	}
-
-	// transfer:
-	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (transferMode);
-			return;
-		}
-		nr++;
-	}
-
-	// Start:
-	if (data.canWork && buildingCanBeStarted() && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			sendWantStartWork (client, *this);
-			return;
-		}
-		nr++;
-	}
-
-	// auto
-	if (data.canSurvey && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeAutoMoveJobCommand (client);
-			return;
-		}
-		nr++;
-	}
-
-	// stop:
-	if (canBeStoppedViaUnitMenu() && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeStopCommand (*gameGUI.getClient());
-			return;
-		}
-		nr++;
-	}
-
-	// remove:
-	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() != 0 && isUnitClearing() == false && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			assert (this->isVehicle());
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			sendWantStartClear (client, static_cast<cVehicle&> (*this));
-			return;
-		}
-		nr++;
-	}
-
-	// manual Fire:
-	if ( (manualFireActive || data.canAttack) && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			sendChangeManualFireStatus (client, iID, isVehicle());
-			return;
-		}
-		nr++;
-	}
-
-	// sentry:
-	if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			sendChangeSentry (client, iID, isVehicle());
-			return;
-		}
-		nr++;
-	}
-
-	// activate/load:
-	if (data.storageUnitsMax > 0 && owner == client.getActivePlayer() && turnsDisabled < 1)
-	{
-		// activate:
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeActivateStoredVehiclesCommand (*gameGUI.getClient());
-			return;
-		}
-		nr++;
-
-		// load:
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (loadMode);
-			return;
-		}
-		nr++;
-	}
-
-	// research
-	if (data.canResearch && isUnitWorking() && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cDialogResearch researchDialog (client, owner);
-			researchDialog.show (&client);
-			return;
-		}
-		nr++;
-	}
-
-	// gold upgrades screen
-	if (data.convertsGold && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cUpgradeMenu upgradeMenu (client, owner);
-			upgradeMenu.show (&client);
-			return;
-		}
-		nr++;
-	}
-
-	// Updates:
-	if (buildingCanBeUpgraded() && owner == client.getActivePlayer())
-	{
-		// Update all buildings of this type in this subbase
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeUpdateBuildingCommmand (*gameGUI.getClient(), true);
-			return;
-		}
-		nr++;
-
-		// update this building
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeUpdateBuildingCommmand (*gameGUI.getClient(), false);
-			return;
-		}
-		nr++;
-	}
-
-	// Self destruct
-	if (data.canSelfDestroy && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeSelfDestroyCommand (*gameGUI.getClient());
-			return;
-		}
-		nr++;
-	}
-
-	// rearm:
-	if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (muniActive);
-			return;
-		}
-		nr++;
-	}
-
-	// repair:
-	if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (repairActive);
-			return;
-		}
-		nr++;
-	}
-
-	// lay mines:
-	if (data.canPlaceMines && data.storageResCur > 0 && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeLayMinesCommand (*gameGUI.getClient());
-			return;
-		}
-		nr++;
-	}
-
-	// clear mines:
-	if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			executeClearMinesCommand (*gameGUI.getClient());
-			return;
-		}
-		nr++;
-	}
-
-	// disable:
-	if (data.canDisable && data.shotsCur > 0 && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (disableMode);
-			return;
-		}
-		nr++;
-	}
-
-	// steal:
-	if (data.canCapture && data.shotsCur > 0 && owner == client.getActivePlayer())
-	{
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			gameGUI.toggleMouseInputMode (stealMode);
-			return;
-		}
-		nr++;
-	}
-
-	// help/info:
-	if (exeNr == nr)
-	{
-		gameGUI.unitMenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
-		cUnitHelpMenu helpMenu (&data, owner);
-		helpMenu.show (gameGUI.getClient());
-		return;
-	}
-	nr++;
-
-	// done:
-	if (exeNr == nr)
-	{
-		gameGUI.unitMenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
-		if (owner == client.getActivePlayer())
-		{
-			isMarkedAsDone = true;
-			sendMoveJobResume (client, iID);
-		}
-		return;
-	}
 }
 
 
