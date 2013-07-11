@@ -153,9 +153,9 @@
 			<Steal ENG="Steal" localized="Stehlen"/>
 			<Stop ENG="Stop" localized="Stopp"/>
 			<Transfer ENG="X-fer" localized="Trsfer."/>
-			<UpAll ENG="Up. all" localized="Verb. All."/>
-			<Upgrade ENG="Up. this" localized="Verb. dies"/>
-			<Upgrades ENG="Buy Up." localized="Kaufen"/>
+			<UpAll ENG="Upg all" localized="Verb. All."/>
+			<Upgrade ENG="Upgrade" localized="Verb. dies"/>
+			<Upgrades ENG="Buy Upg" localized="Kaufen"/>
 		</Context>
 		<Hud>
 			<Ammo ENG="Ammo" localized="Munition"/>
@@ -467,7 +467,7 @@
 		<Clan ID="4" localized="Musashi">Verbesserte Panzerung</Clan>
 		<Clan ID="5" localized="Heilige Acht">Schnellere Fahrzeuge</Clan>
 		<Clan ID="6" localized="7 Ritter">Verbesserte Verteidigungsanlagen</Clan>
-		<Clan ID="7" localized="Axis Inc.">Extra Konstrukteure und Pioniere (Abhängig vom Geld) </Clan>
+		<Clan ID="7" localized="Axis Inc.">Extra Konstrukteure und Pioniere (Abhängig vom Startkredit) </Clan>
 	</Clans>
 	<Graphic>
 		<Dummy/>

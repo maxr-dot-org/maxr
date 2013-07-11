@@ -158,9 +158,9 @@
 			<Steal ENG="Steal"/>
 			<Stop ENG="Stop"/>
 			<Transfer ENG="X-fer"/>
-			<UpAll ENG="Up. all"/>
-			<Upgrade ENG="Up. this"/>
-			<Upgrades ENG="Buy Up."/>
+			<UpAll ENG="Upg all"/>
+			<Upgrade ENG="Upgrade"/>
+			<Upgrades ENG="Buy Upg"/>
 		</Context>
 		<Hud>
 			<Ammo ENG="Ammunition"/>
