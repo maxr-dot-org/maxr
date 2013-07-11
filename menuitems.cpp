@@ -4313,3 +4313,46 @@ void cMenuPlayerInfo::draw()
 
 	font->showText (position.x + 59 - sourceX, position.y + 5, player->isRemovedFromGame ? player->getName() + " (-)" : player->getName());
 }
+
+
+cMenuPlayersInfo::cMenuPlayersInfo (int x, int y, bool topToDown_) :
+	cMenuItem (x, y),
+	client (NULL),
+	topToDown (topToDown_)
+{
+}
+
+cMenuPlayersInfo::~cMenuPlayersInfo()
+{
+	for (size_t i = 0; i != info.size(); ++i)
+	{
+		delete info[i];
+	}
+}
+
+void cMenuPlayersInfo::setClient (const cClient& client_)
+{
+	if (client == &client_) return;
+	for (size_t i = 0; i != info.size(); ++i)
+	{
+		delete info[i];
+	}
+	info.clear();
+
+	const int offsetY = GraphicsData.gfx_hud_extra_players->h * (topToDown ? 1 : -1);
+
+	for (size_t i = 0; i != client_.getPlayerList().size(); ++i)
+	{
+		const cPlayer& p = *client_.getPlayerList()[i];
+		info.push_back(new cMenuPlayerInfo (getPosition().x, getPosition().y + i * offsetY, p));
+	}
+}
+
+/*virtual*/ void cMenuPlayersInfo::draw()
+{
+	if (this->disabled) return;
+	for (size_t i = 0; i != info.size(); ++i)
+	{
+		info[i]->draw();
+	}
+}

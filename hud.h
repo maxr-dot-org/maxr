@@ -373,7 +373,7 @@ private:
 	cMenuLabel selUnitNamePrefixStr;
 	cMenuLineEdit selUnitNameEdit;
 
-	std::vector<cMenuPlayerInfo*> playersInfo;
+	cMenuPlayersInfo playersInfo;
 
 	static void helpReleased (void* parent);
 	static void centerReleased (void* parent);

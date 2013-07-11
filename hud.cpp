@@ -519,6 +519,7 @@ cGameGUI::cGameGUI() :
 	selUnitStatusStr (12, 40, "", FONT_LATIN_SMALL_WHITE),
 	selUnitNamePrefixStr (12, 30, "", FONT_LATIN_SMALL_GREEN),
 	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT),
+	playersInfo (Video.getResolutionY() >= 768 ? 3 : 161, Video.getResolutionY() >= 768 ? 482 : 480 - 82, Video.getResolutionY() >= 768),
 	iTimerTime (0)
 {
 	dCache.setGameGUI (*this);
@@ -632,11 +633,17 @@ cGameGUI::cGameGUI() :
 	selUnitNameEdit.setReturnPressedFunc (unitNameReturnPressed);
 	menuItems.push_back (&selUnitNameEdit);
 
+	playersInfo.setDisabled (true);
+	menuItems.push_back (&playersInfo);
+
 	updateTurn (1);
 }
 
 void cGameGUI::setClient (cClient* client)
 {
+	assert (client);
+	assert (client->getMap());
+
 	this->client = client;
 	debugOutput.setClient (client);
 	debugOutput.setServer (client->getServer());
@@ -647,18 +654,7 @@ void cGameGUI::setClient (cClient* client)
 		miniMapImage.setImage (mini);
 		needMiniMapDraw = false;
 	}
-	for (size_t i = 0; i != client->getPlayerList().size(); ++i)
-	{
-		cPlayer& p = *client->getPlayerList() [i];
-		const int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
-		const int yPos = Video.getResolutionY() >= 768 ? (482 + GraphicsData.gfx_hud_extra_players->h * i) : (480 - 82 - GraphicsData.gfx_hud_extra_players->h * i);
-
-		cMenuPlayerInfo* playerInfo = new cMenuPlayerInfo (xPos, yPos, p);
-		playerInfo->setDisabled (true);
-		playersInfo.push_back (playerInfo);
-
-		menuItems.push_back (playerInfo);
-	}
+	playersInfo.setClient (*client);
 }
 
 float cGameGUI::calcMinZoom() const
@@ -695,10 +691,7 @@ cGameGUI::~cGameGUI()
 	SDL_RemoveTimer (TimerID);
 
 	if (FLC) FLI_Close (FLC);
-	for (size_t i = 0; i != playersInfo.size(); ++i)
-	{
-		delete playersInfo[i];
-	}
+
 	for (size_t i = 0; i != messages.size(); ++i)
 	{
 		delete messages[i];
@@ -3179,10 +3172,7 @@ void cGameGUI::playersReleased (void* parent)
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	gui->showPlayers = gui->playersButton.isChecked();
 
-	for (unsigned int i = 0; i < gui->playersInfo.size(); i++)
-	{
-		gui->playersInfo[i]->setDisabled (!gui->showPlayers);
-	}
+	gui->playersInfo.setDisabled (!gui->showPlayers);
 }
 
 void cGameGUI::changedMiniMap (void* parent)

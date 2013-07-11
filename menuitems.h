@@ -1369,8 +1369,10 @@ public:
 
 //-----------------------------------------------------------------------------
 /**
- * A little box that displays additional information about the current state of a player.
- * (his name, his color, whether he is active in the game and whether he has ended his turn)
+ * A little box that displays additional information
+ * about the current state of a player.
+ * (his name, his color, whether he is active in the game
+ * and whether he has ended his turn)
  * @author alzi
  */
 class cMenuPlayerInfo : public cMenuItem
@@ -1382,5 +1384,23 @@ public:
 
 	virtual void draw();
 };
+
+/**
+ * The collection of cMenuPlayerInfo for the Client
+ */
+class cMenuPlayersInfo : public cMenuItem
+{
+private:
+	const cClient* client;
+	std::vector<cMenuPlayerInfo*> info;
+	bool topToDown;
+public:
+	cMenuPlayersInfo (int x, int y, bool topToDown_);
+	~cMenuPlayersInfo();
+	void setClient (const cClient& client_);
+
+	virtual void draw();
+};
+
 
 #endif // menuitemsH
