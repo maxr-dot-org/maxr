@@ -2385,6 +2385,11 @@ cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContaine
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 
+	infoLabelConst = new cMenuLabel (position.x + 180 + (position.w - 180) / 2 - (Video.getResolutionX() - 200) / 2, position.y + (font->getFontHeight (FONT_LATIN_BIG)) * 3/2, "", FONT_LATIN_BIG);
+	infoLabelConst->setBox ( (Video.getResolutionX() - 200), font->getFontHeight (FONT_LATIN_BIG) * 2);
+	menuItems.push_back (infoLabelConst);
+	
+	infoLabelConst->setText (lngPack.i18n ("Text~Comp~Landing_Select"));
 	PlayRandomVoice (VoiceData.VOILanding);
 }
 

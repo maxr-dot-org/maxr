@@ -731,6 +731,7 @@ protected:
 	AutoPtr<cMenuImage> mapImage;
 	AutoPtr<cMenuImage> circlesImage;
 	AutoPtr<cMenuLabel> infoLabel;
+	AutoPtr<cMenuLabel> infoLabelConst;
 
 	AutoPtr<cMenuButton> backButton;
 
