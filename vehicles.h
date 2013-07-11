@@ -176,12 +176,12 @@ public:
 	bool refreshData_Clear (cServer& server);
 
 	void DrawPath (cGameGUI& gameGUI);
-	std::string getStatusStr (const cGameGUI& gameGUI) const;
+	virtual std::string getStatusStr (const cGameGUI& gameGUI) const;
 	void DecSpeed (int value);
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
 	void MakeReport (cGameGUI& gameGUI);
-	bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const;
+	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
 	bool InSentryRange (cServer& server);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI) const;
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
@@ -193,7 +193,7 @@ public:
 #define SUPPLY_TYPE_REPAIR	1
 	bool canSupply (const cClient& client, int x, int y, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	bool canSupply (const cUnit* unit, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	void calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs);
+	void calcTurboBuild (int (&iTurboBuildRounds)[3], int (&iTurboBuildCosts)[3], int iBuild_Costs);
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath
@@ -284,6 +284,8 @@ public:
 	cVehicle* getContainerVehicle();
 
 private:
+	void drawPath_BuildPath (cGameGUI& gameGUI);
+
 	void render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
 	void render_smallClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
 	void render_shadow (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);

@@ -119,7 +119,7 @@ cVehicle::~cVehicle()
 void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 {
 	//make damage effect
-	cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
+	const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax &&
 		cSettings::getInstance().isDamageEffects() &&
 		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
@@ -652,13 +652,16 @@ bool cVehicle::refreshData_Build (cServer& server)
 	const cMap& map = *server.Map;
 	server.addReport (BuildingTyp, false, owner->getNr());
 
-	//handle pathbuilding
-	//here the new building is added (if possible) and the move job to the next field is generated
-	//the new build event is generated in cServer::handleMoveJobs()
+	// handle pathbuilding
+	// here the new building is added (if possible) and
+	// the move job to the next field is generated
+	// the new build event is generated in cServer::handleMoveJobs()
 	if (BuildPath)
 	{
-		// Find a next position that either a) is something we can't move to (in which case we cancel
-		// the path building, or b) doesn't have a building type that we're trying to build.
+		// Find a next position that either
+		// a) is something we can't move to
+		//  (in which case we cancel the path building)
+		// or b) doesn't have a building type that we're trying to build.
 		int  nextX       = PosX;
 		int  nextY       = PosY;
 		bool found_next  = false;
@@ -670,7 +673,8 @@ bool cVehicle::refreshData_Build (cServer& server)
 			if (PosX < BandX) nextX++;
 			if (PosY > BandY) nextY--;
 			if (PosY < BandY) nextY++;
-			// Can we move to this position? If not, we need to kill the path building now.
+			// Can we move to this position?
+			// If not, we need to kill the path building now.
 			if (!map.possiblePlace (*this, nextX, nextY))
 			{
 				// Try sidestepping stealth units before giving up.
@@ -695,7 +699,8 @@ bool cVehicle::refreshData_Build (cServer& server)
 		{
 			IsBuilding = false;
 			server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
-			// Begin the movment immediately, so no other unit can block the destination field.
+			// Begin the movement immediately,
+			// so no other unit can block the destination field.
 			this->ServerMoveJob->checkMove();
 		}
 
@@ -712,7 +717,8 @@ bool cVehicle::refreshData_Build (cServer& server)
 	}
 	else
 	{
-		//add building immediatly if it doesn't require the engineer to drive away
+		//add building immediatly
+		// if it doesn't require the engineer to drive away
 		if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
 		{
 			IsBuilding = false;
@@ -736,10 +742,10 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	cBuilding* Rubble = map.fields[map.getOffset (PosX, PosY)].getRubble();
 	if (data.isBig)
 	{
-		int size = map.getSize();
+		const int size = map.getSize();
 		map.moveVehicle (*this, BuildBigSavedPos % size, BuildBigSavedPos / size);
 		sendStopClear (server, *this, BuildBigSavedPos, owner->getNr());
-		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
+		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
 			sendStopClear (server, *this, BuildBigSavedPos, seenByPlayerList[i]->getNr());
 		}
@@ -747,7 +753,7 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	else
 	{
 		sendStopClear (server, *this, -1, owner->getNr());
-		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
+		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
 			sendStopClear (server, *this, -1, seenByPlayerList[i]->getNr());
 		}
@@ -768,31 +774,67 @@ bool cVehicle::refreshData()
 	if (turnsDisabled > 0)
 	{
 		lastSpeed = data.speedMax;
-
-		if (data.ammoCur >= data.shotsMax)
-			lastShots = data.shotsMax;
-		else
-			lastShots = data.ammoCur;
-
+		lastShots = std::min (data.ammoCur, data.shotsMax);
 		return true;
 	}
 	if (data.speedCur < data.speedMax || data.shotsCur < data.shotsMax)
 	{
 		data.speedCur = data.speedMax;
+		data.shotsCur = std::min (data.ammoCur, data.shotsMax);
 
-		if (data.ammoCur >= data.shotsMax)
-			data.shotsCur = data.shotsMax;
-		else
-			data.shotsCur = data.ammoCur;
-
-		/*// Regenerieren:
+#if 0
+		// Regeneration:
 		if (data.is_alien && data.hitpointsCur < data.hitpointsMax)
 		{
 			data.hitpointsCur++;
-		}*/
+		}
+#endif
 		return true;
 	}
 	return false;
+}
+
+void cVehicle::drawPath_BuildPath (cGameGUI& gameGUI)
+{
+	assert (!ClientMoveJob || !ClientMoveJob->Waypoints || owner != gameGUI.getClient()->getActivePlayer());
+
+	if (!BuildPath || (BandX == PosX && BandY == PosY) || gameGUI.mouseInputMode == placeBand) return;
+
+	int mx = PosX;
+	int my = PosY;
+	int sp;
+	if (mx < BandX)
+		sp = 4;
+	else if (mx > BandX)
+		sp = 3;
+	else if (my < BandY)
+		sp = 1;
+	else
+		sp = 6;
+
+	while (mx != BandX || my != BandY)
+	{
+		SDL_Rect dest;
+		dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * mx;
+		dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * my;
+
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest);
+
+		if (mx < BandX)
+			mx++;
+		else if (mx > BandX)
+			mx--;
+
+		if (my < BandY)
+			my++;
+		else if (my > BandY)
+			my--;
+	}
+	SDL_Rect dest;
+	dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * mx;
+	dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * my;
+
+	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest);
 }
 
 //-----------------------------------------------------------------------------
@@ -800,52 +842,14 @@ bool cVehicle::refreshData()
 //-----------------------------------------------------------------------------
 void cVehicle::DrawPath (cGameGUI& gameGUI)
 {
-	int mx = 0, my = 0, sp, save;
-	SDL_Rect dest, ndest;
-	sWaypoint* wp;
-
 	if (!ClientMoveJob || !ClientMoveJob->Waypoints || owner != gameGUI.getClient()->getActivePlayer())
 	{
-		if (!BuildPath || (BandX == PosX && BandY == PosY) || gameGUI.mouseInputMode == placeBand) return;
-
-		mx = PosX;
-		my = PosY;
-
-		if (mx < BandX)
-			sp = 4;
-		else if (mx > BandX)
-			sp = 3;
-		else if (my < BandY)
-			sp = 1;
-		else
-			sp = 6;
-
-		while (mx != BandX || my != BandY)
-		{
-			dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * mx;
-			dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * my;
-
-			SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest);
-
-			if (mx < BandX)
-				mx++;
-			else if (mx > BandX)
-				mx--;
-
-			if (my < BandY)
-				my++;
-			else if (my > BandY)
-				my--;
-		}
-
-		dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * mx;
-		dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * my;
-
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest);
+		drawPath_BuildPath (gameGUI);
 		return;
 	}
 
-	sp = data.speedCur;
+	int sp = data.speedCur;
+	int save;
 
 	if (sp)
 	{
@@ -854,11 +858,14 @@ void cVehicle::DrawPath (cGameGUI& gameGUI)
 	}
 	else save = ClientMoveJob->iSavedSpeed;
 
+	SDL_Rect dest;
 	dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * PosX;
 	dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * PosY;
-	wp = ClientMoveJob->Waypoints;
-	ndest = dest;
+	SDL_Rect ndest = dest;
 
+	int mx = 0;
+	int my = 0;
+	sWaypoint* wp = ClientMoveJob->Waypoints;
 	while (wp)
 	{
 		if (wp->next)
@@ -980,13 +987,13 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 			sTmp = lngPack.i18n ("Text~Comp~Sentry") + "\n";
 		else sTmp = lngPack.i18n ("Text~Comp~Waits") + "\n";
 
-		if (CommandoRank < 1) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
-		else if (CommandoRank < 3) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
-		else if (CommandoRank < 6) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
-		else if (CommandoRank < 11) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
-		else if (CommandoRank < 19) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
+		if (CommandoRank < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
+		else if (CommandoRank < 3.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
+		else if (CommandoRank < 6.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
+		else if (CommandoRank < 11.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
+		else if (CommandoRank < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
 		else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
-		if (CommandoRank > 0)
+		if (CommandoRank > 0.f)
 			sTmp += " +" + iToStr ( (int) CommandoRank);
 		return sTmp;
 	}
@@ -1001,24 +1008,18 @@ void cVehicle::DecSpeed (int value)
 {
 	data.speedCur -= value;
 
-	if (data.canAttack)
-	{
-		float f;
-		int s;
-		f = ( (float) data.shotsMax / data.speedMax);
-		s = (int) (data.speedCur * f);
+	if (data.canAttack == false) return;
 
-		if (!data.canDriveAndFire && s < data.shotsCur && s >= 0)
-			data.shotsCur = s;
-	}
+	const float f = (float) data.shotsMax / data.speedMax;
+	const int s = (int) (data.speedCur * f);
+
+	if (!data.canDriveAndFire && s < data.shotsCur && s >= 0)
+		data.shotsCur = s;
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs)
+void cVehicle::calcTurboBuild (int (&iTurboBuildRounds)[3], int (&iTurboBuildCosts)[3], int iBuild_Costs)
 {
-	// calculate building time and costs
-	int a, rounds, costs;
-
 	iTurboBuildRounds[0] = 0;
 	iTurboBuildRounds[1] = 0;
 	iTurboBuildRounds[2] = 0;
@@ -1026,17 +1027,18 @@ void cVehicle::calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBu
 	//prevent division by zero
 	if (data.needsMetal == 0) data.needsMetal = 1;
 
-	//step 1x
+	// step 1x
 	if (data.storageResCur >= iBuild_Costs)
 	{
 		iTurboBuildCosts[0] = iBuild_Costs;
 		iTurboBuildRounds[0] = (int) ceilf (iTurboBuildCosts[0] / (float) (data.needsMetal));
 	}
 
-	//step 2x
-	a = iTurboBuildCosts[0];
-	rounds = iTurboBuildRounds[0];
-	costs = iTurboBuildCosts[0];
+	// step 2x
+	// calculate building time and costs
+	int a = iTurboBuildCosts[0];
+	int rounds = iTurboBuildRounds[0];
+	int costs = iTurboBuildCosts[0];
 
 	while (a >= 4 && data.storageResCur >= costs + 4)
 	{
@@ -1051,7 +1053,7 @@ void cVehicle::calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBu
 		iTurboBuildRounds[1] = rounds;
 	}
 
-	//step 4x
+	// step 4x
 	a = iTurboBuildCosts[1];
 	rounds = iTurboBuildRounds[1];
 	costs = iTurboBuildCosts[1];
@@ -1084,7 +1086,7 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 	const cMap& map = *gameGUI.getClient()->getMap();
 
 	//check, which positions are available
-	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
+	const sUnitData& BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
 	if (map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX    , PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY))
@@ -1113,7 +1115,7 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 		pos[3] = true;
 	}
 
-	//chose the position, which matches the cursor position, if available
+	// chose the position, which matches the cursor position, if available
 	if (x <= PosX && y <= PosY && pos[0])
 	{
 		BandX = PosX - 1;
@@ -1142,7 +1144,7 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 		return;
 	}
 
-	//if the best position is not available, chose the next free one
+	// if the best position is not available, chose the next free one
 	if (pos[0])
 	{
 		BandX = PosX - 1;
@@ -1182,7 +1184,7 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 }
 
 //-----------------------------------------------------------------------------
-/** Scans for resources ( This function is only called by the server) */
+/** Scans for resources */
 //-----------------------------------------------------------------------------
 void cVehicle::doSurvey (const cServer& server)
 {
@@ -1283,11 +1285,8 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transfered to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const
+bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 {
-	const int x = mouse->getKachelX (gameGUI);
-	const int y = mouse->getKachelY (gameGUI);
-
 	if (x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1)
 		return false;
 
@@ -1336,17 +1335,15 @@ bool cVehicle::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField)
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, server.Map);
-	if (target == this)
-	{
-		int iOff = server.Map->getOffset (PosX, PosY);
-		Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-		server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, iOff, true));
-		if (ServerMoveJob != 0)
-			ServerMoveJob->bFinished = true;
-		return true;
-	}
-	return false;
+	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, server.Map);
+	if (target != this) return false;
+
+	int iOff = server.Map->getOffset (PosX, PosY);
+	Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, iOff, true));
+	if (ServerMoveJob != 0)
+		ServerMoveJob->bFinished = true;
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1365,7 +1362,7 @@ bool cVehicle::InSentryRange (cServer& server)
 {
 	int iOff = server.Map->getOffset (PosX, PosY);
 	std::vector<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer* Player = playerList[i];
 
@@ -1487,7 +1484,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 		return false;
 
 	std::vector<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer* player = playerList[i];
 		if (player == owner)
@@ -1514,8 +1511,8 @@ bool cVehicle::provokeReactionFire (cServer& server)
 //-----------------------------------------------------------------------------
 void cVehicle::DrawExitPoints (const sVehicle* const typ, cGameGUI& gameGUI) const
 {
-	int const spx = getScreenPosX (gameGUI);
-	int const spy = getScreenPosY (gameGUI);
+	const int spx = getScreenPosX (gameGUI);
+	const int spy = getScreenPosY (gameGUI);
 	const cMap* map = gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[8] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1),

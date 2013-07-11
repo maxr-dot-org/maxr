@@ -1105,11 +1105,8 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 }
 
 //------------------------------------------------------------
-bool cBuilding::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const
+bool cBuilding::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 {
-	int x = mouse->getKachelX (gameGUI);
-	int y = mouse->getKachelY (gameGUI);
-
 	if (OverUnitField->getVehicle())
 	{
 		const cVehicle* v = OverUnitField->getVehicle();

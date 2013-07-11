@@ -179,7 +179,7 @@ public:
 	void ServerStopWork (cServer& server, bool override);
 	void ClientStopWork (cGameGUI& gameGUI);
 	/** check whether a transfer to a unit on the field is possible */
-	bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const;
+	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
 	void CheckRessourceProd (const cServer& server);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);

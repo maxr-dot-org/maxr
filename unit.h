@@ -73,7 +73,7 @@ public:
 	int getScreenPosX (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	int getScreenPosY (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	void center (cGameGUI& gameGUI) const;
-	virtual bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const = 0;
+	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const = 0;
 	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
 
 	virtual int getMovementOffsetX() const {return 0;}

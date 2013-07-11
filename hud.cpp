@@ -1692,7 +1692,7 @@ void cGameGUI::updateMouseCursor()
 	}
 	else if ( (selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == client->getActivePlayer()))
 	{
-		if (overUnitField && selectedUnit->CanTransferTo (*this, overUnitField))
+		if (overUnitField && selectedUnit->CanTransferTo (mouseMapX, mouseMapY, overUnitField))
 		{
 			mouse->SetCursor (CTransf);
 		}
