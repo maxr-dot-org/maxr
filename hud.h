@@ -172,10 +172,8 @@ class cGameGUI : public cMenu
 	cUnit* selectedUnit;
 	/** the currently selected group of vehicles */
 	std::vector<cVehicle*> selectedVehiclesGroup;
-public:
 	/** the soundstream of the selected unit */
 	int iObjectStream;
-private:
 	/** list with all messages */
 	std::vector<sMessage*> messages;
 	/** Coordinates to a important message */
@@ -423,6 +421,12 @@ public:
 
 	// this means every 100ms because iTimerTime will increase every 50ms.
 	unsigned int getAnimationSpeed() const { return iTimerTime / 2; }
+
+	void playFXLoop (sSOUND* sound);
+	void playStream (const cBuilding& building);
+	void playStream (const cVehicle& vehicle);
+	void startMoveSound (const cVehicle& vehicle);
+	void stopFXLoop();
 
 	/** SDL_Timer for animations */
 	SDL_TimerID TimerID;

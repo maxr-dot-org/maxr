@@ -1004,9 +1004,9 @@ void cBuilding::ClientStartWork (cGameGUI& gameGUI)
 	EffectAlpha = 0;
 	if (gameGUI.getSelectedUnit() == this)
 	{
-		StopFXLoop (gameGUI.iObjectStream);
+		gameGUI.stopFXLoop();
 		PlayFX (typ->Start);
-		gameGUI.iObjectStream = playStream();
+		gameGUI.playStream (*this);
 	}
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
@@ -1096,9 +1096,9 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 	IsWorking = false;
 	if (gameGUI.getSelectedUnit() == this)
 	{
-		StopFXLoop (gameGUI.iObjectStream);
+		gameGUI.stopFXLoop();
 		PlayFX (typ->Stop);
-		gameGUI.iObjectStream = playStream();
+		gameGUI.playStream (*this);
 	}
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
@@ -1598,18 +1598,6 @@ void cBuilding::Select (cGameGUI& gameGUI)
 		// Status red:
 		PlayRandomVoice (VoiceData.VOIStatusRed);
 	}
-}
-
-//----------------------------------------------------------------
-/** Playback of the soundstream that belongs to this building */
-//----------------------------------------------------------------
-int cBuilding::playStream()
-{
-	if (IsWorking)
-		return PlayFXLoop (typ->Running);
-	else
-		return PlayFXLoop (typ->Wait);
-	return 0;
 }
 
 //--------------------------------------------------------------------------

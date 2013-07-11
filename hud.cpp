@@ -686,7 +686,7 @@ void cGameGUI::recalcPosition (bool resetItemPositions)
 
 cGameGUI::~cGameGUI()
 {
-	StopFXLoop (iObjectStream);
+	stopFXLoop();
 
 	SDL_RemoveTimer (TimerID);
 
@@ -696,6 +696,73 @@ cGameGUI::~cGameGUI()
 	{
 		delete messages[i];
 	}
+}
+
+void cGameGUI::playFXLoop (sSOUND* sound)
+{
+	iObjectStream = PlayFXLoop (sound);
+}
+
+void cGameGUI::stopFXLoop()
+{
+	StopFXLoop (iObjectStream);
+	iObjectStream = -1;
+}
+
+//----------------------------------------------------------------
+/** Playback of the soundstream that belongs to this building */
+//----------------------------------------------------------------
+void cGameGUI::playStream (const cBuilding& building)
+{
+	if (building.IsWorking)
+		playFXLoop (building.typ->Running);
+	else
+		playFXLoop (building.typ->Wait);
+}
+
+//----------------------------------------------------------------
+/** Playback of the soundstream that belongs to this vehicle */
+//----------------------------------------------------------------
+void cGameGUI::playStream (const cVehicle& vehicle)
+{
+	const cMap& map = *client->getMap();
+	const cBuilding* building = map[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+	bool water = map.isWater (vehicle.PosX, vehicle.PosY);
+	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+
+	if (vehicle.IsBuilding && (vehicle.BuildRounds || client->getActivePlayer() != vehicle.owner))
+		playFXLoop (SoundData.SNDBuilding);
+	else if (vehicle.IsClearing)
+		playFXLoop (SoundData.SNDClearing);
+	else if (water && vehicle.data.factorSea > 0)
+		playFXLoop (vehicle.typ->WaitWater);
+	else
+		playFXLoop (vehicle.typ->Wait);
+}
+
+//-----------------------------------------------------------------------------
+/** Starts the MoveSound */
+//-----------------------------------------------------------------------------
+void cGameGUI::startMoveSound (const cVehicle& vehicle)
+{
+	const cMap& map = *client->getMap();
+	const cBuilding* building = map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+	bool water = map.isWater (vehicle.PosX, vehicle.PosY);
+	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+	stopFXLoop();
+
+	if (!vehicle.MoveJobActive)
+	{
+		if (water && vehicle.data.factorSea != 0)
+			PlayFX (vehicle.typ->StartWater);
+		else
+			PlayFX (vehicle.typ->Start);
+	}
+
+	if (water && vehicle.data.factorSea != 0)
+		playFXLoop (vehicle.typ->DriveWater);
+	else
+		playFXLoop (vehicle.typ->Drive);
 }
 
 void cGameGUI::Timer()
@@ -1551,12 +1618,12 @@ void cGameGUI::selectUnit (cUnit& unit)
 	if (vehicle)
 	{
 		vehicle->Select (*this);
-		iObjectStream = vehicle->playStream (*this);
+		playStream (*vehicle);
 	}
 	else
 	{
 		building->Select (*this);
-		iObjectStream = building->playStream();
+		playStream (*building);
 	}
 	updateMouseCursor();
 }
@@ -1571,12 +1638,11 @@ void cGameGUI::deselectUnit()
 			selectedVehicle->groupSelected = false;
 			if (mouseInputMode == placeBand) selectedVehicle->BuildPath = false;
 		}
-		StopFXLoop (iObjectStream);
-		iObjectStream = -1;
+		stopFXLoop();
 		setVideoSurface (NULL);
 		setUnitDetailsData (NULL);
 
-		StopFXLoop (iObjectStream);
+		stopFXLoop();
 	}
 	selectedUnit = NULL;
 

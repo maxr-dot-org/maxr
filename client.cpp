@@ -653,7 +653,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
-		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI->getSelectedUnit()) StopFXLoop (gameGUI->iObjectStream);
+		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI->getSelectedUnit()) gameGUI->stopFXLoop();
 
 		Vehicle->FlightHigh = message.popInt16();
 	}
@@ -866,8 +866,8 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (Vehicle == gameGUI->getSelectedUnit())
 	{
-		StopFXLoop (gameGUI->iObjectStream);
-		gameGUI->iObjectStream = Vehicle->playStream (*gameGUI);
+		gameGUI->stopFXLoop();
+		gameGUI->playStream (*Vehicle);
 	}
 
 	if (Vehicle->ClientMoveJob) Vehicle->ClientMoveJob->release();
@@ -900,8 +900,8 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 
 	if (gameGUI->getSelectedUnit() == Vehicle)
 	{
-		StopFXLoop (gameGUI->iObjectStream);
-		gameGUI->iObjectStream = Vehicle->playStream (*gameGUI);
+		gameGUI->stopFXLoop();
+		gameGUI->playStream (*Vehicle);
 	}
 }
 
@@ -1225,8 +1225,8 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 
 			if (gameGUI->getSelectedUnit() == Vehicle)
 			{
-				StopFXLoop (gameGUI->iObjectStream);
-				gameGUI->iObjectStream = Vehicle->playStream (*gameGUI);
+				gameGUI->stopFXLoop();
+				gameGUI->playStream (*Vehicle);
 			}
 		}
 		break;
@@ -1265,8 +1265,8 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 
 	if (gameGUI->getSelectedUnit() == Vehicle)
 	{
-		StopFXLoop (gameGUI->iObjectStream);
-		gameGUI->iObjectStream = Vehicle->playStream (*gameGUI);
+		gameGUI->stopFXLoop();
+		gameGUI->playStream (*Vehicle);
 	}
 }
 

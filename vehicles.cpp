@@ -967,7 +967,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
-	
+
 	// for infiltrators
 	else if ( (data.canCapture || data.canDisable) && owner == gameGUI.getClient()->getActivePlayer())
 	{
@@ -992,52 +992,6 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 	}
 
 	return lngPack.i18n ("Text~Comp~Waits");
-}
-
-//-----------------------------------------------------------------------------
-/** Plays the soundstream, that belongs to this vehicle */
-//-----------------------------------------------------------------------------
-int cVehicle::playStream (const cGameGUI& gameGUI)
-{
-	const cClient& client = *gameGUI.getClient();
-	const cMap& map = *client.getMap();
-	const cBuilding* building = map[map.getOffset (PosX, PosY)].getBaseBuilding();
-	bool water = map.isWater (PosX, PosY);
-	if (data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
-
-	if (IsBuilding && (BuildRounds || client.getActivePlayer() != owner))
-		return PlayFXLoop (SoundData.SNDBuilding);
-	else if (IsClearing)
-		return PlayFXLoop (SoundData.SNDClearing);
-	else if (water && data.factorSea > 0)
-		return PlayFXLoop (typ->WaitWater);
-	else
-		return PlayFXLoop (typ->Wait);
-}
-
-//-----------------------------------------------------------------------------
-/** Starts the MoveSound */
-//-----------------------------------------------------------------------------
-void cVehicle::StartMoveSound (cGameGUI& gameGUI)
-{
-	const cMap& map = *gameGUI.getClient()->getMap();
-	const cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
-	bool water = map.isWater (PosX, PosY);
-	if (data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
-	StopFXLoop (gameGUI.iObjectStream);
-
-	if (!MoveJobActive)
-	{
-		if (water && data.factorSea != 0)
-			PlayFX (typ->StartWater);
-		else
-			PlayFX (typ->Start);
-	}
-
-	if (water && data.factorSea != 0)
-		gameGUI.iObjectStream = PlayFXLoop (typ->DriveWater);
-	else
-		gameGUI.iObjectStream = PlayFXLoop (typ->Drive);
 }
 
 //-----------------------------------------------------------------------------

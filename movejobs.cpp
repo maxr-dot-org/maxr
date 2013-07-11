@@ -1082,7 +1082,7 @@ void cClientMoveJob::moveVehicle()
 
 			if (wasWater != water)
 			{
-				Vehicle->StartMoveSound (client->getGameGUI());
+				client->getGameGUI().startMoveSound (*Vehicle);
 			}
 		}
 	}
@@ -1229,7 +1229,7 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 void cClientMoveJob::startMoveSound()
 {
 	cGameGUI& gameGUI = client->getGameGUI();
-	if (Vehicle == gameGUI.getSelectedUnit()) Vehicle->StartMoveSound (gameGUI);
+	if (Vehicle == gameGUI.getSelectedUnit()) gameGUI.startMoveSound (*Vehicle);
 	bSoundRunning = true;
 }
 
@@ -1246,9 +1246,9 @@ void cClientMoveJob::stopMoveSound()
 	bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY);
 	if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-	StopFXLoop (gameGUI.iObjectStream);
+	gameGUI.stopFXLoop();
 	if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->typ->StopWater);
 	else PlayFX (Vehicle->typ->Stop);
 
-	gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
+	gameGUI.playStream (*Vehicle);
 }

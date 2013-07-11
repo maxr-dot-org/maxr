@@ -177,8 +177,6 @@ public:
 
 	void DrawPath (cGameGUI& gameGUI);
 	std::string getStatusStr (const cGameGUI& gameGUI) const;
-	int playStream (const cGameGUI& gameGUI);
-	void StartMoveSound (cGameGUI& gameGUI);
 	void DecSpeed (int value);
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
