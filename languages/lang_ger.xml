@@ -335,6 +335,7 @@
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nicht genug Gold zum Einschalten vorhanden!"/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
 			<Labs ENG="Labs" localized="Labore"/>
+			<Landing_Select ENG="Please select starting location." localized="Bitte Landeplatz wählen." />
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
 			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen oder neue Position wählen"/>
 			<Laying ENG="minelaying" localized="lege Minen"/>
