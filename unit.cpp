@@ -106,87 +106,43 @@ bool cUnit::isNextTo (int x, int y) const
 	return true;
 }
 
+// http://rosettacode.org/wiki/Roman_numerals/Encode#C.2B.2B
+static std::string to_roman (unsigned int value)
+{
+	struct romandata_t { unsigned int value; char const* numeral; };
+	const struct romandata_t romandata[] = {
+		//{1000, "M"}, {900, "CM"},
+		//{500, "D"}, {400, "CD"},
+		{100, "C"}, { 90, "XC"},
+		{ 50, "L"}, { 40, "XL"},
+		{ 10, "X"}, { 9, "IX"},
+		{ 5, "V"}, { 4, "IV"},
+		{ 1, "I"},
+		{ 0, NULL} // end marker
+	};
+
+	std::string result;
+	for (const romandata_t* current = romandata; current->value > 0; ++current)
+	{
+		while (value >= current->value)
+		{
+			result += current->numeral;
+			value -= current->value;
+		}
+	}
+	return result;
+}
+
 //------------------------------------------------------------------------------
 /** generates the name for the unit depending on the versionnumber */
 //------------------------------------------------------------------------------
 string cUnit::getNamePrefix() const
 {
-	string rome = "";
+	string rome = "MK ";
 	// +1, because the numbers in the name start at 1, not at 0
-	int nr = data.version + 1;
+	unsigned int nr = data.version + 1;
 
-	// generate the roman versionnumber (correct until 899)
-
-	if (nr > 100)
-	{
-		int tmp = nr / 100;
-		nr %= 100;
-
-		while (tmp--)
-			rome += "C";
-	}
-
-	if (nr >= 90)
-	{
-		rome += "XC";
-		nr -= 90;
-	}
-
-	if (nr >= 50)
-	{
-		nr -= 50;
-		rome += "L";
-	}
-
-	if (nr >= 40)
-	{
-		nr -= 40;
-		rome += "XL";
-	}
-
-	if (nr >= 10)
-	{
-		int tmp = nr / 10;
-		nr %= 10;
-
-		while (tmp--)
-			rome += "X";
-	}
-
-	if (nr == 9)
-	{
-		nr -= 9;
-		rome += "IX";
-	}
-
-	if (nr >= 5)
-	{
-		nr -= 5;
-		rome += "V";
-	}
-
-	if (nr == 4)
-	{
-		nr -= 4;
-		rome += "IV";
-	}
-
-	// alzi:
-	// We had a bug, when 'nr' was negative and
-	// the following loop never terminated.
-	// I modified the loop to terminate on a negative 'nr',
-	// but since this should never be the case,
-	// the error has to be occured somewhere before and I added this warning.
-	if (nr < 0)
-	{
-		Log.write ("cUnit: Negative 'nr' in cUnit::getNamePrefix()", cLog::eLOG_TYPE_WARNING);
-	}
-	while (nr-- > 0)
-	{
-		rome += "I";
-	}
-
-	return "MK " + rome;
+	return "MK " + to_roman (nr);
 }
 
 //------------------------------------------------------------------------------
