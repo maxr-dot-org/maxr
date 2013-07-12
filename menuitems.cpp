@@ -1793,6 +1793,11 @@ SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition (eUnitDataSymbols symType)
 			src.w = 12;
 			src.h = 15;
 			break;
+		case MENU_SYMBOLS_METALEMPTY:
+			src.x = 175;
+			src.w = 12;
+			src.h = 15;
+			break;
 		case MENU_SYMBOLS_OIL:
 			src.x = 101;
 			src.w = 11;
