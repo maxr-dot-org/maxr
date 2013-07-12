@@ -32,6 +32,8 @@
 #include "settings.h"
 #include "video.h"
 
+#include <ctime>
+
 void cEventHandling::pushEvent (cNetMessage* message)
 {
 	eventQueue.write (message);

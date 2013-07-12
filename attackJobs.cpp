@@ -17,7 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <math.h>
+#include <cmath>
+
 #include "attackJobs.h"
 
 #include "buildings.h"
@@ -26,6 +27,7 @@
 #include "clist.h"
 #include "fxeffects.h"
 #include "hud.h"
+#include "log.h"
 #include "netmessage.h"
 #include "player.h"
 #include "server.h"

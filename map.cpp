@@ -22,6 +22,7 @@
 #include "buildings.h"
 #include "clist.h"
 #include "files.h"
+#include "log.h"
 #include "player.h"
 #include "settings.h"
 #include "vehicles.h"

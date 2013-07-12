@@ -20,7 +20,7 @@
 #define playerH
 
 #include <SDL.h>
-#include <assert.h>
+#include <cassert>
 #include <string>
 #include <vector>
 

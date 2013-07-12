@@ -54,10 +54,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #include <map>
 #include <string>
-#include "log.h"
 #include "defines.h"
 #include "tinyxml2.h"
 
@@ -69,7 +67,8 @@ public:
 	const std::string& GetCurrentLanguage() const;
 	int         SetCurrentLanguage (const std::string& szLanguageCode);
 	std::string i18n (const std::string& szInputText);
-	std::string i18n (const std::string& szMainText, const std::string& szInsertText);  // Translation with replace %s
+	// Translation with replace %s
+	std::string i18n (const std::string& szMainText, const std::string& szInsertText);
 	int         ReadLanguagePack();
 	int         CheckCurrentLanguagePack (bool bInsertMissingEntries);
 
@@ -86,14 +85,16 @@ private:
 	int         checkTimeStamp (std::string rstrData);
 
 	tinyxml2::XMLDocument m_XmlDoc;
-	std::string   m_szLanguage; // Use ISO 639-2 codes to identify languages (http://www.loc.gov/standards/iso639-2/php/code_list.php)
-	std::string   m_szLanguageFile;
-	std::string   m_szLanguageFileMaster;
-	std::string   m_szEncoding;
-	std::string   m_szLastEditor;
-	StrStrMap     m_mpLanguage;
-	bool          m_bLeftToRight;
-	bool          m_bErrorMsgTranslationLoaded;
+	// Use ISO 639-2 codes to identify languages
+	// (http://www.loc.gov/standards/iso639-2/php/code_list.php)
+	std::string m_szLanguage;
+	std::string m_szLanguageFile;
+	std::string m_szLanguageFileMaster;
+	std::string m_szEncoding;
+	std::string m_szLastEditor;
+	StrStrMap   m_mpLanguage;
+	bool        m_bLeftToRight;
+	bool        m_bErrorMsgTranslationLoaded;
 };
 
 #endif

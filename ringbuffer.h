@@ -21,7 +21,7 @@
 #define ringbuffer_h
 
 #include "cmutex.h"
-#include "assert.h"
+#include <cassert>
 
 /**
 * a simple thread safe ring buffer
@@ -36,7 +36,6 @@ private:
 	int capacity;
 	cMutex mutex;
 	void checkCapacity();
-
 
 public:
 	cRingbuffer() : elements (NULL), read_ (0), write_ (0), capacity (0) {}

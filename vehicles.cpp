@@ -16,7 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <math.h>
+#include <cmath>
 
 #include "vehicles.h"
 
@@ -31,6 +31,7 @@
 #include "files.h"
 #include "fxeffects.h"
 #include "hud.h"
+#include "log.h"
 #include "map.h"
 #include "menus.h"
 #include "mouse.h"
@@ -38,7 +39,6 @@
 #include "player.h"
 #include "server.h"
 #include "settings.h"
-#include "unifonts.h"
 #include "video.h"
 
 using namespace std;

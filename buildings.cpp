@@ -16,7 +16,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <math.h>
+#include <cmath>
+
 #include "buildings.h"
 
 #include "attackJobs.h"
@@ -25,22 +26,17 @@
 #include "clist.h"
 #include "dialog.h"
 #include "events.h"
-#include "files.h"
 #include "fxeffects.h"
 #include "hud.h"
 #include "main.h"
-#include "menus.h"
-#include "mouse.h"
 #include "netmessage.h"
 #include "pcx.h"
 #include "player.h"
 #include "server.h"
 #include "serverevents.h"
 #include "settings.h"
-#include "unifonts.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
-#include "video.h"
 
 using namespace std;
 

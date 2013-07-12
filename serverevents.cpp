@@ -24,6 +24,7 @@
 #include "clist.h"
 #include "events.h"
 #include "hud.h"
+#include "log.h"
 #include "menuevents.h"
 #include "movejobs.h"
 #include "netmessage.h"

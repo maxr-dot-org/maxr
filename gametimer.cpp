@@ -6,6 +6,7 @@
 #include "clist.h"
 #include "events.h"
 #include "files.h"
+#include "log.h"
 #include "netmessage.h"
 #include "player.h"
 #include "server.h"

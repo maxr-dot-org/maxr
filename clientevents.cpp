@@ -16,15 +16,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include "clientevents.h"
-#include "network.h"
-#include "events.h"
-#include "client.h"
-#include "hud.h"
-#include "netmessage.h"
+
 #include "buildings.h"
-#include "vehicles.h"
+#include "client.h"
+#include "events.h"
+#include "hud.h"
+#include "log.h"
+#include "netmessage.h"
+#include "network.h"
 #include "player.h"
+#include "vehicles.h"
 
 using namespace std;
 

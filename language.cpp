@@ -30,8 +30,8 @@
 #include "language.h"
 
 #include "extendedtinyxml.h"
-#include "main.h"
 #include "log.h"
+#include "main.h"
 #include "settings.h"
 #include "tinyxml2.h"
 

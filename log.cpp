@@ -17,12 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <ctime>
 #include <iostream>
-#include <time.h>
+
 #include "log.h"
+
 #include "cmutex.h"
-#include "settings.h"
 #include "files.h"
+#include "settings.h"
 
 #define LOGFILE cSettings::getInstance().getLogPath().c_str()
 #define NETLOGFILE cSettings::getInstance().getNetLogPath().c_str()

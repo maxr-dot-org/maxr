@@ -32,7 +32,7 @@
 #include "buildings.h"
 #include "vehicles.h"
 
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 

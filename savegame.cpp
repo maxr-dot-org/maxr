@@ -24,6 +24,7 @@
 #include "files.h"
 #include "hud.h"
 #include "loaddata.h"
+#include "log.h"
 #include "menus.h"
 #include "movejobs.h"
 #include "player.h"
@@ -31,6 +32,7 @@
 #include "settings.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
+#include <ctime>
 
 using namespace std;
 using namespace tinyxml2;

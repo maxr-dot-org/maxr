@@ -18,7 +18,7 @@ class cServer;
 #define MAX_SERVER_EVENT_COUNTER 15
 #define MAX_WAITING_FOR_SERVER 50
 
-//TODO: comments
+// TODO: comments
 class cGameTimer
 {
 	friend class cDebugOutput;

@@ -20,10 +20,10 @@
 #define vehiclesH
 #include "defines.h"
 #include <SDL.h>
+#include <vector>
 
 #include "main.h" // for sUnitData
 #include "unit.h"
-#include <vector>
 
 class cAutoMJob;
 class cBuilding;
@@ -192,10 +192,12 @@ public:
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
-#define SUPPLY_TYPE_REARM	0
-#define SUPPLY_TYPE_REPAIR	1
-	bool canSupply (const cClient& client, int x, int y, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (const cUnit* unit, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+#define SUPPLY_TYPE_REARM 0
+#define SUPPLY_TYPE_REPAIR 1
+	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	bool canSupply (const cClient& client, int x, int y, int supplyType) const;
+	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	bool canSupply (const cUnit* unit, int supplyType) const;
 	void calcTurboBuild (int (&iTurboBuildRounds)[3], int (&iTurboBuildCosts)[3], int iBuild_Costs);
 	/**
 	* lays a mine. Should only be called by the server!

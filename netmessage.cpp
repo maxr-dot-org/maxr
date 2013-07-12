@@ -22,6 +22,7 @@
 
 #include "clientevents.h"
 #include "events.h"
+#include "log.h"
 #include "main.h"
 #include "menuevents.h"
 #include "network.h"

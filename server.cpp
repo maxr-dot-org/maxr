@@ -50,6 +50,7 @@ typedef struct tagTHREADNAME_INFO
 #include "gametimer.h"
 #include "hud.h"
 #include "jobs.h"
+#include "log.h"
 #include "menus.h"
 #include "movejobs.h"
 #include "netmessage.h"

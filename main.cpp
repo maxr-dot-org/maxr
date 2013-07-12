@@ -17,9 +17,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <math.h>
+#include <ctime>
+#include <cmath>
+#include <cstdio>
 #include <iostream>
-#include <stdio.h>
 #include <sstream>
 
 #include <SDL.h>

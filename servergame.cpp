@@ -18,20 +18,19 @@
  ***************************************************************************/
 
 #include "servergame.h"
-#include "netmessage.h"
+
+#include "log.h"
 #include "menuevents.h"
-#include "serverevents.h"
+#include "netmessage.h"
 #include "player.h"
 #include "savegame.h"
+#include "serverevents.h"
 
-// TODO: remove these dependencies:
-#include "menus.h"
-#include "menuitems.h"
-
-#include <sstream>
-#include <iterator>
-#include <vector>
 #include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <sstream>
+#include <vector>
 
 using namespace std;
 

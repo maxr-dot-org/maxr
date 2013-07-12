@@ -17,9 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <math.h>
-#include <sstream>
 #include <cassert>
+#include <cmath>
+#include <sstream>
 
 #include "menus.h"
 
@@ -34,6 +34,7 @@
 #include "files.h"
 #include "hud.h"
 #include "loaddata.h"
+#include "log.h"
 #include "mapdownload.h"
 #include "menuevents.h"
 #include "mouse.h"

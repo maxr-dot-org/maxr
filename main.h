@@ -33,9 +33,7 @@
 
 // Includes ///////////////////////////////////////////////////////////////////
 
-#include <iostream>
 #include <vector>
-#include <time.h>
 #include <SDL.h>
 #include "autosurface.h"
 #include "defines.h"
@@ -91,17 +89,20 @@ struct sID
 	bool operator== (const sID& ID) const;
 };
 
+enum {
+	TERRAIN_NONE = 0,
+	TERRAIN_AIR = 1,
+	TERRAIN_SEA = 2,
+	TERRAIN_GROUND = 4,
+	TERRAIN_COAST = 8,
+	AREA_SUB = 16,
+	AREA_EXP_MINE = 32
+};
+
 // struct for vehicle properties
 struct sUnitData
 {
 	sUnitData();
-#define TERRAIN_NONE		0
-#define TERRAIN_AIR			1
-#define TERRAIN_SEA			2
-#define TERRAIN_GROUND		4
-#define TERRAIN_COAST		8
-#define AREA_SUB			16
-#define AREA_EXP_MINE		32
 
 	// Main
 	sID ID;
@@ -144,7 +145,7 @@ struct sUnitData
 
 	bool canBuildPath;
 	bool canBuildRepeat;
-	bool buildIntern;
+	bool buildIntern; // unused
 
 	// Movement
 	int speedMax;

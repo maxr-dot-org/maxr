@@ -17,12 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
-#include "files.h"
-#include "extendedtinyxml.h"
 #include "keys.h"
+
+#include "extendedtinyxml.h"
+#include "files.h"
 #include "log.h"
 #include "settings.h"
 #include "tinyxml2.h"

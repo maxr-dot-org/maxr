@@ -20,35 +20,36 @@
 #define definesH
 #include "settings.h"
 
-#define GRID_COLOR			0x305C04	// color of the grid
-#define SCAN_COLOR			0xE3E300	// color of scan circles
-#define RANGE_GROUND_COLOR	0xE20000	// color of range circles for ground attack
-#define RANGE_AIR_COLOR		0xFCA800	// color of range circles for air attack
-#define PFEIL_COLOR			0x0000FF	// color of a waypointarrow
-#define PFEILS_COLOR		0x00FF00	// color of a special waypointarrow
-#define MOVE_SPEED			2			// speed of vehcilemovements
-#define MSG_TICKS			30000		// number of ticks for how long a message will be displayed
-#define LANDING_DISTANCE_WARNING	28
-#define LANDING_DISTANCE_TOO_CLOSE	10
-#define MAX_PLANES_PER_FIELD		5
+#define GRID_COLOR         0x00305C04 // color of the grid
+#define SCAN_COLOR         0x00E3E300 // color of scan circles
+#define RANGE_GROUND_COLOR 0x00E20000 // color of range circles for ground attack
+#define RANGE_AIR_COLOR    0x00FCA800 // color of range circles for air attack
+#define PFEIL_COLOR        0x000000FF // color of a waypointarrow
+#define PFEILS_COLOR       0x0000FF00 // color of a special waypointarrow
+#define MOVE_SPEED 2     // speed of vehiclemovements
+#define MSG_TICKS  30000 // number of ticks for how long a message will be displayed
+#define LANDING_DISTANCE_WARNING   28
+#define LANDING_DISTANCE_TOO_CLOSE 10
+#define MAX_PLANES_PER_FIELD 5
 
-//minimap configuration
-#define MINIMAP_COLOR		0xFC0000 //color of the screen borders on the minimap
-#define MINIMAP_POS_X		15		 //the position of the map on the screen
-#define MINIMAP_POS_Y		356		 //the position of the map on the screen
-#define MINIMAP_SIZE		112		 //the size of the minimap in pixels
-#define MINIMAP_ZOOM_FACTOR	2		 //the zoomfactor for minimap zoom switch
+// minimap configuration
+#define MINIMAP_COLOR 0x00FC0000 // color of the screen borders on the minimap
+#define MINIMAP_POS_X 15         // the position of the map on the screen
+#define MINIMAP_POS_Y 356        // the position of the map on the screen
+#define MINIMAP_SIZE  112        // the size of the minimap in pixels
+#define MINIMAP_ZOOM_FACTOR 2    // the zoomfactor for minimap zoom switch
 
 // Colors /////////////////////////////////////////////////////////////////////
-#define cl_red 0
-#define cl_blue 1
-#define cl_green 2
-#define cl_grey 3
-#define cl_orange 4
-#define cl_yellow 5
-#define cl_purple 6
-#define cl_aqua 7
-
+enum {
+	cl_red = 0,
+	cl_blue = 1,
+	cl_green = 2,
+	cl_grey = 3,
+	cl_orange = 4,
+	cl_yellow = 5,
+	cl_purple = 6,
+	cl_aqua = 7
+};
 #if HAVE_CONFIG_H
 # include "config.h" //created by autotools on linux holding informations like package_string and versions
 #endif
@@ -70,15 +71,15 @@
 # define CHECK_MEMORY
 #endif
 
-//some defines for typical menus
+// some defines for typical menus
 
 
 #ifndef PATH_DELIMITER
-#	ifdef WIN32
-#		define PATH_DELIMITER "\\"
-#	else
-#		define PATH_DELIMITER "/"
-#	endif
+# ifdef WIN32
+#  define PATH_DELIMITER "\\"
+# else
+#  define PATH_DELIMITER "/"
+# endif
 #endif
 
 #ifndef TEXT_FILE_LF
@@ -90,51 +91,50 @@
 #endif
 
 // GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD_MAIN				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "main.pcx").c_str()
-#define GFXOD_HELP				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "help_screen.pcx").c_str()
-#define GFXOD_OPTIONS			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "options.pcx").c_str()
-#define GFXOD_SAVELOAD			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "load_save_menu.pcx").c_str()
-#define GFXOD_PLANET_SELECT		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "planet_select.pcx").c_str()
-#define GFXOD_CLAN_SELECT		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "clanselection.pcx").c_str()
-#define GFXOD_PLAYER_SELECT		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "customgame_menu.pcx").c_str()
-#define GFXOD_PLAYERHS_SELECT	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "hotseatplayers.pcx").c_str()
-#define GFXOD_HANGAR			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "hangar.pcx").c_str()
-#define GFXOD_BUILD_SCREEN		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "build_screen.pcx").c_str()
-#define GFXOD_FAC_BUILD_SCREEN	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "fac_build_screen.pcx").c_str()
-#define GFXOD_MULT				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "multi.pcx").c_str()
-#define GFXOD_UPGRADE			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "upgrade.pcx").c_str()
-#define GFXOD_STORAGE			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "storage.pcx").c_str()
-#define GFXOD_STORAGE_GROUND	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "storage_ground.pcx").c_str()
-#define GFXOD_MULT				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "multi.pcx").c_str()
-#define GFXOD_MINEMANAGER		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "mine_manager.pcx").c_str()
-#define GFXOD_REPORTS			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "reports.pcx").c_str()
-#define GFXOD_DIALOG2			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog2.pcx").c_str()
-#define GFXOD_DIALOG4			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog4.pcx").c_str()
-#define GFXOD_DIALOG5			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog5.pcx").c_str()
-#define GFXOD_DIALOG6			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog6.pcx").c_str()
-#define GFXOD_DIALOG_TRANSFER	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "transfer.pcx").c_str()
-#define GFXOD_DIALOG_RESEARCH	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "research.pcx").c_str()
-#define GFXOD_DESTRUCTION		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "destruction.pcx").c_str()
+#define GFXOD_MAIN           (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "main.pcx").c_str()
+#define GFXOD_HELP           (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "help_screen.pcx").c_str()
+#define GFXOD_OPTIONS        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "options.pcx").c_str()
+#define GFXOD_SAVELOAD       (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "load_save_menu.pcx").c_str()
+#define GFXOD_PLANET_SELECT  (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "planet_select.pcx").c_str()
+#define GFXOD_CLAN_SELECT    (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "clanselection.pcx").c_str()
+#define GFXOD_PLAYER_SELECT  (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "customgame_menu.pcx").c_str()
+#define GFXOD_PLAYERHS_SELECT (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "hotseatplayers.pcx").c_str()
+#define GFXOD_HANGAR         (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "hangar.pcx").c_str()
+#define GFXOD_BUILD_SCREEN   (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "build_screen.pcx").c_str()
+#define GFXOD_FAC_BUILD_SCREEN (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "fac_build_screen.pcx").c_str()
+#define GFXOD_MULT           (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "multi.pcx").c_str()
+#define GFXOD_UPGRADE        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "upgrade.pcx").c_str()
+#define GFXOD_STORAGE        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "storage.pcx").c_str()
+#define GFXOD_STORAGE_GROUND (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "storage_ground.pcx").c_str()
+#define GFXOD_MULT           (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "multi.pcx").c_str()
+#define GFXOD_MINEMANAGER    (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "mine_manager.pcx").c_str()
+#define GFXOD_REPORTS        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "reports.pcx").c_str()
+#define GFXOD_DIALOG2        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog2.pcx").c_str()
+#define GFXOD_DIALOG4        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog4.pcx").c_str()
+#define GFXOD_DIALOG5        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog5.pcx").c_str()
+#define GFXOD_DIALOG6        (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog6.pcx").c_str()
+#define GFXOD_DIALOG_TRANSFER (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "transfer.pcx").c_str()
+#define GFXOD_DIALOG_RESEARCH (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "research.pcx").c_str()
+#define GFXOD_DESTRUCTION     (cSettings::getInstance().getGfxPath() + PATH_DELIMITER "destruction.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
-#define PLAYERCOLORS		8
+#define PLAYERCOLORS 8
 //^-- make sure that given amount of colors is loaded too
 
-#define DEFAULTPORT		58600
-#define MAX_XML			"max.xml"
-#define MAX_LOG			"maxr.log"
-#define MAX_NET_LOG		"net.log"
-#define MAX_LOG_DIR		"log_files"
-#define CLANS_XML		(cSettings::getInstance().getDataDir() + "clans.xml").c_str()
-#define KEYS_XMLGame		(cSettings::getInstance().getDataDir() + "keys.xml").c_str()
-#define KEYS_XMLUsers		(cSettings::getInstance().getHomeDir() + "keys.xml").c_str()
-#define SPLASH_BACKGROUND	(cSettings::getInstance().getDataDir() + "init.pcx")
+#define DEFAULTPORT 58600
+#define MAX_XML "max.xml"
+#define MAX_LOG "maxr.log"
+#define MAX_NET_LOG "net.log"
+#define MAX_LOG_DIR "log_files"
+#define CLANS_XML (cSettings::getInstance().getDataDir() + "clans.xml").c_str()
+#define KEYS_XMLGame (cSettings::getInstance().getDataDir() + "keys.xml").c_str()
+#define KEYS_XMLUsers (cSettings::getInstance().getHomeDir() + "keys.xml").c_str()
+#define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() + "init.pcx")
 #ifdef MAC
-# define MAXR_ICON  (cSettings::getInstance().getDataDir() + "maxr_mac.bmp").c_str()
+# define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr_mac.bmp").c_str()
 #else
-# define MAXR_ICON  (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
+# define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
 #endif
-
 
 #if HAVE_AUTOVERSION_H
 //define nothing on linux - comes all from autoversion.h generated by buildinfo.sh
@@ -142,7 +142,7 @@
 //default path to data dir only used on linux/other
 # define BUILD_DATADIR "/usr/share/maxr"
 // Builddate: Mmm DD YYYY HH:MM:SS
-# define MAX_BUILD_DATE		(std::string)__DATE__ + " " + __TIME__
+# define MAX_BUILD_DATE ((std::string)__DATE__ + " " + __TIME__)
 # ifdef RELEASE
 #  define PACKAGE_REV "Releaseversion"
 # else
@@ -151,8 +151,8 @@
 #endif
 
 #if HAVE_CONFIG_H
-//define nothing on linux - comes all from config.h generated by autotools
-#else	//We have no config.h => take care of these manually
+// define nothing on linux - comes all from config.h generated by autotools
+#else // We have no config.h => take care of these manually
 # define PACKAGE_VERSION "0.2.8"
 # define PACKAGE_NAME "M.A.X.R."
 #endif
@@ -165,4 +165,3 @@
 #endif
 
 #endif
-

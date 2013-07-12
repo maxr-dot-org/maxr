@@ -16,12 +16,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <assert.h>
+#include <cassert>
 #include "base.h"
 
 #include "buildings.h"
 #include "clientevents.h"
 #include "clist.h"
+#include "log.h"
 #include "map.h"
 #include "player.h"
 #include "server.h"

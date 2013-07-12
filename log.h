@@ -19,19 +19,20 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include <iostream>
 #include <SDL_rwops.h>
 #include "defines.h"
 #include "cmutex.h"
 
-#define LOG_TYPE_WARNING 1
-#define LOG_TYPE_ERROR 2
-#define LOG_TYPE_DEBUG 3
-#define LOG_TYPE_INFO 4
-#define LOG_TYPE_MEM 5
-#define LOG_TYPE_NET_DEBUG 6
-#define LOG_TYPE_NET_WARNING 7
-#define LOG_TYPE_NET_ERROR 8
+enum {
+	LOG_TYPE_WARNING = 1,
+	LOG_TYPE_ERROR = 2,
+	LOG_TYPE_DEBUG = 3,
+	LOG_TYPE_INFO = 4,
+	LOG_TYPE_MEM = 5,
+	LOG_TYPE_NET_DEBUG = 6,
+	LOG_TYPE_NET_WARNING = 7,
+	LOG_TYPE_NET_ERROR = 8
+};
 
 /**
 * Log class. Simple log class :-)

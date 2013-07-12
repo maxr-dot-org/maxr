@@ -20,6 +20,8 @@
 /* Author: Paul Grathwohl */
 
 #include "casualtiestracker.h"
+
+#include "log.h"
 #include "netmessage.h"
 #include "tinyxml2.h"
 

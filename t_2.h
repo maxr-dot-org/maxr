@@ -19,7 +19,7 @@
 #ifndef __T2_H
 #define __T2_H
 
-#include <math.h>
+#include <cmath>
 
 template <class Type> class T_2
 {
