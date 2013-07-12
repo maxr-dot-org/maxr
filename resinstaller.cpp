@@ -2882,6 +2882,7 @@ int installGfx()
 		COPY_GRAPHIC("I_RANGE",  52, 109);
 		COPY_GRAPHIC("I_SCAN",   76, 109);
 		COPY_GRAPHIC("I_RAW",    89, 109);
+		COPY_GRAPHIC("I_RAWE",  175, 109); // big emty raw ("cost")
 		COPY_GRAPHIC("I_LIFE",  138, 109);
 		COPY_GRAPHIC("I_POWER", 125, 109);
 		COPY_GRAPHIC("BARTAPE", 156, 307);
