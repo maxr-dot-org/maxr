@@ -524,6 +524,7 @@ cGameGUI::cGameGUI() :
 {
 	dCache.setGameGUI (*this);
 	unitMenuActive = false;
+	selectedMenuButtonIndex = -1;
 	frame = 0;
 	zoom = 1.0f;
 	offX = offY = 0;
@@ -2392,14 +2393,14 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						if (!selectedVehicle->moving)
 						{
 							unitMenuActive = !unitMenuActive;
-							if (unitMenuActive) selectedVehicle->selectedMenuButtonIndex = -1;
+							if (unitMenuActive) selectedMenuButtonIndex = -1;
 							PlayFX (SoundData.SNDHudButton);
 						}
 					}
 					else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 					{
 						unitMenuActive = !unitMenuActive;
-						if (unitMenuActive) selectedBuilding->selectedMenuButtonIndex = -1;
+						if (unitMenuActive) selectedMenuButtonIndex = -1;
 						PlayFX (SoundData.SNDHudButton);
 					}
 					// select unit when using modern style

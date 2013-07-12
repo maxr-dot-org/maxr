@@ -68,8 +68,8 @@ public:
 
 	SDL_Rect getMenuSize (const cGameGUI& gameGUI) const;
 	bool areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const;
-	void setMenuSelection (cGameGUI& gameGUI);
-	void drawMenu (cGameGUI& gameGUI);
+	void setMenuSelection (cGameGUI& gameGUI) const;
+	void drawMenu (cGameGUI& gameGUI) const;
 	void menuReleased (cGameGUI& gameGUI);
 	int getScreenPosX (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	int getScreenPosY (const cGameGUI& gameGUI, bool movementOffset = true) const;
@@ -136,8 +136,6 @@ public: // TODO: make protected/private and make getters/setters
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
-
-	int selectedMenuButtonIndex;
 
 	cPlayer* owner;
 	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit

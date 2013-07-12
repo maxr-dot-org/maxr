@@ -50,7 +50,6 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	, isMarkedAsDone (false)
 	, hasBeenAttacked (false)
 	, VehicleToActivate (0)
-	, selectedMenuButtonIndex (-1)
 	, owner (owner)
 	, job (NULL)
 	, lockerPlayer (NULL)
@@ -266,10 +265,10 @@ bool cUnit::areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setMenuSelection (cGameGUI& gameGUI)
+void cUnit::setMenuSelection (cGameGUI& gameGUI) const
 {
 	SDL_Rect dest = getMenuSize (gameGUI);
-	selectedMenuButtonIndex = (mouse->y - dest.y) / 22;
+	gameGUI.selectedMenuButtonIndex = (mouse->y - dest.y) / 22;
 }
 
 //------------------------------------------------------------------------------
@@ -369,7 +368,7 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 }
 
 //------------------------------------------------------------------------------
-void cUnit::drawMenu (cGameGUI& gameGUI)
+void cUnit::drawMenu (cGameGUI& gameGUI) const
 {
 	if (isBeeingAttacked)
 		return;
@@ -386,7 +385,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		return;
 
 	SDL_Rect dest = getMenuSize (gameGUI);
-	bool markerPossible = (areCoordsOverMenu (gameGUI, mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
+	bool markerPossible = (areCoordsOverMenu (gameGUI, mouse->x, mouse->y) && (gameGUI.selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
 	const cClient& client = *gameGUI.getClient();
 	int nr = 0;
 
@@ -395,7 +394,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Attack:
 		if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -404,7 +403,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Build:
 		if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -413,7 +412,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Distribute:
 		if (data.canMineMaxRes > 0 && isUnitWorking() && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -422,7 +421,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Transfer:
 		if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -431,7 +430,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Start:
 		if (data.canWork && buildingCanBeStarted() && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -440,7 +439,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Auto survey movejob of surveyor
 		if (data.canSurvey && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isAutoMoveJobActive();
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || isAutoMoveJobActive();
 			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -449,7 +448,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Stop:
 		if (canBeStoppedViaUnitMenu() && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -458,7 +457,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Remove:
 		if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -467,7 +466,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Manual fire
 		if ( (manualFireActive || data.canAttack) && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || manualFireActive;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || manualFireActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -476,7 +475,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Sentry status:
 		if ( (sentryActive || data.canAttack || (!isABuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || sentryActive;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || sentryActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -486,13 +485,13 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		if (data.storageUnitsMax > 0 && owner == client.getActivePlayer())
 		{
 			// Activate:
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
 
 			// Load:
-			isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
+			isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -501,7 +500,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// research
 		if (data.canResearch && isUnitWorking() && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -510,7 +509,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// gold upgrades screen
 		if (data.convertsGold && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -520,13 +519,13 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		if (buildingCanBeUpgraded() && owner == client.getActivePlayer())
 		{
 			// Update all buildings of this type in this subbase
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
 
 			// update this building
-			isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -535,7 +534,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Self destruct
 		if (data.canSelfDestroy && owner == client.getActivePlayer())
 		{
-			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -544,7 +543,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Ammo:
 		if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -553,7 +552,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Repair:
 		if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -562,7 +561,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Lay mines:
 		if (data.canPlaceMines && data.storageResCur > 0 && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitLayingMines();
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || isUnitLayingMines();
 			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -571,7 +570,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Collect/clear mines:
 		if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitClearingMines();
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || isUnitClearingMines();
 			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -580,7 +579,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Sabotage/disable:
 		if (data.canDisable && data.shotsCur && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -589,7 +588,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 		// Steal:
 		if (data.canCapture && data.shotsCur && owner == client.getActivePlayer())
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
+			bool isMarked = (markerPossible && gameGUI.selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
 			++nr;
@@ -597,13 +596,13 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 
 	}
 	// Info:
-	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+	bool isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
 	dest.y += 22;
 	++nr;
 
 	// Done:
-	isMarked = markerPossible && selectedMenuButtonIndex == nr;
+	isMarked = markerPossible && gameGUI.selectedMenuButtonIndex == nr;
 	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
 }
 
@@ -615,9 +614,9 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	if (areCoordsOverMenu (gameGUI, mouse->x, mouse->y))
 		exeNr = (mouse->y - dest.y) / 22;
 
-	if (exeNr != selectedMenuButtonIndex)
+	if (exeNr != gameGUI.selectedMenuButtonIndex)
 	{
-		selectedMenuButtonIndex = -1;
+		gameGUI.selectedMenuButtonIndex = -1;
 		return;
 	}
 	if (isUnitMoving() || isBeeingAttacked)

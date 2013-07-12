@@ -548,6 +548,8 @@ public:
 	static SDL_Surface* generateSurface();
 
 	bool unitMenuActive;
+	int selectedMenuButtonIndex;
+
 	eMouseInputMode mouseInputMode;
 };
 
