@@ -4910,13 +4910,13 @@ void cStorageMenu::activateReleased (void* parent)
 
 	if (menu->ownerVehicle)
 	{
-		menu->ownerVehicle->VehicleToActivate = index;
+		menu->client->getGameGUI().vehicleToActivate = index;
 		if (menu->unitData.factorAir > 0) sendWantActivate (*menu->client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
 		else menu->client->getGameGUI().mouseInputMode = activateVehicle;
 	}
 	else if (menu->ownerBuilding)
 	{
-		menu->ownerBuilding->VehicleToActivate = index;
+		menu->client->getGameGUI().vehicleToActivate = index;
 		menu->client->getGameGUI().mouseInputMode = activateVehicle;
 	}
 	menu->end = true;

@@ -550,6 +550,8 @@ public:
 	bool unitMenuActive;
 	int selectedMenuButtonIndex;
 
+	int vehicleToActivate; // Index in cUnit::storedUnits of unit to activate
+
 	eMouseInputMode mouseInputMode;
 };
 

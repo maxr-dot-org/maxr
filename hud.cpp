@@ -371,9 +371,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString =
-		" vehicle_to_activate: +" + iToStr (vehicle.VehicleToActivate) +
-		" stored_vehicles_count: " + iToStr ( (int) vehicle.storedUnits.size());
+	tmpString = " stored_vehicles_count: " + iToStr ( (int) vehicle.storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -416,11 +414,14 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " max_metal_p: " + iToStr (building.MaxMetalProd) + " max_oil_p: " + iToStr (building.MaxOilProd) + " max_gold_p: " + iToStr (building.MaxGoldProd);
+	tmpString = " max_metal_p: " + iToStr (building.MaxMetalProd) +
+				" max_oil_p: " + iToStr (building.MaxOilProd) +
+				" max_gold_p: " + iToStr (building.MaxGoldProd);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_locked: " + iToStr (building.isLocked()) + " disabled: " + iToStr (building.turnsDisabled) + " vehicle_to_activate: " + iToStr (building.VehicleToActivate);
+	tmpString = "is_locked: " + iToStr (building.isLocked()) +
+				" disabled: " + iToStr (building.turnsDisabled);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -525,6 +526,7 @@ cGameGUI::cGameGUI() :
 	dCache.setGameGUI (*this);
 	unitMenuActive = false;
 	selectedMenuButtonIndex = -1;
+	vehicleToActivate = 0;
 	frame = 0;
 	zoom = 1.0f;
 	offX = offY = 0;
@@ -1898,7 +1900,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == activateVehicle)
 		{
-			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->typ) && selectedUnit->isDisabled() == false)
+			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedVehicle->storedUnits[vehicleToActivate]->typ) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1957,7 +1959,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->isDisabled() == false)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->typ))
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->typ))
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -2215,7 +2217,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedUnit && mouseInputMode == activateVehicle)
 		{
-			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isAVehicle(), selectedUnit->storedUnits[selectedUnit->VehicleToActivate]->iID, mouseMapX, mouseMapY);
+			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isAVehicle(), selectedUnit->storedUnits[vehicleToActivate]->iID, mouseMapX, mouseMapY);
 			updateMouseCursor();
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())
@@ -4196,7 +4198,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (mouseInputMode == activateVehicle && v.owner == player)
 		{
-			v.DrawExitPoints (v.storedUnits[v.VehicleToActivate]->typ, *this);
+			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->typ, *this);
 		}
 	}
 	else if (selectedBuilding && selectedUnit->isDisabled() == false)
@@ -4241,7 +4243,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->typ, *this);
+			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->typ, *this);
 		}
 	}
 	drawLockList (*client->getActivePlayer());

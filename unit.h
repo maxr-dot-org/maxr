@@ -135,7 +135,6 @@ public: // TODO: make protected/private and make getters/setters
 	bool hasBeenAttacked; //the unit was attacked in this turn
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
-	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 
 	cPlayer* owner;
 	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit
