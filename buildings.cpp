@@ -132,7 +132,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 {
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
@@ -223,7 +223,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 //--------------------------------------------------------------------------
 int cBuilding::refreshData()
 {
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		lastShots = std::min(this->data.shotsMax, this->data.ammoCur);
 		return 1;
@@ -639,7 +639,7 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 
 	int frameNr = dir;
 	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
-		turnsDisabled == 0 && gameGUI)
+		isDisabled() == false && gameGUI)
 	{
 		frameNr = (gameGUI->getAnimationSpeed() % data.hasFrames);
 	}
@@ -837,7 +837,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	//-- first check all requirements
 
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		sendChatMessageToClient (server, "Text~Comp~Building_Disabled", SERVER_ERROR_MESSAGE, owner->getNr());
 		return;
@@ -1552,9 +1552,9 @@ void cBuilding::Select (cGameGUI& gameGUI)
 	gameGUI.setVideoSurface (typ->video);
 
 	// play sound:
-	if (owner->researchFinished && data.canResearch && turnsDisabled < 1)
+	if (owner->researchFinished && data.canResearch && isDisabled() == false)
 		PlayVoice (VoiceData.VOIResearchComplete);
-	else if (factoryHasJustFinishedBuilding() && turnsDisabled < 1)
+	else if (factoryHasJustFinishedBuilding() && isDisabled() == false)
 	{
 		PlayRandomVoice (VoiceData.VOIBuildDone);
 	}

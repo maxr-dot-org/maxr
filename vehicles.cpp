@@ -437,7 +437,7 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
 	int frameNr = 0;
-	if (client && turnsDisabled == 0)
+	if (client && isDisabled() == false)
 	{
 		frameNr = client->getGameGUI().getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
 	}
@@ -770,7 +770,7 @@ bool cVehicle::refreshData_Clear (cServer& server)
 
 bool cVehicle::refreshData()
 {
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		lastSpeed = data.speedMax;
 		lastShots = std::min (data.ammoCur, data.shotsMax);
@@ -910,7 +910,7 @@ void cVehicle::DrawPath (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 {
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
@@ -1206,7 +1206,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 	if (owner != gameGUI.getClient()->getActivePlayer())
 		return;
 
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		// Disabled:
 		PlayRandomVoice (VoiceData.VOIUnitDisabledByEnemy);

@@ -279,7 +279,7 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 
 	if (owner != client.getActivePlayer())
 		return result;
-	if (turnsDisabled < 1)
+	if (isDisabled() == false)
 	{
 		// Attack
 		if (data.canAttack && data.shotsCur)
@@ -390,7 +390,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	const cClient& client = *gameGUI.getClient();
 	int nr = 0;
 
-	if (turnsDisabled < 1)
+	if (isDisabled() == false)
 	{
 		// Attack:
 		if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
@@ -630,7 +630,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	cClient& client = *gameGUI.getClient();
 
 	// no menu if something disabled - origina behavior -- nonsinn
-	if (turnsDisabled < 1)
+	if (isDisabled() == false)
 	{
 		// attack:
 		if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
@@ -1063,7 +1063,7 @@ void cUnit::drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 	SDL_Rect dest;
 
-	if (turnsDisabled > 0)
+	if (isDisabled())
 	{
 		if (gameGUI.getTileSize() < 25)
 			return;

@@ -568,7 +568,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		if (message.popBool()) Vehicle->changeName (message.popString());
 
 		Vehicle->isBeeingAttacked = message.popBool();
-		const bool bWasDisabled = Vehicle->turnsDisabled > 0;
+		const bool bWasDisabled = Vehicle->isDisabled();
 		Vehicle->turnsDisabled = message.popInt16();
 		Vehicle->CommandoRank = message.popInt16();
 		Vehicle->IsClearing = message.popBool();
@@ -579,9 +579,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Vehicle->sentryActive = message.popBool();
 		Vehicle->manualFireActive = message.popBool();
 
-		if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer)
+		if (Vehicle->isDisabled() != bWasDisabled && Vehicle->owner == ActivePlayer)
 		{
-			if (Vehicle->turnsDisabled > 0)
+			if (Vehicle->isDisabled())
 			{
 				const std::string msg = Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
@@ -604,7 +604,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Building->changeName (message.popString());
 
-		const bool bWasDisabled = Building->turnsDisabled > 0;
+		const bool bWasDisabled = Building->isDisabled();
 		Building->turnsDisabled = message.popInt16();
 		Building->researchArea = message.popInt16();
 		Building->IsWorking = message.popBool();
@@ -612,9 +612,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Building->manualFireActive = message.popBool();
 		Building->points = message.popInt16();
 
-		if ( (Building->turnsDisabled > 0) != bWasDisabled && Building->owner == ActivePlayer)
+		if (Building->isDisabled() != bWasDisabled && Building->owner == ActivePlayer)
 		{
-			if (Building->turnsDisabled > 0)
+			if (Building->isDisabled())
 			{
 				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);

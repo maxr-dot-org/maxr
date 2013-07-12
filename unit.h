@@ -56,6 +56,7 @@ public:
 	bool isInRange (int x, int y) const;
 	/// checks whether the coordinates are next to the unit
 	bool isNextTo (int x, int y) const;
+	bool isDisabled() const { return turnsDisabled > 0; }
 
 	const std::string& getName() const { return name; }
 	bool isNameOriginal() const { return isOriginalName; }

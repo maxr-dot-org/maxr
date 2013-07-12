@@ -440,7 +440,7 @@ void cPlayer::doScan()
 	{
 		if (vp->Loaded) continue;
 
-		if (vp->turnsDisabled)
+		if (vp->isDisabled())
 			ScanMap[getOffset (vp->PosX, vp->PosY)] = 1;
 		else
 		{
@@ -472,7 +472,7 @@ void cPlayer::doScan()
 	// iterate the building list
 	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
-		if (bp->turnsDisabled)
+		if (bp->isDisabled())
 			ScanMap[getOffset (bp->PosX, bp->PosY)] = 1;
 		else if (bp->data.scan)
 		{

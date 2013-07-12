@@ -1887,7 +1887,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		success = true;
 	}
 	// disabled units fail to detect infiltrator even if he screws up
-	else if (destUnit->turnsDisabled == 0)
+	else if (destUnit->isDisabled() == false)
 	{
 		// detect the infiltrator on failed action
 		// and let enemy units fire on him
@@ -2896,10 +2896,10 @@ void cServer::makeTurnEnd()
 			 Building = Building->next)
 		{
 			bool forceSendUnitData = false;
-			if (Building->turnsDisabled > 0)
+			if (Building->isDisabled())
 			{
 				Building->turnsDisabled--;
-				if (Building->turnsDisabled == 0 && Building->wasWorking)
+				if (Building->isDisabled() == false && Building->wasWorking)
 				{
 					Building->ServerStartWork (*this);
 					Building->wasWorking = false;
@@ -2926,7 +2926,7 @@ void cServer::makeTurnEnd()
 			 Vehicle = Vehicle->next)
 		{
 			bool isModified = false;
-			if (Vehicle->turnsDisabled > 0)
+			if (Vehicle->isDisabled())
 			{
 				Vehicle->turnsDisabled--;
 				isModified = true;
@@ -3724,7 +3724,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	newOwner->addUnitToList (vehicle);
 
 	//the vehicle is fully operational for the new owner
-	if (vehicle->turnsDisabled > 0)
+	if (vehicle->isDisabled())
 	{
 		vehicle->data.speedCur = vehicle->lastSpeed;
 		vehicle->data.shotsCur = vehicle->lastShots;

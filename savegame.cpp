@@ -1355,7 +1355,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
 	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", fToStr (vehicle.CommandoRank));
 	if (vehicle.data.isBig) addMainElement (unitNode, "IsBig");
-	if (vehicle.turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.turnsDisabled));
+	if (vehicle.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.turnsDisabled));
 	if (vehicle.LayMines) addMainElement (unitNode, "LayMines");
 	if (vehicle.sentryActive) addMainElement (unitNode, "OnSentry");
 	if (vehicle.manualFireActive) addMainElement (unitNode, "ManualFire");
@@ -1432,7 +1432,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write additional stauts information
 	if (building.IsWorking) addMainElement (unitNode, "IsWorking");
 	if (building.wasWorking) addMainElement (unitNode, "wasWorking");
-	if (building.turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.turnsDisabled));
+	if (building.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.turnsDisabled));
 
 	if (building.data.canResearch)
 	{
