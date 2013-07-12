@@ -131,7 +131,10 @@ class cBuilding : public cUnit
 {
 public:
 	cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID);
-	~cBuilding();
+	virtual ~cBuilding();
+
+	virtual bool isAVehicle() const { return false; }
+	virtual bool isABuilding() const { return true; }
 
 	cBuilding* next; ///< "next"-pointer for the double linked list
 	cBuilding* prev; ///< "prev"-pointer for the double linked list
@@ -243,7 +246,7 @@ protected:
 	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
 	virtual void executeSelfDestroyCommand (cClient& client);
 
-	virtual sUnitData* getUpgradedUnitData() const;
+	virtual const sUnitData* getUpgradedUnitData() const;
 };
 
 #endif

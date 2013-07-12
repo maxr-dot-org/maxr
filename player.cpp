@@ -248,7 +248,7 @@ sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 //------------------------------------------------------------------------------
 cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned int ID)
 {
-	cVehicle* n = new cVehicle (&v, this, ID);
+	cVehicle* n = new cVehicle (v, this, ID);
 	n->PosX = posx;
 	n->PosY = posy;
 
@@ -318,7 +318,7 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 	//units in the linked list are sorted in increasing order of IDs
 
 	//find unit before the added unit
-	if (addedUnit->isBuilding())
+	if (addedUnit->isABuilding())
 	{
 		cBuilding* addedBuilding = static_cast<cBuilding*> (addedUnit);
 		cBuilding* prev = getPreviousUnitById (BuildingList, addedUnit->iID);
@@ -556,7 +556,7 @@ cUnit* cPlayer::getNextUnit (cUnit* start)
 		cBuilding* nextBuilding = getNextBuilding (NULL);
 		if (nextBuilding) return nextBuilding;
 	}
-	else if (start->isVehicle())
+	else if (start->isAVehicle())
 	{
 		cVehicle* nextVehicle = getNextVehicle (static_cast<cVehicle*> (start));
 		if (nextVehicle) return nextVehicle;
@@ -567,7 +567,7 @@ cUnit* cPlayer::getNextUnit (cUnit* start)
 	}
 	else
 	{
-		assert (start->isBuilding());
+		assert (start->isABuilding());
 		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* nextBuilding = getNextBuilding (building);
 		if (nextBuilding) return nextBuilding;
@@ -631,7 +631,7 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 		cBuilding* prevBuilding = getPrevBuilding (NULL);
 		if (prevBuilding) return prevBuilding;
 	}
-	else if (start->isVehicle())
+	else if (start->isAVehicle())
 	{
 		cVehicle* prevVehicle = getPrevVehicle (static_cast<cVehicle*> (start));
 		if (prevVehicle) return prevVehicle;
@@ -642,7 +642,7 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 	}
 	else
 	{
-		assert (start->isBuilding());
+		assert (start->isABuilding());
 		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* prevBuilding = getPrevBuilding (building);
 		if (prevBuilding) return prevBuilding;

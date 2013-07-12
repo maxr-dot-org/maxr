@@ -38,7 +38,6 @@
 #include "player.h"
 #include "server.h"
 #include "settings.h"
-#include "sound.h"
 #include "unifonts.h"
 #include "video.h"
 
@@ -49,12 +48,12 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID) :
-	cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner, ID),
+cVehicle::cVehicle (const sVehicle& v, cPlayer* Owner, unsigned int ID) :
+	cUnit (Owner ? &Owner->VehicleData[v.nr] : &v.data, Owner, ID),
 	next (0),
 	prev (0)
 {
-	typ = v;
+	typ = &v;
 	BandX = 0;
 	BandY = 0;
 	OffX = 0;
@@ -1396,7 +1395,7 @@ bool cVehicle::InSentryRange (cServer& server)
 bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const
 {
 	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-	bool otherUnitIsCheapBuilding = (otherUnit.isBuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2); //FIXME: isn't the check inverted?
+	bool otherUnitIsCheapBuilding = (otherUnit.isABuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2); //FIXME: isn't the check inverted?
 
 	if (otherUnitIsCheapBuilding == false
 		&& isInRange (otherUnit.PosX, otherUnit.PosY)
@@ -1446,7 +1445,7 @@ bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) cons
 	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
 		&& opponentUnit->canAttackObjectAt (PosX, PosY, server.Map, true)
 		// Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
-		&& (opponentUnit->isVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
+		&& (opponentUnit->isAVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
 	{
 		if (makeAttackOnThis (server, opponentUnit, "reaction fire"))
 			return true;
@@ -1649,20 +1648,20 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 			return false;
 	}
 
-	if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0)
+	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0)
 		return false;
 
 	switch (supplyType)
 	{
 		case SUPPLY_TYPE_REARM:
 			if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
-				|| (unit->isVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
+				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->attacking)
 				return false;
 			break;
 		case SUPPLY_TYPE_REPAIR:
 			if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
-				|| (unit->isVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
+				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->attacking)
 				return false;
 			break;
@@ -1732,12 +1731,12 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 
 	if (unit == NULL) return false;
 
-	if (unit->isBuilding() && unit->owner == 0) return false;   // rubble
+	if (unit->isABuilding() && unit->owner == 0) return false;   // rubble
 	if (steal && unit->data.canBeCaptured == false) return false;
 	if (steal == false && unit->data.canBeDisabled == false) return false;
 	if (steal && unit->storedUnits.size() > 0) return false;
 	if (unit->owner == owner) return false;
-	if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
+	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
 	return true;
 }
@@ -1817,7 +1816,7 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
 	int destTurn, srcLevel;
 
-	if (destUnit->isVehicle())
+	if (destUnit->isAVehicle())
 	{
 		destTurn = destUnit->data.buildCosts / 3;
 		srcLevel = (int) CommandoRank;
@@ -2166,9 +2165,9 @@ void cVehicle::executeClearMinesCommand (const cClient& client)
 }
 
 //-----------------------------------------------------------------------------
-sUnitData* cVehicle::getUpgradedUnitData() const
+const sUnitData* cVehicle::getUpgradedUnitData() const
 {
-	return & (owner->VehicleData[typ->nr]);
+	return &owner->VehicleData[typ->nr];
 }
 
 bool cVehicle::canLand (const cMap& map) const

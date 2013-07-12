@@ -961,7 +961,7 @@ void cGameGUI::onRemoveUnit (cUnit& unit)
 	{
 		deselectUnit();
 	}
-	if (unit.isVehicle())
+	if (unit.isAVehicle())
 	{
 		Remove (selectedVehiclesGroup, static_cast<cVehicle*>(&unit));
 	}
@@ -1595,21 +1595,21 @@ void cGameGUI::setStartup (bool startup_)
 
 cVehicle* cGameGUI::getSelectedVehicle()
 {
-	return static_cast<cVehicle*> (selectedUnit && selectedUnit->isVehicle() ? selectedUnit : NULL);
+	return static_cast<cVehicle*> (selectedUnit && selectedUnit->isAVehicle() ? selectedUnit : NULL);
 }
 
 cBuilding* cGameGUI::getSelectedBuilding()
 {
-	return static_cast<cBuilding*> (selectedUnit && selectedUnit->isBuilding() ? selectedUnit : NULL);
+	return static_cast<cBuilding*> (selectedUnit && selectedUnit->isABuilding() ? selectedUnit : NULL);
 }
 
 void cGameGUI::selectUnit (cUnit& unit)
 {
-	cVehicle* vehicle = static_cast<cVehicle*> (unit.isVehicle() ? &unit : NULL);
+	cVehicle* vehicle = static_cast<cVehicle*> (unit.isAVehicle() ? &unit : NULL);
 
 	if (vehicle && vehicle->Loaded) return;
 
-	cBuilding* building = static_cast<cBuilding*> (unit.isBuilding() ? &unit : NULL);
+	cBuilding* building = static_cast<cBuilding*> (unit.isABuilding() ? &unit : NULL);
 
 	deselectUnit();
 	selectedUnit = &unit;
@@ -2214,7 +2214,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedUnit && mouseInputMode == activateVehicle)
 		{
-			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isVehicle(), selectedUnit->storedUnits[selectedUnit->VehicleToActivate]->iID, mouseMapX, mouseMapY);
+			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isAVehicle(), selectedUnit->storedUnits[selectedUnit->VehicleToActivate]->iID, mouseMapX, mouseMapY);
 			updateMouseCursor();
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())
@@ -2328,7 +2328,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					{
 						// find target ID
 						int targetId = 0;
-						if (target && target->isVehicle()) targetId = target->iID;
+						if (target && target->isAVehicle()) targetId = target->iID;
 
 						Log.write (" Client: want to attack " + iToStr (mouseMapX) + ":" + iToStr (mouseMapY) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
 						sendWantAttack (*client, targetId, client->getMap()->getOffset (mouseMapX, mouseMapY), selectedVehicle->iID, true);
@@ -2353,7 +2353,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					// find target ID
 					int targetId = 0;
 					cUnit* target = selectTarget (mouseMapX, mouseMapY, selectedBuilding->data.canAttack, client->getMap());
-					if (target && target->isVehicle()) targetId = target->iID;
+					if (target && target->isAVehicle()) targetId = target->iID;
 					const cMap& map = *client->getMap();
 
 					const int offset = map.getOffset (selectedBuilding->PosX, selectedBuilding->PosY);

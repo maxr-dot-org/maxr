@@ -70,7 +70,7 @@ void sendAddRubble (cServer& server, const cBuilding& building, int iPlayer)
 //------------------------------------------------------------------------------
 void sendDeleteUnitMessage (cServer& server, const cUnit& unit, int playerNr)
 {
-	cNetMessage* message = new cNetMessage (unit.isBuilding() ? GAME_EV_DEL_BUILDING : GAME_EV_DEL_VEHICLE);
+	cNetMessage* message = new cNetMessage (unit.isABuilding() ? GAME_EV_DEL_BUILDING : GAME_EV_DEL_VEHICLE);
 	message->pushInt16 (unit.iID);
 	server.sendNetMessage (message, playerNr);
 }
@@ -94,11 +94,11 @@ void sendDeleteUnit (cServer& server, const cUnit& unit, int iClient)
 //------------------------------------------------------------------------------
 void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iClient)
 {
-	cNetMessage* message = new cNetMessage (unit.isBuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
+	cNetMessage* message = new cNetMessage (unit.isABuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
 
 	message->pushInt16 (unit.data.version);
 	message->pushInt16 (unit.iID);
-	if (unit.isVehicle())
+	if (unit.isAVehicle())
 		message->pushInt16 (unit.dir);
 	message->pushInt16 (unit.PosX);
 	message->pushInt16 (unit.PosY);
@@ -138,7 +138,7 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	cNetMessage* message = new cNetMessage (GAME_EV_UNIT_DATA);
 
 	// The unit data values
-	if (unit.isVehicle())
+	if (unit.isAVehicle())
 	{
 		message->pushInt16 (static_cast<const cVehicle*> (&unit)->FlightHigh);
 		message->pushInt16 (unit.data.speedMax);
@@ -165,13 +165,13 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	// TODO: remove information such sentrystatus,
 	//       build or clearrounds from normal data
 	//       because this data will be received by enemys, too
-	if (unit.isBuilding())
+	if (unit.isABuilding())
 		message->pushInt16 (static_cast<const cBuilding*> (&unit)->points);
 
 	message->pushBool (unit.manualFireActive);
 	message->pushBool (unit.sentryActive);
 
-	if (unit.isVehicle())
+	if (unit.isAVehicle())
 	{
 		const cVehicle& vehicle = *static_cast<const cVehicle*> (&unit);
 		message->pushInt16 (vehicle.ClearingRounds);
@@ -189,7 +189,7 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 
 	message->pushInt16 (unit.turnsDisabled);
 
-	if (unit.isVehicle())
+	if (unit.isAVehicle())
 		message->pushBool (unit.isBeeingAttacked);
 
 	if (unit.isNameOriginal() == false)
@@ -200,13 +200,13 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	else
 		message->pushBool (false);
 
-	if (unit.isVehicle())
+	if (unit.isAVehicle())
 		message->pushBool (unit.data.isBig);
 
 	// Data for identifying the unit by the client
 	message->pushInt16 (unit.PosX);
 	message->pushInt16 (unit.PosY);
-	message->pushBool (unit.isVehicle());
+	message->pushBool (unit.isAVehicle());
 	message->pushInt16 (unit.iID);
 	message->pushInt16 (unit.owner->getNr());
 

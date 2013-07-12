@@ -2397,16 +2397,16 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	if (unit == 0)
 		return;
 
-	if (unit->isBuilding() && unit->owner == 0)
+	if (unit->isABuilding() && unit->owner == 0)
 	{
 		deleteRubble (static_cast<cBuilding*> (unit));
 		return;
 	}
 
-	if (unit->owner && casualtiesTracker && ( (unit->isBuilding() && unit->data.buildCosts <= 2) == false))
+	if (unit->owner && casualtiesTracker && ( (unit->isABuilding() && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->getNr());
 
-	if (unit->isBuilding())
+	if (unit->isABuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
 		remove_from_intrusivelist (building->owner->BuildingList, *building);
@@ -2430,7 +2430,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	helperJobs.onRemoveUnit (unit);
 
 	// detach from move job
-	if (unit->isVehicle())
+	if (unit->isAVehicle())
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->ServerMoveJob)
@@ -2443,13 +2443,13 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	unit->owner->deleteSentry (unit);
 
 	// lose eco points
-	if (unit->isBuilding() && static_cast<cBuilding*> (unit)->points != 0)
+	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
 		unit->owner->setScore (unit->owner->getScore (iTurn) - static_cast<cBuilding*> (unit)->points, iTurn);
 		sendScore (*this, *unit->owner, iTurn);
 	}
 
-	if (unit->isBuilding())
+	if (unit->isABuilding())
 		Map->deleteBuilding (*static_cast<cBuilding*> (unit));
 	else
 		Map->deleteVehicle (*static_cast<cVehicle*> (unit));
@@ -2457,7 +2457,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	if (notifyClient)
 		sendDeleteUnit (*this, *unit, -1);
 
-	if (unit->isBuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
+	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
 		unit->owner->base.deleteBuilding (static_cast<cBuilding*> (unit), this);
 
 	cPlayer* owner = unit->owner;

@@ -98,13 +98,13 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOf
 
 	unit->data.shotsCur--;
 	unit->data.ammoCur--;
-	if (unit->isVehicle() && unit->data.canDriveAndFire == false)
+	if (unit->isAVehicle() && unit->data.canDriveAndFire == false)
 		unit->data.speedCur -= (int) ( ( (float) unit->data.speedMax) / unit->data.shotsMax);
 	unit->attacking = true;
 
 	sendFireCommand();
 
-	if (unit->isBuilding() && unit->data.explodesOnContact)
+	if (unit->isABuilding() && unit->data.explodesOnContact)
 	{
 		server->deleteUnit (unit, false);
 		unit = 0;
@@ -129,7 +129,7 @@ void cServerAttackJob::lockTarget (int offset)
 	if (target)
 		target->isBeeingAttacked = true;
 
-	const bool isAir = (target && target->isVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
+	const bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
 	// if the agressor can attack air and land units,
 	// decide whether it is currently attacking air or land targets
@@ -167,7 +167,7 @@ void cServerAttackJob::lockTarget (int offset)
 		if (!player->canSeeAnyAreaUnder (*target)) continue;
 
 		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET);
-		if (target->isVehicle())
+		if (target->isAVehicle())
 		{
 			cVehicle* v = static_cast<cVehicle*> (target);
 			message->pushChar (v->OffX);
@@ -364,7 +364,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	int remainingHP = 0;
 	int id = 0;
 	cPlayer* owner = 0;
-	bool isAir = (target && target->isVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
+	bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
 	// in the time between the first locking and the impact,
 	// it is possible that a vehicle drove onto the target field
@@ -412,7 +412,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	// remove the destroyed units
 	if (target && target->data.hitpointsCur <= 0)
 	{
-		if (target->isBuilding())
+		if (target->isABuilding())
 			server->destroyUnit (static_cast<cBuilding*> (target));
 		else
 			server->destroyUnit (static_cast<cVehicle*> (target));
@@ -434,11 +434,11 @@ void cServerAttackJob::makeImpact (int x, int y)
 		unit->attacking = false;
 
 	// check whether a following sentry mode attack is possible
-	if (target && target->isVehicle())
+	if (target && target->isAVehicle())
 		static_cast<cVehicle*> (target)->InSentryRange (*server);
 
 	// check whether the agressor itself is in sentry range
-	if (unit && unit->isVehicle())
+	if (unit && unit->isAVehicle())
 		static_cast<cVehicle*> (unit)->InSentryRange (*server);
 }
 
@@ -632,7 +632,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		unit->data.shotsCur = message->popInt16();
 		unit->data.ammoCur = message->popInt16();
 		unit->attacking = true;
-		if (unit->isVehicle())
+		if (unit->isAVehicle())
 			unit->data.speedCur = message->popInt16();
 	}
 	const bool sentryReaction = message->popBool();
@@ -668,7 +668,7 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 	int offx = 0, offy = 0;
 	const cMap& map = *client.getMap();
 
-	if (unit && unit->isBuilding() && unit->data.explodesOnContact)
+	if (unit && unit->isABuilding() && unit->data.explodesOnContact)
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
 		state = FINISHED;
@@ -836,11 +836,11 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 			state = FINISHED;
 			break;
 	}
-	if (unit && unit->isVehicle())
+	if (unit && unit->isAVehicle())
 	{
 		PlayFX (static_cast<cVehicle*> (unit)->typ->Attack);
 	}
-	else if (unit && unit->isBuilding())
+	else if (unit && unit->isABuilding())
 	{
 		PlayFX (static_cast<cBuilding*> (unit)->typ->Attack);
 	}

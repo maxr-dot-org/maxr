@@ -602,8 +602,8 @@ cDialogTransfer::~cDialogTransfer()
 	const sUnitData::eStorageResType type2 = unit2.data.storeResType;
 	if (type1 == type2) return type1;
 
-	if (unit1.isVehicle() && unit2.isBuilding()) return type1;
-	if (unit1.isBuilding() && unit2.isVehicle()) return type2;
+	if (unit1.isAVehicle() && unit2.isABuilding()) return type1;
+	if (unit1.isABuilding() && unit2.isAVehicle()) return type2;
 	return sUnitData::STORE_RES_NONE;
 }
 
@@ -642,14 +642,14 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	if (srcUnit->isBuilding())
+	if (srcUnit->isABuilding())
 	{
 		cBuilding* srcBuilding = static_cast<cBuilding*> (srcUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (srcBuilding->data.isBig ? 128.0f : 64.0f);
 		srcBuilding->render (gameGUI, unitImage1, dest, zoomFactor, false, false);
 
 		unitNameLabels[0]->setText (srcBuilding->data.name);
-		if (destUnit->isVehicle())
+		if (destUnit->isAVehicle())
 		{
 			switch (destUnit->data.storeResType)
 			{
@@ -677,7 +677,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else
 	{
-		assert (srcUnit->isVehicle());
+		assert (srcUnit->isAVehicle());
 
 		cVehicle* srcVehicle = static_cast<cVehicle*> (srcUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
@@ -689,14 +689,14 @@ void cDialogTransfer::getNamesNCargoNImages()
 		srcCargo = srcVehicle->data.storageResCur;
 	}
 
-	if (destUnit->isBuilding())
+	if (destUnit->isABuilding())
 	{
 		cBuilding* destBuilding = static_cast<cBuilding*> (destUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (destBuilding->data.isBig ? 128.0f : 64.0f);
 		destBuilding->render (gameGUI, unitImage2, dest, zoomFactor, false, false);
 
 		unitNameLabels[1]->setText (destBuilding->data.name);
-		if (srcUnit->isVehicle())
+		if (srcUnit->isAVehicle())
 		{
 			switch (srcUnit->data.storeResType)
 			{
@@ -724,7 +724,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else
 	{
-		assert (destUnit->isVehicle());
+		assert (destUnit->isAVehicle());
 
 		cVehicle* destVehicle = static_cast<cVehicle*> (destUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
@@ -818,7 +818,7 @@ void cDialogTransfer::doneReleased (void* parent)
 		const cUnit* srcUnit = menu->srcUnit;
 		const cUnit* destUnit = menu->destUnit;
 		const sUnitData::eStorageResType transfertType = getCommonStorageType (*srcUnit, *destUnit);
-		sendWantTransfer (*client, srcUnit->isVehicle(), srcUnit->iID, destUnit->isVehicle(), destUnit->iID, menu->transferValue, transfertType);
+		sendWantTransfer (*client, srcUnit->isAVehicle(), srcUnit->iID, destUnit->isAVehicle(), destUnit->iID, menu->transferValue, transfertType);
 	}
 
 	menu->end = true;
@@ -1085,7 +1085,7 @@ void cDialogResearch::sliderClicked (void* parent)
 
 void cDialogResearch::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedUnit.isVehicle()) return;
+	if (destroyedUnit.isAVehicle()) return;
 	if (destroyedUnit.owner != owner) return;
 	if (!destroyedUnit.data.canResearch) return;
 	if (static_cast<cBuilding&>(destroyedUnit).IsWorking) terminate = true;

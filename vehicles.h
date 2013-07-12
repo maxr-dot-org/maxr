@@ -118,8 +118,11 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID);
-	~cVehicle();
+	cVehicle (const sVehicle& v, cPlayer* Owner, unsigned int ID);
+	virtual ~cVehicle();
+
+	virtual bool isAVehicle() const { return true; }
+	virtual bool isABuilding() const { return false; }
 
 	cVehicle* next; ///< "next"-pointer for the double linked list
 	cVehicle* prev; ///< "prev"-pointer for the double linked list
@@ -277,6 +280,7 @@ public:
 	void drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 255);
 
+	bool isUnitLoaded() const { return Loaded; }
 	/**
 	* return the unit which contains this vehicle
 	*/
@@ -311,7 +315,6 @@ private:
 protected:
 	//-- methods, that have been extracted during cUnit refactoring ---------------
 
-	virtual bool isUnitLoaded() const { return Loaded; }
 	virtual bool isUnitMoving() const { return moving; }
 	virtual bool isAutoMoveJobActive() const { return autoMJob != 0; }
 	virtual bool isUnitClearing() const { return IsClearing; }
@@ -325,7 +328,7 @@ protected:
 	virtual void executeStopCommand (const cClient& client);
 	virtual void executeActivateStoredVehiclesCommand (cClient& client);
 
-	virtual sUnitData* getUpgradedUnitData() const;
+	virtual const sUnitData* getUpgradedUnitData() const;
 };
 
 #endif

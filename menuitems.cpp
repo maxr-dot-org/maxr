@@ -1258,7 +1258,7 @@ void cMenuUnitListItem::init()
 
 	if (unitID.getVehicle())
 	{
-		cVehicle vehicle (unitID.getVehicle(), owner, 0);
+		cVehicle vehicle (*unitID.getVehicle(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / 64.0f;
 		vehicle.render_simple (surface, dest, zoomFactor);
 		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
@@ -1914,7 +1914,7 @@ void cMenuUnitDetails::draw()
 	const sUnitData* data = &unit->data;
 	const cPlayer* activePlayer = client->getActivePlayer();
 	const cPlayer* unitOwner = unit->owner;
-	const cBuilding* building = unit->isBuilding() ? static_cast<cBuilding*> (unit) : NULL;
+	const cBuilding* building = unit->isABuilding() ? static_cast<cBuilding*> (unit) : NULL;
 
 	// Die Hitpoints anzeigen:
 	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax);
@@ -3732,7 +3732,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						}
 						else if (unitID.getVehicle())
 						{
-							cVehicle vehicle (unitID.getVehicle(), client->getActivePlayer(), 0);
+							cVehicle vehicle (*unitID.getVehicle(), client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&vehicle);
 						}
 						else
@@ -3941,7 +3941,7 @@ void cMenuReportsScreen::drawReportsScreen()
 				AutoSurface surface;
 				if (savedReport.unitID.getVehicle())
 				{
-					cVehicle vehicle (savedReport.unitID.getVehicle(), client->getActivePlayer(), 0);
+					cVehicle vehicle (*savedReport.unitID.getVehicle(), client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&vehicle);
 				}
 				else if (savedReport.unitID.getBuilding())
@@ -4019,7 +4019,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 		if (draw)
 		{
 			{
-				cVehicle vehicle (nextVehicle->typ, nextVehicle->owner, 0);
+				cVehicle vehicle (*nextVehicle->typ, nextVehicle->owner, 0);
 				AutoSurface surface (generateUnitSurface (&vehicle));
 				SDL_BlitSurface (surface, NULL, buffer, &dest);
 			}
@@ -4143,7 +4143,7 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
 	//SDL_FillRect (surface, NULL, 0xFF00FF);
 
-	if (unit->isBuilding())
+	if (unit->isABuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
 		building->render (&client->getGameGUI(), surface, dest, zoomFactor, false, false);

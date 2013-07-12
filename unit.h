@@ -36,25 +36,29 @@ class cVehicle;
 class cUnit
 {
 public:
-	enum UnitType
-	{
-		kUTBuilding,
-		kUTVehicle
-	};
-
-	cUnit (UnitType type, const sUnitData* unitData, cPlayer* owner, unsigned int ID);
+	cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID);
 	virtual ~cUnit();
 
-	bool isVehicle() const { return unitType == kUTVehicle; }
-	bool isBuilding() const { return unitType == kUTBuilding; }
+	virtual bool isAVehicle() const = 0;
+	virtual bool isABuilding() const = 0;
+	virtual void executeAutoMoveJobCommand (cClient& client) {}
+	virtual void executeLayMinesCommand (const cClient& client) {}
+	virtual void executeClearMinesCommand (const cClient& client) {}
+	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const = 0;
+	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
+
+	virtual int getMovementOffsetX() const {return 0;}
+	virtual int getMovementOffsetY() const {return 0;}
+
+	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
 	int calcHealth (int damage) const;
 	bool isInRange (int x, int y) const;
-	bool isNextTo (int x, int y) const;  ///< checks whether the coordinates are next to the unit
+	/// checks whether the coordinates are next to the unit
+	bool isNextTo (int x, int y) const;
 
 	const std::string& getName() const { return name; }
 	bool isNameOriginal() const { return isOriginalName; }
-
 	std::string getNamePrefix() const;
 	std::string getDisplayName() const;
 	void changeName (const std::string& newName);
@@ -66,73 +70,34 @@ public:
 	void setMenuSelection (cGameGUI& gameGUI);
 	void drawMenu (cGameGUI& gameGUI);
 	void menuReleased (cGameGUI& gameGUI);
-	virtual void executeAutoMoveJobCommand (cClient& client) {}
-	virtual void executeLayMinesCommand (const cClient& client) {}
-	virtual void executeClearMinesCommand (const cClient& client) {}
-
 	int getScreenPosX (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	int getScreenPosY (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	void center (cGameGUI& gameGUI) const;
-	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const = 0;
-	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
-
-	virtual int getMovementOffsetX() const {return 0;}
-	virtual int getMovementOffsetY() const {return 0;}
-
 	void drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
 	void drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
+
 	void rotateTo (int newDir);
 
-	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
-
 	/** checks if the unit can attack something at the offset
-	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
-	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
+	 *  when forceAttack is false, the function only returns true,
+	 *  if there is an enemy unit
+	 *  ATTENTION: must not be called with forceAttack == false
+	 *             from the server thread!
 	 */
 	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack = false, bool checkRange = true) const;
 
-	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
+	/** Upgrades the unit data of this unit to the current,
+	 * upgraded version of the player.
+	 */
+	void upgradeToCurrentVersion();
 
 	void deleteStoredUnits();
 
-
-	//------------------------------- public members: TODO: make protected and make getters/setters
-
-	sUnitData data; ///< basic data of the unit
-	const unsigned int iID; ///< the identification number of this unit
-	int PosX, PosY;
-	int dir; // ?Frame of the unit/current direction the unit is facing?
-	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
-	bool sentryActive; ///< is the unit on sentry?
-	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
-	bool attacking;  ///< is the unit currently attacking?
-	bool isBeeingAttacked; ///< true when an attack on this unit is running
-	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
-	bool hasBeenAttacked; //the unit was attacked in this turn
-
-	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
-	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
-
-	int selectedMenuButtonIndex;
-
-	cPlayer* owner;
-	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit
-	std::vector<cPlayer*> detectedByPlayerList; ///< a list of all players who have detected this unit
-
-	cJob* job;	//little jobs, running on the vehicle. e. g. rotating to a spezific direction
-
-	cPlayer* lockerPlayer; // back pointer to (client) player which lock this unit
-	//-----------------------------------------------------------------------------
 protected:
-	UnitType unitType;
-
-	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	std::string name;		// name of the building
-
 	void drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
 	int getNumberOfMenuEntries (const cClient& client) const;
 
-	virtual bool isUnitLoaded() const { return false; }
+protected:
 	virtual bool isUnitMoving() const { return false; }
 	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }
@@ -152,7 +117,40 @@ protected:
 	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) {}
 	virtual void executeSelfDestroyCommand (cClient& client) {}
 
-	virtual sUnitData* getUpgradedUnitData() const = 0;
+	virtual const sUnitData* getUpgradedUnitData() const = 0;
+
+public: // TODO: make protected/private and make getters/setters
+	sUnitData data; ///< basic data of the unit
+	const unsigned int iID; ///< the identification number of this unit
+	int PosX;
+	int PosY;
+	int dir; // ?Frame of the unit/current direction the unit is facing?
+	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
+	bool sentryActive; ///< is the unit on sentry?
+	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
+	bool attacking;  ///< is the unit currently attacking?
+	bool isBeeingAttacked; ///< true when an attack on this unit is running
+	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
+	bool hasBeenAttacked; //the unit was attacked in this turn
+
+	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
+	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
+
+	int selectedMenuButtonIndex;
+
+	cPlayer* owner;
+	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit
+	std::vector<cPlayer*> detectedByPlayerList; ///< a list of all players who have detected this unit
+
+	// little jobs, running on the vehicle.
+	// e.g. rotating to a specific direction
+	cJob* job;
+
+	cPlayer* lockerPlayer; // back pointer to (client) player which lock this unit
+	//-----------------------------------------------------------------------------
+protected:
+	bool isOriginalName; // indicates whether the name has been changed by the player or not
+	std::string name;    // name of the building
 };
 
 //

@@ -2388,7 +2388,7 @@ cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContaine
 	infoLabelConst = new cMenuLabel (position.x + 180 + (position.w - 180) / 2 - (Video.getResolutionX() - 200) / 2, position.y + (font->getFontHeight (FONT_LATIN_BIG)) * 3/2, "", FONT_LATIN_BIG);
 	infoLabelConst->setBox ( (Video.getResolutionX() - 200), font->getFontHeight (FONT_LATIN_BIG) * 2);
 	menuItems.push_back (infoLabelConst);
-	
+
 	infoLabelConst->setText (lngPack.i18n ("Text~Comp~Landing_Select"));
 	PlayRandomVoice (VoiceData.VOILanding);
 }
@@ -4684,7 +4684,7 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 	voiceTypeAll (false),
 	voicePlayed (false)
 {
-	if (unit.isVehicle()) ownerVehicle = static_cast<cVehicle*> (&unit);
+	if (unit.isAVehicle()) ownerVehicle = static_cast<cVehicle*> (&unit);
 	else ownerBuilding = static_cast<cBuilding*> (&unit);
 	unitData = unit.data;
 	if (ownerBuilding)
@@ -5325,7 +5325,7 @@ void cMineManagerMenu::barReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMineManagerMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
-	if (destroyedUnit.isVehicle()) return;
+	if (destroyedUnit.isAVehicle()) return;
 	cBuilding& destroyedBuilding = static_cast<cBuilding&>(destroyedUnit);
 	if (destroyedBuilding.SubBase == building->SubBase) terminate = true;
 }
@@ -5452,7 +5452,7 @@ void cReportsMenu::doubleClicked (cUnit* unit)
 	if (!unit) return;
 
 	end = true;
-	cVehicle* vehicle = unit->isVehicle() ? static_cast<cVehicle*>(unit) : NULL;
+	cVehicle* vehicle = unit->isAVehicle() ? static_cast<cVehicle*>(unit) : NULL;
 	if (vehicle && vehicle->Loaded)
 	{
 		// find storing unit

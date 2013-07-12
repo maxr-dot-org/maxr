@@ -37,7 +37,7 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsigned int ID)
+cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
 	, PosX (0)
 	, PosY (0)
@@ -54,13 +54,10 @@ cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsi
 	, owner (owner)
 	, job (NULL)
 	, lockerPlayer (NULL)
-	, unitType (unitType)
 	, isOriginalName (true)
 {
 	if (unitData != 0)
 		data = *unitData;
-
-	sentryActive = (isBuilding() && data.canAttack != TERRAIN_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -80,19 +77,11 @@ int cUnit::calcHealth (int damage) const
 {
 	damage -= data.armor;
 
-	if (damage <= 0)
-	{
-		//minimum damage is 1
-		damage = 1;
-	}
+	// minimum damage is 1
+	damage = std::max (1, damage);
 
-	int hp;
-	hp = data.hitpointsCur - damage;
-
-	if (hp < 0)
-		return 0;
-
-	return hp;
+	const int hp = data.hitpointsCur - damage;
+	return std::max (0, hp);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +111,6 @@ bool cUnit::isNextTo (int x, int y) const
 		if (x - 1 > PosX || y - 1 > PosY)
 			return false;
 	}
-
 	return true;
 }
 
@@ -131,15 +119,15 @@ bool cUnit::isNextTo (int x, int y) const
 //------------------------------------------------------------------------------
 string cUnit::getNamePrefix() const
 {
-	int tmp;
 	string rome = "";
-	int nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
+	// +1, because the numbers in the name start at 1, not at 0
+	int nr = data.version + 1;
 
 	// generate the roman versionnumber (correct until 899)
 
 	if (nr > 100)
 	{
-		tmp = nr / 100;
+		int tmp = nr / 100;
 		nr %= 100;
 
 		while (tmp--)
@@ -166,7 +154,7 @@ string cUnit::getNamePrefix() const
 
 	if (nr >= 10)
 	{
-		tmp = nr / 10;
+		int tmp = nr / 10;
 		nr %= 10;
 
 		while (tmp--)
@@ -192,8 +180,10 @@ string cUnit::getNamePrefix() const
 	}
 
 	// alzi:
-	// We had a bug, when 'nr' was negative and the following loop never terminated.
-	// I modified the loop to terminate on a negative 'nr', but since this should never be the case,
+	// We had a bug, when 'nr' was negative and
+	// the following loop never terminated.
+	// I modified the loop to terminate on a negative 'nr',
+	// but since this should never be the case,
 	// the error has to be occured somewhere before and I added this warning.
 	if (nr < 0)
 	{
@@ -266,14 +256,12 @@ SDL_Rect cUnit::getMenuSize (const cGameGUI& gameGUI) const
 //------------------------------------------------------------------------------
 bool cUnit::areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const
 {
-	SDL_Rect r = getMenuSize (gameGUI);
+	const SDL_Rect r = getMenuSize (gameGUI);
 
 	if (x < r.x || x > r.x + r.w)
 		return false;
-
 	if (y < r.y || y > r.y + r.h)
 		return false;
-
 	return true;
 }
 
@@ -295,43 +283,43 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 	{
 		// Attack
 		if (data.canAttack && data.shotsCur)
-			result++;
+			++result;
 
 		// Build
 		if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false)
-			result++;
+			++result;
 
 		// Distribute
 		if (data.canMineMaxRes > 0 && isUnitWorking())
-			result++;
+			++result;
 
 		// Transfer
 		if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false)
-			result++;
+			++result;
 
 		// Start
 		if (data.canWork && buildingCanBeStarted())
-			result++;
+			++result;
 
 		// Auto survey
 		if (data.canSurvey)
-			result++;
+			++result;
 
 		// Stop
 		if (canBeStoppedViaUnitMenu())
-			result++;
+			++result;
 
 		// Remove
 		if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false)
-			result++;
+			++result;
 
 		// Manual Fire
 		if (manualFireActive || data.canAttack)
-			result++;
+			++result;
 
 		// Sentry
-		if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
-			result++;
+		if ( (sentryActive || data.canAttack || (!isABuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+			++result;
 
 		// Activate / Load
 		if (data.storageUnitsMax > 0)
@@ -339,11 +327,11 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 
 		// Research
 		if (data.canResearch && isUnitWorking())
-			result++;
+			++result;
 
 		// Gold upgrades screen
 		if (data.convertsGold)
-			result++;
+			++result;
 
 		// Update building(s)
 		if (buildingCanBeUpgraded())
@@ -351,42 +339,38 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 
 		// Self destruct
 		if (data.canSelfDestroy)
-			result++;
+			++result;
 
 		// Ammo
 		if (data.canRearm && data.storageResCur >= 1)
-			result++;
+			++result;
 
 		// Repair
 		if (data.canRepair && data.storageResCur >= 1)
-			result++;
+			++result;
 
 		// Lay Mines
 		if (data.canPlaceMines && data.storageResCur > 0)
-			result++;
+			++result;
 
 		// Clear Mines
 		if (data.canPlaceMines && data.storageResCur < data.storageResMax)
-			result++;
+			++result;
 
 		// Sabotage/disable
 		if (data.canCapture && data.shotsCur)
-			result++;
+			++result;
 
 		// Steal
 		if (data.canDisable && data.shotsCur)
-			result++;
+			++result;
 	}
 	return result;
-
 }
 
 //------------------------------------------------------------------------------
 void cUnit::drawMenu (cGameGUI& gameGUI)
 {
-	int nr = 0;
-	SDL_Rect dest = getMenuSize (gameGUI);
-
 	if (isBeeingAttacked)
 		return;
 	if (isUnitMoving())
@@ -401,8 +385,10 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	if (factoryHasJustFinishedBuilding())
 		return;
 
+	SDL_Rect dest = getMenuSize (gameGUI);
 	bool markerPossible = (areCoordsOverMenu (gameGUI, mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
 	const cClient& client = *gameGUI.getClient();
+	int nr = 0;
 
 	if (turnsDisabled < 1)
 	{
@@ -412,7 +398,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Build:
@@ -421,7 +407,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Distribute:
@@ -430,7 +416,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Transfer:
@@ -439,7 +425,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Start:
@@ -448,7 +434,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Auto survey movejob of surveyor
@@ -457,7 +443,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isAutoMoveJobActive();
 			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Stop:
@@ -466,7 +452,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Remove:
@@ -475,7 +461,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Manual fire
@@ -484,16 +470,16 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || manualFireActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Sentry status:
-		if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+		if ( (sentryActive || data.canAttack || (!isABuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || sentryActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Activate / Load:
@@ -503,13 +489,13 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 
 			// Load:
 			isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// research
@@ -518,7 +504,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// gold upgrades screen
@@ -527,7 +513,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Updates:
@@ -537,13 +523,13 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 
 			// update this building
 			isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Self destruct
@@ -552,7 +538,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Ammo:
@@ -561,7 +547,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Repair:
@@ -570,7 +556,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Lay mines:
@@ -579,7 +565,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitLayingMines();
 			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Collect/clear mines:
@@ -588,7 +574,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitClearingMines();
 			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Sabotage/disable:
@@ -597,7 +583,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 		// Steal:
@@ -606,19 +592,19 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
 			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
 			dest.y += 22;
-			nr++;
+			++nr;
 		}
 
 	}
-		// Info:
-		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
+	// Info:
+	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
+	dest.y += 22;
+	++nr;
 
-		// Done:
-		isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
+	// Done:
+	isMarked = markerPossible && selectedMenuButtonIndex == nr;
+	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
 }
 
 //------------------------------------------------------------------------------
@@ -643,7 +629,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	int nr = 0;
 	cClient& client = *gameGUI.getClient();
 
-	//no menu if something disabled - origina behavior -- nonsinn
+	// no menu if something disabled - origina behavior -- nonsinn
 	if (turnsDisabled < 1)
 	{
 		// attack:
@@ -656,7 +642,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (mouseInputAttackMode);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// Build:
@@ -669,7 +655,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeBuildCommand (gameGUI);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// distribute:
@@ -682,7 +668,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeMineManagerCommand (*gameGUI.getClient());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// transfer:
@@ -695,7 +681,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (transferMode);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// Start:
@@ -708,7 +694,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				sendWantStartWork (client, *this);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// auto
@@ -721,7 +707,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeAutoMoveJobCommand (client);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// stop:
@@ -734,7 +720,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeStopCommand (*gameGUI.getClient());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// remove:
@@ -742,13 +728,13 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
-				assert (this->isVehicle());
+				assert (this->isAVehicle());
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
 				sendWantStartClear (client, static_cast<cVehicle&> (*this));
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// manual Fire:
@@ -758,23 +744,23 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			{
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				sendChangeManualFireStatus (client, iID, isVehicle());
+				sendChangeManualFireStatus (client, iID, isAVehicle());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// sentry:
-		if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+		if ( (sentryActive || data.canAttack || (!isABuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
 		{
 			if (exeNr == nr)
 			{
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				sendChangeSentry (client, iID, isVehicle());
+				sendChangeSentry (client, iID, isAVehicle());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// activate/load:
@@ -788,7 +774,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeActivateStoredVehiclesCommand (*gameGUI.getClient());
 				return;
 			}
-			nr++;
+			++nr;
 
 			// load:
 			if (exeNr == nr)
@@ -798,7 +784,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (loadMode);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// research
@@ -812,7 +798,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				researchDialog.show (&client);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// gold upgrades screen
@@ -826,7 +812,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				upgradeMenu.show (&client);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// Updates:
@@ -840,7 +826,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeUpdateBuildingCommmand (*gameGUI.getClient(), true);
 				return;
 			}
-			nr++;
+			++nr;
 
 			// update this building
 			if (exeNr == nr)
@@ -850,7 +836,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeUpdateBuildingCommmand (*gameGUI.getClient(), false);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// Self destruct
@@ -863,7 +849,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeSelfDestroyCommand (*gameGUI.getClient());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// rearm:
@@ -876,7 +862,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (muniActive);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// repair:
@@ -889,7 +875,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (repairActive);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// lay mines:
@@ -902,7 +888,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeLayMinesCommand (*gameGUI.getClient());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// clear mines:
@@ -915,7 +901,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				executeClearMinesCommand (*gameGUI.getClient());
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// disable:
@@ -928,7 +914,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (disableMode);
 				return;
 			}
-			nr++;
+			++nr;
 		}
 
 		// steal:
@@ -941,35 +927,33 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 				gameGUI.toggleMouseInputMode (stealMode);
 				return;
 			}
-			nr++;
+			++nr;
 		}
-
 	}
-		// help/info:
-		if (exeNr == nr)
-		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cUnitHelpMenu helpMenu (&data, owner);
-			helpMenu.show (gameGUI.getClient());
-			return;
-		}
-		nr++;
+	// help/info:
+	if (exeNr == nr)
+	{
+		gameGUI.unitMenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		cUnitHelpMenu helpMenu (&data, owner);
+		helpMenu.show (gameGUI.getClient());
+		return;
+	}
+	++nr;
 
-		// done:
-		if (exeNr == nr)
+	// done:
+	if (exeNr == nr)
+	{
+		gameGUI.unitMenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		if (owner == client.getActivePlayer())
 		{
-			gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			if (owner == client.getActivePlayer())
-			{
-				isMarkedAsDone = true;
-				sendMoveJobResume (client, iID);
-			}
-			return;
+			isMarkedAsDone = true;
+			sendMoveJobResume (client, iID);
 		}
+		return;
+	}
 }
-
 
 //------------------------------------------------------------------------------
 /** Returns the screen x position of the unit */
@@ -1007,11 +991,11 @@ void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 	if (owner != gameGUI.getClient()->getActivePlayer())
 		return;
 
-	SDL_Rect r1, r2;
+	SDL_Rect r1;
 	r1.x = screenPos.x + gameGUI.getTileSize() / 10 + 1;
+	r1.y = screenPos.y + gameGUI.getTileSize() / 10 + gameGUI.getTileSize() / 8;
 	r1.w = gameGUI.getTileSize() * 8 / 10;
 	r1.h = gameGUI.getTileSize() / 8;
-	r1.y = screenPos.y + gameGUI.getTileSize() / 10 + gameGUI.getTileSize() / 8;
 
 	if (r1.h <= 2)
 	{
@@ -1019,19 +1003,20 @@ void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 		r1.h = 3;
 	}
 
+	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.h = r1.h - 2;
 	r2.w = (int) ( ( (float) (r1.w - 2) / data.ammoMax) * data.ammoCur);
+	r2.h = r1.h - 2;
 
 	SDL_FillRect (buffer, &r1, 0);
 
 	if (data.ammoCur > data.ammoMax / 2)
-		SDL_FillRect (buffer, &r2, 0x04AE04);
+		SDL_FillRect (buffer, &r2, 0x0004AE04);
 	else if (data.ammoCur > data.ammoMax / 4)
-		SDL_FillRect (buffer, &r2, 0xDBDE00);
+		SDL_FillRect (buffer, &r2, 0x00DBDE00);
 	else
-		SDL_FillRect (buffer, &r2, 0xE60000);
+		SDL_FillRect (buffer, &r2, 0x00E60000);
 }
 
 //------------------------------------------------------------------------------
@@ -1039,11 +1024,11 @@ void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 //------------------------------------------------------------------------------
 void cUnit::drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
-	SDL_Rect r1, r2;
+	SDL_Rect r1;
 	r1.x = screenPos.x + gameGUI.getTileSize() / 10 + 1;
+	r1.y = screenPos.y + gameGUI.getTileSize() / 10;
 	r1.w = gameGUI.getTileSize() * 8 / 10;
 	r1.h = gameGUI.getTileSize() / 8;
-	r1.y = screenPos.y + gameGUI.getTileSize() / 10;
 
 	if (data.isBig)
 	{
@@ -1054,28 +1039,29 @@ void cUnit::drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) c
 	if (r1.h <= 2)
 		r1.h = 3;
 
+	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.h = r1.h - 2;
 	r2.w = (int) ( ( (float) (r1.w - 2) / data.hitpointsMax) * data.hitpointsCur);
+	r2.h = r1.h - 2;
 
 	SDL_FillRect (buffer, &r1, 0);
 
 	if (data.hitpointsCur > data.hitpointsMax / 2)
-		SDL_FillRect (buffer, &r2, 0x04AE04);
+		SDL_FillRect (buffer, &r2, 0x0004AE04);
 	else if (data.hitpointsCur > data.hitpointsMax / 4)
-		SDL_FillRect (buffer, &r2, 0xDBDE00);
+		SDL_FillRect (buffer, &r2, 0x00DBDE00);
 	else
-		SDL_FillRect (buffer, &r2, 0xE60000);
+		SDL_FillRect (buffer, &r2, 0x00E60000);
 }
 
 //------------------------------------------------------------------------------
 void cUnit::drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
-	SDL_Rect dest;
 	SDL_Rect speedSymbol = {244, 97, 8, 10};
 	SDL_Rect shotsSymbol = {254, 97, 5, 10};
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
+	SDL_Rect dest;
 
 	if (turnsDisabled > 0)
 	{
@@ -1124,23 +1110,23 @@ void cUnit::rotateTo (int newDir)
 	int t = dir;
 	int dest = 0;
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; ++i)
 	{
 		if (t == newDir)
 		{
 			dest = i;
 			break;
 		}
-		t++;
+		++t;
 
 		if (t > 7)
 			t = 0;
 	}
 
 	if (dest < 4)
-		dir++;
+		++dir;
 	else
-		dir--;
+		--dir;
 
 	if (dir < 0)
 		dir += 8;
@@ -1151,30 +1137,27 @@ void cUnit::rotateTo (int newDir)
 	}
 }
 
-
-
 //------------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //------------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange) const
 {
-	int off = map->getOffset (x, y);
-
-	if (isUnitLoaded()) return false;
 	if (data.canAttack == false) return false;
 	if (data.shotsCur <= 0) return false;
 	if (data.ammoCur <= 0) return false;
 	if (attacking) return false;
 	if (isBeeingAttacked) return false;
-	if (off < 0) return false;
+	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
+	if (map->isValidPos (x, y) == false) return false;
 	if (checkRange && isInRange (x, y) == false) return false;
+	const int off = map->getOffset (x, y);
 
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWaterOrCoast (x, y) == false)
 		return false;
 
-	cUnit* target = selectTarget (x, y, data.canAttack, map);
+	const cUnit* target = selectTarget (x, y, data.canAttack, map);
 
-	if (target && target->iID == iID)   //a unit cannot fire on itself
+	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;
 
 	if (owner->ScanMap[off] == false && !forceAttack)
@@ -1186,8 +1169,10 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (target == NULL)
 		return false;
 
-	if (target->isBuilding() && isVehicle() && data.factorAir == 0 && map->possiblePlace (*static_cast<const cVehicle*> (this), x, y))     //do not fire on e.g. platforms, connectors etc.
-		return false;                                                                                                                      //see ticket #436 on bug tracker
+	// do not fire on e.g. platforms, connectors etc.
+	// see ticket #436 on bug tracker
+	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map->possiblePlace (*static_cast<const cVehicle*> (this), x, y))
+		return false;
 
 	if (target->owner == owner)
 		return false;
@@ -1198,23 +1183,26 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 //------------------------------------------------------------------------------
 void cUnit::upgradeToCurrentVersion()
 {
-	sUnitData* upgradeVersion = getUpgradedUnitData();
+	const sUnitData* upgradeVersion = getUpgradedUnitData();
 	if (upgradeVersion == NULL) return;
 
 	data.version = upgradeVersion->version;
 
+	// TODO: check behaviour in original
 	if (data.hitpointsCur == data.hitpointsMax)
-		data.hitpointsCur = upgradeVersion->hitpointsMax; // TODO: check behaviour in original
+		data.hitpointsCur = upgradeVersion->hitpointsMax;
 	data.hitpointsMax = upgradeVersion->hitpointsMax;
 
-	data.ammoMax = upgradeVersion->ammoMax; // don't change the current ammo-amount!
+	// don't change the current ammo-amount!
+	data.ammoMax = upgradeVersion->ammoMax;
 
 	data.speedMax = upgradeVersion->speedMax;
 
 	data.armor = upgradeVersion->armor;
 	data.scan = upgradeVersion->scan;
 	data.range = upgradeVersion->range;
-	data.shotsMax = upgradeVersion->shotsMax; // TODO: check behaviour in original
+	// TODO: check behaviour in original
+	data.shotsMax = upgradeVersion->shotsMax;
 	data.damage = upgradeVersion->damage;
 	data.buildCosts = upgradeVersion->buildCosts;
 }

@@ -50,13 +50,14 @@ using namespace std;
 
 //--------------------------------------------------------------------------
 cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID) :
-	cUnit (cUnit::kUTBuilding,
-		   ( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
+	cUnit ( (Owner != 0 && b != 0) ? &Owner->BuildingData[b->nr] : 0,
 		   Owner,
 		   ID),
 	next (0),
 	prev (0)
 {
+	sentryActive = data.canAttack != TERRAIN_NONE;
+
 	RubbleTyp = 0;
 	RubbleValue = 0;
 	EffectAlpha = 0;
@@ -224,19 +225,13 @@ int cBuilding::refreshData()
 {
 	if (turnsDisabled > 0)
 	{
-		if (data.ammoCur >= data.shotsMax)
-			lastShots = data.shotsMax;
-		else
-			lastShots = data.ammoCur;
+		lastShots = std::min(this->data.shotsMax, this->data.ammoCur);
 		return 1;
 	}
 
 	if (data.shotsCur < data.shotsMax)
 	{
-		if (data.ammoCur >= data.shotsMax)
-			data.shotsCur = data.shotsMax;
-		else
-			data.shotsCur = data.ammoCur;
+		data.shotsCur = std::min (this->data.shotsMax, this->data.ammoCur);
 		return 1;
 	}
 	return 0;
@@ -1672,9 +1667,9 @@ void sBuilding::scaleSurfaces (float factor)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-sUnitData* cBuilding::getUpgradedUnitData() const
+const sUnitData* cBuilding::getUpgradedUnitData() const
 {
-	return & (owner->BuildingData[typ->nr]);
+	return &owner->BuildingData[typ->nr];
 }
 
 //-----------------------------------------------------------------------------
