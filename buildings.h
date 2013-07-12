@@ -220,6 +220,9 @@ public:
 	void render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete);
 	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 255);
 
+	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
+	void executeSelfDestroyCommand (cClient& client);
+	void executeMineManagerCommand (cClient& client);
 private:
 	/**
 	* draws the connectors onto the given surface
@@ -240,11 +243,8 @@ protected:
 
 	// methods needed for execution of unit menu commands
 	virtual void executeBuildCommand (cGameGUI& gameGUI);
-	virtual void executeMineManagerCommand (cClient& client);
 	virtual void executeStopCommand (const cClient& client);
 	virtual void executeActivateStoredVehiclesCommand (cClient& client);
-	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
-	virtual void executeSelfDestroyCommand (cClient& client);
 
 	virtual const sUnitData* getUpgradedUnitData() const;
 };

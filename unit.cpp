@@ -99,16 +99,10 @@ bool cUnit::isNextTo (int x, int y) const
 	if (x + 1 < PosX || y + 1 < PosY)
 		return false;
 
-	if (data.isBig)
-	{
-		if (x - 2 > PosX || y - 2 > PosY)
-			return false;
-	}
-	else
-	{
-		if (x - 1 > PosX || y - 1 > PosY)
-			return false;
-	}
+	const int size = data.isBig ? 2 : 1;
+
+	if (x - size > PosX || y - size > PosY)
+		return false;
 	return true;
 }
 
@@ -277,92 +271,92 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 
 	if (owner != client.getActivePlayer())
 		return result;
-	if (isDisabled() == false)
-	{
-		// Attack
-		if (data.canAttack && data.shotsCur)
-			++result;
+	if (isDisabled()) return result;
 
-		// Build
-		if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false)
-			++result;
+	// Attack
+	if (data.canAttack && data.shotsCur)
+		++result;
 
-		// Distribute
-		if (data.canMineMaxRes > 0 && isUnitWorking())
-			++result;
+	// Build
+	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false)
+		++result;
 
-		// Transfer
-		if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false)
-			++result;
+	// Distribute
+	if (data.canMineMaxRes > 0 && isUnitWorking())
+		++result;
 
-		// Start
-		if (data.canWork && buildingCanBeStarted())
-			++result;
+	// Transfer
+	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false)
+		++result;
 
-		// Auto survey
-		if (data.canSurvey)
-			++result;
+	// Start
+	if (data.canWork && buildingCanBeStarted())
+		++result;
 
-		// Stop
-		if (canBeStoppedViaUnitMenu())
-			++result;
+	// Auto survey
+	if (data.canSurvey)
+		++result;
 
-		// Remove
-		if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false)
-			++result;
+	// Stop
+	if (canBeStoppedViaUnitMenu())
+		++result;
 
-		// Manual Fire
-		if (manualFireActive || data.canAttack)
-			++result;
+	// Remove
+	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false)
+		++result;
 
-		// Sentry
-		if ( (sentryActive || data.canAttack || (!isABuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
-			++result;
+	// Manual Fire
+	if (manualFireActive || data.canAttack)
+		++result;
 
-		// Activate / Load
-		if (data.storageUnitsMax > 0)
-			result += 2;
+	// Sentry
+	if ( (sentryActive || data.canAttack || (!isABuilding() && !canBeStoppedViaUnitMenu())) && owner == client.getActivePlayer())
+		++result;
 
-		// Research
-		if (data.canResearch && isUnitWorking())
-			++result;
+	// Activate / Load
+	if (data.storageUnitsMax > 0)
+		result += 2;
 
-		// Gold upgrades screen
-		if (data.convertsGold)
-			++result;
+	// Research
+	if (data.canResearch && isUnitWorking())
+		++result;
 
-		// Update building(s)
-		if (buildingCanBeUpgraded())
-			result += 2;
+	// Gold upgrades screen
+	if (data.convertsGold)
+		++result;
 
-		// Self destruct
-		if (data.canSelfDestroy)
-			++result;
+	// Update building(s)
+	if (buildingCanBeUpgraded())
+		result += 2;
 
-		// Ammo
-		if (data.canRearm && data.storageResCur >= 1)
-			++result;
+	// Self destruct
+	if (data.canSelfDestroy)
+		++result;
 
-		// Repair
-		if (data.canRepair && data.storageResCur >= 1)
-			++result;
+	// Ammo
+	if (data.canRearm && data.storageResCur >= 1)
+		++result;
 
-		// Lay Mines
-		if (data.canPlaceMines && data.storageResCur > 0)
-			++result;
+	// Repair
+	if (data.canRepair && data.storageResCur >= 1)
+		++result;
 
-		// Clear Mines
-		if (data.canPlaceMines && data.storageResCur < data.storageResMax)
-			++result;
+	// Lay Mines
+	if (data.canPlaceMines && data.storageResCur > 0)
+		++result;
 
-		// Sabotage/disable
-		if (data.canCapture && data.shotsCur)
-			++result;
+	// Clear Mines
+	if (data.canPlaceMines && data.storageResCur < data.storageResMax)
+		++result;
 
-		// Steal
-		if (data.canDisable && data.shotsCur)
-			++result;
-	}
+	// Sabotage/disable
+	if (data.canCapture && data.shotsCur)
+		++result;
+
+	// Steal
+	if (data.canDisable && data.shotsCur)
+		++result;
+
 	return result;
 }
 
@@ -661,9 +655,10 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
+				cBuilding* building = static_cast<cBuilding*> (this);
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeMineManagerCommand (*gameGUI.getClient());
+				building->executeMineManagerCommand (client);
 				return;
 			}
 			++nr;
@@ -700,9 +695,10 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
+				cVehicle* vehicle = static_cast<cVehicle*>(this);
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeAutoMoveJobCommand (client);
+				vehicle->executeAutoMoveJobCommand (client);
 				return;
 			}
 			++nr;
@@ -715,7 +711,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			{
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeStopCommand (*gameGUI.getClient());
+				executeStopCommand (client);
 				return;
 			}
 			++nr;
@@ -769,7 +765,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			{
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeActivateStoredVehiclesCommand (*gameGUI.getClient());
+				executeActivateStoredVehiclesCommand (client);
 				return;
 			}
 			++nr;
@@ -819,9 +815,11 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			// Update all buildings of this type in this subbase
 			if (exeNr == nr)
 			{
+				cBuilding* building = static_cast<cBuilding*> (this);
+
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeUpdateBuildingCommmand (*gameGUI.getClient(), true);
+				building->executeUpdateBuildingCommmand (client, true);
 				return;
 			}
 			++nr;
@@ -829,9 +827,11 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			// update this building
 			if (exeNr == nr)
 			{
+				cBuilding* building = static_cast<cBuilding*> (this);
+
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeUpdateBuildingCommmand (*gameGUI.getClient(), false);
+				building->executeUpdateBuildingCommmand (client, false);
 				return;
 			}
 			++nr;
@@ -842,9 +842,11 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
+				cBuilding* building = static_cast<cBuilding*> (this);
+
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeSelfDestroyCommand (*gameGUI.getClient());
+				building->executeSelfDestroyCommand (client);
 				return;
 			}
 			++nr;
@@ -881,9 +883,10 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
+				cVehicle* vehicle = static_cast<cVehicle*> (this);
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeLayMinesCommand (*gameGUI.getClient());
+				vehicle->executeLayMinesCommand (client);
 				return;
 			}
 			++nr;
@@ -894,9 +897,10 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
+				cVehicle* vehicle = static_cast<cVehicle*> (this);
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				executeClearMinesCommand (*gameGUI.getClient());
+				vehicle->executeClearMinesCommand (client);
 				return;
 			}
 			++nr;
@@ -934,7 +938,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
 		cUnitHelpMenu helpMenu (&data, owner);
-		helpMenu.show (gameGUI.getClient());
+		helpMenu.show (&client);
 		return;
 	}
 	++nr;

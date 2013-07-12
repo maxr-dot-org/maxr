@@ -41,9 +41,7 @@ public:
 
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
-	virtual void executeAutoMoveJobCommand (cClient& client) {}
-	virtual void executeLayMinesCommand (const cClient& client) {}
-	virtual void executeClearMinesCommand (const cClient& client) {}
+
 	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const = 0;
 	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
 
@@ -109,14 +107,11 @@ protected:
 	virtual bool factoryHasJustFinishedBuilding() const { return false; }
 	virtual bool buildingCanBeStarted() const { return false; }
 	virtual bool buildingCanBeUpgraded() const { return false; }
-	virtual bool canBeStoppedViaUnitMenu() const { return false; }
+	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
 	virtual void executeBuildCommand (cGameGUI&) = 0;
-	virtual void executeMineManagerCommand (cClient& client) {}
 	virtual void executeStopCommand (const cClient& client) = 0;
 	virtual void executeActivateStoredVehiclesCommand (cClient& client) = 0;
-	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) {}
-	virtual void executeSelfDestroyCommand (cClient& client) {}
 
 	virtual const sUnitData* getUpgradedUnitData() const = 0;
 

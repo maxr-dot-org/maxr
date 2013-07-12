@@ -256,10 +256,9 @@ public:
 
 	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
-	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
-	virtual void executeAutoMoveJobCommand (cClient& client);
-	virtual void executeLayMinesCommand (const cClient& client);
-	virtual void executeClearMinesCommand (const cClient& client);
+	void executeAutoMoveJobCommand (cClient& client);
+	void executeLayMinesCommand (const cClient& client);
+	void executeClearMinesCommand (const cClient& client);
 
 	/**
 	* Is this a plane and is there a landing platform beneath it, that can be used to land on?
