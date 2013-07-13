@@ -917,15 +917,6 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		sText += iToStr (turnsDisabled) + ")";
 		return sText;
 	}
-	else if ( !(data.canCapture || data.canDisable) && owner == gameGUI.getClient()->getActivePlayer())
-	{
-		if (ClientMoveJob)
-			return lngPack.i18n ("Text~Comp~Moving");
-		else if (manualFireActive)
-			return lngPack.i18n ("Text~Comp~ReactionFireOff");
-		else if (sentryActive)
-			return lngPack.i18n ("Text~Comp~Sentry");
-	}
 	else if (autoMJob)
 		return lngPack.i18n ("Text~Comp~Surveying");
 	else if (IsBuilding)
@@ -973,9 +964,19 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
-
+	else if ( !(data.canCapture || data.canDisable))
+	{
+		if (ClientMoveJob)
+			return lngPack.i18n ("Text~Comp~Moving");
+		else if (manualFireActive)
+			return lngPack.i18n ("Text~Comp~ReactionFireOff");
+		else if (sentryActive)
+			return lngPack.i18n ("Text~Comp~Sentry");
+	}
 	// for infiltrators
-	else if ( (data.canCapture || data.canDisable) && owner == gameGUI.getClient()->getActivePlayer())
+	else if ( (data.canCapture || data.canDisable)/* && owner == gameGUI.getClient()->getActivePlayer()*/)
+	// TODO should it be original behavior (as it is now) or
+	// don't display CommandRank for enemy (could also be a bug in original...)
 	{
 		string sTmp;
 		if (ClientMoveJob)
