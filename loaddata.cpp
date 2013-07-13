@@ -24,6 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <SDL_mixer.h>
+#include <iostream>
 #include <sstream>
 
 #ifdef WIN32
@@ -34,10 +35,11 @@
 #endif
 
 #include "loaddata.h"
-#include "extendedtinyxml.h"
+
 #include "autosurface.h"
 #include "buildings.h"
 #include "clans.h"
+#include "extendedtinyxml.h"
 #include "files.h"
 #include "keys.h"
 #include "log.h"
@@ -45,10 +47,10 @@
 #include "pcx.h"
 #include "settings.h"
 #include "sound.h"
+#include "tinyxml2.h"
 #include "unifonts.h"
 #include "vehicles.h"
 #include "video.h"
-#include "tinyxml2.h"
 
 #ifdef WIN32
 # include <shlobj.h>
@@ -1828,7 +1830,6 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 
 	Data->canBuildPath = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Can_Build_Path", NULL);
 	Data->canBuildRepeat = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Can_Build_Repeat", NULL);
-	Data->buildIntern = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Builds_Intern", NULL);
 
 	// Movement
 	Data->speedMax = getXMLAttributeInt (unitDataXml, "Unit", "Movement", "Movement_Sum", NULL);

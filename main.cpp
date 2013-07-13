@@ -829,7 +829,6 @@ sUnitData::sUnitData()
 
 	canBuildPath = false;
 	canBuildRepeat = false;
-	buildIntern = false;
 
 	// Movement
 	speedMax = 0;

@@ -145,7 +145,6 @@ struct sUnitData
 
 	bool canBuildPath;
 	bool canBuildRepeat;
-	bool buildIntern; // unused
 
 	// Movement
 	int speedMax;

@@ -1067,7 +1067,6 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 
 	Data->canBuildPath = unitNode->FirstChildElement ("Can_Build_Path") != NULL;
 	Data->canBuildRepeat = unitNode->FirstChildElement ("Can_Build_Repeat") != NULL;
-	Data->buildIntern = unitNode->FirstChildElement ("Build_Intern") != NULL;
 	Data->connectsToBase = unitNode->FirstChildElement ("Connects_To_Base") != NULL;
 
 	Data->canBeCaptured = unitNode->FirstChildElement ("Can_Be_Captured") != NULL;
@@ -1603,7 +1602,6 @@ void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 
 	if (Data->canBuildPath) addMainElement (unitNode, "Can_Build_Path");
 	if (Data->canBuildRepeat) addMainElement (unitNode, "Can_Build_Repeat");
-	if (Data->buildIntern) addMainElement (unitNode, "Build_Intern");
 	if (Data->connectsToBase) addMainElement (unitNode, "Connects_To_Base");
 
 	if (Data->canBeCaptured) addMainElement (unitNode, "Can_Be_Captured");
