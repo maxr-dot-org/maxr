@@ -23,23 +23,23 @@
 #include "autoptr.h"
 #include "autosurface.h"
 #include "defines.h"
-#include "player.h"
-#include "unifonts.h"
-#include "upgradecalculator.h"
-#include "sound.h"
 #include "main.h" // for sID
 #include "notifications.h"
+#include "player.h"
+#include "sound.h"
+#include "unifonts.h"
+#include "upgradecalculator.h"
 
-class cMenu;
-class cHangarMenu;
-class cUpgradeHangarMenu;
-class cNetworkMenu;
-class cMenuRadioGroup;
-class cMenuUnitsList;
-class cReportsMenu;
 class cBuilding;
 class cClient;
+class cHangarMenu;
+class cMenu;
+class cMenuRadioGroup;
+class cMenuUnitsList;
+class cNetworkMenu;
+class cReportsMenu;
 class cUnit;
+class cUpgradeHangarMenu;
 class cVehicle;
 
 /**

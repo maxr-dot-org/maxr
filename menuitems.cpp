@@ -1679,15 +1679,13 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 
 	SDL_FillRect (buffer, &mark, 0xFC0000);
 
-	SDL_Surface* surface = GraphicsData.gfx_hud_stuff;
-#if 0 // TODO: get "black cost" symbol.
 	if (symType == MENU_SYMBOLS_METAL)
 	{
+		src = getBigSymbolPosition (MENU_SYMBOLS_METALEMPTY);
 	}
-#endif
 	for (int i = value1; i != value2; ++i)
 	{
-		SDL_BlitSurface (surface, &src, buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 
 		dest.x += offX;
 	}
@@ -1889,6 +1887,7 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition (eUnitDataSymbols symTyp
 		case MENU_SYMBOLS_RANGE:
 		case MENU_SYMBOLS_ARMOR:
 		case MENU_SYMBOLS_SCAN:
+		case MENU_SYMBOLS_METALEMPTY:
 			break;
 	}
 	return src;
