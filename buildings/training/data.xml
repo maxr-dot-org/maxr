@@ -16,7 +16,6 @@
     <Build_As String="BigBuilding"/>
     <Max_Build_Factor Num="1"/>
     <Can_Build_Repeat YN="Yes"/>
-    <Builds_Intern YN="Yes"/>
   </Production>
 
   <Movement>
