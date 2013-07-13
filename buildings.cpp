@@ -135,17 +135,17 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		sText += iToStr (turnsDisabled) + ")";
 		return sText;
 	}
-	if (IsWorking)
+	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false) )
 	{
 		const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
 		if (!data.canBuild.empty() && BuildList && BuildList->size() && owner == activePlayer)
 		{
 			sBuildList* buildListItem = (*BuildList) [0];
+			string sText;
 
 			if (buildListItem->metall_remaining > 0)
 			{
-				string sText;
 				int iRound;
 
 				iRound = (int) ceilf (buildListItem->metall_remaining / (float) MetalPerRound);
@@ -162,9 +162,19 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 
 				return sText;
 			}
-			else
+			else //new unit is rdy + which kind of unit
 			{
-				return lngPack.i18n ("Text~Comp~Producing_Fin");
+				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
+				sText += ": ";
+				sText += buildListItem->type.getVehicle()->data.name;
+
+				if (font->getTextWide (sText) > 126)
+				{
+					sText = lngPack.i18n ("Text~Comp~Producing_Fin");
+					sText += ":\n";
+					sText += buildListItem->type.getVehicle()->data.name;
+				}
+				return sText;
 			}
 		}
 

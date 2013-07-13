@@ -925,9 +925,9 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 			return lngPack.i18n ("Text~Comp~Producing");
 		else
 		{
+			string sText;
 			if (BuildRounds)
 			{
-				string sText;
 				sText = lngPack.i18n ("Text~Comp~Producing");
 				sText += ": ";
 				sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name + " (";
@@ -944,8 +944,20 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 				}
 				return sText;
 			}
-			else
-				return lngPack.i18n ("Text~Comp~Producing_Fin");
+			else //small building is rdy + activate after engineere moves away
+			{
+				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
+				sText += ": ";
+				sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name;
+
+				if (font->getTextWide (sText) > 126)
+				{
+					sText = lngPack.i18n ("Text~Comp~Producing_Fin");
+					sText += ":\n";
+					sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name;
+				}
+				return sText;
+			}
 		}
 	}
 	else if (ClearMines)
