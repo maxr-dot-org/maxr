@@ -344,6 +344,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		d.y = screenPosition.y + 1;
 		SDL_FillRect (buffer, &d, color);
 	}
+	// draw the seleted-unit-flash-frame for vehicles
 	if (gameGUI.getSelectedUnit() == this)
 	{
 		SDL_Rect d, t;
@@ -353,41 +354,42 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		else max = gameGUI.getTileSize();
 
 		len = max / 4;
-
-		d.x = screenPosition.x + 1;
-		d.y = screenPosition.y + 1;
+		//hor
+		d.x = screenPosition.x + 2;
+		d.y = screenPosition.y + 2;
 		d.w = len;
 		d.h = 1;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x += max - len - 1;
+		d.x += max - len - 3;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.y += max - 2;
+		d.y += max - 4;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x = screenPosition.x + 1;
+		d.x = screenPosition.x + 2;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.y = screenPosition.y + 1;
+		//vert
+		d.y = screenPosition.y + 2;
 		d.w = 1;
 		d.h = len;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x += max - 2;
+		d.x += max - 4;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.y += max - len - 1;
+		d.y += max - len - 3;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x = screenPosition.x + 1;
+		d.x = screenPosition.x + 2;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 	}
 

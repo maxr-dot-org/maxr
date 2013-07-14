@@ -371,6 +371,12 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw a colored frame if necessary
+
+	// disabled color-frame for buildings
+	//   => now it's original game behavior - see ticket #542 (GER) = FIXED
+	// but maybe as setting interresting 
+	//   => ticket #784 (ENG) (so I just commented it) = TODO 
+/*
 	if (gameGUI.colorChecked())
 	{
 		SDL_Rect d, t;
@@ -397,48 +403,49 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		d.x += max - 1;
 		SDL_FillRect (buffer, &d, nr);
 	}
-
-	// draw a colored frame if necessary
+*/
+	// draw the seleted-unit-flash-frame for bulidings
 	if (gameGUI.getSelectedUnit() == this)
 	{
 		SDL_Rect d, t;
 		int max = data.isBig ? (int) (gameGUI.getTileSize()) * 2 : (int) (gameGUI.getTileSize());
 		int len = max / 4;
-
-		d.x = dest.x + 1;
-		d.y = dest.y + 1;
+		//hor
+		d.x = dest.x + 2;
+		d.y = dest.y + 2;
 		d.w = len;
 		d.h = 1;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x += max - len - 1;
+		d.x += max - len - 3;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.y += max - 2;
+		d.y += max - 4;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x = dest.x + 1;
+		d.x = dest.x + 2;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.y = dest.y + 1;
+		//vert
+		d.y = dest.y + 2;
 		d.w = 1;
 		d.h = len;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x += max - 2;
+		d.x += max - 4;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.y += max - len - 1;
+		d.y += max - len - 3;
 		t = d;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 		d = t;
-		d.x = dest.x + 1;
+		d.x = dest.x + 2;
 		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
 	}
 
