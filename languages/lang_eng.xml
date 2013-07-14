@@ -48,7 +48,8 @@
 		<Title>
 			<Alien_Tech ENG="Alien remains"/>
 			<BridgeHead ENG="Starting Base"/>
-			<Build ENG="Build menu"/>
+			<Build_Factory ENG="Factory Menu"/>
+			<Build_Vehicle ENG="Construction Menu"/>
 			<Cargo ENG="Cargo"/>
 			<Choose_Clan ENG="Choose Clan"/>
 			<Choose_Planet ENG="Choose planet"/>
@@ -84,7 +85,7 @@
 			<Send ENG="Send"/>
 			<Team ENG="Team"/>
 			<Unitinfo ENG="Unit status screen"/>
-			<Updates ENG="Update menu"/>
+			<Upgrades_Menu ENG="Upgrades menu"/>
 		</Title>
 		<Button>
 			<Active ENG="Active"/>
