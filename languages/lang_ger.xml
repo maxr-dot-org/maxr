@@ -272,7 +272,7 @@
 			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Das Spiel läuft bereits. Falls Sie die Verbindung zum Spiel verloren haben, können Sie sich neu verbinden. Möchten Sie sich neu verbinden?"/>
+			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?" localized="Das Spiel läuft bereits.\nFalls Sie die Verbindung zum Spiel verloren haben, können Sie sich neu verbinden.\n\nMöchten Sie sich neu verbinden?"/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Wiederbindung vom Server unterbunden."/>
 			<Save_Only_Host ENG="Only the host can save the current games." localized="Nur der Server kann das aktuelle Spiel speichern"/>
 			<Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>

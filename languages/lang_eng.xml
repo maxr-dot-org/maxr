@@ -277,7 +277,7 @@
 			<Player_Turn_End ENG="%s ended turn"/>
 			<Player_Twice ENG="Playername exists twice: "/><!-- not used?! --nonsinn -->
 			<Player_Wrong ENG="Missing a correct player's name"/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?"/>
+			<Reconnect ENG="This game is running already.\nIf you have lost connection to the game, you can reconnect.\n\nDo you want to reconnect?"/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server."/>
 			<Save_Only_Host ENG="Only the host can save the current games."/>
 			<Server_Not_Running ENG="The server is not running."/>
@@ -356,14 +356,14 @@
 			<Producing_Fin ENG="finished building"/>
 			<ReactionFireOff ENG="Reaction Fire Off"/>
 			<Repeat ENG="Again"/>
-			<Research_Armor ENG="Armor research completed"/>
+<!--			<Research_Armor ENG="Armor research completed"/>
 			<Research_Attack ENG="Attack research completed"/>
 			<Research_Costs ENG="Cost research completed"/>
 			<Research_Hitpoints ENG="Hits research completed"/>
 			<Research_Range ENG="Range research completed"/>
 			<Research_Scan ENG="Scan research completed"/>
 			<Research_Shoots ENG="Shots research completed"/>
-			<Research_Speed ENG="Speed research completed"/>
+			<Research_Speed ENG="Speed research completed"/> -->
 			<Reserve ENG="Reserve"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
@@ -417,7 +417,7 @@
 		<Unit ID="0 21" ENG="Missile Crawler">Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version and requires more raw materials to build. However, the ability to move makes it much more flexible.</Unit>
 		<Unit ID="0 22" ENG="Missile Cruiser">Missile Cruiser\n\nShip mounted missile launcher. Excellent range, high attack strength and medium armor makes this a powerful unit.</Unit>
 		<Unit ID="0 23" ENG="Mobile anti-aircraft">Mobile anti-aircraft\n\nLight and fast vehicle with a rapid fire gun for shooting down enemy planes. Mobile anti-aircraft are generally defensive units, because they aren't as fast as planes and can't move while firing. Use them to protect an area once your fighters have chased away enemy ground attack planes.</Unit>
-		<Unit ID="0 24" ENG="Engineer">Small construction vehicle for creating small buildings and stationary defense weapons.</Unit>
+		<Unit ID="0 24" ENG="Engineer">Engineer\n\nSmall construction vehicle for creating small buildings and stationary defense weapons.</Unit>
 		<Unit ID="0 25" ENG="Repair Unit">Repair Unit\n\nLight vehicle which can rapidly repair ground units and buildings. Repairs require raw materials. The more extensive the damage, the more raw materials are required. Depots, docks, hangars and barracks can also repair units.</Unit>
 		<Unit ID="0 26" ENG="Scanner">Scanner\n\nMobile radar platform. Slower and more expensive than a scout, but with a better scan range. A scanner is an excellent way to spot targets for long ranged units like missile crawlers.</Unit>
 		<Unit ID="0 27" ENG="Scout">Scout\n\nHigh speed scouting vehicle for exploration and spotting enemy units. Can cross water without a bridge but is faster on land.\n\nVery fast and good scan range but much weaker than most combat units.</Unit>
