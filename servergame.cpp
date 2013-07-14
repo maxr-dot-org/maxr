@@ -82,7 +82,7 @@ void cServerGame::runInThread()
 bool cServerGame::loadGame (int saveGameNumber)
 {
 	cSavegame savegame (saveGameNumber);
-	if (savegame.load (&server, network) != 1)
+	if (savegame.load (&server, network) == false)
 		return false;
 	assert (server != 0);
 	server->markAllPlayersAsDisconnected();
@@ -474,7 +474,9 @@ void cServerGame::startGameServer()
 	}
 
 	// init server
-	server = new cServer (network, *serverMap, &serverPlayers);
+	server = new cServer (network);
+	server->setMap (*serverMap);
+	server->setPlayers (&serverPlayers);
 	server->setGameSettings (*gameData->settings);
 
 	// send victory conditions to clients

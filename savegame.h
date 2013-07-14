@@ -68,7 +68,7 @@ public:
 	/* saves the current gamestate to a file */
 	int save (const cServer& server, const std::string& saveName);
 	/* loads a savegame */
-	int load (cServer** pServer, cTCP* network);
+	bool load (cServer** pServer, cTCP* network);
 
 	/* loads the header of a savefile and returns some values to the pointers */
 	void loadHeader (std::string* name, std::string* type, std::string* time);
@@ -113,17 +113,17 @@ private:
 	* saves the map infos
 	*@author alzi alias DoctorDeath
 	*/
-	void writeMap (const cMap* Map);
+	void writeMap (const cMap& Map);
 	/**
 	* saves the information for the player to a new node
 	*@author alzi alias DoctorDeath
 	*/
-	void writePlayer (const cPlayer* Player, int number);
+	void writePlayer (const cPlayer& Player, int number);
 	/**
 	* saves the values of a upgraded unit
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUpgrade (tinyxml2::XMLElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata);
+	void writeUpgrade (tinyxml2::XMLElement* upgradesNode, int upgradenumber, const sUnitData& data, const sUnitData& originaldata);
 	/**
 	 * save the research level values of a player
 	 *@author pagra
@@ -133,7 +133,7 @@ private:
 	 * save the number of research centers that are working on each area of a player
 	 *@author pagra
 	 */
-	void writeResearchCentersWorkingOnArea (tinyxml2::XMLElement* researchCentersWorkingOnAreaNode, const cPlayer* player);
+	void writeResearchCentersWorkingOnArea (tinyxml2::XMLElement* researchCentersWorkingOnAreaNode, const cPlayer& player);
 	/**
 	 * save the casualties of all players
 	 *@author pagra
@@ -158,12 +158,12 @@ private:
 	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnitValues (tinyxml2::XMLElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData);
+	void writeUnitValues (tinyxml2::XMLElement* unitNode, const sUnitData& Data, const sUnitData& OwnerData);
 	/**
 	* saves the standard unit values from the unit xmls
 	*@author alzi alias DoctorDeath
 	*/
-	void writeStandardUnitValues (const sUnitData* Data, int unitnum);
+	void writeStandardUnitValues (const sUnitData& Data, int unitnum);
 
 	/**
 	* loads the main game information
@@ -174,17 +174,17 @@ private:
 	* loads the map
 	*@author alzi alias DoctorDeath
 	*/
-	cMap* loadMap();
+	bool loadMap (cServer& server);
 	/**
 	* loads all players from savefile
 	*@author alzi alias DoctorDeath
 	*/
-	std::vector<cPlayer*>* loadPlayers (cMap* map);
+	void loadPlayers (cServer& server);
 	/**
 	* loads a player
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* loadPlayer (tinyxml2::XMLElement* playerNode, cMap* map);
+	cPlayer* loadPlayer (tinyxml2::XMLElement* playerNode, cMap& map);
 	/**
 	* loads the upgrade values of a unit in the players data
 	*@author alzi alias DoctorDeath

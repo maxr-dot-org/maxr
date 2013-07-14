@@ -89,10 +89,12 @@ public:
 	 *@param map The Map for the game
 	 *@param PlayerList The list with all players
 	 */
-	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList);
+	explicit cServer (cTCP* network_);
 	~cServer();
 
 	void setGameSettings (const sSettings& gameSettings);
+	void setMap (cMap& map_);
+	void setPlayers (std::vector<cPlayer*>* playerList_);
 	void setDeadline (int iDeadline);
 	void stop();
 

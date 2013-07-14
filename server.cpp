@@ -92,7 +92,7 @@ int CallbackRunServerThread (void* arg)
 }
 
 //------------------------------------------------------------------------------
-cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList)
+cServer::cServer (cTCP* network_)
 	: network (network_)
 	, localClient (NULL)
 	, gameTimer()
@@ -103,8 +103,8 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 	this->turnLimit = 0;
 	this->scoreLimit = 0;
 	this->bPlayTurns = false;
-	Map = &map;
-	this->PlayerList = PlayerList;
+	Map = NULL;
+	this->PlayerList = NULL;
 	bExit = false;
 	openMapDefeat = true;
 	bStarted = false;
@@ -128,6 +128,16 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start();
+}
+
+void cServer::setMap (cMap& map_)
+{
+	Map = &map_;
+}
+
+void cServer::setPlayers (std::vector<cPlayer*>* playerList_)
+{
+	PlayerList = playerList_;
 }
 
 void cServer::setGameSettings (const sSettings& gameSettings)

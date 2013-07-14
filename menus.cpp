@@ -161,7 +161,9 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 			serverPlayers[i]->initMaps (*serverMap);
 		}
 
-		server = new cServer (network, *serverMap, &serverPlayers);
+		server = new cServer (network);
+		server->setMap (*serverMap);
+		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
@@ -214,7 +216,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 {
 	cServer* server = NULL;
 	cSavegame savegame (savegameNum);
-	if (savegame.load (&server, network) != 1) return;
+	if (savegame.load (&server, network) == false) return;
 	assert (server != NULL);
 	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
 	AutoPtr<cMap> serverMap (server->Map);
@@ -3274,7 +3276,7 @@ bool cNetworkHostMenu::runSavedGame()
 {
 	cServer* server = NULL;
 	cSavegame savegame (gameDataContainer.savegameNum);
-	if (savegame.load (&server, network) != 1) return false;
+	if (savegame.load (&server, network) == false) return false;
 	assert (server != NULL);
 	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
 	AutoPtr<cMap> serverMap (server->Map);
