@@ -1579,7 +1579,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	if (noReturn) backButton->setLocked (true);
 	menuItems.push_back (backButton);
 
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Title~Choose_Clan"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 13, lngPack.i18n ("Text~Title~Choose_Clan"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel);
 
@@ -4076,7 +4076,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 {
 	vehicle = vehicle_;
 
-	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build"));
+	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build_Vehicle"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel);
 
@@ -4203,7 +4203,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* playe
 {
 	building = building_;
 
-	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build"));
+	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build_Factory"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel);
 
@@ -4353,6 +4353,9 @@ void cVehiclesBuildMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (GFXOD_UPGRADE), owner)
 {
+	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Upgrades_Menu"));
+	titleLabel->setCentered (true);
+	menuItems.push_back (titleLabel);
 	upgradeFilter = new cMenuUpgradeFilter (position.x + 467, position.y + 411, this);
 	upgradeFilter->setTankChecked (true);
 	upgradeFilter->setPlaneChecked (true);

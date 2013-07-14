@@ -637,6 +637,7 @@ protected:
 	AutoPtr<cMenuUpgradeHandler> upgradeButtons;
 	AutoPtr<cMenuMaterialBar> goldBar;
 	AutoPtr<cMenuLabel> goldBarLabel;
+	AutoPtr<cMenuLabel> titleLabel;
 
 	sUnitUpgrade (*unitUpgrades) [8];
 	void initUpgrades (cPlayer* player);
