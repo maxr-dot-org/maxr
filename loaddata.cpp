@@ -1029,7 +1029,7 @@ static int LoadVehicles()
 	UnitsData.vehicle.clear();
 	UnitsData.vehicle.reserve (VehicleList.size());
 	string sVehiclePath;
-	for (unsigned int i = 0; i < VehicleList.size(); i++)
+	for (size_t i = 0; i != VehicleList.size(); ++i)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
 		sVehiclePath += PATH_DELIMITER;
@@ -1048,16 +1048,16 @@ static int LoadVehicles()
 		if (DEDICATED_SERVER) continue;
 
 		Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
-
+		sVehicleUIData& ui = v.uiData;
 		// load infantery graphics
 		if (v.data.animationMovement)
 		{
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
-				v.img[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
-				SDL_FillRect (v.img[n], NULL, 0x00FF00FF);
+				ui.img[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
+				SDL_FillRect (ui.img[n], NULL, 0x00FF00FF);
 
 				for (int j = 0; j < 13; j++)
 				{
@@ -1077,37 +1077,37 @@ static int LoadVehicles()
 						{
 							rcDest.x = 64 * j + 32 - sfTempSurface->w / 2;
 							rcDest.y = 32 - sfTempSurface->h / 2;
-							SDL_BlitSurface (sfTempSurface, NULL, v.img[n], &rcDest);
+							SDL_BlitSurface (sfTempSurface, NULL, ui.img[n], &rcDest);
 						}
 					}
 				}
-				v.img_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
-				SDL_FillRect (v.img_org[n], NULL, 0x00FFFFFF);
-				SDL_BlitSurface (v.img[n], NULL, v.img_org[n], NULL);
+				ui.img_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
+				SDL_FillRect (ui.img_org[n], NULL, 0x00FFFFFF);
+				SDL_BlitSurface (ui.img[n], NULL, ui.img_org[n], NULL);
 
-				v.shw[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.shw[n], SDL_SRCCOLORKEY, 0x00FF00FF);
-				SDL_FillRect (v.shw[n], NULL, 0x00FF00FF);
-				v.shw_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (v.shw_org[n], SDL_SRCCOLORKEY, 0x00FF00FF);
-				SDL_FillRect (v.shw_org[n], NULL, 0x00FF00FF);
+				ui.shw[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.shw[n], SDL_SRCCOLORKEY, 0x00FF00FF);
+				SDL_FillRect (ui.shw[n], NULL, 0x00FF00FF);
+				ui.shw_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.shw_org[n], SDL_SRCCOLORKEY, 0x00FF00FF);
+				SDL_FillRect (ui.shw_org[n], NULL, 0x00FF00FF);
 
 				rcDest.x = 3;
 				rcDest.y = 3;
-				SDL_BlitSurface (v.img_org[n], NULL, v.shw_org[n], &rcDest);
-				SDL_LockSurface (v.shw_org[n]);
-				Uint32* ptr = static_cast<Uint32*> (v.shw_org[n]->pixels);
+				SDL_BlitSurface (ui.img_org[n], NULL, ui.shw_org[n], &rcDest);
+				SDL_LockSurface (ui.shw_org[n]);
+				Uint32* ptr = static_cast<Uint32*> (ui.shw_org[n]->pixels);
 				for (int j = 0; j < 64 * 13 * 64; j++)
 				{
 					if (*ptr != 0x00FF00FF)
 						*ptr = 0;
 					ptr++;
 				}
-				SDL_UnlockSurface (v.shw_org[n]);
-				SDL_BlitSurface (v.shw_org[n], NULL, v.shw[n], NULL);
-				SDL_SetAlpha (v.shw_org[n], SDL_SRCALPHA, 50);
-				SDL_SetAlpha (v.shw[n], SDL_SRCALPHA, 50);
+				SDL_UnlockSurface (ui.shw_org[n]);
+				SDL_BlitSurface (ui.shw_org[n], NULL, ui.shw[n], NULL);
+				SDL_SetAlpha (ui.shw_org[n], SDL_SRCALPHA, 50);
+				SDL_SetAlpha (ui.shw[n], SDL_SRCALPHA, 50);
 			}
 		}
 		// load other vehicle graphics
@@ -1123,10 +1123,10 @@ static int LoadVehicles()
 				Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if (FileExists (sTmpString.c_str()))
 				{
-					v.img_org[n] = LoadPCX (sTmpString);
-					v.img[n] = CloneSDLSurface (v.img_org[n]);
-					SDL_SetColorKey (v.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-					SDL_SetColorKey (v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+					ui.img_org[n] = LoadPCX (sTmpString);
+					ui.img[n] = CloneSDLSurface (ui.img_org[n]);
+					SDL_SetColorKey (ui.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+					SDL_SetColorKey (ui.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				}
 				else
 				{
@@ -1138,14 +1138,14 @@ static int LoadVehicles()
 				sTmpString.replace (sTmpString.length() - 8, 3, "shw");
 				if (FileExists (sTmpString.c_str()))
 				{
-					v.shw_org[n] = LoadPCX (sTmpString);
-					v.shw[n] = CloneSDLSurface (v.shw_org[n]);
-					SDL_SetAlpha (v.shw[n], SDL_SRCALPHA, 50);
+					ui.shw_org[n] = LoadPCX (sTmpString);
+					ui.shw[n] = CloneSDLSurface (ui.shw_org[n]);
+					SDL_SetAlpha (ui.shw[n], SDL_SRCALPHA, 50);
 				}
 				else
 				{
-					v.shw_org[n] = NULL;
-					v.shw[n]     = NULL;
+					ui.shw_org[n] = NULL;
+					ui.shw[n]     = NULL;
 				}
 			}
 		}
@@ -1157,9 +1157,9 @@ static int LoadVehicles()
 		{
 			sTmpString = "";
 		}
-		v.FLCFile = new char[sTmpString.length() + 1];
-		if (!v.FLCFile) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy (v.FLCFile, sTmpString.c_str());
+		ui.FLCFile = new char[sTmpString.length() + 1];
+		if (!ui.FLCFile) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
+		strcpy (ui.FLCFile, sTmpString.c_str());
 
 		// load infoimage
 		sTmpString = sVehiclePath;
@@ -1167,7 +1167,7 @@ static int LoadVehicles()
 		Log.write ("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
-			v.info = LoadPCX (sTmpString);
+			ui.info = LoadPCX (sTmpString);
 		}
 		else
 		{
@@ -1181,7 +1181,7 @@ static int LoadVehicles()
 		Log.write ("Loading storageportrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if (FileExists (sTmpString.c_str()))
 		{
-			v.storage = LoadPCX (sTmpString);
+			ui.storage = LoadPCX (sTmpString);
 		}
 		else
 		{
@@ -1197,21 +1197,21 @@ static int LoadVehicles()
 			sTmpString += "overlay.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.overlay_org = LoadPCX (sTmpString);
-				v.overlay = CloneSDLSurface (v.overlay_org);
+				ui.overlay_org = LoadPCX (sTmpString);
+				ui.overlay = CloneSDLSurface (ui.overlay_org);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.overlay_org       = NULL;
-				v.overlay           = NULL;
+				ui.overlay_org       = NULL;
+				ui.overlay           = NULL;
 				v.data.hasOverlay = false;
 			}
 		}
 		else
 		{
-			v.overlay_org = NULL;
-			v.overlay     = NULL;
+			ui.overlay_org = NULL;
+			ui.overlay     = NULL;
 		}
 
 		// load buildgraphics if necessary
@@ -1223,16 +1223,16 @@ static int LoadVehicles()
 			sTmpString += "build.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.build_org = LoadPCX (sTmpString);
-				v.build = CloneSDLSurface (v.build_org);
-				SDL_SetColorKey (v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey (v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
+				ui.build_org = LoadPCX (sTmpString);
+				ui.build = CloneSDLSurface (ui.build_org);
+				SDL_SetColorKey (ui.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_SetColorKey (ui.build, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.build_org             = NULL;
-				v.build                 = NULL;
+				ui.build_org             = NULL;
+				ui.build                 = NULL;
 				v.data.buildUpGraphic = false;
 			}
 			// load shadow
@@ -1240,24 +1240,24 @@ static int LoadVehicles()
 			sTmpString += "build_shw.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.build_shw_org = LoadPCX (sTmpString);
-				v.build_shw = CloneSDLSurface (v.build_shw_org);
-				SDL_SetAlpha (v.build_shw, SDL_SRCALPHA, 50);
+				ui.build_shw_org = LoadPCX (sTmpString);
+				ui.build_shw = CloneSDLSurface (ui.build_shw_org);
+				SDL_SetAlpha (ui.build_shw, SDL_SRCALPHA, 50);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.build_shw_org         = NULL;
-				v.build_shw             = NULL;
+				ui.build_shw_org         = NULL;
+				ui.build_shw             = NULL;
 				v.data.buildUpGraphic = false;
 			}
 		}
 		else
 		{
-			v.build_org     = NULL;
-			v.build         = NULL;
-			v.build_shw_org = NULL;
-			v.build_shw     = NULL;
+			ui.build_org     = NULL;
+			ui.build         = NULL;
+			ui.build_shw_org = NULL;
+			ui.build_shw     = NULL;
 		}
 		// load cleargraphics if necessary
 		Log.write ("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
@@ -1268,16 +1268,16 @@ static int LoadVehicles()
 			sTmpString += "clear_small.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.clear_small_org = LoadPCX (sTmpString);
-				v.clear_small = CloneSDLSurface (v.clear_small_org);
-				SDL_SetColorKey (v.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey (v.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF);
+				ui.clear_small_org = LoadPCX (sTmpString);
+				ui.clear_small = CloneSDLSurface (ui.clear_small_org);
+				SDL_SetColorKey (ui.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_SetColorKey (ui.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.clear_small_org      = NULL;
-				v.clear_small          = NULL;
+				ui.clear_small_org      = NULL;
+				ui.clear_small          = NULL;
 				v.data.canClearArea = false;
 			}
 			// load shadow (small)
@@ -1285,15 +1285,15 @@ static int LoadVehicles()
 			sTmpString += "clear_small_shw.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.clear_small_shw_org = LoadPCX (sTmpString);
-				v.clear_small_shw = CloneSDLSurface (v.clear_small_shw_org);
-				SDL_SetAlpha (v.clear_small_shw, SDL_SRCALPHA, 50);
+				ui.clear_small_shw_org = LoadPCX (sTmpString);
+				ui.clear_small_shw = CloneSDLSurface (ui.clear_small_shw_org);
+				SDL_SetAlpha (ui.clear_small_shw, SDL_SRCALPHA, 50);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.clear_small_shw_org  = NULL;
-				v.clear_small_shw      = NULL;
+				ui.clear_small_shw_org  = NULL;
+				ui.clear_small_shw      = NULL;
 				v.data.canClearArea = false;
 			}
 			// load image (big)
@@ -1301,16 +1301,16 @@ static int LoadVehicles()
 			sTmpString += "clear_big.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.build_org = LoadPCX (sTmpString);
-				v.build = CloneSDLSurface (v.build_org);
-				SDL_SetColorKey (v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey (v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
+				ui.build_org = LoadPCX (sTmpString);
+				ui.build = CloneSDLSurface (ui.build_org);
+				SDL_SetColorKey (ui.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_SetColorKey (ui.build, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.build_org            = NULL;
-				v.build                = NULL;
+				ui.build_org            = NULL;
+				ui.build                = NULL;
 				v.data.canClearArea = false;
 			}
 			// load shadow (big)
@@ -1318,37 +1318,37 @@ static int LoadVehicles()
 			sTmpString += "clear_big_shw.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				v.build_shw_org = LoadPCX (sTmpString);
-				v.build_shw = CloneSDLSurface (v.build_shw_org);
-				SDL_SetAlpha (v.build_shw, SDL_SRCALPHA, 50);
+				ui.build_shw_org = LoadPCX (sTmpString);
+				ui.build_shw = CloneSDLSurface (ui.build_shw_org);
+				SDL_SetAlpha (ui.build_shw, SDL_SRCALPHA, 50);
 			}
 			else
 			{
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
-				v.build_shw_org        = NULL;
-				v.build_shw            = NULL;
+				ui.build_shw_org        = NULL;
+				ui.build_shw            = NULL;
 				v.data.canClearArea = false;
 			}
 		}
 		else
 		{
-			v.clear_small_org     = NULL;
-			v.clear_small         = NULL;
-			v.clear_small_shw_org = NULL;
-			v.clear_small_shw     = NULL;
+			ui.clear_small_org     = NULL;
+			ui.clear_small         = NULL;
+			ui.clear_small_shw_org = NULL;
+			ui.clear_small_shw     = NULL;
 		}
 
 		// load sounds
 		Log.write ("Loading sounds", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitSoundfile (v.Wait,       sVehiclePath.c_str(), "wait.ogg");
-		LoadUnitSoundfile (v.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
-		LoadUnitSoundfile (v.Start,      sVehiclePath.c_str(), "start.ogg");
-		LoadUnitSoundfile (v.StartWater, sVehiclePath.c_str(), "start_water.ogg");
-		LoadUnitSoundfile (v.Stop,       sVehiclePath.c_str(), "stop.ogg");
-		LoadUnitSoundfile (v.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
-		LoadUnitSoundfile (v.Drive,      sVehiclePath.c_str(), "drive.ogg");
-		LoadUnitSoundfile (v.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
-		LoadUnitSoundfile (v.Attack,     sVehiclePath.c_str(), "attack.ogg");
+		LoadUnitSoundfile (ui.Wait,       sVehiclePath.c_str(), "wait.ogg");
+		LoadUnitSoundfile (ui.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
+		LoadUnitSoundfile (ui.Start,      sVehiclePath.c_str(), "start.ogg");
+		LoadUnitSoundfile (ui.StartWater, sVehiclePath.c_str(), "start_water.ogg");
+		LoadUnitSoundfile (ui.Stop,       sVehiclePath.c_str(), "stop.ogg");
+		LoadUnitSoundfile (ui.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
+		LoadUnitSoundfile (ui.Drive,      sVehiclePath.c_str(), "drive.ogg");
+		LoadUnitSoundfile (ui.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
+		LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
 	for (size_t i = 0; i != UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
@@ -1606,14 +1606,15 @@ static int LoadBuildings()
 		if (DEDICATED_SERVER) continue;
 
 		// load img
+		sBuildingUIData& ui = b.uiData;
 		sTmpString = sBuildingPath;
 		sTmpString += "img.pcx";
 		if (FileExists (sTmpString.c_str()))
 		{
-			b.img_org = LoadPCX (sTmpString);
-			b.img = CloneSDLSurface (b.img_org);
-			SDL_SetColorKey (b.img_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-			SDL_SetColorKey (b.img, SDL_SRCCOLORKEY, 0xFFFFFF);
+			ui.img_org = LoadPCX (sTmpString);
+			ui.img = CloneSDLSurface (ui.img_org);
+			SDL_SetColorKey (ui.img_org, SDL_SRCCOLORKEY, 0xFFFFFF);
+			SDL_SetColorKey (ui.img, SDL_SRCCOLORKEY, 0xFFFFFF);
 		}
 		else
 		{
@@ -1625,22 +1626,22 @@ static int LoadBuildings()
 		sTmpString += "shw.pcx";
 		if (FileExists (sTmpString.c_str()))
 		{
-			b.shw_org = LoadPCX (sTmpString);
-			b.shw     = CloneSDLSurface (b.shw_org);
-			SDL_SetAlpha (b.shw, SDL_SRCALPHA, 50);
+			ui.shw_org = LoadPCX (sTmpString);
+			ui.shw     = CloneSDLSurface (ui.shw_org);
+			SDL_SetAlpha (ui.shw, SDL_SRCALPHA, 50);
 		}
 
 		// load video
 		sTmpString = sBuildingPath;
 		sTmpString += "video.pcx";
 		if (FileExists (sTmpString.c_str()))
-			b.video = LoadPCX (sTmpString);
+			ui.video = LoadPCX (sTmpString);
 
 		// load infoimage
 		sTmpString = sBuildingPath;
 		sTmpString += "info.pcx";
 		if (FileExists (sTmpString.c_str()))
-			b.info = LoadPCX (sTmpString);
+			ui.info = LoadPCX (sTmpString);
 
 		// load effectgraphics if necessary
 		if (b.data.powerOnGraphic)
@@ -1649,45 +1650,45 @@ static int LoadBuildings()
 			sTmpString += "effect.pcx";
 			if (FileExists (sTmpString.c_str()))
 			{
-				b.eff_org = LoadPCX (sTmpString);
-				b.eff = CloneSDLSurface (b.eff_org);
-				SDL_SetAlpha (b.eff, SDL_SRCALPHA, 10);
+				ui.eff_org = LoadPCX (sTmpString);
+				ui.eff = CloneSDLSurface (ui.eff_org);
+				SDL_SetAlpha (ui.eff, SDL_SRCALPHA, 10);
 			}
 		}
 		else
 		{
-			b.eff_org = NULL;
-			b.eff     = NULL;
+			ui.eff_org = NULL;
+			ui.eff     = NULL;
 		}
 
 		// load sounds
-		LoadUnitSoundfile (b.Wait,    sBuildingPath.c_str(), "wait.ogg");
-		LoadUnitSoundfile (b.Start,   sBuildingPath.c_str(), "start.ogg");
-		LoadUnitSoundfile (b.Running, sBuildingPath.c_str(), "running.ogg");
-		LoadUnitSoundfile (b.Stop,    sBuildingPath.c_str(), "stop.ogg");
-		LoadUnitSoundfile (b.Attack,  sBuildingPath.c_str(), "attack.ogg");
+		LoadUnitSoundfile (ui.Wait,    sBuildingPath.c_str(), "wait.ogg");
+		LoadUnitSoundfile (ui.Start,   sBuildingPath.c_str(), "start.ogg");
+		LoadUnitSoundfile (ui.Running, sBuildingPath.c_str(), "running.ogg");
+		LoadUnitSoundfile (ui.Stop,    sBuildingPath.c_str(), "stop.ogg");
+		LoadUnitSoundfile (ui.Attack,  sBuildingPath.c_str(), "attack.ogg");
 
 		// Get Ptr if necessary:
 		if (b.data.ID == UnitsData.specialIDConnector)
 		{
 			b.data.isConnectorGraphic = true;
-			UnitsData.ptr_connector = b.img;
-			UnitsData.ptr_connector_org = b.img_org;
+			UnitsData.ptr_connector = ui.img;
+			UnitsData.ptr_connector_org = ui.img_org;
 			SDL_SetColorKey (UnitsData.ptr_connector, SDL_SRCCOLORKEY, 0xFF00FF);
-			UnitsData.ptr_connector_shw = b.shw;
-			UnitsData.ptr_connector_shw_org = b.shw_org;
+			UnitsData.ptr_connector_shw = ui.shw;
+			UnitsData.ptr_connector_shw_org = ui.shw_org;
 			SDL_SetColorKey (UnitsData.ptr_connector_shw, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
 		else if (b.data.ID == UnitsData.specialIDSmallBeton)
 		{
-			UnitsData.ptr_small_beton = b.img;
-			UnitsData.ptr_small_beton_org = b.img_org;
+			UnitsData.ptr_small_beton = ui.img;
+			UnitsData.ptr_small_beton_org = ui.img_org;
 			SDL_SetColorKey (UnitsData.ptr_small_beton, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
 
 		// Check if there is more than one frame
 		// use 129 here because some images from the res_installer are one pixel to large
-		if (b.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos) b.data.hasFrames = b.img_org->w / b.img_org->h;
+		if (ui.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos) b.data.hasFrames = ui.img_org->w / ui.img_org->h;
 		else b.data.hasFrames = 0;
 	}
 

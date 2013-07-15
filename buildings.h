@@ -64,14 +64,12 @@ struct sUpgradeNew
 //--------------------------------------------------------------------------
 /** struct for the images and sounds */
 //--------------------------------------------------------------------------
-struct sBuilding
+struct sBuildingUIData
 {
 	SDL_Surface* img, *img_org; // Surface des Buildings
 	SDL_Surface* shw, *shw_org; // Surfaces des Schattens
 	SDL_Surface* eff, *eff_org; // Surfaces des Effektes
 	SDL_Surface* video;  // Video
-	sUnitData data;  // Grunddaten des Buildings
-	int nr;              // Nr dieses Elements
 	SDL_Surface* info;   // Infobild
 
 	// Die Sounds:
@@ -81,8 +79,17 @@ struct sBuilding
 	struct Mix_Chunk* Attack;
 	struct Mix_Chunk* Wait;
 
-	sBuilding();
+	sBuildingUIData();
 	void scaleSurfaces (float faktor);
+};
+
+struct sBuilding
+{
+	sBuilding() : nr (-1) {}
+
+	sBuildingUIData uiData;
+	sUnitData data;  // Grunddaten des Buildings
+	int nr;          // Nr dieses Elements
 };
 
 // enum for the upgrade symbols
@@ -185,9 +192,9 @@ public:
 	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
 	void CheckRessourceProd (const cServer& server);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
-	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);
-	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
-	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true) const;
+	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI);
+	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
+	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);

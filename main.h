@@ -379,12 +379,6 @@ public:
 
 	void initializeIDData();
 
-	// Vehicles
-	std::vector<sVehicle> vehicle; // the standard version without clan modifications
-
-	// Buildings
-	std::vector<sBuilding> building;  // the standard version without clan modifications
-
 	sVehicle& getVehicle (int nr, int clan = -1);  ///< -1: game without clans
 	sBuilding& getBuilding (int nr, int clan = -1);  ///< -1: game without clans
 
@@ -395,6 +389,17 @@ public:
 	const sID& getEngineerID() const { return engineerID; }
 	const sID& getSurveyorID() const { return surveyorID; }
 
+	void scaleSurfaces (float zoomFactor);
+
+public:
+	// Vehicles
+	// the standard version without clan modifications
+	std::vector<sVehicle> vehicle;
+
+	// Buildings
+	// the standard version without clan modifications
+	std::vector<sBuilding> building;
+
 	AutoSurface dirt_small_org;
 	AutoSurface dirt_small;
 	AutoSurface dirt_small_shw_org;
@@ -404,12 +409,13 @@ public:
 	AutoSurface dirt_big_shw_org;
 	AutoSurface dirt_big_shw;
 
-	AutoSurface ptr_small_beton;
-	AutoSurface ptr_small_beton_org;
-	AutoSurface ptr_connector;
-	AutoSurface ptr_connector_org;
-	AutoSurface ptr_connector_shw;
-	AutoSurface ptr_connector_shw_org;
+	// direct pointer on some of the building graphics
+	SDL_Surface* ptr_small_beton;
+	SDL_Surface* ptr_small_beton_org;
+	SDL_Surface* ptr_connector;
+	SDL_Surface* ptr_connector_org;
+	SDL_Surface* ptr_connector_shw;
+	SDL_Surface* ptr_connector_shw_org;
 
 	//------------------------------------------------------------
 private:

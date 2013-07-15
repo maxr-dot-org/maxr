@@ -65,8 +65,8 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 	lastUsed = gameGUI.getFrame();
 
 	//determine needed size of the surface
-	int height = (int) std::max (vehicle.typ->img_org[vehicle.dir]->h * zoom, vehicle.typ->shw_org[vehicle.dir]->h * zoom);
-	int width  = (int) std::max (vehicle.typ->img_org[vehicle.dir]->w * zoom, vehicle.typ->shw_org[vehicle.dir]->w * zoom);
+	int height = (int) std::max (vehicle.typ->uiData.img_org[vehicle.dir]->h * zoom, vehicle.typ->uiData.shw_org[vehicle.dir]->h * zoom);
+	int width  = (int) std::max (vehicle.typ->uiData.img_org[vehicle.dir]->w * zoom, vehicle.typ->uiData.shw_org[vehicle.dir]->w * zoom);
 	if (vehicle.FlightHigh > 0)
 	{
 		int shwOff = ( (int) (gameGUI.getTileSize() * (vehicle.FlightHigh / 64.0f)));
@@ -104,9 +104,9 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding& buildin
 	lastUsed = gameGUI.getFrame();
 
 	//determine needed size of the surface
-	int height = (int) std::max (building.typ->img_org->h * zoom, building.typ->shw_org->h * zoom);
-	int width  = (int) std::max (building.typ->img_org->w * zoom, building.typ->shw_org->w * zoom);
-	if (building.data.hasFrames) width = (int) (building.typ->shw_org->w * zoom);
+	int height = (int) std::max (building.typ->uiData.img_org->h * zoom, building.typ->uiData.shw_org->h * zoom);
+	int width  = (int) std::max (building.typ->uiData.img_org->w * zoom, building.typ->uiData.shw_org->w * zoom);
+	if (building.data.hasFrames) width = (int) (building.typ->uiData.shw_org->w * zoom);
 
 	surface = SDL_CreateRGBSurface (SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 

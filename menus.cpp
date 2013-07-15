@@ -764,7 +764,7 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 			unitShow = random (UnitsData.getNrBuildings() - 1);
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1); //make sure we don't show same unit twice
-		surface = UnitsData.building[unitShow].info;
+		surface = UnitsData.building[unitShow].uiData.info;
 	}
 	else if (UnitsData.getNrVehicles() > 0) //and a 66% chance to show a vehicle on 0 or 2
 	{
@@ -773,7 +773,7 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 			unitShow = random (UnitsData.getNrVehicles() - 1);
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1); //make sure we don't show same unit twice
-		surface = UnitsData.vehicle[unitShow].info;
+		surface = UnitsData.vehicle[unitShow].uiData.info;
 	}
 	else surface = NULL;
 	lastUnitShow = unitShow; //store shown unit
@@ -1760,13 +1760,13 @@ void cHangarMenu::drawUnitInformation()
 	if (!selectedUnit) return;
 	if (selectedUnit->getUnitID().getVehicle (player))
 	{
-		infoImage->setImage (selectedUnit->getUnitID().getVehicle (player)->info);
+		infoImage->setImage (selectedUnit->getUnitID().getVehicle (player)->uiData.info);
 		if (infoTextCheckBox->isChecked()) infoText->setText (selectedUnit->getUnitID().getVehicle (player)->data.description);
 		else infoText->setText ("");
 	}
 	else if (selectedUnit->getUnitID().getBuilding (player))
 	{
-		infoImage->setImage (selectedUnit->getUnitID().getBuilding (player)->info);
+		infoImage->setImage (selectedUnit->getUnitID().getBuilding (player)->uiData.info);
 		if (infoTextCheckBox->isChecked()) infoText->setText (selectedUnit->getUnitID().getBuilding (player)->data.description);
 		else infoText->setText ("");
 	}
@@ -4660,12 +4660,12 @@ void cUnitHelpMenu::init (sID unitID)
 
 	if (unitID.getVehicle())
 	{
-		infoImage->setImage (unitID.getVehicle()->info);
+		infoImage->setImage (unitID.getVehicle()->uiData.info);
 		infoText->setText (unitID.getVehicle()->data.description);
 	}
 	else if (unitID.getBuilding())
 	{
-		infoImage->setImage (unitID.getBuilding()->info);
+		infoImage->setImage (unitID.getBuilding()->uiData.info);
 		infoText->setText (unitID.getBuilding()->data.description);
 	}
 }
@@ -4805,7 +4805,7 @@ void cStorageMenu::resetInfos()
 			if (index < (int) storageList.size())
 			{
 				cVehicle* vehicle = storageList[index];
-				srcSurface = vehicle->typ->storage;
+				srcSurface = vehicle->typ->uiData.storage;
 				name = vehicle->getDisplayName();
 				if (vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version)
 				{
@@ -4987,8 +4987,8 @@ void cStorageMenu::activateAllReleased (void* parent)
 				if (xpos < 0 || xpos >= map.getSize()) continue;
 				if ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
 					 ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
-				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
-					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
+				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, map, vehicle->typ->data)) ||
+					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, map, vehicle->typ->data)))
 					 && !hasCheckedPlace[poscount])
 				{
 					sendWantActivate (*menu->client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);

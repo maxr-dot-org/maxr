@@ -80,7 +80,7 @@ enum eSymbolsBig
 //-----------------------------------------------------------------------------
 // Struct for the pictures and sounds
 //-----------------------------------------------------------------------------
-struct sVehicle
+struct sVehicleUIData
 {
 	SDL_Surface* img[8], *img_org[8]; // 8 Surfaces des Vehicles
 	SDL_Surface* shw[8], *shw_org[8]; // 8 Surfaces des Schattens
@@ -91,8 +91,6 @@ struct sVehicle
 	SDL_Surface* overlay, *overlay_org;    // Overlays
 	SDL_Surface* storage; // Bild des Vehicles im Lager
 	char* FLCFile;       // FLC-Video
-	sUnitData data;   // Grunddaten des Vehicles
-	int nr;              // Nr dieses Elements
 	SDL_Surface* info;   // Infobild
 
 	// Die Sounds:
@@ -106,10 +104,18 @@ struct sVehicle
 	struct Mix_Chunk* DriveWater;
 	struct Mix_Chunk* Attack;
 
-	sVehicle();
+	sVehicleUIData();
 	void scaleSurfaces (float factor);
 };
 
+struct sVehicle
+{
+	sVehicle() : nr (-1) {}
+
+	sVehicleUIData uiData;
+	sUnitData data;   // Grunddaten des Vehicles
+	int nr;           // Nr dieses Elements
+};
 
 //-----------------------------------------------------------------------------
 /** Class for a vehicle-unit of a player */
@@ -186,8 +192,8 @@ public:
 	void MakeReport (cGameGUI& gameGUI);
 	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
 	bool InSentryRange (cServer& server);
-	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI) const;
-	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
+	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const;
+	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
 	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);

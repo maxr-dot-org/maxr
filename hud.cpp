@@ -719,9 +719,9 @@ void cGameGUI::stopFXLoop()
 void cGameGUI::playStream (const cBuilding& building)
 {
 	if (building.IsWorking)
-		playFXLoop (building.typ->Running);
+		playFXLoop (building.typ->uiData.Running);
 	else
-		playFXLoop (building.typ->Wait);
+		playFXLoop (building.typ->uiData.Wait);
 }
 
 //----------------------------------------------------------------
@@ -739,9 +739,9 @@ void cGameGUI::playStream (const cVehicle& vehicle)
 	else if (vehicle.IsClearing)
 		playFXLoop (SoundData.SNDClearing);
 	else if (water && vehicle.data.factorSea > 0)
-		playFXLoop (vehicle.typ->WaitWater);
+		playFXLoop (vehicle.typ->uiData.WaitWater);
 	else
-		playFXLoop (vehicle.typ->Wait);
+		playFXLoop (vehicle.typ->uiData.Wait);
 }
 
 //-----------------------------------------------------------------------------
@@ -758,15 +758,15 @@ void cGameGUI::startMoveSound (const cVehicle& vehicle)
 	if (!vehicle.MoveJobActive)
 	{
 		if (water && vehicle.data.factorSea != 0)
-			PlayFX (vehicle.typ->StartWater);
+			PlayFX (vehicle.typ->uiData.StartWater);
 		else
-			PlayFX (vehicle.typ->Start);
+			PlayFX (vehicle.typ->uiData.Start);
 	}
 
 	if (water && vehicle.data.factorSea != 0)
-		playFXLoop (vehicle.typ->DriveWater);
+		playFXLoop (vehicle.typ->uiData.DriveWater);
 	else
-		playFXLoop (vehicle.typ->Drive);
+		playFXLoop (vehicle.typ->uiData.Drive);
 }
 
 void cGameGUI::Timer()
@@ -1901,7 +1901,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == activateVehicle)
 		{
-			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedVehicle->storedUnits[vehicleToActivate]->typ) && selectedUnit->isDisabled() == false)
+			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedVehicle->storedUnits[vehicleToActivate]->typ->data) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1949,7 +1949,7 @@ void cGameGUI::updateMouseCursor()
 			!selectedBuilding->IsWorking &&
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), (*selectedBuilding->BuildList) [0]->type.getVehicle()) && selectedUnit->isDisabled() == false)
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), (*selectedBuilding->BuildList) [0]->type.getVehicle()->data) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1960,7 +1960,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->isDisabled() == false)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->typ))
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->typ->data))
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1971,7 +1971,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == loadMode)
 		{
-			if (selectedBuilding->canLoad (mouseMapX, mouseMapY, client->getMap(), false))
+			if (selectedBuilding->canLoad (mouseMapX, mouseMapY, *client->getMap(), false))
 			{
 				mouse->SetCursor (CLoad);
 			}
@@ -4001,22 +4001,8 @@ void cGameGUI::scaleSurfaces()
 {
 	// Terrain:
 	client->getMap()->staticMap->scaleSurfaces (getTileSize());
-	// Vehicles:
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
-	{
-		UnitsData.vehicle[i].scaleSurfaces (getZoom());
-	}
-	// Buildings:
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
-	{
-		UnitsData.building[i].scaleSurfaces (getZoom());
-	}
 
-	if (UnitsData.dirt_small_org && UnitsData.dirt_small) scaleSurface (UnitsData.dirt_small_org, UnitsData.dirt_small, (int) (UnitsData.dirt_small_org->w * getZoom()), (int) (UnitsData.dirt_small_org->h * getZoom()));
-	if (UnitsData.dirt_small_shw_org && UnitsData.dirt_small_shw) scaleSurface (UnitsData.dirt_small_shw_org, UnitsData.dirt_small_shw, (int) (UnitsData.dirt_small_shw_org->w * getZoom()), (int) (UnitsData.dirt_small_shw_org->h * getZoom()));
-	if (UnitsData.dirt_big_org && UnitsData.dirt_big) scaleSurface (UnitsData.dirt_big_org, UnitsData.dirt_big, (int) (UnitsData.dirt_big_org->w * getZoom()), (int) (UnitsData.dirt_big_org->h * getZoom()));
-	if (UnitsData.dirt_big_shw_org && UnitsData.dirt_big_shw) scaleSurface (UnitsData.dirt_big_shw_org, UnitsData.dirt_big_shw, (int) (UnitsData.dirt_big_shw_org->w * getZoom()), (int) (UnitsData.dirt_big_shw_org->h * getZoom()));
-
+	UnitsData.scaleSurfaces (getZoom());
 	// Bänder:
 	if (GraphicsData.gfx_band_small_org && GraphicsData.gfx_band_small) scaleSurface (GraphicsData.gfx_band_small_org, GraphicsData.gfx_band_small, getTileSize(), getTileSize());
 	if (GraphicsData.gfx_band_big_org && GraphicsData.gfx_band_big) scaleSurface (GraphicsData.gfx_band_big_org, GraphicsData.gfx_band_big, getTileSize() * 2, getTileSize() * 2);
@@ -4199,7 +4185,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (mouseInputMode == activateVehicle && v.owner == player)
 		{
-			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->typ, *this);
+			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->typ->data, *this);
 		}
 	}
 	else if (selectedBuilding && selectedUnit->isDisabled() == false)
@@ -4240,11 +4226,11 @@ void cGameGUI::drawUnitCircles()
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0 &&
 			selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints ( (*selectedBuilding->BuildList) [0]->type.getVehicle(), *this);
+			selectedBuilding->DrawExitPoints ( (*selectedBuilding->BuildList) [0]->type.getVehicle()->data, *this);
 		}
 		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->typ, *this);
+			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->typ->data, *this);
 		}
 	}
 	drawLockList (*client->getActivePlayer());

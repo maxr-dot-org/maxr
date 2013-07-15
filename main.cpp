@@ -654,6 +654,12 @@ bool sID::operator == (const sID& ID) const
 
 //------------------------------------------------------------------------------
 cUnitsData::cUnitsData() :
+	ptr_small_beton (0),
+	ptr_small_beton_org (0),
+	ptr_connector (0),
+	ptr_connector_org (0),
+	ptr_connector_shw (0),
+	ptr_connector_shw_org (0),
 	initializedClanUnitData (false)
 {
 }
@@ -820,6 +826,26 @@ void cUnitsData::initializeClanUnitData()
 	}
 
 	initializedClanUnitData = true;
+}
+
+//------------------------------------------------------------------------------
+void cUnitsData::scaleSurfaces (float zoom)
+{
+	// Vehicles:
+	for (unsigned int i = 0; i < getNrVehicles(); ++i)
+	{
+		vehicle[i].uiData.scaleSurfaces (zoom);
+	}
+	// Buildings:
+	for (unsigned int i = 0; i < getNrBuildings(); ++i)
+	{
+		building[i].uiData.scaleSurfaces (zoom);
+	}
+
+	if (dirt_small_org && dirt_small) scaleSurface (dirt_small_org, dirt_small, (int) (dirt_small_org->w * zoom), (int) (dirt_small_org->h * zoom));
+	if (dirt_small_shw_org && dirt_small_shw) scaleSurface (dirt_small_shw_org, dirt_small_shw, (int) (dirt_small_shw_org->w * zoom), (int) (dirt_small_shw_org->h * zoom));
+	if (dirt_big_org && dirt_big) scaleSurface (dirt_big_org, dirt_big, (int) (dirt_big_org->w * zoom), (int) (dirt_big_org->h * zoom));
+	if (dirt_big_shw_org && dirt_big_shw) scaleSurface (dirt_big_shw_org, dirt_big_shw, (int) (dirt_big_shw_org->w * zoom), (int) (dirt_big_shw_org->h * zoom));
 }
 
 //------------------------------------------------------------------------------

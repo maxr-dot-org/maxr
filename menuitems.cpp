@@ -3681,7 +3681,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 	{
 		sID unitID = UnitsData.building[i].data.ID;
 		sBuilding* buildingImgs = unitID.getBuilding();
-		SDL_Surface* unitImg = buildingImgs ? buildingImgs->img_org : 0;
+		SDL_Surface* unitImg = buildingImgs ? buildingImgs->uiData.img_org : 0;
 		if (unitImg == 0)   // shouldn't happen
 			continue;
 		if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
@@ -3695,7 +3695,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 	{
 		sID unitID = UnitsData.vehicle[i].data.ID;
 		sVehicle* vehicleImgs = unitID.getVehicle();
-		SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->img_org[0] : 0;
+		SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->uiData.img_org[0] : 0;
 		if (unitImg == 0)   // shouldn't happen
 			continue;
 		if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))

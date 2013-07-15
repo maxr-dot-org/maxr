@@ -1561,7 +1561,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		// sidestep stealth units if necessary
 		sideStepStealthUnit (x, y, *StoredVehicle);
 
-		if (StoringVehicle->canExitTo (x, y, Map, StoredVehicle->typ))
+		if (StoringVehicle->canExitTo (x, y, *Map, StoredVehicle->typ->data))
 		{
 			StoringVehicle->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
@@ -1595,7 +1595,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		// sidestep stealth units if necessary
 		sideStepStealthUnit (x, y, *StoredVehicle);
 
-		if (StoringBuilding->canExitTo (x, y, Map, StoredVehicle->typ))
+		if (StoringBuilding->canExitTo (x, y, *Map, StoredVehicle->typ->data))
 		{
 			StoringBuilding->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()

@@ -422,7 +422,7 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 {
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
-	const Uint16 size = (Uint16) (typ->overlay_org->h * zoomFactor);
+	const Uint16 size = (Uint16) (typ->uiData.overlay_org->h * zoomFactor);
 	SDL_Rect src = {Sint16 (frameNr * size), 0, size, size};
 
 	SDL_Rect tmp = dest;
@@ -430,8 +430,8 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	tmp.x += offset;
 	tmp.y += offset;
 
-	SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, alpha);
-	blitWithPreScale (typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor);
+	SDL_SetAlpha (typ->uiData.overlay, SDL_SRCALPHA, alpha);
+	blitWithPreScale (typ->uiData.overlay_org, typ->uiData.overlay, &src, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
@@ -441,7 +441,7 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 	int frameNr = 0;
 	if (client && isDisabled() == false)
 	{
-		frameNr = client->getGameGUI().getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
+		frameNr = client->getGameGUI().getAnimationSpeed() % (typ->uiData.overlay_org->w / typ->uiData.overlay_org->h);
 	}
 
 	int alpha = 255;
@@ -465,15 +465,15 @@ void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface*
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow) blitWithPreScale (typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, zoomFactor);
+	if (drawShadow) blitWithPreScale (typ->uiData.build_shw_org, typ->uiData.build_shw, NULL, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
 	src.y = 0;
-	src.h = src.w = (int) (typ->build_org->h * zoomFactor);
+	src.h = src.w = (int) (typ->uiData.build_org->h * zoomFactor);
 	src.x = (client.getGameGUI().getAnimationSpeed() % 4) * src.w;
 	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	blitWithPreScale (typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
+	blitWithPreScale (typ->uiData.build_org, typ->uiData.build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -490,15 +490,15 @@ void cVehicle::render_smallClearing (const cClient& client, SDL_Surface* surface
 	// draw shadow
 	SDL_Rect tmp = dest;
 	if (drawShadow)
-		blitWithPreScale (typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (typ->uiData.clear_small_shw_org, typ->uiData.clear_small_shw, NULL, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
 	src.y = 0;
-	src.h = src.w = (int) (typ->clear_small_org->h * zoomFactor);
+	src.h = src.w = (int) (typ->uiData.clear_small_org->h * zoomFactor);
 	src.x = (client.getGameGUI().getAnimationSpeed() % 4) * src.w;
 	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	blitWithPreScale (typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
+	blitWithPreScale (typ->uiData.clear_small_org, typ->uiData.clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -512,8 +512,8 @@ void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const
 {
 	if (client.getMap()->isWater (PosX, PosY) && (data.isStealthOn & TERRAIN_SEA)) return;
 
-	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
-	else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
+	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->uiData.shw[dir], SDL_SRCALPHA, StartUp / 5);
+	else SDL_SetAlpha (typ->uiData.shw[dir], SDL_SRCALPHA, 50);
 	SDL_Rect tmp = dest;
 
 	// draw shadow
@@ -523,16 +523,16 @@ void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const
 		tmp.x += high;
 		tmp.y += high;
 
-		blitWithPreScale (typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (typ->uiData.shw_org[dir], typ->uiData.shw[dir], NULL, surface, &tmp, zoomFactor);
 	}
 	else if (data.animationMovement)
 	{
-		const Uint16 size = (int) (typ->img_org[dir]->h * zoomFactor);
+		const Uint16 size = (int) (typ->uiData.img_org[dir]->h * zoomFactor);
 		SDL_Rect r = {Sint16 (WalkFrame * size), 0, size, size};
-		blitWithPreScale (typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, zoomFactor);
+		blitWithPreScale (typ->uiData.shw_org[dir], typ->uiData.shw[dir], &r, surface, &tmp, zoomFactor);
 	}
 	else
-		blitWithPreScale (typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (typ->uiData.shw_org[dir], typ->uiData.shw[dir], NULL, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha)
@@ -542,19 +542,19 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 
 	// read the size:
 	SDL_Rect src;
-	src.w = (int) (typ->img_org[dir]->w * zoomFactor);
-	src.h = (int) (typ->img_org[dir]->h * zoomFactor);
+	src.w = (int) (typ->uiData.img_org[dir]->w * zoomFactor);
+	src.h = (int) (typ->uiData.img_org[dir]->h * zoomFactor);
 
 	if (data.animationMovement)
 	{
 		SDL_Rect tmp;
-		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h * zoomFactor);
+		src.w = src.h = tmp.h = tmp.w = (int) (typ->uiData.img_org[dir]->h * zoomFactor);
 		tmp.x = WalkFrame * tmp.w;
 		tmp.y = 0;
-		blitWithPreScale (typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, zoomFactor);
+		blitWithPreScale (typ->uiData.img_org[dir], typ->uiData.img[dir], &tmp, GraphicsData.gfx_tmp, NULL, zoomFactor);
 	}
 	else
-		blitWithPreScale (typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, zoomFactor);
+		blitWithPreScale (typ->uiData.img_org[dir], typ->uiData.img[dir], NULL, GraphicsData.gfx_tmp, NULL, zoomFactor);
 
 	// draw the vehicle
 	src.x = 0;
@@ -623,15 +623,15 @@ void cVehicle::Select (cGameGUI& gameGUI)
 {
 	// load the video
 	if (gameGUI.getFLC() != NULL) FLI_Close (gameGUI.getFLC());
-	if (FileExists (typ->FLCFile))
+	if (FileExists (typ->uiData.FLCFile))
 	{
-		gameGUI.setFLC (FLI_Open (SDL_RWFromFile (typ->FLCFile, "rb"), NULL));
+		gameGUI.setFLC (FLI_Open (SDL_RWFromFile (typ->uiData.FLCFile, "rb"), NULL));
 	}
 	else
 	{
 		//in case the flc video doesn't exist we use the storage image instead
 		gameGUI.setFLC (NULL);
-		gameGUI.setVideoSurface (typ->storage);
+		gameGUI.setVideoSurface (typ->uiData.storage);
 	}
 
 	MakeReport (gameGUI);
@@ -1523,7 +1523,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 //-----------------------------------------------------------------------------
 /** Draws exitpoints for a vehicle, that should be exited */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawExitPoints (const sVehicle* const typ, cGameGUI& gameGUI) const
+void cVehicle::DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const
 {
 	const int spx = getScreenPosX (gameGUI);
 	const int spy = getScreenPosY (gameGUI);
@@ -1536,15 +1536,15 @@ void cVehicle::DrawExitPoints (const sVehicle* const typ, cGameGUI& gameGUI) con
 
 	for (int i = 0; i != 8; ++i)
 	{
-		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, map, typ))
+		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, *map, unitData))
 			gameGUI.drawExitPoint (spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize);
 	}
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const
+bool cVehicle::canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const
 {
-	if (!map->possiblePlaceVehicle (typ->data, x, y, owner)) return false;
+	if (!map.possiblePlaceVehicle (unitData, x, y, owner)) return false;
 	if (data.factorAir > 0 && (x != PosX || y != PosY)) return false;
 	if (!isNextTo (x, y)) return false;
 
@@ -2009,7 +2009,7 @@ void cVehicle::makeDetection (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
-sVehicle::sVehicle() :
+sVehicleUIData::sVehicleUIData() :
 	build (NULL), build_org (NULL),
 	build_shw (NULL), build_shw_org (NULL),
 	clear_small (NULL), clear_small_org (NULL),
@@ -2017,8 +2017,6 @@ sVehicle::sVehicle() :
 	overlay (NULL), overlay_org (NULL),
 	storage (NULL),
 	FLCFile (NULL),
-	data(),
-	nr (-1),
 	info (NULL),
 	Wait (NULL), WaitWater (NULL),
 	Start (NULL), StartWater (NULL),
@@ -2033,10 +2031,10 @@ sVehicle::sVehicle() :
 }
 
 //-----------------------------------------------------------------------------
-void sVehicle::scaleSurfaces (float factor)
+void sVehicleUIData::scaleSurfaces (float factor)
 {
 	int width, height;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; ++i)
 	{
 		width = (int) (img_org[i]->w * factor);
 		height = (int) (img_org[i]->h * factor);
