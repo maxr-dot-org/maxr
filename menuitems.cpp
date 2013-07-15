@@ -3677,9 +3677,9 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 
 	int displayedEntryIndex = 0;
 
-	for (size_t i = 0; i < UnitsData.building.size(); i++)
+	for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 	{
-		sID unitID = UnitsData.building[i].data.ID;
+		sID unitID = UnitsData.sbuildings[i].data.ID;
 		sBuilding* buildingImgs = unitID.getBuilding();
 		SDL_Surface* unitImg = buildingImgs ? buildingImgs->uiData.img_org : 0;
 		if (unitImg == 0)   // shouldn't happen
@@ -3691,9 +3691,9 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 			break;
 	}
 
-	for (size_t i = 0; i < UnitsData.vehicle.size(); i++)
+	for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 	{
-		sID unitID = UnitsData.vehicle[i].data.ID;
+		sID unitID = UnitsData.svehicles[i].data.ID;
 		sVehicle* vehicleImgs = unitID.getVehicle();
 		SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->uiData.img_org[0] : 0;
 		if (unitImg == 0)   // shouldn't happen

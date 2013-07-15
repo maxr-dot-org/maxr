@@ -391,14 +391,17 @@ public:
 
 	void scaleSurfaces (float zoomFactor);
 
-public:
+private:
+	void initializeClanUnitData();
+
+public: // TODO: private
 	// Vehicles
 	// the standard version without clan modifications
-	std::vector<sVehicle> vehicle;
+	std::vector<sVehicle> svehicles;
 
 	// Buildings
 	// the standard version without clan modifications
-	std::vector<sBuilding> building;
+	std::vector<sBuilding> sbuildings;
 
 	AutoSurface dirt_small_org;
 	AutoSurface dirt_small;
@@ -417,10 +420,7 @@ public:
 	SDL_Surface* ptr_connector_shw;
 	SDL_Surface* ptr_connector_shw_org;
 
-	//------------------------------------------------------------
 private:
-	void initializeClanUnitData();
-
 	// contains the modified versions for the clans
 	std::vector<std::vector<sVehicle> > clanUnitDataVehicles;
 	// cotains the modified versions for the clans
@@ -430,7 +430,7 @@ private:
 	sID constructorID;
 	sID engineerID;
 	sID surveyorID;
-public:
+public: // TODO : private
 	sID specialIDLandMine;
 	sID specialIDSeaMine;
 	sID specialIDMine;

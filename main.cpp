@@ -273,8 +273,8 @@ void Quit()
 	delete font;
 	delete InputHandler;
 
-	UnitsData.vehicle.clear();
-	UnitsData.building.clear();
+	UnitsData.svehicles.clear();
+	UnitsData.sbuildings.clear();
 
 	//unload files here
 	CloseSound();
@@ -672,7 +672,7 @@ sVehicle& cUnitsData::getVehicle (int nr, int clan)
 
 	if (clan < 0 || clan > (int) clanUnitDataVehicles.size())
 	{
-		return vehicle[nr];
+		return svehicles[nr];
 	}
 	return clanUnitDataVehicles.at (clan).at (nr);   //[clan][nr];
 }
@@ -685,26 +685,26 @@ sBuilding& cUnitsData::getBuilding (int nr, int clan)
 
 	if (clan < 0 || clan > (int) clanUnitDataBuildings.size())
 	{
-		return building[nr];
+		return sbuildings[nr];
 	}
 	return clanUnitDataBuildings.at (clan).at (nr);   //[clan][nr];
 }
 
 unsigned int cUnitsData::getNrVehicles() const
 {
-	return (int) vehicle.size();
+	return (int) svehicles.size();
 }
 
 unsigned int cUnitsData::getNrBuildings() const
 {
-	return (int) building.size();
+	return (int) sbuildings.size();
 }
 
 static int getConstructorIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle& vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.svehicles[i];
 
 		if (vehicle.data.canBuild.compare ("BigBuilding") == 0)
 		{
@@ -718,7 +718,7 @@ static int getEngineerIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle& vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.svehicles[i];
 
 		if (vehicle.data.canBuild.compare ("SmallBuilding") == 0)
 		{
@@ -732,7 +732,7 @@ static int getSurveyorIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle& vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.svehicles[i];
 
 		if (vehicle.data.canSurvey)
 		{
@@ -752,9 +752,9 @@ void cUnitsData::initializeIDData()
 	assert (engineerIndex != -1);
 	assert (surveyorIndex != -1);
 
-	constructorID = vehicle[constructorIndex].data.ID;
-	engineerID = vehicle[engineerIndex].data.ID;
-	surveyorID = vehicle[surveyorIndex].data.ID;
+	constructorID = svehicles[constructorIndex].data.ID;
+	engineerID = svehicles[engineerIndex].data.ID;
+	surveyorID = svehicles[surveyorIndex].data.ID;
 }
 
 //------------------------------------------------------------------------------
@@ -771,10 +771,10 @@ void cUnitsData::initializeClanUnitData()
 
 		clanUnitDataVehicles.push_back (std::vector<sVehicle>());
 		vector<sVehicle>& clanListVehicles = clanUnitDataVehicles.back();
-		for (unsigned int vehicleIdx = 0; vehicleIdx < vehicle.size(); vehicleIdx++)
+		for (unsigned int vehicleIdx = 0; vehicleIdx < svehicles.size(); vehicleIdx++)
 		{
 			// make a copy of the vehicle's stats
-			const sVehicle& curVehicle = vehicle[vehicleIdx];
+			const sVehicle& curVehicle = svehicles[vehicleIdx];
 			clanListVehicles.push_back (curVehicle);
 
 			const cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID);
@@ -799,10 +799,10 @@ void cUnitsData::initializeClanUnitData()
 
 		clanUnitDataBuildings.push_back (std::vector<sBuilding>());
 		vector<sBuilding>& clanListBuildings = clanUnitDataBuildings.back();
-		for (unsigned int buildingIdx = 0; buildingIdx < building.size(); buildingIdx++)
+		for (unsigned int buildingIdx = 0; buildingIdx < sbuildings.size(); buildingIdx++)
 		{
 			// make a copy of the building's stats
-			const sBuilding& curBuilding = building[buildingIdx];
+			const sBuilding& curBuilding = sbuildings[buildingIdx];
 			clanListBuildings.push_back (curBuilding);
 
 			const cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID);
@@ -834,12 +834,12 @@ void cUnitsData::scaleSurfaces (float zoom)
 	// Vehicles:
 	for (unsigned int i = 0; i < getNrVehicles(); ++i)
 	{
-		vehicle[i].uiData.scaleSurfaces (zoom);
+		svehicles[i].uiData.scaleSurfaces (zoom);
 	}
 	// Buildings:
 	for (unsigned int i = 0; i < getNrBuildings(); ++i)
 	{
-		building[i].uiData.scaleSurfaces (zoom);
+		sbuildings[i].uiData.scaleSurfaces (zoom);
 	}
 
 	if (dirt_small_org && dirt_small) scaleSurface (dirt_small_org, dirt_small, (int) (dirt_small_org->w * zoom), (int) (dirt_small_org->h * zoom));

@@ -1026,8 +1026,8 @@ static int LoadVehicles()
 		}
 	}
 	// load found units
-	UnitsData.vehicle.clear();
-	UnitsData.vehicle.reserve (VehicleList.size());
+	UnitsData.svehicles.clear();
+	UnitsData.svehicles.reserve (VehicleList.size());
 	string sVehiclePath;
 	for (size_t i = 0; i != VehicleList.size(); ++i)
 	{
@@ -1037,8 +1037,8 @@ static int LoadVehicles()
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.vehicle.push_back (sVehicle());
-		sVehicle& v = UnitsData.vehicle[i];
+		UnitsData.svehicles.push_back (sVehicle());
+		sVehicle& v = UnitsData.svehicles[i];
 
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData (&v.data, sVehiclePath.c_str(), IDList[i]);
@@ -1351,7 +1351,7 @@ static int LoadVehicles()
 		LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
-	for (size_t i = 0; i != UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
+	for (size_t i = 0; i != UnitsData.svehicles.size(); ++i) UnitsData.svehicles[i].nr = (int) i;
 
 	UnitsData.initializeIDData();
 
@@ -1414,22 +1414,22 @@ static bool translateUnitData (sID ID, bool vehicle)
 	sUnitData* Data = NULL;
 	if (vehicle)
 	{
-		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
+		for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 		{
-			if (UnitsData.vehicle[i].data.ID == ID)
+			if (UnitsData.svehicles[i].data.ID == ID)
 			{
-				Data = &UnitsData.vehicle[i].data;
+				Data = &UnitsData.svehicles[i].data;
 				break;
 			}
 		}
 	}
 	else
 	{
-		for (size_t i = 0; i != UnitsData.building.size(); ++i)
+		for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 		{
-			if (UnitsData.building[i].data.ID == ID)
+			if (UnitsData.sbuildings[i].data.ID == ID)
 			{
-				Data = &UnitsData.building[i].data;
+				Data = &UnitsData.sbuildings[i].data;
 				break;
 			}
 		}
@@ -1587,8 +1587,8 @@ static int LoadBuildings()
 
 	UnitsData.specialIDMine.iFirstPart = UnitsData.specialIDSmallGen.iFirstPart = UnitsData.specialIDConnector.iFirstPart = UnitsData.specialIDLandMine.iFirstPart = UnitsData.specialIDSeaMine.iFirstPart = UnitsData.specialIDSmallBeton.iFirstPart = 1;
 	// load found units
-	UnitsData.building.clear();
-	UnitsData.building.reserve (BuildingList.size());
+	UnitsData.sbuildings.clear();
+	UnitsData.sbuildings.reserve (BuildingList.size());
 	for (unsigned int i = 0; i < BuildingList.size(); i++)
 	{
 		string sBuildingPath = cSettings::getInstance().getBuildingsPath();
@@ -1597,9 +1597,9 @@ static int LoadBuildings()
 		sBuildingPath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.building.push_back (sBuilding());
+		UnitsData.sbuildings.push_back (sBuilding());
 
-		sBuilding& b = UnitsData.building.back();
+		sBuilding& b = UnitsData.sbuildings.back();
 		LoadUnitData (&b.data, sBuildingPath.c_str(), IDList[i]);
 		translateUnitData (b.data.ID, false);
 
@@ -1707,9 +1707,9 @@ static int LoadBuildings()
 		if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
 	}
 	// set building numbers
-	for (unsigned int i = 0; i < UnitsData.building.size(); ++i)
+	for (unsigned int i = 0; i < UnitsData.sbuildings.size(); ++i)
 	{
-		UnitsData.building[i].nr = (int) i;
+		UnitsData.sbuildings[i].nr = (int) i;
 	}
 	return 1;
 }
@@ -1739,14 +1739,14 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	char szTmp[100];
 	// check whether the id exists twice
 	Data->ID.iFirstPart = atoi (idString.substr (0, idString.find (" ", 0)).c_str());
+	Data->ID.iSecondPart = atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str());
 	if (Data->ID.isAVehicle())
 	{
-		const string secondPart = idString.substr (idString.find (" ", 0), idString.length());
-		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
+		for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 		{
-			if (UnitsData.vehicle[i].data.ID.iSecondPart == atoi (secondPart.c_str()))
+			if (UnitsData.svehicles[i].data.ID == Data->ID)
 			{
-				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.svehicles[i].data.ID.iFirstPart, UnitsData.svehicles[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
@@ -1754,17 +1754,16 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	}
 	else
 	{
-		for (size_t i = 0; i < UnitsData.building.size(); ++i)
+		for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 		{
-			if (UnitsData.building[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
+			if (UnitsData.sbuildings[i].data.ID == Data->ID)
 			{
-				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.building[i].data.ID.iFirstPart, UnitsData.building[i].data.ID.iSecondPart);
+				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.sbuildings[i].data.ID.iFirstPart, UnitsData.sbuildings[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
 		}
 	}
-	Data->ID.iSecondPart = atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str());
 
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
 	if (iID != atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
@@ -2036,8 +2035,8 @@ void reloadUnitValues()
 	while (Element != NULL)
 	{
 		int num = Element->IntAttribute ("num");
-		LoadUnitData (&UnitsData.vehicle[i].data, (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
-		translateUnitData (UnitsData.vehicle[i].data.ID, true);
+		LoadUnitData (&UnitsData.svehicles[i].data, (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
+		translateUnitData (UnitsData.svehicles[i].data.ID, true);
 		if (Element->NextSibling()) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
@@ -2053,8 +2052,8 @@ void reloadUnitValues()
 	while (Element != NULL)
 	{
 		int num = Element->IntAttribute ("num");
-		LoadUnitData (&UnitsData.building[i].data, (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
-		translateUnitData (UnitsData.building[i].data.ID, false);
+		LoadUnitData (&UnitsData.sbuildings[i].data, (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
+		translateUnitData (UnitsData.sbuildings[i].data.ID, false);
 		if (Element->NextSibling()) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;

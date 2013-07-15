@@ -764,7 +764,7 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 			unitShow = random (UnitsData.getNrBuildings() - 1);
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1); //make sure we don't show same unit twice
-		surface = UnitsData.building[unitShow].uiData.info;
+		surface = UnitsData.sbuildings[unitShow].uiData.info;
 	}
 	else if (UnitsData.getNrVehicles() > 0) //and a 66% chance to show a vehicle on 0 or 2
 	{
@@ -773,7 +773,7 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 			unitShow = random (UnitsData.getNrVehicles() - 1);
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1); //make sure we don't show same unit twice
-		surface = UnitsData.vehicle[unitShow].uiData.info;
+		surface = UnitsData.svehicles[unitShow].uiData.info;
 	}
 	else surface = NULL;
 	lastUnitShow = unitShow; //store shown unit
@@ -4111,11 +4111,11 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 //------------------------------------------------------------------------------
 void cBuildingsBuildMenu::generateSelectionList()
 {
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
-		if (UnitsData.building[i].data.explodesOnContact) continue;
+		if (UnitsData.sbuildings[i].data.explodesOnContact) continue;
 
-		if (vehicle->data.canBuild.compare (UnitsData.building[i].data.buildAs) != 0) continue;
+		if (vehicle->data.canBuild.compare (UnitsData.sbuildings[i].data.buildAs) != 0) continue;
 
 		selectionList->addUnit (&vehicle->owner->BuildingData[i], player);
 

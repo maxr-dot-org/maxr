@@ -95,8 +95,8 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); ++i)
 	{
 		const sUnitData* Data;
-		if (i < UnitsData.getNrVehicles()) Data = &UnitsData.vehicle[i].data;
-		else Data = &UnitsData.building[i - UnitsData.getNrVehicles()].data;
+		if (i < UnitsData.getNrVehicles()) Data = &UnitsData.svehicles[i].data;
+		else Data = &UnitsData.sbuildings[i - UnitsData.getNrVehicles()].data;
 		writeStandardUnitValues (*Data, i);
 	}
 
@@ -392,13 +392,13 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 			if (ID.isAVehicle())
 			{
 				unsigned int num;
-				for (num = 0; num < UnitsData.getNrVehicles(); num++) if (UnitsData.vehicle[num].data.ID == ID) break;
+				for (num = 0; num != UnitsData.getNrVehicles(); ++num) if (UnitsData.svehicles[num].data.ID == ID) break;
 				loadUpgrade (upgradeNode, &Player->VehicleData[num]);
 			}
 			else
 			{
 				unsigned int num;
-				for (num = 0; num < UnitsData.getNrBuildings(); num++) if (UnitsData.building[num].data.ID == ID) break;
+				for (num = 0; num != UnitsData.getNrBuildings(); ++num) if (UnitsData.sbuildings[num].data.ID == ID) break;
 				loadUpgrade (upgradeNode, &Player->BuildingData[num]);
 			}
 			upgradenum++;
@@ -562,7 +562,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 	int number = -1;
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		if (UnitsData.vehicle[i].data.ID == ID)
+		if (UnitsData.svehicles[i].data.ID == ID)
 		{
 			number = i;
 			break;
@@ -577,7 +577,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cVehicle* vehicle = server.addUnit (x, y, UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	cVehicle* vehicle = server.addUnit (x, y, UnitsData.svehicles[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -696,7 +696,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, sID& ID)
 	int number = -1;
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
-		if (UnitsData.building[i].data.ID == ID)
+		if (UnitsData.sbuildings[i].data.ID == ID)
 		{
 			number = i;
 			break;
@@ -711,7 +711,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, sID& ID)
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cBuilding* building = server.addUnit (x, y, UnitsData.building[number], owner, true, tmpinteger);
+	cBuilding* building = server.addUnit (x, y, UnitsData.sbuildings[number], owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -758,7 +758,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, sID& ID)
 			{
 				int typenr;
 				itemElement->QueryIntAttribute ("type", &typenr);
-				listitem->type = UnitsData.vehicle[typenr].data.ID;
+				listitem->type = UnitsData.svehicles[typenr].data.ID;
 			}
 			itemElement->QueryIntAttribute ("metall_remaining", &listitem->metall_remaining);
 			building->BuildList->push_back (listitem);
@@ -861,22 +861,22 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	ID.generate (unitNode->FirstChildElement ("ID")->Attribute ("string"));
 	if (ID.isAVehicle())
 	{
-		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
+		for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 		{
-			if (UnitsData.vehicle[i].data.ID == ID)
+			if (UnitsData.svehicles[i].data.ID == ID)
 			{
-				Data = &UnitsData.vehicle[i].data;
+				Data = &UnitsData.svehicles[i].data;
 				break;
 			}
 		}
 	}
 	else if (ID.isABuilding())
 	{
-		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
+		for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
 		{
-			if (UnitsData.building[i].data.ID == ID)
+			if (UnitsData.sbuildings[i].data.ID == ID)
 			{
-				Data = &UnitsData.building[i].data;
+				Data = &UnitsData.sbuildings[i].data;
 				break;
 			}
 		}
