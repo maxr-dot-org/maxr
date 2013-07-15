@@ -633,7 +633,7 @@ bool cServerMoveJob::checkMove()
 
 	if (!Map->possiblePlace (*Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange)
 	{
-		server->sideStepStealthUnit (Waypoints->next->X, Waypoints->next->Y, Vehicle);
+		server->sideStepStealthUnit (Waypoints->next->X, Waypoints->next->Y, *Vehicle);
 	}
 
 	//when the next field is still blocked, inform the client

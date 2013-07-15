@@ -577,7 +577,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cVehicle* vehicle = server.addUnit (x, y, &UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	cVehicle* vehicle = server.addUnit (x, y, UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -711,7 +711,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, sID& ID)
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cBuilding* building = server.addUnit (x, y, &UnitsData.building[number], owner, true, tmpinteger);
+	cBuilding* building = server.addUnit (x, y, UnitsData.building[number], owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));

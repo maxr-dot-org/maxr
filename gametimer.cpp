@@ -242,11 +242,11 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 	int newWaitingForPlayer = -1;
 
 	std::vector<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.size(); i++)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		cPlayer* player = playerList[i];
+		cPlayer& player = *playerList[i];
 		if (!server.isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
-			newWaitingForPlayer = player->getNr();
+			newWaitingForPlayer = player.getNr();
 	}
 
 	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)

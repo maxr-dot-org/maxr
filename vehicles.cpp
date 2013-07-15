@@ -453,7 +453,7 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
 {
 	assert ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL);
-	// draw beton if nessesary
+	// draw beton if necessary
 	SDL_Rect tmp = dest;
 	const cMap& map = *client.getMap();
 	if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
@@ -679,7 +679,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 			if (!map.possiblePlace (*this, nextX, nextY))
 			{
 				// Try sidestepping stealth units before giving up.
-				server.sideStepStealthUnit (nextX, nextY, this);
+				server.sideStepStealthUnit (nextX, nextY, *this);
 				if (!map.possiblePlace (*this, nextX, nextY))
 				{
 					// We can't build along this path any more.
@@ -699,7 +699,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (found_next && server.addMoveJob (PosX, PosY, nextX, nextY, this))
 		{
 			IsBuilding = false;
-			server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
+			server.addUnit (PosX, PosY, *BuildingTyp.getBuilding(), owner);
 			// Begin the movement immediately,
 			// so no other unit can block the destination field.
 			this->ServerMoveJob->checkMove();
@@ -709,7 +709,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		{
 			if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
 			{
-				server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
+				server.addUnit (PosX, PosY, *BuildingTyp.getBuilding(), owner);
 				IsBuilding = false;
 			}
 			BuildPath = false;
@@ -723,7 +723,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
 		{
 			IsBuilding = false;
-			server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
+			server.addUnit (PosX, PosY, *BuildingTyp.getBuilding(), owner);
 		}
 	}
 	return true;
@@ -1696,12 +1696,12 @@ bool cVehicle::layMine (cServer& server)
 	if ( (data.factorSea > 0 && data.factorGround == 0))
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addUnit (PosX, PosY, UnitsData.specialIDSeaMine.getBuilding(), owner, false);
+		server.addUnit (PosX, PosY, *UnitsData.specialIDSeaMine.getBuilding(), owner, false);
 	}
 	else
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addUnit (PosX, PosY, UnitsData.specialIDLandMine.getBuilding(), owner, false);
+		server.addUnit (PosX, PosY, *UnitsData.specialIDLandMine.getBuilding(), owner, false);
 	}
 	data.storageResCur--;
 

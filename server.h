@@ -86,8 +86,6 @@ public:
 	 * initialises the server class.
 	 *@author alzi alias DoctorDeath
 	 *@param network_ non null for GAME_TYPE_TCPIP
-	 *@param map The Map for the game
-	 *@param PlayerList The list with all players
 	 */
 	explicit cServer (cTCP* network_);
 	~cServer();
@@ -109,12 +107,12 @@ public:
 	cCasualtiesTracker* getCasualtiesTracker() { return casualtiesTracker;}
 
 	/**
-	* Handels all incoming netMessages from the clients
+	* Handles all incoming netMessages from the clients
 	*@author Eiko
 	*@param message The message to be prozessed
 	*@return 0 for success
 	*/
-	int HandleNetMessage (cNetMessage* message);
+	int handleNetMessage (cNetMessage* message);
 
 	/**
 	 * gets the unit with the ID
@@ -150,7 +148,7 @@ public:
 	/**
 	* returns the player identified by playerID
 	*@author eiko
-	*@param playerID Can be a string representation of the player number or player name
+	*@param playerID Can be the player number (as string) or player name
 	*/
 	cPlayer* getPlayerFromString (const std::string& playerID);
 
@@ -158,11 +156,11 @@ public:
 	 * returns if the player is on the disconnected players list
 	 *@author pagra
 	 */
-	bool isPlayerDisconnected (const cPlayer* player) const;
+	bool isPlayerDisconnected (const cPlayer& player) const;
 
 	/**
-	 * puts all players on the disconnected list. This is useful for loading a
-	 * game on the dedicated server.
+	 * puts all players on the disconnected list.
+	 * This is useful for loading a game on the dedicated server.
 	 *@author pagra
 	 */
 	void markAllPlayersAsDisconnected();
@@ -175,7 +173,8 @@ public:
 	virtual void pushEvent (cNetMessage* event);
 
 	/**
-	* sends a netMessage to the client on which the player with 'iPlayerNum' is playing
+	* sends a netMessage to the client
+	* on which the player with 'iPlayerNum' is playing
 	* PlayerNum -1 means all players
 	* message must not be deleted after caling this function
 	*@author alzi alias DoctorDeath
@@ -191,7 +190,7 @@ public:
 	void run();
 
 	/**
-	* this function is responsible for running all periodically actions on the game modell
+	* runs all periodically actions on the game model
 	*@author eiko
 	*/
 	void doGameActions();
@@ -200,7 +199,8 @@ public:
 	* deletes a Unit
 	*@author alzi alias DoctorDeath
 	*@param unit the unit which should be deleted.
-	*@param notifyClient when false, the Unit is only removed locally on the Server. The caller must make sure to inform the clients
+	*@param notifyClient when false, the Unit is only removed locally.
+	*       The caller must make sure to inform the clients
 	*/
 	void deleteUnit (cUnit* unit, bool notifyClient = true);
 
@@ -223,8 +223,8 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle* addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int ID = 0);
-	cBuilding* addUnit (int iPosX, int iPosY, const sBuilding* Building, cPlayer* Player, bool bInit = false, unsigned int ID = 0);
+	cVehicle* addUnit (int iPosX, int iPosY, const sVehicle& svehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int ID = 0);
+	cBuilding* addUnit (int iPosX, int iPosY, const sBuilding& sbuilding, cPlayer* Player, bool bInit = false, unsigned int ID = 0);
 
 	void placeInitialResources (const std::vector<sClientLandData*>& landData, const sSettings& settings);
 
@@ -234,10 +234,10 @@ public:
 	*@param iX The X coordinate to land.
 	*@param iY The Y coordinate to land.
 	*@param Player The Player who wants to land.
-	*@param List List with all units to land.
+	*@param landingUnits List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLandingUnit>* List, bool bFixed);
+	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
 	/**
 	 *
 	 */
@@ -251,7 +251,7 @@ public:
 	*/
 	void addReport (sID Type, bool bVehicle, int iPlayerNum);
 	/**
-	* adds an new movejob
+	* adds a new movejob
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added
 	*/
@@ -274,7 +274,7 @@ public:
 	void deleteRubble (cBuilding* rubble);
 
 	void resyncPlayer (cPlayer* Player, bool firstDelete = false);
-	void resyncVehicle (cVehicle* Vehicle, cPlayer* Player);
+	void resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player);
 	/**
 	* deletes a player and all his units
 	*@author alzi alias DoctorDeath
@@ -283,8 +283,8 @@ public:
 
 	void kickPlayer (cPlayer* player);
 
-	void sideStepStealthUnit (int PosX, int PosY, cVehicle* vehicle, int bigOffset = -1);
-	void sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1);
+	void sideStepStealthUnit (int PosX, int PosY, const cVehicle& vehicle, int bigOffset = -1);
+	void sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1);
 
 	void makeAdditionalSaveRequest (int saveNum);
 
@@ -304,50 +304,50 @@ private:
 	*/
 	cNetMessage* pollEvent();
 
-	void HandleNetMessage_TCP_ACCEPT (cNetMessage& message);
-	void HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
+	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
+	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message);
+	void handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
+	void handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
+	void handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message);
+	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
+	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message);
+	void handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message);
+	void handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message);
+	void handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message);
+	void handleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message);
+	void handleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message);
+	void handleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message);
+	void handleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message);
+	void handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message);
+	void handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
+	void handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
 
 	/**
 	* lands the vehicle at a free position in the radius
@@ -356,11 +356,12 @@ private:
 	*@param iY The Y coordinate to land.
 	*@param iWidth Width of the field.
 	*@param iHeight iHeight of the field.
-	*@param Vehicle Vehicle to land.
-	*@param Player Player whose vehicle should be land.
-	*@return NULL if the vehicle could not be landed, else a pointer to the vehicle.
+	*@param svehicle Vehicle to land.
+	*@param player Player whose vehicle should be land.
+	*@return NULL if the vehicle could not be landed,
+	*        else a pointer to the vehicle.
 	*/
-	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, const sVehicle* Vehicle, cPlayer* Player);
+	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, const sVehicle& svehicle, cPlayer* player);
 
 	/**
 	* handles the pressed end of a player
@@ -368,10 +369,8 @@ private:
 	*/
 	void handleEnd (int iPlayerNum);
 	/**
-	* executes everthing for a turnend
+	* executes everything for a turnend
 	*@author alzi alias DoctorDeath
-	*@param iPlayerNum Number of player who has pressed the end turn button
-	*@param bChangeTurn true if all players have ended their turn and the turnnumber has changed
 	*/
 	void makeTurnEnd();
 	/**
@@ -389,7 +388,8 @@ private:
 	/**
 	* checks whether some units are moving and restarts remaining movements
 	*@author alzi alias DoctorDeath
-	*@param iPlayer The player who will receive the messages when the turn can't be finished now; -1 for all players
+	*@param iPlayer The player who will receive the messages
+	*       when the turn can't be finished now; -1 for all players
 	*@return true if there were found some moving units
 	*/
 	bool checkEndActions (int iPlayer);
@@ -425,7 +425,8 @@ private:
 	void stopVehicleBuilding (cVehicle* vehicle);
 
 	/**
-	 * Helper for destroyUnit(cBuilding) that deletes all buildings and returns the generated rubble value.
+	 * Helper for destroyUnit(cBuilding) that deletes all buildings
+	 * and returns the generated rubble value.
 	 * @author Paul Grathwohl
 	 */
 	int deleteBuildings (std::vector<cBuilding*>& buildings);
@@ -443,7 +444,7 @@ private:
 	/** local client if any. */
 	cClient* localClient;
 
-	/** controls the timesynchonous actions on server and client */
+	/** controls the timesynchoneous actions on server and client */
 	cGameTimerServer gameTimer;
 	/** little helper jobs, that do some time dependent actions */
 	cJobContainer helperJobs;
@@ -451,19 +452,19 @@ private:
 	cRingbuffer<cNetMessage*> eventQueue;
 
 	/** the thread the server runs in */
-	SDL_Thread* ServerThread;
+	SDL_Thread* serverThread;
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
 	/** the server is on halt, because a client is not responding */
 	int waitForPlayer;
-	/** list with buildings without owner, e. g. rubble fields */
+	/** list with buildings without owner, e.g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** true if the game should be played in turns */
 	bool bPlayTurns;
 	/** number of active player in turn based multiplayer game */
 	int iActiveTurnPlayerNr;
-	/** a list with the numbers of all players who have ended theire turn */
+	/** a list with the numbers of all players who have ended their turn */
 	std::vector<cPlayer*> PlayerEndList;
 	/** number of current turn */
 	int iTurn;

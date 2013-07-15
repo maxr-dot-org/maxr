@@ -135,7 +135,7 @@ void cServerGame::run()
 		{
 			if (server != 0)
 			{
-				server->HandleNetMessage (event);
+				server->handleNetMessage (event);
 				server->checkPlayerUnits();
 			}
 			else
@@ -494,7 +494,7 @@ void cServerGame::startGameServer()
 	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
 		server->makeLanding (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY,
-							 serverPlayers[i], gameData->landingUnits[i], gameData->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
+							 serverPlayers[i], *gameData->landingUnits[i], gameData->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 		delete gameData->landData[i];
 		delete gameData->landingUnits[i];
 	}
@@ -554,10 +554,10 @@ std::string cServerGame::getGameState() const
 	result << "Players:" << endl;
 	if (server != NULL && serverPlayers.size() > 0)
 	{
-		for (size_t i = 0; i < serverPlayers.size(); i++)
+		for (size_t i = 0; i != serverPlayers.size(); ++i)
 		{
-			cPlayer* player = serverPlayers[i];
-			result << " " << player->getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
+			const cPlayer& player = *serverPlayers[i];
+			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
 	else if (gameData->players.size() > 0)

@@ -187,7 +187,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		// make the landing
 		for (unsigned int i = 0; i < players.size(); i++)
 		{
-			server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
+			server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], *landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 			delete landData[i];
 			delete landingUnits[i];
 		}
