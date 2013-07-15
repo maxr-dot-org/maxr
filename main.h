@@ -479,7 +479,7 @@ public:
  */
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height);
 
-/** this function checks, whether the surface has to be rescaled, and scales it if nessesary */
+/** this function checks, whether the surface has to be rescaled, and scales it if necessary */
 inline void CHECK_SCALING (SDL_Surface* surface, SDL_Surface* surface_org, float factor)
 {
 	if (!cSettings::getInstance().shouldDoPrescale() &&

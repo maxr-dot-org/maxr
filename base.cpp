@@ -600,7 +600,7 @@ bool sSubBase::checkOil (cServer& server)
 		oilMissing = true;
 	}
 
-	// increase oil production, if nessesary
+	// increase oil production, if necessary
 	neededOil = stations * 6 + generators * 2;
 	if (neededOil > OilProd + Oil)
 	{
@@ -1040,7 +1040,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	building->SubBase = firstNeighbour;
 	NeighbourList.erase (NeighbourList.begin());
 
-	// now merge the other neigbours to the first one, if nessesary
+	// now merge the other neigbours to the first one, if necessary
 	for (size_t i = 0; i != NeighbourList.size(); ++i)
 	{
 		sSubBase* const SubBase = NeighbourList[i];

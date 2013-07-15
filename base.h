@@ -108,7 +108,7 @@ public:
 	* - switch off unneeded fuel consumers(=energy producers)
 	* - sets the optimal amount of generators and stations
 	*   to minimize fuel consumption
-	* - increases oil production, if nessesary
+	* - increases oil production, if necessary
 	* - switches off oil consumers, if to few oil is available
 	* @return: returns true, if oil consumers have been shut down,
 	*          due to a lack of oil
@@ -116,7 +116,7 @@ public:
 	*/
 	bool checkOil (cServer& server);
 	/**
-	* switch off energy consumers, if nessesary
+	* switch off energy consumers, if necessary
 	* @return returns true, if a energy consumers have been shut down
 	* @author eiko
 	*/

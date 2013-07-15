@@ -145,7 +145,7 @@ void sendWantStopMove (const cClient& client, int iVehicleID);
 void sendMoveJobResume (const cClient& client, int unitId);
 
 /**
-* sends all nessesary information to identify agressor
+* sends all necessary information to identify agressor
 * and target of an attack to the server
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.
 *@param targetOffset the offset, where the player has aimed

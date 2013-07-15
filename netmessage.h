@@ -37,7 +37,7 @@ enum eNetMessageClass { NET_MSG_SERVER, NET_MSG_CLIENT, NET_MSG_MENU, NET_MSG_ST
 
 /**
 * This class represents a message between server and client
-* It provides some usefull interfaces to its containing data
+* It provides some useful interfaces to its containing data
 *@author Eiko
 */
 class cNetMessage

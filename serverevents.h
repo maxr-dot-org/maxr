@@ -152,13 +152,13 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 void sendChatMessageToClient (cServer& server, const std::string& message, int iType, int iPlayer = -1, const std::string& inserttext = "");
 
 /**
-* sends all nessesary information to all clients to start the building
+* sends all necessary information to all clients to start the building
 *@ author Eiko
 */
 void sendDoStartWork (cServer& server, const cBuilding& building);
 
 /**
-* sends all nessesary information to all clients to stop the building
+* sends all necessary information to all clients to stop the building
 *@ author Eiko
 */
 void sendDoStopWork (cServer& server, const cBuilding& building);

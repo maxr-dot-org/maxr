@@ -49,7 +49,7 @@ public:
 
 	//--------------------------------------------------------------------------
 private:
-	/** syncronizes positions of target, locks target and suspents move job if nessesary
+	/** syncronizes positions of target, locks target and suspents move job if necessary
 	* @author Eiko
 	*/
 	void lockTarget (int offset);
