@@ -94,7 +94,7 @@ void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int play
 {
 	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 
-	for (unsigned int i = 0; i < casualties.size(); i++)
+	for (size_t i = 0; i != casualties.size(); ++i)
 	{
 		if (unitType == casualties[i].unitID)
 		{
@@ -105,10 +105,9 @@ void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int play
 	Casualty newCasualtyEntry;
 	newCasualtyEntry.numberOfLosses = numberOfLosses;
 	newCasualtyEntry.unitID = unitType;
-	for (unsigned int i = 0; i < casualties.size(); i++)
+	for (size_t i = 0; i != casualties.size(); ++i)
 	{
-		if (unitType.iFirstPart < casualties[i].unitID.iFirstPart
-			|| (unitType.iFirstPart == casualties[i].unitID.iFirstPart && unitType.iSecondPart < casualties[i].unitID.iSecondPart))
+		if (unitType.less_vehicleFirst (casualties[i].unitID))
 		{
 			vector<Casualty>::iterator it = casualties.begin();
 			casualties.insert (it + i, newCasualtyEntry);
@@ -135,14 +134,14 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 {
 	vector<sID> result;
 
-	for (unsigned int i = 0; i < casualtiesPerPlayer.size(); i++)
+	for (size_t i = 0; i != casualtiesPerPlayer.size(); ++i)
 	{
 		const vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
-		for (unsigned int entryIdx = 0; entryIdx < casualties.size(); entryIdx++)
+		for (size_t entryIdx = 0; entryIdx != casualties.size(); ++entryIdx)
 		{
 			const Casualty& casualty = casualties[entryIdx];
 			bool containedInResult = false;
-			for (unsigned int j = 0; j < result.size(); j++)
+			for (size_t j = 0; j != result.size(); ++j)
 			{
 				if (result[j] == casualty.unitID)
 				{
@@ -150,25 +149,23 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses() const
 					break;
 				}
 			}
-			if (containedInResult == false)
-			{
-				bool inserted = false;
-				for (unsigned int j = 0; j < result.size(); j++)
-				{
-					const int firstPart = casualty.unitID.iFirstPart;
-					const int secondPart = casualty.unitID.iSecondPart;
+			if (containedInResult == true) continue;
 
-					if ( (firstPart == 1 && result[j].iFirstPart == 0)   // 0: vehicle, 1: building; buildings should be inserted first
-						 || (firstPart == result[j].iFirstPart && secondPart < result[j].iSecondPart))
-					{
-						result.insert (result.begin() + j, casualty.unitID);
-						inserted = true;
-						break;
-					}
+			bool inserted = false;
+			for (size_t j = 0; j != result.size(); ++j)
+			{
+				const sID unitID = casualty.unitID;
+
+				// buildings should be inserted first
+				if (unitID.less_buildingFirst (result[j]))
+				{
+					result.insert (result.begin() + j, casualty.unitID);
+					inserted = true;
+					break;
 				}
-				if (inserted == false)
-					result.push_back (casualty.unitID);
 			}
+			if (inserted == false)
+				result.push_back (casualty.unitID);
 		}
 	}
 	return result;

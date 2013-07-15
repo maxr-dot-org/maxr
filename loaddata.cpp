@@ -463,7 +463,7 @@ static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const
  * @param filename Name of the file
  * @return 1 on success
  */
-static int LoadEffectGraphicToSurface (SDL_Surface**& dest, const char* directory, const char* filename)
+static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename)
 {
 	string filepath;
 	if (strcmp (directory, ""))
@@ -478,8 +478,6 @@ static int LoadEffectGraphicToSurface (SDL_Surface**& dest, const char* director
 		return 0;
 	}
 
-	dest = new SDL_Surface*[2];
-	if (!dest) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (dest[0]);
 
@@ -491,7 +489,7 @@ static int LoadEffectGraphicToSurface (SDL_Surface**& dest, const char* director
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
 // Loads a effectgraphic as aplha to the surface:
-int LoadEffectAlphaToSurface (SDL_Surface**& dest, const char* directory, const char* filename, int alpha)
+static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename, int alpha)
 {
 	string filepath;
 	if (strcmp (directory, ""))
@@ -503,8 +501,6 @@ int LoadEffectAlphaToSurface (SDL_Surface**& dest, const char* directory, const 
 	if (!FileExists (filepath.c_str()))
 		return 0;
 
-	dest = new SDL_Surface*[2];
-	if (!dest) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (dest[0]);
 	SDL_SetAlpha (dest[0], SDL_SRCALPHA, alpha);
@@ -587,7 +583,7 @@ static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char*
 		}
 	}
 	// Not using FileExists to avoid unnecessary warnings in log file
-	SDL_RWops* file  = SDL_RWFromFile (filepath.c_str(), "r");
+	SDL_RWops* file = SDL_RWFromFile (filepath.c_str(), "r");
 	if (!file)
 	{
 		dest = SoundData.DummySound;
@@ -882,8 +878,6 @@ static int LoadGraphics (const char* path)
 	// load colors even for dedicated server
 	// Colors:
 	Log.write ("Colourgraphics...", LOG_TYPE_DEBUG);
-	OtherData.colors = new SDL_Surface*[PLAYERCOLORS];
-	if (!OtherData.colors) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
 	LoadGraphicToSurface (OtherData.colors[cl_red], path, "cl_red.pcx");
 	LoadGraphicToSurface (OtherData.colors[cl_blue], path, "cl_blue.pcx");
 	LoadGraphicToSurface (OtherData.colors[cl_green], path, "cl_green.pcx");
@@ -893,8 +887,6 @@ static int LoadGraphics (const char* path)
 	LoadGraphicToSurface (OtherData.colors[cl_purple], path, "cl_purple.pcx");
 	LoadGraphicToSurface (OtherData.colors[cl_aqua], path, "cl_aqua.pcx");
 
-	OtherData.colors_org = new SDL_Surface*[PLAYERCOLORS];
-	if (!OtherData.colors) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
 	for (int i = 0; i != PLAYERCOLORS; ++i)
 		OtherData.colors_org[i] = CloneSDLSurface (OtherData.colors[i]);
 
@@ -1359,7 +1351,7 @@ static int LoadVehicles()
 		LoadUnitSoundfile (v.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
-	for (unsigned int i = 0; i < UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
+	for (size_t i = 0; i != UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
 
 	UnitsData.initializeIDData();
 
@@ -1453,11 +1445,12 @@ static bool translateUnitData (sID ID, bool vehicle)
 		const char* value = xmlElement->Attribute ("ID");
 		if (value == NULL) return false;
 
-		int idFirst = atoi (value);
+		sID elementID;
+		elementID.iFirstPart = atoi (value);
 		string idString = value;
-		int idSecond = atoi (idString.substr (idString.find (" ")).c_str());
+		elementID.iSecondPart = atoi (idString.substr (idString.find (" ")).c_str());
 
-		if (idFirst == ID.iFirstPart && idSecond == ID.iSecondPart)
+		if (elementID == ID)
 		{
 			const char* value;
 			if (cSettings::getInstance().getLanguage() != "ENG")
@@ -1468,8 +1461,8 @@ static bool translateUnitData (sID ID, bool vehicle)
 
 			Data->name = value;
 
-			value =  xmlElement->GetText();
-			if (value  == NULL) return false;
+			value = xmlElement->GetText();
+			if (value == NULL) return false;
 
 			Data->description = value;
 			size_t pos;
@@ -1745,11 +1738,12 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	char szTmp[100];
 	// check whether the id exists twice
 	Data->ID.iFirstPart = atoi (idString.substr (0, idString.find (" ", 0)).c_str());
-	if (Data->ID.iFirstPart == 0)
+	if (Data->ID.isAVehicle())
 	{
-		for (size_t i = 0; i < UnitsData.vehicle.size(); ++i)
+		const string secondPart = idString.substr (idString.find (" ", 0), idString.length());
+		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
 		{
-			if (UnitsData.vehicle[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
+			if (UnitsData.vehicle[i].data.ID.iSecondPart == atoi (secondPart.c_str()))
 			{
 				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);

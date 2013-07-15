@@ -92,7 +92,7 @@ string cClanUnitStat::getClanStatsDescription() const
 	{
 		result += sep;
 		int nrTurns = getModificationValue ("Built_Costs");
-		if (data->isHuman == false) nrTurns /= unitId.iFirstPart == 0 ? 3 : 2;
+		if (data->isHuman == false) nrTurns /= unitId.isAVehicle() == 0 ? 3 : 2;
 
 		result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
 	}

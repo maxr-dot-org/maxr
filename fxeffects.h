@@ -3,6 +3,7 @@
 #define _FX_EFFECTS_H
 
 #include <vector>
+#include "autosurface.h"
 
 class cGameGUI;
 
@@ -47,7 +48,7 @@ protected:
 	cFxMuzzle (int x, int y, int dir_);
 	void draw (const cGameGUI& gameGUI) const;
 
-	SDL_Surface** image;
+	AutoSurface (*pImages)[2];
 	int dir;
 };
 
@@ -81,15 +82,18 @@ protected:
 	cFxExplo (int x, int y, int frames_);
 	void draw (const cGameGUI& gameGUI) const;
 
-	SDL_Surface** image;
-	const int frames; //TODO: frames could be calculated (frames = w / h), if the width and height
-	//of the grapics for one frame would be equal (which they aren't yet).
+protected:
+	AutoSurface (*pImages)[2];
+	// TODO: frames could be calculated (frames = w / h),
+	// if the width and height of the grapics for one frame would be equal
+	// (which they aren't yet).
+	const int frames;
 };
 
 class cFxExploSmall : public cFxExplo
 {
 public:
-	cFxExploSmall (int x, int y); //x, y is the center of the explosion
+	cFxExploSmall (int x, int y); // x, y is the center of the explosion
 	void playSound (const cGameGUI& gameGUI) const;
 };
 
@@ -134,16 +138,15 @@ protected:
 	cFxFade (int x, int y, bool bottom, int start, int end);
 	void draw (const cGameGUI& gameGUI) const;
 
-	SDL_Surface** image;
+	AutoSurface (*pImages)[2];
 	const int alphaStart;
 	const int alphaEnd;
 };
 
-
 class cFxSmoke : public cFxFade
 {
 public:
-	cFxSmoke (int x, int y, bool bottom); //x, y is the center of the effect
+	cFxSmoke (int x, int y, bool bottom); // x, y is the center of the effect
 };
 
 class cFxCorpse : public cFxFade
@@ -155,7 +158,7 @@ public:
 class cFxTracks : public cFx
 {
 private:
-	SDL_Surface** image;
+	AutoSurface (*pImages)[2];
 	const int alphaStart;
 	const int alphaEnd;
 	const int dir;
@@ -170,7 +173,7 @@ class cFxRocket : public cFx
 private:
 	const int speed;
 	std::vector<cFx*> subEffects;
-	SDL_Surface** image;
+	AutoSurface (*pImages)[2];
 	int dir;
 	int distance;
 	const int startX;
@@ -182,8 +185,10 @@ public:
 	~cFxRocket();
 	void draw (const cGameGUI& gameGUI) const;
 	void run();
-	bool isFinished() const; //return true, when the last smoke effect is finished.
-	//getLength() returns only the time until the rocket has reached the destiantion
+	// return true, when the last smoke effect is finished.
+	// getLength() returns only the time until
+	// the rocket has reached the destination
+	bool isFinished() const;
 };
 
 class cFxDarkSmoke : public cFx
@@ -194,11 +199,10 @@ private:
 	const int alphaStart;
 	const int alphaEnd;
 	const int frames;
-	SDL_Surface** image;
+	AutoSurface (*pImages)[2];
 public:
 	cFxDarkSmoke (int x, int y, int alpha, float windDir);
 	void draw (const cGameGUI& gameGUI) const;
 };
-
 
 #endif

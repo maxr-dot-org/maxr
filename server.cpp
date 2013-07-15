@@ -1644,7 +1644,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 		const int newMaxHitPoints = message.popInt16();
 		const int newScan = message.popInt16();
 		int newMaxSpeed = 0;
-		if (ID.iFirstPart == 0) newMaxSpeed = message.popInt16();
+		if (ID.isAVehicle()) newMaxSpeed = message.popInt16();
 
 		sUnitData* upgradedUnit = player->getUnitDataCurrentVersion (ID);
 		if (upgradedUnit == 0)
@@ -1662,7 +1662,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 			upgradedUnit->armor = newArmor;
 			upgradedUnit->hitpointsMax = newMaxHitPoints;
 			upgradedUnit->scan = newScan;
-			if (ID.iFirstPart == 0) upgradedUnit->speedMax = newMaxSpeed;
+			if (ID.isAVehicle()) upgradedUnit->speedMax = newMaxSpeed;
 			upgradedUnit->version++;
 
 			player->Credits -= costs;
@@ -2108,7 +2108,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
 							  int newScan, int newMaxSpeed)
 {
-	const bool bVehicle = ID.iFirstPart == 0;
+	const bool bVehicle = ID.isAVehicle();
 	const sUnitData* currentVersion = player.getUnitDataCurrentVersion (ID);
 	const sUnitData* startVersion = ID.getUnitDataOriginalVersion (&player);
 	if (currentVersion == 0 || startVersion == 0)

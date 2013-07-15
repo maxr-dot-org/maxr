@@ -389,7 +389,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 		{
 			sID ID;
 			ID.generate (upgradeNode->FirstChildElement ("Type")->Attribute ("string"));
-			if (ID.iFirstPart == 0)
+			if (ID.isAVehicle())
 			{
 				unsigned int num;
 				for (num = 0; num < UnitsData.getNrVehicles(); num++) if (UnitsData.vehicle[num].data.ID == ID) break;
@@ -534,8 +534,8 @@ void cSavegame::loadUnits (cServer& server)
 	{
 		sID ID;
 		ID.generate (unitNode->FirstChildElement ("Type")->Attribute ("string"));
-		if (ID.iFirstPart == 0) loadVehicle (server, unitNode, ID);
-		else if (ID.iFirstPart == 1) loadBuilding (server, unitNode, ID);
+		if (ID.isAVehicle()) loadVehicle (server, unitNode, ID);
+		else if (ID.isABuilding()) loadBuilding (server, unitNode, ID);
 
 		unitnum++;
 		unitNode = unitsNode->FirstChildElement ( ("Unit_" + iToStr (unitnum)).c_str());
@@ -859,7 +859,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	// get the unit data
 	sID ID;
 	ID.generate (unitNode->FirstChildElement ("ID")->Attribute ("string"));
-	if (ID.iFirstPart == 0)
+	if (ID.isAVehicle())
 	{
 		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 		{
@@ -870,7 +870,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 			}
 		}
 	}
-	else if (ID.iFirstPart == 1)
+	else if (ID.isABuilding())
 	{
 		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 		{

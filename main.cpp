@@ -587,8 +587,9 @@ string sID::getText() const
 //------------------------------------------------------------------------------
 void sID::generate (const string& text)
 {
-	iFirstPart = atoi (text.substr (0, text.find (" ", 0)).c_str());
-	iSecondPart = atoi (text.substr (text.find (" ", 0), text.length()).c_str());
+	const string::size_type spacePos = text.find (" ", 0);
+	iFirstPart = atoi (text.substr (0, spacePos).c_str());
+	iSecondPart = atoi (text.substr (spacePos, text.length()).c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -611,7 +612,7 @@ sUnitData* sID::getUnitDataOriginalVersion (cPlayer* Owner) const
 //------------------------------------------------------------------------------
 sVehicle* sID::getVehicle (cPlayer* Owner) const
 {
-	if (iFirstPart != 0) return NULL;
+	if (isAVehicle() == false) return NULL;
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
 		sVehicle* result = Owner ? &UnitsData.getVehicle (i, Owner->getClan()) : &UnitsData.getVehicle (i);
@@ -623,13 +624,25 @@ sVehicle* sID::getVehicle (cPlayer* Owner) const
 //------------------------------------------------------------------------------
 sBuilding* sID::getBuilding (cPlayer* Owner) const
 {
-	if (iFirstPart != 1) return NULL;
+	if (isABuilding() == false) return NULL;
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 	{
 		sBuilding* result = Owner ? &UnitsData.getBuilding (i, Owner->getClan()) : &UnitsData.getBuilding (i);
 		if (result->data.ID == *this) return result;
 	}
 	return NULL;
+}
+
+//------------------------------------------------------------------------------
+bool sID::less_buildingFirst (const sID& ID) const
+{
+	return iFirstPart == ID.iFirstPart ? iSecondPart < ID.iSecondPart : iFirstPart > ID.iFirstPart;
+}
+
+//------------------------------------------------------------------------------
+bool sID::less_vehicleFirst (const sID& ID) const
+{
+	return iFirstPart == ID.iFirstPart ? iSecondPart < ID.iSecondPart : iFirstPart < ID.iFirstPart;
 }
 
 //------------------------------------------------------------------------------

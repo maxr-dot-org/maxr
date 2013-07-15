@@ -224,7 +224,7 @@ void cPlayer::setClan (int newClan)
 //------------------------------------------------------------------------------
 sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 {
-	if (ID.iFirstPart == 0)
+	if (ID.isAVehicle())
 	{
 		for (size_t i = 0; i != VehicleData.size(); ++i)
 		{
@@ -232,7 +232,7 @@ sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 				return &VehicleData[i];
 		}
 	}
-	else if (ID.iFirstPart == 1)
+	else if (ID.isABuilding())
 	{
 		for (unsigned int i = 0; i < BuildingData.size(); ++i)
 		{

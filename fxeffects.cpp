@@ -105,7 +105,7 @@ void cFxContainer::run()
 //------------------------------------------------------------------------------
 cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
 	cFx (false, x, y),
-	image (NULL),
+	pImages (NULL),
 	dir (dir_)
 {}
 
@@ -114,24 +114,25 @@ void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
-	if (image == NULL) return;
-	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
+	if (pImages == NULL) return;
+	AutoSurface (&images)[2] (*pImages);
+	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	SDL_Rect src;
-	src.x = (int) (image[0]->w * gameGUI.getZoom() * dir / 8);
+	src.x = (int) (images[0]->w * gameGUI.getZoom() * dir / 8);
 	src.y = 0;
-	src.w = image[1]->w / 8;
-	src.h = image[1]->h;
+	src.w = images[1]->w / 8;
+	src.h = images[1]->h;
 	SDL_Rect dest = gameGUI.calcScreenPos (posX, posY);
 
-	SDL_BlitSurface (image[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
 cFxMuzzleBig::cFxMuzzleBig (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
-	image = EffectsData.fx_muzzle_big;
+	pImages = &EffectsData.fx_muzzle_big;
 	length = 6;
 }
 
@@ -139,7 +140,7 @@ cFxMuzzleBig::cFxMuzzleBig (int x, int y, int dir_) :
 cFxMuzzleMed::cFxMuzzleMed (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
-	image = EffectsData.fx_muzzle_med;
+	pImages = &EffectsData.fx_muzzle_med;
 	length = 6;
 }
 
@@ -148,7 +149,7 @@ cFxMuzzleMedLong::cFxMuzzleMedLong (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
 	length = 16;
-	image = EffectsData.fx_muzzle_med;
+	pImages = &EffectsData.fx_muzzle_med;
 }
 
 //------------------------------------------------------------------------------
@@ -156,13 +157,13 @@ cFxMuzzleSmall::cFxMuzzleSmall (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
 	length = 6;
-	image = EffectsData.fx_muzzle_small;
+	pImages = &EffectsData.fx_muzzle_small;
 }
 
 //------------------------------------------------------------------------------
 cFxExplo::cFxExplo (int x, int y, int frames_) :
 	cFx (false, x, y),
-	image (NULL),
+	pImages (NULL),
 	frames (frames_)
 {}
 
@@ -171,28 +172,28 @@ void cFxExplo::draw (const cGameGUI& gameGUI) const
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
-	if (!image) return;
-	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
+	if (!pImages) return;
+	AutoSurface (&images)[2] (*pImages);
+	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
 
 	SDL_Rect src, dest;
-	src.x = (int) (image[0]->w * gameGUI.getZoom() * frame / frames);
+	src.x = (int) (images[0]->w * gameGUI.getZoom() * frame / frames);
 	src.y = 0;
-	src.w = image[1]->w / frames;
-	src.h = image[1]->h;
-	dest = gameGUI.calcScreenPos (posX - image[0]->w / (frames * 2), posY - image[0]->h / 2);
+	src.w = images[1]->w / frames;
+	src.h = images[1]->h;
+	dest = gameGUI.calcScreenPos (posX - images[0]->w / (frames * 2), posY - images[0]->h / 2);
 
-	SDL_BlitSurface (image[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, buffer, &dest);
 }
-
 
 //------------------------------------------------------------------------------
 cFxExploSmall::cFxExploSmall (int x, int y) :
 	cFxExplo (x, y, 14)
 {
 	length = 140;
-	image = EffectsData.fx_explo_small;
+	pImages = &EffectsData.fx_explo_small;
 }
 
 void cFxExploSmall::playSound (const cGameGUI& gameGUI) const
@@ -205,7 +206,7 @@ cFxExploBig::cFxExploBig (int x, int y) :
 	cFxExplo (x, y, 28)
 {
 	length = 280;
-	image = EffectsData.fx_explo_big;
+	pImages = &EffectsData.fx_explo_big;
 }
 
 
@@ -227,7 +228,7 @@ cFxExploAir::cFxExploAir (int x, int y) :
 	cFxExplo (x, y, 14)
 {
 	length = 140;
-	image = EffectsData.fx_explo_air;
+	pImages = &EffectsData.fx_explo_air;
 }
 
 void cFxExploAir::playSound (const cGameGUI& gameGUI) const
@@ -240,7 +241,7 @@ cFxExploWater::cFxExploWater (int x, int y) :
 	cFxExplo (x, y, 14)
 {
 	length = 140;
-	image = EffectsData.fx_explo_water;
+	pImages = &EffectsData.fx_explo_water;
 }
 
 void cFxExploWater::playSound (const cGameGUI& gameGUI) const
@@ -253,7 +254,7 @@ cFxHit::cFxHit (int x, int y) :
 	cFxExplo (x, y, 5)
 {
 	length = 50;
-	image = EffectsData.fx_hit;
+	pImages = &EffectsData.fx_hit;
 }
 
 void cFxHit::playSound (const cGameGUI& gameGUI) const
@@ -266,7 +267,7 @@ cFxAbsorb::cFxAbsorb (int x, int y) :
 	cFxExplo (x, y, 10)
 {
 	length = 100;
-	image = EffectsData.fx_absorb;
+	pImages = &EffectsData.fx_absorb;
 }
 
 void cFxAbsorb::playSound (const cGameGUI& gameGUI) const
@@ -277,7 +278,7 @@ void cFxAbsorb::playSound (const cGameGUI& gameGUI) const
 //------------------------------------------------------------------------------
 cFxFade::cFxFade (int x, int y, bool bottom, int start, int end) :
 	cFx (bottom, x, y),
-	image (NULL),
+	pImages (NULL),
 	alphaStart (start),
 	alphaEnd (end)
 {}
@@ -287,15 +288,16 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
-	if (!image) return;
-	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
+	if (!pImages) return;
+	AutoSurface (&images)[2](*pImages);
+	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
+	SDL_SetAlpha (images[1], SDL_SRCALPHA, alpha);
 
 	SDL_Rect dest;
-	dest = gameGUI.calcScreenPos (posX - image[0]->w / 2, posY - image[0]->h / 2);
-	SDL_BlitSurface (image[1], NULL, buffer, &dest);
+	dest = gameGUI.calcScreenPos (posX - images[0]->w / 2, posY - images[0]->h / 2);
+	SDL_BlitSurface (images[1], NULL, buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -303,7 +305,7 @@ cFxSmoke::cFxSmoke (int x, int y, bool bottom) :
 	cFxFade (x, y, bottom, 100, 0)
 {
 	length = 50;
-	image = EffectsData.fx_smoke;
+	pImages = &EffectsData.fx_smoke;
 }
 
 //------------------------------------------------------------------------------
@@ -311,19 +313,19 @@ cFxCorpse::cFxCorpse (int x, int y) :
 	cFxFade (x, y, true, 255, 0)
 {
 	length = 1024;
-	image = EffectsData.fx_corpse;
+	pImages = &EffectsData.fx_corpse;
 }
 
 //------------------------------------------------------------------------------
 cFxTracks::cFxTracks (int x, int y, int dir_) :
 	cFx (true, x, y),
-	image (NULL),
+	pImages (NULL),
 	alphaStart (100),
 	alphaEnd (0),
 	dir (dir_)
 {
 	length = 1024;
-	image = EffectsData.fx_tracks;
+	pImages = &EffectsData.fx_tracks;
 }
 
 void cFxTracks::draw (const cGameGUI& gameGUI) const
@@ -331,27 +333,28 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return; //ja, nein, vielleicht?
-	if (!image) return;
-	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
+	if (!pImages) return;
+	AutoSurface (&images)[2](*pImages);
+	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
+	SDL_SetAlpha (images[1], SDL_SRCALPHA, alpha);
 
 	SDL_Rect src, dest;
 	src.y = 0;
-	src.x = image[1]->w * dir / 4;
-	src.w = image[1]->w / 4;
-	src.h = image[1]->h;
+	src.x = images[1]->w * dir / 4;
+	src.w = images[1]->w / 4;
+	src.h = images[1]->h;
 	dest = gameGUI.calcScreenPos (posX, posY);
 
-	SDL_BlitSurface (image[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
 cFxRocket::cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom) :
 	cFx (bottom, startX_, startY_),
 	speed (8),
-	image (NULL),
+	pImages (&EffectsData.fx_rocket),
 	dir (dir_),
 	distance (0),
 	startX (startX_),
@@ -361,12 +364,11 @@ cFxRocket::cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, 
 {
 	distance = (int) sqrtf (float (Square (endX - startX) + Square (endY - startY)));
 	length = distance / speed;
-	image = EffectsData.fx_rocket;
 }
 
 cFxRocket::~cFxRocket()
 {
-	for (unsigned int i = 0; i < subEffects.size(); i++)
+	for (size_t i = 0; i != subEffects.size(); ++i)
 		delete subEffects[i];
 }
 
@@ -382,18 +384,19 @@ void cFxRocket::draw (const cGameGUI& gameGUI) const
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
-	if (!image) return;
+	if (!pImages) return;
 	if (tick >= length) return;
-	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
+	AutoSurface (&images)[2](*pImages);
+	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	SDL_Rect src, dest;
-	src.x = dir * image[1]->w / 8;
+	src.x = dir * images[1]->w / 8;
 	src.y = 0;
-	src.h = image[1]->h;
-	src.w = image[1]->w / 8;
-	dest = gameGUI.calcScreenPos (posX - image[0]->w / 16, posY - image[0]->h / 2);
+	src.h = images[1]->h;
+	src.w = images[1]->w / 8;
+	dest = gameGUI.calcScreenPos (posX - images[0]->w / 16, posY - images[0]->h / 2);
 
-	SDL_BlitSurface (image[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, buffer, &dest);
 }
 
 void cFxRocket::run()
@@ -435,10 +438,9 @@ cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 	alphaStart (alpha),
 	alphaEnd (0),
 	frames (50),
-	image (NULL)
+	pImages (&EffectsData.fx_dark_smoke)
 {
 	length = 200;
-	image = EffectsData.fx_dark_smoke;
 
 	const float ax = abs (sinf (windDir));
 	const float ay = abs (cosf (windDir));
@@ -457,19 +459,20 @@ cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 {
 	//if (!client.getActivePlayer()->ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
-	if (!image) return;
-	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
+	if (!pImages) return;
+	AutoSurface (&images)[2](*pImages);
+	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
 
 	SDL_Rect src, dest;
-	src.x = (int) (image[0]->w * gameGUI.getZoom() * frame / frames);
+	src.x = (int) (images[0]->w * gameGUI.getZoom() * frame / frames);
 	src.y = 0;
-	src.w = image[1]->w / frames;
-	src.h = image[1]->h;
+	src.w = images[1]->w / frames;
+	src.h = images[1]->h;
 	dest = gameGUI.calcScreenPos ( (int) (posX + tick * dx), (int) (posY + tick * dy));
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
-	SDL_BlitSurface (image[1], &src, buffer, &dest);
+	SDL_SetAlpha (images[1], SDL_SRCALPHA, alpha);
+	SDL_BlitSurface (images[1], &src, buffer, &dest);
 }

@@ -63,30 +63,42 @@ EX cLanguage lngPack;
 
 struct sUnitData;
 
-// Struktur f¸r die IDs
 struct sID
 {
 	sID() : iFirstPart (0), iSecondPart (0) {}
 
-	int iFirstPart;
-	int iSecondPart;
 	std::string getText() const;
 	void generate (const std::string& text);
 
+	bool isAVehicle() const { return iFirstPart == 0; }
+	bool isABuilding() const { return iFirstPart == 1; }
+
 	/** Get the basic version of a unit.
-		@param Owner If a owner is given, the basic version of this player is returned (with possible clan modifications).
-					 If no owner is given, the basic version without any clan modifications is returned.
-		@return the sUnitData of the owner without upgrades (but with the owner's clan modifications) */
+	 * @param Owner If a owner is given,
+	 *        the basic version of this player is returned
+	 *        (with possible clan modifications).
+	 *        If no owner is given,
+	 *        the basic version without any clan modifications is returned.
+	 * @return the sUnitData of the owner without upgrades
+	 *         (but with the owner's clan modifications) */
 	sUnitData* getUnitDataOriginalVersion (cPlayer* Owner = NULL) const;
 
-	/** Returns the original version of a vehicle as stored in UnitsData. If Owner is given, his clan will be taken
-		into consideration for modifications of the unit's values. */
+	/** Returns the original version of a vehicle as stored in UnitsData.
+	 * If Owner is given, his clan will be taken
+	 * into consideration for modifications of the unit's values. */
 	sVehicle* getVehicle (cPlayer* Owner = NULL) const;
-	/** Returns the original version of a building as stored in UnitsData. If Owner is given, his clan will be taken
-		into consideration for modifications of the unit's values. */
+	/** Returns the original version of a building as stored in UnitsData.
+	 * If Owner is given, his clan will be taken
+	 * into consideration for modifications of the unit's values. */
 	sBuilding* getBuilding (cPlayer* Owner = NULL) const;
 
 	bool operator== (const sID& ID) const;
+	bool less_vehicleFirst (const sID& ID) const;
+	bool less_buildingFirst (const sID& ID) const;
+
+public:
+	int iFirstPart;
+	int iSecondPart;
 };
 
 enum {
@@ -331,20 +343,20 @@ public:
 class cEffectsData
 {
 public:
-	SDL_Surface** fx_explo_big;
-	SDL_Surface** fx_explo_small;
-	SDL_Surface** fx_explo_water;
-	SDL_Surface** fx_explo_air;
-	SDL_Surface** fx_muzzle_big;
-	SDL_Surface** fx_muzzle_small;
-	SDL_Surface** fx_muzzle_med;
-	SDL_Surface** fx_hit;
-	SDL_Surface** fx_smoke;
-	SDL_Surface** fx_rocket;
-	SDL_Surface** fx_dark_smoke;
-	SDL_Surface** fx_tracks;
-	SDL_Surface** fx_corpse;
-	SDL_Surface** fx_absorb;
+	AutoSurface fx_explo_big[2];
+	AutoSurface fx_explo_small[2];
+	AutoSurface fx_explo_water[2];
+	AutoSurface fx_explo_air[2];
+	AutoSurface fx_muzzle_big[2];
+	AutoSurface fx_muzzle_small[2];
+	AutoSurface fx_muzzle_med[2];
+	AutoSurface fx_hit[2];
+	AutoSurface fx_smoke[2];
+	AutoSurface fx_rocket[2];
+	AutoSurface fx_dark_smoke[2];
+	AutoSurface fx_tracks[2];
+	AutoSurface fx_corpse[2];
+	AutoSurface fx_absorb[2];
 } EX EffectsData;
 
 // ResourceData - Class containing all resource surfaces //////////////////////
@@ -403,8 +415,10 @@ public:
 private:
 	void initializeClanUnitData();
 
-	std::vector<std::vector<sVehicle> > clanUnitDataVehicles; // contains the modified versions for the clans
-	std::vector<std::vector<sBuilding> > clanUnitDataBuildings; // cotains the modified versions for the clans
+	// contains the modified versions for the clans
+	std::vector<std::vector<sVehicle> > clanUnitDataVehicles;
+	// cotains the modified versions for the clans
+	std::vector<std::vector<sBuilding> > clanUnitDataBuildings;
 	bool initializedClanUnitData;
 
 	sID constructorID;
@@ -417,7 +431,6 @@ public:
 	sID specialIDSmallGen;
 	sID specialIDConnector;
 	sID specialIDSmallBeton;
-
 } EX UnitsData;
 
 enum eFreezeMode
@@ -455,10 +468,10 @@ private:
 class cOtherData
 {
 public:
-	SDL_Surface** colors;
-	SDL_Surface** colors_org;
-	SDL_Surface* WayPointPfeile[8][60];
-	SDL_Surface* WayPointPfeileSpecial[8][60];
+	AutoSurface colors[PLAYERCOLORS];
+	AutoSurface colors_org[PLAYERCOLORS];
+	AutoSurface WayPointPfeile[8][60];
+	AutoSurface WayPointPfeileSpecial[8][60];
 } EX OtherData;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -468,18 +481,21 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * scale a surface to the overgiven sice. The scaled surface will be drawn to the destination surface.
+ * scale a surface to the overgiven sice.
+ * The scaled surface will be drawn to the destination surface.
  * If the destiniation surface is NULL a new surface will be created.
  * @author alzi alias DoctorDeath
  * @param scr the surface to be scaled.
- * @param dest the surface that will receive the new pixel data. If it is NUll a new surface will be created.
+ * @param dest the surface that will receive the new pixel data.
+ *        If it is NUll a new surface will be created.
  * @param width width of the new surface.
  * @param height height of the new surface.
  * @return returns the destination surface.
  */
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height);
 
-/** this function checks, whether the surface has to be rescaled, and scales it if necessary */
+/** this function checks, whether the surface has to be rescaled,
+ * and scales it if necessary */
 inline void CHECK_SCALING (SDL_Surface* surface, SDL_Surface* surface_org, float factor)
 {
 	if (!cSettings::getInstance().shouldDoPrescale() &&
@@ -487,7 +503,6 @@ inline void CHECK_SCALING (SDL_Surface* surface, SDL_Surface* surface_org, float
 		 surface->h != (int) (surface_org->h * (factor))))
 		scaleSurface (surface_org, surface, (int) (surface_org->w * factor), (int) (surface_org->h * factor));
 }
-
 
 SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
 
@@ -523,7 +538,8 @@ std::string pToStr (void* x);
 *
 *@author MM
 *@param num number to round up
-*@param n the position after decimal point in dValueToRound, that will be rounded
+*@param n the position after decimal point in dValueToRound,
+*         that will be rounded
 *@return rounded num
 */
 float Round (float num, unsigned int n);
@@ -545,13 +561,16 @@ T Square (T v) { return v * v; }
 int Round (float num);
 
 /**
-* Works like SDL_BlittSurface. But unlike SDL it respects the destination alpha channel of the surface.
-* This function is only designed to blitt from a surface with per surface alpha value to a surface with alpha channel.
+* Works like SDL_BlittSurface.
+* But unlike SDL it respects the destination alpha channel of the surface.
+* This function is only designed to blitt from a surface
+* with per surface alpha value to a surface with alpha channel.
 * A source color key is also supported.
 */
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 /**
-* Works like SDL_BlittSurface. This function choses the right blitt function to use for blitting.
+* Works like SDL_BlittSurface.
+* This function choses the right blitt function to use for blitting.
 */
 void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 
