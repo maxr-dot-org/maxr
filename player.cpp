@@ -248,8 +248,8 @@ sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 //------------------------------------------------------------------------------
 cVehicle* cPlayer::addVehicle (int posx, int posy, const sID& id, unsigned int uid)
 {
-	const sVehicle& v = *id.getVehicle (this);
-	cVehicle* n = new cVehicle (v, this, uid);
+	const sUnitData& unitData = *id.getUnitDataOriginalVersion (this);
+	cVehicle* n = new cVehicle (unitData, this, uid);
 	n->PosX = posx;
 	n->PosY = posy;
 
@@ -338,8 +338,8 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 //------------------------------------------------------------------------------
 cBuilding* cPlayer::addBuilding (int posx, int posy, const sID& id, unsigned int uid)
 {
-	const sBuilding& b = *id.getBuilding (this);
-	cBuilding* Building = new cBuilding (&b, this, uid);
+	const sUnitData* unitData = id.getUnitDataOriginalVersion (this);
+	cBuilding* Building = new cBuilding (unitData, this, uid);
 
 	Building->PosX = posx;
 	Building->PosY = posy;
@@ -720,7 +720,7 @@ void cPlayer::accumulateScore (cServer& server)
 
 	for (cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
-		if (bp->typ->data.canScore && bp->IsWorking)
+		if (bp->data.canScore && bp->IsWorking)
 		{
 			bp->points++;
 			deltaScore++;
@@ -738,7 +738,7 @@ void cPlayer::countEcoSpheres()
 
 	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
-		if (bp->typ->data.canScore && bp->IsWorking)
+		if (bp->data.canScore && bp->IsWorking)
 			++numEcos;
 	}
 }

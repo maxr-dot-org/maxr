@@ -110,11 +110,8 @@ struct sVehicleUIData
 
 struct sVehicle
 {
-	sVehicle() : nr (-1) {}
-
 	sVehicleUIData uiData;
 	sUnitData data;   // Grunddaten des Vehicles
-	int nr;           // Nr dieses Elements
 };
 
 //-----------------------------------------------------------------------------
@@ -124,7 +121,7 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (const sVehicle& v, cPlayer* Owner, unsigned int ID);
+	cVehicle (const sUnitData& unitData, cPlayer* Owner, unsigned int ID);
 	virtual ~cVehicle();
 
 	virtual bool isAVehicle() const { return true; }
@@ -136,7 +133,7 @@ public:
 	virtual int getMovementOffsetX() const {return OffX;}
 	virtual int getMovementOffsetY() const {return OffY;}
 
-	const sVehicle* typ;   // Typ des Vehicles
+	const sVehicleUIData* uiData;
 	bool groupSelected;
 	cServerMoveJob* ServerMoveJob;
 	cClientMoveJob* ClientMoveJob;

@@ -45,8 +45,8 @@ using namespace std;
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID) :
-	cUnit ( (Owner != 0 && b != 0) ? &Owner->BuildingData[b->nr] : 0,
+cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
+	cUnit ( (Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
 		   Owner,
 		   ID),
 	next (0),
@@ -61,7 +61,7 @@ cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID) :
 	StartUp = 0;
 	IsWorking = false;
 	researchArea = cResearch::kAttackResearch;
-	typ = b;
+	uiData = b ? UnitsData.getBuildingUI (b->ID) : 0;
 	points = 0;
 	lastShots = 0;
 
@@ -313,10 +313,10 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	if (data.powerOnGraphic && cSettings::getInstance().isAnimations() && (IsWorking || !data.canWork))
 	{
 		tmp = dest;
-		SDL_SetAlpha (typ->uiData.eff, SDL_SRCALPHA, EffectAlpha);
+		SDL_SetAlpha (uiData->eff, SDL_SRCALPHA, EffectAlpha);
 
-		CHECK_SCALING (typ->uiData.eff, typ->uiData.eff_org, factor);
-		SDL_BlitSurface (typ->uiData.eff, NULL, buffer, &tmp);
+		CHECK_SCALING (uiData->eff, uiData->eff_org, factor);
+		SDL_BlitSurface (uiData->eff, NULL, buffer, &tmp);
 
 		if (gameGUI.timer100ms)
 		{
@@ -566,8 +566,8 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 	else
 	{
-		src.w = (int) (typ->uiData.img_org->w * zoomFactor);
-		src.h = (int) (typ->uiData.img_org->h * zoomFactor);
+		src.w = (int) (uiData->img_org->w * zoomFactor);
+		src.h = (int) (uiData->img_org->h * zoomFactor);
 	}
 
 	// blit the players color and building graphic
@@ -578,14 +578,14 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	{
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
-		CHECK_SCALING (typ->uiData.img, typ->uiData.img_org, zoomFactor);
-		SDL_BlitSurface (typ->uiData.img, &src, GraphicsData.gfx_tmp, NULL);
+		CHECK_SCALING (uiData->img, uiData->img_org, zoomFactor);
+		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp, NULL);
 
 		src.x = 0;
 	}
 	else if (data.hasClanLogos)
 	{
-		CHECK_SCALING (typ->uiData.img, typ->uiData.img_org, zoomFactor);
+		CHECK_SCALING (uiData->img, uiData->img_org, zoomFactor);
 		src.x = 0;
 		src.y = 0;
 		src.w = (int) (128 * zoomFactor);
@@ -593,12 +593,12 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		//select clan image
 		if (owner->getClan() != -1)
 			src.x = (int) ( (owner->getClan() + 1) * 128 * zoomFactor);
-		SDL_BlitSurface (typ->uiData.img, &src, GraphicsData.gfx_tmp, NULL);
+		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp, NULL);
 	}
 	else
 	{
-		CHECK_SCALING (typ->uiData.img, typ->uiData.img_org, zoomFactor);
-		SDL_BlitSurface (typ->uiData.img, NULL, GraphicsData.gfx_tmp, NULL);
+		CHECK_SCALING (uiData->img, uiData->img_org, zoomFactor);
+		SDL_BlitSurface (uiData->img, NULL, GraphicsData.gfx_tmp, NULL);
 	}
 
 	// draw the building
@@ -643,12 +643,12 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 	{
 		SDL_Rect tmp = dest;
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetAlpha (typ->uiData.shw, SDL_SRCALPHA, StartUp / 5);
+			SDL_SetAlpha (uiData->shw, SDL_SRCALPHA, StartUp / 5);
 		else
-			SDL_SetAlpha (typ->uiData.shw, SDL_SRCALPHA, 50);
+			SDL_SetAlpha (uiData->shw, SDL_SRCALPHA, 50);
 
-		CHECK_SCALING (typ->uiData.shw, typ->uiData.shw_org, zoomFactor);
-		blittAlphaSurface (typ->uiData.shw, NULL, surface, &tmp);
+		CHECK_SCALING (uiData->shw, uiData->shw_org, zoomFactor);
+		blittAlphaSurface (uiData->shw, NULL, surface, &tmp);
 	}
 
 	int frameNr = dir;
@@ -1014,7 +1014,7 @@ void cBuilding::ClientStartWork (cGameGUI& gameGUI)
 	if (gameGUI.getSelectedUnit() == this)
 	{
 		gameGUI.stopFXLoop();
-		PlayFX (typ->uiData.Start);
+		PlayFX (uiData->Start);
 		gameGUI.playStream (*this);
 	}
 	if (data.canResearch)
@@ -1106,7 +1106,7 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 	if (gameGUI.getSelectedUnit() == this)
 	{
 		gameGUI.stopFXLoop();
-		PlayFX (typ->uiData.Stop);
+		PlayFX (uiData->Stop);
 		gameGUI.playStream (*this);
 	}
 	if (data.canResearch)
@@ -1563,7 +1563,7 @@ void cBuilding::Select (cGameGUI& gameGUI)
 		FLI_Close (gameGUI.getFLC());
 		gameGUI.setFLC (NULL);
 	}
-	gameGUI.setVideoSurface (typ->uiData.video);
+	gameGUI.setVideoSurface (uiData->video);
 
 	// play sound:
 	if (owner->researchFinished && data.canResearch && isDisabled() == false)

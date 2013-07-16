@@ -89,7 +89,7 @@ struct sID
 	bool less_vehicleFirst (const sID& ID) const;
 	bool less_buildingFirst (const sID& ID) const;
 
-//private:
+private:
 	/** Returns the original version of a vehicle as stored in UnitsData.
 	 * If Owner is given, his clan will be taken
 	 * into consideration for modifications of the unit's values. */
@@ -432,7 +432,7 @@ public: // TODO: private
 private:
 	// contains the modified versions for the clans
 	std::vector<std::vector<sVehicle> > clanUnitDataVehicles;
-	// cotains the modified versions for the clans
+	// contains the modified versions for the clans
 	std::vector<std::vector<sBuilding> > clanUnitDataBuildings;
 	bool initializedClanUnitData;
 

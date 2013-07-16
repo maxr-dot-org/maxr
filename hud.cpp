@@ -719,9 +719,9 @@ void cGameGUI::stopFXLoop()
 void cGameGUI::playStream (const cBuilding& building)
 {
 	if (building.IsWorking)
-		playFXLoop (building.typ->uiData.Running);
+		playFXLoop (building.uiData->Running);
 	else
-		playFXLoop (building.typ->uiData.Wait);
+		playFXLoop (building.uiData->Wait);
 }
 
 //----------------------------------------------------------------
@@ -739,9 +739,9 @@ void cGameGUI::playStream (const cVehicle& vehicle)
 	else if (vehicle.IsClearing)
 		playFXLoop (SoundData.SNDClearing);
 	else if (water && vehicle.data.factorSea > 0)
-		playFXLoop (vehicle.typ->uiData.WaitWater);
+		playFXLoop (vehicle.uiData->WaitWater);
 	else
-		playFXLoop (vehicle.typ->uiData.Wait);
+		playFXLoop (vehicle.uiData->Wait);
 }
 
 //-----------------------------------------------------------------------------
@@ -758,15 +758,15 @@ void cGameGUI::startMoveSound (const cVehicle& vehicle)
 	if (!vehicle.MoveJobActive)
 	{
 		if (water && vehicle.data.factorSea != 0)
-			PlayFX (vehicle.typ->uiData.StartWater);
+			PlayFX (vehicle.uiData->StartWater);
 		else
-			PlayFX (vehicle.typ->uiData.Start);
+			PlayFX (vehicle.uiData->Start);
 	}
 
 	if (water && vehicle.data.factorSea != 0)
-		playFXLoop (vehicle.typ->uiData.DriveWater);
+		playFXLoop (vehicle.uiData->DriveWater);
 	else
-		playFXLoop (vehicle.typ->uiData.Drive);
+		playFXLoop (vehicle.uiData->Drive);
 }
 
 void cGameGUI::Timer()
@@ -1901,7 +1901,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == activateVehicle)
 		{
-			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedVehicle->storedUnits[vehicleToActivate]->typ->data) && selectedUnit->isDisabled() == false)
+			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedVehicle->storedUnits[vehicleToActivate]->data) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -1960,7 +1960,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->isDisabled() == false)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->typ->data))
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->data))
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -4185,7 +4185,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (mouseInputMode == activateVehicle && v.owner == player)
 		{
-			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->typ->data, *this);
+			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->data, *this);
 		}
 	}
 	else if (selectedBuilding && selectedUnit->isDisabled() == false)
@@ -4230,7 +4230,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->typ->data, *this);
+			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->data, *this);
 		}
 	}
 	drawLockList (*client->getActivePlayer());

@@ -84,11 +84,8 @@ struct sBuildingUIData
 
 struct sBuilding
 {
-	sBuilding() : nr (-1) {}
-
 	sBuildingUIData uiData;
 	sUnitData data;  // Grunddaten des Buildings
-	int nr;          // Nr dieses Elements
 };
 
 // enum for the upgrade symbols
@@ -136,7 +133,7 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
-	cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID);
+	cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID);
 	virtual ~cBuilding();
 
 	virtual bool isAVehicle() const { return false; }
@@ -144,7 +141,7 @@ public:
 
 	cBuilding* next; ///< "next"-pointer for the double linked list
 	cBuilding* prev; ///< "prev"-pointer for the double linked list
-	const sBuilding* typ;  // Typ des Buildings
+	const sBuildingUIData* uiData;
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
 	int StartUp;     // counter for the startup animation

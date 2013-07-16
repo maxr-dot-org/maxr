@@ -1351,8 +1351,6 @@ static int LoadVehicles()
 		LoadUnitSoundfile (ui.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
-	for (size_t i = 0; i != UnitsData.svehicles.size(); ++i) UnitsData.svehicles[i].nr = (int) i;
-
 	UnitsData.initializeIDData();
 
 	return 1;
@@ -1705,11 +1703,6 @@ static int LoadBuildings()
 		LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
 		UnitsData.dirt_small_shw = CloneSDLSurface (UnitsData.dirt_small_shw_org);
 		if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
-	}
-	// set building numbers
-	for (unsigned int i = 0; i < UnitsData.sbuildings.size(); ++i)
-	{
-		UnitsData.sbuildings[i].nr = (int) i;
 	}
 	return 1;
 }

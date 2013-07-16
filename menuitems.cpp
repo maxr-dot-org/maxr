@@ -1258,14 +1258,14 @@ void cMenuUnitListItem::init()
 
 	if (unitID.isAVehicle())
 	{
-		cVehicle vehicle (*unitID.getVehicle(), owner, 0);
+		cVehicle vehicle (*unitID.getUnitDataOriginalVersion(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / 64.0f;
 		vehicle.render_simple (surface, dest, zoomFactor);
 		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
 	}
 	else if (unitID.isABuilding())
 	{
-		cBuilding building (unitID.getBuilding(), owner, 0);
+		cBuilding building (unitID.getUnitDataOriginalVersion(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
 		building.render_simple (surface, dest, zoomFactor, 0);
 	}
@@ -3730,12 +3730,12 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						AutoSurface surface;
 						if (unitID.isABuilding())
 						{
-							cBuilding building (unitID.getBuilding(), client->getActivePlayer(), 0);
+							cBuilding building (unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&building);
 						}
 						else if (unitID.isAVehicle())
 						{
-							cVehicle vehicle (*unitID.getVehicle(), client->getActivePlayer(), 0);
+							cVehicle vehicle (*unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&vehicle);
 						}
 						else
@@ -3944,12 +3944,12 @@ void cMenuReportsScreen::drawReportsScreen()
 				AutoSurface surface;
 				if (savedReport.unitID.isAVehicle())
 				{
-					cVehicle vehicle (*savedReport.unitID.getVehicle(), client->getActivePlayer(), 0);
+					cVehicle vehicle (*savedReport.unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&vehicle);
 				}
 				else if (savedReport.unitID.isABuilding())
 				{
-					cBuilding building (savedReport.unitID.getBuilding(), client->getActivePlayer(), 0);
+					cBuilding building (savedReport.unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&building);
 				}
 				else
@@ -4022,7 +4022,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 		if (draw)
 		{
 			{
-				cVehicle vehicle (*nextVehicle->typ, nextVehicle->owner, 0);
+				cVehicle vehicle (nextVehicle->data, nextVehicle->owner, 0);
 				AutoSurface surface (generateUnitSurface (&vehicle));
 				SDL_BlitSurface (surface, NULL, buffer, &dest);
 			}
@@ -4054,7 +4054,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 			if (draw)
 			{
 				{
-					cBuilding building (nextBuilding->typ, nextBuilding->owner, 0);
+					cBuilding building (&nextBuilding->data, nextBuilding->owner, 0);
 					AutoSurface surface (generateUnitSurface (&building));
 					SDL_BlitSurface (surface, NULL, buffer, &dest);
 				}

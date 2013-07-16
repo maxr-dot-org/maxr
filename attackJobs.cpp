@@ -674,7 +674,7 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
 		state = FINISHED;
-		PlayFX (building->typ->uiData.Attack);
+		PlayFX (building->uiData->Attack);
 		if (map.isWaterOrCoast (unit->PosX, unit->PosY))
 		{
 			client.addFx (new cFxExploWater (unit->PosX * 64 + 32, unit->PosY * 64 + 32));
@@ -840,11 +840,11 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 	}
 	if (unit && unit->isAVehicle())
 	{
-		PlayFX (static_cast<cVehicle*> (unit)->typ->uiData.Attack);
+		PlayFX (static_cast<cVehicle*> (unit)->uiData->Attack);
 	}
 	else if (unit && unit->isABuilding())
 	{
-		PlayFX (static_cast<cBuilding*> (unit)->typ->uiData.Attack);
+		PlayFX (static_cast<cBuilding*> (unit)->uiData->Attack);
 	}
 }
 

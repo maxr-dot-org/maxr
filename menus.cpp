@@ -1861,11 +1861,11 @@ bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* paren
 	if (!menu || menu->selectedUnit == NULL) return false;
 	if (menu->selectedUnit != menu->selectionList->getSelectedUnit()) return false;
 
-	sVehicle* vehicle = menu->selectedUnit->getUnitID().getVehicle (menu->player);
-	if (vehicle && menu->checkAddOk (menu->selectedUnit))
+	const sID& id = menu->selectedUnit->getUnitID();
+	if (id.isAVehicle() && menu->checkAddOk (menu->selectedUnit))
 	{
-		if (menu->selectedUnit->getUpgrades()) menu->secondList->addUnit (vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue());
-		else menu->secondList->addUnit (&menu->player->VehicleData[vehicle->nr], menu->player, NULL, true);
+		if (menu->selectedUnit->getUpgrades()) menu->secondList->addUnit (id, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue());
+		else menu->secondList->addUnit (menu->player->getUnitDataCurrentVersion (id), menu->player, NULL, true);
 		menu->secondList->getItem (menu->secondList->getSize() - 1)->setResValue (menu->selectedUnit->getResValue(), false);
 		menu->addedCallback (menu->selectedUnit);
 		menu->draw();
@@ -4812,7 +4812,7 @@ void cStorageMenu::resetInfos()
 			if (index < (int) storageList.size())
 			{
 				cVehicle* vehicle = storageList[index];
-				srcSurface = vehicle->typ->uiData.storage;
+				srcSurface = vehicle->uiData->storage;
 				name = vehicle->getDisplayName();
 				const sUnitData& upgraded = *vehicle->owner->getUnitDataCurrentVersion (vehicle->data.ID);
 				if (vehicle->data.version != upgraded.version)
@@ -4996,8 +4996,8 @@ void cStorageMenu::activateAllReleased (void* parent)
 				if (xpos < 0 || xpos >= map.getSize()) continue;
 				if ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
 					 ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
-				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, map, vehicle->typ->data)) ||
-					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, map, vehicle->typ->data)))
+				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, map, vehicle->data)) ||
+					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, map, vehicle->data)))
 					 && !hasCheckedPlace[poscount])
 				{
 					sendWantActivate (*menu->client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
