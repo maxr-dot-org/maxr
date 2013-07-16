@@ -699,7 +699,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (found_next && server.addMoveJob (PosX, PosY, nextX, nextY, this))
 		{
 			IsBuilding = false;
-			server.addUnit (PosX, PosY, *BuildingTyp.getBuilding(), owner);
+			server.addBuilding (PosX, PosY, BuildingTyp, owner);
 			// Begin the movement immediately,
 			// so no other unit can block the destination field.
 			this->ServerMoveJob->checkMove();
@@ -709,7 +709,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		{
 			if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
 			{
-				server.addUnit (PosX, PosY, *BuildingTyp.getBuilding(), owner);
+				server.addBuilding (PosX, PosY, BuildingTyp, owner);
 				IsBuilding = false;
 			}
 			BuildPath = false;
@@ -723,7 +723,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
 		{
 			IsBuilding = false;
-			server.addUnit (PosX, PosY, *BuildingTyp.getBuilding(), owner);
+			server.addBuilding (PosX, PosY, BuildingTyp, owner);
 		}
 	}
 	return true;
@@ -1696,12 +1696,12 @@ bool cVehicle::layMine (cServer& server)
 	if ( (data.factorSea > 0 && data.factorGround == 0))
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addUnit (PosX, PosY, *UnitsData.specialIDSeaMine.getBuilding(), owner, false);
+		server.addBuilding (PosX, PosY, UnitsData.specialIDSeaMine, owner, false);
 	}
 	else
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addUnit (PosX, PosY, *UnitsData.specialIDLandMine.getBuilding(), owner, false);
+		server.addBuilding (PosX, PosY, UnitsData.specialIDLandMine, owner, false);
 	}
 	data.storageResCur--;
 

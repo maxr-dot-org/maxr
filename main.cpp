@@ -690,6 +690,40 @@ sBuilding& cUnitsData::getBuilding (int nr, int clan)
 	return clanUnitDataBuildings.at (clan).at (nr);   //[clan][nr];
 }
 
+int cUnitsData::getBuildingIndexBy (sID id) const
+{
+	if (id.isABuilding() == false) return -1;
+	for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
+	{
+		if (sbuildings[i].data.ID == id) return i;
+	}
+	return -1;
+}
+
+int cUnitsData::getVehicleIndexBy (sID id) const
+{
+	if (id.isAVehicle() == false) return -1;
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
+	{
+		if (svehicles[i].data.ID == id) return i;
+	}
+	return -1;
+}
+
+const sBuildingUIData* cUnitsData::getBuildingUI (sID id) const
+{
+	const int index = getBuildingIndexBy (id);
+	if (index == -1) return 0;
+	return &sbuildings[index].uiData;
+}
+
+const sVehicleUIData* cUnitsData::getVehicleUI (sID id) const
+{
+	const int index = getVehicleIndexBy (id);
+	if (index == -1) return 0;
+	return &svehicles[index].uiData;
+}
+
 unsigned int cUnitsData::getNrVehicles() const
 {
 	return (int) svehicles.size();

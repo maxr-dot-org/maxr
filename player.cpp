@@ -246,9 +246,10 @@ sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 //------------------------------------------------------------------------------
 /** Adds the vehicle to the list of the player */
 //------------------------------------------------------------------------------
-cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned int ID)
+cVehicle* cPlayer::addVehicle (int posx, int posy, const sID& id, unsigned int uid)
 {
-	cVehicle* n = new cVehicle (v, this, ID);
+	const sVehicle& v = *id.getVehicle (this);
+	cVehicle* n = new cVehicle (v, this, uid);
 	n->PosX = posx;
 	n->PosY = posy;
 
@@ -335,9 +336,10 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 //------------------------------------------------------------------------------
 /** Adds the building to the list of the player */
 //------------------------------------------------------------------------------
-cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding& b, unsigned int ID)
+cBuilding* cPlayer::addBuilding (int posx, int posy, const sID& id, unsigned int uid)
 {
-	cBuilding* Building = new cBuilding (&b, this, ID);
+	const sBuilding& b = *id.getBuilding (this);
+	cBuilding* Building = new cBuilding (&b, this, uid);
 
 	Building->PosX = posx;
 	Building->PosY = posy;

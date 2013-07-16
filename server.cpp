@@ -740,7 +740,7 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 
 	if (!Map->possiblePlace (*Vehicle, iEscapeX, iEscapeY)) return;
 
-	addUnit (Vehicle->PosX, Vehicle->PosY, *Vehicle->BuildingTyp.getBuilding(), Vehicle->owner);
+	addBuilding (Vehicle->PosX, Vehicle->PosY, Vehicle->BuildingTyp, Vehicle->owner);
 
 	// end building
 	Vehicle->IsBuilding = false;
@@ -1045,7 +1045,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	}
 	if (!Map->possiblePlaceVehicle (svehicle.data, iX, iY, Building->owner)) return;
 
-	addUnit (iX, iY, svehicle, Building->owner, false);
+	addVehicle (iX, iY, BuildingListItem->type, Building->owner, false);
 
 	// start new buildjob
 	Building->BuildList->erase (Building->BuildList->begin());
@@ -2196,15 +2196,15 @@ void cServer::placeInitialResources (const std::vector<sClientLandData*>& landDa
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const sVehicle& svehicle, cPlayer* player)
+cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const sUnitData& unitData, cPlayer* player)
 {
 	for (int offY = -iHeight / 2; offY < iHeight / 2; ++offY)
 	{
 		for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
 		{
-			if (!Map->possiblePlaceVehicle (svehicle.data, iX + offX, iY + offY, player)) continue;
+			if (!Map->possiblePlaceVehicle (unitData, iX + offX, iY + offY, player)) continue;
 
-			return addUnit (iX + offX, iY + offY, svehicle, player, true);
+			return addVehicle (iX + offX, iY + offY, unitData.ID, player, true);
 		}
 	}
 	return NULL;
@@ -2223,8 +2223,8 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sL
 			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1 + 1))
 		{
 			// place buildings:
-			addUnit (iX - 1,     iY - 1 + 1, UnitsData.getBuilding (UnitsData.specialIDSmallGen.getBuilding()->nr, Player->getClan()), Player, true);
-			addUnit (iX - 1 + 1, iY - 1,     UnitsData.getBuilding (UnitsData.specialIDMine.getBuilding()->nr, Player->getClan()), Player, true);
+			addBuilding (iX - 1,     iY - 1 + 1, UnitsData.specialIDSmallGen, Player, true);
+			addBuilding (iX - 1 + 1, iY - 1,     UnitsData.specialIDMine, Player, true);
 		}
 		else
 		{
@@ -2237,12 +2237,12 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sL
 	for (size_t i = 0; i != landingUnits.size(); ++i)
 	{
 		const sLandingUnit& Landing = landingUnits[i];
-		cVehicle* Vehicle = landVehicle (iX, iY, iWidth, iHeight, *Landing.unitID.getVehicle(), Player);
+		cVehicle* Vehicle = landVehicle (iX, iY, iWidth, iHeight, *Landing.unitID.getUnitDataOriginalVersion (Player), Player);
 		while (!Vehicle)
 		{
 			iWidth += 2;
 			iHeight += 2;
-			Vehicle = landVehicle (iX, iY, iWidth, iHeight, *Landing.unitID.getVehicle(), Player);
+			Vehicle = landVehicle (iX, iY, iWidth, iHeight, *Landing.unitID.getUnitDataOriginalVersion (Player), Player);
 		}
 		if (Landing.cargo && Vehicle)
 		{
@@ -2282,10 +2282,10 @@ void cServer::correctLandingPos (int& iX, int& iY)
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle& svehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
+cVehicle* cServer::addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int uid)
 {
 	// generate the vehicle:
-	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, svehicle, ID ? ID : iNextUnitID);
+	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, id, uid ? uid : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
@@ -2308,7 +2308,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle& svehicle, cPla
 		AddedVehicle->FlightHigh = 64;
 	}
 
-	sendAddUnit (*this, iPosX, iPosY, AddedVehicle->iID, true, svehicle.data.ID, Player->getNr(), bInit);
+	sendAddUnit (*this, iPosX, iPosY, AddedVehicle->iID, true, id, Player->getNr(), bInit);
 
 	// detection must be done, after the vehicle has been sent to clients
 	AddedVehicle->makeDetection (*this);
@@ -2316,10 +2316,10 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle& svehicle, cPla
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding& sbuilding, cPlayer* Player, bool bInit, unsigned int ID)
+cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit, unsigned int uid)
 {
 	// generate the building:
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, sbuilding, ID ? ID : iNextUnitID);
+	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, id, uid ? uid : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
@@ -2329,7 +2329,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding& sbuilding, c
 	cBuilding* buildingToBeDeleted = Map->fields[iOff].getTopBuilding();
 
 	Map->addBuilding (*AddedBuilding, iPosX, iPosY);
-	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, sbuilding.data.ID, Player->getNr(), bInit);
+	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, id, Player->getNr(), bInit);
 
 	// integrate the building to the base:
 	Player->base.addBuilding (AddedBuilding, this);

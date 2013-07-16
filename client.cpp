@@ -317,7 +317,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	const int PosY = message.popInt16();
 	const int PosX = message.popInt16();
 	unsigned int ID = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, *UnitID.getBuilding (Player), ID);
+	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID, ID);
 
 	addUnit (PosX, PosY, AddedBuilding, Init);
 
@@ -345,7 +345,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	const unsigned int ID = message.popInt16();
 	const bool bAddToMap = message.popBool();
 
-	cVehicle* AddedVehicle = Player->addVehicle (PosX, PosY, *UnitID.getVehicle (Player), ID);
+	cVehicle* AddedVehicle = Player->addVehicle (PosX, PosY, UnitID, ID);
 	addUnit (PosX, PosY, AddedVehicle, Init, bAddToMap);
 }
 
@@ -390,7 +390,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 	const int dir = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
-	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, *UnitID.getVehicle (Player), ID);
+	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, UnitID, ID);
 
 	AddedVehicle->dir = dir;
 	AddedVehicle->data.version = version;
@@ -412,7 +412,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	const int iPosX = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, *UnitID.getBuilding (Player), ID);
+	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID, ID);
 
 	AddedBuilding->data.version = version;
 	addUnit (iPosX, iPosY, AddedBuilding, false);

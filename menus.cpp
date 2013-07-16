@@ -1758,18 +1758,24 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 void cHangarMenu::drawUnitInformation()
 {
 	if (!selectedUnit) return;
-	if (selectedUnit->getUnitID().getVehicle (player))
+	if (selectedUnit->getUnitID().isAVehicle())
 	{
-		infoImage->setImage (selectedUnit->getUnitID().getVehicle (player)->uiData.info);
-		if (infoTextCheckBox->isChecked()) infoText->setText (selectedUnit->getUnitID().getVehicle (player)->data.description);
-		else infoText->setText ("");
+		const sVehicleUIData& uiData = *UnitsData.getVehicleUI (selectedUnit->getUnitID());
+
+		infoImage->setImage (uiData.info);
 	}
-	else if (selectedUnit->getUnitID().getBuilding (player))
+	else if (selectedUnit->getUnitID().isABuilding())
 	{
-		infoImage->setImage (selectedUnit->getUnitID().getBuilding (player)->uiData.info);
-		if (infoTextCheckBox->isChecked()) infoText->setText (selectedUnit->getUnitID().getBuilding (player)->data.description);
-		else infoText->setText ("");
+		const sBuildingUIData& uiData = *UnitsData.getBuildingUI (selectedUnit->getUnitID());
+
+		infoImage->setImage (uiData.info);
 	}
+	if (infoTextCheckBox->isChecked())
+	{
+		const string description = selectedUnit->getUnitID().getUnitDataOriginalVersion()->description;
+		infoText->setText (description);
+	}
+	else infoText->setText ("");
 }
 
 //------------------------------------------------------------------------------
@@ -1970,7 +1976,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 		cMenuUnitListItem* selectedUnit = selectionList->getItemByID (units[i].unitID);
 		cMenuUnitListItem* unit = secondList->addUnit (units[i].unitID, &player, selectedUnit->getUpgrades());
 
-		credits -= unit->getUnitID().getVehicle (&player)->data.buildCosts;
+		credits -= unit->getUnitID().getUnitDataOriginalVersion (&player)->buildCosts;
 		credits -= units[i].cargo / 5;
 		unit->setResValue (units[i].cargo);
 	}
@@ -2128,21 +2134,21 @@ void cStartupHangarMenu::materialBarUpReleased (void* parent)
 {
 	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	if (!menu->secondList->getSelectedUnit()) return;
-	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
-	if (menu->credits > 0 && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
+	cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
+	if (!unit) return;
+	sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
+	if (menu->credits == 0 || vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
+
+	const int oldCargo = unit->getResValue();
+	unit->setResValue (oldCargo + 5);
+	menu->materialBar->setCurrentValue (unit->getResValue());
+	if (oldCargo != unit->getResValue())
 	{
-		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		menu->secondList->getSelectedUnit()->setResValue (oldCargo + 5);
-		menu->materialBar->setCurrentValue (menu->secondList->getSelectedUnit()->getResValue());
-		if (oldCargo != menu->secondList->getSelectedUnit()->getResValue())
-		{
-			menu->credits--;
-			menu->goldBar->setCurrentValue (menu->credits);
-		}
-		menu->upgradeButtons->setSelection (menu->selectedUnit);
-		menu->draw();
+		menu->credits--;
+		menu->goldBar->setCurrentValue (menu->credits);
 	}
+	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->draw();
 }
 
 //------------------------------------------------------------------------------
@@ -2150,21 +2156,21 @@ void cStartupHangarMenu::materialBarDownReleased (void* parent)
 {
 	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	if (!menu->secondList->getSelectedUnit()) return;
-	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
-	if (vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
+	cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
+	if (!unit) return;
+	const sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
+	if (vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
+
+	const int oldCargo = unit->getResValue();
+	unit->setResValue (oldCargo - 5);
+	menu->materialBar->setCurrentValue (unit->getResValue());
+	if (oldCargo != unit->getResValue())
 	{
-		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		menu->secondList->getSelectedUnit()->setResValue (oldCargo - 5);
-		menu->materialBar->setCurrentValue (menu->secondList->getSelectedUnit()->getResValue());
-		if (oldCargo != menu->secondList->getSelectedUnit()->getResValue())
-		{
-			menu->credits++;
-			menu->goldBar->setCurrentValue (menu->credits);
-		}
-		menu->upgradeButtons->setSelection (menu->selectedUnit);
-		menu->draw();
+		menu->credits++;
+		menu->goldBar->setCurrentValue (menu->credits);
 	}
+	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->draw();
 }
 
 //------------------------------------------------------------------------------
@@ -2172,33 +2178,33 @@ void cStartupHangarMenu::materialBarClicked (void* parent)
 {
 	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	if (!menu->secondList->getSelectedUnit()) return;
-	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
-	if (vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
+	cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
+	if (!unit) return;
+	const sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
+	if (vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
+
+	const int oldCargo = unit->getResValue();
+	int newCargo = (int) ( (float) (menu->position.y + 301 + 115 - mouse->y) / 115 * vehicle->storageResMax);
+	if (newCargo % 5 < 3) newCargo -= newCargo % 5;
+	else newCargo += 5 - newCargo % 5;
+
+	unit->setResValue (newCargo);
+
+	newCargo = unit->getResValue();
+	int costs = (newCargo - oldCargo) / 5;
+	if (costs > menu->credits)
 	{
-		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		int newCargo = (int) ( (float) (menu->position.y + 301 + 115 - mouse->y) / 115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion (menu->player)->storageResMax);
-		if (newCargo % 5 < 3) newCargo -= newCargo % 5;
-		else newCargo += 5 - newCargo % 5;
-
-		menu->secondList->getSelectedUnit()->setResValue (newCargo);
-
-		newCargo = menu->secondList->getSelectedUnit()->getResValue();
-		int costs = (newCargo - oldCargo) / 5;
-		if (costs > menu->credits)
-		{
-			costs = menu->credits;
-			newCargo = costs * 5 + oldCargo;
-		}
-
-		menu->secondList->getSelectedUnit()->setResValue (newCargo);
-		menu->materialBar->setCurrentValue (menu->secondList->getSelectedUnit()->getResValue());
-
-		menu->credits -= costs;
-		menu->goldBar->setCurrentValue (menu->credits);
-		menu->upgradeButtons->setSelection (menu->selectedUnit);
-		menu->draw();
+		costs = menu->credits;
+		newCargo = costs * 5 + oldCargo;
 	}
+
+	unit->setResValue (newCargo);
+	menu->materialBar->setCurrentValue (unit->getResValue());
+
+	menu->credits -= costs;
+	menu->goldBar->setCurrentValue (menu->credits);
+	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->draw();
 }
 
 //------------------------------------------------------------------------------
@@ -2263,22 +2269,22 @@ bool cStartupHangarMenu::isInLandingList (const cMenuUnitListItem* item) const
 //------------------------------------------------------------------------------
 bool cStartupHangarMenu::checkAddOk (const cMenuUnitListItem* item) const
 {
-	const sVehicle* vehicle = item->getUnitID().getVehicle (player);
-	if (!vehicle) return false;
+	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
+	if (!data || item->getUnitID().isAVehicle() == false) return false;
 
-	if (vehicle->data.factorGround == 0) return false;
-	if (vehicle->data.isHuman) return false;
-	if (vehicle->data.buildCosts > credits) return false;
+	if (data->factorGround == 0) return false;
+	if (data->isHuman) return false;
+	if (data->buildCosts > credits) return false;
 	return true;
 }
 
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::addedCallback (cMenuUnitListItem* item)
 {
-	const sVehicle* vehicle = item->getUnitID().getVehicle (player);
-	if (!vehicle) return;
+	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
+	if (!data || item->getUnitID().isAVehicle() == false) return;
 
-	credits -= vehicle->data.buildCosts;
+	credits -= data->buildCosts;
 	goldBar->setCurrentValue (credits);
 	selectionChanged (this);
 }
@@ -2286,10 +2292,10 @@ void cStartupHangarMenu::addedCallback (cMenuUnitListItem* item)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 {
-	const sVehicle* vehicle = item->getUnitID().getVehicle (player);
-	if (!vehicle) return;
+	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
+	if (!data || item->getUnitID().isAVehicle() == false) return;
 
-	credits += vehicle->data.buildCosts + item->getResValue() / 5;
+	credits += data->buildCosts + item->getResValue() / 5;
 	goldBar->setCurrentValue (credits);
 }
 
@@ -2329,14 +2335,15 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 	menu = dynamic_cast<cStartupHangarMenu*> ( (cHangarMenu*) parent);
 	if (!menu) menu = dynamic_cast<cStartupHangarMenu*> ( (cStartupHangarMenu*) parent);
 	if (!menu) return;
-	const sVehicle* vehicle;
-	if (menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player)) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
+	const cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
+	const sUnitData* vehicle = (unit && unit->getUnitID().isAVehicle()) ? unit->getUnitID().getUnitDataOriginalVersion (menu->player) : 0;
+	if (vehicle && vehicle->storeResType != sUnitData::STORE_RES_NONE && vehicle->storeResType != sUnitData::STORE_RES_GOLD)
 	{
-		menu->materialBar->setMaximalValue (vehicle->data.storageResMax);
-		menu->materialBar->setCurrentValue (menu->secondList->getSelectedUnit()->getResValue());
+		menu->materialBar->setMaximalValue (vehicle->storageResMax);
+		menu->materialBar->setCurrentValue (unit->getResValue());
 
 		cMenuMaterialBar::eMaterialBarTypes type = cMenuMaterialBar::MAT_BAR_TYPE_NONE_HORI_BIG;
-		switch (vehicle->data.storeResType)
+		switch (vehicle->storeResType)
 		{
 			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
 			case sUnitData::STORE_RES_OIL:   type = cMenuMaterialBar::MAT_BAR_TYPE_OIL;   break;
@@ -4658,15 +4665,15 @@ void cUnitHelpMenu::init (sID unitID)
 	unitDetails->setSelection (unit);
 	menuItems.push_back (unitDetails);
 
-	if (unitID.getVehicle())
+	if (unitID.isAVehicle())
 	{
-		infoImage->setImage (unitID.getVehicle()->uiData.info);
-		infoText->setText (unitID.getVehicle()->data.description);
+		infoImage->setImage (UnitsData.getVehicleUI (unitID)->info);
+		infoText->setText (unitID.getUnitDataOriginalVersion()->description);
 	}
-	else if (unitID.getBuilding())
+	else if (unitID.isABuilding())
 	{
-		infoImage->setImage (unitID.getBuilding()->uiData.info);
-		infoText->setText (unitID.getBuilding()->data.description);
+		infoImage->setImage (UnitsData.getBuildingUI (unitID)->info);
+		infoText->setText (unitID.getUnitDataOriginalVersion()->description);
 	}
 }
 

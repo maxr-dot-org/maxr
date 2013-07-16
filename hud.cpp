@@ -448,7 +448,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
 		const sBuildList* BuildingList = (*building.BuildList) [i];
-		font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
+		font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
 		*y += 8;
 	}
 
@@ -1949,7 +1949,7 @@ void cGameGUI::updateMouseCursor()
 			!selectedBuilding->IsWorking &&
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), (*selectedBuilding->BuildList) [0]->type.getVehicle()->data) && selectedUnit->isDisabled() == false)
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), *(*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -4226,7 +4226,7 @@ void cGameGUI::drawUnitCircles()
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0 &&
 			selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints ( (*selectedBuilding->BuildList) [0]->type.getVehicle()->data, *this);
+			selectedBuilding->DrawExitPoints (*(*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion(), *this);
 		}
 		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
 		{

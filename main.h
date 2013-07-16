@@ -43,8 +43,9 @@
 class cPlayer;
 class cLanguage;
 struct sBuilding;
+struct sBuildingUIData;
 struct sVehicle;
-
+struct sVehicleUIData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Globals
@@ -83,6 +84,11 @@ struct sID
 	 *         (but with the owner's clan modifications) */
 	sUnitData* getUnitDataOriginalVersion (cPlayer* Owner = NULL) const;
 
+	bool operator== (const sID& ID) const;
+	bool less_vehicleFirst (const sID& ID) const;
+	bool less_buildingFirst (const sID& ID) const;
+
+//private:
 	/** Returns the original version of a vehicle as stored in UnitsData.
 	 * If Owner is given, his clan will be taken
 	 * into consideration for modifications of the unit's values. */
@@ -91,10 +97,6 @@ struct sID
 	 * If Owner is given, his clan will be taken
 	 * into consideration for modifications of the unit's values. */
 	sBuilding* getBuilding (cPlayer* Owner = NULL) const;
-
-	bool operator== (const sID& ID) const;
-	bool less_vehicleFirst (const sID& ID) const;
-	bool less_buildingFirst (const sID& ID) const;
 
 public:
 	int iFirstPart;
@@ -378,6 +380,12 @@ public:
 	cUnitsData();
 
 	void initializeIDData();
+
+	int getBuildingIndexBy (sID id) const;
+	int getVehicleIndexBy (sID id) const;
+
+	const sBuildingUIData* getBuildingUI (sID id) const;
+	const sVehicleUIData* getVehicleUI (sID id) const;
 
 	sVehicle& getVehicle (int nr, int clan = -1);  ///< -1: game without clans
 	sBuilding& getBuilding (int nr, int clan = -1);  ///< -1: game without clans

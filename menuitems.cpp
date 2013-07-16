@@ -1256,14 +1256,14 @@ void cMenuUnitListItem::init()
 	SDL_FillRect (surface, NULL, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	if (unitID.getVehicle())
+	if (unitID.isAVehicle())
 	{
 		cVehicle vehicle (*unitID.getVehicle(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / 64.0f;
 		vehicle.render_simple (surface, dest, zoomFactor);
 		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
 	}
-	else if (unitID.getBuilding())
+	else if (unitID.isABuilding())
 	{
 		cBuilding building (unitID.getBuilding(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
@@ -1301,7 +1301,7 @@ void cMenuUnitListItem::draw()
 
 			const int posy = position.y + 12;
 
-			if (unitID.getVehicle()) font->showTextCentered (position.x + position.w - 12, posy, iToStr (owner->getUnitDataCurrentVersion (unitID)->buildCosts), FONT_LATIN_SMALL_YELLOW);
+			if (unitID.isAVehicle()) font->showTextCentered (position.x + position.w - 12, posy, iToStr (owner->getUnitDataCurrentVersion (unitID)->buildCosts), FONT_LATIN_SMALL_YELLOW);
 		}
 		break;
 		default:
@@ -1328,7 +1328,7 @@ int cMenuUnitListItem::drawName (bool withNumber)
 		// search the landing list for other units of the same type.
 		for (size_t i = 0; i != parentList->unitsList.size(); ++i)
 		{
-			if (!parentList->unitsList[i]->unitID.getVehicle()) continue;
+			if (!parentList->unitsList[i]->unitID.isAVehicle()) continue;
 			if (parentList->unitsList[i] == this) break;
 			if (unitID == parentList->unitsList[i]->unitID) nrOfSameUnits++;
 		}
@@ -1349,19 +1349,20 @@ int cMenuUnitListItem::drawName (bool withNumber)
 
 void cMenuUnitListItem::drawCargo (int destY)
 {
-	if (!unitID.getVehicle()) return;
+	if (!unitID.isAVehicle()) return;
 
 	SDL_Rect dest = { Sint16 (position.x + 32 + 4), Sint16 (destY), 0, 0 };
-
-	if (unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_NONE) return;
-	if (unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_GOLD) return;   // don't allow buying gold
+	const sUnitData& originalData = *unitID.getUnitDataOriginalVersion();
+	if (originalData.storeResType == sUnitData::STORE_RES_NONE) return;
+	// don't allow buying gold
+	if (originalData.storeResType == sUnitData::STORE_RES_GOLD) return;
 
 	if (resValue == 0)
 	{
 		font->showText (dest.x, dest.y + 10, "(empty)", FONT_LATIN_SMALL_WHITE);
 		return;
 	}
-	const int maxResValue = unitID.getUnitDataOriginalVersion()->storageResMax;
+	const int maxResValue = originalData.storageResMax;
 	const std::string text = " (" + iToStr (resValue) + "/" + iToStr (maxResValue) + ")";
 	eUnicodeFontType fontType;
 	if (resValue <= maxResValue / 4) fontType = FONT_LATIN_SMALL_RED;
@@ -2167,7 +2168,7 @@ void cMenuUnitDetailsBig::draw()
 	}
 
 	sUnitData::eStorageResType transport;
-	if (selectedUnit->getUnitID().getVehicle()) transport = data->storeResType;
+	if (selectedUnit->getUnitID().isAVehicle()) transport = data->storeResType;
 	else transport = data->storeResType;
 
 	if (transport != sUnitData::STORE_RES_NONE)
@@ -3680,8 +3681,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 	for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 	{
 		sID unitID = UnitsData.sbuildings[i].data.ID;
-		sBuilding* buildingImgs = unitID.getBuilding();
-		SDL_Surface* unitImg = buildingImgs ? buildingImgs->uiData.img_org : 0;
+		SDL_Surface* unitImg = UnitsData.sbuildings[i].uiData.img_org;
 		if (unitImg == 0)   // shouldn't happen
 			continue;
 		if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
@@ -3694,8 +3694,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 	for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 	{
 		sID unitID = UnitsData.svehicles[i].data.ID;
-		sVehicle* vehicleImgs = unitID.getVehicle();
-		SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->uiData.img_org[0] : 0;
+		SDL_Surface* unitImg = UnitsData.svehicles[i].uiData.img_org[0];
 		if (unitImg == 0)   // shouldn't happen
 			continue;
 		if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
@@ -3729,12 +3728,12 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						//SDL_Rect src = { 0, 0, 32, 32 };
 						SDL_Rect dest = { Sint16 (position.x + 17), Sint16 (position.y + 28 + (displayedEntryIndex - (index * 10)) * 42), 0, 0 };
 						AutoSurface surface;
-						if (unitID.getBuilding())
+						if (unitID.isABuilding())
 						{
 							cBuilding building (unitID.getBuilding(), client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&building);
 						}
-						else if (unitID.getVehicle())
+						else if (unitID.isAVehicle())
 						{
 							cVehicle vehicle (*unitID.getVehicle(), client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&vehicle);
@@ -3943,12 +3942,12 @@ void cMenuReportsScreen::drawReportsScreen()
 				SDL_Rect dest = { Sint16 (position.x + 17), Sint16 (position.y + 30 + (i - (index) *maxItems) * 55), 0, 0 };
 
 				AutoSurface surface;
-				if (savedReport.unitID.getVehicle())
+				if (savedReport.unitID.isAVehicle())
 				{
 					cVehicle vehicle (*savedReport.unitID.getVehicle(), client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&vehicle);
 				}
-				else if (savedReport.unitID.getBuilding())
+				else if (savedReport.unitID.isABuilding())
 				{
 					cBuilding building (savedReport.unitID.getBuilding(), client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&building);

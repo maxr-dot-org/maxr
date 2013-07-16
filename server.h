@@ -218,13 +218,12 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param iPosX The X were the unit should be added.
 	*@param iPosY The Y were the unit should be added.
-	*@param Vehicle Vehicle which should be added.
-	*@param Building Building which should be added.
+	*@param id id of the unit which should be added.
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle* addUnit (int iPosX, int iPosY, const sVehicle& svehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int ID = 0);
-	cBuilding* addUnit (int iPosX, int iPosY, const sBuilding& sbuilding, cPlayer* Player, bool bInit = false, unsigned int ID = 0);
+	cVehicle* addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
+	cBuilding* addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
 	void placeInitialResources (const std::vector<sClientLandData*>& landData, const sSettings& settings);
 
@@ -356,12 +355,12 @@ private:
 	*@param iY The Y coordinate to land.
 	*@param iWidth Width of the field.
 	*@param iHeight iHeight of the field.
-	*@param svehicle Vehicle to land.
+	*@param unitData Vehicle to land.
 	*@param player Player whose vehicle should be land.
 	*@return NULL if the vehicle could not be landed,
 	*        else a pointer to the vehicle.
 	*/
-	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, const sVehicle& svehicle, cPlayer* player);
+	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, const sUnitData& unitData, cPlayer* player);
 
 	/**
 	* handles the pressed end of a player

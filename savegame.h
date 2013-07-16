@@ -214,12 +214,12 @@ private:
 	* loads a vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void loadVehicle (cServer& server, tinyxml2::XMLElement* unitNode, sID& ID);
+	void loadVehicle (cServer& server, tinyxml2::XMLElement* unitNode, const sID& ID);
 	/**
 	* loads a building
 	*@author alzi alias DoctorDeath
 	*/
-	void loadBuilding (cServer& server, tinyxml2::XMLElement* unitNode, sID& ID);
+	void loadBuilding (cServer& server, tinyxml2::XMLElement* unitNode, const sID& ID);
 	/**
 	* loads rubble
 	*@author alzi alias DoctorDeath
