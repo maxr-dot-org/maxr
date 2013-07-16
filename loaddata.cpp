@@ -1738,15 +1738,16 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	string idString = getXMLAttributeString (unitDataXml, "ID", "Unit", NULL);
 	char szTmp[100];
 	// check whether the id exists twice
-	Data->ID.iFirstPart = atoi (idString.substr (0, idString.find (" ", 0)).c_str());
-	Data->ID.iSecondPart = atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str());
-	if (Data->ID.isAVehicle())
+	sID id;
+	id.iFirstPart = atoi (idString.substr (0, idString.find (" ", 0)).c_str());
+	id.iSecondPart = atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str());
+	if (id.isAVehicle())
 	{
 		for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 		{
-			if (UnitsData.svehicles[i].data.ID == Data->ID)
+			if (UnitsData.svehicles[i].data.ID == id)
 			{
-				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.svehicles[i].data.ID.iFirstPart, UnitsData.svehicles[i].data.ID.iSecondPart);
+				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.iFirstPart, id.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
@@ -1756,15 +1757,15 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	{
 		for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 		{
-			if (UnitsData.sbuildings[i].data.ID == Data->ID)
+			if (UnitsData.sbuildings[i].data.ID == id)
 			{
-				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", UnitsData.sbuildings[i].data.ID.iFirstPart, UnitsData.sbuildings[i].data.ID.iSecondPart);
+				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.iFirstPart, id.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
 		}
 	}
-
+	Data->ID = id;
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
 	if (iID != atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 	{
