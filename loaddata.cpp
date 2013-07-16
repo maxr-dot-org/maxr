@@ -1027,7 +1027,8 @@ static int LoadVehicles()
 	}
 	// load found units
 	UnitsData.svehicles.clear();
-	UnitsData.svehicles.reserve (VehicleList.size());
+	UnitsData.svehicles.resize (VehicleList.size());
+	UnitsData.vehicleUIs.resize (VehicleList.size());
 	string sVehiclePath;
 	for (size_t i = 0; i != VehicleList.size(); ++i)
 	{
@@ -1036,21 +1037,19 @@ static int LoadVehicles()
 		sVehiclePath += VehicleList[i];
 		sVehiclePath += PATH_DELIMITER;
 
-		// Prepare memory for next unit
-		UnitsData.svehicles.push_back (sVehicle());
-		sVehicle& v = UnitsData.svehicles[i];
+		sUnitData& v = UnitsData.svehicles[i];
 
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData (&v.data, sVehiclePath.c_str(), IDList[i]);
-		if (!translateUnitData (v.data.ID, true))
+		LoadUnitData (&v, sVehiclePath.c_str(), IDList[i]);
+		if (!translateUnitData (v.ID, true))
 			Log.write ("Can not translate Unit data. Check your lang file!", cLog::eLOG_TYPE_WARNING);
 
 		if (DEDICATED_SERVER) continue;
 
 		Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
-		sVehicleUIData& ui = v.uiData;
+		sVehicleUIData& ui = UnitsData.vehicleUIs[i];
 		// load infantery graphics
-		if (v.data.animationMovement)
+		if (v.animationMovement)
 		{
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
@@ -1191,7 +1190,7 @@ static int LoadVehicles()
 
 		// load overlaygraphics if necessary
 		Log.write ("Loading overlay", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.hasOverlay)
+		if (v.hasOverlay)
 		{
 			sTmpString = sVehiclePath;
 			sTmpString += "overlay.pcx";
@@ -1205,7 +1204,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.overlay_org       = NULL;
 				ui.overlay           = NULL;
-				v.data.hasOverlay = false;
+				v.hasOverlay = false;
 			}
 		}
 		else
@@ -1216,7 +1215,7 @@ static int LoadVehicles()
 
 		// load buildgraphics if necessary
 		Log.write ("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.buildUpGraphic)
+		if (v.buildUpGraphic)
 		{
 			// load image
 			sTmpString = sVehiclePath;
@@ -1233,7 +1232,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_org             = NULL;
 				ui.build                 = NULL;
-				v.data.buildUpGraphic = false;
+				v.buildUpGraphic = false;
 			}
 			// load shadow
 			sTmpString = sVehiclePath;
@@ -1249,7 +1248,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_shw_org         = NULL;
 				ui.build_shw             = NULL;
-				v.data.buildUpGraphic = false;
+				v.buildUpGraphic = false;
 			}
 		}
 		else
@@ -1261,7 +1260,7 @@ static int LoadVehicles()
 		}
 		// load cleargraphics if necessary
 		Log.write ("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.canClearArea)
+		if (v.canClearArea)
 		{
 			// load image (small)
 			sTmpString = sVehiclePath;
@@ -1278,7 +1277,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.clear_small_org      = NULL;
 				ui.clear_small          = NULL;
-				v.data.canClearArea = false;
+				v.canClearArea = false;
 			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
@@ -1294,7 +1293,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.clear_small_shw_org  = NULL;
 				ui.clear_small_shw      = NULL;
-				v.data.canClearArea = false;
+				v.canClearArea = false;
 			}
 			// load image (big)
 			sTmpString = sVehiclePath;
@@ -1311,7 +1310,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_org            = NULL;
 				ui.build                = NULL;
-				v.data.canClearArea = false;
+				v.canClearArea = false;
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
@@ -1327,7 +1326,7 @@ static int LoadVehicles()
 				Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				ui.build_shw_org        = NULL;
 				ui.build_shw            = NULL;
-				v.data.canClearArea = false;
+				v.canClearArea = false;
 			}
 		}
 		else
@@ -1414,9 +1413,9 @@ static bool translateUnitData (sID ID, bool vehicle)
 	{
 		for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 		{
-			if (UnitsData.svehicles[i].data.ID == ID)
+			if (UnitsData.svehicles[i].ID == ID)
 			{
-				Data = &UnitsData.svehicles[i].data;
+				Data = &UnitsData.svehicles[i];
 				break;
 			}
 		}
@@ -1425,9 +1424,9 @@ static bool translateUnitData (sID ID, bool vehicle)
 	{
 		for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 		{
-			if (UnitsData.sbuildings[i].data.ID == ID)
+			if (UnitsData.sbuildings[i].ID == ID)
 			{
-				Data = &UnitsData.sbuildings[i].data;
+				Data = &UnitsData.sbuildings[i];
 				break;
 			}
 		}
@@ -1586,25 +1585,23 @@ static int LoadBuildings()
 	UnitsData.specialIDMine.iFirstPart = UnitsData.specialIDSmallGen.iFirstPart = UnitsData.specialIDConnector.iFirstPart = UnitsData.specialIDLandMine.iFirstPart = UnitsData.specialIDSeaMine.iFirstPart = UnitsData.specialIDSmallBeton.iFirstPart = 1;
 	// load found units
 	UnitsData.sbuildings.clear();
-	UnitsData.sbuildings.reserve (BuildingList.size());
-	for (unsigned int i = 0; i < BuildingList.size(); i++)
+	UnitsData.sbuildings.resize (BuildingList.size());
+	UnitsData.buildingUIs.resize (BuildingList.size());
+	for (size_t i = 0; i != BuildingList.size(); ++i)
 	{
 		string sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
 		sBuildingPath += BuildingList[i];
 		sBuildingPath += PATH_DELIMITER;
 
-		// Prepare memory for next unit
-		UnitsData.sbuildings.push_back (sBuilding());
-
-		sBuilding& b = UnitsData.sbuildings.back();
-		LoadUnitData (&b.data, sBuildingPath.c_str(), IDList[i]);
-		translateUnitData (b.data.ID, false);
+		sUnitData& b = UnitsData.sbuildings[i];
+		LoadUnitData (&b, sBuildingPath.c_str(), IDList[i]);
+		translateUnitData (b.ID, false);
 
 		if (DEDICATED_SERVER) continue;
 
 		// load img
-		sBuildingUIData& ui = b.uiData;
+		sBuildingUIData& ui = UnitsData.buildingUIs[i];
 		sTmpString = sBuildingPath;
 		sTmpString += "img.pcx";
 		if (FileExists (sTmpString.c_str()))
@@ -1642,7 +1639,7 @@ static int LoadBuildings()
 			ui.info = LoadPCX (sTmpString);
 
 		// load effectgraphics if necessary
-		if (b.data.powerOnGraphic)
+		if (b.powerOnGraphic)
 		{
 			sTmpString = sBuildingPath;
 			sTmpString += "effect.pcx";
@@ -1667,9 +1664,9 @@ static int LoadBuildings()
 		LoadUnitSoundfile (ui.Attack,  sBuildingPath.c_str(), "attack.ogg");
 
 		// Get Ptr if necessary:
-		if (b.data.ID == UnitsData.specialIDConnector)
+		if (b.ID == UnitsData.specialIDConnector)
 		{
-			b.data.isConnectorGraphic = true;
+			b.isConnectorGraphic = true;
 			UnitsData.ptr_connector = ui.img;
 			UnitsData.ptr_connector_org = ui.img_org;
 			SDL_SetColorKey (UnitsData.ptr_connector, SDL_SRCCOLORKEY, 0xFF00FF);
@@ -1677,7 +1674,7 @@ static int LoadBuildings()
 			UnitsData.ptr_connector_shw_org = ui.shw_org;
 			SDL_SetColorKey (UnitsData.ptr_connector_shw, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
-		else if (b.data.ID == UnitsData.specialIDSmallBeton)
+		else if (b.ID == UnitsData.specialIDSmallBeton)
 		{
 			UnitsData.ptr_small_beton = ui.img;
 			UnitsData.ptr_small_beton_org = ui.img_org;
@@ -1686,8 +1683,8 @@ static int LoadBuildings()
 
 		// Check if there is more than one frame
 		// use 129 here because some images from the res_installer are one pixel to large
-		if (ui.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos) b.data.hasFrames = ui.img_org->w / ui.img_org->h;
-		else b.data.hasFrames = 0;
+		if (ui.img_org->w > 129 && !b.isConnectorGraphic && !b.hasClanLogos) b.hasFrames = ui.img_org->w / ui.img_org->h;
+		else b.hasFrames = 0;
 	}
 
 	// Dirtsurfaces
@@ -1738,7 +1735,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	{
 		for (size_t i = 0; i != UnitsData.svehicles.size(); ++i)
 		{
-			if (UnitsData.svehicles[i].data.ID == id)
+			if (UnitsData.svehicles[i].ID == id)
 			{
 				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.iFirstPart, id.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
@@ -1750,7 +1747,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	{
 		for (size_t i = 0; i != UnitsData.sbuildings.size(); ++i)
 		{
-			if (UnitsData.sbuildings[i].data.ID == id)
+			if (UnitsData.sbuildings[i].ID == id)
 			{
 				TIXML_SNPRINTF (szTmp, sizeof (szTmp), "unit with id %.2d %.2d already exists", id.iFirstPart, id.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
@@ -2029,8 +2026,8 @@ void reloadUnitValues()
 	while (Element != NULL)
 	{
 		int num = Element->IntAttribute ("num");
-		LoadUnitData (&UnitsData.svehicles[i].data, (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
-		translateUnitData (UnitsData.svehicles[i].data.ID, true);
+		LoadUnitData (&UnitsData.svehicles[i], (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
+		translateUnitData (UnitsData.svehicles[i].ID, true);
 		if (Element->NextSibling()) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
@@ -2046,8 +2043,8 @@ void reloadUnitValues()
 	while (Element != NULL)
 	{
 		int num = Element->IntAttribute ("num");
-		LoadUnitData (&UnitsData.sbuildings[i].data, (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
-		translateUnitData (UnitsData.sbuildings[i].data.ID, false);
+		LoadUnitData (&UnitsData.sbuildings[i], (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
+		translateUnitData (UnitsData.sbuildings[i].ID, false);
 		if (Element->NextSibling()) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;

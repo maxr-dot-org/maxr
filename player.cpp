@@ -95,15 +95,9 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 	lastDeletedUnit (0),
 	clan (-1)
 {
-	// copy the vehicle stats
-	VehicleData.reserve (UnitsData.getNrVehicles());
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
-		VehicleData.push_back (UnitsData.getVehicle (i).data); // get the default (no clan) vehicle data
-
-	// copy the building stats
-	BuildingData.reserve (UnitsData.getNrBuildings());
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
-		BuildingData.push_back (UnitsData.getBuilding (i).data); // get the default (no clan) building data
+	// get the default (no clan) unit data
+	VehicleData = UnitsData.getUnitData_Vehicles (-1);
+	BuildingData = UnitsData.getUnitData_Buildings (-1);
 
 	VehicleList = NULL;
 	BuildingList = NULL;
@@ -214,11 +208,8 @@ void cPlayer::setClan (int newClan)
 
 	clan = newClan;
 
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
-		VehicleData[i] = UnitsData.getVehicle (i, clan).data;
-
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
-		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
+	VehicleData = UnitsData.getUnitData_Vehicles (clan);
+	BuildingData = UnitsData.getUnitData_Buildings (clan);
 }
 
 //------------------------------------------------------------------------------
@@ -786,7 +777,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
-		const sUnitData& originalData = UnitsData.getVehicle (i, getClan()).data;
+		const sUnitData& originalData = UnitsData.getVehicle (i, getClan());
 		bool incrementVersion = false;
 		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
 		{
@@ -835,7 +826,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 	{
-		const sUnitData& originalData = UnitsData.getBuilding (i, getClan()).data;
+		const sUnitData& originalData = UnitsData.getBuilding (i, getClan());
 		bool incrementVersion = false;
 		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
 		{

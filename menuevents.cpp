@@ -149,7 +149,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 	{
 		const sUnitData& playerData = player.VehicleData[i];
-		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan()).data;
+		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan());
 		if (playerData.damage == originalData.damage &&
 			playerData.shotsMax == originalData.shotsMax &&
 			playerData.range == originalData.range &&
@@ -210,7 +210,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
 		const sUnitData& playerData = player.BuildingData[i];
-		const sUnitData& originalData = UnitsData.getBuilding (i, player.getClan()).data;
+		const sUnitData& originalData = UnitsData.getBuilding (i, player.getClan());
 		if (playerData.damage == originalData.damage &&
 			playerData.shotsMax == originalData.shotsMax &&
 			playerData.range == originalData.range &&

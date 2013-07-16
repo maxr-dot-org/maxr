@@ -42,9 +42,7 @@
 // Predeclarations
 class cPlayer;
 class cLanguage;
-struct sBuilding;
 struct sBuildingUIData;
-struct sVehicle;
 struct sVehicleUIData;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,29 +73,16 @@ struct sID
 	bool isABuilding() const { return iFirstPart == 1; }
 
 	/** Get the basic version of a unit.
-	 * @param Owner If a owner is given,
-	 *        the basic version of this player is returned
-	 *        (with possible clan modifications).
-	 *        If no owner is given,
-	 *        the basic version without any clan modifications is returned.
+	 * @param Owner If Owner is given, his clan will be taken
+	 *        into consideration for modifications of the unit's values.
 	 * @return the sUnitData of the owner without upgrades
 	 *         (but with the owner's clan modifications) */
-	sUnitData* getUnitDataOriginalVersion (cPlayer* Owner = NULL) const;
+	const sUnitData* getUnitDataOriginalVersion (cPlayer* Owner = NULL) const;
 
 	bool operator== (const sID& ID) const;
 	bool operator!= (const sID& rhs) const { return !(*this == rhs);}
 	bool less_vehicleFirst (const sID& ID) const;
 	bool less_buildingFirst (const sID& ID) const;
-
-private:
-	/** Returns the original version of a vehicle as stored in UnitsData.
-	 * If Owner is given, his clan will be taken
-	 * into consideration for modifications of the unit's values. */
-	sVehicle* getVehicle (cPlayer* Owner = NULL) const;
-	/** Returns the original version of a building as stored in UnitsData.
-	 * If Owner is given, his clan will be taken
-	 * into consideration for modifications of the unit's values. */
-	sBuilding* getBuilding (cPlayer* Owner = NULL) const;
 
 public:
 	int iFirstPart;
@@ -388,8 +373,13 @@ public:
 	const sBuildingUIData* getBuildingUI (sID id) const;
 	const sVehicleUIData* getVehicleUI (sID id) const;
 
-	sVehicle& getVehicle (int nr, int clan = -1);  ///< -1: game without clans
-	sBuilding& getBuilding (int nr, int clan = -1);  ///< -1: game without clans
+	// clan = -1: without clans
+	const sUnitData& getVehicle (int nr, int clan = -1);
+	const sUnitData& getBuilding (int nr, int clan = -1);
+
+	// clan = -1: without clans
+	const std::vector<sUnitData>& getUnitData_Vehicles (int clan);
+	const std::vector<sUnitData>& getUnitData_Buildings (int clan);
 
 	unsigned int getNrVehicles() const;
 	unsigned int getNrBuildings() const;
@@ -406,11 +396,13 @@ private:
 public: // TODO: private
 	// Vehicles
 	// the standard version without clan modifications
-	std::vector<sVehicle> svehicles;
+	std::vector<sUnitData> svehicles;
+	std::vector<sVehicleUIData> vehicleUIs;
 
 	// Buildings
 	// the standard version without clan modifications
-	std::vector<sBuilding> sbuildings;
+	std::vector<sUnitData> sbuildings;
+	std::vector<sBuildingUIData> buildingUIs;
 
 	AutoSurface dirt_small_org;
 	AutoSurface dirt_small;
@@ -431,9 +423,9 @@ public: // TODO: private
 
 private:
 	// contains the modified versions for the clans
-	std::vector<std::vector<sVehicle> > clanUnitDataVehicles;
+	std::vector<std::vector<sUnitData> > clanUnitDataVehicles;
 	// contains the modified versions for the clans
-	std::vector<std::vector<sBuilding> > clanUnitDataBuildings;
+	std::vector<std::vector<sUnitData> > clanUnitDataBuildings;
 	bool initializedClanUnitData;
 
 	sID constructorID;

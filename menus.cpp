@@ -764,7 +764,7 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 			unitShow = random (UnitsData.getNrBuildings() - 1);
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1); //make sure we don't show same unit twice
-		surface = UnitsData.sbuildings[unitShow].uiData.info;
+		surface = UnitsData.buildingUIs[unitShow].info;
 	}
 	else if (UnitsData.getNrVehicles() > 0) //and a 66% chance to show a vehicle on 0 or 2
 	{
@@ -773,7 +773,7 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 			unitShow = random (UnitsData.getNrVehicles() - 1);
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1); //make sure we don't show same unit twice
-		surface = UnitsData.svehicles[unitShow].uiData.info;
+		surface = UnitsData.vehicleUIs[unitShow].info;
 	}
 	else surface = NULL;
 	lastUnitShow = unitShow; //store shown unit
@@ -2136,7 +2136,7 @@ void cStartupHangarMenu::materialBarUpReleased (void* parent)
 	if (!menu) return;
 	cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
 	if (!unit) return;
-	sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
+	const sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
 	if (menu->credits == 0 || vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
 
 	const int oldCargo = unit->getResValue();
@@ -2225,7 +2225,7 @@ void cStartupHangarMenu::generateSelectionList()
 	{
 		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 		{
-			sUnitData& data = UnitsData.getVehicle (i, player->getClan()).data;
+			const sUnitData& data = UnitsData.getVehicle (i, player->getClan());
 			if (data.isHuman && buy) continue;
 			if (tnt && !data.canAttack) continue;
 			if (data.factorAir > 0 && !plane) continue;
@@ -2239,7 +2239,7 @@ void cStartupHangarMenu::generateSelectionList()
 	{
 		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 		{
-			sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
+			const sUnitData& data = UnitsData.getBuilding (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
 			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
 		}
@@ -3364,8 +3364,8 @@ bool cNetworkHostMenu::runSavedGame()
 		clientPlayerList.push_back (addedPlayer);
 		if (serverPlayerList[i]->isLocal()) localPlayer = clientPlayerList[i];
 		// reinit unit values
-		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan()).data;
-		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
+		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan());
+		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan());
 	}
 	// init client and his player
 	AutoPtr<cClient> client (new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList));
@@ -4120,9 +4120,9 @@ void cBuildingsBuildMenu::generateSelectionList()
 {
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
-		if (UnitsData.sbuildings[i].data.explodesOnContact) continue;
+		if (UnitsData.sbuildings[i].explodesOnContact) continue;
 
-		if (vehicle->data.canBuild.compare (UnitsData.sbuildings[i].data.buildAs) != 0) continue;
+		if (vehicle->data.canBuild.compare (UnitsData.sbuildings[i].buildAs) != 0) continue;
 
 		selectionList->addUnit (&vehicle->owner->BuildingData[i], player);
 
@@ -4398,12 +4398,12 @@ void cUpgradeHangarMenu::initUpgrades (cPlayer* player)
 		const sUnitData* oriData;
 		if (unitIndex < UnitsData.getNrVehicles())
 		{
-			oriData = &UnitsData.getVehicle (unitIndex, player->getClan()).data;
+			oriData = &UnitsData.getVehicle (unitIndex, player->getClan());
 			data = &player->VehicleData[unitIndex];
 		}
 		else
 		{
-			oriData = &UnitsData.getBuilding (unitIndex - UnitsData.getNrVehicles(), player->getClan()).data;
+			oriData = &UnitsData.getBuilding (unitIndex - UnitsData.getNrVehicles(), player->getClan());
 			data = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
 		}
 
@@ -4590,7 +4590,7 @@ void cUpgradeMenu::generateSelectionList()
 	{
 		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 		{
-			sUnitData& data = UnitsData.getVehicle (i, player->getClan()).data;
+			const sUnitData& data = UnitsData.getVehicle (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
@@ -4603,7 +4603,7 @@ void cUpgradeMenu::generateSelectionList()
 	{
 		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 		{
-			sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
+			const sUnitData& data = UnitsData.getBuilding (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
 			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
 		}

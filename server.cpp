@@ -3648,14 +3648,14 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	{
 		// if only costs were researched, the version is not incremented
 		if (Player->VehicleData[i].version > 0
-			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan()).data.buildCosts)
+			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan()).buildCosts)
 			sendUnitUpgrades (*this, Player->VehicleData[i], Player->getNr());
 	}
 	for (size_t i = 0; i != UnitsData.getNrBuildings(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
 		if (Player->BuildingData[i].version > 0
-			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan()).data.buildCosts)
+			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan()).buildCosts)
 			sendUnitUpgrades (*this, Player->BuildingData[i], Player->getNr());
 	}
 	// send credits

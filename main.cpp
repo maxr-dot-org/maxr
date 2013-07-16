@@ -593,44 +593,20 @@ void sID::generate (const string& text)
 }
 
 //------------------------------------------------------------------------------
-sUnitData* sID::getUnitDataOriginalVersion (cPlayer* Owner) const
+const sUnitData* sID::getUnitDataOriginalVersion (cPlayer* Owner) const
 {
-	switch (iFirstPart)
+	if (isAVehicle())
 	{
-		case 0:
-			if (!getVehicle (Owner)) return NULL;
-			return &getVehicle (Owner)->data;
-		case 1:
-			if (!getBuilding (Owner)) return NULL;
-			return &getBuilding (Owner)->data;
-		default:
-			return NULL;
+		int index = UnitsData.getVehicleIndexBy (*this);
+		const int clan = Owner ? Owner->getClan() : -1;
+		return &UnitsData.getVehicle (index, clan);
 	}
-	return NULL;
-}
-
-//------------------------------------------------------------------------------
-sVehicle* sID::getVehicle (cPlayer* Owner) const
-{
-	if (isAVehicle() == false) return NULL;
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+	else
 	{
-		sVehicle* result = Owner ? &UnitsData.getVehicle (i, Owner->getClan()) : &UnitsData.getVehicle (i);
-		if (result->data.ID == *this) return result;
+		int index = UnitsData.getBuildingIndexBy (*this);
+		const int clan = Owner ? Owner->getClan() : -1;
+		return &UnitsData.getBuilding (index, clan);
 	}
-	return NULL;
-}
-
-//------------------------------------------------------------------------------
-sBuilding* sID::getBuilding (cPlayer* Owner) const
-{
-	if (isABuilding() == false) return NULL;
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
-	{
-		sBuilding* result = Owner ? &UnitsData.getBuilding (i, Owner->getClan()) : &UnitsData.getBuilding (i);
-		if (result->data.ID == *this) return result;
-	}
-	return NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -665,29 +641,39 @@ cUnitsData::cUnitsData() :
 }
 
 //------------------------------------------------------------------------------
-sVehicle& cUnitsData::getVehicle (int nr, int clan)
+const sUnitData& cUnitsData::getVehicle (int nr, int clan)
+{
+	return getUnitData_Vehicles (clan)[nr];
+}
+
+//------------------------------------------------------------------------------
+const sUnitData& cUnitsData::getBuilding (int nr, int clan)
+{
+	return getUnitData_Buildings (clan)[nr];
+}
+
+const std::vector<sUnitData>& cUnitsData::getUnitData_Vehicles (int clan)
 {
 	if (!initializedClanUnitData)
 		initializeClanUnitData();
 
 	if (clan < 0 || clan > (int) clanUnitDataVehicles.size())
 	{
-		return svehicles[nr];
+		return svehicles;
 	}
-	return clanUnitDataVehicles.at (clan).at (nr);   //[clan][nr];
+	return clanUnitDataVehicles[clan];
 }
 
-//------------------------------------------------------------------------------
-sBuilding& cUnitsData::getBuilding (int nr, int clan)
+const std::vector<sUnitData>& cUnitsData::getUnitData_Buildings (int clan)
 {
 	if (!initializedClanUnitData)
 		initializeClanUnitData();
 
 	if (clan < 0 || clan > (int) clanUnitDataBuildings.size())
 	{
-		return sbuildings[nr];
+		return sbuildings;
 	}
-	return clanUnitDataBuildings.at (clan).at (nr);   //[clan][nr];
+	return clanUnitDataBuildings[clan];
 }
 
 int cUnitsData::getBuildingIndexBy (sID id) const
@@ -695,7 +681,7 @@ int cUnitsData::getBuildingIndexBy (sID id) const
 	if (id.isABuilding() == false) return -1;
 	for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
 	{
-		if (sbuildings[i].data.ID == id) return i;
+		if (sbuildings[i].ID == id) return i;
 	}
 	return -1;
 }
@@ -705,7 +691,7 @@ int cUnitsData::getVehicleIndexBy (sID id) const
 	if (id.isAVehicle() == false) return -1;
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		if (svehicles[i].data.ID == id) return i;
+		if (svehicles[i].ID == id) return i;
 	}
 	return -1;
 }
@@ -714,14 +700,14 @@ const sBuildingUIData* cUnitsData::getBuildingUI (sID id) const
 {
 	const int index = getBuildingIndexBy (id);
 	if (index == -1) return 0;
-	return &sbuildings[index].uiData;
+	return &buildingUIs[index];
 }
 
 const sVehicleUIData* cUnitsData::getVehicleUI (sID id) const
 {
 	const int index = getVehicleIndexBy (id);
 	if (index == -1) return 0;
-	return &svehicles[index].uiData;
+	return &vehicleUIs[index];
 }
 
 unsigned int cUnitsData::getNrVehicles() const
@@ -738,9 +724,9 @@ static int getConstructorIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle& vehicle = UnitsData.svehicles[i];
+		const sUnitData& vehicle = UnitsData.svehicles[i];
 
-		if (vehicle.data.canBuild.compare ("BigBuilding") == 0)
+		if (vehicle.canBuild.compare ("BigBuilding") == 0)
 		{
 			return i;
 		}
@@ -752,9 +738,9 @@ static int getEngineerIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle& vehicle = UnitsData.svehicles[i];
+		const sUnitData& vehicle = UnitsData.svehicles[i];
 
-		if (vehicle.data.canBuild.compare ("SmallBuilding") == 0)
+		if (vehicle.canBuild.compare ("SmallBuilding") == 0)
 		{
 			return i;
 		}
@@ -766,9 +752,9 @@ static int getSurveyorIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle& vehicle = UnitsData.svehicles[i];
+		const sUnitData& vehicle = UnitsData.svehicles[i];
 
-		if (vehicle.data.canSurvey)
+		if (vehicle.canSurvey)
 		{
 			return i;
 		}
@@ -786,9 +772,9 @@ void cUnitsData::initializeIDData()
 	assert (engineerIndex != -1);
 	assert (surveyorIndex != -1);
 
-	constructorID = svehicles[constructorIndex].data.ID;
-	engineerID = svehicles[engineerIndex].data.ID;
-	surveyorID = svehicles[surveyorIndex].data.ID;
+	constructorID = svehicles[constructorIndex].ID;
+	engineerID = svehicles[engineerIndex].ID;
+	surveyorID = svehicles[surveyorIndex].ID;
 }
 
 //------------------------------------------------------------------------------
@@ -797,65 +783,65 @@ void cUnitsData::initializeClanUnitData()
 	if (initializedClanUnitData == true) return;
 
 	cClanData& clanData = cClanData::instance();
-	for (int clanIdx = 0; clanIdx < clanData.getNrClans(); clanIdx++)
+	clanUnitDataVehicles.resize (clanData.getNrClans());
+	clanUnitDataBuildings.resize (clanData.getNrClans());
+	for (int i = 0; i != clanData.getNrClans(); ++i)
 	{
-		const cClan* clan = clanData.getClan (clanIdx);
+		const cClan* clan = clanData.getClan (i);
 		if (clan == 0)
 			continue;
 
-		clanUnitDataVehicles.push_back (std::vector<sVehicle>());
-		vector<sVehicle>& clanListVehicles = clanUnitDataVehicles.back();
-		for (unsigned int vehicleIdx = 0; vehicleIdx < svehicles.size(); vehicleIdx++)
-		{
-			// make a copy of the vehicle's stats
-			const sVehicle& curVehicle = svehicles[vehicleIdx];
-			clanListVehicles.push_back (curVehicle);
+		vector<sUnitData>& clanListVehicles = clanUnitDataVehicles[i];
 
-			const cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID);
+		// make a copy of the vehicle's stats
+		clanListVehicles = svehicles;
+		for (size_t j = 0; j != svehicles.size(); ++j)
+		{
+			const sUnitData& curVehicle = svehicles[j];
+			const cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.ID);
+
 			if (changedStat == NULL) continue;
 
-			sVehicle& clanVehicle = clanListVehicles.back();
+			sUnitData& clanVehicle = clanListVehicles[j];
 			if (changedStat->hasModification ("Damage"))
-				clanVehicle.data.damage = changedStat->getModificationValue ("Damage");
+				clanVehicle.damage = changedStat->getModificationValue ("Damage");
 			if (changedStat->hasModification ("Range"))
-				clanVehicle.data.range = changedStat->getModificationValue ("Range");
+				clanVehicle.range = changedStat->getModificationValue ("Range");
 			if (changedStat->hasModification ("Armor"))
-				clanVehicle.data.armor = changedStat->getModificationValue ("Armor");
+				clanVehicle.armor = changedStat->getModificationValue ("Armor");
 			if (changedStat->hasModification ("Hitpoints"))
-				clanVehicle.data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
+				clanVehicle.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
 			if (changedStat->hasModification ("Scan"))
-				clanVehicle.data.scan = changedStat->getModificationValue ("Scan");
+				clanVehicle.scan = changedStat->getModificationValue ("Scan");
 			if (changedStat->hasModification ("Speed"))
-				clanVehicle.data.speedMax = changedStat->getModificationValue ("Speed") * 4;
+				clanVehicle.speedMax = changedStat->getModificationValue ("Speed") * 4;
 			if (changedStat->hasModification ("Built_Costs"))
-				clanVehicle.data.buildCosts = changedStat->getModificationValue ("Built_Costs");
+				clanVehicle.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}
 
-		clanUnitDataBuildings.push_back (std::vector<sBuilding>());
-		vector<sBuilding>& clanListBuildings = clanUnitDataBuildings.back();
-		for (unsigned int buildingIdx = 0; buildingIdx < sbuildings.size(); buildingIdx++)
+		vector<sUnitData>& clanListBuildings = clanUnitDataBuildings[i];
+		// make a copy of the building's stats
+		clanListBuildings = sbuildings;
+		for (size_t j = 0; j != sbuildings.size(); ++j)
 		{
-			// make a copy of the building's stats
-			const sBuilding& curBuilding = sbuildings[buildingIdx];
-			clanListBuildings.push_back (curBuilding);
-
-			const cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID);
+			const sUnitData& curBuilding = sbuildings[j];
+			const cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.ID);
 			if (changedStat == NULL) continue;
-			sBuilding& clanBuilding = clanListBuildings.back();
+			sUnitData& clanBuilding = clanListBuildings[j];
 			if (changedStat->hasModification ("Damage"))
-				clanBuilding.data.damage = changedStat->getModificationValue ("Damage");
+				clanBuilding.damage = changedStat->getModificationValue ("Damage");
 			if (changedStat->hasModification ("Range"))
-				clanBuilding.data.range = changedStat->getModificationValue ("Range");
+				clanBuilding.range = changedStat->getModificationValue ("Range");
 			if (changedStat->hasModification ("Armor"))
-				clanBuilding.data.armor = changedStat->getModificationValue ("Armor");
+				clanBuilding.armor = changedStat->getModificationValue ("Armor");
 			if (changedStat->hasModification ("Hitpoints"))
-				clanBuilding.data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
+				clanBuilding.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
 			if (changedStat->hasModification ("Scan"))
-				clanBuilding.data.scan = changedStat->getModificationValue ("Scan");
+				clanBuilding.scan = changedStat->getModificationValue ("Scan");
 			if (changedStat->hasModification ("Speed"))
-				clanBuilding.data.speedMax = changedStat->getModificationValue ("Speed") * 4;
+				clanBuilding.speedMax = changedStat->getModificationValue ("Speed") * 4;
 			if (changedStat->hasModification ("Built_Costs"))
-				clanBuilding.data.buildCosts = changedStat->getModificationValue ("Built_Costs");
+				clanBuilding.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}
 	}
 
@@ -868,12 +854,12 @@ void cUnitsData::scaleSurfaces (float zoom)
 	// Vehicles:
 	for (unsigned int i = 0; i < getNrVehicles(); ++i)
 	{
-		svehicles[i].uiData.scaleSurfaces (zoom);
+		vehicleUIs[i].scaleSurfaces (zoom);
 	}
 	// Buildings:
 	for (unsigned int i = 0; i < getNrBuildings(); ++i)
 	{
-		sbuildings[i].uiData.scaleSurfaces (zoom);
+		buildingUIs[i].scaleSurfaces (zoom);
 	}
 
 	if (dirt_small_org && dirt_small) scaleSurface (dirt_small_org, dirt_small, (int) (dirt_small_org->w * zoom), (int) (dirt_small_org->h * zoom));

@@ -82,12 +82,6 @@ struct sBuildingUIData
 	void scaleSurfaces (float faktor);
 };
 
-struct sBuilding
-{
-	sBuildingUIData uiData;
-	sUnitData data;  // Grunddaten des Buildings
-};
-
 // enum for the upgrade symbols
 #ifndef D_eSymbols
 #define D_eSymbols

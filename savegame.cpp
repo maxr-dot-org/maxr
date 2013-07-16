@@ -95,8 +95,8 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); ++i)
 	{
 		const sUnitData* Data;
-		if (i < UnitsData.getNrVehicles()) Data = &UnitsData.svehicles[i].data;
-		else Data = &UnitsData.sbuildings[i - UnitsData.getNrVehicles()].data;
+		if (i < UnitsData.getNrVehicles()) Data = &UnitsData.svehicles[i];
+		else Data = &UnitsData.sbuildings[i - UnitsData.getNrVehicles()];
 		writeStandardUnitValues (*Data, i);
 	}
 
@@ -391,14 +391,12 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 			ID.generate (upgradeNode->FirstChildElement ("Type")->Attribute ("string"));
 			if (ID.isAVehicle())
 			{
-				unsigned int num;
-				for (num = 0; num != UnitsData.getNrVehicles(); ++num) if (UnitsData.svehicles[num].data.ID == ID) break;
+				unsigned int num = UnitsData.getVehicleIndexBy (ID);
 				loadUpgrade (upgradeNode, &Player->VehicleData[num]);
 			}
 			else
 			{
-				unsigned int num;
-				for (num = 0; num != UnitsData.getNrBuildings(); ++num) if (UnitsData.sbuildings[num].data.ID == ID) break;
+				unsigned int num = UnitsData.getBuildingIndexBy (ID);
 				loadUpgrade (upgradeNode, &Player->BuildingData[num]);
 			}
 			upgradenum++;
@@ -738,7 +736,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 			{
 				int typenr;
 				itemElement->QueryIntAttribute ("type", &typenr);
-				listitem->type = UnitsData.svehicles[typenr].data.ID;
+				listitem->type = UnitsData.svehicles[typenr].ID;
 			}
 			itemElement->QueryIntAttribute ("metall_remaining", &listitem->metall_remaining);
 			building->BuildList->push_back (listitem);
@@ -841,27 +839,12 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	ID.generate (unitNode->FirstChildElement ("ID")->Attribute ("string"));
 	if (ID.isAVehicle())
 	{
-		for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
-		{
-			if (UnitsData.svehicles[i].data.ID == ID)
-			{
-				Data = &UnitsData.svehicles[i].data;
-				break;
-			}
-		}
+		Data = &UnitsData.svehicles[UnitsData.getVehicleIndexBy (ID)];
 	}
 	else if (ID.isABuilding())
 	{
-		for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
-		{
-			if (UnitsData.sbuildings[i].data.ID == ID)
-			{
-				Data = &UnitsData.sbuildings[i].data;
-				break;
-			}
-		}
+		Data = &UnitsData.sbuildings[UnitsData.getBuildingIndexBy (ID)];
 	}
-	else return;
 	if (Data == NULL) return;
 
 	Data->ID = ID;
@@ -1182,9 +1165,9 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	{
 		// if only costs were researched, the version is not incremented
 		if (Player.VehicleData[i].version > 0
-			|| Player.VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player.getClan()).data.buildCosts)
+			|| Player.VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player.getClan()).buildCosts)
 		{
-			writeUpgrade (upgradesNode, upgrades, Player.VehicleData[i], UnitsData.getVehicle (i, Player.getClan()).data);
+			writeUpgrade (upgradesNode, upgrades, Player.VehicleData[i], UnitsData.getVehicle (i, Player.getClan()));
 			upgrades++;
 		}
 	}
@@ -1192,9 +1175,9 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	{
 		// if only costs were researched, the version is not incremented
 		if (Player.BuildingData[i].version > 0
-			|| Player.BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player.getClan()).data.buildCosts)
+			|| Player.BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player.getClan()).buildCosts)
 		{
-			writeUpgrade (upgradesNode, upgrades, Player.BuildingData[i], UnitsData.getBuilding (i, Player.getClan()).data);
+			writeUpgrade (upgradesNode, upgrades, Player.BuildingData[i], UnitsData.getBuilding (i, Player.getClan()));
 			upgrades++;
 		}
 	}

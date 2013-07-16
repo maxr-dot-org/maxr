@@ -108,12 +108,6 @@ struct sVehicleUIData
 	void scaleSurfaces (float factor);
 };
 
-struct sVehicle
-{
-	sVehicleUIData uiData;
-	sUnitData data;   // Grunddaten des Vehicles
-};
-
 //-----------------------------------------------------------------------------
 /** Class for a vehicle-unit of a player */
 //-----------------------------------------------------------------------------
