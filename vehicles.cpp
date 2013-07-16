@@ -2178,18 +2178,14 @@ void cVehicle::executeClearMinesCommand (const cClient& client)
 }
 
 //-----------------------------------------------------------------------------
-const sUnitData* cVehicle::getUpgradedUnitData() const
-{
-	return &owner->VehicleData[typ->nr];
-}
-
 bool cVehicle::canLand (const cMap& map) const
 {
-	if (data.factorAir == 0)  return true;    //true, because normal vehicles are always "landed"
+	// normal vehicles are always "landed"
+	if (data.factorAir == 0) return true;
 
 	if (moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || attacking) return false;     //vehicle busy?
 
-	//landing pad there?
+	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map[map.getOffset (PosX, PosY)].getBuildings();
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	for (; b_it != buildings.end(); ++b_it)

@@ -299,7 +299,7 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 		return;
 
 	const sUnitData& currentVersion = building.data;
-	const sUnitData& upgradedVersion = building.owner->BuildingData[building.typ->nr];
+	const sUnitData& upgradedVersion = *building.owner->getUnitDataCurrentVersion (building.data.ID);
 	if (currentVersion.version >= upgradedVersion.version)
 		return; // already uptodate
 

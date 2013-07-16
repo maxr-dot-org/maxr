@@ -1038,12 +1038,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 
 	if (!Building->isNextTo (iX, iY)) return;
 
-	sVehicle& svehicle = *BuildingListItem->type.getVehicle();
-	if (!Map->possiblePlaceVehicle (svehicle.data, iX, iY, Building->owner))
+	const sUnitData& unitData = *BuildingListItem->type.getUnitDataOriginalVersion();
+	if (!Map->possiblePlaceVehicle (unitData, iX, iY, Building->owner))
 	{
-		sideStepStealthUnit (iX, iY, svehicle.data, Building->owner);
+		sideStepStealthUnit (iX, iY, unitData, Building->owner);
 	}
-	if (!Map->possiblePlaceVehicle (svehicle.data, iX, iY, Building->owner)) return;
+	if (!Map->possiblePlaceVehicle (unitData, iX, iY, Building->owner)) return;
 
 	addVehicle (iX, iY, BuildingListItem->type, Building->owner, false);
 
@@ -1321,7 +1321,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 		if (upgradeAll || i == storageSlot)
 		{
 			cVehicle* vehicle = storingBuilding->storedUnits[i];
-			const sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
+			const sUnitData& upgradedVersion = *storingBuilding->owner->getUnitDataCurrentVersion (vehicle->data.ID);
 
 			if (vehicle->data.version >= upgradedVersion.version)
 				continue; // already up to date
@@ -1690,7 +1690,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 
 	const int availableMetal = building->SubBase->Metal;
 
-	const sUnitData& upgradedVersion = player->BuildingData[building->typ->nr];
+	const sUnitData& upgradedVersion = *player->getUnitDataCurrentVersion (building->data.ID);
 	if (building->data.version >= upgradedVersion.version)
 		return; // already up to date
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
@@ -1713,7 +1713,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 			cBuilding* otherBuilding = subBase->buildings[subBaseBuildIdx];
 			if (otherBuilding == building)
 				continue;
-			if (otherBuilding->typ->nr != building->typ->nr)
+			if (otherBuilding->data.ID != building->data.ID)
 				continue;
 			if (otherBuilding->data.version >= upgradedVersion.version)
 				continue;

@@ -21,9 +21,8 @@
 #define drawingcacheH
 
 #include "autosurface.h"
+#include "main.h" // for sID
 
-struct sVehicle;
-struct sBuilding;
 class cPlayer;
 class cVehicle;
 class cGameGUI;
@@ -44,11 +43,9 @@ struct sDrawingCacheEntry
 	bool BaseBS;
 	bool BaseW;
 	bool BaseBW;
-	const sBuilding* buildingTyp;
 	int clan;
 
 	//vehicle properties
-	const sVehicle* vehicleTyp;
 	unsigned int frame;
 	int flightHigh;
 	bool big;
@@ -58,6 +55,7 @@ struct sDrawingCacheEntry
 	bool water;
 
 	//common properties
+	sID id;
 	cPlayer* owner;
 	int dir;
 	float zoom;

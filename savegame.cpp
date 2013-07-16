@@ -1312,7 +1312,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 
 	// write the standard unit values
 	// which are the same for vehicles and buildings
-	writeUnitValues (unitNode, vehicle.data, vehicle.owner->VehicleData[vehicle.typ->nr]);
+	writeUnitValues (unitNode, vehicle.data, *vehicle.owner->getUnitDataCurrentVersion (vehicle.data.ID));
 
 	// add additional status information
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
@@ -1390,7 +1390,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	addAttributeElement (unitNode, "Name", "string", building.isNameOriginal() ? building.data.name : building.getName(), "notDefault", building.isNameOriginal() ? "0" : "1");
 
 	// write the standard values
-	writeUnitValues (unitNode, building.data, building.owner->BuildingData[building.typ->nr]);
+	writeUnitValues (unitNode, building.data, *building.owner->getUnitDataCurrentVersion (building.data.ID));
 
 	// write additional stauts information
 	if (building.IsWorking) addMainElement (unitNode, "IsWorking");

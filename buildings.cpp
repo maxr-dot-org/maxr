@@ -1679,12 +1679,6 @@ void sBuildingUIData::scaleSurfaces (float factor)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-const sUnitData* cBuilding::getUpgradedUnitData() const
-{
-	return &owner->BuildingData[typ->nr];
-}
-
-//-----------------------------------------------------------------------------
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
 	return (BuildList && BuildList->size() > 0 && isUnitWorking() == false && (*BuildList) [0]->metall_remaining <= 0);
@@ -1741,5 +1735,6 @@ bool cBuilding::buildingCanBeStarted() const
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeUpgraded() const
 {
-	return (data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2);
+	const sUnitData& upgraded = *owner->getUnitDataCurrentVersion (data.ID);
+	return (data.version != upgraded.version && SubBase && SubBase->Metal >= 2);
 }

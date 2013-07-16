@@ -4250,7 +4250,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
-		const sVehicle& vehicle = UnitsData.getVehicle (i, player->getClan());
+		sUnitData& unitData = player->VehicleData[i];
 		bool land = false;
 		bool water = false;
 		int x = building->PosX - 2;
@@ -4258,7 +4258,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 		for (int j = 0; j < 12; j++)
 		{
-			if (j == 4 ||  j == 6 || j == 8)
+			if (j == 4 || j == 6 || j == 8)
 			{
 				x -= 3;
 				y += 1;
@@ -4286,12 +4286,12 @@ void cVehiclesBuildMenu::generateSelectionList()
 			else if (map.isWaterOrCoast (x, y)) water = true;
 		}
 
-		if (vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0 && !water) continue;
-		else if (vehicle.data.factorGround > 0 && vehicle.data.factorSea == 0 && !land) continue;
+		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water) continue;
+		else if (unitData.factorGround > 0 && unitData.factorSea == 0 && !land) continue;
 
-		if (building->data.canBuild.compare (vehicle.data.buildAs) != 0) continue;
+		if (building->data.canBuild.compare (unitData.buildAs) != 0) continue;
 
-		selectionList->addUnit (&player->VehicleData[i], player, NULL, false, false);
+		selectionList->addUnit (&unitData, player, NULL, false, false);
 		selectionList->getItem (selectionList->getSize() - 1)->setResValue (-1, false);
 	}
 
@@ -4814,7 +4814,8 @@ void cStorageMenu::resetInfos()
 				cVehicle* vehicle = storageList[index];
 				srcSurface = vehicle->typ->uiData.storage;
 				name = vehicle->getDisplayName();
-				if (vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version)
+				const sUnitData& upgraded = *vehicle->owner->getUnitDataCurrentVersion (vehicle->data.ID);
+				if (vehicle->data.version != upgraded.version)
 				{
 					name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
 				}
@@ -4825,7 +4826,7 @@ void cStorageMenu::resetInfos()
 				else reloadButtons[pos]->setLocked (true);
 				if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax && metalValue >= 1) repairButtons[pos]->setLocked (false);
 				else repairButtons[pos]->setLocked (true);
-				if (vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version && metalValue >= 1) upgradeButtons[pos]->setLocked (false);
+				if (vehicle->data.version != upgraded.version && metalValue >= 1) upgradeButtons[pos]->setLocked (false);
 				else upgradeButtons[pos]->setLocked (true);
 			}
 			else
@@ -4857,12 +4858,13 @@ void cStorageMenu::resetInfos()
 	upgradeAllButton->setLocked (true);
 	if (canRepairReloadUpgrade && metalValue >= 1)
 	{
-		for (unsigned int i = 0; i < storageList.size(); i++)
+		for (size_t i = 0; i != storageList.size(); ++i)
 		{
-			cVehicle* vehicle = storageList[i];
-			if (vehicle->data.ammoCur != vehicle->data.ammoMax) reloadAllButton->setLocked (false);
-			if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax) repairAllButton->setLocked (false);
-			if (vehicle->data.version != vehicle->owner->VehicleData[vehicle->typ->nr].version) upgradeAllButton->setLocked (false);
+			const cVehicle& vehicle = *storageList[i];
+			const sUnitData& upgraded = *vehicle.owner->getUnitDataCurrentVersion (vehicle.data.ID);
+			if (vehicle.data.ammoCur != vehicle.data.ammoMax) reloadAllButton->setLocked (false);
+			if (vehicle.data.hitpointsCur != vehicle.data.hitpointsMax) repairAllButton->setLocked (false);
+			if (vehicle.data.version != upgraded.version) upgradeAllButton->setLocked (false);
 		}
 	}
 

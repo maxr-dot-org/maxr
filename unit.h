@@ -113,8 +113,6 @@ protected:
 	virtual void executeStopCommand (const cClient& client) = 0;
 	virtual void executeActivateStoredVehiclesCommand (cClient& client) = 0;
 
-	virtual const sUnitData* getUpgradedUnitData() const = 0;
-
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit
 	const unsigned int iID; ///< the identification number of this unit

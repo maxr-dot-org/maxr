@@ -38,7 +38,6 @@ class cTCP;
 class cUnit;
 struct sClientLandData;
 struct sSettings;
-struct sVehicle;
 
 /**
 * The Types which are possible for a game

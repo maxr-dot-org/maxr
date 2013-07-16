@@ -1141,7 +1141,8 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 //------------------------------------------------------------------------------
 void cUnit::upgradeToCurrentVersion()
 {
-	const sUnitData* upgradeVersion = getUpgradedUnitData();
+	if (owner == NULL) return;
+	const sUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.ID);
 	if (upgradeVersion == NULL) return;
 
 	data.version = upgradeVersion->version;

@@ -334,8 +334,6 @@ protected:
 	virtual void executeBuildCommand (cGameGUI& gameGUI);
 	virtual void executeStopCommand (const cClient& client);
 	virtual void executeActivateStoredVehiclesCommand (cClient& client);
-
-	virtual const sUnitData* getUpgradedUnitData() const;
 };
 
 #endif

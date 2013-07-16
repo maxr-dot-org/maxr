@@ -36,11 +36,9 @@ class cMapField;
 class cUnit;
 class cVehicle;
 
-struct sBuilding;
 struct sHudStateContainer;
 struct sTurnstartReport;
 struct sUnitData;
-struct sVehicle;
 
 struct sSavedReportMessage
 {

@@ -35,8 +35,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 	isClearing = vehicle.IsClearing;
 	flightHigh = vehicle.FlightHigh;
 	big = vehicle.data.isBig;
-	vehicleTyp = vehicle.typ;
-	buildingTyp = NULL;
+	id = vehicle.data.ID;
 	if (vehicle.data.animationMovement)
 		frame = vehicle.WalkFrame;
 	else
@@ -96,8 +95,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding& buildin
 	BaseBW = building.BaseBW;
 	dir = building.dir;
 	owner = building.owner;
-	buildingTyp = building.typ;
-	vehicleTyp = NULL;
+	id = building.data.ID;
 	clan = building.owner->getClan();
 
 	zoom = gameGUI.getZoom();
@@ -142,8 +140,8 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building)
 	{
 		sDrawingCacheEntry& entry = cachedImages[i];
 
-		//check wether the entrys properties are equal to the building
-		if (entry.buildingTyp != building.typ) continue;
+		// check wether the entry's properties are equal to the building
+		if (entry.id != building.data.ID) continue;
 		if (entry.owner != building.owner) continue;
 		if (building.SubBase)
 		{
@@ -188,8 +186,8 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 	{
 		sDrawingCacheEntry& entry = cachedImages[i];
 
-		//check wether the entrys properties are equal to the building
-		if (entry.vehicleTyp != vehicle.typ) continue;
+		// check wether the entry's properties are equal to the building
+		if (entry.id != vehicle.data.ID) continue;
 		if (entry.owner != vehicle.owner) continue;
 		if (entry.big != vehicle.data.isBig) continue;
 		if (entry.isBuilding != vehicle.IsBuilding) continue;

@@ -1547,7 +1547,8 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 			Log.write (" Client: Unknown building with ID: " + iToStr (buildingID), cLog::eLOG_TYPE_NET_ERROR);
 			break;
 		}
-		if (!scanNecessary && building->data.scan < ActivePlayer->BuildingData[building->typ->nr].scan)
+		const sUnitData& upgraded = *ActivePlayer->getUnitDataCurrentVersion (building->data.ID);
+		if (building->data.scan < upgraded.scan)
 			scanNecessary = true; // Scan range was upgraded. So trigger a scan.
 		building->upgradeToCurrentVersion();
 		if (i == 0)
