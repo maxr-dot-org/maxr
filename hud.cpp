@@ -870,7 +870,7 @@ int cGameGUI::show (cClient* client)
 		handleMessages();
 
 		handleTimer();
-		if (timer10ms)
+		if (timer50ms)
 		{
 			// run effects, which are not synchronous to game time
 			runFx();

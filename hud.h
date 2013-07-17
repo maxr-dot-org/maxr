@@ -433,7 +433,7 @@ public:
 	/** will be incremented by the Timer */
 	unsigned int iTimerTime;
 	/** gui timers for animations only */
-	bool timer10ms, timer50ms, timer100ms, timer400ms;
+	bool timer50ms, timer100ms, timer400ms;
 	void handleTimer();
 	void Timer();
 

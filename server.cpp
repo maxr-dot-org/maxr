@@ -2772,8 +2772,8 @@ void cServer::handleEnd (int iPlayerNum)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.size() == 0))
 			{
-				sendTurnFinished (*this, iPlayerNum, iTurnDeadline);
-				iDeadlineStartTime = SDL_GetTicks();
+				sendTurnFinished (*this, iPlayerNum, 100 * iTurnDeadline);
+				iDeadlineStartTime = gameTimer.gameTime;
 			}
 			else
 			{
@@ -3151,13 +3151,8 @@ void cServer::checkDeadline()
 {
 	if (!gameTimer.timer50ms) return;
 	if (iTurnDeadline < 0 || iDeadlineStartTime <= 0) return;
-	const Uint32 currentTicks = SDL_GetTicks();
 
-	// stop time when waiting for reconnection
-	if (DisconnectedPlayerList.size() > 0)
-		iDeadlineStartTime = currentTicks;
-
-	if (currentTicks - iDeadlineStartTime <= (unsigned int) iTurnDeadline * 1000) return;
+	if (gameTimer.gameTime <= iDeadlineStartTime + iTurnDeadline * 100) return;
 
 	if (checkEndActions (-1))
 	{
@@ -3613,7 +3608,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendClansToClients (*this, *PlayerList);
 	}
 	sendTurn (*this, iTurn, *Player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, iTurnDeadline - (SDL_GetTicks() - iDeadlineStartTime) / 1000, Player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * iTurnDeadline - (gameTimer.gameTime - iDeadlineStartTime), Player);
 	sendResources (*this, *Player);
 
 	// send all units to the client

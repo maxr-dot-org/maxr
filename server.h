@@ -468,7 +468,7 @@ private:
 	int iTurn;
 	/** deadline in seconds if the first player has finished his turn*/
 	int iTurnDeadline;
-	/** Ticks when the deadline has been initialised*/
+	/** gametime when the deadline has been initialised*/
 	unsigned int iDeadlineStartTime;
 	/** Number of the Player who wants to end his turn;
 	 * -1 for no player, -2 for undefined player */
