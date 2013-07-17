@@ -36,7 +36,6 @@
 #include "log.h"
 #include "main.h"
 #include "menus.h"
-#include "mouse.h"
 #include "netmessage.h"
 #include "player.h"
 #include "server.h"
@@ -1382,31 +1381,23 @@ void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_STORE_UNIT);
 
-	cVehicle* StoredVehicle = getVehicleFromID (message.popInt16());
-	if (!StoredVehicle) return;
+	cVehicle* storedVehicle = getVehicleFromID (message.popInt16());
+	if (!storedVehicle) return;
 
 	if (message.popBool())
 	{
-		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
-		if (!StoringVehicle) return;
-		StoringVehicle->storeVehicle (StoredVehicle, getMap());
+		cVehicle* storingVehicle = getVehicleFromID (message.popInt16());
+		if (!storingVehicle) return;
+		gameGUI->onVehicleStored (*storingVehicle, *storedVehicle);
+		storingVehicle->storeVehicle (storedVehicle, getMap());
 	}
 	else
 	{
-		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
-		if (!StoringBuilding) return;
-		StoringBuilding->storeVehicle (StoredVehicle, getMap());
+		cBuilding* storingBuilding = getBuildingFromID (message.popInt16());
+		if (!storingBuilding) return;
+		gameGUI->onVehicleStored (*storingBuilding, *storedVehicle);
+		storingBuilding->storeVehicle (storedVehicle, getMap());
 	}
-
-	const int mouseX = mouse->getKachelX (*gameGUI);
-	const int mouseY = mouse->getKachelY (*gameGUI);
-	if (StoredVehicle->PosX == mouseX && StoredVehicle->PosY == mouseY) gameGUI->updateMouseCursor();
-
-	gameGUI->checkMouseInputMode();
-
-	if (StoredVehicle == gameGUI->getSelectedUnit()) gameGUI->deselectUnit();
-
-	PlayFX (SoundData.SNDLoad);
 }
 
 void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)

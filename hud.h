@@ -532,6 +532,8 @@ public:
 	void selectUnit (cUnit& unit);
 	void deselectUnit();
 
+	void onVehicleStored (const cUnit& storingUnit, const cVehicle& storedVehicle);
+
 	void onRemoveUnit (cUnit& unit);
 
 	/**

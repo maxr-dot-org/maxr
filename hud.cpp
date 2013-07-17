@@ -971,6 +971,19 @@ void cGameGUI::onRemoveUnit (cUnit& unit)
 	callMiniMapDraw();
 }
 
+void cGameGUI::onVehicleStored (const cUnit& storingUnit, const cVehicle& storedVehicle)
+{
+	const int mouseX = mouse->getKachelX (*this);
+	const int mouseY = mouse->getKachelY (*this);
+	if (storedVehicle.PosX == mouseX && storedVehicle.PosY == mouseY) updateMouseCursor();
+
+	checkMouseInputMode();
+
+	if (&storedVehicle == getSelectedUnit()) deselectUnit();
+
+	PlayFX (SoundData.SNDLoad);
+}
+
 SDL_Surface* cGameGUI::generateSurface()
 {
 	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_HWSURFACE, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);
