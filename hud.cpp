@@ -971,6 +971,41 @@ void cGameGUI::onRemoveUnit (cUnit& unit)
 	callMiniMapDraw();
 }
 
+void cGameGUI::onLostConnection()
+{
+	const string msgString = lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server");
+	addMessage (msgString);
+	client->getActivePlayer()->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
+	//TODO: ask user for reconnect
+}
+
+void cGameGUI::onAddedBuilding (const cBuilding& building)
+{
+	if (building.owner != client->getActivePlayer()) return;
+	if (building.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace);
+	else if (building.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace);
+}
+
+void cGameGUI::onChat_errorMessage (const std::string& msg)
+{
+	PlayFX (SoundData.SNDQuitsch);
+	addMessage (msg);
+	client->getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
+}
+
+void cGameGUI::onChat_infoMessage (const std::string& msg)
+{
+	addMessage (msg);
+	client->getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
+}
+
+void cGameGUI::onChat_userMessage (const std::string& msg)
+{
+	PlayFX (SoundData.SNDChat);
+	addMessage (msg);
+	client->getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_CHAT);
+}
+
 void cGameGUI::onVehicleStored (const cUnit& storingUnit, const cVehicle& storedVehicle)
 {
 	const int mouseX = mouse->getKachelX (*this);

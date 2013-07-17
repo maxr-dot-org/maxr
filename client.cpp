@@ -245,10 +245,7 @@ void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
 	assert (message.iType == TCP_CLOSE);
 
 	network->close (message.popInt16());
-	const string msgString = lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server");
-	gameGUI->addMessage (msgString);
-	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
-	//TODO: ask user for reconnect
+	gameGUI->onLostConnection();
 }
 
 void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
@@ -259,18 +256,14 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 	{
 		case USER_MESSAGE:
 		{
-			PlayFX (SoundData.SNDChat);
-			const string msgString = message.popString();
-			gameGUI->addMessage (msgString);
-			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_CHAT);
+			const string msg = message.popString();
+			gameGUI->onChat_userMessage (msg);
 			break;
 		}
 		case SERVER_ERROR_MESSAGE:
 		{
-			PlayFX (SoundData.SNDQuitsch);
-			const string msgString = lngPack.i18n (message.popString());
-			gameGUI->addMessage (msgString);
-			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
+			const string msg = lngPack.i18n (message.popString());
+			gameGUI->onChat_errorMessage (msg);
 			break;
 		}
 		case SERVER_INFO_MESSAGE:
@@ -280,8 +273,7 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 			string msgString;
 			if (!inserttext.compare ("")) msgString = lngPack.i18n (translationpath);
 			else msgString = lngPack.i18n (translationpath, inserttext);
-			gameGUI->addMessage (msgString);
-			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
+			gameGUI->onChat_infoMessage (msgString);
 			break;
 		}
 	}
@@ -321,10 +313,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	addUnit (PosX, PosY, AddedBuilding, Init);
 
 	Player->base.addBuilding (AddedBuilding, NULL);
-
-	// play placesound if it is a mine
-	if (UnitID == UnitsData.specialIDLandMine && Player == ActivePlayer) PlayFX (SoundData.SNDLandMinePlace);
-	else if (UnitID == UnitsData.specialIDSeaMine && Player == ActivePlayer) PlayFX (SoundData.SNDSeaMinePlace);
+	gameGUI->onAddedBuilding (*AddedBuilding);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)

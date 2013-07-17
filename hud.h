@@ -532,6 +532,12 @@ public:
 	void selectUnit (cUnit& unit);
 	void deselectUnit();
 
+	void onAddedBuilding (const cBuilding& building);
+	void onChat_errorMessage (const std::string& msg);
+	void onChat_infoMessage (const std::string& msg);
+	void onChat_userMessage (const std::string& msg);
+
+	void onLostConnection();
 	void onVehicleStored (const cUnit& storingUnit, const cVehicle& storedVehicle);
 
 	void onRemoveUnit (cUnit& unit);
