@@ -65,6 +65,11 @@ struct sUpgradeNew
 //--------------------------------------------------------------------------
 struct sBuildingUIData
 {
+	// TODO: Use AutoSurface and AutoSound
+	// Note: not possible since AutoSurface and Autosound (as autoptr)
+	//       cannot be in std::vector.
+	//       C++11 should allow this with move semantic (as unique_ptr)
+
 	SDL_Surface* img, *img_org; // Surface des Buildings
 	SDL_Surface* shw, *shw_org; // Surfaces des Schattens
 	SDL_Surface* eff, *eff_org; // Surfaces des Effektes

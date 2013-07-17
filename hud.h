@@ -165,8 +165,8 @@ class cGameGUI : public cMenu
 	friend class cDebugOutput;
 
 	cClient* client;
-	SDL_Surface* panelTopGraphic;
-	SDL_Surface* panelBottomGraphic;
+	AutoSurface panelTopGraphic;
+	AutoSurface panelBottomGraphic;
 
 	/** the currently selected unit */
 	cUnit* selectedUnit;

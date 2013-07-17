@@ -82,6 +82,11 @@ enum eSymbolsBig
 //-----------------------------------------------------------------------------
 struct sVehicleUIData
 {
+	// TODO: Use AutoSurface and AutoSound
+	// Note: not possible since AutoSurface and Autosound (as autoptr)
+	//       cannot be in std::vector.
+	//       C++11 should allow this with move semantic (as unique_ptr)
+
 	SDL_Surface* img[8], *img_org[8]; // 8 Surfaces des Vehicles
 	SDL_Surface* shw[8], *shw_org[8]; // 8 Surfaces des Schattens
 	SDL_Surface* build, *build_org;        // Surfaces beim Bauen

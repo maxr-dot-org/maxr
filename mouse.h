@@ -34,15 +34,6 @@ class cMouse
 public:
 	cMouse();
 
-	bool visible; // Gibt an, ob die Maus angezeigt werden soll.
-	SDL_Surface* cur; // Der aktuelle Cursor.
-	AutoSurface back; // Zum Speichern des Maushintergrundes.
-	int x, y; /** the pixel positon of the curor on the map */
-	bool isDoubleClick;
-	int prevScreenX, prevScreenY;
-	int LastX, LastY; // Die letzte Position der Maus.
-	int DrawX, DrawY; // Die Position, an die die Maus gezeichnet werden soll.
-
 	void draw (bool draw_back, SDL_Surface* sf);
 
 	// Set a new cursor.
@@ -66,6 +57,19 @@ public:
 	* return the Y Coordinate of the Cursor on the map
 	*/
 	int getKachelY (const cGameGUI& gameGUI) const;
+private:
+	bool visible; // Gibt an, ob die Maus angezeigt werden soll.
+public:
+	SDL_Surface* cur; // Current Cursor.
+private:
+	AutoSurface back; // Zum Speichern des Maushintergrundes.
+public:
+	int x, y; /** the pixel positon of the curor on the map */
+	bool isDoubleClick;
+private:
+	int prevScreenX, prevScreenY;
+	int LastX, LastY; // Die letzte Position der Maus.
+	int DrawX, DrawY; // Die Position, an die die Maus gezeichnet werden soll.
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////

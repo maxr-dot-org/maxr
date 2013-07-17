@@ -533,7 +533,6 @@ cGameGUI::cGameGUI() :
 	offX = offY = 0;
 	framesPerSecond = cyclesPerSecond = 0;
 	loadValue = 0;
-	panelTopGraphic = NULL, panelBottomGraphic = NULL;
 	activeItem = NULL;
 	helpActive = false;
 	showPlayers = false;
