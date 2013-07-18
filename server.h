@@ -37,6 +37,7 @@ class cServerMoveJob;
 class cTCP;
 class cUnit;
 struct sClientLandData;
+struct sLandingUnit;
 struct sSettings;
 
 /**
@@ -44,9 +45,9 @@ struct sSettings;
 */
 enum eGameTypes
 {
-	GAME_TYPE_SINGLE,		// a singleplayer game
-	GAME_TYPE_HOTSEAT,		// a hotseat multiplayer game
-	GAME_TYPE_TCPIP			// a multiplayergame over TCP/IP
+	GAME_TYPE_SINGLE,  // a singleplayer game
+	GAME_TYPE_HOTSEAT, // a hotseat multiplayer game
+	GAME_TYPE_TCPIP    // a multiplayergame over TCP/IP
 };
 
 /**
@@ -61,7 +62,7 @@ struct sTurnstartReport
 };
 
 /**
-* Callback funktion for the serverthread
+* Callback function for the serverthread
 *@author alzi alias DoctorDeath
 */
 int CallbackRunServerThread (void* arg);
@@ -69,7 +70,6 @@ int CallbackRunServerThread (void* arg);
 
 Uint32 ServerTimerCallback (Uint32 interval, void* arg);
 
-struct sLandingUnit;
 
 /**
 * Server class which takes all calculations for the game and has the data of all players
@@ -247,7 +247,7 @@ public:
 	*@param bVehicle true if the report is about vehicles
 	*@param iPlayerNum Number of player to whos list the report should be added
 	*/
-	void addReport (sID Type, bool bVehicle, int iPlayerNum);
+	void addReport (sID Type, int iPlayerNum);
 	/**
 	* adds a new movejob
 	*@author alzi alias DoctorDeath
@@ -295,8 +295,10 @@ public:
 
 private:
 	/**
-	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
-	* the returned message and its data structures are valid until the next call of pollEvent()
+	* returns a pointer to the next event of the eventqueue.
+	* If the queue is empty it will return NULL.
+	* the returned message and its data structures are valid
+	* until the next call of pollEvent()
 	*@author eiko
 	*@return the next net message or NULL if queue is empty
 	*/
@@ -470,6 +472,8 @@ private:
 	int iTurnDeadline;
 	/** gametime when the deadline has been initialised*/
 	unsigned int iDeadlineStartTime;
+	/** stores the gametime of the last turn end. */
+	unsigned int lastTurnEnd;
 	/** Number of the Player who wants to end his turn;
 	 * -1 for no player, -2 for undefined player */
 	int iWantPlayerEndNum;
@@ -479,13 +483,13 @@ private:
 	bool openMapDefeat;
 	/** List with disconnected players */
 	std::vector<cPlayer*> DisconnectedPlayerList;
-	/** a sequential id for identifying additional save information from clients */
+	/** a sequential id for identifying additional
+	 * save information from clients */
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
 	int savingIndex;
-	/** stores the gametime of the last turn end. */
-	unsigned int lastTurnEnd;
-	/** sever is executing all remaining movements, before turn end is processed */
+	/** server is executing all remaining movements,
+	 * before turn end is processed */
 	bool executingRemainingMovements;
 
 	/** victory conditions. One or both must be zero. **/

@@ -3109,22 +3109,22 @@ void cServer::checkDefeats()
 }
 
 //------------------------------------------------------------------------------
-void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
+void cServer::addReport (sID id, int iPlayerNum)
 {
 	cPlayer* player = getPlayerFromNumber (iPlayerNum);
-	if (bVehicle)
+	if (id.isAVehicle())
 	{
 		for (size_t i = 0; i != player->ReportVehicles.size(); ++i)
 		{
 			sTurnstartReport& report = *player->ReportVehicles[i];
-			if (report.Type == Type)
+			if (report.Type == id)
 			{
 				report.iAnz++;
 				return;
 			}
 		}
 		sTurnstartReport* report = new sTurnstartReport;
-		report->Type = Type;
+		report->Type = id;
 		report->iAnz = 1;
 		player->ReportVehicles.push_back (report);
 	}
@@ -3133,14 +3133,14 @@ void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 		for (size_t i = 0; i != player->ReportBuildings.size(); ++i)
 		{
 			sTurnstartReport* report = player->ReportBuildings[i];
-			if (report->Type == Type)
+			if (report->Type == id)
 			{
 				report->iAnz++;
 				return;
 			}
 		}
 		sTurnstartReport* report = new sTurnstartReport;
-		report->Type = Type;
+		report->Type = id;
 		report->iAnz = 1;
 		player->ReportBuildings.push_back (report);
 	}
@@ -3607,7 +3607,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	{
 		sendClansToClients (*this, *PlayerList);
 	}
-	sendTurn (*this, iTurn, *Player);
+	sendTurn (*this, iTurn, lastTurnEnd, *Player);
 	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * iTurnDeadline - (gameTimer.gameTime - iDeadlineStartTime), Player);
 	sendResources (*this, *Player);
 

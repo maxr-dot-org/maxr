@@ -814,7 +814,7 @@ void sSubBase::makeTurnend (cServer& server)
 			}
 			if (BuildListItem.metall_remaining <= 0)
 			{
-				server.addReport (BuildListItem.type, true, owner->getNr());
+				server.addReport (BuildListItem.type, owner->getNr());
 				Building.ServerStopWork (server, false);
 			}
 		}

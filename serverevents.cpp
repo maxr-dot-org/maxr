@@ -727,9 +727,10 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 }
 
 //------------------------------------------------------------------------------
-void sendTurn (cServer& server, int turn, const cPlayer& player)
+void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_TURN);
+	message->pushInt32 (gameTime);
 	message->pushInt16 (turn);
 	server.sendNetMessage (message, player.getNr());
 }

@@ -1333,6 +1333,8 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 	assert (message.iType == GAME_EV_TURN);
 
 	iTurn = message.popInt16();
+	iStartTurnTime = message.popInt32();
+	iEndTurnTime = iStartTurnTime;
 	gameGUI->updateTurn (iTurn);
 }
 

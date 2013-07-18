@@ -651,7 +651,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 	if (BuildRounds != 0) return true;
 
 	const cMap& map = *server.Map;
-	server.addReport (BuildingTyp, false, owner->getNr());
+	server.addReport (BuildingTyp, owner->getNr());
 
 	// handle pathbuilding
 	// here the new building is added (if possible) and
