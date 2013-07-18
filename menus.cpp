@@ -57,14 +57,10 @@ string sSettings::getResValString (eSettingResourceValue type) const
 {
 	switch (type)
 	{
-		case SETTING_RESVAL_LOW:
-			return lngPack.i18n ("Text~Option~Low");
-		case SETTING_RESVAL_NORMAL:
-			return lngPack.i18n ("Text~Option~Normal");
-		case SETTING_RESVAL_MUCH:
-			return lngPack.i18n ("Text~Option~Much");
-		case SETTING_RESVAL_MOST:
-			return lngPack.i18n ("Text~Option~Most");
+		case SETTING_RESVAL_LOW: return lngPack.i18n ("Text~Option~Low");
+		case SETTING_RESVAL_NORMAL: return lngPack.i18n ("Text~Option~Normal");
+		case SETTING_RESVAL_MUCH: return lngPack.i18n ("Text~Option~Much");
+		case SETTING_RESVAL_MOST: return lngPack.i18n ("Text~Option~Most");
 	}
 	return "";
 }
@@ -74,16 +70,26 @@ string sSettings::getResFreqString() const
 {
 	switch (resFrequency)
 	{
-		case SETTING_RESFREQ_THIN:
-			return lngPack.i18n ("Text~Option~Thin");
-		case SETTING_RESFREQ_NORMAL:
-			return lngPack.i18n ("Text~Option~Normal");
-		case SETTING_RESFREQ_THICK:
-			return lngPack.i18n ("Text~Option~Thick");
-		case SETTING_RESFREQ_MOST:
-			return lngPack.i18n ("Text~Option~Most");
+		case SETTING_RESFREQ_THIN: return lngPack.i18n ("Text~Option~Thin");
+		case SETTING_RESFREQ_NORMAL: return lngPack.i18n ("Text~Option~Normal");
+		case SETTING_RESFREQ_THICK: return lngPack.i18n ("Text~Option~Thick");
+		case SETTING_RESFREQ_MOST: return lngPack.i18n ("Text~Option~Most");
 	}
 	return "";
+}
+
+static std::string ToString (eLandingState state)
+{
+	switch (state)
+	{
+		case LANDING_POSITION_TOO_CLOSE: return "LANDING_POSITION_TOO_CLOSE";
+		case LANDING_POSITION_WARNING: return "LANDING_POSITION_WARNING";
+		case LANDING_POSITION_OK: return "LANDING_POSITION_OK";
+		case LANDING_POSITION_CONFIRMED: return "LANDING_POSITION_COMFIRMED";
+		case LANDING_STATE_UNKNOWN: return "LANDING_STATE_UNKNOWN";
+	}
+	assert(0);
+	return "unknown";
 }
 
 //------------------------------------------------------------------------------
@@ -93,13 +99,12 @@ string sSettings::getVictoryConditionString() const
 
 	switch (victoryType)
 	{
-		case SETTINGS_VICTORY_TURNS:  r += lngPack.i18n ("Text~Comp~Turns");  break;
+		case SETTINGS_VICTORY_TURNS: r += lngPack.i18n ("Text~Comp~Turns");  break;
 		case SETTINGS_VICTORY_POINTS: r += lngPack.i18n ("Text~Comp~Points"); break;
 		case SETTINGS_VICTORY_ANNIHILATION: return lngPack.i18n ("Text~Comp~NoLimit");
 	}
 	return r;
 }
-
 
 //------------------------------------------------------------------------------
 // cGameDataContainer implementation
@@ -134,14 +139,20 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 }
 
 //------------------------------------------------------------------------------
+cPlayer* cGameDataContainer::findPlayerByNr (int nr)
+{
+	for (size_t i = 0; i != players.size(); ++i)
+	{
+		if (players[i]->getNr() == nr)
+			return players[i];
+	}
+	return NULL;
+}
+
+//------------------------------------------------------------------------------
 void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect)
 {
-	cPlayer* actPlayer = NULL;
-	for (unsigned int i = 0; i < players.size(); i++)
-	{
-		if (players[i]->getNr() == playerNr)
-			actPlayer = players[i];
-	}
+	cPlayer* actPlayer = findPlayerByNr (playerNr);
 	if (actPlayer == NULL)
 		return;
 
@@ -153,7 +164,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		serverMap = new cMap (*map);
 
 		// copy playerlist for server
-		for (unsigned int i = 0; i < players.size(); i++)
+		for (size_t i = 0; i != players.size(); ++i)
 		{
 			serverPlayers.push_back (new cPlayer (*players[i]));
 
@@ -166,8 +177,8 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
 		// send victory conditions to clients
-		for (unsigned n = 0; n < players.size(); n++)
-			sendVictoryConditions (*server, *players[n]);
+		for (size_t i = 0; i != players.size(); ++i)
+			sendVictoryConditions (*server, *players[i]);
 
 		// place resources
 		server->placeInitialResources (landData, *settings);
@@ -185,10 +196,9 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 			sendClansToClients (*server, players);
 
 		// make the landing
-		for (unsigned int i = 0; i < players.size(); i++)
+		server->makeLanding (landData, landingUnits, *settings);
+		for (size_t i = 0; i != players.size(); ++i)
 		{
-			server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], *landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
-			delete landData[i];
 			delete landingUnits[i];
 		}
 
@@ -283,10 +293,7 @@ void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
 
 	unsigned int playerNr = message->popInt16();
 
-	for (unsigned int i = (unsigned int) landingUnits.size(); i < players.size(); i++)
-	{
-		landingUnits.push_back (NULL);
-	}
+	landingUnits.resize (players.size(), NULL);
 
 	if (landingUnits[playerNr] == NULL) landingUnits[playerNr] = new std::vector<sLandingUnit>;
 	std::vector<sLandingUnit>* playerLandingUnits = landingUnits[playerNr];
@@ -332,43 +339,29 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	int playerNr = message->popChar();
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	for (size_t i = landData.size(); i < players.size(); i++)
-	{
-		landData.push_back (NULL);
-	}
+	landData.resize (players.size());
 
-	if (landData[playerNr] == NULL) landData[playerNr] = new sClientLandData;
-	sClientLandData* c = landData[playerNr];
+	sClientLandData& c = landData[playerNr];
 	// save last coords, so that a player can confirm his position
 	// after a warning about nearby players
-	c->iLastLandX = c->iLandX;
-	c->iLastLandY = c->iLandY;
-	c->iLandX = message->popInt16();
-	c->iLandY = message->popInt16();
-	c->receivedOK = true;
+	c.iLastLandX = c.iLandX;
+	c.iLastLandY = c.iLandY;
+	c.iLandX = message->popInt16();
+	c.iLandY = message->popInt16();
+	c.receivedOK = true;
 
-	for (size_t player = 0; player < landData.size(); player++)
+	for (size_t player = 0; player != landData.size(); ++player)
 	{
-		if (landData[player] == NULL || !landData[player]->receivedOK) return;
+		if (!landData[player].receivedOK) return;
 	}
 
-	//now check the landing positions
-	for (size_t player = 0; player < landData.size(); player++)
+	// now check the landing positions
+	for (size_t player = 0; player != landData.size(); ++player)
 	{
 		eLandingState state = checkLandingState (player);
+		const std::string posStr = iToStr (landData[player].iLandX) + ", " + iToStr (landData[player].iLandY);
 
-		if (state == LANDING_POSITION_TOO_CLOSE)
-			Log.write ("Server: Player " + iToStr (player) + " has state LANDING_POSITION_TOO_CLOSE, Position: " + iToStr (landData[player]->iLandX) + "," + iToStr (landData[player]->iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-		else if (state == LANDING_POSITION_WARNING)
-			Log.write ("Server: Player " + iToStr (player) + " has state LANDING_POSITION_WARNING, Position: " + iToStr (landData[player]->iLandX) + "," + iToStr (landData[player]->iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-		else if (state == LANDING_POSITION_OK)
-			Log.write ("Server: Player " + iToStr (player) + " has state LANDING_POSITION_OK, Position: " + iToStr (landData[player]->iLandX) + "," + iToStr (landData[player]->iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-		else if (state == LANDING_POSITION_CONFIRMED)
-			Log.write ("Server: Player " + iToStr (player) + " has state LANDING_POSITION_COMFIRMED, Position: " + iToStr (landData[player]->iLandX) + "," + iToStr (landData[player]->iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-		else if (state == LANDING_STATE_UNKNOWN)
-			Log.write ("Server: Player " + iToStr (player) + " has state LANDING_STATE_UNKNOWN, Position: " + iToStr (landData[player]->iLandX) + "," + iToStr (landData[player]->iLandY), cLog::eLOG_TYPE_NET_DEBUG);
-		else
-			Log.write ("Server: Player " + iToStr (player) + " has an unknown landing state, Position: " + iToStr (landData[player]->iLandX) + "," + iToStr (landData[player]->iLandY), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write ("Server: Player " + iToStr (player) + "has state " + ToString (state) + ", Position:" + posStr, cLog::eLOG_TYPE_NET_DEBUG);
 
 		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
 		{
@@ -379,11 +372,11 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 
 	// now remove all players with warning
 	bool ok = true;
-	for (size_t player = 0; player < landData.size(); ++player)
+	for (size_t player = 0; player != landData.size(); ++player)
 	{
-		if (landData[player]->landingState != LANDING_POSITION_OK && landData[player]->landingState != LANDING_POSITION_CONFIRMED)
+		if (landData[player].landingState != LANDING_POSITION_OK && landData[player].landingState != LANDING_POSITION_CONFIRMED)
 		{
-			landData[player]->receivedOK = false;
+			landData[player].receivedOK = false;
 			ok = false;
 		}
 	}
@@ -396,21 +389,21 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 //------------------------------------------------------------------------------
 eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 {
-	int posX = landData[playerNr]->iLandX;
-	int posY = landData[playerNr]->iLandY;
-	int lastPosX = landData[playerNr]->iLastLandX;
-	int lastPosY = landData[playerNr]->iLastLandY;
+	int posX = landData[playerNr].iLandX;
+	int posY = landData[playerNr].iLandY;
+	int lastPosX = landData[playerNr].iLastLandX;
+	int lastPosY = landData[playerNr].iLastLandY;
 	bool bPositionTooClose = false;
 	bool bPositionWarning = false;
 
-	//check distances to all other players
+	// check distances to all other players
 	for (size_t i = 0; i != players.size(); ++i)
 	{
-		const sClientLandData* c = landData[i];
-		if (c == NULL) continue;
+		const sClientLandData& c = landData[i];
+		if (c.receivedOK == false) continue;
 		if (i == playerNr) continue;
 
-		const int sqDistance = Square (c->iLandX - posX) + Square (c->iLandY - posY);
+		const int sqDistance = Square (c.iLandX - posX) + Square (c.iLandY - posY);
 
 		if (sqDistance < Square (LANDING_DISTANCE_TOO_CLOSE))
 		{
@@ -422,9 +415,10 @@ eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 		}
 	}
 
-	//now set the new landing state,
-	//depending on the last state, the last position, the current position, bPositionTooClose and bPositionWarning
-	eLandingState lastState = landData[playerNr]->landingState;
+	// now set the new landing state,
+	// depending on the last state, the last position, the current position,
+	//  bPositionTooClose and bPositionWarning
+	eLandingState lastState = landData[playerNr].landingState;
 	eLandingState newState = LANDING_STATE_UNKNOWN;
 
 	if (bPositionTooClose)
@@ -438,8 +432,8 @@ eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 			const int sqDelta = Square (posX - lastPosX) + Square (posY - lastPosY);
 			if (sqDelta <= Square (LANDING_DISTANCE_TOO_CLOSE))
 			{
-				//the player has choosen the same position after a warning
-				//so further warnings will be ignored
+				// the player has choosen the same position after a warning
+				// so further warnings will be ignored
 				newState = LANDING_POSITION_CONFIRMED;
 			}
 			else
@@ -449,7 +443,8 @@ eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 		}
 		else if (lastState == LANDING_POSITION_CONFIRMED)
 		{
-			//player is in state LANDING_POSITION_CONFIRMED, so ignore the warning
+			// player is in state LANDING_POSITION_CONFIRMED,
+			// so ignore the warning
 			newState = LANDING_POSITION_CONFIRMED;
 		}
 		else
@@ -469,7 +464,7 @@ eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 		}
 	}
 
-	landData[playerNr]->landingState = newState;
+	landData[playerNr].landingState = newState;
 	return newState;
 }
 
@@ -518,15 +513,14 @@ void cMenu::recalcPosition (bool resetItemPositions)
 		position.h = Video.getResolutionY();
 	}
 
-	if (resetItemPositions)
-	{
-		for (unsigned int i = 0; i < menuItems.size(); i++)
-		{
-			int xOffset = menuItems[i]->getPosition().x - oldPosition.x;
-			int yOffset = menuItems[i]->getPosition().y - oldPosition.y;
+	if (resetItemPositions == false) return;
 
-			menuItems[i]->move (position.x + xOffset, position.y + yOffset);
-		}
+	for (size_t i = 0; i != menuItems.size(); ++i)
+	{
+		const int xOffset = menuItems[i]->getPosition().x - oldPosition.x;
+		const int yOffset = menuItems[i]->getPosition().y - oldPosition.y;
+
+		menuItems[i]->move (position.x + xOffset, position.y + yOffset);
 	}
 }
 
@@ -543,8 +537,8 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 	switch (backgroundType)
 	{
 		case MNU_BG_BLACK:
-			// fill the hole screen with black to prevent old garbage from menus
-			// that don't support resolutions > 640x480
+			// fill the whole screen with black to prevent
+			// old garbage from menus that don't support resolutions > 640x480
 			SDL_FillRect (buffer, NULL, 0x000000);
 			break;
 		case MNU_BG_ALPHA:
@@ -560,11 +554,11 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 	// draw the menu background
 	if (background) SDL_BlitSurface (background, NULL, buffer, &position);
 
-	//show mouse
+	// show mouse
 	mouse->Show();
 
 	// draw all menu items
-	for (unsigned int i = 0; i < menuItems.size(); i++)
+	for (size_t i = 0; i != menuItems.size(); ++i)
 	{
 		menuItems[i]->draw();
 	}
@@ -625,8 +619,8 @@ int cMenu::show (cClient* client)
 			}
 		}
 
-		//run timer callbacks
-		for (unsigned int i = 0; i < menuTimers.size(); i++)
+		// run timer callbacks
+		for (size_t i = 0; i != menuTimers.size(); ++i)
 			if (menuTimers[i]->getState()) menuTimers[i]->callback();
 
 		lastMouseX = mouse->x;
@@ -634,7 +628,7 @@ int cMenu::show (cClient* client)
 		SDL_Delay (1);
 	}
 
-	//flush event queue before exiting menu
+	// flush event queue before exiting menu
 	if (!client) handleNetMessages();
 	cEventHandling::handleInputEvents (*this, client);
 
@@ -662,7 +656,7 @@ void cMenu::handleMouseInput (sMouseState mouseState)
 	mouse->GetPos();
 	mouse->isDoubleClick = mouseState.isDoubleClick;
 
-	for (unsigned int i = 0; i < menuItems.size(); i++)
+	for (size_t i = 0; i != menuItems.size(); ++i)
 	{
 		cMenuItem* menuItem = menuItems[i];
 		if (menuItem->overItem (mouse->x, mouse->y) && mouseState.leftButtonPressed)
@@ -749,30 +743,32 @@ cMainMenu::cMainMenu()
 SDL_Surface* cMainMenu::getRandomInfoImage()
 {
 	int const showBuilding = random (3);
-	// I want 3 possible random numbers
-	// since a chance of 50:50 is boring (and
-	// vehicles are way more cool so I prefer
-	// them to be shown) -- beko
+	// I want 3 possible random numbers since a chance of 50:50 is boring
+	// (and vehicles are way more cool so I prefer them to be shown) -- beko
 	static int lastUnitShow = -1;
 	int unitShow = -1;
 	SDL_Surface* surface = NULL;
 
-	if (showBuilding == 1 && UnitsData.getNrBuildings() > 0) //that's a 33% chance that we show a building on 1
+	if (showBuilding == 1 && UnitsData.getNrBuildings() > 0)
 	{
+		// that's a 33% chance that we show a building on 1
 		do
 		{
 			unitShow = random (UnitsData.getNrBuildings() - 1);
+			// make sure we don't show same unit twice
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1); //make sure we don't show same unit twice
+		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1);
 		surface = UnitsData.buildingUIs[unitShow].info;
 	}
-	else if (UnitsData.getNrVehicles() > 0) //and a 66% chance to show a vehicle on 0 or 2
+	else if (UnitsData.getNrVehicles() > 0)
 	{
+		// and a 66% chance to show a vehicle on 0 or 2
 		do
 		{
 			unitShow = random (UnitsData.getNrVehicles() - 1);
+			// make sure we don't show same unit twice
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1); //make sure we don't show same unit twice
+		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1);
 		surface = UnitsData.vehicleUIs[unitShow].info;
 	}
 	else surface = NULL;
@@ -1164,7 +1160,9 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	iCurrentLine += iLineHeight * 3;
 
 	// Other options (AlienTechs and Clans):
-#if 0 //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
+#if 0
+	//alien stuff disabled until we reimplement this proper
+	// -- beko Fri Jun 12 20:48:59 CEST 2009
 	alienTechLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Alien_Tech") + ":");
 	menuItems.push_back (alienTechLabel);
 	aliensGroup = new cMenuRadioGroup();
@@ -1279,7 +1277,9 @@ void cSettingsMenu::updateSettings()
 	if (bridgeheadGroup->buttonIsChecked (0)) settings.bridgeHead = SETTING_BRIDGEHEAD_MOBILE;
 	else settings.bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
 
-#if 0 //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
+#if 0
+	// alien stuff disabled until we reimplement this proper
+	// -- beko Fri Jun 12 20:48:59 CEST 2009
 	if (aliensGroup->buttonIsChecked (0)) settings.alienTech = SETTING_ALIENTECH_ON;
 	else settings.alienTech = SETTING_ALIENTECH_OFF;
 #endif
@@ -1293,23 +1293,25 @@ void cSettingsMenu::updateSettings()
 
 	if (victoryGroup->buttonIsChecked (6))
 		settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
-	else for (int i = 0; i < 6; i++)
+	else
+	{
+		for (int i = 0; i < 6; i++)
 		{
-			if (victoryGroup->buttonIsChecked (i))
+			if (victoryGroup->buttonIsChecked (i) == false) continue;
+
+			if (i < 3)
+				settings.victoryType = SETTINGS_VICTORY_TURNS;
+			else
 			{
-				if (i < 3)
-					settings.victoryType = SETTINGS_VICTORY_TURNS;
-				else
-				{
-					settings.victoryType = SETTINGS_VICTORY_POINTS;
-					i -= 3;
-				}
-				if (i == 0) settings.duration = SETTINGS_DUR_SHORT;
-				else if (i == 1) settings.duration = SETTINGS_DUR_MEDIUM;
-				else if (i == 2) settings.duration = SETTINGS_DUR_LONG;
-				break;
+				settings.victoryType = SETTINGS_VICTORY_POINTS;
+				i -= 3;
 			}
+			if (i == 0) settings.duration = SETTINGS_DUR_SHORT;
+			else if (i == 1) settings.duration = SETTINGS_DUR_MEDIUM;
+			else if (i == 2) settings.duration = SETTINGS_DUR_LONG;
+			break;
 		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -1375,15 +1377,15 @@ void cPlanetsSelectionMenu::loadMaps()
 	if (!getUserMapsDir().empty())
 	{
 		AutoPtr<std::vector<std::string> > userMaps (getFilesOfDirectory (getUserMapsDir()));
-		for (unsigned int i = 0; userMaps != 0 && i < userMaps->size(); i++)
+		for (size_t i = 0; userMaps != 0 && i < userMaps->size(); ++i)
 		{
 			if (!Contains (*maps, (*userMaps) [i]))
 				maps->push_back ( (*userMaps) [i]);
 		}
 	}
-	for (unsigned int i = 0; i < maps->size(); i++)
+	for (size_t i = 0; i != maps->size(); ++i)
 	{
-		string const& map = (*maps) [i];
+		const string& map = (*maps) [i];
 		if (map.substr (map.length() - 3, 3).compare ("WRL") != 0 && map.substr (map.length() - 3, 3).compare ("wrl") != 0)
 		{
 			maps->erase (maps->begin() + i);
@@ -1442,8 +1444,9 @@ void cPlanetsSelectionMenu::showMaps()
 					SDL_RWclose (mapFile);
 
 					const int MAPWINSIZE = 112;
-					if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
+					if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE)
 					{
+						// resize map
 						mapSurface = scaleSurface (mapSurface, NULL, MAPWINSIZE, MAPWINSIZE);
 					}
 
@@ -1651,7 +1654,7 @@ void cClanSelectionMenu::updateClanDescription()
 		vector<string> strings = clanInfo->getClanStatsDescription();
 
 		string desc1;
-		for (unsigned int i = 0; i < 4 && i < strings.size(); i++)
+		for (size_t i = 0; i < 4 && i < strings.size(); ++i)
 		{
 			desc1.append (strings[i]);
 			desc1.append ("\n");
@@ -1659,7 +1662,7 @@ void cClanSelectionMenu::updateClanDescription()
 		clanDescription1->setText (desc1);
 
 		string desc2;
-		for (unsigned int i = 4; i < strings.size(); i++)
+		for (size_t i = 4; i < strings.size(); ++i)
 		{
 			desc2.append (strings[i]);
 			desc2.append ("\n");
@@ -1713,7 +1716,8 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 	cMenu (background_, backgroundType_),
 	player (player_),
 	titleLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
-	//TODO different Title needed! Remove "Hangar-lable" from original deadline counter location
+	// TODO different Title needed!
+	// Remove "Hangar-label" from original deadline counter location
 {
 	selectionChangedFunc = NULL;
 
@@ -2057,7 +2061,7 @@ void cStartupHangarMenu::updateUnitData()
 
 		for (int j = 0; j < 8; j++)
 		{
-			sUnitUpgrade* upgrades = unitUpgrades[i];
+			const sUnitUpgrade* upgrades = unitUpgrades[i];
 			switch (upgrades[j].type)
 			{
 				case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
@@ -2107,8 +2111,14 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		landingUnit.cargo = menu->secondList->getItem (i)->getResValue();
 		landingUnits->push_back (landingUnit);
 	}
-	if (menu->gameDataContainer->landingUnits.size() == 0) // the size can be != 0, if a client sent his landingunits before the host is done with the startup hangar
-		menu->gameDataContainer->landingUnits.push_back (landingUnits); // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
+	// the size can be != 0, if a client sent his landingunits
+	// before the host is done with the startup hangar
+	if (menu->gameDataContainer->landingUnits.size() == 0)
+	{
+		// TODO: alzi, for clients it shouldn't be necessary
+		// to store the landing units, or? (pagra)
+		menu->gameDataContainer->landingUnits.push_back (landingUnits);
+	}
 	else
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if (menu->network && menu->gameDataContainer->isServer == false)
@@ -2346,8 +2356,8 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 		switch (vehicle->storeResType)
 		{
 			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
-			case sUnitData::STORE_RES_OIL:   type = cMenuMaterialBar::MAT_BAR_TYPE_OIL;   break;
-			case sUnitData::STORE_RES_GOLD: //type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD;  break; // Its not allowed to store gold bought with gold. Why should the user be able to buy gold with... gold?!
+			case sUnitData::STORE_RES_OIL: type = cMenuMaterialBar::MAT_BAR_TYPE_OIL; break;
+			case sUnitData::STORE_RES_GOLD: //type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD; break; // Its not allowed to store gold bought with gold. Why should the user be able to buy gold with... gold?!
 			case sUnitData::STORE_RES_NONE: break;
 		}
 		menu->materialBar->setType (type);
@@ -2446,8 +2456,10 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	float fakx = (Video.getResolutionX() - 192.0f) / menu->map->getSize(); //pixel per field in x direction
-	float faky = (Video.getResolutionY() - 32.0f) / menu->map->getSize(); //pixel per field in y direction
+	//pixel per field in x direction
+	const float fakx = (Video.getResolutionX() - 192.0f) / menu->map->getSize();
+	//pixel per field in y direction
+	const float faky = (Video.getResolutionY() - 32.0f) / menu->map->getSize();
 
 	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
 	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0f / menu->map-> getSize()) * (448.0f / (Video.getResolutionY() - 32)));
@@ -2460,8 +2472,8 @@ void cLandingMenu::mapClicked (void* parent)
 
 		int posX = (int) (menu->landData.iLandX * fakx);
 		int posY = (int) (menu->landData.iLandY * faky);
-		//for non 4:3 screen resolutions, the size of the circles is
-		//only correct in x dimension, because I don't draw an ellipse
+		// for non 4:3 screen resolutions, the size of the circles is
+		// only correct in x dimension, because I don't draw an ellipse
 		drawCircle (posX, posY, (int) ( (LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
 		drawCircle (posX, posY, (int) ( (LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
 
@@ -2510,9 +2522,11 @@ void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 //------------------------------------------------------------------------------
 void cLandingMenu::handleNetMessage (cNetMessage* message)
 {
-	// because the messages for landing units and landing positions can be send during
-	// the host is in the hangar menu or in the landing selection menu, the gameGataContainer class
-	// will receive and handle the messages directly
+	// because the messages for landing units
+	// and landing positions can be send when the host is in the hangar menu
+	// or in the landing selection menu,
+	// the gameGataContainer class will receive and
+	// handle the messages directly
 	switch (message->iType)
 	{
 		case TCP_ACCEPT:
@@ -2539,7 +2553,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
 
 			draw();
-			mouseMoved (this); //update cursor
+			mouseMoved (this); // update cursor
 			break;
 		case MU_MSG_ALL_LANDED:
 			end = true;
@@ -2558,7 +2572,8 @@ void cLandingMenu::hitPosition()
 	}
 	else
 	{
-		gameDataContainer->landData.push_back (new sClientLandData (landData));
+		gameDataContainer->landData.resize (gameDataContainer->players.size());
+		gameDataContainer->landData[player->getNr()] = landData;
 		end = true;
 	}
 }
@@ -2689,17 +2704,17 @@ void cNetworkMenu::showSettingsText()
 	{
 		if (gameDataContainer.settings)
 		{
-			sSettings* settings = gameDataContainer.settings;
-			text += lngPack.i18n ("Text~Comp~GameEndsAt") + " " + settings->getVictoryConditionString() + "\n";
-			text += lngPack.i18n ("Text~Title~Metal") + ": " + settings->getResValString (settings->metal) + "\n";
-			text += lngPack.i18n ("Text~Title~Oil") + ": " + settings->getResValString (settings->oil) + "\n";
-			text += lngPack.i18n ("Text~Title~Gold") + ": " + settings->getResValString (settings->gold) + "\n";
-			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + settings->getResFreqString() + "\n";
-			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (settings->credits) + "\n";
-			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + (settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ("Text~Option~Definite") : lngPack.i18n ("Text~Option~Mobile")) + "\n";
-			//text += lngPack.i18n ("Text~Title~Alien_Tech") + ": " + (settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += string ("Clans") + ": " + (settings->clans == SETTING_CLANS_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
+			const sSettings& settings = *gameDataContainer.settings;
+			text += lngPack.i18n ("Text~Comp~GameEndsAt") + " " + settings.getVictoryConditionString() + "\n";
+			text += lngPack.i18n ("Text~Title~Metal") + ": " + settings.getResValString (settings.metal) + "\n";
+			text += lngPack.i18n ("Text~Title~Oil") + ": " + settings.getResValString (settings.oil) + "\n";
+			text += lngPack.i18n ("Text~Title~Gold") + ": " + settings.getResValString (settings.gold) + "\n";
+			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + settings.getResFreqString() + "\n";
+			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (settings.credits) + "\n";
+			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + (settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ("Text~Option~Definite") : lngPack.i18n ("Text~Option~Mobile")) + "\n";
+			//text += lngPack.i18n ("Text~Title~Alien_Tech") + ": " + (settings.alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
+			text += string ("Clans") + ": " + (settings.clans == SETTING_CLANS_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
+			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings.gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
@@ -2710,14 +2725,13 @@ void cNetworkMenu::showSettingsText()
 void cNetworkMenu::showMap()
 {
 	if (!gameDataContainer.map) return;
-	int size;
 	SDL_RWops* fp = SDL_RWFromFile ( (cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getName()).c_str(), "rb");
 	if (fp == NULL && !getUserMapsDir().empty())
 		fp = SDL_RWFromFile ( (getUserMapsDir() + gameDataContainer.map->getName()).c_str(), "rb");
 	if (fp != NULL)
 	{
 		SDL_RWseek (fp, 5, SEEK_SET);
-		size = SDL_ReadLE16 (fp);
+		int size = SDL_ReadLE16 (fp);
 
 		sColor Palette[256];
 		short sGraphCount;
@@ -2753,7 +2767,7 @@ void cNetworkMenu::showMap()
 	}
 
 	string mapName = gameDataContainer.map->getName();
-	size = gameDataContainer.map->getSize();
+	int size = gameDataContainer.map->getSize();
 
 	if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 	{
@@ -2951,7 +2965,7 @@ cNetworkHostMenu::cNetworkHostMenu()
 //------------------------------------------------------------------------------
 cNetworkHostMenu::~cNetworkHostMenu()
 {
-	for (size_t i = 0; i < mapSenders.size(); i++)
+	for (size_t i = 0; i != mapSenders.size(); ++i)
 	{
 		delete mapSenders[i];
 	}
@@ -2962,7 +2976,7 @@ void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 {
 	if (player->isReady() == false) return;
 
-	for (size_t i = 0; i < players.size(); ++i)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		if (static_cast<int> (i) == player->getNr()) continue;
 		if (players[i]->getName() == player->getName())
@@ -2985,7 +2999,7 @@ void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 //------------------------------------------------------------------------------
 int cNetworkHostMenu::checkAllPlayersReady() const
 {
-	for (unsigned int i = 0; i < players.size(); i++)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		if (!players[i]->isReady()) return i;
 	}
@@ -3028,7 +3042,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 	{
 		sendGo (*menu->network);
 
-		for (unsigned int i = 0; i < menu->players.size(); i++)
+		for (size_t i = 0; i != menu->players.size(); ++i)
 		{
 			cPlayer* player = new cPlayer (menu->players[i]->getsPlayer());
 			menu->gameDataContainer.players.push_back (player);
@@ -3134,10 +3148,11 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 	else
 	{
 		chatBox->addLine (chatText);
-		PlayFX (SoundData.SNDChat); //play some chattersound if we got a player message
+		// play some chattersound if we got a player message
+		PlayFX (SoundData.SNDChat);
 	}
 	// send to other clients
-	for (unsigned int i = 1; i < players.size(); i++)
+	for (size_t i = 1; i != players.size(); ++i)
 	{
 		if (players[i]->getNr() == message->iPlayerNr) continue;
 		sendMenuChatMessage (*network, chatText, players[i], -1, translationText);
@@ -3165,8 +3180,8 @@ void cNetworkHostMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 	network->close (socket);
 	string playerName;
 
-	//delete player
-	for (unsigned int i = 0; i < players.size(); i++)
+	// delete player
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		if (players[i]->getSocketIndex() == socket)
 		{
@@ -3176,14 +3191,14 @@ void cNetworkHostMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 		}
 	}
 
-	//resort socket numbers
-	for (unsigned int playerNr = 0; playerNr < players.size(); playerNr++)
+	// resort socket numbers
+	for (size_t i = 0; i != players.size(); ++i)
 	{
-		players[playerNr]->onSocketIndexDisconnected (socket);
+		players[i]->onSocketIndexDisconnected (socket);
 	}
 
-	//resort player numbers
-	for (unsigned int i = 0; i < players.size(); i++)
+	// resort player numbers
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		players[i]->setNr (i);
 		sendRequestIdentification (*network, *players[i]);
@@ -3235,7 +3250,8 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 	const size_t receiverNr = message->popInt16();
 	if (receiverNr >= players.size()) return;
 	int socketNr = players[receiverNr]->getSocketIndex();
-	// check, if there is already a map sender, that uploads to the same socketNr.
+	// check, if there is already a map sender,
+	// that uploads to the same socketNr.
 	// If yes, terminate the old map sender.
 	for (int i = (int) mapSenders.size() - 1; i >= 0; i--)
 	{
@@ -3289,9 +3305,9 @@ bool cNetworkHostMenu::runSavedGame()
 	AutoPtr<cMap> serverMap (server->Map);
 	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	// first we check whether all necessary players are connected
-	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		for (unsigned int j = 0; j < players.size(); j++)
+		for (size_t j = 0; j != players.size(); ++j)
 		{
 			if (serverPlayerList[i]->getName() == players[j]->getName()) break;
 			// stop when a player is missing
@@ -3305,31 +3321,34 @@ bool cNetworkHostMenu::runSavedGame()
 		}
 	}
 	// then remove all players that do not belong to the save
-	for (unsigned int i = 0; i < players.size(); i++)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
-		for (unsigned int j = 0; j < serverPlayerList.size(); j++)
+		for (size_t j = 0; j != serverPlayerList.size(); ++j)
 		{
 			if (players[i]->getName() == serverPlayerList[j]->getName()) break;
 
-			// the player isn't in the list when the loop has gone trough all players and no match was found
+			// the player isn't in the list
+			// when the loop has gone trough all players
+			// and no match was found
 			if (j == serverPlayerList.size() - 1)
 			{
 				sendMenuChatMessage (*network, "Text~Multiplayer~Disconnect_Not_In_Save", players[i], -1, true);
 				const int socketIndex = players[i]->getSocketIndex();
 				network->close (socketIndex);
-				for (unsigned int k = 0; k < players.size(); k++)
+				for (size_t k = 0; k != players.size(); ++k)
 				{
 					players[k]->onSocketIndexDisconnected (socketIndex);
 				}
 				delete players[i];
 				players.erase (players.begin() + i);
+				--i;
 			}
 		}
 	}
 	// and now set sockets, playernumbers and colors
-	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		for (unsigned int j = 0; j < players.size(); j++)
+		for (size_t j = 0; j != players.size(); ++j)
 		{
 			if (serverPlayerList[i]->getName() == players[j]->getName())
 			{
@@ -3345,10 +3364,11 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 
 	// send the correct player numbers to client
-	for (unsigned int i = 0; i < players.size(); i++)
+	for (size_t i = 0; i != players.size(); ++i)
 		sendRequestIdentification (*network, *players[i]);
 
-	// now we can send the menus players-list with the right numbers and colors of each player.
+	// now we can send the menus players-list with the right numbers
+	// and colors of each player.
 	sendPlayerList (*network, players);
 
 	// send client that the game has to be started
@@ -3358,21 +3378,21 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// copy players for client
 	cPlayer* localPlayer = NULL;
-	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		cPlayer* addedPlayer = new cPlayer (*serverPlayerList[i]);
 		clientPlayerList.push_back (addedPlayer);
 		if (serverPlayerList[i]->isLocal()) localPlayer = clientPlayerList[i];
 		// reinit unit values
-		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan());
-		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan());
+		clientPlayerList[i]->VehicleData = UnitsData.getUnitData_Vehicles (addedPlayer->getClan());
+		clientPlayerList[i]->BuildingData = UnitsData.getUnitData_Buildings (addedPlayer->getClan());
 	}
 	// init client and his player
 	AutoPtr<cClient> client (new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList));
 	client->initPlayer (localPlayer);
 
 	// send data to all players
-	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		sendRequestResync (*client, serverPlayerList[i]->getNr());
 		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
@@ -3428,25 +3448,25 @@ void cNetworkClientMenu::connectReleased (void* parent)
 {
 	cNetworkClientMenu* menu = reinterpret_cast<cNetworkClientMenu*> (parent);
 
-	if (menu->network->getConnectionStatus() == 0) // Connect only if there isn't a connection yet
-	{
-		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + menu->ip + ":" + iToStr (menu->port));    // e.g. Connecting to 127.0.0.1:55800
-		Log.write ( ("Connecting to " + menu->ip + ":" + iToStr (menu->port)), cLog::eLOG_TYPE_INFO);
+	// Connect only if there isn't a connection yet
+	if (menu->network->getConnectionStatus() != 0) return;
 
-		if (menu->network->connect (menu->ip, menu->port) == -1)
-		{
-			menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect") + menu->ip + ":" + iToStr (menu->port));
-			Log.write ("Error on connecting " + menu->ip + ":" + iToStr (menu->port), cLog::eLOG_TYPE_WARNING);
-		}
-		else
-		{
-			menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
-			Log.write ("Connected", cLog::eLOG_TYPE_INFO);
-			menu->portLine->setReadOnly (true);
-			menu->ipLine->setReadOnly (true);
-		}
-		menu->draw();
+	menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + menu->ip + ":" + iToStr (menu->port));    // e.g. Connecting to 127.0.0.1:55800
+	Log.write ( ("Connecting to " + menu->ip + ":" + iToStr (menu->port)), cLog::eLOG_TYPE_INFO);
+
+	if (menu->network->connect (menu->ip, menu->port) == -1)
+	{
+		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect") + menu->ip + ":" + iToStr (menu->port));
+		Log.write ("Error on connecting " + menu->ip + ":" + iToStr (menu->port), cLog::eLOG_TYPE_WARNING);
 	}
+	else
+	{
+		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
+		Log.write ("Connected", cLog::eLOG_TYPE_INFO);
+		menu->portLine->setReadOnly (true);
+		menu->ipLine->setReadOnly (true);
+	}
+	menu->draw();
 }
 
 //------------------------------------------------------------------------------
@@ -3472,11 +3492,12 @@ void cNetworkClientMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 {
 	assert (message->iType == TCP_CLOSE);
 
-	for (unsigned int i = 0; i < players.size(); i++)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		if (players[i]->getNr() == actPlayer->getNr()) continue;
 		players.erase (players.begin() + i);
 		// memleak ?
+		break;
 	}
 	actPlayer->setReady (false);
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
@@ -3626,7 +3647,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	assert (message->iType == MU_MSG_GO);
 
 	saveOptions();
-	for (unsigned int i = 0; i < players.size(); i++)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		cPlayer* player = new cPlayer (players[i]->getsPlayer());
 		gameDataContainer.players.push_back (player);
@@ -3856,7 +3877,7 @@ cLoadMenu::~cLoadMenu()
 //------------------------------------------------------------------------------
 void cLoadMenu::loadSaves()
 {
-	for (unsigned int i = 0; i < files->size(); i++)
+	for (size_t i = 0; i != files->size(); ++i)
 	{
 		// only check for xml files and numbers for this offset
 		string const& file = (*files) [i];
@@ -3920,7 +3941,7 @@ void cLoadMenu::loadReleased (void* parent)
 {
 	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
 	sSaveFile* savefile = NULL;
-	for (unsigned int i = 0; i < menu->savefiles.size(); i++)
+	for (size_t i = 0; i != menu->savefiles.size(); ++i)
 	{
 		if (menu->savefiles[i]->number == menu->selected + 1)
 		{
@@ -4043,7 +4064,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 
 	delete menu->files;
 	menu->files = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
-	for (unsigned int i = 0; i < menu->savefiles.size(); i++)
+	for (size_t i = 0; i != menu->savefiles.size(); ++i)
 	{
 		if (menu->savefiles[i]->number == menu->selected + 1)
 		{
@@ -4307,7 +4328,7 @@ void cVehiclesBuildMenu::handleDestroyUnit (cUnit& destroyedUnit)
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::createBuildList()
 {
-	for (unsigned int i = 0; i < building->BuildList->size(); i++)
+	for (size_t i = 0; i != building->BuildList->size(); ++i)
 	{
 		secondList->addUnit ((*building->BuildList) [i]->type, building->owner, NULL, true, false);
 		secondList->getItem (secondList->getSize() - 1)->setResValue ( (*building->BuildList) [i]->metall_remaining, false);
@@ -4984,7 +5005,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 	bool isBig = menu->unitData.isBig;
 	const cMap& map = *menu->client->getMap();
 
-	for (unsigned int i = 0; i < menu->storageList.size(); i++)
+	for (size_t i = 0; i != menu->storageList.size(); ++i)
 	{
 		cVehicle* vehicle = menu->storageList[i];
 		bool activated = false;
@@ -5021,7 +5042,7 @@ void cStorageMenu::reloadAllReleased (void* parent)
 	menu->voiceTypeAll = true;
 	menu->voicePlayed = false;
 	int resources = menu->metalValue;
-	for (unsigned int i = 0; i < menu->storageList.size(); i++)
+	for (size_t i = 0; i != menu->storageList.size(); ++i)
 	{
 		if (resources < 1) break;
 		cVehicle* vehicle = menu->storageList[i];
@@ -5042,7 +5063,7 @@ void cStorageMenu::repairAllReleased (void* parent)
 	menu->voiceTypeAll = true;
 	menu->voicePlayed = false;
 	int resources = menu->metalValue;
-	for (unsigned int i = 0; i < menu->storageList.size(); i++)
+	for (size_t i = 0; i != menu->storageList.size(); ++i)
 	{
 		if (resources < 1) break;
 		cVehicle* vehicle = menu->storageList[i];
@@ -5407,7 +5428,8 @@ cReportsMenu::cReportsMenu (cClient& client_)
 	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton);
 
-	// its important that the screen will be added before the up and down buttons
+	// it's important that the screen will be added
+	// before the up and down buttons
 	dataScreen = new cMenuReportsScreen (position.x + 7, position.y + 6, 479, 467, *client, this);
 	menuItems.push_back (dataScreen);
 

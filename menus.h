@@ -61,7 +61,7 @@ struct sClientLandData
 	eLandingState landingState;
 	bool receivedOK;
 
-	sClientLandData() : iLandX (0), iLandY (0), iLastLandX (0), iLastLandY (0), landingState (LANDING_STATE_UNKNOWN), receivedOK (true) {}
+	sClientLandData() : iLandX (0), iLandY (0), iLastLandX (0), iLastLandY (0), landingState (LANDING_STATE_UNKNOWN), receivedOK (false) {}
 };
 
 enum eSettingResourceValue
@@ -179,7 +179,7 @@ public:
 	/** list with the selected landing units by each player*/
 	std::vector<std::vector<sLandingUnit>*> landingUnits;
 	/** the client landing data (landing positions) of the players*/
-	std::vector<sClientLandData*> landData;
+	std::vector<sClientLandData> landData;
 	/** indicates, whether all players have landed */
 	bool allLanded;
 
@@ -215,6 +215,9 @@ public:
 
 	cEventHandling& getEventHandler() { return *eventHandler; }
 private:
+
+	cPlayer* findPlayerByNr (int nr);
+
 	/** checks whether the landing positions are okay
 	 *@author alzi
 	 */

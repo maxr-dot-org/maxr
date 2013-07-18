@@ -2185,12 +2185,12 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 }
 
 //------------------------------------------------------------------------------
-void cServer::placeInitialResources (const std::vector<sClientLandData*>& landData, const sSettings& settings)
+void cServer::placeInitialResources (std::vector<sClientLandData>& landData, const sSettings& settings)
 {
 	for (size_t i = 0; i != landData.size(); ++i)
 	{
-		correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
-		Map->placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings.resFrequency);
+		correctLandingPos (landData[i].iLandX, landData[i].iLandY);
+		Map->placeRessourcesAddPlayer (landData[i].iLandX, landData[i].iLandY, settings.resFrequency);
 	}
 	Map->placeRessources (settings.metal, settings.oil, settings.gold);
 }
@@ -2208,6 +2208,22 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const s
 		}
 	}
 	return NULL;
+}
+
+//------------------------------------------------------------------------------
+void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
+							const std::vector<std::vector<sLandingUnit>*>& landingUnits,
+							const sSettings& settings)
+{
+	const bool fixed = settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+	{
+		const int x = landPos[i].iLandX;
+		const int y = landPos[i].iLandY;
+		cPlayer* player = (*PlayerList) [i];
+
+		makeLanding (x, y, player, *landingUnits[i], fixed);
+	}
 }
 
 //------------------------------------------------------------------------------
