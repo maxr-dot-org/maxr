@@ -255,14 +255,49 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (!gameInfoNode) return;
 
 	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
+
+	sSettings gameSetting;
+
 	if (XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
-		server.bPlayTurns = true;
+		gameSetting.gameType = SETTINGS_GAMETYPE_TURNS;
 		server.iActiveTurnPlayerNr = element->IntAttribute ("activeplayer");
 	}
+#if 1 // old format
+	int turnLimit = 0;
+	int scoreLimit = 0;
+	if (XMLElement* const e = gameInfoNode->FirstChildElement ("TurnLimit")) turnLimit = e->IntAttribute ("num");
+	if (XMLElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) scoreLimit = e->IntAttribute ("num");
 
-	if (XMLElement* const e = gameInfoNode->FirstChildElement ("TurnLimit"))  server.turnLimit  = e->IntAttribute ("num");
-	if (XMLElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) server.scoreLimit = e->IntAttribute ("num");
+	if (turnLimit != 0)
+	{
+		gameSetting.victoryType = SETTINGS_VICTORY_TURNS;
+		gameSetting.duration = (eSettingsDuration) turnLimit;
+	}
+	else if (scoreLimit != 0)
+	{
+		gameSetting.victoryType = SETTINGS_VICTORY_POINTS;
+		gameSetting.duration = (eSettingsDuration) scoreLimit;
+	}
+	else
+	{
+		gameSetting.victoryType = SETTINGS_VICTORY_ANNIHILATION;
+	}
+#endif
+
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Metal")) gameSetting.metal = (eSettingResourceValue) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Oil")) gameSetting.oil = (eSettingResourceValue) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Gold")) gameSetting.gold = (eSettingResourceValue) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("ResFrequency")) gameSetting.resFrequency = (eSettingResFrequency) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.credits = (eSettingsCredits) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.bridgeHead = (eSettingsBridgeHead) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("AlienTech")) gameSetting.alienTech = (eSettingsAlienTech) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.clans = (eSettingsClans) e->IntAttribute ("num");
+	//if (XMLElement* e = gameInfoNode->FirstChildElement ("GameType")) gameSetting.gameType = (eSettingsGameType) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType")) gameSetting.victoryType = (eSettingsVictoryType) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.duration = (eSettingsDuration) e->IntAttribute ("num");
+
+	server.gameSetting = new sSettings (gameSetting);
 }
 
 //--------------------------------------------------------------------------
@@ -1112,13 +1147,23 @@ void cSavegame::writeHeader (const cServer& server, const string& saveName)
 //--------------------------------------------------------------------------
 void cSavegame::writeGameInfo (const cServer& server)
 {
-	XMLElement* gemeinfoNode = addMainElement (SaveFile.RootElement(), "Game");
+	XMLElement* gameinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
-	addAttributeElement (gemeinfoNode, "Turn", "num", iToStr (server.iTurn));
-	if (server.bPlayTurns) addAttributeElement (gemeinfoNode, "PlayTurns", "activeplayer", iToStr (server.iActiveTurnPlayerNr));
+	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.iTurn));
+	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.iActiveTurnPlayerNr));
 
-	addAttributeElement (gemeinfoNode, "TurnLimit", "num", iToStr (server.turnLimit));
-	addAttributeElement (gemeinfoNode, "ScoreLimit", "num", iToStr (server.scoreLimit));
+	const sSettings& gameSetting = *server.getGameSettings();
+	addAttributeElement (gameinfoNode, "Metal", "num", iToStr (gameSetting.metal));
+	addAttributeElement (gameinfoNode, "Oil", "num", iToStr (gameSetting.oil));
+	addAttributeElement (gameinfoNode, "Gold", "num", iToStr (gameSetting.gold));
+	addAttributeElement (gameinfoNode, "ResFrequency", "num", iToStr (gameSetting.resFrequency));
+	addAttributeElement (gameinfoNode, "Credits", "num", iToStr (gameSetting.credits));
+	addAttributeElement (gameinfoNode, "BridgeHead", "num", iToStr (gameSetting.bridgeHead));
+	addAttributeElement (gameinfoNode, "AlienTech", "num", iToStr (gameSetting.alienTech));
+	addAttributeElement (gameinfoNode, "Clan", "num", iToStr (gameSetting.clans));
+	//addAttributeElement (gameinfoNode, "GameType", "num", iToStr (gameSetting.gameType));
+	addAttributeElement (gameinfoNode, "VictoryType", "num", iToStr (gameSetting.victoryType));
+	addAttributeElement (gameinfoNode, "Duration", "num", iToStr (gameSetting.duration));
 }
 
 //--------------------------------------------------------------------------

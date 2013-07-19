@@ -176,9 +176,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		server->setMap (*serverMap);
 		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
-		// send victory conditions to clients
-		for (size_t i = 0; i != players.size(); ++i)
-			sendVictoryConditions (*server, *players[i]);
 
 		// place resources
 		server->placeInitialResources (landData, *settings);
@@ -191,6 +188,9 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	if (isServer)
 	{
+		// send victory conditions to clients
+		for (size_t i = 0; i != players.size(); ++i)
+			sendGameSettings (*server, *players[i]);
 		// send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
 			sendClansToClients (*server, players);

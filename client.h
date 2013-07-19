@@ -43,6 +43,7 @@ class cPlayer;
 class cServer;
 class cStaticMap;
 class cTCP;
+struct sSettings;
 struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -172,8 +173,6 @@ public:
 	void destroyUnit (cVehicle* vehicle);
 	void destroyUnit (cBuilding* building);
 
-	int getTurnLimit() const { return turnLimit; }
-	int getScoreLimit() const { return scoreLimit; }
 	int getTurn() const;
 	unsigned int getRemainingTimeInSecond() const;
 	unsigned int getElapsedTimeInSecond() const;
@@ -189,6 +188,7 @@ public:
 	cPlayer* getActivePlayer() { return ActivePlayer; }
 	const cGameGUI& getGameGUI() const { return *gameGUI; }
 	cGameGUI& getGameGUI() { return *gameGUI; }
+	const sSettings* getGameSetting() const { return gameSetting; }
 private:
 	/**
 	* adds the unit to the map and player.
@@ -282,7 +282,7 @@ private:
 	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
@@ -310,9 +310,8 @@ private:
 	unsigned int iEndTurnTime;
 	/** serverTime when the TurnTime has been started */
 	unsigned int iStartTurnTime;
-	/** this client's copy of the victory conditions **/
-	int turnLimit;
-	int scoreLimit;
+	/** this client's copy of the gameSettings **/
+	AutoPtr<const sSettings> gameSetting;
 
 	cCasualtiesTracker* casualtiesTracker;
 

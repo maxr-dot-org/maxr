@@ -100,9 +100,6 @@ cServer::cServer (cTCP* network_)
 	, executingRemainingMovements (false)
 	, casualtiesTracker (0)
 {
-	this->turnLimit = 0;
-	this->scoreLimit = 0;
-	this->bPlayTurns = false;
 	Map = NULL;
 	this->PlayerList = NULL;
 	bExit = false;
@@ -182,27 +179,22 @@ void cServer::setPlayers (std::vector<cPlayer*>* playerList_)
 }
 
 //------------------------------------------------------------------------------
-void cServer::setGameSettings (const sSettings& gameSettings)
+void cServer::setGameSettings (const sSettings& gameSettings_)
 {
-	this->bPlayTurns = gameSettings.gameType == SETTINGS_GAMETYPE_TURNS;
-	this->turnLimit = 0;
-	this->scoreLimit = 0;
-	switch (gameSettings.victoryType)
-	{
-		case SETTINGS_VICTORY_TURNS: turnLimit = gameSettings.duration; break;
-		case SETTINGS_VICTORY_POINTS: scoreLimit = gameSettings.duration; break;
-		case SETTINGS_VICTORY_ANNIHILATION: break;
-		default: assert (0);
-	}
+	gameSetting = new sSettings (gameSettings_);
+}
 
-	assert (turnLimit == 0 || scoreLimit == 0);
+//------------------------------------------------------------------------------
+bool cServer::isTurnBasedGame() const
+{
+	return gameSetting->gameType == SETTINGS_GAMETYPE_TURNS;
 }
 
 //------------------------------------------------------------------------------
 eGameTypes cServer::getGameType() const
 {
 	if (network) return GAME_TYPE_TCPIP;
-	if (PlayerList->size() > 1 && bPlayTurns) return GAME_TYPE_HOTSEAT;
+	if (PlayerList->size() > 1 && isTurnBasedGame()) return GAME_TYPE_HOTSEAT;
 	return GAME_TYPE_SINGLE;
 }
 
@@ -389,7 +381,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_TO_END_TURN);
 
-	if (bPlayTurns)
+	if (isTurnBasedGame())
 	{
 		const cPlayer* Player = getPlayerFromNumber (message.iPlayerNr);
 		if ( (*PlayerList) [iActiveTurnPlayerNr] != Player) return;
@@ -1459,7 +1451,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	}
 	DisconnectedPlayerList.clear();
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
+	if (isTurnBasedGame()) sendWaitFor (*this, iActiveTurnPlayerNr);
 }
 
 //------------------------------------------------------------------------------
@@ -1502,7 +1494,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 	resyncPlayer (Player);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
+	if (isTurnBasedGame()) sendWaitFor (*this, iActiveTurnPlayerNr);
 }
 
 //------------------------------------------------------------------------------
@@ -2711,9 +2703,9 @@ void cServer::handleEnd (int iPlayerNum)
 		iTurn++;
 		makeTurnEnd();
 	}
-	else if (gameType == GAME_TYPE_HOTSEAT || bPlayTurns)
+	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
 	{
-		const bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && bPlayTurns);
+		const bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && isTurnBasedGame());
 		if (checkEndActions (iPlayerNum))
 		{
 			iWantPlayerEndNum = iPlayerNum;
@@ -3043,69 +3035,94 @@ void cServer::makeTurnEnd()
 }
 
 //------------------------------------------------------------------------------
+bool cServer::isVictoryConditionMet() const
+{
+	switch (gameSetting->victoryType)
+	{
+		case SETTINGS_VICTORY_TURNS: return iTurn >= gameSetting->duration;
+		case SETTINGS_VICTORY_POINTS:
+		{
+			for (size_t i = 0; i != PlayerList->size(); ++i)
+			{
+				const cPlayer& player = *(*PlayerList) [i];
+				if (player.isDefeated) continue;
+				if (player.getScore (iTurn) >= gameSetting->duration) return true;
+			}
+			return false;
+		}
+		case SETTINGS_VICTORY_ANNIHILATION:
+		{
+			int nbActivePlayer = 0;
+			for (size_t i = 0; i != PlayerList->size(); ++i)
+			{
+				const cPlayer& player = *(*PlayerList) [i];
+				if (player.isDefeated) continue;
+				++nbActivePlayer;
+				if (nbActivePlayer >= 2) return false;
+			}
+			return nbActivePlayer == 1;
+		}
+	}
+	assert (0);
+	return false;
+}
+
+//------------------------------------------------------------------------------
+void cServer::defeatLoserPlayers()
+{
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+	{
+		cPlayer& player = *(*PlayerList) [i];
+		if (player.isDefeated) continue;
+		if (player.mayHaveOffensiveUnit()) continue;
+
+		player.isDefeated = true;
+		sendDefeated (*this, player);
+		if (openMapDefeat == false)
+
+		player.revealMap();
+		checkPlayerUnits();
+		sendNoFog (*this, player.getNr());
+	}
+}
+
+//------------------------------------------------------------------------------
 void cServer::checkDefeats()
 {
+	defeatLoserPlayers();
+	if (isVictoryConditionMet() == false) return;
+
 	std::set<cPlayer*> winners;
-	std::set<cPlayer*> losers;
-	int best_score = 0;
+	int best_score = -1;
 
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
 		cPlayer& player = *(*PlayerList) [i];
-		if (player.isDefeated)
-		{
-			continue;
-		}
+		if (player.isDefeated) continue;
 		const int score = player.getScore (iTurn);
-		if ( (scoreLimit && score >= scoreLimit) ||
-			 (turnLimit && iTurn >= turnLimit))
-		{
-			if (score >= best_score)
-			{
-				if (score > best_score)
-				{
-					winners.clear();
-					best_score = score;
-				}
-				winners.insert (&player);
-			}
-		}
 
-		cVehicle* vehicle = player.VehicleList;
-		for (; vehicle; vehicle = vehicle->next)
-		{
-			if (vehicle->data.canAttack || !vehicle->data.canBuild.empty()) break;
-		}
-		if (vehicle != NULL) continue;
-		cBuilding* building = player.BuildingList;
-		for (; building; building = building->next)
-		{
-			if (building->data.canAttack || !building->data.canBuild.empty()) break;
-		}
-		if (building != NULL) continue;
+		if (score < best_score) continue;
 
-		losers.insert (&player);
+		if (score > best_score)
+		{
+			winners.clear();
+			best_score = score;
+		}
+		winners.insert (&player);
 	}
 
-	// If some players have won, anyone who hasn't won has lost.
-	if (!winners.empty())
-		for (size_t i = 0; i != PlayerList->size(); ++i)
-		{
-			cPlayer& player = *(*PlayerList) [i];
-
-			if (winners.find (&player) == winners.end())
-				losers.insert (&player);
-		}
-
-	// Defeat all players who have lost.
-	for (std::set<cPlayer*>::iterator i = losers.begin(); i != losers.end(); ++i)
+	// anyone who hasn't won has lost.
+	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = **i;
+		cPlayer& player = *(*PlayerList) [i];
+
+		if (player.isDefeated) continue;
+		if (winners.find (&player) != winners.end()) continue;
 
 		player.isDefeated = true;
 		sendDefeated (*this, player);
 
-		if (openMapDefeat && player.getSocketNum() != -1)
+		if (openMapDefeat)
 		{
 			player.revealMap();
 			checkPlayerUnits();
@@ -3122,6 +3139,7 @@ void cServer::checkDefeats()
 		for (size_t i = 0; i != PlayerList->size(); ++i)
 			sendChatMessageToClient (*this, "Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, i);
 	}
+	// TODO: send win message to the winner.
 }
 
 //------------------------------------------------------------------------------
@@ -3684,7 +3702,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendNumEcos (*this, subj, Player);
 	}
 
-	sendVictoryConditions (*this, *Player);
+	sendGameSettings (*this, *Player);
 
 	// send attackJobs
 	for (size_t i = 0; i != AJobs.size(); ++i)

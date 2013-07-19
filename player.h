@@ -162,6 +162,8 @@ public:
 
 	void refreshSentryAir();
 	void refreshSentryGround();
+
+	bool mayHaveOffensiveUnit() const;
 private:
 	/**
 	* draws a circle on the map for the fog

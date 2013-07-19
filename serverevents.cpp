@@ -436,14 +436,27 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 	}
 }
 
-void sendVictoryConditions (cServer& server, const cPlayer& receiver)
+void sendGameSettings (cServer& server, const cPlayer& receiver)
 {
-	const int turnLimit = server.getTurnLimit();
-	const int scoreLimit = server.getScoreLimit();
-	cNetMessage* msg = new cNetMessage (GAME_EV_VICTORY_CONDITIONS);
-	msg->pushInt16 (turnLimit);
-	msg->pushInt16 (scoreLimit);
-	server.sendNetMessage (msg, receiver.getNr());
+	cNetMessage* message = new cNetMessage (GAME_EV_GAME_SETTINGS);
+	const sSettings* gameSettings = server.getGameSettings();
+
+	if (gameSettings)
+	{
+		message->pushChar (gameSettings->gameType);
+		message->pushChar (gameSettings->clans);
+		message->pushChar (gameSettings->alienTech);
+		message->pushChar (gameSettings->bridgeHead);
+		message->pushInt16 (gameSettings->credits);
+		message->pushChar (gameSettings->resFrequency);
+		message->pushChar (gameSettings->gold);
+		message->pushChar (gameSettings->oil);
+		message->pushChar (gameSettings->metal);
+		message->pushChar (gameSettings->victoryType);
+		message->pushInt16 (gameSettings->duration);
+	}
+	message->pushBool (gameSettings != NULL);
+	server.sendNetMessage (message, receiver.getNr());
 }
 
 //------------------------------------------------------------------------------

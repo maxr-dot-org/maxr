@@ -84,8 +84,6 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	bWantToEnd = false;
 	iEndTurnTime = 0;
 	iStartTurnTime = 0;
-	scoreLimit = 0;
-	turnLimit = 0;
 
 	casualtiesTracker = new cCasualtiesTracker();
 
@@ -1731,12 +1729,29 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message)
 	b->points = message.popInt16();
 }
 
-void cClient::HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (cNetMessage& message)
+void cClient::HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message)
 {
-	assert (message.iType == GAME_EV_VICTORY_CONDITIONS);
+	assert (message.iType == GAME_EV_GAME_SETTINGS);
 
-	scoreLimit = message.popInt16();
-	turnLimit = message.popInt16();
+	if (message.popBool() == false)
+	{
+		gameSetting = NULL;
+		return;
+	}
+	sSettings* gameSettings_ = new sSettings();
+
+	gameSettings_->duration = (eSettingsDuration) message.popInt16 ();
+	gameSettings_->victoryType = (eSettingsVictoryType) message.popChar ();
+	gameSettings_->metal = (eSettingResourceValue) message.popChar ();
+	gameSettings_->oil = (eSettingResourceValue) message.popChar ();
+	gameSettings_->gold = (eSettingResourceValue) message.popChar ();
+	gameSettings_->resFrequency = (eSettingResFrequency) message.popChar ();
+	gameSettings_->credits = (eSettingsCredits) message.popInt16 ();
+	gameSettings_->bridgeHead = (eSettingsBridgeHead) message.popChar ();
+	gameSettings_->alienTech = (eSettingsAlienTech) message.popChar ();
+	gameSettings_->clans = (eSettingsClans) message.popChar ();
+	gameSettings_->gameType = (eSettingsGameType) message.popChar ();
+	gameSetting = gameSettings_;
 }
 
 void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
@@ -1844,7 +1859,7 @@ int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 		case GAME_EV_SCORE: HandleNetMessage_GAME_EV_SCORE (*message); break;
 		case GAME_EV_NUM_ECOS: HandleNetMessage_GAME_EV_NUM_ECOS (*message); break;
 		case GAME_EV_UNIT_SCORE: HandleNetMessage_GAME_EV_UNIT_SCORE (*message); break;
-		case GAME_EV_VICTORY_CONDITIONS: HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (*message); break;
+		case GAME_EV_GAME_SETTINGS: HandleNetMessage_GAME_EV_GAME_SETTINGS(*message); break;
 		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (*message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (*message); break;
 		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (*message); break;

@@ -19,6 +19,7 @@
 #ifndef serverH
 #define serverH
 #include <SDL.h>
+#include "autoptr.h"
 #include "defines.h"
 #include "gametimer.h"
 #include "jobs.h"
@@ -95,8 +96,6 @@ public:
 	void setDeadline (int iDeadline);
 	void stop();
 
-	int getTurnLimit() const { return turnLimit; }
-	int getScoreLimit() const { return scoreLimit; }
 	/** the type of the current game */
 	eGameTypes getGameType() const;
 
@@ -288,13 +287,16 @@ public:
 	void makeAdditionalSaveRequest (int saveNum);
 
 	int getTurn() const;
-
-	bool isTurnBasedGame() const { return bPlayTurns; }
+	const sSettings* getGameSettings() const { return gameSetting; }
+	bool isTurnBasedGame() const;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 
 private:
+	void defeatLoserPlayers();
+	bool isVictoryConditionMet() const;
+
 	/**
 	* returns a pointer to the next event of the eventqueue.
 	* If the queue is empty it will return NULL.
@@ -461,8 +463,6 @@ private:
 	int waitForPlayer;
 	/** list with buildings without owner, e.g. rubble fields */
 	cBuilding* neutralBuildings;
-	/** true if the game should be played in turns */
-	bool bPlayTurns;
 	/** number of active player in turn based multiplayer game */
 	int iActiveTurnPlayerNr;
 	/** a list with the numbers of all players who have ended their turn */
@@ -493,10 +493,7 @@ private:
 	 * before turn end is processed */
 	bool executingRemainingMovements;
 
-	/** victory conditions. One or both must be zero. **/
-	int turnLimit;
-	int scoreLimit;
-
+	AutoPtr<const sSettings> gameSetting;
 	cCasualtiesTracker* casualtiesTracker;
 	sFreezeModes freezeModes;
 public:

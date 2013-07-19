@@ -1939,8 +1939,8 @@ void cMenuUnitDetails::draw()
 	{
 		const int score = building->points;
 		const int tot = unit->owner->getScore (client->getTurn());
-		const int scoreLim = client->getScoreLimit();
-		const int lim = scoreLim ? scoreLim : tot;
+		const sSettings& gameSetting = *client->getGameSetting();
+		const int lim = (gameSetting.victoryType == SETTINGS_VICTORY_POINTS) ? gameSetting.duration : tot;
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE, buffer);
@@ -3766,23 +3766,29 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawScoreScreen()
 {
-	const int turnLimit = client->getTurnLimit();
-	const int scoreLimit = client->getScoreLimit();
 	{
+		const sSettings& gameSetting = *client->getGameSetting();
 		std::stringstream ss;
-		if (turnLimit)
+		switch (gameSetting.victoryType)
 		{
-			ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
-			   plural (turnLimit, "Text~Comp~Turn", "Text~Comp~Turns");
+			case SETTINGS_VICTORY_TURNS:
+			{
+				ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
+				   plural (gameSetting.duration, "Text~Comp~Turn", "Text~Comp~Turns");
+				break;
+			}
+			case SETTINGS_VICTORY_POINTS:
+			{
+				ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
+				   plural (gameSetting.duration, "Text~Comp~Point", "Text~Comp~Points");
+				break;
+			}
+			case SETTINGS_VICTORY_ANNIHILATION:
+			{
+				ss << lngPack.i18n ("Text~Comp~NoLimit");
+				break;
+			}
 		}
-		else if (scoreLimit)
-		{
-			ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
-			   plural (scoreLimit, "Text~Comp~Point", "Text~Comp~Points");
-		}
-		else
-			ss << lngPack.i18n ("Text~Comp~NoLimit");
-
 		font->showText (position.x + 25, position.y + 20, ss.str());
 	}
 
@@ -3867,24 +3873,31 @@ void cMenuReportsScreen::drawScoreGraph()
 	// Draw Limits
 	drawLine (buffer, now_x, y0, now_x, y1, limit_colour);
 
-	const int turn_lim = client->getTurnLimit();
-	const int points_lim = client->getScoreLimit();
+	const sSettings& gameSetting = *client->getGameSetting();
 
-	if (turn_lim && turn_lim > min_turns && turn_lim < max_turns)
+	if (gameSetting.victoryType == SETTINGS_VICTORY_TURNS)
 	{
-		const int x = x0 + (turn_lim - min_turns) * pix_per_turn;
+		const int turn_lim = gameSetting.duration;
 
-		drawLine (buffer, x, y0, x, y1, limit_colour);
-		font->showTextCentered (x, y1 + 8, iToStr (turn_lim), FONT_LATIN_SMALL_WHITE);
+		if (turn_lim && turn_lim > min_turns && turn_lim < max_turns)
+		{
+			const int x = x0 + (turn_lim - min_turns) * pix_per_turn;
+
+			drawLine (buffer, x, y0, x, y1, limit_colour);
+			font->showTextCentered (x, y1 + 8, iToStr (turn_lim), FONT_LATIN_SMALL_WHITE);
+		}
 	}
-	if (points_lim && points_lim > min_points && points_lim < max_points)
+	else if (gameSetting.victoryType == SETTINGS_VICTORY_POINTS)
 	{
-		const int y = y1 - (int) ( (points_lim - min_points) * pix_per_point);
+		const int points_lim = gameSetting.duration;
+		if (points_lim > min_points && points_lim < max_points)
+		{
+			const int y = y1 - (int) ( (points_lim - min_points) * pix_per_point);
 
-		drawLine (buffer, x0, y, x1, y, limit_colour);
-		font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
+			drawLine (buffer, x0, y, x1, y, limit_colour);
+			font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
+		}
 	}
-
 	// Draw Labels
 	int my = y1 - (int) ( (max_points - min_points) * pix_per_point);
 

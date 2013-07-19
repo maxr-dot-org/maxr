@@ -892,6 +892,22 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 }
 
 //------------------------------------------------------------------------------
+bool cPlayer::mayHaveOffensiveUnit() const
+{
+	const cVehicle* vehicle = VehicleList;
+	for (; vehicle; vehicle = vehicle->next)
+	{
+		if (vehicle->data.canAttack || !vehicle->data.canBuild.empty()) return true;
+	}
+	const cBuilding* building = BuildingList;
+	for (; building; building = building->next)
+	{
+		if (building->data.canAttack || !building->data.canBuild.empty()) return true;
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
 void cPlayer::deleteLock (cUnit& unit)
 {
 	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);
