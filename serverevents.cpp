@@ -454,6 +454,7 @@ void sendGameSettings (cServer& server, const cPlayer& receiver)
 		message->pushChar (gameSettings->metal);
 		message->pushChar (gameSettings->victoryType);
 		message->pushInt16 (gameSettings->duration);
+		message->pushInt16 (gameSettings->iTurnDeadline);
 	}
 	message->pushBool (gameSettings != NULL);
 	server.sendNetMessage (message, receiver.getNr());

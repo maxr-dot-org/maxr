@@ -333,7 +333,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					}
 					else
 					{
-						gameData->settings->credits = (eSettingsCredits) credits;
+						gameData->settings->credits = credits;
 						sendGameData (*network, *gameData, "");
 						string reply = senderPlayer->getName();
 						reply += " changed the starting credits.";

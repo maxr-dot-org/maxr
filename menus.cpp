@@ -1187,17 +1187,30 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	menuItems.push_back (creditsLabel);
 	iCurrentLine += iLineHeight;
 	creditsGroup = new cMenuRadioGroup();
-	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~None") + " (" + iToStr (SETTING_CREDITS_LOWEST) + ")", settings.credits == SETTING_CREDITS_LOWEST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	iCurrentLine += iLineHeight;
-	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Lower") + " (" + iToStr (SETTING_CREDITS_LOWER) + ")", settings.credits == SETTING_CREDITS_LOWER, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	iCurrentLine += iLineHeight;
-	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low") + " (" + iToStr (SETTING_CREDITS_LOW) + ")", settings.credits == SETTING_CREDITS_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	iCurrentLine += iLineHeight;
-	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal") + " (" + iToStr (SETTING_CREDITS_NORMAL) + ")", settings.credits == SETTING_CREDITS_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	iCurrentLine += iLineHeight;
-	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much") + " (" + iToStr (SETTING_CREDITS_MUCH) + ")", settings.credits == SETTING_CREDITS_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	iCurrentLine += iLineHeight;
-	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~More") + " (" + iToStr (SETTING_CREDITS_MORE) + ")", settings.credits == SETTING_CREDITS_MORE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	struct
+	{
+		const char* text;
+		unsigned int value;
+	} creditData[] =
+	{
+		{"Text~Option~None", SETTING_CREDITS_LOWEST},
+		{"Text~Option~Lower", SETTING_CREDITS_LOWER},
+		{"Text~Option~Low", SETTING_CREDITS_LOW},
+		{"Text~Option~Normal", SETTING_CREDITS_NORMAL},
+		{"Text~Option~Much", SETTING_CREDITS_MUCH},
+		{"Text~Option~More", SETTING_CREDITS_MORE}
+	};
+
+	for (int i = 0; i != sizeof (creditData) / sizeof (*creditData); ++i)
+	{
+		const unsigned int x = position.x + 140;
+		const unsigned int y = position.y + iCurrentLine;
+		const unsigned int value = creditData[i].value;
+		const std::string text = lngPack.i18n (creditData[i].text)+ " (" + iToStr (value) + ")";
+		const bool checked = settings.credits == value;
+		creditsGroup->addButton (new cMenuCheckButton (x, y, text, checked, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+		iCurrentLine += iLineHeight;
+	}
 	menuItems.push_back (creditsGroup);
 
 	iCurrentLine = tmpLine;
@@ -1312,6 +1325,9 @@ void cSettingsMenu::updateSettings()
 			break;
 		}
 	}
+	// TODO:
+	// turnLimit/ScoreLimit may be handed filled
+	// some others parameters are missing (max time of a turn, ...)
 }
 
 //------------------------------------------------------------------------------
@@ -3551,17 +3567,18 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 		if (!gameDataContainer.settings) gameDataContainer.settings = new sSettings;
 		sSettings* settings = gameDataContainer.settings;
 
-		settings->duration = (eSettingsDuration) message->popInt16();
+		settings->duration = message->popInt16();
 		settings->victoryType = (eSettingsVictoryType) message->popChar();
 		settings->metal = (eSettingResourceValue) message->popChar();
 		settings->oil = (eSettingResourceValue) message->popChar();
 		settings->gold = (eSettingResourceValue) message->popChar();
 		settings->resFrequency = (eSettingResFrequency) message->popChar();
-		settings->credits = (eSettingsCredits) message->popInt16();
+		settings->credits = message->popInt16();
 		settings->bridgeHead = (eSettingsBridgeHead) message->popChar();
 		settings->alienTech = (eSettingsAlienTech) message->popChar();
 		settings->clans = (eSettingsClans) message->popChar();
 		settings->gameType = (eSettingsGameType) message->popChar();
+		settings->iTurnDeadline = message->popInt16();
 	}
 	else
 	{

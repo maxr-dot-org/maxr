@@ -109,7 +109,6 @@ cServer::cServer (cTCP* network_)
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
-	iTurnDeadline = 90; // just temporary set to 90 seconds
 	iNextUnitID = 1;
 	iWantPlayerEndNum = -1;
 	savingID = 0;
@@ -217,7 +216,7 @@ void cServer::stop()
 //------------------------------------------------------------------------------
 void cServer::setDeadline (int iDeadline)
 {
-	iTurnDeadline = iDeadline;
+	gameSetting->iTurnDeadline = iDeadline;
 }
 
 //------------------------------------------------------------------------------
@@ -2780,7 +2779,7 @@ void cServer::handleEnd (int iPlayerNum)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.size() == 0))
 			{
-				sendTurnFinished (*this, iPlayerNum, 100 * iTurnDeadline);
+				sendTurnFinished (*this, iPlayerNum, 100 * gameSetting->iTurnDeadline);
 				iDeadlineStartTime = gameTimer.gameTime;
 			}
 			else
@@ -3184,9 +3183,9 @@ void cServer::addReport (sID id, int iPlayerNum)
 void cServer::checkDeadline()
 {
 	if (!gameTimer.timer50ms) return;
-	if (iTurnDeadline < 0 || iDeadlineStartTime <= 0) return;
+	if (gameSetting->iTurnDeadline < 0 || iDeadlineStartTime <= 0) return;
 
-	if (gameTimer.gameTime <= iDeadlineStartTime + iTurnDeadline * 100) return;
+	if (gameTimer.gameTime <= iDeadlineStartTime + gameSetting->iTurnDeadline * 100) return;
 
 	if (checkEndActions (-1))
 	{
@@ -3642,7 +3641,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendClansToClients (*this, *PlayerList);
 	}
 	sendTurn (*this, iTurn, lastTurnEnd, *Player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * iTurnDeadline - (gameTimer.gameTime - iDeadlineStartTime), Player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->iTurnDeadline - (gameTimer.gameTime - iDeadlineStartTime), Player);
 	sendResources (*this, *Player);
 
 	// send all units to the client

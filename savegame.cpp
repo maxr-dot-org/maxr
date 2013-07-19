@@ -272,12 +272,12 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (turnLimit != 0)
 	{
 		gameSetting.victoryType = SETTINGS_VICTORY_TURNS;
-		gameSetting.duration = (eSettingsDuration) turnLimit;
+		gameSetting.duration = turnLimit;
 	}
 	else if (scoreLimit != 0)
 	{
 		gameSetting.victoryType = SETTINGS_VICTORY_POINTS;
-		gameSetting.duration = (eSettingsDuration) scoreLimit;
+		gameSetting.duration = scoreLimit;
 	}
 	else
 	{
@@ -289,13 +289,14 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Oil")) gameSetting.oil = (eSettingResourceValue) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Gold")) gameSetting.gold = (eSettingResourceValue) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("ResFrequency")) gameSetting.resFrequency = (eSettingResFrequency) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.credits = (eSettingsCredits) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.credits = e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.bridgeHead = (eSettingsBridgeHead) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("AlienTech")) gameSetting.alienTech = (eSettingsAlienTech) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.clans = (eSettingsClans) e->IntAttribute ("num");
 	//if (XMLElement* e = gameInfoNode->FirstChildElement ("GameType")) gameSetting.gameType = (eSettingsGameType) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType")) gameSetting.victoryType = (eSettingsVictoryType) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.duration = (eSettingsDuration) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.duration = e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadLine")) gameSetting.iTurnDeadline = e->IntAttribute ("num");
 
 	server.gameSetting = new sSettings (gameSetting);
 }
@@ -1164,6 +1165,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 	//addAttributeElement (gameinfoNode, "GameType", "num", iToStr (gameSetting.gameType));
 	addAttributeElement (gameinfoNode, "VictoryType", "num", iToStr (gameSetting.victoryType));
 	addAttributeElement (gameinfoNode, "Duration", "num", iToStr (gameSetting.duration));
+	addAttributeElement (gameinfoNode, "TurnDeadLine", "num", iToStr (gameSetting.iTurnDeadline));
 }
 
 //--------------------------------------------------------------------------

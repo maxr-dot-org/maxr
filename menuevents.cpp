@@ -79,6 +79,7 @@ void sendGameData (cTCP& network, const cGameDataContainer& gameData, const stri
 
 	if (gameData.settings)
 	{
+		message->pushInt16 (gameData.settings->iTurnDeadline);
 		message->pushChar (gameData.settings->gameType);
 		message->pushChar (gameData.settings->clans);
 		message->pushChar (gameData.settings->alienTech);

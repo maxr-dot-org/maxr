@@ -469,8 +469,6 @@ private:
 	std::vector<cPlayer*> PlayerEndList;
 	/** number of current turn */
 	int iTurn;
-	/** deadline in seconds if the first player has finished his turn*/
-	int iTurnDeadline;
 	/** gametime when the deadline has been initialised*/
 	unsigned int iDeadlineStartTime;
 	/** stores the gametime of the last turn end. */
@@ -493,7 +491,7 @@ private:
 	 * before turn end is processed */
 	bool executingRemainingMovements;
 
-	AutoPtr<const sSettings> gameSetting;
+	AutoPtr<sSettings> gameSetting;
 	cCasualtiesTracker* casualtiesTracker;
 	sFreezeModes freezeModes;
 public:

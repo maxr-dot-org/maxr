@@ -136,17 +136,19 @@ struct sSettings
 {
 	eSettingResourceValue metal, oil, gold;
 	eSettingResFrequency resFrequency;
-	eSettingsCredits credits;
+	unsigned int credits;
 	eSettingsBridgeHead bridgeHead;
 	eSettingsAlienTech alienTech;
 	eSettingsClans clans;
 	eSettingsGameType gameType;
 	eSettingsVictoryType victoryType;
-	eSettingsDuration duration;
+	int duration;
+	/** deadline in seconds when the first player has finished his turn */
+	int iTurnDeadline;
 
 	sSettings() : metal (SETTING_RESVAL_NORMAL), oil (SETTING_RESVAL_NORMAL), gold (SETTING_RESVAL_NORMAL), resFrequency (SETTING_RESFREQ_NORMAL), credits (SETTING_CREDITS_NORMAL),
 		bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech (SETTING_ALIENTECH_OFF), clans (SETTING_CLANS_ON), gameType (SETTINGS_GAMETYPE_SIMU), victoryType (SETTINGS_VICTORY_POINTS),
-		duration (SETTINGS_DUR_MEDIUM) {}
+		duration (SETTINGS_DUR_MEDIUM), iTurnDeadline (90) {}
 
 	std::string getResValString (eSettingResourceValue type) const;
 	std::string getResFreqString() const;

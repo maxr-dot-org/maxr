@@ -1740,13 +1740,14 @@ void cClient::HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message)
 	}
 	sSettings* gameSettings_ = new sSettings();
 
-	gameSettings_->duration = (eSettingsDuration) message.popInt16 ();
+	gameSettings_->iTurnDeadline = message.popInt16();
+	gameSettings_->duration = message.popInt16 ();
 	gameSettings_->victoryType = (eSettingsVictoryType) message.popChar ();
 	gameSettings_->metal = (eSettingResourceValue) message.popChar ();
 	gameSettings_->oil = (eSettingResourceValue) message.popChar ();
 	gameSettings_->gold = (eSettingResourceValue) message.popChar ();
 	gameSettings_->resFrequency = (eSettingResFrequency) message.popChar ();
-	gameSettings_->credits = (eSettingsCredits) message.popInt16 ();
+	gameSettings_->credits = message.popInt16 ();
 	gameSettings_->bridgeHead = (eSettingsBridgeHead) message.popChar ();
 	gameSettings_->alienTech = (eSettingsAlienTech) message.popChar ();
 	gameSettings_->clans = (eSettingsClans) message.popChar ();
