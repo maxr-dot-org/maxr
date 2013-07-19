@@ -81,28 +81,30 @@ bool cMouse::SetCursor (eCursor const typ)
 	switch (typ)
 	{
 		default:
-		case CHand:     cur = GraphicsData.gfx_Chand;     break;
-		case CNo:       cur = GraphicsData.gfx_Cno;       break;
-		case CSelect:   cur = GraphicsData.gfx_Cselect;   break;
-		case CMove:     cur = GraphicsData.gfx_Cmove;     break;
-		case CPfeil1:   cur = GraphicsData.gfx_Cpfeil1;   break;
-		case CPfeil2:   cur = GraphicsData.gfx_Cpfeil2;   break;
-		case CPfeil3:   cur = GraphicsData.gfx_Cpfeil3;   break;
-		case CPfeil4:   cur = GraphicsData.gfx_Cpfeil4;   break;
-		case CPfeil6:   cur = GraphicsData.gfx_Cpfeil6;   break;
-		case CPfeil7:   cur = GraphicsData.gfx_Cpfeil7;   break;
-		case CPfeil8:   cur = GraphicsData.gfx_Cpfeil8;   break;
-		case CPfeil9:   cur = GraphicsData.gfx_Cpfeil9;   break;
-		case CHelp:     cur = GraphicsData.gfx_Chelp;     break;
-		case CAttack:   cur = GraphicsData.gfx_Cattack;   break;
-		case CBand:     cur = GraphicsData.gfx_Cband;     break;
-		case CTransf:   cur = GraphicsData.gfx_Ctransf;   break;
-		case CLoad:     cur = GraphicsData.gfx_Cload;     break;
-		case CMuni:     cur = GraphicsData.gfx_Cmuni;     break;
-		case CRepair:   cur = GraphicsData.gfx_Crepair;   break;
-		case CSteal:    cur = GraphicsData.gfx_Csteal;    break;
-		case CDisable:  cur = GraphicsData.gfx_Cdisable;  break;
-		case CActivate: cur = GraphicsData.gfx_Cactivate; break;
+		case CHand:      cur = GraphicsData.gfx_Chand;       break;
+		case CNo:        cur = GraphicsData.gfx_Cno;         break;
+		case CSelect:    cur = GraphicsData.gfx_Cselect;     break;
+		case CMove:      cur = GraphicsData.gfx_Cmove;       break;
+		case CMoveDraft: cur = GraphicsData.gfx_Cmove_draft; break;
+		case CPfeil1:    cur = GraphicsData.gfx_Cpfeil1;     break;
+		case CPfeil2:    cur = GraphicsData.gfx_Cpfeil2;     break;
+		case CPfeil3:    cur = GraphicsData.gfx_Cpfeil3;     break;
+		case CPfeil4:    cur = GraphicsData.gfx_Cpfeil4;     break;
+		case CPfeil6:    cur = GraphicsData.gfx_Cpfeil6;     break;
+		case CPfeil7:    cur = GraphicsData.gfx_Cpfeil7;     break;
+		case CPfeil8:    cur = GraphicsData.gfx_Cpfeil8;     break;
+		case CPfeil9:    cur = GraphicsData.gfx_Cpfeil9;     break;
+		case CHelp:      cur = GraphicsData.gfx_Chelp;       break;
+		case CAttack:    cur = GraphicsData.gfx_Cattack;     break;
+		case CAttackOOR: cur = GraphicsData.gfx_Cattackoor;  break;
+		case CBand:      cur = GraphicsData.gfx_Cband;       break;
+		case CTransf:    cur = GraphicsData.gfx_Ctransf;     break;
+		case CLoad:      cur = GraphicsData.gfx_Cload;       break;
+		case CMuni:      cur = GraphicsData.gfx_Cmuni;       break;
+		case CRepair:    cur = GraphicsData.gfx_Crepair;     break;
+		case CSteal:     cur = GraphicsData.gfx_Csteal;      break;
+		case CDisable:   cur = GraphicsData.gfx_Cdisable;    break;
+		case CActivate:  cur = GraphicsData.gfx_Cactivate;   break;
 	}
 	return lastCur != cur;
 }
@@ -145,12 +147,12 @@ void cMouse::GetPos()
 // gets the cursor offset. transforms screenspace to clickspace
 void cMouse::getCursorOffset (int& x, int& y) const
 {
-	if (cur == GraphicsData.gfx_Cselect || cur == GraphicsData.gfx_Chelp || cur == GraphicsData.gfx_Cmove || cur == GraphicsData.gfx_Cno || cur == GraphicsData.gfx_Ctransf || cur == GraphicsData.gfx_Cband || cur == GraphicsData.gfx_Cload || cur == GraphicsData.gfx_Cmuni || cur == GraphicsData.gfx_Crepair || cur == GraphicsData.gfx_Cactivate)
+	if (cur == GraphicsData.gfx_Cselect || cur == GraphicsData.gfx_Chelp || cur == GraphicsData.gfx_Cmove || cur == GraphicsData.gfx_Cmove_draft || cur == GraphicsData.gfx_Cno || cur == GraphicsData.gfx_Ctransf || cur == GraphicsData.gfx_Cband || cur == GraphicsData.gfx_Cload || cur == GraphicsData.gfx_Cmuni || cur == GraphicsData.gfx_Crepair || cur == GraphicsData.gfx_Cactivate)
 	{
 		x = -12;
 		y = -12;
 	}
-	else if (cur == GraphicsData.gfx_Cattack || cur == GraphicsData.gfx_Csteal || cur == GraphicsData.gfx_Cdisable)
+	else if (cur == GraphicsData.gfx_Cattack || cur == GraphicsData.gfx_Csteal || cur == GraphicsData.gfx_Cdisable || cur == GraphicsData.gfx_Cattackoor)
 	{
 		x = -19;
 		y = -16;

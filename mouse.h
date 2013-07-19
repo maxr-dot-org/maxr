@@ -26,7 +26,7 @@
 class cGameGUI;
 
 // Die Mauszeigertypen ///////////////////////////////////////////////////////
-enum eCursor {CHand, CNo, CSelect, CMove, CPfeil1, CPfeil2, CPfeil3, CPfeil4, CPfeil6, CPfeil7, CPfeil8, CPfeil9, CHelp, CAttack, CBand, CTransf, CLoad, CMuni, CRepair, CSteal, CDisable, CActivate};
+enum eCursor {CHand, CNo, CSelect, CMove, CPfeil1, CPfeil2, CPfeil3, CPfeil4, CPfeil6, CPfeil7, CPfeil8, CPfeil9, CHelp, CAttack, CBand, CTransf, CLoad, CMuni, CRepair, CSteal, CDisable, CActivate, CMoveDraft, CAttackOOR};
 
 // Die Maus-Klasse ///////////////////////////////////////////////////////////
 class cMouse

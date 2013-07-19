@@ -818,6 +818,7 @@ static int LoadGraphics (const char* path)
 		!LoadGraphicToSurface (GraphicsData.gfx_Cno, path, "no.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, path, "select.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cmove, path, "move.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cmove_draft, path, "move_draft.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Chelp, path, "help.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Ctransf, path, "transf.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cload, path, "load.pcx") ||
@@ -828,6 +829,7 @@ static int LoadGraphics (const char* path)
 		!LoadGraphicToSurface (GraphicsData.gfx_Csteal, path, "steal.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cdisable, path, "disable.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_Cattack, path, "attack.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cattackoor, path, "attack_oor.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_hud_stuff, path, "hud_stuff.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_hud_extra_players, path, "hud_extra_players.pcx") ||
 		!LoadGraphicToSurface (GraphicsData.gfx_panel_top, path, "panel_top.pcx") ||

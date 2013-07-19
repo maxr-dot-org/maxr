@@ -272,8 +272,10 @@ public:
 	AutoSurface gfx_Cno;
 	AutoSurface gfx_Cselect;
 	AutoSurface gfx_Cmove;
+	AutoSurface gfx_Cmove_draft; // for shift + lmb to set a path but no move
 	AutoSurface gfx_Chelp;
 	AutoSurface gfx_Cattack;
+	AutoSurface gfx_Cattackoor; // attack a unit out of range
 	AutoSurface gfx_Cpfeil1;
 	AutoSurface gfx_Cpfeil2;
 	AutoSurface gfx_Cpfeil3;
