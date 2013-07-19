@@ -24,7 +24,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>	// for transform toupper
-#include <vector>		//for vectorLanguages
+#include <vector>		// for vectorLanguages
 #include "defines.h"
 #include "resinstaller.h"
 #include "converter.h"
@@ -97,7 +97,7 @@ int installVehicleGraphics()
 	cout << "========================================================================\n";
 	cout << "Vehicle graphics\n";
 
-	//air_transport
+	// air_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -108,7 +108,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_AIRTRN", path + "store.pcx");
 	copyFileFromRes("P_AIRTRN", path + "info.pcx");
 
-	//alien_assault
+	// alien_assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_assault" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -119,7 +119,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ALNASG", path + "store.pcx");
 	copyFileFromRes("P_ALNASG", path + "info.pcx");
 
-	//alien_plane
+	// alien_plane
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_plane" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -130,7 +130,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ALNPLA", path + "store.pcx");
 	copyFileFromRes("P_ALNPLA", path + "info.pcx");
 
-	//alien_ship
+	// alien_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_ship" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -141,7 +141,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_JUGGER", path + "store.pcx");
 	copyFileFromRes("P_JUGGER", path + "info.pcx");
 
-	//alien_tank
+	// alien_tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_tank" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -152,7 +152,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ALNTAN", path + "store.pcx");
 	copyFileFromRes("P_ALNTAN", path + "info.pcx");
 
-	//apc
+	// apc
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "apc" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -170,7 +170,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_COLNST", path + "store.pcx");
 	copyFileFromRes("P_COLNST", path + "info.pcx");
 
-	//assault
+	// assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "assault" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -190,7 +190,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ARTY", path + "store.pcx");
 	copyFileFromRes("P_ARTY", path + "info.pcx");
 
-	//awac
+	// awac
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "awac" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -226,7 +226,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_AWAC", path + "store.pcx");
 	copyFileFromRes("P_AWAC", path + "info.pcx");
 
-	//bomber
+	// bomber
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bomber" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -246,7 +246,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_BOMBER", path + "store.pcx");
 	copyFileFromRes("P_BOMBER", path + "info.pcx");
 
-	//bulldozer
+	// bulldozer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bulldozer" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -279,8 +279,10 @@ int installVehicleGraphics()
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;		//this seems to be an SDL-Bug...
-										//sometimes the pitch of a surface has an wrong value
+		output->pitch = output->w;
+		// this seems to be an SDL-Bug...
+		// sometimes the pitch of a surface has an wrong value
+
 		dst_rect.x = 0;
 		dst_rect.y = 0;
 		for ( int i = 0; i < 4; i++ )
@@ -343,8 +345,10 @@ int installVehicleGraphics()
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;		//this seems to be an SDL-Bug...
-										//sometimes the pitch of a surface has an wrong value
+		output->pitch = output->w;
+		// this seems to be an SDL-Bug...
+		// sometimes the pitch of a surface has an wrong value
+
 		dst_rect.x = 0;
 		dst_rect.y = 0;
 		for ( int i = 0; i < 4; i++ )
@@ -402,7 +406,7 @@ int installVehicleGraphics()
 	}
 	END_INSTALL_FILE( path + "clear_small_shw.pcx")
 
-	//cargoship
+	// cargoship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cargoship" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -413,7 +417,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_CARGOS", path + "store.pcx");
 	copyFileFromRes("P_CARGOS", path + "info.pcx");
 
-	//cluster
+	// cluster
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cluster" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -433,7 +437,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ROCKET", path + "store.pcx");
 	copyFileFromRes("P_ROCKET", path + "info.pcx");
 
-	//commando
+	// commando
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "commando" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -455,7 +459,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_COMMAN", path + "store.pcx");
 	copyFileFromRes("P_COMMAN", path + "info.pcx");
 
-	//corvet
+	// corvet
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "corvet" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -473,7 +477,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_CORVET", path + "store.pcx");
 	copyFileFromRes("P_CORVET", path + "info.pcx");
 
-	//escort
+	// escort
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "escort" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -491,7 +495,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_ESCORT", path + "store.pcx");
 	copyFileFromRes("P_ESCORT", path + "info.pcx");
 
-	//fighter
+	// fighter
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -511,7 +515,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_FIGHTR", path + "store.pcx");
 	copyFileFromRes("P_FIGHTR", path + "info.pcx");
 	
-	//gunboat
+	// gunboat
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "gunboat" + PATH_DELIMITER;
 	try
 	{
@@ -645,7 +649,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_GUNBT", path + "store.pcx");
 	copyFileFromRes("P_GUNBT", path + "info.pcx");
 
-	//infantery
+	// infantery
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "infantery" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -667,7 +671,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_INFANT", path + "store.pcx");
 	copyFileFromRes("P_INFANT", path + "info.pcx");
 	
-	//konstrukt
+	// konstrukt
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -681,7 +685,7 @@ int installVehicleGraphics()
 			SDL_FreeSurface( surface);
 		}
 		END_INSTALL_FILE( path + "shw" + szNum + ".pcx" )
-		//copyFileFromRes("S_CONSTR", path + "shw" + szNum + ".pcx", i);
+		// copyFileFromRes("S_CONSTR", path + "shw" + szNum + ".pcx", i);
 	}
 	copyFileFromRes("A_CONTRC", path + "store.pcx");
 	copyFileFromRes("P_CONTRC", path + "info.pcx");
@@ -692,8 +696,10 @@ int installVehicleGraphics()
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;		//this seems to be an SDL-Bug...
-										//sometimes the pitch of a surface has an wrong value
+		output->pitch = output->w;
+		// this seems to be an SDL-Bug...
+		// sometimes the pitch of a surface has an wrong value
+
 		dst_rect.x = 0;
 		dst_rect.y = 0;
 		for ( int i = 0; i < 4; i++ )
@@ -760,7 +766,7 @@ int installVehicleGraphics()
 	END_INSTALL_FILE( path + "build_shw.pcx")
 
 
-	//minelayer
+	// minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "minelayer" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -771,7 +777,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_MNELAY", path + "store.pcx");
 	copyFileFromRes("P_MNELAY", path + "info.pcx");
 
-	//missel
+	// missel
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++ )
 	{
@@ -799,7 +805,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_MISSIL", path + "store.pcx");
 	copyFileFromRes("P_MISSIL", path + "info.pcx");
 
-	//missel_ship
+	// missel_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel_ship" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -825,7 +831,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_MSLCR", path + "store.pcx");
 	copyFileFromRes("P_MSLCR", path + "info.pcx");
 	
-	//mobile_aa
+	// mobile_aa
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "mobile_aa" + PATH_DELIMITER;
 	src_rect.h = 33; 
 	src_rect.w = 35;
@@ -960,7 +966,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_AA", path + "store.pcx");
 	copyFileFromRes("P_AA", path + "info.pcx");
 
-	//pionier
+	// pionier
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "pionier" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++ )
 	{
@@ -993,8 +999,10 @@ int installVehicleGraphics()
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;		//this seems to be an SDL-Bug...
-										//sometimes the pitch of a surface has an wrong value
+		output->pitch = output->w;
+		// this seems to be an SDL-Bug...
+		// sometimes the pitch of a surface has an wrong value
+
 		dst_rect.x = 0;
 		dst_rect.y = 0;
 		for ( int i = 0; i < 4; i++ )
@@ -1052,7 +1060,7 @@ int installVehicleGraphics()
 	END_INSTALL_FILE( path + "build_shw.pcx")
 
 
-	//repair
+	// repair
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "repair" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -1063,7 +1071,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_REPAIR", path + "store.pcx");
 	copyFileFromRes("P_REPAIR", path + "info.pcx");
 
-	//scanner
+	// scanner
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scanner" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1096,8 +1104,10 @@ int installVehicleGraphics()
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 360, 45, 8,0,0,0,0);
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;		//this seems to be an SDL-Bug...
-										//sometimes the pitch of a surface has an wrong value
+		output->pitch = output->w;
+		// this seems to be an SDL-Bug...
+		// sometimes the pitch of a surface has an wrong value
+
 		resizeSurface( surface, 2, 1, 45, 45);
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -1117,7 +1127,7 @@ int installVehicleGraphics()
 	}
 	END_INSTALL_FILE( path + "overlay.pcx")
 
-	//scout
+	// scout
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scout" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1135,7 +1145,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_SCOUT", path + "store.pcx");
 	copyFileFromRes("P_SCOUT", path + "info.pcx");
 
-	//sea_minelayer
+	// sea_minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_minelayer" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1146,7 +1156,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_SEAMNL", path + "store.pcx");
 	copyFileFromRes("P_SEAMNL", path + "info.pcx");
 
-	//sea_transport
+	// sea_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_transport" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1164,7 +1174,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_SEATRN", path + "store.pcx");
 	copyFileFromRes("P_SEATRN", path + "info.pcx");
 
-	//sub
+	// sub
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sub" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1174,7 +1184,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_SUB", path + "store.pcx");
 	copyFileFromRes("P_SUB", path + "info.pcx");
 
-	//surveyor
+	// surveyor
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "surveyor" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1201,7 +1211,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_SURVEY", path + "store.pcx");
 	copyFileFromRes("P_SURVEY", path + "info.pcx");
 	
-	//tank
+	// tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "tank" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1235,7 +1245,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_TANK", path + "store.pcx");
 	copyFileFromRes("P_TANK", path + "info.pcx");
 
-	//trans_gold
+	// trans_gold
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_gold" + PATH_DELIMITER;
 	for ( int i = 0; i < 8; i++)
 	{
@@ -1253,7 +1263,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_GOLDTR", path + "store.pcx");
 	copyFileFromRes("P_GOLDTR", path + "info.pcx");
 	
-	//trans_metal
+	// trans_metal
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_metal" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -1280,7 +1290,7 @@ int installVehicleGraphics()
 	copyFileFromRes("A_SPLYTR", path + "store.pcx");
 	copyFileFromRes("P_SPLYTR", path + "info.pcx");
 	
-	//trans_oil
+	// trans_oil
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_oil" + PATH_DELIMITER;
 	for (int i = 0; i < 8; i++)
 	{
@@ -1337,28 +1347,28 @@ int installBuildingGraphics()
 	cout << "========================================================================\n";
 	cout << "Building graphics\n";
 
-	//Barracks
+	// Barracks
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "barracks" + PATH_DELIMITER;
 	copyFileFromRes_rpc("BARRACKS", path + "img.pcx", 1 );
 	copyFileFromRes("P_BARRCK", path + "info.pcx");
 	copyFileFromRes("S_BARRAC", path + "shw.pcx");
 	copyImageFromFLC( sMAXPath + "BARX_ISO.FLC", path + "video.pcx");
 	
-	//block
+	// block
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "block" + PATH_DELIMITER;
 	copyFileFromRes("BLOCK", path + "img.pcx");
 	copyFileFromRes("P_BLOCK", path + "info.pcx");
 	copyFileFromRes("S_BLOCK", path + "shw.pcx");
 	copyImageFromFLC( sMAXPath + "BLOK128.FLC", path + "video.pcx");
 
-	//bridge
+	// bridge
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "bridge" + PATH_DELIMITER;
 	copyFileFromRes_rpc("BRIDGE", path + "img.pcx");
 	copyFileFromRes("P_BRIDGE", path + "info.pcx");
 	copyFileFromRes("S_BRIDGE", path + "shw.pcx");
 	copyImageFromFLC( sMAXPath + "BRIDGE.FLC", path + "video.pcx");
 
-	//connector
+	// connector
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "connector" + PATH_DELIMITER;
 	try
 	{
@@ -1553,14 +1563,14 @@ int installBuildingGraphics()
 	copyFileFromRes("P_CONNEC", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "CROSS.FLC", path + "video.pcx");
 
-	//depot
+	// depot
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "depot" + PATH_DELIMITER;
 	copyFileFromRes_rpc("DEPOT", path + "img.pcx", 1);
 	copyFileFromRes("P_DEPOT", path + "info.pcx");
 	copyFileFromRes("S_DEPOT", path + "shw.pcx", 1);
 	copyImageFromFLC( sMAXPath + "DPBG_S.FLC", path + "video.pcx");
 
-	//dock
+	// dock
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "dock" + PATH_DELIMITER;
 	copyFileFromRes_rpc("DOCK", path + "img.pcx");
 	copyFileFromRes("S_DOCK", path + "shw.pcx");
@@ -1568,7 +1578,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "DOCK.FLC", path + "video.pcx");
 
 	
-	//eco-sphere
+	// eco-sphere
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "ecosphere" + PATH_DELIMITER;
 	copyFileFromRes_rpc("GREENHSE", path + "img.pcx");
 	copyFileFromRes("S_GREENH", path + "shw.pcx");
@@ -1577,7 +1587,7 @@ int installBuildingGraphics()
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
 
-	//energy big
+	// energy big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
 	copyFileFromRes_rpc("POWERSTN", path + "img.pcx");
 	copyFileFromRes("S_POWERS", path + "shw.pcx");
@@ -1585,7 +1595,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "PWRGEN.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//energy small
+	// energy small
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_small" + PATH_DELIMITER;
 	copyFileFromRes_rpc("POWGEN", path + "img.pcx");
 	copyFileFromRes("S_POWGEN", path + "shw.pcx");
@@ -1593,7 +1603,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "SPWR_ISO.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//fac air
+	// fac air
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_air" + PATH_DELIMITER;
 	copyFileFromRes_rpc("AIRPLT", path + "img.pcx");
 	copyFileFromRes("S_AIRPLT", path + "shw.pcx");
@@ -1601,7 +1611,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "AIRPLNT.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//fac alien
+	// fac alien
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_alien" + PATH_DELIMITER;
 	copyFileFromRes_rpc("RECCENTR", path + "img.pcx");
 	copyFileFromRes("S_RECCEN", path + "shw.pcx");
@@ -1609,7 +1619,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "RECNTR.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//fac big
+	// fac big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_big" + PATH_DELIMITER;
 	copyFileFromRes_rpc("LANDPLT", path + "img.pcx");
 	copyFileFromRes("S_LANDPL", path + "shw.pcx");
@@ -1617,7 +1627,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "FVP.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//fac ship
+	// fac ship
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_ship" + PATH_DELIMITER;
 	copyFileFromRes_rpc("SHIPYARD", path + "img.pcx");
 	copyFileFromRes("S_SHIPYA", path + "shw.pcx");
@@ -1625,7 +1635,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "SHPYRD.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//fac small
+	// fac small
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_small" + PATH_DELIMITER;
 	copyFileFromRes_rpc("LIGHTPLT", path + "img.pcx");
 	copyFileFromRes("S_LIGHTP", path + "shw.pcx");
@@ -1633,7 +1643,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "LVP_ISO.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//goldraff
+	// goldraff
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "goldraff" + PATH_DELIMITER;
 	copyFileFromRes_rpc("COMMTWR", path + "img.pcx");
 	copyFileFromRes("S_COMMTW", path + "shw.pcx");
@@ -1641,7 +1651,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "COMMTWR.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//gun aa
+	// gun aa
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_aa" + PATH_DELIMITER;
 	try
 	{
@@ -1681,7 +1691,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_FXAA", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "AA_ISO.FLC", path + "video.pcx");
 
-	//gun ari
+	// gun ari
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_ari" + PATH_DELIMITER;
 	try
 		{
@@ -1720,7 +1730,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_ARTYTR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "FXDGUN.FLC", path + "video.pcx");
 
-	//gun missile
+	// gun missile
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_missel" + PATH_DELIMITER;
 	try
 	{
@@ -1758,7 +1768,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_FXROCK", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "ANTIMSL.FLC", path + "video.pcx");
 
-	//gun turret
+	// gun turret
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_turret" + PATH_DELIMITER;
 	try
 	{
@@ -1797,7 +1807,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_GUNTUR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "FXAGUN.FLC", path + "video.pcx");
 
-	//habitat
+	// habitat
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "habitat" + PATH_DELIMITER;
 	copyFileFromRes_rpc("HABITAT", path + "img.pcx", 1);
 	copyFileFromRes("S_HABITA", path + "shw.pcx", 1);
@@ -1805,7 +1815,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "DORM.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//hangar
+	// hangar
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "hangar" + PATH_DELIMITER;
 	copyFileFromRes_rpc("HANGAR", path + "img.pcx", 1);
 	copyFileFromRes("S_HANGAR", path + "shw.pcx", 1);
@@ -1813,7 +1823,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "HANGR.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//landmine
+	// landmine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "landmine" + PATH_DELIMITER;
 	try
 	{
@@ -1834,7 +1844,7 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("S_LANDMI");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
-		output->pitch = output->w;					//workaround for an SDL-Bug
+		output->pitch = output->w;					// workaround for an SDL-Bug
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
 		dst_rect.x = 22;
@@ -1849,7 +1859,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_LANDMN", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "LMINE01.FLC", path + "video.pcx");
 
-	//mine
+	// mine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine" + PATH_DELIMITER;
 	
 	try
@@ -1868,9 +1878,9 @@ int installBuildingGraphics()
 			SDL_FreeSurface( surface );
 		}
 
-		//remove the clan logo from the first image
+		// remove the clan logo from the first image
 		surface = loadPCX(path + "roof.pcx" );
-		surface->pitch = surface->w;					//workaround for an SDL-Bug
+		surface->pitch = surface->w;					// workaround for an SDL-Bug
 		dst_rect.x = 32;
 		dst_rect.y = 40;
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
@@ -1886,7 +1896,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "MSTRSTAT.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//mine deep
+	// mine deep
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine_deep" + PATH_DELIMITER;
 	copyFileFromRes_rpc("SUPRTPLT", path + "img.pcx");
 	copyFileFromRes("S_SUPRTP", path + "shw.pcx");
@@ -1894,7 +1904,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "SVP.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//pad
+	// pad
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "pad" + PATH_DELIMITER;
 	copyFileFromRes_rpc("LANDPAD", path + "img.pcx");
 	copyFileFromRes("S_LANDPA", path + "shw.pcx");
@@ -1902,14 +1912,14 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "LP_ISO.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//platform
+	// platform
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "platform" + PATH_DELIMITER;
 	copyFileFromRes_rpc("WTRPLTFM", path + "img.pcx");
 	copyFileFromRes("S_WTRPLT", path + "shw.pcx");
 	copyFileFromRes("P_WATER", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "WP.FLC", path + "video.pcx");
 	
-	//radar
+	// radar
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
 	try
 	{
@@ -1939,7 +1949,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_RADAR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "RADAR.FLC", path + "video.pcx");
 
-	//research
+	// research
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;
 	copyFileFromRes_rpc("RESEARCH", path + "img.pcx");
 	copyFileFromRes("S_RESEAR", path + "shw.pcx");
@@ -1947,20 +1957,20 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "RESEARCH.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//road
+	// road
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "road" + PATH_DELIMITER;
 	copyFileFromRes("ROAD", path + "img.pcx");
 	copyFileFromRes("S_ROAD", path + "shw.pcx");
 	copyFileFromRes("P_ROAD", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "ROAD.FLC", path + "video.pcx");
 
-	//seamine
+	// seamine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "seamine" + PATH_DELIMITER;
 	try
 	{
 		surface = getImageFromRes("SEAMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
-		output->pitch = output->w;					//workaround for an SDL-Bug
+		output->pitch = output->w;	// workaround for an SDL-Bug
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
 		dst_rect.x = 23;
@@ -1972,12 +1982,13 @@ int installBuildingGraphics()
 	}
 	END_INSTALL_FILE( path + "img.pcx")
 
-	//seamines don't have a shadow in the original. So creating a dummy file here
+	// seamines don't have a shadow in the original.
+	// So creating a dummy file here
 	try
 	{
 		surface = getImageFromRes("SEAMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
-		output->pitch = output->w;					//workaround for an SDL-Bug
+		output->pitch = output->w;	// workaround for an SDL-Bug
 		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
 		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
 		SDL_FreeSurface( surface );
@@ -1989,7 +2000,7 @@ int installBuildingGraphics()
 	copyFileFromRes("P_SEAMIN", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SMINE01.FLC", path + "video.pcx");
 
-	//shield
+	// shield
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "shield" + PATH_DELIMITER;
 	copyFileFromRes_rpc("SHIELDGN", path + "img.pcx");
 	copyFileFromRes("S_SHIELD", path + "shw.pcx");
@@ -1997,28 +2008,28 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "SHLDGEN.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//storage gold
+	// storage gold
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_gold" + PATH_DELIMITER;
 	copyFileFromRes_rpc("GOLDSM", path + "img.pcx");
 	copyFileFromRes("S_GOLDSM", path + "shw.pcx");
 	copyFileFromRes("P_SMVLT", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "GOLDSM.FLC", path + "video.pcx");
 
-	//storage metal
+	// storage metal
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_metal" + PATH_DELIMITER;
 	copyFileFromRes_rpc("ADUMP", path + "img.pcx");
 	copyFileFromRes("S_ADUMP", path + "shw.pcx");
 	copyFileFromRes("P_SMSTOR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SS_ISO.FLC", path + "video.pcx");
 
-	//storage oil
+	// storage oil
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "storage_oil" + PATH_DELIMITER;
 	copyFileFromRes_rpc("FDUMP", path + "img.pcx");
 	copyFileFromRes("S_FDUMP", path + "shw.pcx");
 	copyFileFromRes("P_SMFUEL", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "SF_ISO.FLC", path + "video.pcx");
 
-	//training
+	// training
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "training" + PATH_DELIMITER;
 	copyFileFromRes_rpc("TRAINHAL", path + "img.pcx");
 	copyFileFromRes("S_TRAINH", path + "shw.pcx");
@@ -2026,7 +2037,7 @@ int installBuildingGraphics()
 	copyImageFromFLC( sMAXPath + "THALL.FLC", path + "video.pcx");
 	copyFile( path + "effect_org.pcx", path + "effect.pcx");
 
-	//rubble
+	// rubble
 	path = sOutputPath + "buildings" + PATH_DELIMITER;
 	try
 	{
@@ -2115,143 +2126,143 @@ int installVehicleVideos()
 	cout << "========================================================================\n";
 	cout << "Vehicle videos\n";
 
-	//air_transport
+	// air_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
 	copyFile( sMAXPath + "ATRANS02.FLC", path + "video.flc" );
 
-	//alien_assault
+	// alien_assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_assault" + PATH_DELIMITER;
 	copyFile( sMAXPath + "ALNASG.FLC", path + "video.flc" );
 	
-	//alien_plane
+	// alien_plane
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_plane" + PATH_DELIMITER;
 	copyFile( sMAXPath + "ALNPLANE.FLC", path + "video.flc" );
 	
-	//alien_ship
+	// alien_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_ship" + PATH_DELIMITER;
 	copyFile( sMAXPath + "JUGGERN.FLC", path + "video.flc" );
 	
-	//alien_tank
+	// alien_tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_tank" + PATH_DELIMITER;
 	copyFile( sMAXPath + "ALNTANK.FLC", path + "video.flc" );
 	
-	//apc
+	// apc
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "apc" + PATH_DELIMITER;
 	copyFile( sMAXPath + "APC_TR01.FLC", path + "video.flc" );
 	
-	//assault
+	// assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "assault" + PATH_DELIMITER;
 	copyFile( sMAXPath + "E_ART2.FLC", path + "video.flc" );
 	
-	//awac
+	// awac
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "awac" + PATH_DELIMITER;
 	copyFile( sMAXPath + "AWACS03.FLC", path + "video.flc" );
 	
-	//bomber
+	// bomber
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bomber" + PATH_DELIMITER;
 	copyFile( sMAXPath + "BOMBER03.FLC", path + "video.flc" );
 	
-	//bulldozer
+	// bulldozer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bulldozer" + PATH_DELIMITER;
 	copyFile( sMAXPath + "DOZER01.FLC", path + "video.flc" );
 	
-	//cargoship
+	// cargoship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cargoship" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SCARGO02.FLC", path + "video.flc" );
 	
-	//cluster
+	// cluster
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cluster" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MML.FLC", path + "video.flc" );
 	
-	//commando
+	// commando
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "commando" + PATH_DELIMITER;
 	copyFile( sMAXPath + "AGT.FLC", path + "video.flc" );
 	
-	//corvet
+	// corvet
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "corvet" + PATH_DELIMITER;
 	copyFile( sMAXPath + "CORVETTE.FLC", path + "video.flc" );
 	
-	//escort
+	// escort
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "escort" + PATH_DELIMITER;
 	copyFile( sMAXPath + "ESCORT.FLC", path + "video.flc" );
 	
-	//fighter
+	// fighter
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
 	copyFile( sMAXPath + "FIGHTER.FLC", path + "video.flc" );
 	
-	//gunboat
+	// gunboat
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "gunboat" + PATH_DELIMITER;
 	copyFile( sMAXPath + "HG1.FLC", path + "video.flc" );
 	
-	//infantery
+	// infantery
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "infantery" + PATH_DELIMITER;
 	copyFile( sMAXPath + "INFANTRY.FLC", path + "video.flc" );
 		
-	//konstrukt
+	// konstrukt
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
 	copyFile( sMAXPath + "CONSTRCT.FLC", path + "video.flc" );
 	
-	//minelayer
+	// minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "minelayer" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MINELAY.FLC", path + "video.flc" );
 	
-	//missel
+	// missel
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MISSLE_L.FLC", path + "video.flc" );
 	
-	//missel_ship
+	// missel_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel_ship" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MB5.FLC", path + "video.flc" );
 		
-	//mobile_aa
+	// mobile_aa
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "mobile_aa" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MAA.FLC", path + "video.flc" );
 	
-	//pionier
+	// pionier
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "pionier" + PATH_DELIMITER;
 	copyFile( sMAXPath + "ENGINEER.FLC", path + "video.flc" );
 	
-	//repair
+	// repair
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "repair" + PATH_DELIMITER;
 	copyFile( sMAXPath + "REPAIR02.FLC", path + "video.flc" );
 	
-	//scanner
+	// scanner
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scanner" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SCANR1.FLC", path + "video.flc" );
 	
-	//scout
+	// scout
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scout" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SCOUT.FLC", path + "video.flc" );
 	
-	//sea_minelayer
+	// sea_minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_minelayer" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SML.FLC", path + "video.flc" );
 	
-	//sea_transport
+	// sea_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_transport" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SEATRANS.FLC", path + "video.flc" );
 	
-	//sub
+	// sub
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sub" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SUB.FLC", path + "video.flc" );
 	
-	//surveyor
+	// surveyor
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "surveyor" + PATH_DELIMITER;
 	copyFile( sMAXPath + "SURVEYOR.FLC", path + "video.flc" );
 	
-	//tank
+	// tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "tank" + PATH_DELIMITER;
 	copyFile( sMAXPath + "TANK03.FLC", path + "video.flc" );
 	
-	//trans_gold
+	// trans_gold
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_gold" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MCHARGE.FLC", path + "video.flc" );
 	
-	//trans_metal
+	// trans_metal
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_metal" + PATH_DELIMITER;
 	copyFile( sMAXPath + "TRUCK.FLC", path + "video.flc" );
 	
-	//trans_oil
+	// trans_oil
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_oil" + PATH_DELIMITER;
 	copyFile( sMAXPath + "MGENR.FLC", path + "video.flc" );
 	
@@ -2286,7 +2297,7 @@ int installFX()
 
 	path = sOutputPath + "fx" + PATH_DELIMITER;
 
-	//waldo
+	// waldo
 	try
 	{
 		surface = getImageFromRes("WALDO");
@@ -2296,7 +2307,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "corpse.pcx" )
 
-	//hit
+	// hit
 	try
 	{
 		output = getImageFromRes("HITEXPLD", 0);
@@ -2316,7 +2327,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "hit.pcx" )
 
-	//explo_air
+	// explo_air
 	try
 	{
 		output = getImageFromRes("AIREXPLD", 0);
@@ -2336,7 +2347,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "explo_air.pcx" )
 
-	//explo_big
+	// explo_big
 	try
 	{
 		output = getImageFromRes("BLDEXPLD", 0);
@@ -2356,7 +2367,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "explo_big.pcx" )
 
-	//explo_small
+	// explo_small
 	try
 	{
 		output = getImageFromRes("LNDEXPLD", 0);
@@ -2376,7 +2387,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "explo_small.pcx" )
 
-	//explo_water
+	// explo_water
 	try
 	{
 		output = getImageFromRes("SEAEXPLD", 0);
@@ -2395,8 +2406,7 @@ int installFX()
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "explo_water.pcx" )
-
-	//rocket
+	// rocket
 	try
 	{
 		output = getImageFromRes( "ROCKET", 0);
@@ -2416,9 +2426,9 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "rocket.pcx" )
 
-	//torpedo???
+	// torpedo???
 
-	//saveload.flc
+	// saveload.flc
 	copyFile( sMAXPath + "SAVELOAD.FLC", path + "saveload.flc" );
 
 
@@ -2455,7 +2465,7 @@ int installGfx()
 
 	path = sOutputPath + "gfx" + PATH_DELIMITER;
 
-	//clan logos
+	// clan logos
 	for ( int i = 1; i <= 8; i++ )
 	{
 		try
@@ -2469,7 +2479,7 @@ int installGfx()
 		END_INSTALL_FILE( path + "clanlogo" + szNum + ".pcx" );
 	}
 
-	//activate
+	// activate
 	try
 	{
 		output = getImageFromRes("ACTVTPTR");
@@ -2479,7 +2489,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "activate.pcx" );
 
-	//attack
+	// attack
 	try
 	{
 		output = getImageFromRes("ENMY_PTR");
@@ -2524,7 +2534,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "activate_field.pcx" );
 
-	//band_big
+	// band_big
 	try
 	{
 		surface = getImageFromRes( "LRGTAPE" );
@@ -2534,16 +2544,16 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "band_big.pcx" );
 
-	//band_big_water
-	//copyFileFromRes("LRGTAPE", path + "band_big_water.pcx", 1);
+	// band_big_water
+	// copyFileFromRes("LRGTAPE", path + "band_big_water.pcx", 1);
 
-	//band_small
+	// band_small
 	copyFileFromRes("SMLTAPE", path + "band_small.pcx", 0);
 
-	//band_small_water
-	//copyFileFromRes("SMLTAPE", path + "band_big_water.pcx", 1);
+	// band_small_water
+	// copyFileFromRes("SMLTAPE", path + "band_big_water.pcx", 1);
 
-	//band_cur
+	// band_cur
 	try
 	{
 		output = getImageFromRes("MAP_PTR");
@@ -2553,7 +2563,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "band_cur.pcx" );
 
-	//big_beton
+	// big_beton
 	try
 	{
 		output = getImageFromRes("LRGSLAB");
@@ -2562,7 +2572,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "big_beton.pcx");
 	
-	//disable
+	// disable
 	try
 	{
 		output = getImageFromRes("DISBLPTR");
@@ -2572,16 +2582,16 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "disable.pcx" );
 
-	//edock
+	// edock
 	copyFileFromRes("E_DOCK", path + "edock.pcx");
 
-	//edepot
+	// edepot
 	copyFileFromRes("E_DEPOT", path + "edepot.pcx");
 
-	//ehangar
+	// ehangar
 	copyFileFromRes("E_HANGAR", path + "ehangar.pcx");
 
-	//hand
+	// hand
 	try
 	{
 		output = getImageFromRes("HANDPTR");
@@ -2591,7 +2601,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "hand.pcx" );
 
-	//help
+	// help
 	try
 	{
 		output = getImageFromRes("PTR_HELP");
@@ -2601,7 +2611,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "help.pcx" );
 
-	//load
+	// load
 	try
 	{
 		output = getImageFromRes("FRND_LOD");
@@ -2611,7 +2621,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "load.pcx" );
 
-	//move
+	// move
 	try
 	{
 		output = getImageFromRes("UNIT_GO");
@@ -2621,7 +2631,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "move.pcx" );
 
-	//muni
+	// muni
 	try
 	{
 		output = getImageFromRes("PTR_RLD");
@@ -2631,7 +2641,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "muni.pcx" );
 
-	//no
+	// no
 	try
 	{
 		output = getImageFromRes("UNIT_NGO");
@@ -2641,7 +2651,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "no.pcx" );
 
-	//object_manu
+	// object_manu
 	try
 	{
 		output = getImageFromRes("UNTBTN_U");
@@ -2659,7 +2669,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "object_menu2.pcx" );
 
-	//pf_x
+	// pf_x
 	try
 	{
 		output = getImageFromRes("ARROW_SW");
@@ -2726,7 +2736,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "pf_4.pcx" );
 
-	//transfer
+	// transfer
 	try
 	{
 		output = getImageFromRes("FRND_XFR");
@@ -2736,7 +2746,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "transf.pcx" );
 
-	//repair
+	// repair
 	try
 	{
 		output = getImageFromRes("FRND_FIX");
@@ -2746,7 +2756,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "repair.pcx" );
 
-	//steal
+	// steal
 	try
 	{
 		output = getImageFromRes("STEALPTR");
@@ -2756,7 +2766,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "steal.pcx" )
 
-	//select
+	// select
 	try
 	{
 		output = getImageFromRes("FRND_PTR");
@@ -2766,7 +2776,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "select.pcx" )
 
-	//res
+	// res
 	try
 	{
 		output = getImageFromRes("RAWMSK0");
@@ -2787,7 +2797,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "res.pcx" )
 
-	//fuel
+	// fuel
 	try
 	{
 		output = getImageFromRes("FUELMK0");
@@ -2808,7 +2818,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "fuel.pcx" )
 
-	//gold
+	// gold
 	try
 	{
 		output = getImageFromRes("GOLDMK0");
@@ -2829,7 +2839,7 @@ int installGfx()
 	}
 	END_INSTALL_FILE( path + "gold.pcx" )
 
-	//and now the ugly hud_stuff.pcx :|
+	// and now the ugly hud_stuff.pcx :|
 #define COPY_GRAPHIC(name, _x, _y) \
 	surface = getImageFromRes( name ); \
 	setColor( surface, backgroundIndex, 255, 0, 255 ); \
@@ -2938,7 +2948,7 @@ int installGfx()
 		src_rect.x = 1;
 		src_rect.y = 0;
 		src_rect.h = 31;
-		src_rect.w = 1000; //?
+		src_rect.w = 1000; // ?
 		dst_rect.x = 156;
 		dst_rect.y = 338;
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
@@ -2949,7 +2959,7 @@ int installGfx()
 		src_rect.x = 33;
 		src_rect.y = 0;
 		src_rect.h = 30; 
-		src_rect.w = 1000; //?
+		src_rect.w = 1000; // ?
 		dst_rect.x = 156;
 		dst_rect.y = 369;
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
@@ -2960,7 +2970,7 @@ int installGfx()
 		src_rect.x = 1;
 		src_rect.y = 0;
 		src_rect.h = 30; 
-		src_rect.w = 1000; //?
+		src_rect.w = 1000; // ?
 		dst_rect.x = 156;
 		dst_rect.y = 400;
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
@@ -3033,112 +3043,114 @@ int installBuildingSounds()
 	cout << "========================================================================\n";
 	cout << "Building sounds\n";
 
-	//energy big
+	// energy big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "POWGN17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "POWGN17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "POWGN18" + waveExtension, path + "stop.wav");
 	
-	//energy small
+	// energy small
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_small" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "POWGN17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "POWGN17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "POWGN18" + waveExtension, path + "stop.wav");
 		
-	//fac air
+	// fac air
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_air" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "AUNIT17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "AUNIT17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "AUNIT18" + waveExtension, path + "stop.wav");
 	
-	//fac alien
+	// fac alien
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_alien" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "LVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "LVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "LVP18" + waveExtension, path + "stop.wav");
 	
-	//fac big
+	// fac big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_big" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "HVP18" + waveExtension, path + "stop.wav");
 	
-	//fac ship
+	// fac ship
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_ship" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "HVP18" + waveExtension, path + "stop.wav");
 	
-	//fac small
+	// fac small
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "fac_small" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "LVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "LVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "LVP18" + waveExtension, path + "stop.wav");
 	
-	//goldraff
-	//goldraff is using the monopole-mine sound in original game - nonsinn
+	// goldraff
+	// goldraff is using the monopole-mine sound in original game - nonsinn
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "goldraff" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "MONOP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "MONOP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "MONOP18" + waveExtension, path + "stop.wav");
 	
-	//gun aa
+	// gun aa
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_aa" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "FANTI14" + waveExtension, path + "attack.wav");
 	
-	//gun ari
+	// gun ari
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_ari" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "FARTY14" + waveExtension, path + "attack.wav");
 	
-	//gun missile
+	// gun missile
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_missel" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MISLFIRE" + waveExtension, path + "attack.wav");
 
-	//gun turret
+	// gun turret
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_turret" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "FGUN14" + waveExtension, path + "attack.wav");
 	
-	//landmine
+	// landmine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "landmine" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "EXPSDIRT" + waveExtension, path + "attack.wav");
 	
-	//mine
+	// mine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
 
-	//ecosphere
+	// ecosphere
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "ecosphere" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
 
-	//mine deep (monopol-mine)
-	//while monopole sound is used for goldraff, we can use the goldraff sound for monopol mine => both have a different sound - nonsinn
+	// mine deep (monopol-mine)
+	// while monopole sound is used for goldraff,
+	// we can use the goldraff sound for monopol mine
+	//  => both have a different sound - nonsinn
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine_deep" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "GOLDR17" + waveExtension, path + "start.wav", 0); 
 	copyPartOfWAV( sMAXPath + "GOLDR17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "GOLDR18" + waveExtension, path + "stop.wav");
 	
-	//radar
+	// radar
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "RADAR13" + waveExtension, path + "wait.wav");
 	
-	//research
+	// research
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "RESEAR17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "RESEAR17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "RESEAR18" + waveExtension, path + "stop.wav");
 
-	//seamine
+	// seamine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "seamine" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "EPLOWET1" + waveExtension, path + "attack.wav");
 	
-	//shield
-	//path = sOutputPath + "buildings" + PATH_DELIMITER + "shield" + PATH_DELIMITER;
+	// shield
+	// path = sOutputPath + "buildings" + PATH_DELIMITER + "shield" + PATH_DELIMITER;
 
-	//training
+	// training
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "training" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "LVP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "LVP17" + waveExtension, path + "running.wav", 1);
@@ -3172,14 +3184,14 @@ int installVehicleSounds()
 	cout << "========================================================================\n";
 	cout << "Vehicle Sounds\n";
 
-	//air_transport
+	// air_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "air_transport" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "ATRANS1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ATRANS5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "ATRANS5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "ATRANS7" + waveExtension, path + "stop.wav");
 
-	//alien_assault
+	// alien_assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_assault" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "ALNTK1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ALNTK5" + waveExtension, path + "start.wav", 0);
@@ -3187,7 +3199,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "ALNTK7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "ASGUN14" + waveExtension, path + "attack.wav");
 		
-	//alien_plane
+	// alien_plane
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_plane" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "ATTACK1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ATTACK5" + waveExtension, path + "start.wav", 0);
@@ -3195,7 +3207,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "ATTACK7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "ASGUN14" + waveExtension, path + "attack.wav");
 		
-	//alien_ship
+	// alien_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_ship" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "JUGGR1" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "JUGGR5" + waveExtension, path + "start_water.wav", 0);
@@ -3203,7 +3215,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "JUGGR7" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "ASGUN14" + waveExtension, path + "attack.wav");
 		
-	//alien_tank
+	// alien_tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_tank" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "ALNTK1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ALNTK5" + waveExtension, path + "start.wav", 0);
@@ -3211,7 +3223,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "ALNTK7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
-	//apc
+	// apc
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "apc" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "APC1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "start.wav", 0);
@@ -3222,7 +3234,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "APC7" + waveExtension, path + "stop_water.wav");
 		
-	//assault
+	// assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "assault" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TANKA_1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TANKA_5" + waveExtension, path + "start.wav", 0);
@@ -3230,14 +3242,14 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "TANKA_7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "ASGUN14" + waveExtension, path + "attack.wav");
 		
-	//awac
+	// awac
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "awac" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "AWAC1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "AWAC5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "AWAC5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "AWAC7" + waveExtension, path + "stop.wav");
 		
-	//bomber
+	// bomber
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bomber" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "ATTACK1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ATTACK5" + waveExtension, path + "start.wav", 0);
@@ -3245,21 +3257,21 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "ATTACK7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
-	//bulldozer
+	// bulldozer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bulldozer" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "BULL1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "BULL5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "BULL5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "BULL7" + waveExtension, path + "stop.wav");
 	
-	//cargoship
+	// cargoship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cargoship" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "MBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "MBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "MBOATSTP" + waveExtension, path + "stop_water.wav");
 		
-	//cluster
+	// cluster
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "cluster" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TANKC_1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TANKC_5" + waveExtension, path + "start.wav", 0);
@@ -3267,14 +3279,14 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "TANKC_7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "MISLFIRE" + waveExtension, path + "attack.wav");
 
-	//commando
+	// commando
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "commando" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MANMOVE" + waveExtension, path + "drive.wav");
 	copyWAV( sMAXPath + "INFIL14" + waveExtension, path + "attack.wav");
 	copyWAV( sMAXPath + "INFIL15" + waveExtension, path + "death1.wav");
 	copyWAV( sMAXPath + "INFIL16" + waveExtension, path + "death2.wav");
 
-	//corvet
+	// corvet
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "corvet" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "SBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "SBOATMVE" + waveExtension, path + "start_water.wav", 0);
@@ -3282,7 +3294,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "SBOATSTP" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "CORVT14" + waveExtension, path + "attack.wav");
 		
-	//escort
+	// escort
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "escort" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "SBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "SBOATMVE" + waveExtension, path + "start_water.wav", 0);
@@ -3290,7 +3302,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "SBOATSTP" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "MANTI14" + waveExtension, path + "attack.wav");
 		
-	//fighter
+	// fighter
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "FIGHT1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "FIGHT5" + waveExtension, path + "start.wav", 0);
@@ -3298,7 +3310,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "FIGHT7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
-	//gunboat
+	// gunboat
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "gunboat" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "GBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "start_water.wav", 0);
@@ -3306,14 +3318,14 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "GBOATSTP" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "CANFIRE" + waveExtension, path + "attack.wav");
 
-	//infantery
+	// infantery
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "infantery" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MANMOVE" + waveExtension, path + "drive.wav");
 	copyWAV( sMAXPath + "INFAN14" + waveExtension, path + "attack.wav");
 	copyWAV( sMAXPath + "INFAN15" + waveExtension, path + "death1.wav");
 	copyWAV( sMAXPath + "INFAN16" + waveExtension, path + "death2.wav");
 			
-	//konstrukt
+	// konstrukt
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "CONST1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "CONST5" + waveExtension, path + "start.wav", 0);
@@ -3324,14 +3336,14 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "CONST6" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "CONST8" + waveExtension, path + "stop_water.wav");
 		
-	//minelayer
+	// minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "minelayer" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TANKC_1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TANKC_5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "TANKC_5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "TANKC_7" + waveExtension, path + "stop.wav");
 		
-	//missel
+	// missel
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TANKC_1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TANKC_5" + waveExtension, path + "start.wav", 0);
@@ -3339,7 +3351,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "TANKC_7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "MISLFIRE" + waveExtension, path + "attack.wav");
 		
-	//missel_ship
+	// missel_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "missel_ship" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "MBOATMVE" + waveExtension, path + "start_water.wav", 0);
@@ -3347,7 +3359,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "MBOATSTP" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "MSLCR14" + waveExtension, path + "attack.wav");
 	
-	//mobile_aa
+	// mobile_aa
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "mobile_aa" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "APC1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "start.wav", 0);
@@ -3355,7 +3367,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "APC7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "MANTI14" + waveExtension, path + "attack.wav");
 		
-	//pionier
+	// pionier
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "pionier" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "ENGIN1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ENGIN5" + waveExtension, path + "start.wav", 0);
@@ -3366,21 +3378,21 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "ENGIN6" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "ENGIN8" + waveExtension, path + "stop_water.wav");
 		
-	//repair
+	// repair
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "repair" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "REPAIR1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "REPAIR5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "REPAIR5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "REPAIR7" + waveExtension, path + "stop.wav");
 		
-	//scanner
+	// scanner
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scanner" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "SCAN1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "SCAN5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "SCAN5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "SCAN7" + waveExtension, path + "stop.wav");
 		
-	//scout
+	// scout
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scout" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "SCOUT1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "SCOUT5" + waveExtension, path + "start.wav", 0);
@@ -3392,21 +3404,21 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "SCOUT8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
-	//sea_minelayer
+	// sea_minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_minelayer" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "GBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "GBOATSTP" + waveExtension, path + "stop_water.wav");
 		
-	//sea_transport
+	// sea_transport
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sea_transport" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "GBOATIDL" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "GBOATSTP" + waveExtension, path + "stop_water.wav");
 		
-	//sub
+	// sub
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "sub" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "SUB2" + waveExtension, path + "wait_water.wav");
 	copyPartOfWAV( sMAXPath + "SUB6" + waveExtension, path + "start_water.wav", 0);
@@ -3415,7 +3427,7 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "SUB14" + waveExtension, path + "attack.wav");
 	copyWAV( sMAXPath + "SUB16" + waveExtension, path + "death1.wav");
 		
-	//surveyor
+	// surveyor
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "surveyor" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "SURVY1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "SURVY5" + waveExtension, path + "start.wav", 0);
@@ -3426,7 +3438,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "SURVY6" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "SURVY8" + waveExtension, path + "stop_water.wav");
 		
-	//tank
+	// tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "tank" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TANK1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TANK5" + waveExtension, path + "start.wav", 0);
@@ -3434,21 +3446,21 @@ int installVehicleSounds()
 	copyWAV( sMAXPath + "TANK7" + waveExtension, path + "stop.wav");
 	copyWAV( sMAXPath + "CANFIRE" + waveExtension, path + "attack.wav");
 		
-	//trans_gold
+	// trans_gold
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_gold" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TRUCKIDL" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TRUCKMVE" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "TRUCKMVE" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "TRUCKSTP" + waveExtension, path + "stop.wav");
 		
-	//trans_metal
+	// trans_metal
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_metal" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TRUCKIDL" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TRUCKMVE" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "TRUCKMVE" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "TRUCKSTP" + waveExtension, path + "stop.wav");
 		
-	//trans_oil
+	// trans_oil
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "trans_oil" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "TRUCKIDL" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "TRUCKMVE" + waveExtension, path + "start.wav", 0);
@@ -3508,11 +3520,11 @@ void installVoices()
 	copyWAV(sVoicePath + "F154" + waveExtension, path + "status_red1" + waveExt);
 	copyWAV(sVoicePath + "F155" + waveExtension, path + "status_red2" + waveExt);
 	copyWAV(sVoicePath + "F158" + waveExtension, path + "sentry" + waveExt);
-	copyWAV(sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt);//for pio + constr
-	copyWAV(sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt);//for pio + constr
+	copyWAV(sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt);// for pio + constr
+	copyWAV(sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt);// for pio + constr
 	copyWAV(sVoicePath + "F166" + waveExtension, path + "start_one" + waveExt);// unit completed (in fac.)
-	copyWAV(sVoicePath + "F169" + waveExtension, path + "build_done3" + waveExt);//for factories
-	copyWAV(sVoicePath + "F216" + waveExtension, path + "build_done4" + waveExt);//for factories
+	copyWAV(sVoicePath + "F169" + waveExtension, path + "build_done3" + waveExt);// for factories
+	copyWAV(sVoicePath + "F216" + waveExtension, path + "build_done4" + waveExt);// for factories
 	copyWAV(sVoicePath + "F171" + waveExtension, path + "clearing" + waveExt);
 	copyWAV(sVoicePath + "F181" + waveExtension, path + "laying_mines" + waveExt);
 	copyWAV(sVoicePath + "F186" + waveExtension, path + "clearing_mines2" + waveExt);
@@ -3546,7 +3558,7 @@ void installVoices()
 // fix differences between eng and ger original sound-files - nonsinn
 // FIMXE / TODO : French-soundfile-check
 //-------------------------------------------------------------
-	//landing screen
+	// landing screen
 		copyWAV(sVoicePath + "F176" + waveExtension, path + "landing1" + waveExt);
 	if (sLanguage != "german")
 	{
@@ -3557,7 +3569,7 @@ void installVoices()
 		copyWAV(sVoicePath + "F276" + waveExtension, path + "landing3" + waveExt);
 	}
 
-	//differenc of F270 (ammo low vs. empty)
+	// differenc of F270 (ammo low vs. empty)
 		copyWAV(sVoicePath + "F138" + waveExtension, path + "ammo_low1" + waveExt);
 		copyWAV(sVoicePath + "F142" + waveExtension, path + "ammo_empty1" + waveExt);
 	if (sLanguage != "german")
@@ -3569,16 +3581,16 @@ void installVoices()
 		copyWAV(sVoicePath + "F270" + waveExtension, path + "ammo_empty2" + waveExt);
 	}
 
-	//20 sec left
+	// 20 sec left
 	if (sLanguage != "german")
 	{
-		copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec1" + waveExt);//not used yet
-		copyWAV(sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec2" + waveExt);//not used yet
-		copyWAV(sVoicePath + "F275" + waveExtension, path + "turn_end_20_sec3" + waveExt);//not used yet
+		copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec1" + waveExt);// not used yet
+		copyWAV(sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec2" + waveExt);// not used yet
+		copyWAV(sVoicePath + "F275" + waveExtension, path + "turn_end_20_sec3" + waveExt);// not used yet
 	}else{ /* install german lang */	
-		copyWAV(sVoicePath + "F271" + waveExtension, path + "turn_end_20_sec1" + waveExt);//not used yet
-		copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec2" + waveExt);//not used yet
-		copyWAV(sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec3" + waveExt);//not used yet
+		copyWAV(sVoicePath + "F271" + waveExtension, path + "turn_end_20_sec1" + waveExt);// not used yet
+		copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec2" + waveExt);// not used yet
+		copyWAV(sVoicePath + "F273" + waveExtension, path + "turn_end_20_sec3" + waveExt);// not used yet
 	}
 //-------------------------------------------------------------
 
@@ -3766,7 +3778,7 @@ void initialize ()
 	 to prevend stdout.txt to be created on windows -- beko
 	 */
     // added code to prevent writing to stdout.txt and stderr.txt
-    //freopen( "CON", "w", stdout );
+    // freopen( "CON", "w", stdout );
 	
     atexit(SDL_Quit);	
 }
@@ -3813,7 +3825,7 @@ void createLogFile ()
 {
 	string path;
 #ifdef WIN32
-	//write log file to user home dir
+	// write log file to user home dir
 	TCHAR szPath[MAX_PATH];
 	if (SHGetFolderPath (NULL, CSIDL_PERSONAL, NULL, 0, szPath) == S_OK)
 	{
@@ -3844,7 +3856,7 @@ void createLogFile ()
 	}
 	else
 	{
-		freopen( "resinstaller.log", "a", stderr );	//write errors to log instead stdout(.txt)
+		freopen( "resinstaller.log", "a", stderr );	// write errors to log instead stdout(.txt)
 	}
 	
 	writeLog(string("resinstaller version ") + VERSION + TEXT_FILE_LF);	
@@ -3853,7 +3865,7 @@ void createLogFile ()
 void checkWritePermissions()
 {
 #ifdef WIN32
-	//create test file
+	// create test file
 	string testFileName = sOutputPath + "\\writeTest.txt";
 	SDL_RWops* testFile = SDL_RWFromFile(testFileName.c_str(), "w");
 
@@ -3868,19 +3880,19 @@ void checkWritePermissions()
 
 			HINSTANCE result = ShellExecute(
 				NULL,
-				"runas",			//request elevated rights
+				"runas",			// request elevated rights
 				sAppName.c_str(),
 				parameter.c_str(),
-				NULL,				//working directory
+				NULL,				// working directory
 				SW_SHOW);
 
 			if ( (int)result > 32)
-				exit(0);	//success
+				exit(0);	// success
 		}
 		
 		cout << "Failed. Please restart the application with admin rights." << endl;
 		
-		//wait for key press
+		// wait for key press
 		FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 		getch();
 
@@ -3897,13 +3909,13 @@ void checkWritePermissions()
 //-------------------------------------------------------------
 bool validateMAXPath (string& maxPath)
 {
-	//now testing different input variations
+	// now testing different input variations
 	try
 	{
 		res = openFile ( (maxPath + "MAX.RES").c_str(), "rb" );
 		return true;
 	}
-	catch ( InstallException ) {}	//ignore exceptions
+	catch ( InstallException ) {}	// ignore exceptions
 	
 	try
 	{
@@ -3979,7 +3991,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	#ifdef EIKO
 		pathFromUser = "C:\\Users\\eiko\\Desktop\\MAX-Develop\\Original Versions\\MAX";
 	#else
-		//read path from cin
+		// read path from cin
 		getline(cin, pathFromUser, '\n');
 		trimSpaces(pathFromUser);
 		trimQuotes(pathFromUser);
@@ -4001,7 +4013,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 //-------------------------------------------------------------
 bool validateOutputPath (string& outputPath)
 {
-	//test for valid output folder
+	// test for valid output folder
 	string testFileName = "init.pcx";
 	SDL_RWops* testFile;
 	try
@@ -4053,7 +4065,7 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 		cout << "Please enter full path to M.A.X.R. installation for extracted files:" << endl;
 #ifdef EIKO
 		cout << "\n";
-		//pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
+		// pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
 		pathFromUser = "C:\\Users\\eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
 #else
 		// read the path from cin
@@ -4167,12 +4179,12 @@ int installEverything (void*)
 
 void trimSpaces(string& str, const locale& loc) 
 {
-	//trim spaces at the beginning
+	// trim spaces at the beginning
 	string::size_type pos = 0;
 	while (pos < str.size() && isspace(str[pos], loc))
 		pos++;
 	str.erase(0, pos);
-	//trim spaces at the end
+	// trim spaces at the end
 	pos = str.size();
 	while (pos > 0 && isspace(str[pos - 1], loc)) 
 		pos--;
@@ -4244,10 +4256,10 @@ int main ( int argc, char* argv[] )
 	// choose the language to install
 	if ( iLanguages == 0 )
 	{
-		//we are not installing from CD
+		// we are not installing from CD
 		sVoicePath = sMAXPath;
 	}
-	//we got the language parameter from commandline
+	// we got the language parameter from commandline
 	else if ( !sLanguage.empty() )
 	{
 		writeLog("Language argument from command line: " + sLanguage );
@@ -4276,7 +4288,7 @@ int main ( int argc, char* argv[] )
 			writeLog("Language is not available");
 		}
 	}
-	//ask the user, which language to install
+	// ask the user, which language to install
 	else
 	{
 #if MAC
@@ -4299,8 +4311,8 @@ int main ( int argc, char* argv[] )
 			sVoicePath = sMAXPath; // default - but should not happen
 #else
 
-		//make menu values
-		vector<string> vectorLanguages; //initialize empty vector of strings
+		// make menu values
+		vector<string> vectorLanguages; // initialize empty vector of strings
 		vectorLanguages.push_back("english");
 
 		if (bGerman)
@@ -4318,25 +4330,25 @@ int main ( int argc, char* argv[] )
 
 		do
 		{
-			//make menu output
+			// make menu output
 			cout << "\nThe following voice samples are available from your install source:\n";
 			cout << "\n No. | as word\n";
 			cout << " ------------- " << endl; 
 			for(unsigned ii = 0; ii < vectorLanguages.size(); ii++)
 			{
-				cout << "  " << ii+1 << "  | " << vectorLanguages[ii] << endl; //output languages from vector with increased number to start menu with 1 instead of 0
+				cout << "  " << ii+1 << "  | " << vectorLanguages[ii] << endl; // output languages from vector with increased number to start menu with 1 instead of 0
 				cout << " ------------- " << endl; 
 			}
 			
 			cout << "\nPlease enter your preferred language (as number or word): ";
 
-			//read lang from cin
+			// read lang from cin
 			string input;
 			getline(cin, input);
 			trimSpaces(input);
 			transform(input.begin(), input.end(), input.begin(), ::tolower);
 			
-			long int value = strtol( input.c_str(), NULL, 10 ); //If no valid conversion could be performed, a zero value is returned
+			long int value = strtol( input.c_str(), NULL, 10 ); // If no valid conversion could be performed, a zero value is returned
 			if ( value > 0 && value <= (long)vectorLanguages.size() )
 			{
 				input = vectorLanguages[value-1];
@@ -4347,7 +4359,7 @@ int main ( int argc, char* argv[] )
 			{
 				errormsg = "you inserted an invalid number";
 			}
-			else //no number entered. Search language by string
+			else // no number entered. Search language by string
 			{
 				for(unsigned ii = 0; ii < vectorLanguages.size(); ii++)
 				{
@@ -4382,18 +4394,18 @@ int main ( int argc, char* argv[] )
 #endif
 	}
 
-	//check if we need admin rights for the selected output directory
+	// check if we need admin rights for the selected output directory
 	checkWritePermissions();
 	
-	//init res converter
+	// init res converter
 	SDL_RWseek( res, 0, SEEK_END );
 	lEndOfFile = SDL_RWtell (res);
 
 	
-	lPosBegin = 15000000;		//the '[EOD]' should be after this position 
-								//for all versions of max.res, I think 
+	lPosBegin = 15000000;		// the '[EOD]' should be after this position 
+								// for all versions of max.res, I think 
 
-	//a little state maschine for searching the string "[EOD]" in max.res
+	// a little state maschine for searching the string "[EOD]" in max.res
 	unsigned char temp, state = 0;
 	SDL_RWseek( res, lPosBegin, SEEK_SET);
 
@@ -4477,7 +4489,7 @@ int main ( int argc, char* argv[] )
 	SDL_RWclose( logFile );
 	
 #if defined(WIN32) && !defined(NDEBUG)
-	//wait for key press
+	// wait for key press
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	getch();
 #endif
