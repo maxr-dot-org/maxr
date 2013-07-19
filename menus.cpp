@@ -182,9 +182,11 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	}
 
 	// init client and his players
-	AutoPtr<cClient> client (new cClient (server, network, *eventHandler, *map, &players));
+	AutoPtr<cClient> client (new cClient (server, network, *eventHandler));
+	client->setMap (*map);
+	client->setPlayers (&players, actPlayer);
+
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-	client->initPlayer (actPlayer);
 
 	if (isServer)
 	{
@@ -241,8 +243,9 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	AutoPtr<cClient> client (new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList));
-	client->initPlayer (clientPlayerList[player]);
+	AutoPtr<cClient> client (new cClient (server, network, *eventHandler));
+	client->setMap (*server->Map->staticMap);
+	client->setPlayers (&clientPlayerList, clientPlayerList[player]);
 
 	// in singleplayer only the first player is important
 	serverPlayerList[player]->setLocal();
@@ -3404,8 +3407,9 @@ bool cNetworkHostMenu::runSavedGame()
 		clientPlayerList[i]->BuildingData = UnitsData.getUnitData_Buildings (addedPlayer->getClan());
 	}
 	// init client and his player
-	AutoPtr<cClient> client (new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList));
-	client->initPlayer (localPlayer);
+	AutoPtr<cClient> client (new cClient (server, network, gameDataContainer.getEventHandler()));
+	client->setMap (*server->Map->staticMap);
+	client->setPlayers (&clientPlayerList, localPlayer);
 
 	// send data to all players
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)

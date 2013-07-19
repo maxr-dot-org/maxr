@@ -35,7 +35,6 @@
 #include "jobs.h"
 #include "log.h"
 #include "main.h"
-#include "menus.h"
 #include "netmessage.h"
 #include "player.h"
 #include "server.h"
@@ -65,12 +64,11 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cStaticMap& staticMap, std::vector<cPlayer*>* const playerList) :
+cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_) :
 	server (server_),
 	network (network_),
 	eventHandling (&eventHandling_),
-	Map (new cMap (staticMap)),
-	PlayerList (playerList),
+	PlayerList (NULL),
 	gameGUI (new cGameGUI ()),
 	gameTimer(),
 	FxList (new cFxContainer)
@@ -88,10 +86,6 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	casualtiesTracker = new cCasualtiesTracker();
 
 	gameTimer.start();
-	for (unsigned int i = 0; i < PlayerList->size(); i++)
-	{
-		(*PlayerList) [i]->initMaps (*Map);
-	}
 }
 
 cClient::~cClient()
@@ -110,7 +104,38 @@ cClient::~cClient()
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
-	delete Map;
+}
+
+void cClient::setMap (cStaticMap& staticMap)
+{
+	Map = new cMap (staticMap);
+	initPlayersWithMap();
+}
+
+void cClient::setPlayers (std::vector<cPlayer*>* playerList, cPlayer* Player)
+{
+	PlayerList = playerList;
+	ActivePlayer = Player;
+
+	initPlayersWithMap();
+}
+
+void cClient::initPlayersWithMap()
+{
+	if (PlayerList == 0 || Map == 0) return;
+
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+	{
+		(*PlayerList) [i]->initMaps (*Map);
+	}
+
+	// generate subbase for enemy players
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+	{
+		if ( (*PlayerList) [i] == ActivePlayer) continue;
+		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ( (*PlayerList) [i]));
+	}
+	gameGUI->setClient (this);
 }
 
 /*virtual*/ void cClient::pushEvent (cNetMessage* message)
@@ -148,19 +173,6 @@ void cClient::sendNetMessage (cNetMessage* message) const
 		//so network->send() only sends to the server
 		network->send (message->iLength, message->serialize());
 		delete message;
-	}
-}
-
-void cClient::initPlayer (cPlayer* Player)
-{
-	ActivePlayer = Player;
-	gameGUI->setClient (this);
-
-	// generate subbase for enemy players
-	for (unsigned int i = 0; i < PlayerList->size(); i++)
-	{
-		if ( (*PlayerList) [i] == ActivePlayer) continue;
-		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ( (*PlayerList) [i]));
 	}
 }
 

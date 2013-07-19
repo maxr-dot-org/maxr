@@ -57,8 +57,11 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutput;
 	friend class cPlayer;
 public:
-	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cStaticMap& staticMap, std::vector<cPlayer*>* PlayerList);
+	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_);
 	~cClient();
+
+	void setMap (cStaticMap& staticMap);
+	void setPlayers (std::vector<cPlayer*>* PlayerList, cPlayer* Player);
 
 	// Return local server if any.
 	// TODO: should be const cServer*
@@ -144,13 +147,6 @@ public:
 	cBuilding* getBuildingFromID (unsigned int iID);
 
 	/**
-	* initialises this client for the player.
-	*@author alzi alias DoctorDeath
-	*@param Player The player.
-	*/
-	void initPlayer (cPlayer* Player);
-
-	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops
 	*/
@@ -190,6 +186,8 @@ public:
 	cGameGUI& getGameGUI() { return *gameGUI; }
 	const sSettings* getGameSetting() const { return gameSetting; }
 private:
+	void initPlayersWithMap();
+
 	/**
 	* adds the unit to the map and player.
 	*@author alzi alias DoctorDeath
@@ -292,7 +290,7 @@ private:
 	cTCP* network;
 	cEventHandling* eventHandling;
 	/** the map */
-	cMap* Map;
+	AutoPtr<cMap> Map;
 	/** List with all players */
 	std::vector<cPlayer*>* PlayerList;
 	/** the active Player */
