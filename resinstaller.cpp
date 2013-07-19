@@ -2498,6 +2498,15 @@ int installGfx()
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "attack.pcx" );
+	// attack out-of-range
+	try
+	{
+		output = getImageFromRes("PTR_FTRG");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "attack-oor.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "attack-oor.pcx" );
 
 	try
 	{
@@ -2630,6 +2639,15 @@ int installGfx()
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "move.pcx" );
+	// move draft
+	try
+	{
+		output = getImageFromRes("WAY_PTR");
+		setColor( output, 0, 255, 0, 255 );
+		savePCX( output, path + "move_draft.pcx");
+		SDL_FreeSurface( output );
+	}
+	END_INSTALL_FILE( path + "move_draft.pcx" );
 
 	// muni
 	try
@@ -2838,6 +2856,41 @@ int installGfx()
 		SDL_FreeSurface( output );
 	}
 	END_INSTALL_FILE( path + "gold.pcx" )
+
+	//some unused pointer from original res-file
+	#if 0
+		// blizzard-pointer...
+		// maybe useful if teammode available,
+		// => mouse over a friends unit -> ident. friend or foe (IFF)
+		try 
+		{
+			output = getImageFromRes("FRND_FUE");
+			setColor( output, 0, 255, 0, 255 );
+			savePCX( output, path + "blizzard.pcx");
+			SDL_FreeSurface( output );
+		}
+		END_INSTALL_FILE( path + "blizzard.pcx" );
+
+		// this could be used for what it is labled for ;)
+		try
+		{
+			output = getImageFromRes("GROUPPTR");
+			setColor( output, 0, 255, 0, 255 );
+			savePCX( output, path + "select_groupe.pcx");
+			SDL_FreeSurface( output );
+		}
+		END_INSTALL_FILE( path + "select_groupe.pcx" );
+
+		// another funny ptr... maybe usefull for #776
+		try
+		{
+			output = getImageFromRes("PTR_PATH");
+			setColor( output, 0, 255, 0, 255 );
+			savePCX( output, path + "maze.pcx");
+			SDL_FreeSurface( output );
+		}
+		END_INSTALL_FILE( path + "maze.pcx" );
+	#endif
 
 	// and now the ugly hud_stuff.pcx :|
 #define COPY_GRAPHIC(name, _x, _y) \
