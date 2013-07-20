@@ -107,18 +107,19 @@ void cServerGame::saveGame (int saveGameNumber)
 void cServerGame::prepareGameData()
 {
 	gameData = new cGameDataContainer();
-	gameData->settings = new sSettings();
-	gameData->settings->metal = SETTING_RESVAL_MUCH;
-	gameData->settings->oil = SETTING_RESVAL_NORMAL;
-	gameData->settings->gold = SETTING_RESVAL_NORMAL;
-	gameData->settings->resFrequency = SETTING_RESFREQ_NORMAL;
-	gameData->settings->credits = SETTING_CREDITS_NORMAL;
-	gameData->settings->bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
-	gameData->settings->alienTech = SETTING_ALIENTECH_OFF;
-	gameData->settings->clans = SETTING_CLANS_ON;
-	gameData->settings->gameType = SETTINGS_GAMETYPE_SIMU;
-	gameData->settings->victoryType = SETTINGS_VICTORY_ANNIHILATION;
-	gameData->settings->duration = SETTINGS_DUR_LONG;
+	sSettings* settings = new sSettings();
+	settings->metal = SETTING_RESVAL_MUCH;
+	settings->oil = SETTING_RESVAL_NORMAL;
+	settings->gold = SETTING_RESVAL_NORMAL;
+	settings->resFrequency = SETTING_RESFREQ_NORMAL;
+	settings->credits = SETTING_CREDITS_NORMAL;
+	settings->bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
+	settings->alienTech = SETTING_ALIENTECH_OFF;
+	settings->clans = SETTING_CLANS_ON;
+	settings->gameType = SETTINGS_GAMETYPE_SIMU;
+	settings->victoryType = SETTINGS_VICTORY_ANNIHILATION;
+	settings->duration = SETTINGS_DUR_LONG;
+	gameData->settings = settings;
 	gameData->map = new cStaticMap();
 	string mapName = "Mushroom.wrl";
 	gameData->map->loadMap (mapName);
@@ -241,8 +242,11 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 	//checkTakenPlayerAttr (player);
 
 	sendPlayerList (*network, menuPlayers);
-	//sendGameData (*network, gameData, saveGameString, player);
-	sendGameData (*network, *gameData, "", player);
+
+	const cStaticMap* map = gameData->map;
+	const sSettings* settings = gameData->settings;
+	//sendGameData (*network, map, settings, saveGameString, player);
+	sendGameData (*network, map, settings, "", player);
 }
 
 //------------------------------------------------------------------------------
@@ -305,7 +309,10 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				}
 				if (gameData->map != 0 && gameData->map->loadMap (mapName))
 				{
-					sendGameData (*network, *gameData, "");
+					const cStaticMap* map = gameData->map;
+					const sSettings* settings = gameData->settings;
+
+					sendGameData (*network, map, settings, "");
 					string reply = senderPlayer->getName();
 					reply += " changed the map.";
 					sendMenuChatMessage (*network, reply);
@@ -333,8 +340,10 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					}
 					else
 					{
-						gameData->settings->credits = credits;
-						sendGameData (*network, *gameData, "");
+						sSettings* settings = gameData->settings;
+						settings->credits = credits;
+						const cStaticMap* map = gameData->map;
+						sendGameData (*network, map, settings, "");
 						string reply = senderPlayer->getName();
 						reply += " changed the starting credits.";
 						sendMenuChatMessage (*network, reply);
@@ -424,8 +433,10 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 		else if (tokens[1].compare ("most") == 0) density = SETTING_RESFREQ_MOST;
 		if (density != -1)
 		{
-			gameData->settings->resFrequency = (eSettingResFrequency) density;
-			sendGameData (*network, *gameData, "");
+			sSettings* settings = gameData->settings;
+			settings->resFrequency = (eSettingResFrequency) density;
+			const cStaticMap* map = gameData->map;
+			sendGameData (*network, map, settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
@@ -444,10 +455,12 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 		else if (tokens[1].compare ("most") == 0) ammount = SETTING_RESVAL_MOST;
 		if (ammount != -1)
 		{
-			if (tokens[0].compare ("oil") == 0) gameData->settings->oil = (eSettingResourceValue) ammount;
-			else if (tokens[0].compare ("metal") == 0) gameData->settings->metal = (eSettingResourceValue) ammount;
-			else if (tokens[0].compare ("gold") == 0) gameData->settings->gold = (eSettingResourceValue) ammount;
-			sendGameData (*network, *gameData, "");
+			sSettings* settings = gameData->settings;
+			if (tokens[0].compare ("oil") == 0) settings->oil = (eSettingResourceValue) ammount;
+			else if (tokens[0].compare ("metal") == 0) settings->metal = (eSettingResourceValue) ammount;
+			else if (tokens[0].compare ("gold") == 0) settings->gold = (eSettingResourceValue) ammount;
+			const cStaticMap* map = gameData->map;
+			sendGameData (*network, map, settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";
 			reply += tokens[0];

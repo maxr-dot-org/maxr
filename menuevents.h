@@ -52,7 +52,7 @@ void sendRequestIdentification (cTCP& network, const sMenuPlayer& player);
 
 void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players);
 
-void sendGameData (cTCP& network, const cGameDataContainer& gameData, const std::string& saveGameString, const sMenuPlayer* player = NULL);
+void sendGameData (cTCP& network, const cStaticMap* map, const sSettings* settings, const std::string& saveGameString, const sMenuPlayer* player = NULL);
 
 void sendGo (cTCP& network);
 

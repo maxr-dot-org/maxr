@@ -3078,7 +3078,9 @@ void cNetworkHostMenu::mapReleased (void* parent)
 	planetsSelectionMenu.show (NULL);
 	menu->showSettingsText();
 	menu->showMap();
-	sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
+	const cStaticMap* map = menu->gameDataContainer.map;
+	const sSettings* settings = menu->gameDataContainer.settings;
+	sendGameData (*menu->network, map, settings, menu->saveGameString);
 	menu->draw();
 }
 
@@ -3096,7 +3098,9 @@ void cNetworkHostMenu::settingsReleased (void* parent)
 		menu->gameDataContainer.settings = NULL;
 	}
 	menu->showSettingsText();
-	sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
+	const cStaticMap* map = menu->gameDataContainer.map;
+	const sSettings* settings = menu->gameDataContainer.settings;
+	sendGameData (*menu->network, map, settings, menu->saveGameString);
 	menu->draw();
 }
 
@@ -3118,8 +3122,9 @@ void cNetworkHostMenu::loadReleased (void* parent)
 		cStaticMap* map = new cStaticMap;
 		map->loadMap (savegame.getMapName());
 		menu->gameDataContainer.map = map;
+		const sSettings* settings = menu->gameDataContainer.settings;
 
-		sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
+		sendGameData (*menu->network, map, settings, menu->saveGameString);
 		menu->showSettingsText();
 		menu->showMap();
 	}
@@ -3254,7 +3259,9 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* mess
 
 	draw();
 	sendPlayerList (*network, players);
-	sendGameData (*network, gameDataContainer, saveGameString, player);
+	const cStaticMap* map = gameDataContainer.map;
+	const sSettings* settings = gameDataContainer.settings;
+	sendGameData (*network, map, settings, saveGameString, player);
 }
 
 void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message)
@@ -3649,8 +3656,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 		showMap();
 	}
 
-	if (message->popBool()) saveGameString = message->popString();
-	else saveGameString = "";
+	saveGameString = message->popString();
 
 	showSettingsText();
 	draw();

@@ -62,37 +62,36 @@ void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players)
 	cMenu::sendMessage (network, message);
 }
 
-void sendGameData (cTCP& network, const cGameDataContainer& gameData, const string& saveGameString, const sMenuPlayer* player)
+void sendGameData (cTCP& network, const cStaticMap* map, const sSettings* settings, const string& saveGameString, const sMenuPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
-	if (!gameData.savegame.empty()) message->pushString (saveGameString);
-	message->pushBool (!gameData.savegame.empty());
+	message->pushString (saveGameString);
 
-	if (gameData.map)
+	if (map)
 	{
-		const std::string mapName = gameData.map->getName();
+		const std::string mapName = map->getName();
 		message->pushInt32 (MapDownload::calculateCheckSum (mapName));
 		message->pushString (mapName);
 	}
-	message->pushBool (gameData.map != NULL);
+	message->pushBool (map != NULL);
 
-	if (gameData.settings)
+	if (settings)
 	{
-		message->pushInt16 (gameData.settings->iTurnDeadline);
-		message->pushChar (gameData.settings->gameType);
-		message->pushChar (gameData.settings->clans);
-		message->pushChar (gameData.settings->alienTech);
-		message->pushChar (gameData.settings->bridgeHead);
-		message->pushInt16 (gameData.settings->credits);
-		message->pushChar (gameData.settings->resFrequency);
-		message->pushChar (gameData.settings->gold);
-		message->pushChar (gameData.settings->oil);
-		message->pushChar (gameData.settings->metal);
-		message->pushChar (gameData.settings->victoryType);
-		message->pushInt16 (gameData.settings->duration);
+		message->pushInt16 (settings->iTurnDeadline);
+		message->pushChar (settings->gameType);
+		message->pushChar (settings->clans);
+		message->pushChar (settings->alienTech);
+		message->pushChar (settings->bridgeHead);
+		message->pushInt16 (settings->credits);
+		message->pushChar (settings->resFrequency);
+		message->pushChar (settings->gold);
+		message->pushChar (settings->oil);
+		message->pushChar (settings->metal);
+		message->pushChar (settings->victoryType);
+		message->pushInt16 (settings->duration);
 	}
-	message->pushBool (gameData.settings != NULL);
+	message->pushBool (settings != NULL);
 
 	cMenu::sendMessage (network, message, player);
 }
