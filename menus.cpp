@@ -226,13 +226,12 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 //------------------------------------------------------------------------------
 void cGameDataContainer::runSavedGame (cTCP* network, int player)
 {
-	cServer* server = NULL;
+	cServer server (network);
 	cSavegame savegame (savegameNum);
-	if (savegame.load (&server, network) == false) return;
-	assert (server != NULL);
-	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
-	AutoPtr<cMap> serverMap (server->Map);
-	std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
+	if (savegame.load (server) == false) return;
+	AutoPtr<cStaticMap> staticMap (server.Map->staticMap);
+	AutoPtr<cMap> serverMap (server.Map);
+	std::vector<cPlayer*>& serverPlayerList = *server.PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
 	std::vector<cPlayer*> clientPlayerList;
@@ -243,8 +242,8 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	AutoPtr<cClient> client (new cClient (server, network, *eventHandler));
-	client->setMap (*server->Map->staticMap);
+	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
+	client->setMap (*server.Map->staticMap);
 	client->setPlayers (&clientPlayerList, clientPlayerList[player]);
 
 	// in singleplayer only the first player is important
@@ -253,17 +252,17 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
+		sendHudSettings (server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
-			sendSavedReport (*server, reportList[j], serverPlayerList[i]->getNr());
+			sendSavedReport (server, reportList[j], serverPlayerList[i]->getNr());
 		}
 		reportList.clear();
 	}
 
 	// exit menu and start game
-	server->bStarted = true;
+	server.bStarted = true;
 	client->getGameGUI().show (client);
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
@@ -272,9 +271,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	}
 	clientPlayerList.clear();
 
-	server->stop();
-	delete server;
-	server = NULL;
+	server.stop();
 
 	reloadUnitValues();
 }
@@ -3316,13 +3313,12 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 //------------------------------------------------------------------------------
 bool cNetworkHostMenu::runSavedGame()
 {
-	cServer* server = NULL;
+	cServer server (network);
 	cSavegame savegame (gameDataContainer.savegameNum);
-	if (savegame.load (&server, network) == false) return false;
-	assert (server != NULL);
-	AutoPtr<cStaticMap> staticMap (server->Map->staticMap);
-	AutoPtr<cMap> serverMap (server->Map);
-	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
+	if (savegame.load (server) == false) return false;
+	AutoPtr<cStaticMap> staticMap (server.Map->staticMap);
+	AutoPtr<cMap> serverMap (server.Map);
+	const std::vector<cPlayer*>& serverPlayerList = *server.PlayerList;
 	// first we check whether all necessary players are connected
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
@@ -3334,7 +3330,6 @@ bool cNetworkHostMenu::runSavedGame()
 			{
 				chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
 				draw();
-				// memleak ? (server)
 				return false;
 			}
 		}
@@ -3407,30 +3402,28 @@ bool cNetworkHostMenu::runSavedGame()
 		clientPlayerList[i]->BuildingData = UnitsData.getUnitData_Buildings (addedPlayer->getClan());
 	}
 	// init client and his player
-	AutoPtr<cClient> client (new cClient (server, network, gameDataContainer.getEventHandler()));
-	client->setMap (*server->Map->staticMap);
+	AutoPtr<cClient> client (new cClient (&server, network, gameDataContainer.getEventHandler()));
+	client->setMap (*server.Map->staticMap);
 	client->setPlayers (&clientPlayerList, localPlayer);
 
 	// send data to all players
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		sendRequestResync (*client, serverPlayerList[i]->getNr());
-		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
+		sendHudSettings (server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
-			sendSavedReport (*server, reportList[j], serverPlayerList[i]->getNr());
+			sendSavedReport (server, reportList[j], serverPlayerList[i]->getNr());
 		}
 		reportList.clear();
 	}
 
 	// exit menu and start game
-	server->bStarted = true;
+	server.bStarted = true;
 	client->getGameGUI().show (client);
 
-	server->stop();
-	delete server;
-	server = NULL;
+	server.stop();
 
 	reloadUnitValues();
 

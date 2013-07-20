@@ -111,9 +111,8 @@ int cSavegame::save (const cServer& server, const string& saveName)
 }
 
 //--------------------------------------------------------------------------
-bool cSavegame::load (cServer** pServer, cTCP* network)
+bool cSavegame::load (cServer& server)
 {
-	*pServer = NULL;
 	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
 	if (SaveFile.LoadFile (fileName.c_str()) != 0)
 	{
@@ -157,19 +156,16 @@ bool cSavegame::load (cServer** pServer, cTCP* network)
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
 	}
-	cServer* server = new cServer (network);
-	if (loadMap(*server) == false)
+	if (loadMap(server) == false)
 	{
-		delete server;
 		return false;
 	}
-	*pServer = server;
-	loadPlayers (*server);
-	loadGameInfo (*server);
-	loadUnits (*server);
-	loadCasualties (*server);
+	loadPlayers (server);
+	loadGameInfo (server);
+	loadUnits (server);
+	loadCasualties (server);
 
-	recalcSubbases (*server);
+	recalcSubbases (server);
 	return true;
 }
 

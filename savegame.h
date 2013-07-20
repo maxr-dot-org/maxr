@@ -68,7 +68,7 @@ public:
 	/* saves the current gamestate to a file */
 	int save (const cServer& server, const std::string& saveName);
 	/* loads a savegame */
-	bool load (cServer** pServer, cTCP* network);
+	bool load (cServer& server);
 
 	/* loads the header of a savefile and returns some values to the pointers */
 	void loadHeader (std::string* name, std::string* type, std::string* time);

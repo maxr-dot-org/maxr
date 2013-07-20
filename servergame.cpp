@@ -82,9 +82,9 @@ void cServerGame::runInThread()
 bool cServerGame::loadGame (int saveGameNumber)
 {
 	cSavegame savegame (saveGameNumber);
-	if (savegame.load (&server, network) == false)
+	server = new cServer (network);
+	if (savegame.load (*server) == false)
 		return false;
-	assert (server != 0);
 	server->markAllPlayersAsDisconnected();
 	server->bStarted = true;
 	return true;
