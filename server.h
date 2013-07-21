@@ -223,7 +223,7 @@ public:
 	cVehicle* addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
 	cBuilding* addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
-	void placeInitialResources (std::vector<sClientLandData>& landData, const sSettings& settings);
+	void placeInitialResources (std::vector<sClientLandData>& landData);
 
 	/**
 	* lands all units at the given position
@@ -235,7 +235,7 @@ public:
 	*@param bFixed true if the bridgehead is fixed.
 	*/
 	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
-	void makeLanding (const std::vector<sClientLandData>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits, const sSettings& settings);
+	void makeLanding (const std::vector<sClientLandData>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
 	/**
 	 *
 	 */

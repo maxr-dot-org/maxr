@@ -2176,14 +2176,14 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 }
 
 //------------------------------------------------------------------------------
-void cServer::placeInitialResources (std::vector<sClientLandData>& landData, const sSettings& settings)
+void cServer::placeInitialResources (std::vector<sClientLandData>& landData)
 {
 	for (size_t i = 0; i != landData.size(); ++i)
 	{
 		correctLandingPos (landData[i].iLandX, landData[i].iLandY);
-		Map->placeRessourcesAddPlayer (landData[i].iLandX, landData[i].iLandY, settings.resFrequency);
+		Map->placeRessourcesAddPlayer (landData[i].iLandX, landData[i].iLandY, gameSetting->resFrequency);
 	}
-	Map->placeRessources (settings.metal, settings.oil, settings.gold);
+	Map->placeRessources (gameSetting->metal, gameSetting->oil, gameSetting->gold);
 }
 
 //------------------------------------------------------------------------------
@@ -2203,10 +2203,9 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const s
 
 //------------------------------------------------------------------------------
 void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
-							const std::vector<std::vector<sLandingUnit>*>& landingUnits,
-							const sSettings& settings)
+							const std::vector<std::vector<sLandingUnit>*>& landingUnits)
 {
-	const bool fixed = settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
+	const bool fixed = gameSetting->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
 		const int x = landPos[i].iLandX;

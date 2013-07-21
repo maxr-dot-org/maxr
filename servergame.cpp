@@ -493,7 +493,7 @@ void cServerGame::startGameServer()
 	server->setGameSettings (*gameData->settings);
 
 	// place resources
-	server->placeInitialResources (gameData->landData, *gameData->settings);
+	server->placeInitialResources (gameData->landData);
 
 	// send victory conditions to clients
 	for (unsigned n = 0; n < gameData->players.size(); n++)
@@ -504,7 +504,7 @@ void cServerGame::startGameServer()
 		sendClansToClients (*server, gameData->players);
 
 	// make the landing
-	server->makeLanding (gameData->landData, gameData->landingUnits, *gameData->settings);
+	server->makeLanding (gameData->landData, gameData->landingUnits);
 	for (size_t i = 0; i != gameData->players.size(); ++i)
 	{
 		delete gameData->landingUnits[i];

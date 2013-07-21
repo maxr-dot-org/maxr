@@ -178,7 +178,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		server->setGameSettings (*settings);
 
 		// place resources
-		server->placeInitialResources (landData, *settings);
+		server->placeInitialResources (landData);
 	}
 
 	// init client and his players
@@ -198,7 +198,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 			sendClansToClients (*server, players);
 
 		// make the landing
-		server->makeLanding (landData, landingUnits, *settings);
+		server->makeLanding (landData, landingUnits);
 		for (size_t i = 0; i != players.size(); ++i)
 		{
 			delete landingUnits[i];
