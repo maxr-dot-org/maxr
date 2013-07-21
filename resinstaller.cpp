@@ -2503,10 +2503,10 @@ int installGfx()
 	{
 		output = getImageFromRes("PTR_FTRG");
 		setColor( output, 0, 255, 0, 255 );
-		savePCX( output, path + "attack-oor.pcx");
+		savePCX( output, path + "attack_oor.pcx");
 		SDL_FreeSurface( output );
 	}
-	END_INSTALL_FILE( path + "attack-oor.pcx" );
+	END_INSTALL_FILE( path + "attack_oor.pcx" );
 
 	try
 	{
