@@ -145,12 +145,12 @@ void sendWantStopMove (const cClient& client, int iVehicleID);
 void sendMoveJobResume (const cClient& client, int unitId);
 
 /**
-* sends all necessary information to identify agressor
+* sends all necessary information to identify aggressor
 * and target of an attack to the server
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.
 *@param targetOffset the offset, where the player has aimed
-*@param agressor ID of the agressor, if it is a vehicle. Offset os the agressor if it is a building
-*@param isVehicle true if agressor is a vehicle, false otherwise
+*@param aggressor ID of the aggressor, if it is a vehicle. Offset os the aggressor if it is a building
+*@param isVehicle true if aggressor is a vehicle, false otherwise
 *@author Eiko
 */
 void sendWantAttack (const cClient& client, int targetID, int targetOffset, int aggressor, bool isVehicle);

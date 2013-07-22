@@ -2119,7 +2119,7 @@ void cClient::handleMoveJobs()
 		}
 		if (MoveJob->bEndForNow)
 		{
-			Log.write (" Client: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write (" Client: Movejob has end for now and will be stopped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 			if (Vehicle)
 			{
 				Vehicle->MoveJobActive = false;

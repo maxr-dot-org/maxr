@@ -108,12 +108,12 @@ void sendMoveJobResume (const cClient& client, int unitId)
 	client.sendNetMessage (message);
 }
 
-void sendWantAttack (const cClient& client, int targetID, int targetOffset, int agressor, bool isVehicle)
+void sendWantAttack (const cClient& client, int targetID, int targetOffset, int aggressor, bool isVehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_ATTACK);
 	message->pushInt32 (targetID);
 	message->pushInt32 (targetOffset);
-	message->pushInt32 (agressor);
+	message->pushInt32 (aggressor);
 	message->pushBool (isVehicle);
 	client.sendNetMessage (message);
 }

@@ -133,7 +133,7 @@ void cServerAttackJob::lockTarget (int offset)
 
 	const bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
-	// if the agressor can attack air and land units,
+	// if the aggressor can attack air and land units,
 	// decide whether it is currently attacking air or land targets
 	if ( (attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
 	{
@@ -215,7 +215,8 @@ void cServerAttackJob::sendFireCommand()
 	if (unit == 0)
 		return;
 
-	// make the agressor visible on all clients who can see the agressor offset
+	// make the aggressor visible on all clients
+	// who can see the aggressor offset
 	std::vector<cPlayer*>& playerList = *server->PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
@@ -242,7 +243,7 @@ void cServerAttackJob::sendFireCommand()
 	int fireDir = unit->dir;
 	if (r <= 0.001f)
 	{
-		//do not rotate agressor
+		// do not rotate aggressor
 	}
 	else
 	{
@@ -303,7 +304,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 		message->pushInt32 (unit->iID);
 	else
 	{
-		// when the agressor is out of sight,
+		// when the aggressor is out of sight,
 		// send the position and muzzle type to the client
 		message->pushInt32 (iAgressorOff);
 		message->pushChar (unit->data.muzzleType);
@@ -439,7 +440,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	if (target && target->isAVehicle())
 		static_cast<cVehicle*> (target)->InSentryRange (*server);
 
-	// check whether the agressor itself is in sentry range
+	// check whether the aggressor itself is in sentry range
 	if (unit && unit->isAVehicle())
 		static_cast<cVehicle*> (unit)->InSentryRange (*server);
 }
@@ -595,7 +596,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 
 	const int unitID = message->popInt32();
 
-	// get muzzle type and agressor position
+	// get muzzle type and aggressor position
 	if (unitID == 0)
 	{
 		iMuzzleType = message->popChar();
@@ -614,7 +615,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		{
 			// we are out of sync!!!
 			state = FINISHED;
-			Log.write (" Client: agressor with id " + iToStr (unitID) + " not found", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write (" Client: aggressor with id " + iToStr (unitID) + " not found", cLog::eLOG_TYPE_NET_ERROR);
 			return;
 		}
 

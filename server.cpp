@@ -133,7 +133,7 @@ cServer::~cServer()
 	delete casualtiesTracker;
 	casualtiesTracker = 0;
 
-	// disconect clients
+	// disconnect clients
 	if (network)
 	{
 		for (size_t i = 0; i < PlayerList->size(); ++i)
@@ -478,7 +478,7 @@ void cServer::handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_ATTACK);
-	// identify agressor
+	// identify aggressor
 	const bool bIsVehicle = message.popBool();
 	cUnit* attackingUnit = NULL;
 	if (bIsVehicle)
@@ -502,13 +502,13 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 		const int offset = message.popInt32();
 		if (Map->isValidOffset (offset) == false)
 		{
-			Log.write (" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Server: Invalid aggressor offset", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
 		attackingUnit = Map->fields[offset].getTopBuilding();
 		if (attackingUnit == NULL)
 		{
-			Log.write (" Server: No Building at agressor offset", cLog::eLOG_TYPE_NET_WARNING);
+			Log.write (" Server: No Building at aggressor offset", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
 		if (attackingUnit->owner->getNr() != message.iPlayerNr)
@@ -956,7 +956,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		// if the first unit hasn't changed copy it to the new buildlist
 		if (Building->BuildList->size() > 0 && i == 0 && Type == (*Building->BuildList) [0]->type)
 		{
-			// recalculate costs, because build speed could have beed changed
+			// recalculate costs, because build speed could have been changed
 			int iTurboBuildRounds[3];
 			int iTurboBuildCosts[3];
 			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, (*Building->BuildList) [0]->metall_remaining);
@@ -1836,7 +1836,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map, steal)) ||
 			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map, steal)))) return;
 
-	// check whether the action is successfull or not
+	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
 	bool success = false;
 	if (random (100) < chance)
@@ -1853,9 +1853,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		}
 		else
 		{
-			// only on disabling units the infiltartor gets exp.
+			// only on disabling units the infiltrator gets exp.
 			// As higher his level is as slower he rises onto the next one.
-			// every 5 rankings he needs one succesfull disabling more,
+			// every 5 rankings he needs one successful disabling more,
 			// to get to the next ranking
 			srcVehicle->CommandoRank += 1.f / ( ( (int) srcVehicle->CommandoRank + 5) / 5);
 
@@ -3220,7 +3220,7 @@ void cServer::handleMoveJobs()
 		// stop the job
 		if (MoveJob->bEndForNow && Vehicle)
 		{
-			Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write (" Server: Movejob has end for now and will be stopped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 			sendNextMove (*this, *Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			continue;
@@ -3280,7 +3280,7 @@ void cServer::handleMoveJobs()
 			}
 			if (MoveJob->bEndForNow)
 			{
-				Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+				Log.write (" Server: Movejob has end for now and will be stopped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				sendNextMove (*this, *Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
 				ActiveMJobs.erase (ActiveMJobs.begin() + i);
 				continue;
@@ -3864,7 +3864,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 			if (x == PosX && y == PosY) continue;
 
 			// when a bigOffet was passed,
-			// for example a contructor needs space for a big building
+			// for example a constructor needs space for a big building
 			// so not all directions are allowed for the side stepping
 			if (bigOffset != -1)
 			{
@@ -3973,7 +3973,7 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 			//gameTimer.stop(); //done in cGameTimer::nextTickAllowed();
 			break;
 		default:
-			Log.write (" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write (" Server: Tried to enable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	sendFreeze (*this, mode, freezeModes.getPlayerNumber());
@@ -3991,7 +3991,7 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 			sendUnfreeze (*this, mode);
 			break;
 		default:
-			Log.write (" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write (" Server: Tried to disable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	if (!freezeModes.pause && !freezeModes.waitForReconnect)
