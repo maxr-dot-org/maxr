@@ -819,8 +819,6 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 			}
 		}
 		Vehicle->BuildRounds = 0;
-		Vehicle->BuildingTyp.iFirstPart = 0;
-		Vehicle->BuildingTyp.iSecondPart = 0;
 		Vehicle->BuildPath = false;
 		Vehicle->BandX = 0;
 		Vehicle->BandY = 0;
