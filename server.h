@@ -398,7 +398,7 @@ private:
 	bool checkEndActions (int iPlayer);
 
 	/**
-	* checks wether the deadline has run down
+	* checks whether the deadline has run down
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDeadline();

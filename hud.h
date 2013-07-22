@@ -116,7 +116,7 @@ enum eMouseInputMode
 
 /**
  * This class draws all the debug output on the screen.
- * It is a seperate class,
+ * It is a separate class,
  * so you can add a "friend class cDebugOutput;" to the class,
  * which contains the data to display.
  * So there is no need to make members public

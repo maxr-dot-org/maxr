@@ -140,7 +140,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building)
 	{
 		sDrawingCacheEntry& entry = cachedImages[i];
 
-		// check wether the entry's properties are equal to the building
+		// check whether the entry's properties are equal to the building
 		if (entry.id != building.data.ID) continue;
 		if (entry.owner != building.owner) continue;
 		if (building.SubBase)
@@ -186,7 +186,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 	{
 		sDrawingCacheEntry& entry = cachedImages[i];
 
-		// check wether the entry's properties are equal to the building
+		// check whether the entry's properties are equal to the building
 		if (entry.id != vehicle.data.ID) continue;
 		if (entry.owner != vehicle.owner) continue;
 		if (entry.big != vehicle.data.isBig) continue;

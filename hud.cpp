@@ -1565,7 +1565,7 @@ void cGameGUI::updateUnderMouseObject()
 		}
 		return;
 	}
-	// check wether there is a unit under the mouse:
+	// check whether there is a unit under the mouse:
 	overUnitField = map.fields + (map.getOffset (x, y));
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	if (mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
@@ -1581,7 +1581,7 @@ void cGameGUI::updateUnderMouseObject()
 		const cVehicle& vehicle = *overUnitField->getVehicle();
 		// FIXME: displaying ownername to unit name
 		// may cause an overdraw on the infobox.
-		// This needs either to seperate infobox or
+		// This needs either to separate infobox or
 		// a length check in the future.
 		// that goes for unitnames itself too. -- beko
 		unitNameLabel.setText (vehicle.getDisplayName() + " (" + vehicle.owner->getName() + ")");
