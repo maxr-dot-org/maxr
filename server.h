@@ -223,23 +223,9 @@ public:
 	cVehicle* addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
 	cBuilding* addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
-	void placeInitialResources (std::vector<sClientLandData>& landData);
 
-	/**
-	* lands all units at the given position
-	*@author alzi alias DoctorDeath
-	*@param iX The X coordinate to land.
-	*@param iY The Y coordinate to land.
-	*@param Player The Player who wants to land.
-	*@param landingUnits List with all units to land.
-	*@param bFixed true if the bridgehead is fixed.
-	*/
-	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
-	void makeLanding (const std::vector<sClientLandData>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
-	/**
-	 *
-	 */
-	void correctLandingPos (int& iX, int& iY);
+	void startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
+
 	/**
 	* adds a report to the reportlist
 	*@author alzi alias DoctorDeath
@@ -294,6 +280,25 @@ public:
 	void disableFreezeMode (eFreezeMode mode);
 
 private:
+	void placeInitialResources (std::vector<sClientLandData>& landData);
+
+	/**
+	* lands all units at the given position
+	*@author alzi alias DoctorDeath
+	*@param iX The X coordinate to land.
+	*@param iY The Y coordinate to land.
+	*@param Player The Player who wants to land.
+	*@param landingUnits List with all units to land.
+	*@param bFixed true if the bridgehead is fixed.
+	*/
+	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
+	void makeLanding (const std::vector<sClientLandData>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
+	/**
+	 *
+	 */
+	void correctLandingPos (int& iX, int& iY);
+
+
 	void defeatLoserPlayers();
 	bool isVictoryConditionMet() const;
 

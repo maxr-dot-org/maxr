@@ -2288,6 +2288,23 @@ void cServer::correctLandingPos (int& iX, int& iY)
 }
 
 //------------------------------------------------------------------------------
+void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits)
+{
+	// send victory conditions to clients
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+		sendGameSettings (*this, *(*PlayerList)[i]);
+	// send clan info to clients
+	if (gameSetting->clans == SETTING_CLANS_ON)
+		sendClansToClients (*this, *PlayerList);
+
+	// place resources
+	placeInitialResources (landData);
+	// make the landing
+	makeLanding (landData, landingUnits);
+	bStarted = true;
+}
+
+//------------------------------------------------------------------------------
 cVehicle* cServer::addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int uid)
 {
 	// generate the vehicle:

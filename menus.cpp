@@ -176,9 +176,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		server->setMap (*serverMap);
 		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
-
-		// place resources
-		server->placeInitialResources (landData);
 	}
 
 	// init client and his players
@@ -190,21 +187,11 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	if (isServer)
 	{
-		// send victory conditions to clients
-		for (size_t i = 0; i != players.size(); ++i)
-			sendGameSettings (*server, *players[i]);
-		// send clan info to clients
-		if (settings->clans == SETTING_CLANS_ON)
-			sendClansToClients (*server, players);
-
-		// make the landing
-		server->makeLanding (landData, landingUnits);
+		server->startNewGame (landData, landingUnits);
 		for (size_t i = 0; i != players.size(); ++i)
 		{
 			delete landingUnits[i];
 		}
-
-		server->bStarted = true;
 	}
 
 	if (reconnect && network)
