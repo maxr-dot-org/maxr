@@ -448,17 +448,17 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 	}
 	if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0)
 	{
-		int ammount = -1;
-		if (tokens[1].compare ("low") == 0) ammount = SETTING_RESVAL_LOW;
-		else if (tokens[1].compare ("normal") == 0) ammount = SETTING_RESVAL_NORMAL;
-		else if (tokens[1].compare ("much") == 0) ammount = SETTING_RESVAL_MUCH;
-		else if (tokens[1].compare ("most") == 0) ammount = SETTING_RESVAL_MOST;
-		if (ammount != -1)
+		int amount = -1;
+		if (tokens[1].compare ("low") == 0) amount = SETTING_RESVAL_LOW;
+		else if (tokens[1].compare ("normal") == 0) amount = SETTING_RESVAL_NORMAL;
+		else if (tokens[1].compare ("much") == 0) amount = SETTING_RESVAL_MUCH;
+		else if (tokens[1].compare ("most") == 0) amount = SETTING_RESVAL_MOST;
+		if (amount != -1)
 		{
 			sSettings* settings = gameData->settings;
-			if (tokens[0].compare ("oil") == 0) settings->oil = (eSettingResourceValue) ammount;
-			else if (tokens[0].compare ("metal") == 0) settings->metal = (eSettingResourceValue) ammount;
-			else if (tokens[0].compare ("gold") == 0) settings->gold = (eSettingResourceValue) ammount;
+			if (tokens[0].compare ("oil") == 0) settings->oil = (eSettingResourceValue) amount;
+			else if (tokens[0].compare ("metal") == 0) settings->metal = (eSettingResourceValue) amount;
+			else if (tokens[0].compare ("gold") == 0) settings->gold = (eSettingResourceValue) amount;
 			const cStaticMap* map = gameData->map;
 			sendGameData (*network, map, settings, "");
 			string reply = senderPlayer->getName();

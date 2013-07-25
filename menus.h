@@ -129,7 +129,7 @@ enum eSettingsDuration
 };
 
 /**
- * A class that containes all settings for a new game.
+ * A class that contains all settings for a new game.
  *@author alzi
  */
 struct sSettings
@@ -156,7 +156,7 @@ struct sSettings
 };
 
 /**
- * A class that containes all information to start a new or loaded game.
+ * A class that contains all information to start a new or loaded game.
  * This class can run games automaticaly out of this information.
  *@author alzi
  */

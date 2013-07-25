@@ -71,7 +71,7 @@ struct sDataBuffer
 	void deleteFront (int n);
 
 	/**
-	* Clears the data buffer and sets his lenght to 0.
+	* Clears the data buffer and sets his length to 0.
 	*@author alzi alias DoctorDeath
 	*/
 	void clear();
@@ -114,7 +114,8 @@ class cTCP
 {
 public:
 	/**
-	 * Creates the mutexes, initialises some variables and the sockets and starts the network thread.
+	 * Creates the mutexes, initialises some variables
+	 * and the sockets and starts the network thread.
 	 *@author alzi alias DoctorDeath
 	 */
 	cTCP();
@@ -145,14 +146,16 @@ public:
 	/**
 	* Closes the connection to the socket.
 	*@author alzi alias DoctorDeath
-	*param iClientNumber Number of client/socket to which the connection should be closed.
+	*param iClientNumber Number of client/socket
+	*                    to which the connection should be closed.
 	*/
 	void close (unsigned int iClientNumber);
 
 	/**
-	* Sends data of an given lenght to the client/socket.
+	* Sends data of an given length to the client/socket.
 	*@author alzi alias DoctorDeath
-	*param iClientNumber Number of client/socket to which the data should be send.
+	*param iClientNumber Number of client/socket
+	*                    to which the data should be send.
 	*param iLength Length of data to be send.
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
@@ -200,13 +203,15 @@ public:
 
 private:
 	/**
-	* Searchs for the first unused socket and allocates memory for a new one if there are no free sockets.
+	* Searchs for the first unused socket and allocates memory
+	* for a new one if there are no free sockets.
 	*@author alzi alias DoctorDeath
 	*@return index of found socket
 	*/
 	int getFreeSocket();
 	/**
-	* Deletes the socket, frees its memory and sorts the rest sockets in the list.
+	* Deletes the socket, frees its memory
+	* and sorts the rest sockets in the list.
 	*@author alzi alias DoctorDeath
 	*/
 	void deleteSocket (int socketIndex);

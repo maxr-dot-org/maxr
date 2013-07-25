@@ -48,7 +48,7 @@ protected:
 	cFxMuzzle (int x, int y, int dir_);
 	void draw (const cGameGUI& gameGUI) const;
 
-	AutoSurface (*pImages)[2];
+	AutoSurface (*pImages) [2];
 	int dir;
 };
 
@@ -83,7 +83,7 @@ protected:
 	void draw (const cGameGUI& gameGUI) const;
 
 protected:
-	AutoSurface (*pImages)[2];
+	AutoSurface (*pImages) [2];
 	// TODO: frames could be calculated (frames = w / h),
 	// if the width and height of the grapics for one frame would be equal
 	// (which they aren't yet).
@@ -138,7 +138,7 @@ protected:
 	cFxFade (int x, int y, bool bottom, int start, int end);
 	void draw (const cGameGUI& gameGUI) const;
 
-	AutoSurface (*pImages)[2];
+	AutoSurface (*pImages) [2];
 	const int alphaStart;
 	const int alphaEnd;
 };
@@ -158,7 +158,7 @@ public:
 class cFxTracks : public cFx
 {
 private:
-	AutoSurface (*pImages)[2];
+	AutoSurface (*pImages) [2];
 	const int alphaStart;
 	const int alphaEnd;
 	const int dir;
@@ -173,7 +173,7 @@ class cFxRocket : public cFx
 private:
 	const int speed;
 	std::vector<cFx*> subEffects;
-	AutoSurface (*pImages)[2];
+	AutoSurface (*pImages) [2];
 	int dir;
 	int distance;
 	const int startX;
@@ -199,7 +199,7 @@ private:
 	const int alphaStart;
 	const int alphaEnd;
 	const int frames;
-	AutoSurface (*pImages)[2];
+	AutoSurface (*pImages) [2];
 public:
 	cFxDarkSmoke (int x, int y, int alpha, float windDir);
 	void draw (const cGameGUI& gameGUI) const;

@@ -254,7 +254,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 		int freeB = min (building.data.canMineMaxRes - building.*ressourceProdA, building.*ressourceProdB);
 		int freeC = min (building.data.canMineMaxRes - building.*ressourceProdA, building.*ressourceProdC);
 
-		// substract values from step 1
+		// subtract values from step 1
 		freeB -= min (max (building.data.canMineMaxRes - building.*ressourceProdA - building.*ressourceProdC, 0), building.*ressourceProdB);
 		freeC -= min (max (building.data.canMineMaxRes - building.*ressourceProdA - building.*ressourceProdB, 0), building.*ressourceProdC);
 
@@ -404,7 +404,7 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 			break;
 	}
 
-	value = std::max(value, -*storedRessources);
+	value = std::max (value, -*storedRessources);
 	if (!value) return;
 
 	*storedRessources += value;
@@ -796,12 +796,12 @@ void sSubBase::makeTurnend (cServer& server)
 		// build:
 		if (Building.IsWorking && !Building.data.canBuild.empty() && !Building.BuildList->empty())
 		{
-			sBuildList& BuildListItem = *(*Building.BuildList) [0];
+			sBuildList& BuildListItem = * (*Building.BuildList) [0];
 			if (BuildListItem.metall_remaining > 0)
 			{
 				// in this block the metal consumption of the factory
 				// in the next round can change
-				// so we first substract the old value from MetalNeed and
+				// so we first subtract the old value from MetalNeed and
 				// then add the new one, to hold the base up to date
 				MetalNeed -= min (Building.MetalPerRound, BuildListItem.metall_remaining);
 
@@ -1023,7 +1023,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 
 	if (NeighbourList.size() == 0)
 	{
-		// no neigbours found, just generate new subbase and add the building
+		// no neighbours found, just generate new subbase and add the building
 		sSubBase* NewSubBase = new sSubBase (building->owner);
 		building->SubBase = NewSubBase;
 		NewSubBase->addBuilding (building);
@@ -1040,7 +1040,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	building->SubBase = firstNeighbour;
 	NeighbourList.erase (NeighbourList.begin());
 
-	// now merge the other neigbours to the first one, if necessary
+	// now merge the other neighbours to the first one, if necessary
 	for (size_t i = 0; i != NeighbourList.size(); ++i)
 	{
 		sSubBase* const SubBase = NeighbourList[i];

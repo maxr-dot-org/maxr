@@ -71,7 +71,8 @@ private:
 };
 
 /**
- * Shows licence infobox refering to hardcoded GPL-notation and warranty information
+ * Shows licence infobox referring to hardcoded GPL-notation
+ * and warranty information
  */
 class cDialogLicence : public cMenu
 {

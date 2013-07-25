@@ -47,8 +47,8 @@ using namespace std;
 //--------------------------------------------------------------------------
 cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	cUnit ( (Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
-		   Owner,
-		   ID),
+			Owner,
+			ID),
 	next (0),
 	prev (0)
 {
@@ -135,7 +135,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		sText += iToStr (turnsDisabled) + ")";
 		return sText;
 	}
-	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false) )
+	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false))
 	{
 		const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
@@ -232,7 +232,7 @@ int cBuilding::refreshData()
 {
 	if (isDisabled())
 	{
-		lastShots = std::min(this->data.shotsMax, this->data.ammoCur);
+		lastShots = std::min (this->data.shotsMax, this->data.ammoCur);
 		return 1;
 	}
 
@@ -1583,12 +1583,12 @@ void cBuilding::Select (cGameGUI& gameGUI)
 	if (data.canAttack)
 	{
 		if (data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
-		/* red ammo-status but still ammo left */
+			/* red ammo-status but still ammo left */
 		{
 			PlayRandomVoice (VoiceData.VOIAmmoLow);
 		}
 		else if (data.ammoCur == 0)
-		/*no ammo left*/
+			/*no ammo left*/
 		{
 			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
 		}

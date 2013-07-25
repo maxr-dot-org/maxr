@@ -441,7 +441,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	tmpString =
 		"build_speed: "        + iToStr (building.BuildSpeed) +
 		" repeat_build: "      + iToStr (building.RepeatBuild) +
-		" build_list_count: +" + iToStr ((int) buildingBuildListSize);
+		" build_list_count: +" + iToStr ( (int) buildingBuildListSize);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -966,7 +966,7 @@ void cGameGUI::onRemoveUnit (cUnit& unit)
 	}
 	if (unit.isAVehicle())
 	{
-		Remove (selectedVehiclesGroup, static_cast<cVehicle*>(&unit));
+		Remove (selectedVehiclesGroup, static_cast<cVehicle*> (&unit));
 	}
 	callMiniMapDraw();
 }
@@ -1996,7 +1996,7 @@ void cGameGUI::updateMouseCursor()
 			!selectedBuilding->IsWorking &&
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), *(*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), * (*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -3444,8 +3444,8 @@ void cGameGUI::preDrawFunction()
 	// draw the map screen with everything on it
 	const int zoomOffX = (int) (offX * getZoom());
 	const int zoomOffY = (int) (offY * getZoom());
-	const int startX = std::max(0, (offX - 1) / 64 - 1);
-	const int startY = std::max(0, (offY - 1) / 64 - 1);
+	const int startX = std::max (0, (offX - 1) / 64 - 1);
+	const int startY = std::max (0, (offY - 1) / 64 - 1);
 	cStaticMap& staticMap = *client->getMap()->staticMap;
 	const int mapSize = client->getMap()->getSize();
 	int endX = Round (offX / 64.0f + (float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getTileSize());
@@ -4273,7 +4273,7 @@ void cGameGUI::drawUnitCircles()
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0 &&
 			selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints (*(*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion(), *this);
+			selectedBuilding->DrawExitPoints (* (*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion(), *this);
 		}
 		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
 		{

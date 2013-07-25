@@ -203,7 +203,7 @@ int cLanguage::ReadLanguagePack()
 		return -1;
 	}
 
-	// Now - finaly - let's get the translations.
+	// Now - finally - let's get the translations.
 	if (ReadSingleTranslation (XNP_MAX_LANG_FILE_TEXT_ERROR_MSG, "ERROR_Missing_Translation", NULL) == 0)
 	{
 		m_bErrorMsgTranslationLoaded = true;

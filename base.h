@@ -73,7 +73,7 @@ public:
 	void addBuilding (cBuilding* b);
 
 	/**
-	* adds/substracts a ressource to/from the subbase
+	* adds/subtracts a ressource to/from the subbase
 	* @author eiko
 	*/
 	void addMetal (cServer& server, int value);
@@ -181,7 +181,7 @@ private:
 	*/
 	int calcMaxProd (int ressourceType) const;
 	/**
-	* adds/substracts ressourcec of the type storeResType to/from the subbase
+	* adds/subtracts ressourcec of the type storeResType to/from the subbase
 	* @author eiko
 	*/
 	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);

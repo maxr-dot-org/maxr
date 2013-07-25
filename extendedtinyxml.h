@@ -29,12 +29,14 @@ tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const c
 
 /**
  * Tries to find a element from a path in a xml file.
- * If the element does not exist, it will be generated (and all parent nodes that do not exist as well).
+ * If the element does not exist, it will be generated
+ * (and all parent nodes that do not exist as well).
  * If the configuration file does not exist it tries to generate a new one.
- * @param path The path to the node to get. Nodes should be devided by '~'.
+ * @param path The path to the node to get. Nodes should be divided by '~'.
  *             e.g.: "Options~Game~Net~PlayerName"
  * @param configFile The XML file to search in.
- * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
+ * @return The found or generated node at the specific path or NULL
+ *         if the config file could not be read and generated.
  */
 tinyxml2::XMLElement* getOrCreateXmlElement (tinyxml2::XMLDocument& xmlDoc, const std::string& path);
 

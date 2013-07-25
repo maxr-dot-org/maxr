@@ -718,7 +718,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 	}
 	else
 	{
-		//add building immediatly
+		// add building immediately
 		// if it doesn't require the engineer to drive away
 		if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
 		{
@@ -978,7 +978,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
-	else if ( !(data.canCapture || data.canDisable))
+	else if (! (data.canCapture || data.canDisable))
 	{
 		if (ClientMoveJob)
 			return lngPack.i18n ("Text~Comp~Moving");
@@ -988,9 +988,9 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 			return lngPack.i18n ("Text~Comp~Sentry");
 	}
 	// for infiltrators
-	else if ( (data.canCapture || data.canDisable)/* && owner == gameGUI.getClient()->getActivePlayer()*/)
-	// TODO should it be original behavior (as it is now) or
-	// don't display CommandRank for enemy (could also be a bug in original...)
+	else if ( (data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
+		// TODO should it be original behavior (as it is now) or
+		// don't display CommandRank for enemy (could also be a bug in original...)
 	{
 		string sTmp;
 		if (ClientMoveJob)
@@ -1032,7 +1032,7 @@ void cVehicle::DecSpeed (int value)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::calcTurboBuild (int (&iTurboBuildRounds)[3], int (&iTurboBuildCosts)[3], int iBuild_Costs)
+void cVehicle::calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCosts) [3], int iBuild_Costs)
 {
 	iTurboBuildRounds[0] = 0;
 	iTurboBuildRounds[1] = 0;
@@ -1297,7 +1297,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 }
 
 //-----------------------------------------------------------------------------
-/** checks, if resources can be transfered to the unit */
+/** checks, if resources can be transferred to the unit */
 //-----------------------------------------------------------------------------
 bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 {
@@ -1353,7 +1353,7 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 	if (target != this) return false;
 
 	int iOff = server.Map->getOffset (PosX, PosY);
-	Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
 	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, iOff, true));
 	if (ServerMoveJob != 0)
 		ServerMoveJob->bFinished = true;

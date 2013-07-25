@@ -200,11 +200,11 @@ public:
 	bool canSupply (const cClient& client, int x, int y, int supplyType) const;
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	bool canSupply (const cUnit* unit, int supplyType) const;
-	void calcTurboBuild (int (&iTurboBuildRounds)[3], int (&iTurboBuildCosts)[3], int iBuild_Costs);
+	void calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCosts) [3], int iBuild_Costs);
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath
-	*@return true if a mine has been layed
+	*@return true if a mine has been laid
 	*/
 	bool layMine (cServer& server);
 	/**
@@ -219,7 +219,8 @@ public:
 	*/
 	bool canDoCommandoAction (int x, int y, const cMap* map, bool steal) const;
 	/**
-	* draws the commando curser for stealing or disabling with the calculated chance
+	* draws the commando curser for stealing or disabling
+	* with the calculated chance
 	*@author alzi alias DoctorDeath
 	*/
 	void drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) const;
@@ -232,7 +233,7 @@ public:
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath
-	*@param iPlayerNum number of player for which the stauts sould be checked
+	*@param iPlayerNum number of player for which the status should be checked
 	*@return true if the player has detected the unit
 	*/
 	bool isDetectedByPlayer (const cPlayer* player) const;
@@ -247,14 +248,18 @@ public:
 	/**
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit
-	* the detection maps have to be up to date, when calling this funktion
-	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
+	* the detection maps have to be up to date,
+	* when calling this function,
+	* this function has to be called on the server
+	* every time a unit was moved, builded, unloaded...
 	*/
 	void makeDetection (cServer& server);
 
-	/** After a movement the detection state of a unit might be reset, if it was not detected in _this_ turn. */
+	/** After a movement the detection state of a unit might be reset,
+	 * if it was not detected in _this_ turn. */
 	void tryResetOfDetectionStateAfterMove (cServer& server);
-	/** Resets the list of players, that detected this unit in this turn (is called at turn end). */
+	/** Resets the list of players, that detected this unit in this turn
+	 * (is called at turn end). */
 	void clearDetectedInThisTurnPlayerList();
 	bool wasDetectedInThisTurnByPlayer (const cPlayer* player) const;
 
@@ -265,7 +270,8 @@ public:
 	void executeClearMinesCommand (const cClient& client);
 
 	/**
-	* Is this a plane and is there a landing platform beneath it, that can be used to land on?
+	* Is this a plane and is there a landing platform beneath it,
+	* that can be used to land on?
 	* @author: eiko
 	*/
 	bool canLand (const cMap& map) const;
@@ -297,10 +303,14 @@ private:
 	void render_smallClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
 	void render_shadow (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
 
-	//---- sentry and reaction fire helpers ---------------------------------------
+	//---- sentry and reaction fire helpers ------------------------------------
 	/**
-	 * Is called after a unit moved one field; it allows opponent units to react to that movement and fire on the moving vehicle, if they can.
-	 * An opponent unit only fires as reaction to the movement, if the moving unit is an "offense" for that opponent (i.e. it could attack a unit/building of the opponent).
+	 * Is called after a unit moved one field;
+	 * it allows opponent units to react to that movement and
+	 * fire on the moving vehicle, if they can.
+	 * An opponent unit only fires as reaction to the movement,
+	 * if the moving unit is an "offense" for that opponent
+	 * (i.e. it could attack a unit/building of the opponent).
 	 * @author: pagra
 	 */
 	bool provokeReactionFire (cServer& server);
@@ -311,12 +321,15 @@ private:
 	bool doReactionFire (cServer& server, cPlayer* player) const;
 	bool doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const;
 
-	std::vector<cPlayer*> calcDetectedByPlayer (cServer& server) const;  ///< helper method that returns a list of all players, that can detect this unit
-	std::vector<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn
+	/// helper method that returns a list of all players,
+	/// that can detect this unit
+	std::vector<cPlayer*> calcDetectedByPlayer (cServer& server) const;
+	/// list of players, that detected this vehicle in this turn
+	std::vector<cPlayer*> detectedInThisTurnByPlayerList;
 
-	//-----------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 protected:
-	//-- methods, that have been extracted during cUnit refactoring ---------------
+	//-- methods, that have been extracted during cUnit refactoring ------------
 
 	virtual bool isUnitMoving() const { return moving; }
 	virtual bool isAutoMoveJobActive() const { return autoMJob != 0; }

@@ -100,36 +100,42 @@ void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle,
 /**
 * Sends an event to a player that a unit has to be deleted
 *@param unit unit that has to be deleted
-*@param iClient The client who schould receive this event. -1 for all Clients who can see the unit
+*@param iClient The client who should receive this event.
+*               -1 for all Clients who can see the unit
 */
 void sendDeleteUnit (cServer& server, const cUnit& unit, int iClient);
-void sendDeleteUnitMessage (cServer& server, const cUnit& unit, int playerNr);  ///< playerNr must be the number of a valid player
+/// playerNr must be the number of a valid player
+void sendDeleteUnitMessage (cServer& server, const cUnit& unit, int playerNr);
 /**
 * adds a rubble object to the client
 */
 void sendAddRubble (cServer& server, const cBuilding& building, int iPlayer);
 /**
-* Sends an event to a player that he has detected an enemy unit and should add it
+* Sends an event to a player that he has detected
+* an enemy unit and should add it
 *@author alzi alias DoctorDeath
 *@param unit The unit that should be added by the player
-*@param iCLient The client who schould receive this event
+*@param iCLient The client who should receive this event
 */
 void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iCLient);
 /**
 * A client has to make a turnend
 *@author alzi alias DoctorDeath
 *@param bEndTurn True if the turnnumber has to be increased
-*@param bWaitForNextPlayer True if the receiver has to wait for an other player. (Only if he isn't the next player himselves)
+*@param bWaitForNextPlayer True if the receiver has to wait for an other player.
+*       (Only if he isn't the next player himselves)
 *@param iNextPlayerNum The number of the player who has to make his turn next.
 *@param sReport The turn start report for this player.
-*@param iVoiceNum Number of voice with the player has to play at his turn beginning.
+*@param iVoiceNum Number of voice with the player has to play
+*       at his turn beginning.
 */
 void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, int iPlayer);
 /**
 * Information for other clients that one player has finished his turn
 *@author alzi alias DoctorDeath
 *@param iPlayerNum Number of player who has finished his turn.
-*@param iTimeDelay Deadline for the rest of the players until the turn will be finished. -1 for no deadline.
+*@param iTimeDelay Deadline for the rest of the players
+*       until the turn will be finished. -1 for no deadline.
 */
 void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cPlayer* Player = NULL);
 /**
@@ -146,7 +152,8 @@ void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 * sends a text message to one or all client
 *@author Eiko
 *@param message the message to be send
-*@param iType spezifies if this is an error message, info message from the Server or a text message from an other player
+*@param iType spezifies if this is an error message,
+*       info message from the Server or a text message from an other player
 *@param iPlayer -1 the playernumber or -1 for broatcast
 */
 void sendChatMessageToClient (cServer& server, const std::string& message, int iType, int iPlayer = -1, const std::string& inserttext = "");
@@ -170,7 +177,8 @@ void sendDoStopWork (cServer& server, const cBuilding& building);
 void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed = -1);
 
 /**
-* sends all waypoints of a movejob to a client. If the movejob is already running,
+* sends all waypoints of a movejob to a client.
+* If the movejob is already running,
 * the sourceoffset will be changed to the actual position of the vehicle
 *@author alzi alias DoctorDeath
 */
@@ -226,7 +234,8 @@ void sendTurnReport (cServer& server, cPlayer& player);
 */
 void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, int iPlayerNum);
 /**
-* informs the owner of the vehicle whether the vehicle has been detected by another player.
+* informs the owner of the vehicle whether the vehicle has been detected
+* by another player.
 * this is used by the client for correct drawing of the unit
 */
 void sendDetectionState (cServer& server, const cVehicle& vehicle);
@@ -252,7 +261,7 @@ void sendNoFog (cServer& server, int iPlayer);
 */
 void sendDefeated (cServer& server, const cPlayer& player, int iPlayerNum = -1);
 /**
-* sends that a client has to wait untill he will be defrezzed
+* sends that a client has to wait until he will be defrezzed
 *@param waitForPlayer tells the client, for which other player he is waiting
 */
 void sendFreeze (cServer& server, eFreezeMode mode, int waitForPlayer);
@@ -301,7 +310,7 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 * sends the result of a infiltrating action to the client
 *@author alzi alias DoctorDeath
 */
-void sendCommandoAnswer (cServer& server, bool succsess, bool steal, const cVehicle& srcUnit, int player);
+void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, int player);
 void sendRequestSaveInfo (cServer& server, const int saveingID);
 void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, int player);
 

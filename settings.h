@@ -25,12 +25,15 @@
 #include "cmutex.h"
 
 /**
- * cSettings class stores all settings for the game and handles reading and writing them
- * from and to the configuration file.
- * To do this it needs to find out the location of the configuration for the secific platform.
+ * cSettings class stores all settings for the game and handles reading
+ * and writing them from and to the configuration file.
+ * To do this it needs to find out the location of the configuration
+ * for the secific platform.
  *
- * For each element of the settings that has to be stored in the configuration file there are getters and setters defined.
- * The setters will automaticaly save the changed values to the configuration. If the configuration does not exist or is uncomplete
+ * For each element of the settings that has to be stored
+ * in the configuration file there are getters and setters defined.
+ * The setters will automaticaly save the changed values to the configuration.
+ * If the configuration does not exist or is uncomplete
  * it will be generated and the needed node will be added.
  *
  * This is a singleton class.
@@ -46,12 +49,14 @@ public:
 	static cSettings& getInstance();
 
 	/**
-	 * Checks whether the class has been initialized already and successful (what means the configuration file has been read).
+	 * Checks whether the class has been initialized already and successful
+	 * (what means the configuration file has been read).
 	 * @return True if the settings have been initialized.
 	 */
 	bool isInitialized() const;
 
-	// Some save methods for settings that are not stored in this class but nevertheless
+	// Some save methods for settings that are not stored
+	// in this class but nevertheless
 	// have to be written to the configuration file.
 	void saveResolution();
 	void saveColorDepth();
@@ -234,103 +239,104 @@ private:
 	 */
 	static cSettings instance;
 
-	//START-Node
-	/**enable intro on start*/
+	// START-Node
+	/** enable intro on start */
 	bool showIntro;
-	/**start in fastmode */
+	/** start in fastmode */
 	bool fastMode;
-	/**prescale gfx */
+	/** prescale gfx */
 	bool preScale;
-	/**translation file*/
+	/** translation file */
 	std::string language;
-	/**language code for voice files*/
+	/** language code for voice files */
 	std::string voiceLanguage;
-	/**cache size*/
+	/** cache size */
 	unsigned int cacheSize;
 
-	//GAME-Node
-	/** enable debug*/
+	// GAME-Node
+	/** enable debug */
 	bool debug;
-	/**enable autosafe */
+	/** enable autosafe */
 	bool autosave;
-	/**enable animations */
+	/** enable animations */
 	bool animations;
-	/**enable shadows */
+	/** enable shadows */
 	bool shadows;
-	/**enable alpha effects */
+	/** enable alpha effects */
 	bool alphaEffects;
-	/**enable describtions (e.g. in buildmenues) */
+	/** enable describtions (e.g. in buildmenues) */
 	bool showDescription;
-	/**enable damage effects (smoke'n stuff)*/
+	/** enable damage effects (smoke'n stuff) */
 	bool damageEffects;
-	/**enable damage effects for vehicles (smoke'n stuff)*/
+	/** enable damage effects for vehicles (smoke'n stuff) */
 	bool damageEffectsVehicles;
-	/**enable tracks (units leave tracks on the floor) */
+	/** enable tracks (units leave tracks on the floor) */
 	bool makeTracks;
-	/**scrollspeed on map */
+	/** scrollspeed on map */
 	int scrollSpeed;
 
-	/**sConfig is where the config is read from - set in setPaths() **/
+	/** sConfig is where the config is read from - set in setPaths() **/
 	std::string configPath;
-	/**sExePath is where the exe is located - set in setPaths*/
+	/** sExePath is where the exe is located - set in setPaths */
 	std::string exePath;
-	/**sDataDir is where the data files are stored*/
+	/** sDataDir is where the data files are stored */
 	std::string dataDir;
-	/**sLog is where the log goes - set in setPaths() **/
+	/** sLog is where the log goes - set in setPaths() **/
 	std::string logPath;
-	/**sNetLog is where the netlog goes - set in setPaths() **/
+	/** sNetLog is where the netlog goes - set in setPaths() **/
 	std::string netLogPath;
-	/**sHome is where the user has his $HOME dir - set in setPaths() **/
+	/** sHome is where the user has his $HOME dir - set in setPaths() **/
 	std::string homeDir;
 
-	//NET
-	/**Last/default ip used for network game */
-	std::string ip; //string? why not int array? --beko
-	/**Last/default port  used for network game */
+	// NET
+	/** Last/default ip used for network game */
+	std::string ip; // string? why not int array? --beko
+	/** Last/default port  used for network game */
 	unsigned short port;
-	/**Last/default player's name used for network game */
+	/** Last/default player's name used for network game */
 	std::string playerName;
-	/**Last color choosen by player*/
+	/** Last color chosen by player */
 	int playerColor;
 
-	//SOUND
-	/**sound enabled*/
+	// SOUND
+	/** sound enabled */
 	bool soundEnabled;
-	/**volume music */
+	/** volume music */
 	int musicVol;
-	/**volume sound effects */
+	/** volume sound effects */
 	int soundVol;
-	/**volume voices */
+	/** volume voices */
 	int voiceVol;
-	/**chunk size */
+	/** chunk size */
 	int chunkSize;
-	/**frequenzy */
+	/** frequenzy */
 	int frequency;
-	/**mute music */
+	/** mute music */
 	bool musicMute;
-	/**mute sound effects */
+	/** mute sound effects */
 	bool soundMute;
-	/**mute voices */
+	/** mute voices */
 	bool voiceMute;
 
-	//PATHS
-	std::string fontPath;			// Path to the fonts
-	std::string fxPath;				// Path to the effects
-	std::string gfxPath;			// Path to the graphics
-	std::string langPath;			//Path to language files
-	std::string mapsPath;			// Path to the maps
-	std::string savesPath;			// Path to the saves
-	std::string soundsPath;			// Path to the sound-files
-	std::string voicesPath;			// Path to the voice-files
-	std::string musicPath;			// Path to the music-files
-	std::string vehiclesPath;			// Path to the vehicles
-	std::string buildingsPath;			// Path to the buildings
-	std::string mvePath;			// Path to the in-game movies (*.mve)
+	// PATHS
+	std::string fontPath;      // Path to the fonts
+	std::string fxPath;        // Path to the effects
+	std::string gfxPath;       // Path to the graphics
+	std::string langPath;      //Path to language files
+	std::string mapsPath;      // Path to the maps
+	std::string savesPath;     // Path to the saves
+	std::string soundsPath;    // Path to the sound-files
+	std::string voicesPath;    // Path to the voice-files
+	std::string musicPath;     // Path to the music-files
+	std::string vehiclesPath;  // Path to the vehicles
+	std::string buildingsPath; // Path to the buildings
+	std::string mvePath;       // Path to the in-game movies (*.mve)
 
 	/**
-	 * Gets the platform dependent user paths for the configuration file and reads the file.
-	 * If the file (or parts of it) do not exist default values will be used and written to
-	 * the (may generated) file.
+	 * Gets the platform dependent user paths for the configuration file
+	 * and reads the file.
+	 * If the file (or parts of it) does not exist
+	 * default values will be used and written to the (may generated) file.
 	 */
 	void initialize();
 
@@ -342,9 +348,10 @@ private:
 	/**
 	 * Platform dependend implementations.
 	 * On most plattforms just the executable folder is used.
-	 * On linux it tries to verify the path from the configuraion file
-	 * @param sDataDirFromConf The data location that has been read from the confguration file.
-	 * @return The realy selected data location.
+	 * On linux it tries to verify the path from the configuration file
+	 * @param sDataDirFromConf The data location that has been read
+	 *        from the configuration file.
+	 * @return The really selected data location.
 	 */
 	std::string searchDataDir (const std::string& sDataDirFromConf = "");
 
@@ -358,7 +365,8 @@ private:
 
 	/**
 	 * Template function for saving a setting.
-	 * @param path See #getXmlNode() for more information on how to use this parameter.
+	 * @param path See #getXmlNode() for more information on
+	 *        how to use this parameter.
 	 * @param value The value to set as attribute to the setting node.
 	 * @param valueName The name of the attribute to set to the setting node.
 	 */

@@ -66,11 +66,13 @@ string cClanUnitStat::getClanStatsDescription() const
 	const char* const commaSep = ", ";
 	const char* sep = "";
 
-	struct {
+	struct
+	{
 		const char* type;
 		const char* textToTranslate;
 		int originalValue;
-	} t[] = {
+	} t[] =
+	{
 		{"Damage", "Text~Vehicles~Damage", data->damage},
 		// here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot
 		{"Range", "Text~Hud~Range", data->range},

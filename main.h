@@ -80,7 +80,7 @@ struct sID
 	const sUnitData* getUnitDataOriginalVersion (cPlayer* Owner = NULL) const;
 
 	bool operator== (const sID& ID) const;
-	bool operator!= (const sID& rhs) const { return !(*this == rhs);}
+	bool operator!= (const sID& rhs) const { return ! (*this == rhs);}
 	bool less_vehicleFirst (const sID& ID) const;
 	bool less_buildingFirst (const sID& ID) const;
 
@@ -89,7 +89,8 @@ public:
 	int iSecondPart;
 };
 
-enum {
+enum
+{
 	TERRAIN_NONE = 0,
 	TERRAIN_AIR = 1,
 	TERRAIN_SEA = 2,

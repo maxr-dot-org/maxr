@@ -2203,7 +2203,7 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const s
 
 //------------------------------------------------------------------------------
 void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
-							const std::vector<std::vector<sLandingUnit>*>& landingUnits)
+						   const std::vector<std::vector<sLandingUnit>*>& landingUnits)
 {
 	const bool fixed = gameSetting->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
 	for (size_t i = 0; i != PlayerList->size(); ++i)
@@ -2292,7 +2292,7 @@ void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::v
 {
 	// send victory conditions to clients
 	for (size_t i = 0; i != PlayerList->size(); ++i)
-		sendGameSettings (*this, *(*PlayerList)[i]);
+		sendGameSettings (*this, * (*PlayerList) [i]);
 	// send clan info to clients
 	if (gameSetting->clans == SETTING_CLANS_ON)
 		sendClansToClients (*this, *PlayerList);
@@ -2834,7 +2834,7 @@ void cServer::handleWantEnd()
 	{
 		for (size_t i = 0; i != PlayerList->size(); ++i)
 		{
-			cPlayer& player = *(*PlayerList) [i];
+			cPlayer& player = * (*PlayerList) [i];
 			if (!isPlayerDisconnected (player) && gameTimer.getReceivedTime (i) <= lastTurnEnd)
 				return;
 		}
@@ -2929,7 +2929,7 @@ void cServer::makeTurnEnd()
 	// reload all buildings
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 		for (cBuilding* Building = player.BuildingList;
 			 Building;
 			 Building = Building->next)
@@ -2959,7 +2959,7 @@ void cServer::makeTurnEnd()
 	// reload all vehicles
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 		for (cVehicle* Vehicle = player.VehicleList;
 			 Vehicle;
 			 Vehicle = Vehicle->next)
@@ -2989,7 +2989,7 @@ void cServer::makeTurnEnd()
 	// hide stealth units
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 		player.doScan(); // make sure the detection maps are up to date
 
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
@@ -3018,7 +3018,7 @@ void cServer::makeTurnEnd()
 	// Gun'em down:
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -3059,7 +3059,7 @@ bool cServer::isVictoryConditionMet() const
 		{
 			for (size_t i = 0; i != PlayerList->size(); ++i)
 			{
-				const cPlayer& player = *(*PlayerList) [i];
+				const cPlayer& player = * (*PlayerList) [i];
 				if (player.isDefeated) continue;
 				if (player.getScore (iTurn) >= gameSetting->duration) return true;
 			}
@@ -3070,7 +3070,7 @@ bool cServer::isVictoryConditionMet() const
 			int nbActivePlayer = 0;
 			for (size_t i = 0; i != PlayerList->size(); ++i)
 			{
-				const cPlayer& player = *(*PlayerList) [i];
+				const cPlayer& player = * (*PlayerList) [i];
 				if (player.isDefeated) continue;
 				++nbActivePlayer;
 				if (nbActivePlayer >= 2) return false;
@@ -3087,7 +3087,7 @@ void cServer::defeatLoserPlayers()
 {
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 		if (player.isDefeated) continue;
 		if (player.mayHaveOffensiveUnit()) continue;
 
@@ -3095,7 +3095,7 @@ void cServer::defeatLoserPlayers()
 		sendDefeated (*this, player);
 		if (openMapDefeat == false)
 
-		player.revealMap();
+			player.revealMap();
 		checkPlayerUnits();
 		sendNoFog (*this, player.getNr());
 	}
@@ -3112,7 +3112,7 @@ void cServer::checkDefeats()
 
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 		if (player.isDefeated) continue;
 		const int score = player.getScore (iTurn);
 
@@ -3129,7 +3129,7 @@ void cServer::checkDefeats()
 	// anyone who hasn't won has lost.
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& player = *(*PlayerList) [i];
+		cPlayer& player = * (*PlayerList) [i];
 
 		if (player.isDefeated) continue;
 		if (winners.find (&player) != winners.end()) continue;
@@ -3711,7 +3711,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	// send all players' score histories & eco-counts
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		cPlayer& subj = *(*PlayerList) [i];
+		cPlayer& subj = * (*PlayerList) [i];
 		for (int t = 1; t <= iTurn; ++t)
 			sendScore (*this, subj, t, Player);
 		sendNumEcos (*this, subj, Player);

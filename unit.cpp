@@ -110,7 +110,8 @@ bool cUnit::isNextTo (int x, int y) const
 static std::string to_roman (unsigned int value)
 {
 	struct romandata_t { unsigned int value; char const* numeral; };
-	const struct romandata_t romandata[] = {
+	const struct romandata_t romandata[] =
+	{
 		//{1000, "M"}, {900, "CM"},
 		//{500, "D"}, {400, "CD"},
 		{100, "C"}, { 90, "XC"},
@@ -651,7 +652,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			if (exeNr == nr)
 			{
-				cVehicle* vehicle = static_cast<cVehicle*>(this);
+				cVehicle* vehicle = static_cast<cVehicle*> (this);
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
 				vehicle->executeAutoMoveJobCommand (client);

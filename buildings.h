@@ -197,7 +197,7 @@ public:
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath
-	*@param player player for which the stauts sould be checked
+	*@param player player for which the status should be checked
 	*@return true if the player has detected the unit
 	*/
 	bool isDetectedByPlayer (const cPlayer* player) const;
@@ -211,8 +211,9 @@ public:
 	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true);
 	/**
 	* - checks whether the building has been detected by an other unit
-	* the detection maps have to be up to date, when calling this funktion
-	* this function has to be called on the server everytime a building is added
+	* the detection maps have to be up to date, when calling this function
+	* this function has to be called on the server
+	* every time a building is added
 	*/
 	void makeDetection (cServer& server);
 

@@ -23,7 +23,8 @@
 #include "defines.h"
 #include "cmutex.h"
 
-enum {
+enum
+{
 	LOG_TYPE_WARNING = 1,
 	LOG_TYPE_ERROR = 2,
 	LOG_TYPE_DEBUG = 3,

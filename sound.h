@@ -25,7 +25,7 @@
 
 #define sSOUND struct Mix_Chunk
 
-extern void FreesSound (sSOUND *sound);
+extern void FreesSound (sSOUND* sound);
 
 typedef AutoObj<sSOUND, FreesSound> AutoSound;
 
@@ -125,9 +125,9 @@ public:
 int InitSound (int frequency, int chunksize);
 void CloseSound();
 void PlayVoice (sSOUND* snd);
-template <int N> void PlayRandomVoice (AutoSound (&snds)[N]);
+template <int N> void PlayRandomVoice (AutoSound (&snds) [N]);
 void PlayFX (sSOUND* snd);
-template <int N> void PlayRandomFX (AutoSound (&snds)[N]);
+template <int N> void PlayRandomFX (AutoSound (&snds) [N]);
 void PlayMusic (char const* file);
 void SetMusicVol (int vol);
 void StopMusic();

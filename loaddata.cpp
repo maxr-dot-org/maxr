@@ -463,7 +463,7 @@ static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const
  * @param filename Name of the file
  * @return 1 on success
  */
-static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename)
+static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename)
 {
 	string filepath;
 	if (strcmp (directory, ""))
@@ -489,7 +489,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest)[2], const char* direc
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
 // Loads a effectgraphic as aplha to the surface:
-static int LoadEffectAlphaToSurface (AutoSurface (&dest)[2], const char* directory, const char* filename, int alpha)
+static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* directory, const char* filename, int alpha)
 {
 	string filepath;
 	if (strcmp (directory, ""))

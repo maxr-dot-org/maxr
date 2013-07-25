@@ -40,7 +40,8 @@
 #define MINIMAP_ZOOM_FACTOR 2    // the zoomfactor for minimap zoom switch
 
 // Colors /////////////////////////////////////////////////////////////////////
-enum {
+enum
+{
 	cl_red = 0,
 	cl_blue = 1,
 	cl_green = 2,

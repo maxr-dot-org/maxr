@@ -156,7 +156,7 @@ bool cSavegame::load (cServer& server)
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
 	}
-	if (loadMap(server) == false)
+	if (loadMap (server) == false)
 	{
 		return false;
 	}
@@ -489,10 +489,12 @@ void cSavegame::loadUpgrade (XMLElement* upgradeNode, sUnitData* data)
 //--------------------------------------------------------------------------
 void cSavegame::loadResearchLevel (XMLElement* researchLevelNode, cResearch& researchLevel)
 {
-	const struct {
+	const struct
+	{
 		const char* name;
 		cResearch::ResearchArea area;
-	} data[] = {
+	} data[] =
+	{
 		{"attack", cResearch::kAttackResearch},
 		{"shots", cResearch::kShotsResearch},
 		{"range", cResearch::kRangeResearch},
@@ -683,7 +685,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		}
 	}
 
-	// since we write all stored vehicles immediatly after the storing unit
+	// since we write all stored vehicles immediately after the storing unit
 	// we can be sure that this one has been loaded yet
 	if (XMLElement* const element = unitNode->FirstChildElement ("Stored_In"))
 	{

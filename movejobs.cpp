@@ -379,7 +379,7 @@ static void setOffset (cVehicle* Vehicle, int nextDir, int offset)
 	assert (0 <= nextDir && nextDir < 8);
 	//                       N, NE, E, SE, S, SW,  W, NW
 	const int offsetX[8] = { 0,  1, 1,  1, 0, -1, -1, -1};
-	const int offsetY[8] = {-1, -1, 0,  1, 1,  1,  0, -1};
+	const int offsetY[8] = { -1, -1, 0,  1, 1,  1,  0, -1};
 
 	Vehicle->OffX += offsetX[nextDir] * offset;
 	Vehicle->OffY += offsetY[nextDir] * offset;
@@ -391,9 +391,10 @@ static int getDir (int x, int y, int nextX, int nextY)
 	const int diffY = nextY - y;
 	//                       N, NE, E, SE, S, SW,  W, NW
 	const int offsetX[8] = { 0,  1, 1,  1, 0, -1, -1, -1};
-	const int offsetY[8] = {-1, -1, 0,  1, 1,  1,  0, -1};
+	const int offsetY[8] = { -1, -1, 0,  1, 1,  1,  0, -1};
 
-	for (int i = 0; i != 8; ++i) {
+	for (int i = 0; i != 8; ++i)
+	{
 		if (diffX == offsetX[i] && diffY == offsetY[i]) return i;
 	}
 	assert (false);

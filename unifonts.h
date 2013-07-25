@@ -70,7 +70,8 @@ enum eUnicodeFontCharset
 
 /**
  * @author alzi alias DoctorDeath
- * Loads the fontbitmaps from a ISO-8859 structure to a unicode structure and handles theire output to the screen
+ * Loads the fontbitmaps from a ISO-8859 structure to a unicode structure
+ * and handles theire output to the screen
 */
 class cUnicodeFont
 {
@@ -97,10 +98,13 @@ public:
 	 */
 	void showText (int x, int y, const std::string& sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface* surface = buffer, bool encode = true);
 	/**
-	 * Displays a text as block.<br><br> This does <b>not</b> allow blanks in line. Linebreaks are interpreted. Unneeded blanks will be snipped.<br><br>
+	 * Displays a text as block.<br><br>
+	 * This does <b>not</b> allow blanks in line. Linebreaks are interpreted.
+	 * Unneeded blanks will be snipped.<br><br>
 	 * Example: "Headline\n\n This is my text for a textblock that get's linebreaked automagically"!
 	 * @author beko
-	 * @param rDest SDL_Rect for position and wide of textbox. Height is not taken care of!
+	 * @param rDest SDL_Rect for position and wide of textbox.
+	 *        Height is not taken care of!
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 	 * @param surface SDL_Surface to draw on. Default is buffer
@@ -109,7 +113,8 @@ public:
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
-	 * @param rDest DL_Rect for position.<br>Use X for position to center on.<br>Y is not taken care of!
+	 * @param rDest DL_Rect for position.<br>Use X for position to center on.
+	 *              <br>Y is not taken care of!
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 	 * @param surface SDL_Surface to draw on. Default is buffer
@@ -158,7 +163,9 @@ public:
 
 	std::string shortenStringToSize (const std::string& str, int size, eUnicodeFontType fonttype);
 private:
-	// character surfaces. Since SDL maximal gives us the unicodes from BMP we maximaly need 0xFFFF surfaces
+	// character surfaces.
+	// Since SDL maximal gives us the unicodes
+	// from BMP we maximaly need 0xFFFF surfaces
 	AutoSurface charsNormal[0xFFFF];
 	AutoSurface charsSmallWhite[0xFFFF];
 	AutoSurface charsSmallGreen[0xFFFF];
@@ -178,7 +185,8 @@ private:
 	/**
 	 * returns the character array of a fonttype.
 	 * @author alzi alias DoctorDeath
-	 * @param fonttype the fonttype of which the chracter array should be returned.
+	 * @param fonttype the fonttype of which the character
+	 *        array should be returned.
 	 * @return the character array for the fonttype.
 	 */
 	AutoSurface* getFontTypeSurfaces (eUnicodeFontType fonttype);
@@ -191,7 +199,8 @@ private:
 	 */
 	SDL_Surface* loadCharsetSurface (eUnicodeFontCharset charset, eUnicodeFontType fonttype);
 	/**
-	 * returns the iso page with the unicode positions of the characters in a ISO-8859 font
+	 * returns the iso page with the unicode positions of the characters
+	 * in a ISO-8859 font
 	 * @author alzi alias DoctorDeath
 	 * @param charset the charset for that the iso page should be returned.
 	 * @return the iso page
@@ -202,7 +211,8 @@ private:
 	 * encodes a UTF-8 character to his unicode position
 	 * @author alzi alias DoctorDeath
 	 * @param pch pointer to the character string
-	 * @param increase number which will be changed to the value how much bytes the character has taken in UTF-8
+	 * @param increase number which will be changed to the value
+	 *        how much bytes the character has taken in UTF-8
 	 * @return unicode position
 	 */
 	Uint16 encodeUTF8Char (const unsigned char* pch, int* increase) const;

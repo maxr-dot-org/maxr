@@ -229,7 +229,7 @@ public:
 public:
 	cStaticMap* staticMap;
 	/**
-	* the infomation about the fields
+	* the information about the fields
 	*/
 	cMapField* fields;
 private:

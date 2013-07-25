@@ -1111,8 +1111,8 @@ void cMenuCheckButton::draw()
 			font->showText (position.x, position.y, text, fontType);
 			if (checked)
 			{
-				const Uint32 selection_color(0x00E3DACF);
-				const SDL_Rect dest = {Sint16(position.x - 2), Sint16 (position.y - 1), Uint16 (position.w + 5), Uint16 (position.h + 2)};
+				const Uint32 selection_color (0x00E3DACF);
+				const SDL_Rect dest = {Sint16 (position.x - 2), Sint16 (position.y - 1), Uint16 (position.w + 5), Uint16 (position.h + 2) };
 				DrawRectangle (buffer, dest, selection_color);
 			}
 			break;
@@ -3940,7 +3940,7 @@ void cMenuReportsScreen::drawReportsScreen()
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
 	const cPlayer* activePlayer = client->getActivePlayer();
 
-	size_t endIndex = std::min ((index + 1u) * maxItems, activePlayer->savedReportsList.size());
+	size_t endIndex = std::min ( (index + 1u) * maxItems, activePlayer->savedReportsList.size());
 	for (size_t i = index * maxItems; i != endIndex; ++i)
 	{
 		const sSavedReportMessage& savedReport = activePlayer->savedReportsList[i];
@@ -4359,8 +4359,8 @@ void cMenuPlayersInfo::setClient (const cClient& client_)
 
 	for (size_t i = 0; i != client_.getPlayerList().size(); ++i)
 	{
-		const cPlayer& p = *client_.getPlayerList()[i];
-		info.push_back(new cMenuPlayerInfo (getPosition().x, getPosition().y + i * offsetY, p));
+		const cPlayer& p = *client_.getPlayerList() [i];
+		info.push_back (new cMenuPlayerInfo (getPosition().x, getPosition().y + i * offsetY, p));
 	}
 }
 

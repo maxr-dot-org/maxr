@@ -377,7 +377,7 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 drawline:
 		Uint8* destPixelData = static_cast<Uint8*> (surface->pixels) + (destRow * surface->pitch);
 
-		// pay attention to diffrent surface formats
+		// pay attention to different surface formats
 		switch (scr->format->BytesPerPixel)
 		{
 			case 1:
@@ -643,13 +643,13 @@ cUnitsData::cUnitsData() :
 //------------------------------------------------------------------------------
 const sUnitData& cUnitsData::getVehicle (int nr, int clan)
 {
-	return getUnitData_Vehicles (clan)[nr];
+	return getUnitData_Vehicles (clan) [nr];
 }
 
 //------------------------------------------------------------------------------
 const sUnitData& cUnitsData::getBuilding (int nr, int clan)
 {
-	return getUnitData_Buildings (clan)[nr];
+	return getUnitData_Buildings (clan) [nr];
 }
 
 const std::vector<sUnitData>& cUnitsData::getUnitData_Vehicles (int clan)

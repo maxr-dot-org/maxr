@@ -88,7 +88,7 @@ static std::string ToString (eLandingState state)
 		case LANDING_POSITION_CONFIRMED: return "LANDING_POSITION_COMFIRMED";
 		case LANDING_STATE_UNKNOWN: return "LANDING_STATE_UNKNOWN";
 	}
-	assert(0);
+	assert (0);
 	return "unknown";
 }
 
@@ -419,7 +419,7 @@ eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 			const int sqDelta = Square (posX - lastPosX) + Square (posY - lastPosY);
 			if (sqDelta <= Square (LANDING_DISTANCE_TOO_CLOSE))
 			{
-				// the player has choosen the same position after a warning
+				// the player has chosen the same position after a warning
 				// so further warnings will be ignored
 				newState = LANDING_POSITION_CONFIRMED;
 			}
@@ -1193,7 +1193,7 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 		const unsigned int x = position.x + 140;
 		const unsigned int y = position.y + iCurrentLine;
 		const unsigned int value = creditData[i].value;
-		const std::string text = lngPack.i18n (creditData[i].text)+ " (" + iToStr (value) + ")";
+		const std::string text = lngPack.i18n (creditData[i].text) + " (" + iToStr (value) + ")";
 		const bool checked = settings.credits == value;
 		creditsGroup->addButton (new cMenuCheckButton (x, y, text, checked, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 		iCurrentLine += iLineHeight;
@@ -1574,7 +1574,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
 	, network (network_)
 	, gameDataContainer (gameDataContainer_)
-	, clan (std::max(0, player->getClan()))
+	, clan (std::max (0, player->getClan()))
 {
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&cMenu::doneReleased);
@@ -2408,7 +2408,7 @@ cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContaine
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 
-	infoLabelConst = new cMenuLabel (position.x + 180 + (position.w - 180) / 2 - (Video.getResolutionX() - 200) / 2, position.y + (font->getFontHeight (FONT_LATIN_BIG)) * 3/2, "", FONT_LATIN_BIG);
+	infoLabelConst = new cMenuLabel (position.x + 180 + (position.w - 180) / 2 - (Video.getResolutionX() - 200) / 2, position.y + (font->getFontHeight (FONT_LATIN_BIG)) * 3 / 2, "", FONT_LATIN_BIG);
 	infoLabelConst->setBox ( (Video.getResolutionX() - 200), font->getFontHeight (FONT_LATIN_BIG) * 2);
 	menuItems.push_back (infoLabelConst);
 
@@ -4337,7 +4337,7 @@ void cVehiclesBuildMenu::createBuildList()
 {
 	for (size_t i = 0; i != building->BuildList->size(); ++i)
 	{
-		secondList->addUnit ((*building->BuildList) [i]->type, building->owner, NULL, true, false);
+		secondList->addUnit ( (*building->BuildList) [i]->type, building->owner, NULL, true, false);
 		secondList->getItem (secondList->getSize() - 1)->setResValue ( (*building->BuildList) [i]->metall_remaining, false);
 	}
 	if (secondList->getSize() > 0)
@@ -5369,7 +5369,7 @@ void cMineManagerMenu::barReleased (void* parent)
 void cMineManagerMenu::handleDestroyUnit (cUnit& destroyedUnit)
 {
 	if (destroyedUnit.isAVehicle()) return;
-	cBuilding& destroyedBuilding = static_cast<cBuilding&>(destroyedUnit);
+	cBuilding& destroyedBuilding = static_cast<cBuilding&> (destroyedUnit);
 	if (destroyedBuilding.SubBase == building->SubBase) terminate = true;
 }
 
@@ -5496,7 +5496,7 @@ void cReportsMenu::doubleClicked (cUnit* unit)
 	if (!unit) return;
 
 	end = true;
-	cVehicle* vehicle = unit->isAVehicle() ? static_cast<cVehicle*>(unit) : NULL;
+	cVehicle* vehicle = unit->isAVehicle() ? static_cast<cVehicle*> (unit) : NULL;
 	if (vehicle && vehicle->Loaded)
 	{
 		// find storing unit

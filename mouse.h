@@ -64,7 +64,7 @@ public:
 private:
 	AutoSurface back; // Zum Speichern des Maushintergrundes.
 public:
-	int x, y; /** the pixel positon of the curor on the map */
+	int x, y; /** the pixel position of the cursor on the map */
 	bool isDoubleClick;
 private:
 	int prevScreenX, prevScreenY;

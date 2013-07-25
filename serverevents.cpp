@@ -987,12 +987,12 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void sendCommandoAnswer (cServer& server, bool succsess, bool steal, const cVehicle& srcUnit, int player)
+void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_COMMANDO_ANSWER);
 	message->pushInt16 (srcUnit.iID);
 	message->pushBool (steal);
-	message->pushBool (succsess);
+	message->pushBool (success);
 	server.sendNetMessage (message, player);
 }
 

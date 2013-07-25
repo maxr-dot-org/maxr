@@ -18,24 +18,25 @@
  ***************************************************************************/
 
 #ifdef WIN32
-#	include <shlobj.h>
-#	include <direct.h>
+# include <shlobj.h>
+# include <direct.h>
 #else
-#	include <sys/stat.h>
-#	include <unistd.h>
+# include <sys/stat.h>
+# include <unistd.h>
 #endif
 
 #include <cctype>
-#include <string>
 #include <iostream>
 #include <locale>
+#include <string>
 
 #include "settings.h"
-#include "main.h"
-#include "log.h"
-#include "tinyxml2.h"
+
 #include "extendedtinyxml.h"
 #include "files.h"
+#include "log.h"
+#include "main.h"
+#include "tinyxml2.h"
 #include "video.h"
 
 using namespace tinyxml2;
@@ -66,14 +67,16 @@ bool cSettings::isInitialized() const
 //------------------------------------------------------------------------------
 void cSettings::setPaths()
 {
-	//init absolutly needed paths
+	// init absolutely needed paths
 	logPath = MAX_LOG;
 	netLogPath = getUserLogDir();
-	exePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
+	// FIXME: I don't know how this is handled on win/mac/amiga -- beko
+	exePath = "";
 	homeDir = "";
 
 #if MAC
-	// do some rudimentary work with the user's homefolder. Needs to be extended in future...
+	// do some rudimentary work with the user's homefolder.
+	// Needs to be extended in future...
 	char* cHome = getenv ("HOME");  //get $HOME on mac
 	if (cHome != NULL)
 		homeDir = cHome;
@@ -84,23 +87,24 @@ void cSettings::setPaths()
 		homeDir += PATH_DELIMITER;
 
 		// check whether home dir is set up and readable
-		if (!FileExists (homeDir.c_str()))    // under mac everything is a file
+		if (!FileExists (homeDir.c_str())) // under mac everything is a file
 		{
 			if (mkdir (homeDir.c_str(), 0755) == 0)
 				std::cout << "\n(II): Created new config directory " << homeDir;
 			else
 			{
 				std::cout << "\n(EE): Can't create config directory " << homeDir;
-				homeDir = ""; //reset $HOME since we can't create our config directory
+				// reset $HOME since we can't create our config directory
+				homeDir = "";
 			}
 		}
 	}
-	//this is also a good place to find out where the executable is located
-	configPath = MAX_XML; //assume config in current working directory
+	// this is also a good place to find out where the executable is located
+	configPath = MAX_XML; // assume config in current working directory
 #elif WIN32
-	//this is where windowsuser should set their %HOME%
-	//this is also a good place to find out where the executable is located
-	configPath = MAX_XML; //assume config in current working directory
+	// this is where windowsuser should set their %HOME%
+	// this is also a good place to find out where the executable is located
+	configPath = MAX_XML; // assume config in current working directory
 
 	TCHAR szPath[MAX_PATH];
 	SHGetFolderPath (NULL, CSIDL_PERSONAL, NULL, 0, szPath);
@@ -140,21 +144,24 @@ void cSettings::setPaths()
 		configPath += MAX_XML;
 	}
 
-	//set new place for logs
+	// set new place for logs
 	logPath = homeDir + logPath;
 	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath;
 #elif __amigaos4__
-	//this is where amigausers should set their %HOME%
-	//this is also a good place to find out where the executable is located
-	configPath = MAX_XML; //assume config in current working directory
+	// this is where amigausers should set their %HOME%
+	// this is also a good place to find out where the executable is located
+	configPath = MAX_XML; // assume config in current working directory
 #else
-	//NOTE: I do not use cLog here on purpose. Logs on linux go somewhere to $HOME/.maxr/ - as long as we can't access that we have to output everything to the terminal because game's root dir is usually write protected! -- beko
+	// NOTE: I do not use cLog here on purpose.
+	// Logs on linux go somewhere to $HOME/.maxr/
+	// - as long as we can't access that we have to output everything to
+	// the terminal because game's root dir is usually write protected! -- beko
 
-	char* cHome = getenv ("HOME");  //get $HOME on linux
+	char* cHome = getenv ("HOME"); // get $HOME on linux
 	if (cHome != NULL)
 	{
-		homeDir = cHome; //get $HOME on linux
+		homeDir = cHome; // get $HOME on linux
 	}
 
 	if (!homeDir.empty())
@@ -163,10 +170,11 @@ void cSettings::setPaths()
 		homeDir += ".maxr";
 		homeDir += PATH_DELIMITER;
 		configPath = homeDir;
-		configPath += MAX_XML; //set config to $HOME/.maxr/max.xml
+		configPath += MAX_XML; // set config to $HOME/.maxr/max.xml
 
-		//check whether home dir is set up and readable
-		if (!FileExists (homeDir.c_str()))    //under linux everything is a file -- beko
+		// check whether home dir is set up and readable.
+		// under linux everything is a file -- beko
+		if (!FileExists (homeDir.c_str()))
 		{
 			if (mkdir (homeDir.c_str(), 0755) == 0)
 			{
@@ -175,28 +183,31 @@ void cSettings::setPaths()
 			else
 			{
 				std::cout << "\n(EE): Can't create config directory " << homeDir;
-				homeDir = ""; //reset $HOME since we can't create our config directory
+				// reset $HOME since we can't create our config directory
+				homeDir = "";
 			}
 		}
 		else
 		{
-			std::cout << "\n(II): Config is read from " << homeDir; //config dir can be read - we're fine
+			// config dir can be read - we're fine
+			std::cout << "\n(II): Config is read from " << homeDir;
 		}
 	}
 	else
 	{
 		std::cout << "\n(WW): $HOME is not set!";
 		homeDir = "";
-		configPath = MAX_XML; //assume config in current working directory
+		configPath = MAX_XML; // assume config in current working directory
 	}
 
-	//set new place for logs
+	// set new place for logs
 	logPath = homeDir + logPath;
 	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath;
 
-	//determine full path to application
-	//this needs /proc support that should be avaible on most linux installations
+	// determine full path to application
+	// this needs /proc support that should be avaible
+	// on most linux installations
 	if (FileExists ("/proc/self/exe"))
 	{
 		int iSize;
@@ -215,24 +226,29 @@ void cSettings::setPaths()
 			int iPos = 0;
 			for (int i = 0; i < 255; i++)
 			{
-				if (cPathToExe[i] == '/')   //snip garbage after last PATH_DELIMITER + executable itself (is reported on some linux systems as well using /proc/self/exe
+				// snip garbage after last PATH_DELIMITER + executable itself
+				// (is reported on some linux systems
+				//  as well using /proc/self/exe
+				if (cPathToExe[i] == '/')
 					iPos = i;
-				if (cPathToExe[i] == '\0')   //skip garbage that might lunger on heap after 0 termination
+				// skip garbage that might lunger on heap after 0 termination
+				if (cPathToExe[i] == '\0')
 					i = 255;
 			}
-
 
 			exePath = cPathToExe;
 			exePath = exePath.substr (0, iPos);
 			exePath += PATH_DELIMITER;
 
-			if (FileExists ( (exePath + "maxr").c_str()))     //check for binary itself in bin folder
+			// check for binary itself in bin folder
+			if (FileExists ( (exePath + "maxr").c_str()))
 			{
 				Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
 			}
 			else
 			{
-				//perhaps we got ourself a trailing maxr in the path like /proc
+				// perhaps we got ourself a trailing maxr
+				// in the path like /proc
 				// seems to do it sometimes. remove it and try again!
 				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
 				{
@@ -262,19 +278,25 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 {
 	std::string sPathToGameData = "";
 #if MAC
-	sPathToGameData = exePath; //assuming data is in same folder like binary (or current working directory)
+	// assuming data is in same folder as binary (or current working directory)
+	sPathToGameData = exePath;
 #elif WIN32
-	sPathToGameData = exePath; //assuming data is in same folder like binary (or current working directory)
+	// assuming data is in same folder as binary (or current working directory)
+	sPathToGameData = exePath;
 #elif __amigaos4__
-	sPathToGameData = exePath; //assuming data is in same folder like binary (or current working directory)
+	// assuming data is in same folder as binary (or current working directory)
+	sPathToGameData = exePath;
 #else
-	//BEGIN crude path validation to find gamedata
+	// BEGIN crude path validation to find gamedata
 	Log.write ("Probing for data paths using default values:", cLog::eLOG_TYPE_INFO);
 
 #define PATHCOUNT 11
 	std::string sPathArray[PATHCOUNT] =
 	{
-		BUILD_DATADIR, //most important position holds value of configure --prefix to gamedata in %prefix%/$(datadir)/maxr or default path if autoversion.h wasn't used
+		// most important position holds value of configure --prefix
+		// to gamedata in %prefix%/$(datadir)/maxr or default path
+		// if autoversion.h wasn't used
+		BUILD_DATADIR,
 		"/usr/local/share/maxr",
 		"/usr/games/maxr",
 		"/usr/local/games/maxr",
@@ -283,8 +305,8 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 		"/opt/maxr",
 		"/usr/share/games/maxr",
 		"/usr/local/share/games/maxr",
-		exePath, //check for gamedata in bin folder too
-		"." //last resort: local dir
+		exePath, // check for gamedata in bin folder too
+		"." // last resort: local dir
 	};
 
 	/*
@@ -296,11 +318,13 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 	*/
 	if (!sDataDirFromConf.empty())
 	{
-		sPathArray[0] = sDataDirFromConf; //override default path with path from config
-		sPathArray[1] = BUILD_DATADIR; //and save old value one later in case sDataDirFromConf is invalid
+		// override default path with path from config
+		sPathArray[0] = sDataDirFromConf;
+		// and save old value one later in case sDataDirFromConf is invalid
+		sPathArray[1] = BUILD_DATADIR;
 	}
 
-	//BEGIN SET MAXRDATA
+	// BEGIN SET MAXRDATA
 	char* cDataDir;
 	cDataDir = getenv ("MAXRDATA");
 	if (cDataDir == NULL)
@@ -313,7 +337,7 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 		sPathArray[1] = BUILD_DATADIR;
 		Log.write ("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
 	}
-	//END SET MAXRDATA
+	// END SET MAXRDATA
 
 	for (int i = 0; i < PATHCOUNT; i++)
 	{
@@ -328,7 +352,8 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 		}
 	}
 
-	if (sPathToGameData.empty())   //still empty? cry for mama - we couldn't locate any typical data folder
+	// still empty? cry for mama - we couldn't locate any typical data folder
+	if (sPathToGameData.empty())
 	{
 		Log.write ("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);
 	}
@@ -336,7 +361,7 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 	{
 		Log.write ("Found gamedata in: " + sPathToGameData, cLog::eLOG_TYPE_INFO);
 	}
-	//END crude path validation to find gamedata
+	// END crude path validation to find gamedata
 #endif
 	return sPathToGameData;
 }
@@ -348,7 +373,8 @@ bool cSettings::createConfigFile()
 
 	configFile.LinkEndChild (configFile.NewElement ("Options"));
 
-	if (configFile.SaveFile (configPath.c_str()) != XML_NO_ERROR)    //create new empty config
+	// create new empty config
+	if (configFile.SaveFile (configPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Could not write new config to " + configPath, cLog::eLOG_TYPE_ERROR);
 		return false; // Generate fails
@@ -366,7 +392,7 @@ void cSettings::initialize()
 
 	setPaths();
 
-	if (configPath.empty())   //we need at least configPath here
+	if (configPath.empty()) // we need at least configPath here
 	{
 		Log.write ("configPath not set!", cLog::eLOG_TYPE_WARNING);
 		configPath = MAX_XML;
@@ -379,11 +405,11 @@ void cSettings::initialize()
 
 	XMLElement* xmlElement = NULL;
 
-	//START
+	// START
 
 	if (!DEDICATED_SERVER)
 	{
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Resolution", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
@@ -399,7 +425,7 @@ void cSettings::initialize()
 			Video.setResolution (wTmp, hTmp);
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "ColourDepth", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -412,7 +438,7 @@ void cSettings::initialize()
 			Video.setColDepth (xmlElement->IntAttribute ("Num"));
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Intro", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -424,7 +450,7 @@ void cSettings::initialize()
 			showIntro = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Windowmode", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -437,7 +463,7 @@ void cSettings::initialize()
 			Video.setWindowMode (xmlElement->BoolAttribute ("YN"));
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Fastmode", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -449,7 +475,7 @@ void cSettings::initialize()
 			fastMode = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "PreScale", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -461,7 +487,7 @@ void cSettings::initialize()
 			preScale = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "CacheSize", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -474,7 +500,7 @@ void cSettings::initialize()
 		}
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Language", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -488,7 +514,7 @@ void cSettings::initialize()
 			*i = std::toupper ( (unsigned char) * i);
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "VoiceLanguage", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -502,8 +528,8 @@ void cSettings::initialize()
 			*i = std::tolower ( (unsigned char) * i);
 	}
 
-	//GAME
-	// =============================================================================
+	// GAME
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAutosave", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -515,7 +541,7 @@ void cSettings::initialize()
 		autosave = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDebug", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -529,7 +555,7 @@ void cSettings::initialize()
 		else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAnimations", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -541,7 +567,7 @@ void cSettings::initialize()
 		animations = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableShadows", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -553,7 +579,7 @@ void cSettings::initialize()
 		shadows = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAlphaEffects", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -565,7 +591,7 @@ void cSettings::initialize()
 		alphaEffects = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDescribtions", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -577,7 +603,7 @@ void cSettings::initialize()
 		showDescription = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDamageEffects", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -589,7 +615,7 @@ void cSettings::initialize()
 		damageEffects = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDamageEffectsVehicles", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -601,7 +627,7 @@ void cSettings::initialize()
 		damageEffectsVehicles = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableMakeTracks", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
@@ -613,7 +639,7 @@ void cSettings::initialize()
 		makeTracks = xmlElement->BoolAttribute ("YN");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "ScrollSpeed", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
@@ -625,10 +651,10 @@ void cSettings::initialize()
 		scrollSpeed = xmlElement->IntAttribute ("Num");
 	}
 
-	//GAME-SOUND
+	// GAME-SOUND
 	if (!DEDICATED_SERVER)
 	{
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Enabled", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -640,7 +666,7 @@ void cSettings::initialize()
 			soundEnabled = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicMute", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -652,7 +678,7 @@ void cSettings::initialize()
 			musicMute = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "SoundMute", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -664,7 +690,7 @@ void cSettings::initialize()
 			soundMute = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "VoiceMute", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -676,7 +702,7 @@ void cSettings::initialize()
 			voiceMute = xmlElement->BoolAttribute ("YN");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicVol", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -688,7 +714,7 @@ void cSettings::initialize()
 			musicVol = xmlElement->IntAttribute ("Num");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "SoundVol", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -700,7 +726,7 @@ void cSettings::initialize()
 			soundVol = xmlElement->IntAttribute ("Num");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "VoiceVol", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -712,7 +738,7 @@ void cSettings::initialize()
 			voiceVol = xmlElement->IntAttribute ("Num");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "ChunkSize", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -724,7 +750,7 @@ void cSettings::initialize()
 			chunkSize = xmlElement->IntAttribute ("Num");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Frequency", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -737,8 +763,8 @@ void cSettings::initialize()
 		}
 	}
 
-	//PATHS
-	// =============================================================================
+	// PATHS
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Gamedata", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -750,7 +776,7 @@ void cSettings::initialize()
 		setDataDir (searchDataDir (xmlElement->Attribute ("Text")).c_str(), false);
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Languages", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -763,7 +789,7 @@ void cSettings::initialize()
 		langPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Fonts", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -776,7 +802,7 @@ void cSettings::initialize()
 		fontPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "FX", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -789,7 +815,7 @@ void cSettings::initialize()
 		fxPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "GFX", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -802,7 +828,7 @@ void cSettings::initialize()
 		gfxPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Maps", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -815,7 +841,7 @@ void cSettings::initialize()
 		mapsPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Saves", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -824,10 +850,12 @@ void cSettings::initialize()
 	}
 	else
 	{
-		savesPath = xmlElement->Attribute ("Text"); //use absolut paths for saves - do not add dataDir or homeDir
+		// use absolute paths for saves - do not add dataDir or homeDir
+		savesPath = xmlElement->Attribute ("Text");
 	}
 #if MAC
-	// Create saves directory, if it doesn't exist, yet. Creating it during setPaths is too early, because it was not read yet.
+	// Create saves directory, if it doesn't exist, yet.
+	// Creating it during setPaths is too early, because it was not read yet.
 	if (!FileExists (getSavesPath().c_str()))
 	{
 		if (mkdir (getSavesPath().c_str(), 0755) == 0)
@@ -839,7 +867,7 @@ void cSettings::initialize()
 
 	if (!DEDICATED_SERVER)
 	{
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Sounds", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
@@ -852,7 +880,7 @@ void cSettings::initialize()
 			soundsPath = dataDir + xmlElement->Attribute ("Text");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Voices", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
@@ -865,7 +893,7 @@ void cSettings::initialize()
 			voicesPath = dataDir + xmlElement->Attribute ("Text");
 		}
 
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Music", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
@@ -879,7 +907,7 @@ void cSettings::initialize()
 		}
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Vehicles", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -892,7 +920,7 @@ void cSettings::initialize()
 		vehiclesPath = dataDir + xmlElement->Attribute ("Text");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Buildings", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -907,7 +935,7 @@ void cSettings::initialize()
 
 	if (!DEDICATED_SERVER)
 	{
-		// =============================================================================
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "MVEs", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
@@ -921,8 +949,8 @@ void cSettings::initialize()
 		}
 	}
 
-	//GAME-NET
-	// =============================================================================
+	// GAME-NET
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "IP", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -934,7 +962,7 @@ void cSettings::initialize()
 		setIP (xmlElement->Attribute ("Text"));
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "Port", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
@@ -946,7 +974,7 @@ void cSettings::initialize()
 		port = xmlElement->IntAttribute ("Num");
 	}
 
-	// =============================================================================
+	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "PlayerName", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -970,7 +998,7 @@ void cSettings::initialize()
 		setPlayerName (xmlElement->Attribute ("Text"));
 	}
 
-	// =============================================================================
+	// =========================================================================
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);

@@ -88,7 +88,7 @@ void cFxContainer::draw (const cGameGUI& gameGUI, bool bottom) const
 
 void cFxContainer::run()
 {
-	for (std::vector<cFx*>::iterator it = fxs.begin(); it != fxs.end(); )
+	for (std::vector<cFx*>::iterator it = fxs.begin(); it != fxs.end();)
 	{
 		cFx* fx = *it;
 
@@ -115,7 +115,7 @@ void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (pImages == NULL) return;
-	AutoSurface (&images)[2] (*pImages);
+	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	SDL_Rect src;
@@ -173,7 +173,7 @@ void cFxExplo::draw (const cGameGUI& gameGUI) const
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
-	AutoSurface (&images)[2] (*pImages);
+	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
@@ -289,7 +289,7 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
-	AutoSurface (&images)[2](*pImages);
+	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
@@ -334,7 +334,7 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return; //ja, nein, vielleicht?
 	if (!pImages) return;
-	AutoSurface (&images)[2](*pImages);
+	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
@@ -386,7 +386,7 @@ void cFxRocket::draw (const cGameGUI& gameGUI) const
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
 	if (tick >= length) return;
-	AutoSurface (&images)[2](*pImages);
+	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	SDL_Rect src, dest;
@@ -460,7 +460,7 @@ void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 {
 	//if (!client.getActivePlayer()->ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
 	if (!pImages) return;
-	AutoSurface (&images)[2](*pImages);
+	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
