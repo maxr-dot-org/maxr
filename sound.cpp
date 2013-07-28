@@ -156,7 +156,7 @@ void StopMusic()
 void StartMusic()
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
-	if (MusicFiles.size() == 0) return;
+	if (MusicFiles.empty()) return;
 	PlayMusic (MusicFiles[random ( (int) MusicFiles.size())].c_str());
 }
 
@@ -164,7 +164,7 @@ void StartMusic()
 static void MusicFinished()
 {
 	if (!cSettings::getInstance().isSoundEnabled()) return;
-	if (MusicFiles.size() == 0) return;
+	if (MusicFiles.empty()) return;
 	PlayMusic (MusicFiles[random ( (int) MusicFiles.size())].c_str());
 }
 

@@ -1021,7 +1021,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 
 	RemoveDuplicates (NeighbourList);
 
-	if (NeighbourList.size() == 0)
+	if (NeighbourList.empty())
 	{
 		// no neighbours found, just generate new subbase and add the building
 		sSubBase* NewSubBase = new sSubBase (building->owner);

@@ -954,7 +954,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		const sID Type = message.popID();
 
 		// if the first unit hasn't changed copy it to the new buildlist
-		if (Building->BuildList.size() > 0 && i == 0 && Type == Building->BuildList[0].type)
+		if (Building->BuildList.empty() == false && i == 0 && Type == Building->BuildList[0].type)
 		{
 			// recalculate costs, because build speed could have been changed
 			int iTurboBuildRounds[3];
@@ -2783,7 +2783,7 @@ void cServer::handleEnd (int iPlayerNum)
 			// When playing with dedicated server
 			// where a player is not connected, play without a deadline,
 			// but wait till all players pressed "End".
-			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.size() == 0))
+			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
 				sendTurnFinished (*this, iPlayerNum, 100 * gameSetting->iTurnDeadline);
 				iDeadlineStartTime = gameTimer.gameTime;

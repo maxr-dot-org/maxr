@@ -428,7 +428,7 @@ void cFxRocket::run()
 
 bool cFxRocket::isFinished() const
 {
-	return tick >= length && subEffects.size() == 0;
+	return tick >= length && subEffects.empty();
 }
 
 cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :

@@ -623,7 +623,7 @@ void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, in
 void sendDetectionState (cServer& server, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_DETECTION_STATE);
-	message->pushBool (vehicle.detectedByPlayerList.size() > 0);
+	message->pushBool (!vehicle.detectedByPlayerList.empty());
 	message->pushInt32 (vehicle.iID);
 	server.sendNetMessage (message, vehicle.owner->getNr());
 }

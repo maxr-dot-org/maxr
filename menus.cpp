@@ -2116,7 +2116,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 	}
 	// the size can be != 0, if a client sent his landingunits
 	// before the host is done with the startup hangar
-	if (menu->gameDataContainer->landingUnits.size() == 0)
+	if (menu->gameDataContainer->landingUnits.empty())
 	{
 		// TODO: alzi, for clients it shouldn't be necessary
 		// to store the landing units, or? (pagra)
@@ -4879,7 +4879,7 @@ void cStorageMenu::resetInfos()
 		}
 	}
 
-	activateAllButton->setLocked (storageList.size() == 0);
+	activateAllButton->setLocked (storageList.empty());
 
 	reloadAllButton->setLocked (true);
 	repairAllButton->setLocked (true);

@@ -1373,7 +1373,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->DestX), "desty", iToStr (vehicle.ServerMoveJob->DestY));
 
 	// write from which players this unit has been detected
-	if (vehicle.detectedByPlayerList.size() > 0)
+	if (vehicle.detectedByPlayerList.empty() == false)
 	{
 		XMLElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
 		for (size_t i = 0; i != vehicle.detectedByPlayerList.size(); ++i)
@@ -1439,7 +1439,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	if (building.hasBeenAttacked) addMainElement (unitNode, "HasBeenAttacked");
 
 	// write the buildlist
-	if (building.BuildList.size() > 0)
+	if (building.BuildList.empty() == false)
 	{
 		XMLElement* buildNode = addMainElement (unitNode, "Building");
 		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (building.BuildSpeed));

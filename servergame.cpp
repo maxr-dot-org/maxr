@@ -539,7 +539,7 @@ std::string cServerGame::getGameState() const
 	result << "GameState: ";
 	if (server != NULL)
 		result << "Game is active" << endl;
-	else if (gameData != 0 && gameData->players.size() == 0)
+	else if (gameData != 0 && gameData->players.empty())
 		result << "Game is open for new players" << endl;
 	else
 		result << "Game has started, players are setting up" << endl;
@@ -549,7 +549,7 @@ std::string cServerGame::getGameState() const
 		result << "Turn: " << server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if (server != NULL && serverPlayers.size() > 0)
+	if (server != NULL && serverPlayers.empty() == false)
 	{
 		for (size_t i = 0; i != serverPlayers.size(); ++i)
 		{
@@ -557,12 +557,12 @@ std::string cServerGame::getGameState() const
 			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
-	else if (gameData->players.size() > 0)
+	else if (gameData->players.empty() == false)
 	{
 		for (size_t i = 0; i < gameData->players.size(); i++)
 			result << " " << gameData->players[i]->getName() << endl;
 	}
-	else if (menuPlayers.size() > 0)
+	else if (menuPlayers.empty() == false)
 	{
 		for (size_t i = 0; i < menuPlayers.size(); i++)
 			result << " " << menuPlayers[i]->getName() << endl;

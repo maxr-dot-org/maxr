@@ -891,7 +891,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 
-		if (fields[offset].vehicles.size() > 0) return false;
+		if (fields[offset].vehicles.empty() == false) return false;
 		if (b_it != b_end)
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
@@ -917,7 +917,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 
-		if (fields[offset].vehicles.size() > 0) return false;
+		if (fields[offset].vehicles.empty() == false) return false;
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
 		if (b_it != b_end &&
@@ -1006,7 +1006,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
 		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
 
-	if (field.vehicles.size() > 0)
+	if (field.vehicles.empty() == false)
 	{
 		if (!vehicle) return false;
 		if (vehicle != field.vehicles[0]) return false;

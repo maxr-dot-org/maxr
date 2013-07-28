@@ -176,7 +176,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
+		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == gameGUI.getClient()->getActivePlayer())
 		{
 			if (StartUp > 100) StartUp = 0;
 		}
@@ -1749,7 +1749,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 	if (unit->isABuilding() && unit->owner == 0) return false;   // rubble
 	if (steal && unit->data.canBeCaptured == false) return false;
 	if (steal == false && unit->data.canBeDisabled == false) return false;
-	if (steal && unit->storedUnits.size() > 0) return false;
+	if (steal && unit->storedUnits.empty() == false) return false;
 	if (unit->owner == owner) return false;
 	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
@@ -1858,7 +1858,7 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
-	bool wasDetected = (detectedByPlayerList.size() > 0);
+	bool wasDetected = (detectedByPlayerList.empty() == false);
 
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.push_back (player);
@@ -1872,12 +1872,12 @@ void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addTo
 //-----------------------------------------------------------------------------
 void cVehicle::resetDetectedByPlayer (cServer& server, cPlayer* player)
 {
-	bool wasDetected = (detectedByPlayerList.size() > 0);
+	bool wasDetected = (detectedByPlayerList.empty() == false);
 
 	Remove (detectedByPlayerList, player);
 	Remove (detectedInThisTurnByPlayerList, player);
 
-	if (wasDetected && detectedByPlayerList.size() == 0) sendDetectionState (server, *this);
+	if (wasDetected && detectedByPlayerList.empty()) sendDetectionState (server, *this);
 }
 
 //-----------------------------------------------------------------------------

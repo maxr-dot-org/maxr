@@ -337,7 +337,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 
 	Log.write (" Server: waiting for " + iToStr ( (int) executingClients.size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG);
 
-	if (executingClients.size() == 0)
+	if (executingClients.empty())
 	{
 		if (unit && unit->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 			makeImpactCluster();
