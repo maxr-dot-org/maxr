@@ -284,5 +284,5 @@ vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer 
 		}
 	}
 	casualtiesPerPlayer.push_back (newCasualtiesOfPlayer);
-	return casualtiesPerPlayer[casualtiesPerPlayer.size() - 1].casualties;
+	return casualtiesPerPlayer.back().casualties;
 }

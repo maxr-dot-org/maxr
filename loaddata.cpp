@@ -1531,12 +1531,12 @@ static int LoadBuildings()
 	if (spezial != NULL)
 	{
 		string specialString = spezial;
-		if (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
-		else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList[IDList.size() - 1];
-		else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList[IDList.size() - 1];
-		else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList[IDList.size() - 1];
-		else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList[IDList.size() - 1];
-		else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList[IDList.size() - 1];
+		if (specialString == "mine")            UnitsData.specialIDMine.iSecondPart       = IDList.back();
+		else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList.back();
+		else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList.back();
+		else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList.back();
+		else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList.back();
+		else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList.back();
 		else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 	}
 
@@ -1567,12 +1567,12 @@ static int LoadBuildings()
 		if (spezial != NULL)
 		{
 			string specialString = spezial;
-			if (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
-			else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList[IDList.size() - 1];
-			else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList[IDList.size() - 1];
-			else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList[IDList.size() - 1];
-			else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList[IDList.size() - 1];
-			else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList[IDList.size() - 1];
+			if (specialString == "mine")            UnitsData.specialIDMine.iSecondPart       = IDList.back();
+			else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList.back();
+			else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList.back();
+			else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList.back();
+			else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList.back();
+			else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList.back();
 			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 		}
 	}

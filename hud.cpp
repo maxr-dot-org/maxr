@@ -1781,7 +1781,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-	// Infiltratros: manual action from unit-menu
+		// Infiltrators: manual action from unit-menu
 		// disable vs. vehicle/building
 		else if (selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
@@ -1815,7 +1815,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-	// Infiltratros: auto-action 
+		// Infiltrators: auto-action
 		// no disable vs. disabled building
 		// ...with a little && !(! - work-around to avoid wrong selection
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && !(!overUnitField->getBuilding() || overUnitField->getBuilding()->isDisabled() == false))
@@ -1830,7 +1830,7 @@ void cGameGUI::updateMouseCursor()
 				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 			}
 		}
-		// ... disabled (the) vehicle can be stolen 
+		// ... disabled (the) vehicle can be stolen
 		// (without selecting the 'steal' from menu)
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), true))
 		{
@@ -4281,7 +4281,7 @@ void cGameGUI::drawUnitCircles()
 						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, buffer);
 		}
 
-		if (selectedBuilding->BuildList.size() &&
+		if (selectedBuilding->BuildList.empty() == false &&
 			!selectedBuilding->IsWorking &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
 			selectedBuilding->owner == player)

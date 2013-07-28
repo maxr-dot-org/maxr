@@ -764,10 +764,8 @@ int cPlayer::getScore (int turn) const
 
 	if (pointsHistory.size() < t)
 	{
-		int score = pointsHistory.empty() ?
-					0 : pointsHistory[pointsHistory.size() - 1];
-		pointsHistory.resize (t);
-		pointsHistory[t - 1] = score;
+		const int score = pointsHistory.empty() ? 0 : pointsHistory.back();
+		pointsHistory.resize (t, score);
 	}
 	return pointsHistory[t - 1];
 }
