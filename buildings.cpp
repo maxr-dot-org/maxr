@@ -50,7 +50,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 			Owner,
 			ID),
 	next (0),
-	prev (0)
+	prev (0),
+	BuildList (0)
 {
 	sentryActive = data.canAttack != TERRAIN_NONE;
 
@@ -67,7 +68,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 
 	if (Owner == NULL || b == NULL)
 	{
-		BuildList = NULL;
 		return;
 	}
 
@@ -89,10 +89,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	data.ammoCur = data.ammoMax;
 	SubBase = NULL;
 	BuildSpeed = 0;
-	BuildList = NULL;
-
-	if (!data.canBuild.empty())
-		BuildList = new std::vector<sBuildList*>;
 
 	if (data.isBig)
 	{
@@ -113,14 +109,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 //--------------------------------------------------------------------------
 cBuilding::~cBuilding()
 {
-	if (BuildList)
-	{
-		for (size_t i = 0; i != BuildList->size(); ++i)
-		{
-			delete (*BuildList) [i];
-		}
-		delete BuildList;
-	}
 }
 
 //----------------------------------------------------
@@ -139,17 +127,17 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 	{
 		const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
-		if (!data.canBuild.empty() && BuildList && BuildList->size() && owner == activePlayer)
+		if (!data.canBuild.empty() && !BuildList.empty() && owner == activePlayer)
 		{
-			const sBuildList* buildListItem = (*BuildList) [0];
-			const string& unitName = buildListItem->type.getUnitDataOriginalVersion()->name;
+			const sBuildList& buildListItem = BuildList[0];
+			const string& unitName = buildListItem.type.getUnitDataOriginalVersion()->name;
 			string sText;
 
-			if (buildListItem->metall_remaining > 0)
+			if (buildListItem.metall_remaining > 0)
 			{
 				int iRound;
 
-				iRound = (int) ceilf (buildListItem->metall_remaining / (float) MetalPerRound);
+				iRound = (int) ceilf (buildListItem.metall_remaining / (float) MetalPerRound);
 				sText = lngPack.i18n ("Text~Comp~Producing") + ": ";
 				sText += unitName + " (";
 				sText += iToStr (iRound) + ")";
@@ -344,7 +332,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw the mark, when a build order is finished
-	if ( ( (BuildList && BuildList->size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
+	if ( ( (!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -878,7 +866,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs raw material:
 	if (data.needsMetal)
 	{
-		if (SubBase->MetalNeed + min (MetalPerRound, (*BuildList) [0]->metall_remaining) > SubBase->getMetalProd() + SubBase->Metal)
+		if (SubBase->MetalNeed + min (MetalPerRound, BuildList[0].metall_remaining) > SubBase->getMetalProd() + SubBase->Metal)
 		{
 			sendChatMessageToClient (server, "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
 			return;
@@ -981,7 +969,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed += min (MetalPerRound, (*BuildList) [0]->metall_remaining);
+		SubBase->MetalNeed += min (MetalPerRound, BuildList[0].metall_remaining);
 
 	// gold consumer:
 	SubBase->GoldNeed += data.convertsGold;
@@ -1053,7 +1041,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed -= min (MetalPerRound, (*BuildList) [0]->metall_remaining);
+		SubBase->MetalNeed -= min (MetalPerRound, BuildList[0].metall_remaining);
 
 	// gold consumer
 	if (data.convertsGold)
@@ -1681,7 +1669,7 @@ void sBuildingUIData::scaleSurfaces (float factor)
 //-----------------------------------------------------------------------------
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
-	return (BuildList && BuildList->size() > 0 && isUnitWorking() == false && (*BuildList) [0]->metall_remaining <= 0);
+	return (!BuildList.empty() && isUnitWorking() == false && BuildList[0].metall_remaining <= 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1729,7 +1717,7 @@ void cBuilding::executeSelfDestroyCommand (cClient& client)
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (data.canWork && isUnitWorking() == false
-			&& ( (BuildList && BuildList->size() > 0) || data.canBuild.empty()));
+			&& (!BuildList.empty() || data.canBuild.empty()));
 }
 
 //-----------------------------------------------------------------------------

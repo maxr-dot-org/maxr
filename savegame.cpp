@@ -760,20 +760,20 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 		const XMLElement* itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ("Item_0");
 		while (itemElement)
 		{
-			sBuildList* listitem = new sBuildList;
+			sBuildList listitem;
 			if (itemElement->Attribute ("type_id") != NULL)
 			{
-				listitem->type.generate (itemElement->Attribute ("type_id"));
+				listitem.type.generate (itemElement->Attribute ("type_id"));
 			}
-			// be downward compatible and looke for 'type' too
+			// be downward compatible and look for 'type' too
 			else if (itemElement->Attribute ("type") != NULL)
 			{
 				int typenr;
 				itemElement->QueryIntAttribute ("type", &typenr);
-				listitem->type = UnitsData.svehicles[typenr].ID;
+				listitem.type = UnitsData.svehicles[typenr].ID;
 			}
-			itemElement->QueryIntAttribute ("metall_remaining", &listitem->metall_remaining);
-			building->BuildList->push_back (listitem);
+			itemElement->QueryIntAttribute ("metall_remaining", &listitem.metall_remaining);
+			building->BuildList.push_back (listitem);
 
 			itemnum++;
 			itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ( ("Item_" + iToStr (itemnum)).c_str());
@@ -1439,7 +1439,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	if (building.hasBeenAttacked) addMainElement (unitNode, "HasBeenAttacked");
 
 	// write the buildlist
-	if (building.BuildList && building.BuildList->size() > 0)
+	if (building.BuildList.size() > 0)
 	{
 		XMLElement* buildNode = addMainElement (unitNode, "Building");
 		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (building.BuildSpeed));
@@ -1447,9 +1447,9 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 		if (building.RepeatBuild) addMainElement (buildNode, "RepeatBuild");
 
 		XMLElement* buildlistNode = addMainElement (buildNode, "BuildList");
-		for (size_t i = 0; i != building.BuildList->size(); ++i)
+		for (size_t i = 0; i != building.BuildList.size(); ++i)
 		{
-			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", (*building.BuildList) [i]->type.getText(), "metall_remaining", iToStr ( (*building.BuildList) [i]->metall_remaining));
+			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", building.BuildList[i].type.getText(), "metall_remaining", iToStr (building.BuildList[i].metall_remaining));
 		}
 	}
 

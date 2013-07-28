@@ -957,18 +957,14 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 		return;
 	}
 
-	while (Building->BuildList->size())
-	{
-		delete (*Building->BuildList) [0];
-		Building->BuildList->erase (Building->BuildList->begin());
-	}
+	Building->BuildList.clear();
 	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
 	{
-		sBuildList* BuildListItem = new sBuildList;
-		BuildListItem->type = message.popID();
-		BuildListItem->metall_remaining = message.popInt16();
-		Building->BuildList->push_back (BuildListItem);
+		sBuildList BuildListItem;
+		BuildListItem.type = message.popID();
+		BuildListItem.metall_remaining = message.popInt16();
+		Building->BuildList.push_back (BuildListItem);
 	}
 
 	Building->MetalPerRound = message.popInt16();

@@ -437,7 +437,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 		*y += 8;
 	}
 
-	const size_t buildingBuildListSize = building.BuildList ? building.BuildList->size() : 0;
+	const size_t buildingBuildListSize = building.BuildList.size();
 	tmpString =
 		"build_speed: "        + iToStr (building.BuildSpeed) +
 		" repeat_build: "      + iToStr (building.RepeatBuild) +
@@ -447,8 +447,8 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 
 	for (size_t i = 0; i != buildingBuildListSize; ++i)
 	{
-		const sBuildList* BuildingList = (*building.BuildList) [i];
-		font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
+		const sBuildList& BuildingList = building.BuildList[i];
+		font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList.type.getText() + " \"" + BuildingList.type.getUnitDataOriginalVersion()->name + "\"", FONT_LATIN_SMALL_WHITE);
 		*y += 8;
 	}
 
@@ -1938,10 +1938,9 @@ void cGameGUI::updateMouseCursor()
 					 selectedBuilding->owner != client->getActivePlayer() ||
 					 (
 						 (
-							 !selectedBuilding->BuildList ||
-							 !selectedBuilding->BuildList->size() ||
+							 selectedBuilding->BuildList.empty() ||
 							 selectedBuilding->IsWorking ||
-							 (*selectedBuilding->BuildList) [0]->metall_remaining > 0
+							 selectedBuilding->BuildList[0].metall_remaining > 0
 						 ) &&
 						 mouseInputMode != loadMode &&
 						 mouseInputMode != activateVehicle
@@ -2007,12 +2006,11 @@ void cGameGUI::updateMouseCursor()
 		else if (
 			selectedBuilding &&
 			selectedBuilding->owner == client->getActivePlayer() &&
-			selectedBuilding->BuildList &&
-			selectedBuilding->BuildList->size() &&
+			!selectedBuilding->BuildList.empty() &&
 			!selectedBuilding->IsWorking &&
-			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0)
+			selectedBuilding->BuildList[0].metall_remaining <= 0)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), * (*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
+			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
 			{
 				mouse->SetCursor (CActivate);
 			}
@@ -2284,7 +2282,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isAVehicle(), selectedUnit->storedUnits[vehicleToActivate]->iID, mouseMapX, mouseMapY);
 			updateMouseCursor();
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList.size())
 		{
 			sendWantExitFinishedVehicle (*client, *selectedBuilding, mouseMapX, mouseMapY);
 		}
@@ -3068,7 +3066,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 			}
 			selectedVehicle->executeAutoMoveJobCommand (*client);
 		}
-		else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->size()) || selectedBuilding->data.canBuild.empty()))
+		else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && (selectedBuilding->BuildList.size() || selectedBuilding->data.canBuild.empty()))
 		{
 			sendWantStartWork (*client, *selectedBuilding);
 		}
@@ -4283,13 +4281,12 @@ void cGameGUI::drawUnitCircles()
 						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, buffer);
 		}
 
-		if (selectedBuilding->BuildList &&
-			selectedBuilding->BuildList->size() &&
+		if (selectedBuilding->BuildList.size() &&
 			!selectedBuilding->IsWorking &&
-			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0 &&
+			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
 			selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints (* (*selectedBuilding->BuildList) [0]->type.getUnitDataOriginalVersion(), *this);
+			selectedBuilding->DrawExitPoints (*selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion(), *this);
 		}
 		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
 		{

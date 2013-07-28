@@ -794,9 +794,9 @@ void sSubBase::makeTurnend (cServer& server)
 		}
 
 		// build:
-		if (Building.IsWorking && !Building.data.canBuild.empty() && !Building.BuildList->empty())
+		if (Building.IsWorking && !Building.data.canBuild.empty() && !Building.BuildList.empty())
 		{
-			sBuildList& BuildListItem = * (*Building.BuildList) [0];
+			sBuildList& BuildListItem = Building.BuildList[0];
 			if (BuildListItem.metall_remaining > 0)
 			{
 				// in this block the metal consumption of the factory
@@ -919,7 +919,7 @@ void sSubBase::addBuilding (cBuilding* b)
 		MaxMetalNeed += b->data.needsMetal * 12;
 		if (b->IsWorking)
 		{
-			MetalNeed += min (b->MetalPerRound, (*b->BuildList) [0]->metall_remaining);
+			MetalNeed += min (b->MetalPerRound, b->BuildList[0].metall_remaining);
 		}
 	}
 	// calculate gold

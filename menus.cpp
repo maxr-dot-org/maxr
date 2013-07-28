@@ -4335,10 +4335,10 @@ void cVehiclesBuildMenu::handleDestroyUnit (cUnit& destroyedUnit)
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::createBuildList()
 {
-	for (size_t i = 0; i != building->BuildList->size(); ++i)
+	for (size_t i = 0; i != building->BuildList.size(); ++i)
 	{
-		secondList->addUnit ( (*building->BuildList) [i]->type, building->owner, NULL, true, false);
-		secondList->getItem (secondList->getSize() - 1)->setResValue ( (*building->BuildList) [i]->metall_remaining, false);
+		secondList->addUnit (building->BuildList[i].type, building->owner, NULL, true, false);
+		secondList->getItem (secondList->getSize() - 1)->setResValue (building->BuildList[i].metall_remaining, false);
 	}
 	if (secondList->getSize() > 0)
 	{
