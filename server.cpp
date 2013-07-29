@@ -1033,12 +1033,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	addVehicle (iX, iY, BuildingListItem.type, Building->owner, false);
 
 	// start new buildjob
-	Building->BuildList.erase (Building->BuildList.begin());
 	if (Building->RepeatBuild)
 	{
 		BuildingListItem.metall_remaining = -1;
 		Building->BuildList.push_back (BuildingListItem);
 	}
+	Building->BuildList.erase (Building->BuildList.begin());
 
 	if (Building->BuildList.empty() == false)
 	{
