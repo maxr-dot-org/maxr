@@ -485,7 +485,7 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	assert (message.iType == GAME_EV_FINISHED_TURN);
 
 	const int iPlayerNum = message.popInt16();
-	const int iTimeDelay = message.popInt16();
+	const int iTimeDelay = message.popInt32();
 	cPlayer* Player = getPlayerFromNumber (iPlayerNum);
 
 	if (Player == NULL && iPlayerNum != -1)
@@ -500,11 +500,11 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	{
 		if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 		{
-			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay));
+			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay / 100));
 			gameGUI->addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 		}
-		iEndTurnTime = gameTimer.gameTime + 100 * iTimeDelay;
+		iEndTurnTime = gameTimer.gameTime + iTimeDelay;
 	}
 	else if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 	{

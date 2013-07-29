@@ -126,7 +126,7 @@ void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cP
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_FINISHED_TURN);
 
-	message->pushInt16 (iTimeDelay);
+	message->pushInt32 (iTimeDelay);
 	message->pushInt16 (iPlayerNum);
 
 	if (Player != NULL) server.sendNetMessage (message, Player->getNr());
