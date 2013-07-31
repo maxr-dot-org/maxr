@@ -338,8 +338,9 @@ static int findUpgradeValue (sUnitUpgrade upgrades[8], sUnitUpgrade::eUpgradeTyp
 	return defaultValue; // the specified upgrade was not found...
 }
 
-void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player)
+void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8])
 {
+	const cPlayer* player = client.getActivePlayer();
 	cNetMessage* msg = NULL;
 	int iCount = 0;
 

@@ -4576,7 +4576,7 @@ void cUpgradeMenu::doneReleased (void* parent)
 {
 	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	sendTakenUpgrades (*menu->client, menu->unitUpgrades, menu->player);
+	sendTakenUpgrades (*menu->client, menu->unitUpgrades);
 	menu->end = true;
 }
 

@@ -76,6 +76,6 @@ void sendReconnectionSuccess (cTCP& network, int playerNr);
 
 void sendRequestMap (cTCP& network, const std::string& mapName, int playerNr);
 
-void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player);
+void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8]);
 
 #endif // menueventsH
