@@ -4542,12 +4542,12 @@ int cUpgradeHangarMenu::getCredits() const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cUpgradeMenu::cUpgradeMenu (cClient& client_, cPlayer* player)
-	: cHangarMenu (LoadPCX (GFXOD_UPGRADE), player, MNU_BG_ALPHA)
-	, cUpgradeHangarMenu (player)
-	, client (&client_)
+cUpgradeMenu::cUpgradeMenu (cClient& client_) :
+	cHangarMenu (LoadPCX (GFXOD_UPGRADE), client_.getActivePlayer(), MNU_BG_ALPHA),
+	cUpgradeHangarMenu (client_.getActivePlayer()),
+	client (&client_)
 {
-	credits = player->Credits;
+	credits = client_.getActivePlayer()->Credits;
 
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);

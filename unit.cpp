@@ -745,7 +745,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			{
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				cDialogResearch researchDialog (client, owner);
+				cDialogResearch researchDialog (client);
 				researchDialog.show (&client);
 				return;
 			}
@@ -759,7 +759,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			{
 				gameGUI.unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				cUpgradeMenu upgradeMenu (client, owner);
+				cUpgradeMenu upgradeMenu (client);
 				upgradeMenu.show (&client);
 				return;
 			}

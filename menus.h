@@ -1037,7 +1037,7 @@ class cUpgradeMenu : public cUpgradeHangarMenu
 	cClient* client;
 protected:
 public:
-	cUpgradeMenu (cClient& client_, cPlayer* player);
+	explicit cUpgradeMenu (cClient& client_);
 
 private:
 	virtual void generateSelectionList();

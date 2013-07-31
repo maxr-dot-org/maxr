@@ -3188,12 +3188,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking)
 		{
-			cDialogResearch researchDialog (*client, selectedBuilding->owner);
+			cDialogResearch researchDialog (*client);
 			researchDialog.show (client);
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold)
 		{
-			cUpgradeMenu upgradeMenu (*client, selectedBuilding->owner);
+			cUpgradeMenu upgradeMenu (*client);
 			upgradeMenu.show (client);
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy)

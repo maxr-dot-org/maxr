@@ -241,7 +241,7 @@ class cDialogResearch : public cMenu
 
 	void setData();
 public:
-	explicit cDialogResearch (cClient& client_, cPlayer* owner_);
+	explicit cDialogResearch (cClient& client_);
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
