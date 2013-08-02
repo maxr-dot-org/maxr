@@ -27,7 +27,8 @@
 cUpgradeCalculator& cUpgradeCalculator::instance()
 {
 	static cUpgradeCalculator _instance;
-	if (!_instance.setupDone)   // do the setup on the first call, not on startup of the program
+	// do the setup on the first call, not on startup of the program
+	if (!_instance.setupDone)
 		_instance.setupLookupTables();
 	return _instance;
 }
@@ -726,7 +727,10 @@ int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newVa
 				cost += costsForThis;
 				upgradedValue += calcIncreaseByUpgrade (orgValue);
 				if (upgradedValue > newValue)
-					return kNoPriceAvailable; // it is not possible to reach the newValue with upgrading
+				{
+					// it is not possible to reach the newValue with upgrading
+					return kNoPriceAvailable;
+				}
 			}
 			else
 				return kNoPriceAvailable;
@@ -813,10 +817,11 @@ int cUpgradeCalculator::calcIncreaseByUpgrade (int startValue) const
 int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLevel,
 											  int upgradeType, int unitType) const
 {
-	if (curResearchLevel <= 0)   // no research done yet...
+	if (curResearchLevel <= 0) // no research done yet...
 		return 0;
 
-	if (upgradeType == -1 || upgradeType != kCost)   // standard research areas - all handled the same way
+	// standard research areas - all handled the same way
+	if (upgradeType == -1 || upgradeType != kCost)
 	{
 		// a simple integer division does the job
 		int newValue = (startValue * (100 + curResearchLevel)) / 100;
@@ -824,11 +829,14 @@ int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLev
 	}
 	else if (upgradeType == kCost)
 	{
-		// cost makes a decrease based on the formula 1/x (where x is the research level)
+		// cost makes a decrease based on the formula 1/x
+		// (where x is the research level)
 		float realCost = startValue / ( (100.0f + curResearchLevel) / 100.0f);
 
 		// now the real cost is rounded to the next possible cost value
-		// (Unit factories: steps of 3, Building construction: steps of 2, Infantry training: steps of 1)
+		// (Unit factories: steps of 3,
+		//  Building construction: steps of 2,
+		//  Infantry training: steps of 1)
 		int costRounded = startValue;
 		if (unitType == kBuilding)
 			costRounded = getNearestPossibleCost (realCost, 2);
@@ -992,9 +1000,7 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 }
 
 
-
-
-/*
+#if 0
 // This is the old code (from JCK?) for calculating the upgrade cost.
 // Interesting is the formula used for calculating (although it doesn't produce
 // the exact same results - but nearly).
@@ -1264,21 +1270,21 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 
 	tmp = (int) Round((a * pow((value-b), c) ), 0);
 	return tmp;
-*/
+#endif
 
 
 
-//---------------------------------------------------------------------
-// R E S E A R C H   C L A S S ----------------------------------------
-//---------------------------------------------------------------------
+//--------------------------------------------------
+// R E S E A R C H   C L A S S ---------------------
+//--------------------------------------------------
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 cResearch::cResearch()
 {
 	init();
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 void cResearch::init()
 {
 	for (int i = 0; i < kNrResearchAreas; i++)
@@ -1289,7 +1295,7 @@ void cResearch::init()
 	}
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 int cResearch::getCurResearchLevel (int researchArea) const
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas)
@@ -1297,7 +1303,7 @@ int cResearch::getCurResearchLevel (int researchArea) const
 	return 0;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 int cResearch::getCurResearchPoints (int researchArea) const
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas)
@@ -1305,7 +1311,7 @@ int cResearch::getCurResearchPoints (int researchArea) const
 	return 0;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 int cResearch::getNeededResearchPoints (int researchArea) const
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas)
@@ -1313,7 +1319,7 @@ int cResearch::getNeededResearchPoints (int researchArea) const
 	return cUpgradeCalculator::kNoResearchAvailable;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 int cResearch::getRemainingTurns (int researchArea, int centersWorkingOn) const
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && centersWorkingOn > 0)
@@ -1327,7 +1333,7 @@ int cResearch::getRemainingTurns (int researchArea, int centersWorkingOn) const
 	return 0;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 void cResearch::setCurResearchLevel (int researchLevel, int researchArea)
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchLevel >= 0 && researchLevel % 10 == 0)
@@ -1339,14 +1345,14 @@ void cResearch::setCurResearchLevel (int researchLevel, int researchArea)
 	}
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 void cResearch::setCurResearchPoints (int researchPoints, int researchArea)
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints >= 0 && researchPoints < neededResearchPoints[researchArea])
 		curResearchPoints[researchArea] = researchPoints;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 bool cResearch::doResearch (int researchPoints, int researchArea)
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints > 0)
@@ -1364,7 +1370,7 @@ bool cResearch::doResearch (int researchPoints, int researchArea)
 	return false;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 int cResearch::getUpgradeCalculatorUpgradeType (int researchArea) const
 {
 	switch (researchArea)
@@ -1381,7 +1387,7 @@ int cResearch::getUpgradeCalculatorUpgradeType (int researchArea) const
 	return 0;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------
 int cResearch::getResearchArea (int upgradeCalculatorType) const
 {
 	switch (upgradeCalculatorType)
