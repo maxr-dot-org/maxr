@@ -2471,49 +2471,22 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 	if (!This->selection) return;
 
 	sUnitUpgrade* upgrades = This->selection->getUpgrades();
-	cPlayer* owner = This->selection->getOwner();
+	const cResearch& researchLevel = This->selection->getOwner()->researchLevel;
 
 	for (int i = 0; i < 8; i++)
 	{
-		cUpgradeCalculator::UpgradeTypes upgradeType = This->getUpgradeType (upgrades[i]);
-		cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-
 		if (This->increaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
 			This->parentMenu->setCredits (This->parentMenu->getCredits() - upgrades[i].nextPrice);
-
-			if (upgradeType != cUpgradeCalculator::kSpeed)
-			{
-				upgrades[i].curValue += uc.calcIncreaseByUpgrade (upgrades[i].startValue);
-				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue, upgrades[i].startValue, upgradeType, owner->researchLevel);
-			}
-			else
-			{
-				upgrades[i].curValue += 4 * uc.calcIncreaseByUpgrade (upgrades[i].startValue / 4);
-				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue / 4, upgrades[i].startValue / 4, upgradeType, owner->researchLevel);
-			}
-
-			upgrades[i].purchased++;
+			upgrades[i].purchase (researchLevel);
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
 		}
 		else if (This->decreaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			if (upgradeType != cUpgradeCalculator::kSpeed)
-			{
-				upgrades[i].curValue -= uc.calcIncreaseByUpgrade (upgrades[i].startValue);
-				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue, upgrades[i].startValue, upgradeType, owner->researchLevel);
-			}
-			else
-			{
-				upgrades[i].curValue -= 4 * uc.calcIncreaseByUpgrade (upgrades[i].startValue / 4);
-				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue / 4, upgrades[i].startValue / 4, upgradeType, owner->researchLevel);
-			}
-
+			upgrades[i].cancelPurchase (researchLevel);
 			This->parentMenu->setCredits (This->parentMenu->getCredits() + upgrades[i].nextPrice);
-
-			upgrades[i].purchased--;
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
@@ -2551,32 +2524,6 @@ void cMenuUpgradeHandler::setSelection (cMenuUnitListItem* selection_)
 			decreaseButtons[i]->setLocked (false);
 		else
 			decreaseButtons[i]->setLocked (true);
-	}
-}
-
-cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType (sUnitUpgrade upgrade)
-{
-	switch (upgrade.type)
-	{
-		case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
-			return cUpgradeCalculator::kAttack;
-		case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-			return cUpgradeCalculator::kShots;
-		case sUnitUpgrade::UPGRADE_TYPE_RANGE:
-			return cUpgradeCalculator::kRange;
-		case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-			return cUpgradeCalculator::kAmmo;
-		case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
-			return cUpgradeCalculator::kArmor;
-		case sUnitUpgrade::UPGRADE_TYPE_HITS:
-			return cUpgradeCalculator::kHitpoints;
-		case sUnitUpgrade::UPGRADE_TYPE_SCAN:
-			return cUpgradeCalculator::kScan;
-		case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-			return cUpgradeCalculator::kSpeed;
-		case sUnitUpgrade::UPGRADE_TYPE_NONE: // Follow next line
-		default:
-			return cUpgradeCalculator::kAttack;
 	}
 }
 

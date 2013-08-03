@@ -23,6 +23,7 @@
 #include <map>
 
 class cResearch;
+struct sUnitData;
 
 //------------------------------------------------------------------------------
 /**
@@ -85,7 +86,7 @@ public:
 	 * @return the costs for this upgrade or kNoPriceAvailable
 	 *         if the values are unknown
 	 */
-	int calcPrice (int curValue, int orgValue, int upgradeType, cResearch& researchLevel) const;
+	int calcPrice (int curValue, int orgValue, int upgradeType, const cResearch& researchLevel) const;
 
 	/**
 	 * Calculates the increase of a unit value, when an upgrade is bought.
@@ -308,5 +309,46 @@ protected:
 	int neededResearchPoints[kNrResearchAreas];
 };
 
+/**
+ * A struct that contains information about the upgrades of a unit.
+ *@author alzi
+ */
+struct sUnitUpgrade
+{
+	sUnitUpgrade() : active (false), nextPrice (0), purchased (0),
+					 curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
+
+	void purchase (const cResearch& researchLevel);
+	void cancelPurchase (const cResearch& researchLevel);
+
+	static void init (sUnitUpgrade upgrade[/*8*/], const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
+
+	/** The different values of a unit that can be upgraded */
+	enum eUpgradeTypes
+	{
+		UPGRADE_TYPE_DAMAGE,
+		UPGRADE_TYPE_SHOTS,
+		UPGRADE_TYPE_RANGE,
+		UPGRADE_TYPE_AMMO,
+		UPGRADE_TYPE_ARMOR,
+		UPGRADE_TYPE_HITS,
+		UPGRADE_TYPE_SCAN,
+		UPGRADE_TYPE_SPEED,
+		UPGRADE_TYPE_NONE
+	};
+
+	/** is this upgrade buyable for the player */
+	bool active;
+	/** what will the next upgrade cost */
+	int nextPrice;
+	/** how many upgrades of this type has the player purchased */
+	int purchased;
+	/** what is the current value */
+	int curValue;
+	/** the value that this unit would have without all upgrades */
+	int startValue;
+	/** the type of the upgrade */
+	eUpgradeTypes type;
+};
 
 #endif // upgradecalculatorH

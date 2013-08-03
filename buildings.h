@@ -20,7 +20,6 @@
 #define buildingsH
 #include <SDL.h>
 #include "defines.h"
-#include "upgradecalculator.h"
 #include "main.h" // for sUnitData, sID
 #include "unit.h"
 #include <vector>

@@ -4420,107 +4420,22 @@ cUpgradeHangarMenu::~cUpgradeHangarMenu()
 void cUpgradeHangarMenu::initUpgrades (cPlayer* player)
 {
 	unitUpgrades = new sUnitUpgrade[UnitsData.getNrVehicles() + UnitsData.getNrBuildings()][8];
-	for (unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); unitIndex++)
+
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		sUnitData* data;
-		const sUnitData* oriData;
-		if (unitIndex < UnitsData.getNrVehicles())
-		{
-			oriData = &UnitsData.getVehicle (unitIndex, player->getClan());
-			data = &player->VehicleData[unitIndex];
-		}
-		else
-		{
-			oriData = &UnitsData.getBuilding (unitIndex - UnitsData.getNrVehicles(), player->getClan());
-			data = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
-		}
+		const sUnitData& oriData = UnitsData.getVehicle (i, player->getClan());
+		const sUnitData& data = player->VehicleData[i];
 
-		cResearch& researchLevel = player->researchLevel;
+		sUnitUpgrade* upgrade = unitUpgrades[i];
+		sUnitUpgrade::init (upgrade, oriData, data, player->researchLevel);
+	}
+	for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
+	{
+		const sUnitData& oriData = UnitsData.getBuilding (i, player->getClan());
+		const sUnitData& data = player->BuildingData[i];
 
-		sUnitUpgrade* upgrade = unitUpgrades[unitIndex];
-		int i = 0;
-
-		if (data->canAttack)
-		{
-			// Damage:
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->damage;
-			upgrade[i].curValue = data->damage;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->damage, oriData->damage, cUpgradeCalculator::kAttack, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
-			i++;
-			if (!data->explodesOnContact)
-			{
-				// Shots:
-				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->shotsMax;
-				upgrade[i].curValue = data->shotsMax;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->shotsMax, oriData->shotsMax, cUpgradeCalculator::kShots, researchLevel);
-				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
-				i++;
-				// Range:
-				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->range;
-				upgrade[i].curValue = data->range;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->range, oriData->range, cUpgradeCalculator::kRange, researchLevel);
-				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_RANGE;
-				i++;
-				// Ammo:
-				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->ammoMax;
-				upgrade[i].curValue = data->ammoMax;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->ammoMax, oriData->ammoMax, cUpgradeCalculator::kAmmo, researchLevel);
-				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
-				i++;
-			}
-		}
-
-		if (data->storeResType != sUnitData::STORE_RES_NONE)
-		{
-			i++;
-		}
-
-		if (data->produceEnergy) i += 2;
-
-		if (data->produceHumans) i++;
-
-		// Armor:
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData->armor;
-		upgrade[i].curValue = data->armor;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->armor, oriData->armor, cUpgradeCalculator::kArmor, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_ARMOR;
-		i++;
-
-		// Hitpoints:
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData->hitpointsMax;
-		upgrade[i].curValue = data->hitpointsMax;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->hitpointsMax, oriData->hitpointsMax, cUpgradeCalculator::kHitpoints, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
-		i++;
-
-		// Scan:
-		if (data->scan)
-		{
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->scan;
-			upgrade[i].curValue = data->scan;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->scan, oriData->scan, cUpgradeCalculator::kScan, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SCAN;
-			i++;
-		}
-
-		// Speed:
-		if (data->speedMax)
-		{
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->speedMax;
-			upgrade[i].curValue = data->speedMax;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->speedMax / 4, oriData->speedMax / 4, cUpgradeCalculator::kSpeed, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
-			i++;
-		}
+		sUnitUpgrade* upgrade = unitUpgrades[UnitsData.getNrVehicles() + i];
+		sUnitUpgrade::init (upgrade, oriData, data, player->researchLevel);
 	}
 }
 

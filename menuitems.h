@@ -28,7 +28,6 @@
 #include "player.h"
 #include "sound.h"
 #include "unifonts.h"
-#include "upgradecalculator.h"
 
 class cBuilding;
 class cClient;
@@ -58,42 +57,6 @@ struct sSaveFile
 	std::string time;
 	/** the number of the savegame*/
 	int number;
-};
-
-/**
- * A struct that contains information about the upgrades of a unit.
- *@author alzi
- */
-struct sUnitUpgrade
-{
-	/** The different values of a unit that can be upgraded*/
-	enum eUpgradeTypes
-	{
-		UPGRADE_TYPE_DAMAGE,
-		UPGRADE_TYPE_SHOTS,
-		UPGRADE_TYPE_RANGE,
-		UPGRADE_TYPE_AMMO,
-		UPGRADE_TYPE_ARMOR,
-		UPGRADE_TYPE_HITS,
-		UPGRADE_TYPE_SCAN,
-		UPGRADE_TYPE_SPEED,
-		UPGRADE_TYPE_NONE
-	};
-
-	/** is this upgrade buyable for the player */
-	bool active;
-	/** what will the next upgrade cost */
-	int nextPrice;
-	/** how many upgrades of this type has the player purchased */
-	int purchased;
-	/** what is the current value */
-	int curValue;
-	/** the value that this unit would have without all upgrades */
-	int startValue;
-	/** the type of the upgrade */
-	eUpgradeTypes type;
-
-	sUnitUpgrade() : active (false), nextPrice (0), purchased (0), curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
 };
 
 /**
@@ -929,8 +892,6 @@ class cMenuUpgradeHandler : public cMenuItemContainer
 	AutoPtr<cMenuButton> decreaseButtons[8];
 	AutoPtr<cMenuButton> increaseButtons[8];
 	AutoPtr<cMenuLabel> costsLabel[8];
-
-	cUpgradeCalculator::UpgradeTypes getUpgradeType (sUnitUpgrade upgrade);
 
 	static void buttonReleased (void* parent);
 public:
