@@ -25,8 +25,8 @@
 enum eMenuMessages
 {
 	MU_MSG_CHAT = FIRST_MENU_MESSAGE,	// simple text message
-	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identifacation of this player
-	MU_MSG_IDENTIFIKATION,		// player send his idenetification
+	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identification of this player
+	MU_MSG_IDENTIFIKATION,		// player send his identification
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_START_MAP_DOWNLOAD,  // the host start a map upload to the client
@@ -40,7 +40,7 @@ enum eMenuMessages
 	MU_MSG_UPGRADES,			// data of upgraded units
 	GAME_EV_REQ_RECON_IDENT,	// a server of a running game requests an identification of a player who wants to reconnect
 	GAME_EV_RECONNECT_ANSWER,	// a server returns an answer for the reconnect
-	//messages for the landing selectiong menu:
+	// messages for the landing selectiong menu:
 	MU_MSG_LANDING_COORDS,		// the selected landing coords of a client
 	MU_MSG_RESELECT_LANDING,	// informs a client that the player has to reselect the landing site
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game

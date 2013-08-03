@@ -52,11 +52,11 @@ void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players)
 
 	for (int i = (int) players.size() - 1; i >= 0; i--)
 	{
-		const sMenuPlayer* player = players[i];
-		message->pushInt16 (player->getNr());
-		message->pushBool (player->isReady());
-		message->pushInt16 (player->getColorIndex());
-		message->pushString (player->getName());
+		const sMenuPlayer& player = *players[i];
+		message->pushInt16 (player.getNr());
+		message->pushBool (player.isReady());
+		message->pushInt16 (player.getColorIndex());
+		message->pushString (player.getName());
 	}
 	message->pushInt16 ( (int) players.size());
 	cMenu::sendMessage (network, message);
@@ -120,7 +120,8 @@ void sendClan (cTCP& network, int clanNr, int ownerNr)
 	message->pushInt16 (clanNr);
 	message->pushInt16 (ownerNr);
 
-	// the host has not to send the message over tcpip and we can handle the message directly
+	// the host has not to send the message over tcpip and
+	// we can handle the message directly
 	cMenu::sendMessage (network, message);
 }
 
@@ -128,7 +129,7 @@ void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingLi
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_VEHICLES);
 
-	for (unsigned int i = 0; i < landingList.size(); i++)
+	for (size_t i = 0; i != landingList.size(); ++i)
 	{
 		message->pushID (landingList[i].unitID);
 		message->pushInt16 (landingList[i].cargo);
@@ -136,7 +137,8 @@ void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingLi
 	message->pushInt16 ( (int) landingList.size());
 	message->pushInt16 (ownerNr);
 
-	// the host has not to send the message over tcpip and we can handle the message directly
+	// the host has not to send the message over tcpip
+	// and we can handle the message directly
 	cMenu::sendMessage (network, message);
 }
 
@@ -174,7 +176,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 		message->pushInt16 (playerData.shotsMax);
 		message->pushInt16 (playerData.damage);
 		message->pushID (playerData.ID);
-		message->pushBool (true);  // true for vehciles
+		message->pushBool (true);  // true for vehicles
 
 		count++;
 
@@ -328,9 +330,21 @@ void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
 	cMenu::sendMessage (network, msg);
 }
 
-static int findUpgradeValue (sUnitUpgrade upgrades[8], sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue)
+static bool UnitUpgradesHaveBeenPurchased (const sUnitUpgrade upgrades[8])
 {
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i != 8; ++i)
+	{
+		if (upgrades[i].purchased)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+static int FindUpgradeValue (const sUnitUpgrade upgrades[8], sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue)
+{
+	for (int i = 0; i != 8; ++i)
 	{
 		if (upgrades[i].active && upgrades[i].type == upgradeType)
 			return upgrades[i].curValue;
@@ -344,20 +358,11 @@ void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8])
 	cNetMessage* msg = NULL;
 	int iCount = 0;
 
-	for (unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); unitIndex++)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); ++i)
 	{
-		sUnitUpgrade* curUpgrades = unitUpgrades[unitIndex];
-		bool purchased = false;
-		for (int i = 0; i < 8; i++)
-		{
-			if (curUpgrades[i].purchased)
-			{
-				purchased = true;
-				break;
-			}
-		}
+		const sUnitUpgrade* curUpgrades = unitUpgrades[i];
 
-		if (!purchased) continue;
+		if (!UnitUpgradesHaveBeenPurchased (curUpgrades)) continue;
 
 		if (msg == NULL)
 		{
@@ -366,22 +371,24 @@ void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8])
 		}
 
 		const sUnitData* currentVersion;
-		if (unitIndex < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[unitIndex];
-		else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
+		if (i < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[i];
+		else currentVersion = &player->BuildingData[i - UnitsData.getNrVehicles()];
 
-		if (unitIndex < UnitsData.getNrVehicles()) msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->ammoMax));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->range));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->shotsMax));
-		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->damage));
+		if (i < UnitsData.getNrVehicles()) msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->ammoMax));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->range));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->shotsMax));
+		msg->pushInt16 (FindUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->damage));
 		msg->pushID (currentVersion->ID);
 
 		iCount++; // msg contains one more upgrade struct
 
-		// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
+		// the msg would be too long,
+		// if another upgrade would be written into it.
+		// So send it and put the next upgrades in a new message.
 		if (msg->iLength + 38 > PACKAGE_LENGTH)
 		{
 			msg->pushInt16 (iCount);
