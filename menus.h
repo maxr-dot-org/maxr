@@ -645,7 +645,7 @@ protected:
 	AutoPtr<cMenuLabel> titleLabel;
 
 	sUnitUpgrade (*unitUpgrades) [8];
-	void initUpgrades (cPlayer* player);
+	void initUpgrades (const cPlayer& player);
 public:
 	cUpgradeHangarMenu (cPlayer* owner);
 	~cUpgradeHangarMenu();

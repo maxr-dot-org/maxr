@@ -4407,7 +4407,7 @@ cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (
 	goldBarLabel->setCentered (true);
 	menuItems.push_back (goldBarLabel);
 
-	initUpgrades (owner);
+	initUpgrades (*owner);
 }
 
 //------------------------------------------------------------------------------
@@ -4417,25 +4417,26 @@ cUpgradeHangarMenu::~cUpgradeHangarMenu()
 }
 
 //------------------------------------------------------------------------------
-void cUpgradeHangarMenu::initUpgrades (cPlayer* player)
+void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
 {
 	unitUpgrades = new sUnitUpgrade[UnitsData.getNrVehicles() + UnitsData.getNrBuildings()][8];
 
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sUnitData& oriData = UnitsData.getVehicle (i, player->getClan());
-		const sUnitData& data = player->VehicleData[i];
+		const sUnitData& oriData = UnitsData.getVehicle (i, player.getClan());
+		const sUnitData& data = player.VehicleData[i];
 
-		sUnitUpgrade* upgrade = unitUpgrades[i];
-		sUnitUpgrade::init (upgrade, oriData, data, player->researchLevel);
+		sUnitUpgrade* upgrades = unitUpgrades[i];
+		sUnitUpgrade::init (upgrades, oriData, data, player.researchLevel);
 	}
+	const int offset = UnitsData.getNrVehicles();
 	for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
 	{
-		const sUnitData& oriData = UnitsData.getBuilding (i, player->getClan());
-		const sUnitData& data = player->BuildingData[i];
+		const sUnitData& oriData = UnitsData.getBuilding (i, player.getClan());
+		const sUnitData& data = player.BuildingData[i];
 
-		sUnitUpgrade* upgrade = unitUpgrades[UnitsData.getNrVehicles() + i];
-		sUnitUpgrade::init (upgrade, oriData, data, player->researchLevel);
+		sUnitUpgrade* upgrades = unitUpgrades[offset + i];
+		sUnitUpgrade::init (upgrades, oriData, data, player.researchLevel);
 	}
 }
 
