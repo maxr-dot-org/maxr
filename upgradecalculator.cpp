@@ -1498,7 +1498,6 @@ int cResearch::getResearchArea (int upgradeCalculatorType) const
 	}
 }
 
-
 //--------------------------------------------------
 static cUpgradeCalculator::UpgradeTypes GetUpgradeType (const sUnitUpgrade& upgrade)
 {
@@ -1552,4 +1551,20 @@ void sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 		nextPrice = uc.calcPrice (curValue, startValue, upgradeType, researchLevel);
 	}
 	--purchased;
+}
+
+//--------------------------------------------------
+void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel)
+{
+	sUnitUpgrade::init (upgrades, origData, curData, researchLevel);
+}
+
+//--------------------------------------------------
+sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeTypes type)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		if (upgrades[i].type == type) return &upgrades[i];
+	}
+	return NULL;
 }

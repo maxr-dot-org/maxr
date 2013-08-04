@@ -648,7 +648,7 @@ protected:
 
 	int resValue;
 	int minResValue;
-	sUnitUpgrade* upgrades;
+	cUnitUpgrade* unitUpgrade;
 
 	bool fixed;
 	bool selected;
@@ -661,8 +661,8 @@ protected:
 	virtual void released (void* parent);
 	void init();
 public:
-	cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
-	cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
+	cMenuUnitListItem (sID unitID_, cPlayer* owner_, cUnitUpgrade* unitUpgrade_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
+	cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, cUnitUpgrade* unitUpgrade_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
 	virtual void draw();
 
 	sID getUnitID() const;
@@ -713,7 +713,7 @@ public:
 	 */
 	bool getFixedStatus() const;
 
-	sUnitUpgrade* getUpgrades();
+	cUnitUpgrade* getUpgrades();
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
 };
 
@@ -759,12 +759,12 @@ public:
 	 *@author alzi
 	 *@param unitID the id of the new unit
 	 *@param owner the owner of the unit
-	 *@param upgrades the struct with the upgrade-values for this unit
+	 *@param unitUpgrade the class with the upgrade-values for this unit
 	 *@param scroll if this is true the list will automatically scrolled to the new added item.
 	 *@param fixedCargo if this is true the new unit will set with a fixed cargo.
 	 */
-	cMenuUnitListItem* addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
-	cMenuUnitListItem* addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
+	cMenuUnitListItem* addUnit (sID unitID, cPlayer* owner, cUnitUpgrade* unitUpgrade = NULL, bool scroll = false, bool fixedCargo = false);
+	cMenuUnitListItem* addUnit (sUnitData* unitData, cPlayer* owner, cUnitUpgrade* unitUpgrade = NULL, bool scroll = false, bool fixedCargo = false);
 	void removeUnit (cMenuUnitListItem* item);
 	void clear();
 	void setDisplayType (eMenuUnitListDisplayTypes displayType_);

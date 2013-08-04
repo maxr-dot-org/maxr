@@ -1221,26 +1221,26 @@ void cMenuRadioGroup::clicked (void* parent)
 	if (click) click (parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, cUnitUpgrade* unitUpgrade_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
 	cMenuItem (0, 0),
 	displayType (displayType_),
 	parentList (parent),
 	unitID (unitID_),
 	unitData (0),
 	owner (owner_),
-	upgrades (upgrades_),
+	unitUpgrade (unitUpgrade_),
 	fixedResValue (fixedResValue_)
 {
 	init();
 }
 
-cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, cUnitUpgrade* unitUpgrade_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
 	cMenuItem (0, 0),
 	displayType (displayType_),
 	parentList (parent),
 	unitData (unitData_),
 	owner (owner_),
-	upgrades (upgrades_),
+	unitUpgrade (unitUpgrade_),
 	fixedResValue (fixedResValue_)
 {
 	if (unitData != 0)
@@ -1441,20 +1441,15 @@ bool cMenuUnitListItem::getFixedStatus() const
 	return fixed;
 }
 
-sUnitUpgrade* cMenuUnitListItem::getUpgrades()
+cUnitUpgrade* cMenuUnitListItem::getUpgrades()
 {
-	return upgrades;
+	return unitUpgrade;
 }
-
 
 sUnitUpgrade* cMenuUnitListItem::getUpgrade (sUnitUpgrade::eUpgradeTypes type)
 {
-	if (!upgrades) return NULL;
-	for (int i = 0; i < 8; i++)
-	{
-		if (upgrades[i].type == type) return &upgrades[i];
-	}
-	return NULL;
+	if (!unitUpgrade) return NULL;
+	return unitUpgrade->getUpgrade (type);
 }
 
 cMenuUnitsList::cMenuUnitsList (int x, int y, int w, int h, cHangarMenu* parent, eMenuUnitListDisplayTypes displayType_) : cMenuItem (x, y), parentMenu (parent), displayType (displayType_)
@@ -1589,16 +1584,16 @@ void cMenuUnitsList::addUnit (cMenuUnitListItem* unitItem, bool scroll)
 	if (scroll && (int) unitsList.size() > offset + maxDisplayUnits) scrollDown();
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
+cMenuUnitListItem* cMenuUnitsList::addUnit (sUnitData* unitData, cPlayer* owner, cUnitUpgrade* unitUpgrade, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitData, owner, upgrades, displayType, this, fixedCargo);
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitData, owner, unitUpgrade, displayType, this, fixedCargo);
 	addUnit (unitItem, scroll);
 	return unitItem;
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
+cMenuUnitListItem* cMenuUnitsList::addUnit (sID unitID, cPlayer* owner, cUnitUpgrade* unitUpgrade, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitID, owner, upgrades, displayType, this, fixedCargo);
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitID, owner, unitUpgrade, displayType, this, fixedCargo);
 	addUnit (unitItem, scroll);
 	return unitItem;
 }
@@ -2470,23 +2465,23 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 	cMenuUpgradeHandler* This = reinterpret_cast<cMenuUpgradeHandler*> (parent);
 	if (!This->selection) return;
 
-	sUnitUpgrade* upgrades = This->selection->getUpgrades();
+	cUnitUpgrade& unitUpgrade = *This->selection->getUpgrades();
 	const cResearch& researchLevel = This->selection->getOwner()->researchLevel;
 
 	for (int i = 0; i < 8; i++)
 	{
 		if (This->increaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			This->parentMenu->setCredits (This->parentMenu->getCredits() - upgrades[i].nextPrice);
-			upgrades[i].purchase (researchLevel);
+			This->parentMenu->setCredits (This->parentMenu->getCredits() - unitUpgrade.upgrades[i].nextPrice);
+			unitUpgrade.upgrades[i].purchase (researchLevel);
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
 		}
 		else if (This->decreaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			upgrades[i].cancelPurchase (researchLevel);
-			This->parentMenu->setCredits (This->parentMenu->getCredits() + upgrades[i].nextPrice);
+			unitUpgrade.upgrades[i].cancelPurchase (researchLevel);
+			This->parentMenu->setCredits (This->parentMenu->getCredits() + unitUpgrade.upgrades[i].nextPrice);
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
@@ -2507,20 +2502,30 @@ void cMenuUpgradeHandler::setSelection (cMenuUnitListItem* selection_)
 		}
 		return;
 	}
-	sUnitUpgrade* upgrade = selection->getUpgrades();
+	const cUnitUpgrade& unitUpgrade = *selection->getUpgrades();
 	for (int i = 0; i < 8; i++)
 	{
-		if (upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable)
-			costsLabel[i]->setText (iToStr (upgrade[i].nextPrice));
+		const sUnitUpgrade& upgrade = unitUpgrade.upgrades[i];
+
+		if (upgrade.type == sUnitUpgrade::UPGRADE_TYPE_NONE)
+		{
+			costsLabel[i]->setText ("");
+			increaseButtons[i]->setLocked (true);
+			decreaseButtons[i]->setLocked (true);
+			continue;
+		}
+
+		if (upgrade.nextPrice != cUpgradeCalculator::kNoPriceAvailable)
+			costsLabel[i]->setText (iToStr (upgrade.nextPrice));
 		else
 			costsLabel[i]->setText ("");
 
-		if (upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable)
+		if (parentMenu->getCredits() >= upgrade.nextPrice && upgrade.nextPrice != cUpgradeCalculator::kNoPriceAvailable)
 			increaseButtons[i]->setLocked (false);
 		else
 			increaseButtons[i]->setLocked (true);
 
-		if (upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0)
+		if (upgrade.purchased > 0)
 			decreaseButtons[i]->setLocked (false);
 		else
 			decreaseButtons[i]->setLocked (true);

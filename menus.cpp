@@ -1997,9 +1997,9 @@ void cStartupHangarMenu::generateInitialLandingUnits()
 	const sID& engineerID = UnitsData.getEngineerID();
 	const sID& surveyorID = UnitsData.getSurveyorID();
 
-	sUnitUpgrade* constructorUpgrades = selectionList->getItemByID (constructorID)->getUpgrades();
-	sUnitUpgrade* engineerUpgrades = selectionList->getItemByID (engineerID)->getUpgrades();
-	sUnitUpgrade* surveyorUpgrades = selectionList->getItemByID (surveyorID)->getUpgrades();
+	cUnitUpgrade* constructorUpgrades = selectionList->getItemByID (constructorID)->getUpgrades();
+	cUnitUpgrade* engineerUpgrades = selectionList->getItemByID (engineerID)->getUpgrades();
+	cUnitUpgrade* surveyorUpgrades = selectionList->getItemByID (surveyorID)->getUpgrades();
 
 	cMenuUnitListItem* constructor = secondList->addUnit (constructorID, player, constructorUpgrades);
 	constructor->setMinResValue (40);
@@ -2058,38 +2058,38 @@ void cStartupHangarMenu::updateUnitData()
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); i++)
 	{
+		const cUnitUpgrade& unitUpgrade = unitUpgrades[i];
 		sUnitData* data;
 		if (i < UnitsData.getNrVehicles()) data = &player->VehicleData[i];
 		else data = &player->BuildingData[i - UnitsData.getNrVehicles()];
 
 		for (int j = 0; j < 8; j++)
 		{
-			const sUnitUpgrade* upgrades = unitUpgrades[i];
-			switch (upgrades[j].type)
+			switch (unitUpgrade.upgrades[j].type)
 			{
 				case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
-					data->damage = upgrades[j].curValue;
+					data->damage = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-					data->shotsMax = upgrades[j].curValue;
+					data->shotsMax = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_RANGE:
-					data->range = upgrades[j].curValue;
+					data->range = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-					data->ammoMax = upgrades[j].curValue;
+					data->ammoMax = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
-					data->armor = upgrades[j].curValue;
+					data->armor = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_HITS:
-					data->hitpointsMax = upgrades[j].curValue;
+					data->hitpointsMax = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_SCAN:
-					data->scan = upgrades[j].curValue;
+					data->scan = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-					data->speedMax = upgrades[j].curValue;
+					data->speedMax = unitUpgrade.upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_NONE:
 					break;
@@ -2244,7 +2244,7 @@ void cStartupHangarMenu::generateSelectionList()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			selectionList->addUnit (data.ID, player, unitUpgrades[i]);
+			selectionList->addUnit (data.ID, player, &unitUpgrades[i]);
 		}
 	}
 
@@ -2254,7 +2254,7 @@ void cStartupHangarMenu::generateSelectionList()
 		{
 			const sUnitData& data = UnitsData.getBuilding (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
-			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+			selectionList->addUnit (data.ID, player, &unitUpgrades[UnitsData.getNrVehicles() + i]);
 		}
 	}
 
@@ -4419,15 +4419,15 @@ cUpgradeHangarMenu::~cUpgradeHangarMenu()
 //------------------------------------------------------------------------------
 void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
 {
-	unitUpgrades = new sUnitUpgrade[UnitsData.getNrVehicles() + UnitsData.getNrBuildings()][8];
+	unitUpgrades = new cUnitUpgrade[UnitsData.getNrVehicles() + UnitsData.getNrBuildings()];
 
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
 		const sUnitData& oriData = UnitsData.getVehicle (i, player.getClan());
 		const sUnitData& data = player.VehicleData[i];
 
-		sUnitUpgrade* upgrades = unitUpgrades[i];
-		sUnitUpgrade::init (upgrades, oriData, data, player.researchLevel);
+		cUnitUpgrade& unitUpgrade = unitUpgrades[i];
+		unitUpgrade.init (oriData, data, player.researchLevel);
 	}
 	const int offset = UnitsData.getNrVehicles();
 	for (unsigned int i = 0; i != UnitsData.getNrBuildings(); ++i)
@@ -4435,8 +4435,8 @@ void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
 		const sUnitData& oriData = UnitsData.getBuilding (i, player.getClan());
 		const sUnitData& data = player.BuildingData[i];
 
-		sUnitUpgrade* upgrades = unitUpgrades[offset + i];
-		sUnitUpgrade::init (upgrades, oriData, data, player.researchLevel);
+		cUnitUpgrade& unitUpgrade = unitUpgrades[offset + i];
+		unitUpgrade.init (oriData, data, player.researchLevel);
 	}
 }
 
@@ -4539,7 +4539,7 @@ void cUpgradeMenu::generateSelectionList()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			selectionList->addUnit (data.ID, player, unitUpgrades[i]);
+			selectionList->addUnit (data.ID, player, &unitUpgrades[i]);
 		}
 	}
 
@@ -4549,7 +4549,7 @@ void cUpgradeMenu::generateSelectionList()
 		{
 			const sUnitData& data = UnitsData.getBuilding (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
-			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+			selectionList->addUnit (data.ID, player, &unitUpgrades[UnitsData.getNrVehicles() + i]);
 		}
 	}
 

@@ -644,10 +644,10 @@ protected:
 	AutoPtr<cMenuLabel> goldBarLabel;
 	AutoPtr<cMenuLabel> titleLabel;
 
-	sUnitUpgrade (*unitUpgrades) [8];
+	cUnitUpgrade *unitUpgrades;
 	void initUpgrades (const cPlayer& player);
 public:
-	cUpgradeHangarMenu (cPlayer* owner);
+	explicit cUpgradeHangarMenu (cPlayer* owner);
 	~cUpgradeHangarMenu();
 	void setCredits (int credits_);
 	int getCredits() const;

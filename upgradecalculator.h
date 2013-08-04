@@ -351,4 +351,14 @@ struct sUnitUpgrade
 	eUpgradeTypes type;
 };
 
+class cUnitUpgrade
+{
+public:
+	void init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
+	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
+
+public:
+	sUnitUpgrade upgrades[8];
+};
+
 #endif // upgradecalculatorH
