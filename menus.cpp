@@ -4413,13 +4413,12 @@ cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (
 //------------------------------------------------------------------------------
 cUpgradeHangarMenu::~cUpgradeHangarMenu()
 {
-	delete[] unitUpgrades;
 }
 
 //------------------------------------------------------------------------------
 void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
 {
-	unitUpgrades = new cUnitUpgrade[UnitsData.getNrVehicles() + UnitsData.getNrBuildings()];
+	unitUpgrades.resize (UnitsData.getNrVehicles() + UnitsData.getNrBuildings());
 
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{

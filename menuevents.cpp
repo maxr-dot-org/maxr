@@ -352,7 +352,7 @@ static int FindUpgradeValue (const cUnitUpgrade& unitUpgrade, sUnitUpgrade::eUpg
 	return defaultValue; // the specified upgrade was not found...
 }
 
-void sendTakenUpgrades (const cClient& client, const cUnitUpgrade *unitUpgrades)
+void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrades)
 {
 	const cPlayer* player = client.getActivePlayer();
 	cNetMessage* msg = NULL;

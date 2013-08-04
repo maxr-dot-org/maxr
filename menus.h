@@ -644,7 +644,7 @@ protected:
 	AutoPtr<cMenuLabel> goldBarLabel;
 	AutoPtr<cMenuLabel> titleLabel;
 
-	cUnitUpgrade *unitUpgrades;
+	std::vector<cUnitUpgrade> unitUpgrades;
 	void initUpgrades (const cPlayer& player);
 public:
 	explicit cUpgradeHangarMenu (cPlayer* owner);
