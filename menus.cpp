@@ -1755,6 +1755,12 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 }
 
 //------------------------------------------------------------------------------
+void cHangarMenu::addItem (cMenuItem* menuItem)
+{
+	menuItems.push_back (menuItem);
+}
+
+//------------------------------------------------------------------------------
 void cHangarMenu::drawUnitInformation()
 {
 	if (!selectedUnit) return;
@@ -1894,9 +1900,11 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 
 //------------------------------------------------------------------------------
 cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
-	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_), cUpgradeHangarMenu (player_), cAdvListHangarMenu (NULL, player_),
+	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_),
+	cAdvListHangarMenu (NULL, player_),
 	network (network_),
 	gameDataContainer (gameDataContainer_),
+	upgradeHangarContainer (this, player_),
 	chooseUnitLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
 {
 	chooseUnitLabel.setCentered (true);
@@ -1933,8 +1941,8 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 
 	generateSelectionList();
 
-	goldBar->setMaximalValue (credits);
-	goldBar->setCurrentValue (credits);
+	upgradeHangarContainer.getGoldBar().setMaximalValue (credits);
+	upgradeHangarContainer.getGoldBar().setCurrentValue (credits);
 	generateInitialLandingUnits();
 	addPlayerLandingUnits (*player);
 
@@ -1961,7 +1969,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[0];
 
 	if (units.empty()) return;
-	int credits = goldBar->getCurrentValue();
+	int credits = upgradeHangarContainer.getGoldBar().getCurrentValue();
 	std::vector<sLandingUnit>::iterator it;
 	for (int i = 0; i != secondList->getSize(); ++i)
 	{
@@ -1984,7 +1992,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 		credits -= units[i].cargo / 5;
 		unit->setResValue (units[i].cargo);
 	}
-	goldBar->setCurrentValue (credits);
+	upgradeHangarContainer.getGoldBar().setCurrentValue (credits);
 }
 
 void cStartupHangarMenu::generateInitialLandingUnits()
@@ -2056,7 +2064,7 @@ void cStartupHangarMenu::updateUnitData()
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); i++)
 	{
-		const cUnitUpgrade& unitUpgrade = unitUpgrades[i];
+		const cUnitUpgrade& unitUpgrade = upgradeHangarContainer.getUnitUpgrade (i);
 		sUnitData* data;
 		if (i < UnitsData.getNrVehicles()) data = &player->VehicleData[i];
 		else data = &player->BuildingData[i - UnitsData.getNrVehicles()];
@@ -2148,17 +2156,17 @@ void cStartupHangarMenu::materialBarUpReleased (void* parent)
 	cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
 	if (!unit) return;
 	const sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
-	cMenuMaterialBar* goldBar = menu->goldBar;
-	if (goldBar->getCurrentValue() == 0 || vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
+	cMenuMaterialBar& goldBar = menu->upgradeHangarContainer.getGoldBar();
+	if (goldBar.getCurrentValue() == 0 || vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
 
 	const int oldCargo = unit->getResValue();
 	unit->setResValue (oldCargo + 5);
 	menu->materialBar->setCurrentValue (unit->getResValue());
 	if (oldCargo != unit->getResValue())
 	{
-		goldBar->increaseCurrentValue (-1);
+		goldBar.increaseCurrentValue (-1);
 	}
-	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->upgradeHangarContainer.getUpgradeButtons().setSelection (menu->selectedUnit);
 	menu->draw();
 }
 
@@ -2177,9 +2185,9 @@ void cStartupHangarMenu::materialBarDownReleased (void* parent)
 	menu->materialBar->setCurrentValue (unit->getResValue());
 	if (oldCargo != unit->getResValue())
 	{
-		menu->goldBar->increaseCurrentValue (1);
+		menu->upgradeHangarContainer.getGoldBar().increaseCurrentValue (1);
 	}
-	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->upgradeHangarContainer.getUpgradeButtons().setSelection (menu->selectedUnit);
 	menu->draw();
 }
 
@@ -2202,17 +2210,17 @@ void cStartupHangarMenu::materialBarClicked (void* parent)
 
 	newCargo = unit->getResValue();
 	int costs = (newCargo - oldCargo) / 5;
-	if (costs > menu->goldBar->getCurrentValue())
+	if (costs > menu->upgradeHangarContainer.getGoldBar().getCurrentValue())
 	{
-		costs = menu->goldBar->getCurrentValue();
+		costs = menu->upgradeHangarContainer.getGoldBar().getCurrentValue();
 		newCargo = costs * 5 + oldCargo;
 	}
 
 	unit->setResValue (newCargo);
 	menu->materialBar->setCurrentValue (unit->getResValue());
 
-	menu->goldBar->increaseCurrentValue (-costs);
-	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->upgradeHangarContainer.getGoldBar().increaseCurrentValue (-costs);
+	menu->upgradeHangarContainer.getUpgradeButtons().setSelection (menu->selectedUnit);
 	menu->draw();
 }
 
@@ -2224,11 +2232,11 @@ void cStartupHangarMenu::generateSelectionList()
 
 	selectionList->clear();
 	const bool buy = upgradeBuyGroup->buttonIsChecked (0);
-	const bool tank = upgradeFilter->TankIsChecked();
-	const bool plane = upgradeFilter->PlaneIsChecked() && !buy;
-	const bool ship = upgradeFilter->ShipIsChecked() && !buy;
-	const bool build = upgradeFilter->BuildingIsChecked() && !buy;
-	const bool tnt = upgradeFilter->TNTIsChecked();
+	const bool tank = upgradeHangarContainer.getUpgradeFilter().TankIsChecked();
+	const bool plane = upgradeHangarContainer.getUpgradeFilter().PlaneIsChecked() && !buy;
+	const bool ship = upgradeHangarContainer.getUpgradeFilter().ShipIsChecked() && !buy;
+	const bool build = upgradeHangarContainer.getUpgradeFilter().BuildingIsChecked() && !buy;
+	const bool tnt = upgradeHangarContainer.getUpgradeFilter().TNTIsChecked();
 
 	if (tank || ship || plane)
 	{
@@ -2240,7 +2248,7 @@ void cStartupHangarMenu::generateSelectionList()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			selectionList->addUnit (data.ID, player, &unitUpgrades[i]);
+			selectionList->addUnit (data.ID, player, &upgradeHangarContainer.getUnitUpgrade (i));
 		}
 	}
 
@@ -2250,7 +2258,7 @@ void cStartupHangarMenu::generateSelectionList()
 		{
 			const sUnitData& data = UnitsData.getBuilding (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
-			selectionList->addUnit (data.ID, player, &unitUpgrades[UnitsData.getNrVehicles() + i]);
+			selectionList->addUnit (data.ID, player, &upgradeHangarContainer.getUnitUpgrade (UnitsData.getNrVehicles() + i));
 		}
 	}
 
@@ -2283,7 +2291,7 @@ bool cStartupHangarMenu::checkAddOk (const cMenuUnitListItem* item) const
 
 	if (data->factorGround == 0) return false;
 	if (data->isHuman) return false;
-	if (data->buildCosts > goldBar->getCurrentValue()) return false;
+	if (data->buildCosts > upgradeHangarContainer.getGoldBar().getCurrentValue()) return false;
 	return true;
 }
 
@@ -2293,7 +2301,7 @@ void cStartupHangarMenu::addedCallback (cMenuUnitListItem* item)
 	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
 	if (!data || item->getUnitID().isAVehicle() == false) return;
 
-	goldBar->increaseCurrentValue (-data->buildCosts);
+	upgradeHangarContainer.getGoldBar().increaseCurrentValue (-data->buildCosts);
 	selectionChanged (this);
 }
 
@@ -2303,7 +2311,7 @@ void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
 	if (!data || item->getUnitID().isAVehicle() == false) return;
 
-	goldBar->increaseCurrentValue (data->buildCosts + item->getResValue() / 5);
+	upgradeHangarContainer.getGoldBar().increaseCurrentValue (data->buildCosts + item->getResValue() / 5);
 }
 
 //------------------------------------------------------------------------------
@@ -2364,7 +2372,7 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 		menu->materialBar->setMaximalValue (0);
 		menu->materialBar->setCurrentValue (0);
 	}
-	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->upgradeHangarContainer.getUpgradeButtons().setSelection (menu->selectedUnit);
 	menu->draw();
 }
 
@@ -4380,37 +4388,33 @@ void cVehiclesBuildMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (GFXOD_UPGRADE), owner)
+cUpgradeHangarContainer::cUpgradeHangarContainer (cHangarMenu* parentMenu, cPlayer* owner)
 {
+	const SDL_Rect& position = parentMenu->getPosition();
 	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Upgrades_Menu"));
 	titleLabel->setCentered (true);
-	menuItems.push_back (titleLabel);
-	upgradeFilter = new cMenuUpgradeFilter (position.x + 467, position.y + 411, this);
+	parentMenu->addItem (titleLabel);
+	upgradeFilter = new cMenuUpgradeFilter (position.x + 467, position.y + 411, parentMenu);
 	upgradeFilter->setTankChecked (true);
 	upgradeFilter->setPlaneChecked (true);
 	upgradeFilter->setShipChecked (true);
 	upgradeFilter->setBuildingChecked (true);
-	menuItems.push_back (upgradeFilter);
+	parentMenu->addItem (upgradeFilter);
 
 	goldBar = new cMenuMaterialBar (position.x + 372, position.y + 301, position.x + 381, position.y + 275, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD);
-	menuItems.push_back (goldBar);
+	parentMenu->addItem (goldBar);
 	goldBarLabel = new cMenuLabel (position.x + 381, position.y + 285, lngPack.i18n ("Text~Title~Credits"));
 	goldBarLabel->setCentered (true);
-	menuItems.push_back (goldBarLabel);
+	parentMenu->addItem (goldBarLabel);
 
-	upgradeButtons = new cMenuUpgradeHandler (position.x + 283, position.y + 293, this, this->goldBar);
-	menuItems.push_back (upgradeButtons);
+	upgradeButtons = new cMenuUpgradeHandler (position.x + 283, position.y + 293, parentMenu, this->goldBar);
+	parentMenu->addItem (upgradeButtons);
 
 	initUpgrades (*owner);
 }
 
 //------------------------------------------------------------------------------
-cUpgradeHangarMenu::~cUpgradeHangarMenu()
-{
-}
-
-//------------------------------------------------------------------------------
-void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
+void cUpgradeHangarContainer::initUpgrades (const cPlayer& player)
 {
 	unitUpgrades.resize (UnitsData.getNrVehicles() + UnitsData.getNrBuildings());
 
@@ -4440,27 +4444,27 @@ void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
 //------------------------------------------------------------------------------
 cUpgradeMenu::cUpgradeMenu (cClient& client_) :
 	cHangarMenu (LoadPCX (GFXOD_UPGRADE), client_.getActivePlayer(), MNU_BG_ALPHA),
-	cUpgradeHangarMenu (client_.getActivePlayer()),
-	client (&client_)
+	client (&client_),
+	upgradeHangarContainer (this, client_.getActivePlayer())
 {
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
 	const int credits = client_.getActivePlayer()->Credits;
-	goldBar->setMaximalValue (credits);
-	goldBar->setCurrentValue (credits);
+	upgradeHangarContainer.getGoldBar().setMaximalValue (credits);
+	upgradeHangarContainer.getGoldBar().setCurrentValue (credits);
 
-	upgradeFilter->setPlaneChecked (plane);
-	upgradeFilter->setTankChecked (tank);
-	upgradeFilter->setShipChecked (ship);
-	upgradeFilter->setBuildingChecked (build);
-	upgradeFilter->setTNTChecked (tnt);
+	upgradeHangarContainer.getUpgradeFilter().setPlaneChecked (plane);
+	upgradeHangarContainer.getUpgradeFilter().setTankChecked (tank);
+	upgradeHangarContainer.getUpgradeFilter().setShipChecked (ship);
+	upgradeHangarContainer.getUpgradeFilter().setBuildingChecked (build);
+	upgradeHangarContainer.getUpgradeFilter().setTNTChecked (tnt);
 
 	generateSelectionList();
 	if (selectedUnit != 0)
 	{
 		unitDetails->setSelection (selectedUnit);
-		upgradeButtons->setSelection (selectedUnit);
+		upgradeHangarContainer.getUpgradeButtons().setSelection (selectedUnit);
 	}
 
 	selectionChangedFunc = &selectionChanged;
@@ -4471,7 +4475,7 @@ void cUpgradeMenu::doneReleased (void* parent)
 {
 	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	sendTakenUpgrades (*menu->client, menu->unitUpgrades);
+	sendTakenUpgrades (*menu->client, menu->upgradeHangarContainer.getUnitUpgrades());
 	menu->end = true;
 }
 
@@ -4481,7 +4485,7 @@ void cUpgradeMenu::selectionChanged (void* parent)
 	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cHangarMenu*) parent);
 	if (!menu) menu = dynamic_cast<cUpgradeMenu*> ( (cUpgradeMenu*) parent);
 	if (!menu) return;
-	menu->upgradeButtons->setSelection (menu->selectedUnit);
+	menu->upgradeHangarContainer.getUpgradeButtons().setSelection (menu->selectedUnit);
 	menu->draw();
 }
 
@@ -4503,11 +4507,11 @@ void cUpgradeMenu::generateSelectionList()
 	}
 
 	selectionList->clear();
-	tank = upgradeFilter->TankIsChecked();
-	plane = upgradeFilter->PlaneIsChecked();
-	ship = upgradeFilter->ShipIsChecked();
-	build = upgradeFilter->BuildingIsChecked();
-	tnt = upgradeFilter->TNTIsChecked();
+	tank = upgradeHangarContainer.getUpgradeFilter().TankIsChecked();
+	plane = upgradeHangarContainer.getUpgradeFilter().PlaneIsChecked();
+	ship = upgradeHangarContainer.getUpgradeFilter().ShipIsChecked();
+	build = upgradeHangarContainer.getUpgradeFilter().BuildingIsChecked();
+	tnt = upgradeHangarContainer.getUpgradeFilter().TNTIsChecked();
 
 	if (tank || ship || plane)
 	{
@@ -4518,7 +4522,7 @@ void cUpgradeMenu::generateSelectionList()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			selectionList->addUnit (data.ID, player, &unitUpgrades[i]);
+			selectionList->addUnit (data.ID, player, &upgradeHangarContainer.getUnitUpgrade (i));
 		}
 	}
 
@@ -4528,7 +4532,7 @@ void cUpgradeMenu::generateSelectionList()
 		{
 			const sUnitData& data = UnitsData.getBuilding (i, player->getClan());
 			if (tnt && !data.canAttack) continue;
-			selectionList->addUnit (data.ID, player, &unitUpgrades[UnitsData.getNrVehicles() + i]);
+			selectionList->addUnit (data.ID, player, &upgradeHangarContainer.getUnitUpgrade (UnitsData.getNrVehicles() + i));
 		}
 	}
 

@@ -263,10 +263,12 @@ protected:
 
 	/** The background of the menu. Can be smaller than the screen. */
 	AutoSurface background;
-	/** The type of the background behind the menu background image, when the image is smaller then the screen. */
+	/** The type of the background behind the menu background image,
+	 * when the image is smaller than the screen. */
 	eMenuBackgrounds backgroundType;
-	/** The position of the menu on the screen when it is smaller than the screen. The position will be
-	 * calculated in the constructor of cMenu and set to the center of the screen.
+	/** The position of the menu on the screen when it is smaller
+	 * than the screen. The position will be  calculated in the constructor
+	 * of cMenu and set to the center of the screen.
 	 */
 	SDL_Rect position;
 
@@ -305,6 +307,8 @@ public:
 	 *@author alzi
 	 */
 	virtual int show (cClient* client);
+
+	const SDL_Rect& getPosition() const { return position; }
 	/**
 	 * sets end to true what will close the menu.
 	 *@author alzi
@@ -591,6 +595,8 @@ protected:
 public:
 	cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 
+	void addItem (cMenuItem* menuItem);
+
 	void setSelectedUnit (cMenuUnitListItem* selectedUnit_);
 	cMenuUnitListItem* getSelectedUnit();
 
@@ -628,13 +634,13 @@ private:
 };
 
 /**
- * An upgrade hangar menu with filter checkbuttons for the unit selection list, goldbar and buttons for
- * upgrading units.
+ * An upgrade hangar menu with filter checkbuttons for the unit selection list,
+ * goldbar and buttons for upgrading units.
  *@author alzi
  */
-class cUpgradeHangarMenu : virtual public cHangarMenu
+class cUpgradeHangarContainer
 {
-protected:
+private:
 	AutoPtr<cMenuUpgradeFilter> upgradeFilter;
 	AutoPtr<cMenuUpgradeHandler> upgradeButtons;
 	AutoPtr<cMenuMaterialBar> goldBar;
@@ -642,22 +648,30 @@ protected:
 	AutoPtr<cMenuLabel> titleLabel;
 
 	std::vector<cUnitUpgrade> unitUpgrades;
+private:
 	void initUpgrades (const cPlayer& player);
 public:
-	explicit cUpgradeHangarMenu (cPlayer* owner);
-	~cUpgradeHangarMenu();
+	cUpgradeHangarContainer (cHangarMenu* parentMenu, cPlayer* owner);
+
+	const cMenuMaterialBar& getGoldBar() const { return *goldBar; }
+	cMenuMaterialBar& getGoldBar() { return *goldBar; }
+	const std::vector<cUnitUpgrade>& getUnitUpgrades() const { return unitUpgrades; }
+	cUnitUpgrade& getUnitUpgrade(int index) { return unitUpgrades[index]; }
+	cMenuUpgradeFilter& getUpgradeFilter() { return *upgradeFilter; }
+	cMenuUpgradeHandler& getUpgradeButtons() { return *upgradeButtons; }
 };
 
 /**
  * The hangar menu where you select your landing units in the beginning of a new game.
  *@author alzi
  */
-class cStartupHangarMenu : public cUpgradeHangarMenu, public cAdvListHangarMenu
+class cStartupHangarMenu : public cAdvListHangarMenu
 {
 protected:
 	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 
+	cUpgradeHangarContainer upgradeHangarContainer;
 	cMenuLabel chooseUnitLabel;
 	AutoPtr<cMenuRadioGroup> upgradeBuyGroup;
 
@@ -1023,7 +1037,7 @@ private:
  * The upgrade menu.
  *@author alzi
  */
-class cUpgradeMenu : public cUpgradeHangarMenu
+class cUpgradeMenu : public cHangarMenu
 {
 	static bool tank;
 	static bool plane;
@@ -1031,7 +1045,7 @@ class cUpgradeMenu : public cUpgradeHangarMenu
 	static bool build;
 	static bool tnt;
 	cClient* client;
-protected:
+	cUpgradeHangarContainer upgradeHangarContainer;
 public:
 	explicit cUpgradeMenu (cClient& client_);
 
