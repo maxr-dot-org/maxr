@@ -176,7 +176,6 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 		message->pushInt16 (playerData.shotsMax);
 		message->pushInt16 (playerData.damage);
 		message->pushID (playerData.ID);
-		message->pushBool (true);  // true for vehicles
 
 		count++;
 
@@ -235,7 +234,6 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 		message->pushInt16 (playerData.shotsMax);
 		message->pushInt16 (playerData.damage);
 		message->pushID (playerData.ID);
-		message->pushBool (false);  // false for buildings
 
 		count++;
 

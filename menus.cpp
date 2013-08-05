@@ -302,7 +302,6 @@ void cGameDataContainer::receiveUnitUpgrades (cNetMessage* message)
 	const int count = message->popInt16();
 	for (int i = 0; i < count; i++)
 	{
-		const bool isVehicle = message->popBool();
 		const sID ID = message->popID();
 		sUnitData* unitData = players[playerNr]->getUnitDataCurrentVersion (ID);
 
@@ -313,7 +312,7 @@ void cGameDataContainer::receiveUnitUpgrades (cNetMessage* message)
 		unitData->armor = message->popInt16();
 		unitData->hitpointsMax = message->popInt16();
 		unitData->scan = message->popInt16();
-		if (isVehicle) unitData->speedMax = message->popInt16();
+		if (ID.isAVehicle()) unitData->speedMax = message->popInt16();
 		unitData->version++;
 	}
 }
