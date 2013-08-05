@@ -570,7 +570,6 @@ class cHangarMenu : public cMenu
 protected:
 	cPlayer* player;
 
-	cMenuLabel titleLabel;
 	AutoPtr<cMenuImage> infoImage;
 	AutoPtr<cMenuLabel> infoText;
 	AutoPtr<cMenuCheckButton> infoTextCheckBox;
@@ -659,6 +658,7 @@ protected:
 	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 
+	cMenuLabel chooseUnitLabel;
 	AutoPtr<cMenuRadioGroup> upgradeBuyGroup;
 
 	AutoPtr<cMenuMaterialBar> materialBar;

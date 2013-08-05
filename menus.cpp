@@ -1716,15 +1716,9 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 //------------------------------------------------------------------------------
 cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_) :
 	cMenu (background_, backgroundType_),
-	player (player_),
-	titleLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
-	// TODO different Title needed!
-	// Remove "Hangar-label" from original deadline counter location
+	player (player_)
 {
 	selectionChangedFunc = NULL;
-
-	titleLabel.setCentered (true);
-	menuItems.push_back (&titleLabel);
 
 	doneButton = new cMenuButton (position.x + 447, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	menuItems.push_back (doneButton);
@@ -1902,8 +1896,12 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
 	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_), cUpgradeHangarMenu (player_), cAdvListHangarMenu (NULL, player_),
 	network (network_),
-	gameDataContainer (gameDataContainer_)
+	gameDataContainer (gameDataContainer_),
+	chooseUnitLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
 {
+	chooseUnitLabel.setCentered (true);
+	menuItems.push_back (&chooseUnitLabel);
+
 	const int credits = gameDataContainer->settings? gameDataContainer->settings->credits : 0;
 
 	selectionChangedFunc = &selectionChanged;
