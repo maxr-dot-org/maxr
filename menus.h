@@ -636,8 +636,6 @@ private:
 class cUpgradeHangarMenu : virtual public cHangarMenu
 {
 protected:
-	int credits;
-
 	AutoPtr<cMenuUpgradeFilter> upgradeFilter;
 	AutoPtr<cMenuUpgradeHandler> upgradeButtons;
 	AutoPtr<cMenuMaterialBar> goldBar;
@@ -649,8 +647,6 @@ protected:
 public:
 	explicit cUpgradeHangarMenu (cPlayer* owner);
 	~cUpgradeHangarMenu();
-	void setCredits (int credits_);
-	int getCredits() const;
 };
 
 /**

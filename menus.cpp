@@ -1904,8 +1904,7 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	network (network_),
 	gameDataContainer (gameDataContainer_)
 {
-	if (gameDataContainer->settings) credits = gameDataContainer->settings->credits;
-	else credits = 0;
+	const int credits = gameDataContainer->settings? gameDataContainer->settings->credits : 0;
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -1937,9 +1936,9 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	generateSelectionList();
 
 	goldBar->setMaximalValue (credits);
+	goldBar->setCurrentValue (credits);
 	generateInitialLandingUnits();
 	addPlayerLandingUnits (*player);
-	goldBar->setCurrentValue (credits);
 
 	if (selectionList->getSize() > 0) setSelectedUnit (selectionList->getItem (0));
 }
@@ -1964,6 +1963,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[0];
 
 	if (units.empty()) return;
+	int credits = goldBar->getCurrentValue();
 	std::vector<sLandingUnit>::iterator it;
 	for (int i = 0; i != secondList->getSize(); ++i)
 	{
@@ -1986,6 +1986,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 		credits -= units[i].cargo / 5;
 		unit->setResValue (units[i].cargo);
 	}
+	goldBar->setCurrentValue (credits);
 }
 
 void cStartupHangarMenu::generateInitialLandingUnits()
@@ -2149,15 +2150,15 @@ void cStartupHangarMenu::materialBarUpReleased (void* parent)
 	cMenuUnitListItem* unit = menu->secondList->getSelectedUnit();
 	if (!unit) return;
 	const sUnitData* vehicle = unit->getUnitID().getUnitDataOriginalVersion (menu->player);
-	if (menu->credits == 0 || vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
+	cMenuMaterialBar* goldBar = menu->goldBar;
+	if (goldBar->getCurrentValue() == 0 || vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
 
 	const int oldCargo = unit->getResValue();
 	unit->setResValue (oldCargo + 5);
 	menu->materialBar->setCurrentValue (unit->getResValue());
 	if (oldCargo != unit->getResValue())
 	{
-		menu->credits--;
-		menu->goldBar->setCurrentValue (menu->credits);
+		goldBar->increaseCurrentValue (-1);
 	}
 	menu->upgradeButtons->setSelection (menu->selectedUnit);
 	menu->draw();
@@ -2178,8 +2179,7 @@ void cStartupHangarMenu::materialBarDownReleased (void* parent)
 	menu->materialBar->setCurrentValue (unit->getResValue());
 	if (oldCargo != unit->getResValue())
 	{
-		menu->credits++;
-		menu->goldBar->setCurrentValue (menu->credits);
+		menu->goldBar->increaseCurrentValue (1);
 	}
 	menu->upgradeButtons->setSelection (menu->selectedUnit);
 	menu->draw();
@@ -2204,17 +2204,16 @@ void cStartupHangarMenu::materialBarClicked (void* parent)
 
 	newCargo = unit->getResValue();
 	int costs = (newCargo - oldCargo) / 5;
-	if (costs > menu->credits)
+	if (costs > menu->goldBar->getCurrentValue())
 	{
-		costs = menu->credits;
+		costs = menu->goldBar->getCurrentValue();
 		newCargo = costs * 5 + oldCargo;
 	}
 
 	unit->setResValue (newCargo);
 	menu->materialBar->setCurrentValue (unit->getResValue());
 
-	menu->credits -= costs;
-	menu->goldBar->setCurrentValue (menu->credits);
+	menu->goldBar->increaseCurrentValue (-costs);
 	menu->upgradeButtons->setSelection (menu->selectedUnit);
 	menu->draw();
 }
@@ -2286,7 +2285,7 @@ bool cStartupHangarMenu::checkAddOk (const cMenuUnitListItem* item) const
 
 	if (data->factorGround == 0) return false;
 	if (data->isHuman) return false;
-	if (data->buildCosts > credits) return false;
+	if (data->buildCosts > goldBar->getCurrentValue()) return false;
 	return true;
 }
 
@@ -2296,8 +2295,7 @@ void cStartupHangarMenu::addedCallback (cMenuUnitListItem* item)
 	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
 	if (!data || item->getUnitID().isAVehicle() == false) return;
 
-	credits -= data->buildCosts;
-	goldBar->setCurrentValue (credits);
+	goldBar->increaseCurrentValue (-data->buildCosts);
 	selectionChanged (this);
 }
 
@@ -2307,8 +2305,7 @@ void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 	const sUnitData* data = item->getUnitID().getUnitDataOriginalVersion (player);
 	if (!data || item->getUnitID().isAVehicle() == false) return;
 
-	credits += data->buildCosts + item->getResValue() / 5;
-	goldBar->setCurrentValue (credits);
+	goldBar->increaseCurrentValue (data->buildCosts + item->getResValue() / 5);
 }
 
 //------------------------------------------------------------------------------
@@ -4397,14 +4394,14 @@ cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (
 	upgradeFilter->setBuildingChecked (true);
 	menuItems.push_back (upgradeFilter);
 
-	upgradeButtons = new cMenuUpgradeHandler (position.x + 283, position.y + 293, this);
-	menuItems.push_back (upgradeButtons);
-
 	goldBar = new cMenuMaterialBar (position.x + 372, position.y + 301, position.x + 381, position.y + 275, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD);
 	menuItems.push_back (goldBar);
 	goldBarLabel = new cMenuLabel (position.x + 381, position.y + 285, lngPack.i18n ("Text~Title~Credits"));
 	goldBarLabel->setCentered (true);
 	menuItems.push_back (goldBarLabel);
+
+	upgradeButtons = new cMenuUpgradeHandler (position.x + 283, position.y + 293, this, this->goldBar);
+	menuItems.push_back (upgradeButtons);
 
 	initUpgrades (*owner);
 }
@@ -4439,19 +4436,6 @@ void cUpgradeHangarMenu::initUpgrades (const cPlayer& player)
 }
 
 //------------------------------------------------------------------------------
-void cUpgradeHangarMenu::setCredits (int credits_)
-{
-	credits = credits_;
-	goldBar->setCurrentValue (credits);
-}
-
-//------------------------------------------------------------------------------
-int cUpgradeHangarMenu::getCredits() const
-{
-	return credits;
-}
-
-//------------------------------------------------------------------------------
 // cUpgradeMenu
 //------------------------------------------------------------------------------
 
@@ -4461,11 +4445,10 @@ cUpgradeMenu::cUpgradeMenu (cClient& client_) :
 	cUpgradeHangarMenu (client_.getActivePlayer()),
 	client (&client_)
 {
-	credits = client_.getActivePlayer()->Credits;
-
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
+	const int credits = client_.getActivePlayer()->Credits;
 	goldBar->setMaximalValue (credits);
 	goldBar->setCurrentValue (credits);
 

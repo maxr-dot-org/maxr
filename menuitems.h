@@ -38,7 +38,6 @@ class cMenuUnitsList;
 class cNetworkMenu;
 class cReportsMenu;
 class cUnit;
-class cUpgradeHangarMenu;
 class cVehicle;
 
 /**
@@ -876,7 +875,9 @@ public:
 
 	void setType (eMaterialBarTypes);
 	void setMaximalValue (int maxValue_);
+	void increaseCurrentValue (int offset);
 	void setCurrentValue (int currentValue_);
+	int getCurrentValue() const { return currentValue; }
 };
 
 /**
@@ -886,7 +887,8 @@ public:
  */
 class cMenuUpgradeHandler : public cMenuItemContainer
 {
-	cUpgradeHangarMenu* parentMenu;
+	cMenu* parentMenu;
+	cMenuMaterialBar* goldBar;
 	cMenuUnitListItem* selection;
 
 	AutoPtr<cMenuButton> decreaseButtons[8];
@@ -895,7 +897,7 @@ class cMenuUpgradeHandler : public cMenuItemContainer
 
 	static void buttonReleased (void* parent);
 public:
-	cMenuUpgradeHandler (int x, int y, cUpgradeHangarMenu* parent);
+	cMenuUpgradeHandler (int x, int y, cMenu* parentMenu, cMenuMaterialBar* goldBar_);
 
 	void setSelection (cMenuUnitListItem* selection_);
 };

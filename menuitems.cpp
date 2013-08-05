@@ -2429,18 +2429,23 @@ void cMenuMaterialBar::setMaximalValue (int maxValue_)
 	maxValue = maxValue_;
 }
 
+void cMenuMaterialBar::increaseCurrentValue (int offset)
+{
+	currentValue += offset;
+	valueLabel->setText (iToStr (currentValue));
+}
+
 void cMenuMaterialBar::setCurrentValue (int currentValue_)
 {
 	currentValue = currentValue_;
 	valueLabel->setText (iToStr (currentValue));
 }
-#if 0
-SDL_Rect cMenuMaterialBar::getPosition() const
-{
-	return position;
-}
-#endif
-cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cUpgradeHangarMenu* parent) : cMenuItemContainer (x, y), parentMenu (parent)
+
+cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cMenu* parentMenu_, cMenuMaterialBar* goldBar_) :
+	cMenuItemContainer (x, y),
+	parentMenu (parentMenu_),
+	goldBar (goldBar_),
+	selection (NULL)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -2457,7 +2462,6 @@ cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cUpgradeHangarMenu* pare
 		costsLabel[i] = new cMenuLabel (position.x + 40, position.y + 2 + 19 * i);
 		addItem (costsLabel[i]);
 	}
-	selection = NULL;
 }
 
 void cMenuUpgradeHandler::buttonReleased (void* parent)
@@ -2472,7 +2476,7 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 	{
 		if (This->increaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			This->parentMenu->setCredits (This->parentMenu->getCredits() - unitUpgrade.upgrades[i].nextPrice);
+			This->goldBar->increaseCurrentValue (-unitUpgrade.upgrades[i].nextPrice);
 			unitUpgrade.upgrades[i].purchase (researchLevel);
 
 			This->setSelection (This->selection);
@@ -2481,7 +2485,7 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 		else if (This->decreaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
 			unitUpgrade.upgrades[i].cancelPurchase (researchLevel);
-			This->parentMenu->setCredits (This->parentMenu->getCredits() + unitUpgrade.upgrades[i].nextPrice);
+			This->goldBar->increaseCurrentValue (unitUpgrade.upgrades[i].nextPrice);
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
@@ -2520,7 +2524,7 @@ void cMenuUpgradeHandler::setSelection (cMenuUnitListItem* selection_)
 		else
 			costsLabel[i]->setText ("");
 
-		if (parentMenu->getCredits() >= upgrade.nextPrice && upgrade.nextPrice != cUpgradeCalculator::kNoPriceAvailable)
+		if (goldBar->getCurrentValue() >= upgrade.nextPrice && upgrade.nextPrice != cUpgradeCalculator::kNoPriceAvailable)
 			increaseButtons[i]->setLocked (false);
 		else
 			increaseButtons[i]->setLocked (true);
