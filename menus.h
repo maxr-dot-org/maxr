@@ -659,7 +659,6 @@ private:
 	AutoPtr<cMenuUpgradeHandler> upgradeButtons;
 	AutoPtr<cMenuMaterialBar> goldBar;
 	AutoPtr<cMenuLabel> goldBarLabel;
-	AutoPtr<cMenuLabel> titleLabel;
 
 	std::vector<cUnitUpgrade> unitUpgrades;
 private:
@@ -1061,7 +1060,9 @@ class cUpgradeMenu : public cHangarMenu
 	static bool build;
 	static bool tnt;
 	cClient* client;
+
 	cUpgradeHangarContainer upgradeHangarContainer;
+	AutoPtr<cMenuLabel> titleLabel;
 public:
 	explicit cUpgradeMenu (cClient& client_);
 

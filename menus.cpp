@@ -4390,9 +4390,6 @@ void cVehiclesBuildMenu::selectionChanged (void* parent)
 cUpgradeHangarContainer::cUpgradeHangarContainer (cHangarMenu* parentMenu, cPlayer* owner)
 {
 	const SDL_Rect& position = parentMenu->getPosition();
-	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Upgrades_Menu"));
-	titleLabel->setCentered (true);
-	parentMenu->addItem (titleLabel);
 	upgradeFilter = new cMenuUpgradeFilter (position.x + 467, position.y + 411, parentMenu);
 	upgradeFilter->setTankChecked (true);
 	upgradeFilter->setPlaneChecked (true);
@@ -4446,6 +4443,10 @@ cUpgradeMenu::cUpgradeMenu (cClient& client_) :
 	client (&client_),
 	upgradeHangarContainer (this, client_.getActivePlayer())
 {
+	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Upgrades_Menu"));
+	titleLabel->setCentered (true);
+	menuItems.push_back (titleLabel);
+
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
