@@ -1788,7 +1788,7 @@ void cGameGUI::updateMouseCursor()
 			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false)
 				&& (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false)
 				&& (!overUnitField->getBuilding() || overUnitField->getBuilding()->isDisabled() == false)
-			 )
+			   )
 			{
 				if (mouse->SetCursor (CDisable))
 				{
@@ -1817,8 +1817,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		// Infiltrators: auto-action
 		// no disable vs. disabled building
-		// ...with a little && !(! - work-around to avoid wrong selection
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && !(!overUnitField->getBuilding() || overUnitField->getBuilding()->isDisabled() == false))
+		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && overUnitField->getBuilding() && overUnitField->getBuilding()->isDisabled())
 		{
 			mouse->SetCursor (CNo);
 		}

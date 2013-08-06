@@ -315,8 +315,9 @@ protected:
  */
 struct sUnitUpgrade
 {
-	sUnitUpgrade() : active (false), nextPrice (0), purchased (0),
-					 curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
+	sUnitUpgrade() :
+		active (false), nextPrice (0), purchased (0),
+		curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
 
 	void purchase (const cResearch& researchLevel);
 	void cancelPurchase (const cResearch& researchLevel);
