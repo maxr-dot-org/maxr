@@ -51,7 +51,8 @@ enum eLandingState
 	LANDING_POSITION_OK,        //there are no other players near the position
 	LANDING_POSITION_WARNING,   //there are players within the warning distance
 	LANDING_POSITION_TOO_CLOSE, //the position is too close to another player
-	LANDING_POSITION_CONFIRMED  //warnings about nearby players will be ignored, because the player has confirmed his position
+	LANDING_POSITION_CONFIRMED  //warnings about nearby players will be ignored,
+	//because the player has confirmed his position
 };
 
 struct sClientLandData
@@ -61,7 +62,10 @@ struct sClientLandData
 	eLandingState landingState;
 	bool receivedOK;
 
-	sClientLandData() : iLandX (0), iLandY (0), iLastLandX (0), iLastLandY (0), landingState (LANDING_STATE_UNKNOWN), receivedOK (false) {}
+	sClientLandData() :
+		iLandX (0), iLandY (0), iLastLandX (0), iLastLandY (0),
+		landingState (LANDING_STATE_UNKNOWN), receivedOK (false)
+	{}
 };
 
 enum eSettingResourceValue
@@ -146,8 +150,12 @@ struct sSettings
 	/** deadline in seconds when the first player has finished his turn */
 	int iTurnDeadline;
 
-	sSettings() : metal (SETTING_RESVAL_NORMAL), oil (SETTING_RESVAL_NORMAL), gold (SETTING_RESVAL_NORMAL), resFrequency (SETTING_RESFREQ_NORMAL), credits (SETTING_CREDITS_NORMAL),
-		bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech (SETTING_ALIENTECH_OFF), clans (SETTING_CLANS_ON), gameType (SETTINGS_GAMETYPE_SIMU), victoryType (SETTINGS_VICTORY_POINTS),
+	sSettings() :
+		metal (SETTING_RESVAL_NORMAL), oil (SETTING_RESVAL_NORMAL), gold (SETTING_RESVAL_NORMAL),
+		resFrequency (SETTING_RESFREQ_NORMAL), credits (SETTING_CREDITS_NORMAL),
+		bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech (SETTING_ALIENTECH_OFF),
+		clans (SETTING_CLANS_ON), gameType (SETTINGS_GAMETYPE_SIMU),
+		victoryType (SETTINGS_VICTORY_POINTS),
 		duration (SETTINGS_DUR_MEDIUM), iTurnDeadline (90) {}
 
 	std::string getResValString (eSettingResourceValue type) const;
@@ -166,21 +174,22 @@ public:
 	/** Should this instance of maxr act as the server for a TCP/IP game. */
 	bool isServer;
 
-	/** Number of the savegame or -1 for no savegame*/
+	/** Number of the savegame or -1 for no savegame */
 	int savegameNum;
-	/** name of the savegame if the savefile is only on the server and this container is set by a client*/
+	/** name of the savegame if the savefile is only on the server and
+	 * this container is set by a client */
 	std::string savegame;
 
-	/** The settings for the game*/
+	/** The settings for the game */
 	sSettings* settings;
-	/** The map for the game*/
+	/** The map for the game */
 	cStaticMap* map;
 
-	/** list with all players for the game*/
+	/** list with all players for the game */
 	std::vector<cPlayer*> players;
-	/** list with the selected landing units by each player*/
+	/** list with the selected landing units by each player */
 	std::vector<std::vector<sLandingUnit>*> landingUnits;
-	/** the client landing data (landing positions) of the players*/
+	/** the client landing data (landing positions) of the players */
 	std::vector<sClientLandData> landData;
 	/** indicates, whether all players have landed */
 	bool allLanded;
@@ -189,9 +198,12 @@ public:
 	cGameDataContainer();
 	~cGameDataContainer();
 
-	/** Runs the game. If isServer is true, which means that he is the host, a server will be started.
-	 * Else only a client will be started. When reconnect is true, it will be reconnected to a running game.
-	 * When the container contains a savegamenumber, the savegame will be loaded
+	/** Runs the game. If isServer is true, which means that he is the host,
+	 * a server will be started.
+	 * Else only a client will be started.
+	 * When reconnect is true, it will be reconnected to a running game.
+	 * When the container contains a savegamenumber,
+	 * the savegame will be loaded
 	 *@author alzi
 	 */
 	void runGame (cTCP* network, int playerNr, bool reconnect = false);
@@ -243,9 +255,10 @@ enum eMenuBackgrounds
 };
 
 /**
- * The main menu class. This class handles the background, the position, the input from mouse and keyboard
- * and all the menu items as buttons, images, labels, etc. All menuclasses in maxr should be a child of
- * this class.
+ * The main menu class.
+ * This class handles the background, the position, the input from mouse and
+ * keyboard and all the menu items as buttons, images, labels, etc.
+ * All menuclasses in maxr should be a child of this class.
  *@author alzi
  */
 class cMenu
@@ -275,27 +288,24 @@ protected:
 	std::vector<cMenuTimerBase*> menuTimers;
 	/** The list with all menuitems (buttons, images, etc.) of this menu. */
 	std::vector<cMenuItem*> menuItems;
-	/** Pointer to the currently active menuitem. This one will receive keyboard input. */
+	/** Pointer to the currently active menuitem.
+	 * This one will receive keyboard input. */
 	cMenuItem* activeItem;
 
 	/**
 	 * initializes members and calculates the menu position on the screen.
 	 *@author alzi
-	 *@param background_ The background of the surface. Automatically gets deleted
-	 *                   when the menu is destroyed.
+	 *@param background_ The background of the surface.
+	 *                   Automatically gets deleted when the menu is destroyed.
 	 */
 	cMenu (SDL_Surface* background_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 
 	virtual void preDrawFunction() {}
 
-	/** Recalculates the position and size of the menu.
-	 */
+	/** Recalculates the position and size of the menu. */
 	virtual void recalcPosition (bool resetItemPositions);
 
 public:
-	/**
-	* virtual destructor
-	*/
 	virtual ~cMenu();
 	/**
 	 * redraws the menu background, the cursor and all menuitems.
@@ -303,7 +313,8 @@ public:
 	 */
 	void draw (bool firstDraw = false, bool showScreen = true);
 	/**
-	 * displays the menu and focuses all input on this menu until end or terminate are set to true.
+	 * displays the menu and focuses all input on this menu until end or
+	 * terminate are set to true.
 	 *@author alzi
 	 */
 	virtual int show (cClient* client);
@@ -316,18 +327,19 @@ public:
 	void close();
 
 	/**
-	 * will the menu be closed after finishing the current action?
+	 * will the menu be closed after finishing the current action ?
 	 *@author eiko
 	 */
 	bool exiting() const;
 
 	/**
-	 * handles mouseclicks, delegates them to the matching menuitem and handles the activity of the menuitems.
+	 * handles mouseclicks, delegates them to the matching menuitem and
+	 * handles the activity of the menuitems.
 	 *@author alzi
 	 */
 	void handleMouseInput (sMouseState mouseState);
 	/**
-	 * gives the opinion to handle the mouse input to childclasses.
+	 * gives the option to handle the mouse input to childclasses.
 	 * This function is called at the end of handleMouseInput().
 	 *@author alzi
 	 */
@@ -344,8 +356,9 @@ public:
 	 */
 	static void sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer* player = NULL, int fromPlayerNr = -1);
 	/**
-	 * this method will receive the menu-net-messages when this menu is active in the moment the message
-	 * has been received. If the message should be handled overwrite this virtual method.
+	 * this method will receive the menu-net-messages
+	 * when this menu is active in the moment the message has been received.
+	 * If the message should be handled overwrite this virtual method.
 	 *@author alzi
 	 */
 	virtual void handleNetMessage (cNetMessage* message) {}
@@ -608,7 +621,8 @@ private:
 };
 
 /**
- * A hangar menu with a second unit table, where you can add units by double clicking in the first list.
+ * A hangar menu with a second unit table,
+ * where you can add units by double clicking in the first list.
  *@author alzi
  */
 class cAdvListHangarMenu : public cHangarMenu
@@ -634,8 +648,8 @@ private:
 };
 
 /**
- * An upgrade hangar menu with filter checkbuttons for the unit selection list,
- * goldbar and buttons for upgrading units.
+ * An upgrade hangar container with filter checkbuttons
+ * for the unit selection list, goldbar and buttons for upgrading units.
  *@author alzi
  */
 class cUpgradeHangarContainer
@@ -656,13 +670,14 @@ public:
 	const cMenuMaterialBar& getGoldBar() const { return *goldBar; }
 	cMenuMaterialBar& getGoldBar() { return *goldBar; }
 	const std::vector<cUnitUpgrade>& getUnitUpgrades() const { return unitUpgrades; }
-	cUnitUpgrade& getUnitUpgrade(int index) { return unitUpgrades[index]; }
+	cUnitUpgrade& getUnitUpgrade (int index) { return unitUpgrades[index]; }
 	cMenuUpgradeFilter& getUpgradeFilter() { return *upgradeFilter; }
 	cMenuUpgradeHandler& getUpgradeButtons() { return *upgradeButtons; }
 };
 
 /**
- * The hangar menu where you select your landing units in the beginning of a new game.
+ * The hangar menu where you select your landing units
+ * at the beginning of a new game.
  *@author alzi
  */
 class cStartupHangarMenu : public cAdvListHangarMenu
@@ -755,8 +770,9 @@ protected:
 };
 
 /**
- * A standard menu for network TCP/IP games with ip, port, and playername lineedits,
- * chat lineedit and chat window, color selection and playerlist and map image.
+ * A standard menu for network TCP/IP games with ip, port, and
+ * playername lineedits, chat lineedit and chat window,
+ * color selection and playerlist and map image.
  *@author alzi
  */
 class cNetworkMenu : public cMenu

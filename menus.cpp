@@ -1909,7 +1909,7 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	chooseUnitLabel.setCentered (true);
 	menuItems.push_back (&chooseUnitLabel);
 
-	const int credits = gameDataContainer->settings? gameDataContainer->settings->credits : 0;
+	const int credits = gameDataContainer->settings ? gameDataContainer->settings->credits : 0;
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -2763,7 +2763,7 @@ void cNetworkMenu::showMap()
 		SDL_RWclose (fp);
 
 #define MAPWINSIZE 112
-		if (surface->w != MAPWINSIZE || surface->h != MAPWINSIZE)   // resize map
+		if (surface->w != MAPWINSIZE || surface->h != MAPWINSIZE) // resize map
 		{
 			surface = scaleSurface (surface, NULL, MAPWINSIZE, MAPWINSIZE);
 		}
@@ -5051,7 +5051,8 @@ cMineManagerMenu::cMineManagerMenu (const cClient& client_, cBuilding* building_
 	doneButton->setReleasedFunction (doneReleased);
 	menuItems.push_back (doneButton);
 
-	// add the bars before the labels so that the bars will be drawn under the labels
+	// add the bars before the labels
+	// so that the bars will be drawn under the labels
 	for (int i = 0; i < 3; i++)
 	{
 		metalBars[i] = new cMenuMaterialBar (position.x + 174, position.y + 70 + 37 * i, position.x + 174 + 120, position.y + 70 + 15 + 37 * i, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_BIG, false, false);
