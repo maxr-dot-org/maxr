@@ -1826,8 +1826,8 @@ cMenuUnitListItem* cHangarMenu::getSelectedUnit()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_) :
-	cHangarMenu (background_, player_)
+cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_) :
+	cHangarMenu (background_, player_, backgroundType_)
 {
 	secondList = new cMenuUnitsList (position.x + 330, position.y + 12, 130, 225, this, MUL_DIS_TYPE_CARGO);
 	secondList->setDoubleClickedFunction (&secondListDoubleClicked);
@@ -1900,8 +1900,7 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 
 //------------------------------------------------------------------------------
 cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
-	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_),
-	cAdvListHangarMenu (NULL, player_),
+	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), player_),
 	network (network_),
 	gameDataContainer (gameDataContainer_),
 	upgradeHangarContainer (this, player_),
@@ -4107,9 +4106,9 @@ void cLoadSaveMenu::extendedSlotClicked (int oldSelection)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cVehicle* vehicle_)
-	: cHangarMenu (LoadPCX (GFXOD_BUILD_SCREEN), player_, MNU_BG_ALPHA),
-	  client (&client_)
+cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cVehicle* vehicle_) :
+	cHangarMenu (LoadPCX (GFXOD_BUILD_SCREEN), player_, MNU_BG_ALPHA),
+	client (&client_)
 {
 	vehicle = vehicle_;
 
@@ -4234,9 +4233,9 @@ bool cBuildingsBuildMenu::selListDoubleClicked (cMenuUnitsList* list, void* pare
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_)
-	: cHangarMenu (LoadPCX (GFXOD_FAC_BUILD_SCREEN), player_, MNU_BG_ALPHA)
-	, cAdvListHangarMenu (NULL, player_), gameGUI (&gameGUI_)
+cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_) :
+	cAdvListHangarMenu (LoadPCX (GFXOD_FAC_BUILD_SCREEN), player_, MNU_BG_ALPHA),
+	gameGUI (&gameGUI_)
 {
 	building = building_;
 

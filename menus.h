@@ -611,7 +611,7 @@ private:
  * A hangar menu with a second unit table, where you can add units by double clicking in the first list.
  *@author alzi
  */
-class cAdvListHangarMenu : virtual public cHangarMenu
+class cAdvListHangarMenu : public cHangarMenu
 {
 protected:
 	AutoPtr<cMenuUnitsList> secondList;
@@ -623,7 +623,7 @@ protected:
 	virtual void addedCallback (cMenuUnitListItem* item) {}
 	virtual void removedCallback (cMenuUnitListItem* item) {}
 public:
-	cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_);
+	cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 
 private:
 	static bool selListDoubleClicked (cMenuUnitsList* list, void* parent);
