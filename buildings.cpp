@@ -1566,31 +1566,35 @@ void cBuilding::Select (cGameGUI& gameGUI)
 	// display the details:
 	gameGUI.setUnitDetailsData (this);
 
-	//some sounds for special moments
-	//running out of ammo
-	if (data.canAttack)
+	// some sounds for special moments
+	// (disabled as long as you are not the owner)
+	if (gameGUI.getClient()->getActivePlayer() == owner)
 	{
-		if (data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
-			/* red ammo-status but still ammo left */
+		// running out of ammo
+		if (data.canAttack)
 		{
-			PlayRandomVoice (VoiceData.VOIAmmoLow);
+			if (data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
+			{
+				// red ammo-status but still ammo left */
+				PlayRandomVoice (VoiceData.VOIAmmoLow);
+			}
+			else if (data.ammoCur == 0)
+				// no ammo left */
+			{
+				PlayRandomVoice (VoiceData.VOIAmmoEmpty);
+			}
 		}
-		else if (data.ammoCur == 0)
-			/*no ammo left*/
+		// damaged
+		if (data.hitpointsCur <= data.hitpointsMax / 2 && data.hitpointsCur > data.hitpointsMax / 4)
 		{
-			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
+			// Status yellow:
+			PlayRandomVoice (VoiceData.VOIStatusYellow);
 		}
-	}
-	//damaged
-	if (data.hitpointsCur <= data.hitpointsMax / 2 && data.hitpointsCur > data.hitpointsMax / 4)
-	{
-		// Status yellow:
-		PlayRandomVoice (VoiceData.VOIStatusYellow);
-	}
-	else if (data.hitpointsCur <= data.hitpointsMax / 4)
-	{
-		// Status red:
-		PlayRandomVoice (VoiceData.VOIStatusRed);
+		else if (data.hitpointsCur <= data.hitpointsMax / 4)
+		{
+			// Status red:
+			PlayRandomVoice (VoiceData.VOIStatusRed);
+		}
 	}
 }
 
