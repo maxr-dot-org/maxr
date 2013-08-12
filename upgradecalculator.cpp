@@ -1502,7 +1502,7 @@ int cResearch::getResearchArea (int upgradeCalculatorType) const
 //--------------------------------------------------
 static cUpgradeCalculator::UpgradeTypes GetUpgradeType (const sUnitUpgrade& upgrade)
 {
-	switch (upgrade.type)
+	switch (upgrade.getType())
 	{
 		case sUnitUpgrade::UPGRADE_TYPE_DAMAGE: return cUpgradeCalculator::kAttack;
 		case sUnitUpgrade::UPGRADE_TYPE_SHOTS: return cUpgradeCalculator::kShots;
@@ -1568,4 +1568,65 @@ sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeTypes type)
 		if (upgrades[i].type == type) return &upgrades[i];
 	}
 	return NULL;
+}
+
+//--------------------------------------------------
+int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const
+{
+	for (int i = 0; i != 8; ++i)
+	{
+		if (upgrades[i].active && upgrades[i].type == upgradeType)
+			return upgrades[i].curValue;
+	}
+	return defaultValue; // the specified upgrade was not found...
+}
+
+//--------------------------------------------------
+bool cUnitUpgrade::hasBeenPurchased() const
+{
+	for (int i = 0; i != 8; ++i)
+	{
+		if (upgrades[i].purchased)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//--------------------------------------------------
+void cUnitUpgrade::updateUnitData (sUnitData& data) const
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		switch (upgrades[i].getType())
+		{
+			case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
+				data.damage = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
+				data.shotsMax = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_RANGE:
+				data.range = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_AMMO:
+				data.ammoMax = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
+				data.armor = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_HITS:
+				data.hitpointsMax = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_SCAN:
+				data.scan = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_SPEED:
+				data.speedMax = upgrades[i].curValue;
+				break;
+			case sUnitUpgrade::UPGRADE_TYPE_NONE:
+				break;
+		}
+	}
 }

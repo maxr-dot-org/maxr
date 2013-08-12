@@ -328,28 +328,6 @@ void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
 	cMenu::sendMessage (network, msg);
 }
 
-static bool UnitUpgradesHaveBeenPurchased (const cUnitUpgrade& unitUpgrade)
-{
-	for (int i = 0; i != 8; ++i)
-	{
-		if (unitUpgrade.upgrades[i].purchased)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-static int FindUpgradeValue (const cUnitUpgrade& unitUpgrade, sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue)
-{
-	for (int i = 0; i != 8; ++i)
-	{
-		if (unitUpgrade.upgrades[i].active && unitUpgrade.upgrades[i].type == upgradeType)
-			return unitUpgrade.upgrades[i].curValue;
-	}
-	return defaultValue; // the specified upgrade was not found...
-}
-
 void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrades)
 {
 	const cPlayer* player = client.getActivePlayer();
@@ -360,7 +338,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& 
 	{
 		const cUnitUpgrade& curUpgrade = unitUpgrades[i];
 
-		if (!UnitUpgradesHaveBeenPurchased (curUpgrade)) continue;
+		if (!curUpgrade.hasBeenPurchased()) continue;
 
 		if (msg == NULL)
 		{
@@ -372,14 +350,14 @@ void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& 
 		if (i < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[i];
 		else currentVersion = &player->BuildingData[i - UnitsData.getNrVehicles()];
 
-		if (i < UnitsData.getNrVehicles()) msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->ammoMax));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->range));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->shotsMax));
-		msg->pushInt16 (FindUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->damage));
+		if (i < UnitsData.getNrVehicles()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->ammoMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->range));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->shotsMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->damage));
 		msg->pushID (currentVersion->ID);
 
 		iCount++; // msg contains one more upgrade struct

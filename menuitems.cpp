@@ -2132,32 +2132,32 @@ void cMenuUnitDetailsBig::draw()
 	{
 		// Damage:
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE);
-		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->damage));
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->damage));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Damage"));
-		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3, y - 3, upgrade ? upgrade->curValue : data->damage, oriData->damage);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3, y - 3, upgrade ? upgrade->getCurValue() : data->damage, oriData->damage);
 		DETAIL_DOLINEBREAK
 
 		if (!data->explodesOnContact)
 		{
 			// Shots:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS);
-			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->shotsMax));
+			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->shotsMax));
 			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Shoots"));
-			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, upgrade ? upgrade->curValue : data->shotsMax, oriData->shotsMax);
+			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, upgrade ? upgrade->getCurValue() : data->shotsMax, oriData->shotsMax);
 			DETAIL_DOLINEBREAK
 
 			// Range:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE);
-			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->range));
+			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->range));
 			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Range"));
-			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->range, oriData->range);
+			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->range, oriData->range);
 			DETAIL_DOLINEBREAK
 
 			// Ammo:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO);
-			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->ammoMax));
+			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->ammoMax));
 			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Ammo"));
-			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->ammoMax, oriData->ammoMax);
+			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->ammoMax, oriData->ammoMax);
 			DETAIL_DOLINEBREAK
 		}
 	}
@@ -2215,25 +2215,25 @@ void cMenuUnitDetailsBig::draw()
 
 	// Armor:
 	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR);
-	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->armor));
+	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->armor));
 	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Armor"));
-	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->armor, oriData->armor);
+	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->armor, oriData->armor);
 	DETAIL_DOLINEBREAK
 
 	// Hitpoints:
 	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS);
-	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->hitpointsMax));
+	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->hitpointsMax));
 	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Hitpoints"));
-	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3, y - 1, upgrade ? upgrade->curValue : data->hitpointsMax, oriData->hitpointsMax);
+	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3, y - 1, upgrade ? upgrade->getCurValue() : data->hitpointsMax, oriData->hitpointsMax);
 	DETAIL_DOLINEBREAK
 
 	// Scan:
 	if (data->scan)
 	{
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN);
-		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->scan));
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->scan));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Scan"));
-		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->scan, oriData->scan);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->scan, oriData->scan);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2241,9 +2241,9 @@ void cMenuUnitDetailsBig::draw()
 	if (data->speedMax)
 	{
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED);
-		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->curValue : data->speedMax) / 4));    //FIXME: might crash if e.g. speedMax = 3
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->getCurValue() : data->speedMax) / 4));    //FIXME: might crash if e.g. speedMax = 3
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Speed"));
-		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3, y - 2, (upgrade ? upgrade->curValue : data->speedMax) / 4, oriData->speedMax / 4);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3, y - 2, (upgrade ? upgrade->getCurValue() : data->speedMax) / 4, oriData->speedMax / 4);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2476,7 +2476,7 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 	{
 		if (This->increaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			This->goldBar->increaseCurrentValue (-unitUpgrade.upgrades[i].nextPrice);
+			This->goldBar->increaseCurrentValue (-unitUpgrade.upgrades[i].getNextPrice());
 			unitUpgrade.upgrades[i].purchase (researchLevel);
 
 			This->setSelection (This->selection);
@@ -2485,7 +2485,7 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 		else if (This->decreaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
 			unitUpgrade.upgrades[i].cancelPurchase (researchLevel);
-			This->goldBar->increaseCurrentValue (unitUpgrade.upgrades[i].nextPrice);
+			This->goldBar->increaseCurrentValue (unitUpgrade.upgrades[i].getNextPrice());
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
@@ -2511,7 +2511,7 @@ void cMenuUpgradeHandler::setSelection (cMenuUnitListItem* selection_)
 	{
 		const sUnitUpgrade& upgrade = unitUpgrade.upgrades[i];
 
-		if (upgrade.type == sUnitUpgrade::UPGRADE_TYPE_NONE)
+		if (upgrade.getType() == sUnitUpgrade::UPGRADE_TYPE_NONE)
 		{
 			costsLabel[i]->setText ("");
 			increaseButtons[i]->setLocked (true);
@@ -2519,17 +2519,17 @@ void cMenuUpgradeHandler::setSelection (cMenuUnitListItem* selection_)
 			continue;
 		}
 
-		if (upgrade.nextPrice != cUpgradeCalculator::kNoPriceAvailable)
-			costsLabel[i]->setText (iToStr (upgrade.nextPrice));
+		if (upgrade.getNextPrice() != cUpgradeCalculator::kNoPriceAvailable)
+			costsLabel[i]->setText (iToStr (upgrade.getNextPrice()));
 		else
 			costsLabel[i]->setText ("");
 
-		if (goldBar->getCurrentValue() >= upgrade.nextPrice && upgrade.nextPrice != cUpgradeCalculator::kNoPriceAvailable)
+		if (goldBar->getCurrentValue() >= upgrade.getNextPrice() && upgrade.getNextPrice() != cUpgradeCalculator::kNoPriceAvailable)
 			increaseButtons[i]->setLocked (false);
 		else
 			increaseButtons[i]->setLocked (true);
 
-		if (upgrade.purchased > 0)
+		if (upgrade.getPurchased() > 0)
 			decreaseButtons[i]->setLocked (false);
 		else
 			decreaseButtons[i]->setLocked (true);

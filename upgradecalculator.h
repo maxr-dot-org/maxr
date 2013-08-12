@@ -23,6 +23,7 @@
 #include <map>
 
 class cResearch;
+class cUnitUpgrade;
 struct sUnitData;
 
 //------------------------------------------------------------------------------
@@ -338,6 +339,12 @@ struct sUnitUpgrade
 		UPGRADE_TYPE_NONE
 	};
 
+	int getCurValue() const { return curValue; }
+	eUpgradeTypes getType() const { return type; }
+	int getNextPrice() const { return nextPrice; }
+	int getPurchased() const { return purchased; }
+private:
+	friend class cUnitUpgrade;
 	/** is this upgrade buyable for the player */
 	bool active;
 	/** what will the next upgrade cost */
@@ -358,6 +365,9 @@ public:
 	void init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
 
+	bool hasBeenPurchased() const;
+	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
+	void updateUnitData (sUnitData& data) const;
 public:
 	sUnitUpgrade upgrades[8];
 };

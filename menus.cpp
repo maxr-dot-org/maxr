@@ -2069,38 +2069,7 @@ void cStartupHangarMenu::updateUnitData()
 		if (i < UnitsData.getNrVehicles()) data = &player->VehicleData[i];
 		else data = &player->BuildingData[i - UnitsData.getNrVehicles()];
 
-		for (int j = 0; j < 8; j++)
-		{
-			switch (unitUpgrade.upgrades[j].type)
-			{
-				case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
-					data->damage = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-					data->shotsMax = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_RANGE:
-					data->range = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-					data->ammoMax = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
-					data->armor = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_HITS:
-					data->hitpointsMax = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_SCAN:
-					data->scan = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-					data->speedMax = unitUpgrade.upgrades[j].curValue;
-					break;
-				case sUnitUpgrade::UPGRADE_TYPE_NONE:
-					break;
-			}
-		}
+		unitUpgrade.updateUnitData (*data);
 	}
 }
 
