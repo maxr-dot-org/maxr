@@ -133,9 +133,9 @@ std::string getUserMapsDir()
 	}
 	return mapFolder + PATH_DELIMITER;
 #else
-#ifdef __amigaos4__
+# ifdef __amigaos4__
 	return "";
-#else
+# else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
@@ -146,9 +146,8 @@ std::string getUserMapsDir()
 		return "";
 	}
 	return mapFolder + PATH_DELIMITER;
+# endif
 #endif
-#endif
-	return "";
 }
 
 //--------------------------------------------------------------

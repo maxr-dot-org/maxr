@@ -27,7 +27,7 @@ class cNetMessage;
 
 #define MAX_CLIENTS     10   // maximal number of clients that can connect to the server
 #define PACKAGE_LENGTH  1024 // maximal length of a TCP/IP package
-#define START_CHAR      (char(0xFF)) // start character in netmessages
+#define START_CHAR      ('\xFF') // start character in netmessages
 
 // the first client message must be smaller then the first menu message!
 #define FIRST_SERVER_MESSAGE 10

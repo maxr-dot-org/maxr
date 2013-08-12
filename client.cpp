@@ -2053,7 +2053,7 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 
 unsigned int cClient::getRemainingTimeInSecond() const
 {
-	if (iEndTurnTime <= iStartTurnTime) return ~0; // max value
+	if (iEndTurnTime <= iStartTurnTime) return ~0u; // max value
 	return (iEndTurnTime - gameTimer.gameTime) / 100;
 }
 
