@@ -1412,94 +1412,6 @@ int cResearch::getResearchArea (int upgradeCalculatorType) const
 //--------------------------------------------------
 
 //--------------------------------------------------
-/*static*/ void sUnitUpgrade::init (sUnitUpgrade upgrade[/*8*/], const sUnitData& oriData, const sUnitData& data, const cResearch& researchLevel)
-{
-	int i = 0;
-
-	if (data.canAttack)
-	{
-		// Damage:
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData.damage;
-		upgrade[i].curValue = data.damage;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.damage, oriData.damage, cUpgradeCalculator::kAttack, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
-		i++;
-		if (!data.explodesOnContact)
-		{
-			// Shots:
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData.shotsMax;
-			upgrade[i].curValue = data.shotsMax;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.shotsMax, oriData.shotsMax, cUpgradeCalculator::kShots, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
-			i++;
-			// Range:
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData.range;
-			upgrade[i].curValue = data.range;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.range, oriData.range, cUpgradeCalculator::kRange, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_RANGE;
-			i++;
-			// Ammo:
-			upgrade[i].active = true;
-			upgrade[i].startValue = oriData.ammoMax;
-			upgrade[i].curValue = data.ammoMax;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.ammoMax, oriData.ammoMax, cUpgradeCalculator::kAmmo, researchLevel);
-			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
-			i++;
-		}
-	}
-
-	if (data.storeResType != sUnitData::STORE_RES_NONE)
-	{
-		i++;
-	}
-
-	if (data.produceEnergy) i += 2;
-
-	if (data.produceHumans) i++;
-
-	// Armor:
-	upgrade[i].active = true;
-	upgrade[i].startValue = oriData.armor;
-	upgrade[i].curValue = data.armor;
-	upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.armor, oriData.armor, cUpgradeCalculator::kArmor, researchLevel);
-	upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_ARMOR;
-	i++;
-
-	// Hitpoints:
-	upgrade[i].active = true;
-	upgrade[i].startValue = oriData.hitpointsMax;
-	upgrade[i].curValue = data.hitpointsMax;
-	upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.hitpointsMax, oriData.hitpointsMax, cUpgradeCalculator::kHitpoints, researchLevel);
-	upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
-	i++;
-
-	// Scan:
-	if (data.scan)
-	{
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData.scan;
-		upgrade[i].curValue = data.scan;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.scan, oriData.scan, cUpgradeCalculator::kScan, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SCAN;
-		i++;
-	}
-
-	// Speed:
-	if (data.speedMax)
-	{
-		upgrade[i].active = true;
-		upgrade[i].startValue = oriData.speedMax;
-		upgrade[i].curValue = data.speedMax;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data.speedMax / 4, oriData.speedMax / 4, cUpgradeCalculator::kSpeed, researchLevel);
-		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
-		i++;
-	}
-}
-
-//--------------------------------------------------
 static cUpgradeCalculator::UpgradeTypes GetUpgradeType (const sUnitUpgrade& upgrade)
 {
 	switch (upgrade.getType())
@@ -1557,7 +1469,81 @@ void sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 //--------------------------------------------------
 void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel)
 {
-	sUnitUpgrade::init (upgrades, origData, curData, researchLevel);
+	int i = 0;
+
+	if (curData.canAttack)
+	{
+		// Damage:
+		upgrades[i].startValue = origData.damage;
+		upgrades[i].curValue = curData.damage;
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.damage, origData.damage, cUpgradeCalculator::kAttack, researchLevel);
+		upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
+		i++;
+		if (!curData.explodesOnContact)
+		{
+			// Shots:
+			upgrades[i].startValue = origData.shotsMax;
+			upgrades[i].curValue = curData.shotsMax;
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.shotsMax, origData.shotsMax, cUpgradeCalculator::kShots, researchLevel);
+			upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
+			i++;
+			// Range:
+			upgrades[i].startValue = origData.range;
+			upgrades[i].curValue = curData.range;
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.range, origData.range, cUpgradeCalculator::kRange, researchLevel);
+			upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_RANGE;
+			i++;
+			// Ammo:
+			upgrades[i].startValue = origData.ammoMax;
+			upgrades[i].curValue = curData.ammoMax;
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.ammoMax, origData.ammoMax, cUpgradeCalculator::kAmmo, researchLevel);
+			upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
+			i++;
+		}
+	}
+
+	if (curData.storeResType != sUnitData::STORE_RES_NONE)
+	{
+		i++;
+	}
+
+	if (curData.produceEnergy) i += 2;
+
+	if (curData.produceHumans) i++;
+
+	// Armor:
+	upgrades[i].startValue = origData.armor;
+	upgrades[i].curValue = curData.armor;
+	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.armor, origData.armor, cUpgradeCalculator::kArmor, researchLevel);
+	upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_ARMOR;
+	i++;
+
+	// Hitpoints:
+	upgrades[i].startValue = origData.hitpointsMax;
+	upgrades[i].curValue = curData.hitpointsMax;
+	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.hitpointsMax, origData.hitpointsMax, cUpgradeCalculator::kHitpoints, researchLevel);
+	upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
+	i++;
+
+	// Scan:
+	if (curData.scan)
+	{
+		upgrades[i].startValue = origData.scan;
+		upgrades[i].curValue = curData.scan;
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.scan, origData.scan, cUpgradeCalculator::kScan, researchLevel);
+		upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_SCAN;
+		i++;
+	}
+
+	// Speed:
+	if (curData.speedMax)
+	{
+		upgrades[i].startValue = origData.speedMax;
+		upgrades[i].curValue = curData.speedMax;
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.speedMax / 4, origData.speedMax / 4, cUpgradeCalculator::kSpeed, researchLevel);
+		upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
+		i++;
+	}
 }
 
 //--------------------------------------------------
@@ -1575,7 +1561,7 @@ int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, in
 {
 	for (int i = 0; i != 8; ++i)
 	{
-		if (upgrades[i].active && upgrades[i].type == upgradeType)
+		if (upgrades[i].type == upgradeType)
 			return upgrades[i].curValue;
 	}
 	return defaultValue; // the specified upgrade was not found...

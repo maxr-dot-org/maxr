@@ -317,13 +317,11 @@ protected:
 struct sUnitUpgrade
 {
 	sUnitUpgrade() :
-		active (false), nextPrice (0), purchased (0),
+		nextPrice (0), purchased (0),
 		curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
 
 	void purchase (const cResearch& researchLevel);
 	void cancelPurchase (const cResearch& researchLevel);
-
-	static void init (sUnitUpgrade upgrade[/*8*/], const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
 
 	/** The different values of a unit that can be upgraded */
 	enum eUpgradeTypes
@@ -345,8 +343,6 @@ struct sUnitUpgrade
 	int getPurchased() const { return purchased; }
 private:
 	friend class cUnitUpgrade;
-	/** is this upgrade buyable for the player */
-	bool active;
 	/** what will the next upgrade cost */
 	int nextPrice;
 	/** how many upgrades of this type has the player purchased */
