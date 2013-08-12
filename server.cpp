@@ -92,19 +92,19 @@ int CallbackRunServerThread (void* arg)
 }
 
 //------------------------------------------------------------------------------
-cServer::cServer (cTCP* network_)
-	: network (network_)
-	, localClient (NULL)
-	, gameTimer()
-	, lastTurnEnd (0)
-	, executingRemainingMovements (false)
-	, casualtiesTracker (0)
+cServer::cServer (cTCP* network_) :
+	network (network_),
+	localClient (NULL),
+	gameTimer(),
+	lastTurnEnd (0),
+	executingRemainingMovements (false),
+	casualtiesTracker (0),
+	serverState (SERVER_STATE_ROOM)
 {
 	Map = NULL;
 	this->PlayerList = NULL;
 	bExit = false;
 	openMapDefeat = true;
-	bStarted = false;
 	neutralBuildings = NULL;
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
@@ -289,7 +289,7 @@ void cServer::run()
 
 		// don't do anything if games hasn't been started yet!
 		unsigned int lastTime = gameTimer.gameTime;
-		if (bStarted)
+		if (serverState == SERVER_STATE_INGAME)
 		{
 			gameTimer.run (*this);
 		}
@@ -2280,6 +2280,7 @@ void cServer::correctLandingPos (int& iX, int& iY)
 //------------------------------------------------------------------------------
 void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits)
 {
+	assert (serverState == SERVER_STATE_INITGAME);
 	// send victory conditions to clients
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 		sendGameSettings (*this, * (*PlayerList) [i]);
@@ -2291,7 +2292,7 @@ void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::v
 	placeInitialResources (landData);
 	// make the landing
 	makeLanding (landData, landingUnits);
-	bStarted = true;
+	serverState = SERVER_STATE_INGAME;
 }
 
 //------------------------------------------------------------------------------

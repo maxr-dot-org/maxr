@@ -86,7 +86,7 @@ bool cServerGame::loadGame (int saveGameNumber)
 	if (savegame.load (*server) == false)
 		return false;
 	server->markAllPlayersAsDisconnected();
-	server->bStarted = true;
+	server->serverState = SERVER_STATE_INGAME;
 	return true;
 }
 
@@ -150,7 +150,7 @@ void cServerGame::run()
 			lastTime = server->gameTimer.gameTime;
 
 		// don't do anything if games hasn't been started yet!
-		if (server && server->bStarted)
+		if (server && server->serverState == SERVER_STATE_INGAME)
 		{
 			server->gameTimer.run (*server);
 

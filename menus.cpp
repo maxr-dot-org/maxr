@@ -176,6 +176,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		server->setMap (*serverMap);
 		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
+		server->serverState = SERVER_STATE_INITGAME;
 	}
 
 	// init client and his players
@@ -249,7 +250,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	}
 
 	// exit menu and start game
-	server.bStarted = true;
+	server.serverState = SERVER_STATE_INGAME;
 	client->getGameGUI().show (client);
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
@@ -3415,7 +3416,7 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 
 	// exit menu and start game
-	server.bStarted = true;
+	server.serverState = SERVER_STATE_INGAME;
 	client->getGameGUI().show (client);
 
 	server.stop();

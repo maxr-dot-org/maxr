@@ -51,6 +51,13 @@ enum eGameTypes
 	GAME_TYPE_TCPIP    // a multiplayergame over TCP/IP
 };
 
+enum eServerState
+{
+	SERVER_STATE_ROOM,     // Choose players, options and map.
+	SERVER_STATE_INITGAME, // Choose clan, initial units and land position.
+	SERVER_STATE_INGAME,   // Game is running
+};
+
 /**
  * Structure for the reports
  */
@@ -508,8 +515,8 @@ public:
 	std::vector<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */
 	std::vector<cPlayer*>* PlayerList;
-	/** true if the game has been started */
-	bool bStarted;
+	/** state of the server */
+	eServerState serverState;
 };
 
 #endif
