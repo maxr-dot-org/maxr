@@ -2476,16 +2476,16 @@ void cMenuUpgradeHandler::buttonReleased (void* parent)
 	{
 		if (This->increaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			This->goldBar->increaseCurrentValue (-unitUpgrade.upgrades[i].getNextPrice());
-			unitUpgrade.upgrades[i].purchase (researchLevel);
+			const int cost = unitUpgrade.upgrades[i].purchase (researchLevel);
+			This->goldBar->increaseCurrentValue (-cost);
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();
 		}
 		else if (This->decreaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			unitUpgrade.upgrades[i].cancelPurchase (researchLevel);
-			This->goldBar->increaseCurrentValue (unitUpgrade.upgrades[i].getNextPrice());
+			const int cost = unitUpgrade.upgrades[i].cancelPurchase (researchLevel);
+			This->goldBar->increaseCurrentValue (-cost);
 
 			This->setSelection (This->selection);
 			This->parentMenu->draw();

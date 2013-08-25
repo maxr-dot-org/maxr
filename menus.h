@@ -666,6 +666,7 @@ private:
 public:
 	cUpgradeHangarContainer (cHangarMenu* parentMenu, cPlayer* owner);
 
+	void computePurchased (const cPlayer& player);
 	const cMenuMaterialBar& getGoldBar() const { return *goldBar; }
 	cMenuMaterialBar& getGoldBar() { return *goldBar; }
 	const std::vector<cUnitUpgrade>& getUnitUpgrades() const { return unitUpgrades; }

@@ -320,8 +320,9 @@ struct sUnitUpgrade
 		nextPrice (0), purchased (0),
 		curValue (-1), startValue (0), type (UPGRADE_TYPE_NONE) {}
 
-	void purchase (const cResearch& researchLevel);
-	void cancelPurchase (const cResearch& researchLevel);
+	int purchase (const cResearch& researchLevel);
+	int cancelPurchase (const cResearch& researchLevel);
+	int computedPurchasedCount (const cResearch& researchLevel);
 
 	/** The different values of a unit that can be upgraded */
 	enum eUpgradeTypes
@@ -361,6 +362,7 @@ public:
 	void init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
 
+	int computedPurchasedCount (const cResearch& researchLevel);
 	bool hasBeenPurchased() const;
 	int getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const;
 	void updateUnitData (sUnitData& data) const;

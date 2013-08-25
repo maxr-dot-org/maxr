@@ -1946,6 +1946,8 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	generateInitialLandingUnits();
 	addPlayerLandingUnits (*player);
 
+	upgradeHangarContainer.computePurchased(*player);
+
 	if (selectionList->getSize() > 0) setSelectedUnit (selectionList->getItem (0));
 }
 
@@ -4400,6 +4402,17 @@ void cUpgradeHangarContainer::initUpgrades (const cPlayer& player)
 
 		cUnitUpgrade& unitUpgrade = unitUpgrades[offset + i];
 		unitUpgrade.init (oriData, data, player.researchLevel);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cUpgradeHangarContainer::computePurchased (const cPlayer& player)
+{
+	for (size_t i = 0; i != unitUpgrades.size(); ++i)
+	{
+		cUnitUpgrade& unitUpgrade = unitUpgrades[i];
+		const int cost = unitUpgrade.computedPurchasedCount (player.researchLevel);
+		goldBar->increaseCurrentValue (-cost);
 	}
 }
 

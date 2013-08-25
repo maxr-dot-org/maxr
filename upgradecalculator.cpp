@@ -1430,10 +1430,11 @@ static cUpgradeCalculator::UpgradeTypes GetUpgradeType (const sUnitUpgrade& upgr
 }
 
 //--------------------------------------------------
-void sUnitUpgrade::purchase (const cResearch& researchLevel)
+int sUnitUpgrade::purchase (const cResearch& researchLevel)
 {
 	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+	const int cost = nextPrice;
 
 	if (upgradeType == cUpgradeCalculator::kSpeed)
 	{
@@ -1446,13 +1447,15 @@ void sUnitUpgrade::purchase (const cResearch& researchLevel)
 		nextPrice = uc.calcPrice (curValue, startValue, upgradeType, researchLevel);
 	}
 	++purchased;
+	return cost;
 }
 
 //--------------------------------------------------
-void sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
+int sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 {
 	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
 	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+
 	if (upgradeType == cUpgradeCalculator::kSpeed)
 	{
 		curValue -= 4 * uc.calcIncreaseByUpgrade (startValue / 4);
@@ -1464,6 +1467,28 @@ void sUnitUpgrade::cancelPurchase (const cResearch& researchLevel)
 		nextPrice = uc.calcPrice (curValue, startValue, upgradeType, researchLevel);
 	}
 	--purchased;
+	return -nextPrice;
+}
+
+//--------------------------------------------------
+int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
+{
+	if (type == sUnitUpgrade::UPGRADE_TYPE_NONE) return 0;
+
+	cUpgradeCalculator::UpgradeTypes upgradeType = GetUpgradeType (*this);
+	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+	sUnitUpgrade other (*this);
+	int cost = 0;
+	const int bonusByResearch = uc.calcChangeByResearch (startValue, researchLevel.getCurResearchLevel (researchLevel.getResearchArea (upgradeType)));
+
+	other.curValue = other.startValue + bonusByResearch;
+	other.nextPrice = uc.calcPrice (other.curValue, other.startValue, upgradeType, researchLevel);
+	while (other.curValue != curValue)
+	{
+		cost += other.purchase (researchLevel);
+	}
+	purchased = other.purchased;
+	return cost;
 }
 
 //--------------------------------------------------
@@ -1544,6 +1569,18 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 		upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
 		i++;
 	}
+}
+
+//--------------------------------------------------
+int cUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
+{
+	int cost = 0;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		cost += upgrades[i].computedPurchasedCount (researchLevel);
+	}
+	return cost;
 }
 
 //--------------------------------------------------
