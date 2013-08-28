@@ -118,13 +118,6 @@ static int LoadClans();
 static int LoadMusic (const char* path);
 
 /**
- * Loads all Voices
- * @param path Directory of the Vehicles
- * @return 1 on success
- */
-static int LoadVoices (const char* path);
-
-/**
  * Loads the unitdata from the data.xml in the unitfolder
  * @param directory Unitdirectory, relative to the main game directory
  */
@@ -155,7 +148,7 @@ int LoadData (void* data)
 			return 0;
 		}
 
-		font = new cUnicodeFont; //init ascii fonts
+		font = new cUnicodeFont; // init ascii fonts
 
 		Log.mark();
 	}
@@ -171,7 +164,8 @@ int LoadData (void* data)
 	MakeLog ("Loading languagepack...", 0, 2);
 
 	string sLang = cSettings::getInstance().getLanguage();
-	//FIXME: here is the assumption made that the file always exists with lower cases
+	// FIXME: here is the assumption made
+	// that the file always exists with lower cases
 	for (int i = 0; i <= 2; i++)
 	{
 		if (sLang[i] < 97)
@@ -216,7 +210,8 @@ int LoadData (void* data)
 
 	// Load Fonts
 	MakeLog (lngPack.i18n ("Text~Init~Fonts"), 0, 4);
-	// -- little bit crude but fonts are already loaded. what to do with this now? -- beko
+	// -- little bit crude but fonts are already loaded.
+	// what to do with this now? -- beko
 	// Really loaded with new cUnicodeFont
 	MakeLog ("", 1, 4);
 	Log.mark();
@@ -322,33 +317,16 @@ int LoadData (void* data)
 
 		// Load Sounds
 		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
-		if (SoundData.load (cSettings::getInstance().getSoundsPath().c_str()) == false)
-		{
-			MakeLog ("", -1, 11);
-			SDL_Delay (5000);
-			loadingState = LOAD_ERROR;
-			return -1;
-		}
-		else
-		{
-			MakeLog ("", 1, 11);
-		}
+		Log.write ("Loading Sounds", LOG_TYPE_INFO);
+		SoundData.load (cSettings::getInstance().getSoundsPath().c_str());
+		MakeLog ("", 1, 11);
 		Log.mark();
 
 		// Load Voices
 		MakeLog (lngPack.i18n ("Text~Init~Voices"), 0, 12);
-
-		if (LoadVoices (cSettings::getInstance().getVoicesPath().c_str()) != 1)
-		{
-			MakeLog ("", -1, 12);
-			SDL_Delay (5000);
-			loadingState = LOAD_ERROR;
-			return -1;
-		}
-		else
-		{
-			MakeLog ("", 1, 12);
-		}
+		Log.write ("Loading Voices", LOG_TYPE_INFO);
+		VoiceData.load (cSettings::getInstance().getVoicesPath().c_str());
+		MakeLog ("", 1, 12);
 		Log.mark();
 	}
 
@@ -589,7 +567,8 @@ static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char*
 
 static int LoadLanguage()
 {
-	if (lngPack.SetCurrentLanguage (cSettings::getInstance().getLanguage()) != 0) // Set the language code
+	// Set the language code
+	if (lngPack.SetCurrentLanguage (cSettings::getInstance().getLanguage()) != 0)
 	{
 		// Not a valid language code, critical fail!
 		Log.write ("Not a valid language code!", cLog::eLOG_TYPE_ERROR);
@@ -610,22 +589,26 @@ static int LoadEffects (const char* path)
 
 	if (DEDICATED_SERVER) return 1;
 
-	LoadEffectGraphicToSurface (EffectsData.fx_explo_small, path, "explo_small.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_explo_big, path, "explo_big.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_explo_water, path, "explo_water.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_explo_air, path, "explo_air.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_muzzle_big, path, "muzzle_big.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_muzzle_small, path, "muzzle_small.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_muzzle_med, path, "muzzle_med.pcx");
-	LoadEffectGraphicToSurface (EffectsData.fx_hit, path, "hit.pcx");
-	LoadEffectAlphaToSurface (EffectsData.fx_smoke, path, "smoke.pcx", 100);
-	LoadEffectGraphicToSurface (EffectsData.fx_rocket, path, "rocket.pcx");
-	LoadEffectAlphaToSurface (EffectsData.fx_dark_smoke, path, "dark_smoke.pcx", 100);
-	LoadEffectAlphaToSurface (EffectsData.fx_tracks, path, "tracks.pcx", 100);
-	LoadEffectAlphaToSurface (EffectsData.fx_corpse, path, "corpse.pcx", 255);
-	LoadEffectAlphaToSurface (EffectsData.fx_absorb, path, "absorb.pcx", 150);
-
+	EffectsData.load (path);
 	return 1;
+}
+
+void cEffectsData::load (const char* path)
+{
+	LoadEffectGraphicToSurface (fx_explo_small, path, "explo_small.pcx");
+	LoadEffectGraphicToSurface (fx_explo_big, path, "explo_big.pcx");
+	LoadEffectGraphicToSurface (fx_explo_water, path, "explo_water.pcx");
+	LoadEffectGraphicToSurface (fx_explo_air, path, "explo_air.pcx");
+	LoadEffectGraphicToSurface (fx_muzzle_big, path, "muzzle_big.pcx");
+	LoadEffectGraphicToSurface (fx_muzzle_small, path, "muzzle_small.pcx");
+	LoadEffectGraphicToSurface (fx_muzzle_med, path, "muzzle_med.pcx");
+	LoadEffectGraphicToSurface (fx_hit, path, "hit.pcx");
+	LoadEffectAlphaToSurface (fx_smoke, path, "smoke.pcx", 100);
+	LoadEffectGraphicToSurface (fx_rocket, path, "rocket.pcx");
+	LoadEffectAlphaToSurface (fx_dark_smoke, path, "dark_smoke.pcx", 100);
+	LoadEffectAlphaToSurface (fx_tracks, path, "tracks.pcx", 100);
+	LoadEffectAlphaToSurface (fx_corpse, path, "corpse.pcx", 255);
+	LoadEffectAlphaToSurface (fx_absorb, path, "absorb.pcx", 150);
 }
 
 static int LoadMusic (const char* path)
@@ -690,10 +673,8 @@ static int LoadMusic (const char* path)
 	return 1;
 }
 
-bool cSoundData::load (const char* path)
+void cSoundData::load (const char* path)
 {
-	Log.write ("Loading Sounds", LOG_TYPE_INFO);
-
 	LoadSoundfile (SNDHudSwitch, path, "HudSwitch.ogg");
 	LoadSoundfile (SNDHudButton, path, "HudButton.ogg");
 	LoadSoundfile (SNDMenuButton, path, "MenuButton.ogg");
@@ -726,84 +707,80 @@ bool cSoundData::load (const char* path)
 	LoadSoundfile (SNDPanelOpen, path, "panel_open.ogg");
 	LoadSoundfile (SNDPanelClose, path, "panel_close.ogg");
 	LoadSoundfile (SNDAbsorb, path, "absorb.ogg");
-	return true;
 }
 
-static int LoadVoices (const char* path)
+void cVoiceData::load (const char* path)
 {
-	Log.write ("Loading Voices", LOG_TYPE_INFO);
-	LoadSoundfile (VoiceData.VOIAmmoLow[0], path, "ammo_low1.ogg", true);
-	LoadSoundfile (VoiceData.VOIAmmoLow[1], path, "ammo_low2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAmmoEmpty[0], path, "ammo_empty1.ogg", true);
-	LoadSoundfile (VoiceData.VOIAmmoEmpty[1], path, "ammo_empty2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttacking[0], path, "attacking1.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttacking[1], path, "attacking2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingEnemy[0], path, "attacking_enemy1.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingEnemy[1], path, "attacking_enemy2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingUs[0], path, "attacking_us.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingUs[1], path, "attacking_us2.ogg", true);
-	LoadSoundfile (VoiceData.VOIAttackingUs[2], path, "attacking_us3.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone[0], path, "build_done1.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone[1], path, "build_done2.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone[2], path, "build_done3.ogg", true);
-	LoadSoundfile (VoiceData.VOIBuildDone[3], path, "build_done4.ogg", true);
-	LoadSoundfile (VoiceData.VOIClearing, path, "clearing.ogg", true);
-	LoadSoundfile (VoiceData.VOIClearingMines[0], path, "clearing_mines.ogg", true);
-	LoadSoundfile (VoiceData.VOIClearingMines[1], path, "clearing_mines2.ogg", true);
-	LoadSoundfile (VoiceData.VOICommandoFailed[0], path, "commando_failed1.ogg", true);
-	LoadSoundfile (VoiceData.VOICommandoFailed[1], path, "commando_failed2.ogg", true);
-	LoadSoundfile (VoiceData.VOICommandoFailed[2], path, "commando_failed3.ogg", true);
-	LoadSoundfile (VoiceData.VOIDestroyedUs[0], path, "destroyed_us1.ogg", true);
-	LoadSoundfile (VoiceData.VOIDestroyedUs[1], path, "destroyed_us2.ogg", true);
-	LoadSoundfile (VoiceData.VOIDetected[0], path, "detected1.ogg", true);
-	LoadSoundfile (VoiceData.VOIDetected[1], path, "detected2.ogg", true);
-	LoadSoundfile (VoiceData.VOILanding[0], path, "landing1.ogg", true);
-	LoadSoundfile (VoiceData.VOILanding[1], path, "landing2.ogg", true);
-	LoadSoundfile (VoiceData.VOILanding[2], path, "landing3.ogg", true);
-	LoadSoundfile (VoiceData.VOILayingMines, path, "laying_mines.ogg", true);
-	LoadSoundfile (VoiceData.VOINoPath[0], path, "no_path1.ogg", true);
-	LoadSoundfile (VoiceData.VOINoPath[1], path, "no_path2.ogg", true);
-	LoadSoundfile (VoiceData.VOINoSpeed, path, "no_speed.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK[0], path, "ok1.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK[1], path, "ok2.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK[2], path, "ok3.ogg", true);
-	LoadSoundfile (VoiceData.VOIOK[3], path, "ok4.ogg", true);
-	LoadSoundfile (VoiceData.VOIReammo, path, "reammo.ogg", true);
-	LoadSoundfile (VoiceData.VOIReammoAll, path, "reammo_all.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepaired[0], path, "repaired.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepaired[1], path, "repaired2.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepairedAll[0], path, "repaired_all1.ogg", true);
-	LoadSoundfile (VoiceData.VOIRepairedAll[1], path, "repaired_all2.ogg", true);
-	LoadSoundfile (VoiceData.VOIResearchComplete, path, "research_complete.ogg", true);
-	LoadSoundfile (VoiceData.VOISaved, path, "saved.ogg", true);
-	LoadSoundfile (VoiceData.VOISentry, path, "sentry.ogg", true);
-	LoadSoundfile (VoiceData.VOIStartMore, path, "start_more.ogg", true);
-	LoadSoundfile (VoiceData.VOIStartNone, path, "start_none.ogg", true);
-	LoadSoundfile (VoiceData.VOIStartOne, path, "start_one.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusRed[0], path, "status_red1.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusRed[1], path, "status_red2.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusYellow[0], path, "status_yellow1.ogg", true);
-	LoadSoundfile (VoiceData.VOIStatusYellow[1], path, "status_yellow2.ogg", true);
-	LoadSoundfile (VoiceData.VOISubDetected, path, "sub_detected.ogg", true);
-	LoadSoundfile (VoiceData.VOISurveying[0], path, "surveying.ogg", true);
-	LoadSoundfile (VoiceData.VOISurveying[1], path, "surveying2.ogg", true);
-	LoadSoundfile (VoiceData.VOITransferDone, path, "transfer_done.ogg", true);
-	LoadSoundfile (VoiceData.VOITurnEnd20Sec[0], path, "turn_end_20_sec1.ogg", true);//not used yet
-	LoadSoundfile (VoiceData.VOITurnEnd20Sec[1], path, "turn_end_20_sec2.ogg", true);//not used yet
-	LoadSoundfile (VoiceData.VOITurnEnd20Sec[2], path, "turn_end_20_sec3.ogg", true);//not used yet
-	LoadSoundfile (VoiceData.VOIUnitDisabled, path, "unit_disabled.ogg", true);
-	LoadSoundfile (VoiceData.VOIUnitDisabledByEnemy[0], path, "unit_disabled_by_enemy1.ogg", true);
-	LoadSoundfile (VoiceData.VOIUnitDisabledByEnemy[1], path, "unit_disabled_by_enemy2.ogg", true);
-	LoadSoundfile (VoiceData.VOIUnitStolen[0], path, "unit_stolen1.ogg", true);
-	LoadSoundfile (VoiceData.VOIUnitStolen[1], path, "unit_stolen2.ogg", true);
-	LoadSoundfile (VoiceData.VOIUnitStolenByEnemy, path, "unit_stolen_by_enemy.ogg", true);
-	return 1;
+	LoadSoundfile (VOIAmmoLow[0], path, "ammo_low1.ogg", true);
+	LoadSoundfile (VOIAmmoLow[1], path, "ammo_low2.ogg", true);
+	LoadSoundfile (VOIAmmoEmpty[0], path, "ammo_empty1.ogg", true);
+	LoadSoundfile (VOIAmmoEmpty[1], path, "ammo_empty2.ogg", true);
+	LoadSoundfile (VOIAttacking[0], path, "attacking1.ogg", true);
+	LoadSoundfile (VOIAttacking[1], path, "attacking2.ogg", true);
+	LoadSoundfile (VOIAttackingEnemy[0], path, "attacking_enemy1.ogg", true);
+	LoadSoundfile (VOIAttackingEnemy[1], path, "attacking_enemy2.ogg", true);
+	LoadSoundfile (VOIAttackingUs[0], path, "attacking_us.ogg", true);
+	LoadSoundfile (VOIAttackingUs[1], path, "attacking_us2.ogg", true);
+	LoadSoundfile (VOIAttackingUs[2], path, "attacking_us3.ogg", true);
+	LoadSoundfile (VOIBuildDone[0], path, "build_done1.ogg", true);
+	LoadSoundfile (VOIBuildDone[1], path, "build_done2.ogg", true);
+	LoadSoundfile (VOIBuildDone[2], path, "build_done3.ogg", true);
+	LoadSoundfile (VOIBuildDone[3], path, "build_done4.ogg", true);
+	LoadSoundfile (VOIClearing, path, "clearing.ogg", true);
+	LoadSoundfile (VOIClearingMines[0], path, "clearing_mines.ogg", true);
+	LoadSoundfile (VOIClearingMines[1], path, "clearing_mines2.ogg", true);
+	LoadSoundfile (VOICommandoFailed[0], path, "commando_failed1.ogg", true);
+	LoadSoundfile (VOICommandoFailed[1], path, "commando_failed2.ogg", true);
+	LoadSoundfile (VOICommandoFailed[2], path, "commando_failed3.ogg", true);
+	LoadSoundfile (VOIDestroyedUs[0], path, "destroyed_us1.ogg", true);
+	LoadSoundfile (VOIDestroyedUs[1], path, "destroyed_us2.ogg", true);
+	LoadSoundfile (VOIDetected[0], path, "detected1.ogg", true);
+	LoadSoundfile (VOIDetected[1], path, "detected2.ogg", true);
+	LoadSoundfile (VOILanding[0], path, "landing1.ogg", true);
+	LoadSoundfile (VOILanding[1], path, "landing2.ogg", true);
+	LoadSoundfile (VOILanding[2], path, "landing3.ogg", true);
+	LoadSoundfile (VOILayingMines, path, "laying_mines.ogg", true);
+	LoadSoundfile (VOINoPath[0], path, "no_path1.ogg", true);
+	LoadSoundfile (VOINoPath[1], path, "no_path2.ogg", true);
+	LoadSoundfile (VOINoSpeed, path, "no_speed.ogg", true);
+	LoadSoundfile (VOIOK[0], path, "ok1.ogg", true);
+	LoadSoundfile (VOIOK[1], path, "ok2.ogg", true);
+	LoadSoundfile (VOIOK[2], path, "ok3.ogg", true);
+	LoadSoundfile (VOIOK[3], path, "ok4.ogg", true);
+	LoadSoundfile (VOIReammo, path, "reammo.ogg", true);
+	LoadSoundfile (VOIReammoAll, path, "reammo_all.ogg", true);
+	LoadSoundfile (VOIRepaired[0], path, "repaired.ogg", true);
+	LoadSoundfile (VOIRepaired[1], path, "repaired2.ogg", true);
+	LoadSoundfile (VOIRepairedAll[0], path, "repaired_all1.ogg", true);
+	LoadSoundfile (VOIRepairedAll[1], path, "repaired_all2.ogg", true);
+	LoadSoundfile (VOIResearchComplete, path, "research_complete.ogg", true);
+	LoadSoundfile (VOISaved, path, "saved.ogg", true);
+	LoadSoundfile (VOISentry, path, "sentry.ogg", true);
+	LoadSoundfile (VOIStartMore, path, "start_more.ogg", true);
+	LoadSoundfile (VOIStartNone, path, "start_none.ogg", true);
+	LoadSoundfile (VOIStartOne, path, "start_one.ogg", true);
+	LoadSoundfile (VOIStatusRed[0], path, "status_red1.ogg", true);
+	LoadSoundfile (VOIStatusRed[1], path, "status_red2.ogg", true);
+	LoadSoundfile (VOIStatusYellow[0], path, "status_yellow1.ogg", true);
+	LoadSoundfile (VOIStatusYellow[1], path, "status_yellow2.ogg", true);
+	LoadSoundfile (VOISubDetected, path, "sub_detected.ogg", true);
+	LoadSoundfile (VOISurveying[0], path, "surveying.ogg", true);
+	LoadSoundfile (VOISurveying[1], path, "surveying2.ogg", true);
+	LoadSoundfile (VOITransferDone, path, "transfer_done.ogg", true);
+	LoadSoundfile (VOITurnEnd20Sec[0], path, "turn_end_20_sec1.ogg", true);//not used yet
+	LoadSoundfile (VOITurnEnd20Sec[1], path, "turn_end_20_sec2.ogg", true);//not used yet
+	LoadSoundfile (VOITurnEnd20Sec[2], path, "turn_end_20_sec3.ogg", true);//not used yet
+	LoadSoundfile (VOIUnitDisabled, path, "unit_disabled.ogg", true);
+	LoadSoundfile (VOIUnitDisabledByEnemy[0], path, "unit_disabled_by_enemy1.ogg", true);
+	LoadSoundfile (VOIUnitDisabledByEnemy[1], path, "unit_disabled_by_enemy2.ogg", true);
+	LoadSoundfile (VOIUnitStolen[0], path, "unit_stolen1.ogg", true);
+	LoadSoundfile (VOIUnitStolen[1], path, "unit_stolen2.ogg", true);
+	LoadSoundfile (VOIUnitStolenByEnemy, path, "unit_stolen_by_enemy.ogg", true);
 }
 
 static int LoadGraphics (const char* path)
 {
 	Log.write ("Loading Graphics", LOG_TYPE_INFO);
-	string stmp;
 	if (DEDICATED_SERVER) return 1;
 
 	Log.write ("Gamegraphics...", LOG_TYPE_DEBUG);
@@ -873,17 +850,8 @@ static int LoadGraphics (const char* path)
 	// load colors even for dedicated server
 	// Colors:
 	Log.write ("Colourgraphics...", LOG_TYPE_DEBUG);
-	LoadGraphicToSurface (OtherData.colors[cl_red], path, "cl_red.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_blue], path, "cl_blue.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_green], path, "cl_green.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_grey], path, "cl_grey.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_orange], path, "cl_orange.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_yellow], path, "cl_yellow.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_purple], path, "cl_purple.pcx");
-	LoadGraphicToSurface (OtherData.colors[cl_aqua], path, "cl_aqua.pcx");
 
-	for (int i = 0; i != PLAYERCOLORS; ++i)
-		OtherData.colors_org[i] = CloneSDLSurface (OtherData.colors[i]);
+	OtherData.loadColors (path);
 
 	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
 	// Shadow:
@@ -901,57 +869,80 @@ static int LoadGraphics (const char* path)
 
 	// Waypoints:
 	Log.write ("Waypointgraphics...", LOG_TYPE_DEBUG);
-	for (int i = 0; i < 60; i++)
-	{
-		OtherData.WayPointPfeile[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEIL_COLOR, 64 - i);
-		OtherData.WayPointPfeile[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEIL_COLOR, 64 - i);
-
-		OtherData.WayPointPfeileSpecial[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEILS_COLOR, 64 - i);
-		OtherData.WayPointPfeileSpecial[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEILS_COLOR, 64 - i);
-	}
+	OtherData.loadWayPoints();
 
 	// Resources:
 	Log.write ("Resourcegraphics...", LOG_TYPE_DEBUG);
-	//metal
-	if (LoadGraphicToSurface (ResourceData.res_metal_org, path, "res.pcx") == 1)
-	{
-		ResourceData.res_metal = CloneSDLSurface (ResourceData.res_metal_org);
-		SDL_SetColorKey (ResourceData.res_metal, SDL_SRCCOLORKEY, 0xFF00FF);
-	}
-
-	//gold
-	if (LoadGraphicToSurface (ResourceData.res_gold_org, path, "gold.pcx") == 1)
-	{
-		ResourceData.res_gold = CloneSDLSurface (ResourceData.res_gold_org);
-		SDL_SetColorKey (ResourceData.res_gold, SDL_SRCCOLORKEY, 0xFF00FF);
-	}
-
-	//fuel
-	if (LoadGraphicToSurface (ResourceData.res_oil_org, path, "fuel.pcx") == 1)
-	{
-		ResourceData.res_oil = CloneSDLSurface (ResourceData.res_oil_org);
-		SDL_SetColorKey (ResourceData.res_oil, SDL_SRCCOLORKEY, 0xFF00FF);
-	}
-
+	ResourceData.load (path);
 	return 1;
+}
+
+void cOtherData::loadColors (const char* path)
+{
+	LoadGraphicToSurface (colors[cl_red], path, "cl_red.pcx");
+	LoadGraphicToSurface (colors[cl_blue], path, "cl_blue.pcx");
+	LoadGraphicToSurface (colors[cl_green], path, "cl_green.pcx");
+	LoadGraphicToSurface (colors[cl_grey], path, "cl_grey.pcx");
+	LoadGraphicToSurface (colors[cl_orange], path, "cl_orange.pcx");
+	LoadGraphicToSurface (colors[cl_yellow], path, "cl_yellow.pcx");
+	LoadGraphicToSurface (colors[cl_purple], path, "cl_purple.pcx");
+	LoadGraphicToSurface (colors[cl_aqua], path, "cl_aqua.pcx");
+
+	for (int i = 0; i != PLAYERCOLORS; ++i)
+		colors_org[i] = CloneSDLSurface (colors[i]);
+}
+
+void cOtherData::loadWayPoints()
+{
+	for (int i = 0; i < 60; i++)
+	{
+		WayPointPfeile[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEIL_COLOR, 64 - i);
+		WayPointPfeile[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEIL_COLOR, 64 - i);
+
+		WayPointPfeileSpecial[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEILS_COLOR, 64 - i);
+		WayPointPfeileSpecial[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEILS_COLOR, 64 - i);
+	}
+}
+
+void cResourceData::load (const char* path)
+{
+	// metal
+	if (LoadGraphicToSurface (res_metal_org, path, "res.pcx") == 1)
+	{
+		res_metal = CloneSDLSurface (res_metal_org);
+		SDL_SetColorKey (res_metal, SDL_SRCCOLORKEY, 0xFF00FF);
+	}
+
+	// gold
+	if (LoadGraphicToSurface (res_gold_org, path, "gold.pcx") == 1)
+	{
+		res_gold = CloneSDLSurface (res_gold_org);
+		SDL_SetColorKey (res_gold, SDL_SRCCOLORKEY, 0xFF00FF);
+	}
+
+	// fuel
+	if (LoadGraphicToSurface (res_oil_org, path, "fuel.pcx") == 1)
+	{
+		res_oil = CloneSDLSurface (res_oil_org);
+		SDL_SetColorKey (res_oil, SDL_SRCCOLORKEY, 0xFF00FF);
+	}
 }
 
 static int LoadVehicles()
 {
 	Log.write ("Loading Vehicles", LOG_TYPE_INFO);
-
 
 	tinyxml2::XMLDocument VehiclesXml;
 

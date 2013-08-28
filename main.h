@@ -334,6 +334,8 @@ public:
 class cEffectsData
 {
 public:
+	void load (const char* path);
+public:
 	AutoSurface fx_explo_big[2];
 	AutoSurface fx_explo_small[2];
 	AutoSurface fx_explo_water[2];
@@ -353,6 +355,8 @@ public:
 // ResourceData - Class containing all resource surfaces //////////////////////
 class cResourceData
 {
+public:
+	void load (const char* path);
 public:
 	AutoSurface res_metal_org;
 	AutoSurface res_metal;
@@ -477,6 +481,9 @@ private:
 // OtherData - Class containing the rest of surfaces //////////////////////////
 class cOtherData
 {
+public:
+	void loadColors (const char* path);
+	void loadWayPoints();
 public:
 	AutoSurface colors[PLAYERCOLORS];
 	AutoSurface colors_org[PLAYERCOLORS];

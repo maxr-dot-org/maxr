@@ -39,7 +39,7 @@ EX std::vector<std::string> MusicFiles;
 class cSoundData
 {
 public:
-	bool load (const char* path);
+	void load (const char* path);
 public:
 	// General
 	AutoSound SNDAbsorb;
@@ -76,6 +76,8 @@ public:
 // Voices ////////////////////////////////////////////////////////////////////
 class cVoiceData
 {
+public:
+	void load (const char* path);
 public:
 	AutoSound VOIAmmoLow[2];
 	AutoSound VOIAmmoEmpty[2];
