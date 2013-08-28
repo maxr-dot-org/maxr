@@ -26,6 +26,13 @@
 #include "settings.h"
 #include "main.h"
 
+#define SOUND_CHANNEL_MIN 0
+#define SOUND_CHANNEL_MAX 2
+#define VOICE_CHANNEL_MIN (SOUND_CHANNEL_MAX + 1)
+#define VOICE_CHANNEL_MAX 5
+static int SoundChannel;
+static int VoiceChannel;
+
 static Mix_Music* music_stream = NULL;
 
 static void MusicFinished();

@@ -118,13 +118,6 @@ static int LoadClans();
 static int LoadMusic (const char* path);
 
 /**
- * Loads all Sounds
- * @param path Directory of the Vehicles
- * @return 1 on success
- */
-static int LoadSounds (const char* path);
-
-/**
  * Loads all Voices
  * @param path Directory of the Vehicles
  * @return 1 on success
@@ -329,7 +322,7 @@ int LoadData (void* data)
 
 		// Load Sounds
 		MakeLog (lngPack.i18n ("Text~Init~Sounds"), 0, 11);
-		if (LoadSounds (cSettings::getInstance().getSoundsPath().c_str()) != 1)
+		if (SoundData.load (cSettings::getInstance().getSoundsPath().c_str()) == false)
 		{
 			MakeLog ("", -1, 11);
 			SDL_Delay (5000);
@@ -653,6 +646,7 @@ static int LoadMusic (const char* path)
 		return 0;
 	}
 	XMLElement* xmlElement;
+#if 0 // unused
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "main", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
@@ -668,7 +662,7 @@ static int LoadMusic (const char* path)
 		return 0;
 	}
 	CreditsMusicFile = xmlElement->Attribute ("Text");
-
+#endif
 	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", "bkgcount", NULL);
 	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
@@ -696,44 +690,43 @@ static int LoadMusic (const char* path)
 	return 1;
 }
 
-static int LoadSounds (const char* path)
+bool cSoundData::load (const char* path)
 {
 	Log.write ("Loading Sounds", LOG_TYPE_INFO);
 
-	LoadSoundfile (SoundData.SNDHudSwitch, path, "HudSwitch.ogg");
-	LoadSoundfile (SoundData.SNDHudButton, path, "HudButton.ogg");
-	LoadSoundfile (SoundData.SNDMenuButton, path, "MenuButton.ogg");
-	LoadSoundfile (SoundData.SNDChat, path, "Chat.ogg");
-	LoadSoundfile (SoundData.SNDObjectMenu, path, "ObjectMenu.ogg");
-	LoadSoundfile (SoundData.EXPBigWet[0], path, "exp_big_wet0.ogg");
-	LoadSoundfile (SoundData.EXPBigWet[1], path, "exp_big_wet1.ogg");
-	LoadSoundfile (SoundData.EXPBig[0], path, "exp_big0.ogg");
-	LoadSoundfile (SoundData.EXPBig[1], path, "exp_big1.ogg");
-	LoadSoundfile (SoundData.EXPBig[2], path, "exp_big2.ogg");
-	LoadSoundfile (SoundData.EXPBig[3], path, "exp_big3.ogg");
-	LoadSoundfile (SoundData.EXPSmallWet[0], path, "exp_small_wet0.ogg");
-	LoadSoundfile (SoundData.EXPSmallWet[1], path, "exp_small_wet1.ogg");
-	LoadSoundfile (SoundData.EXPSmallWet[2], path, "exp_small_wet2.ogg");
-	LoadSoundfile (SoundData.EXPSmall[0], path, "exp_small0.ogg");
-	LoadSoundfile (SoundData.EXPSmall[1], path, "exp_small1.ogg");
-	LoadSoundfile (SoundData.EXPSmall[2], path, "exp_small2.ogg");
-	LoadSoundfile (SoundData.SNDArm, path, "arm.ogg");
-	LoadSoundfile (SoundData.SNDBuilding, path, "building.ogg");
-	LoadSoundfile (SoundData.SNDClearing, path, "clearing.ogg");
-	LoadSoundfile (SoundData.SNDQuitsch, path, "quitsch.ogg");
-	LoadSoundfile (SoundData.SNDActivate, path, "activate.ogg");
-	LoadSoundfile (SoundData.SNDLoad, path, "load.ogg");
-	LoadSoundfile (SoundData.SNDReload, path, "reload.ogg");
-	LoadSoundfile (SoundData.SNDRepair, path, "repair.ogg");
-	LoadSoundfile (SoundData.SNDLandMinePlace, path, "land_mine_place.ogg");
-	LoadSoundfile (SoundData.SNDLandMineClear, path, "land_mine_clear.ogg");
-	LoadSoundfile (SoundData.SNDSeaMinePlace, path, "sea_mine_place.ogg");
-	LoadSoundfile (SoundData.SNDSeaMineClear, path, "sea_mine_clear.ogg");
-	LoadSoundfile (SoundData.SNDPanelOpen, path, "panel_open.ogg");
-	LoadSoundfile (SoundData.SNDPanelClose, path, "panel_close.ogg");
-	LoadSoundfile (SoundData.SNDAbsorb, path, "absorb.ogg");
-
-	return 1;
+	LoadSoundfile (SNDHudSwitch, path, "HudSwitch.ogg");
+	LoadSoundfile (SNDHudButton, path, "HudButton.ogg");
+	LoadSoundfile (SNDMenuButton, path, "MenuButton.ogg");
+	LoadSoundfile (SNDChat, path, "Chat.ogg");
+	LoadSoundfile (SNDObjectMenu, path, "ObjectMenu.ogg");
+	LoadSoundfile (EXPBigWet[0], path, "exp_big_wet0.ogg");
+	LoadSoundfile (EXPBigWet[1], path, "exp_big_wet1.ogg");
+	LoadSoundfile (EXPBig[0], path, "exp_big0.ogg");
+	LoadSoundfile (EXPBig[1], path, "exp_big1.ogg");
+	LoadSoundfile (EXPBig[2], path, "exp_big2.ogg");
+	LoadSoundfile (EXPBig[3], path, "exp_big3.ogg");
+	LoadSoundfile (EXPSmallWet[0], path, "exp_small_wet0.ogg");
+	LoadSoundfile (EXPSmallWet[1], path, "exp_small_wet1.ogg");
+	LoadSoundfile (EXPSmallWet[2], path, "exp_small_wet2.ogg");
+	LoadSoundfile (EXPSmall[0], path, "exp_small0.ogg");
+	LoadSoundfile (EXPSmall[1], path, "exp_small1.ogg");
+	LoadSoundfile (EXPSmall[2], path, "exp_small2.ogg");
+	LoadSoundfile (SNDArm, path, "arm.ogg");
+	LoadSoundfile (SNDBuilding, path, "building.ogg");
+	LoadSoundfile (SNDClearing, path, "clearing.ogg");
+	LoadSoundfile (SNDQuitsch, path, "quitsch.ogg");
+	LoadSoundfile (SNDActivate, path, "activate.ogg");
+	LoadSoundfile (SNDLoad, path, "load.ogg");
+	LoadSoundfile (SNDReload, path, "reload.ogg");
+	LoadSoundfile (SNDRepair, path, "repair.ogg");
+	LoadSoundfile (SNDLandMinePlace, path, "land_mine_place.ogg");
+	LoadSoundfile (SNDLandMineClear, path, "land_mine_clear.ogg");
+	LoadSoundfile (SNDSeaMinePlace, path, "sea_mine_place.ogg");
+	LoadSoundfile (SNDSeaMineClear, path, "sea_mine_clear.ogg");
+	LoadSoundfile (SNDPanelOpen, path, "panel_open.ogg");
+	LoadSoundfile (SNDPanelClose, path, "panel_close.ogg");
+	LoadSoundfile (SNDAbsorb, path, "absorb.ogg");
+	return true;
 }
 
 static int LoadVoices (const char* path)

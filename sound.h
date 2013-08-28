@@ -30,22 +30,16 @@ extern void FreesSound (sSOUND* sound);
 typedef AutoObj<sSOUND, FreesSound> AutoSound;
 
 // Volumes ///////////////////////////////////////////////////////////////////
-#define SOUND_CHANNEL_MIN 0
-#define SOUND_CHANNEL_MAX 2
-#define VOICE_CHANNEL_MIN (SOUND_CHANNEL_MAX + 1)
-#define VOICE_CHANNEL_MAX 5
-EX int SoundChannel;
-EX int VoiceChannel;
 EX int SoundLoopChannel;
 
 // Musik /////////////////////////////////////////////////////////////////////
-EX std::string MainMusicFile;
-EX std::string CreditsMusicFile;
 EX std::vector<std::string> MusicFiles;
 
 // Sounds ////////////////////////////////////////////////////////////////////
 class cSoundData
 {
+public:
+	bool load (const char* path);
 public:
 	// General
 	AutoSound SNDAbsorb;
