@@ -1481,14 +1481,13 @@ int sUnitUpgrade::computedPurchasedCount (const cResearch& researchLevel)
 	int cost = 0;
 	const int bonusByResearch = uc.calcChangeByResearch (startValue, researchLevel.getCurResearchLevel (researchLevel.getResearchArea (upgradeType)));
 
-	other.curValue = other.startValue + bonusByResearch;
-	other.nextPrice = uc.calcPrice (other.curValue, other.startValue, upgradeType, researchLevel);
-	while (other.curValue != curValue)
+	other.purchased = 0;
+	while (other.curValue != startValue + bonusByResearch)
 	{
-		cost += other.purchase (researchLevel);
+		cost += other.cancelPurchase (researchLevel);
 	}
-	purchased = other.purchased;
-	return cost;
+	purchased += -other.purchased;
+	return -cost;
 }
 
 //--------------------------------------------------
