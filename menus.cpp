@@ -5389,5 +5389,5 @@ void cReportsMenu::doubleClicked (cUnit* unit)
 		return;
 	}
 	client->getGameGUI().selectUnit (*unit);
-	unit->center (client->getGameGUI());
+	client->getGameGUI().center (*unit);
 }

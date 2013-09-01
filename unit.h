@@ -20,7 +20,6 @@
 #define unitH
 
 #include <string>
-#include <SDL.h>
 #include "main.h" /// for sUnitData -> move that to cUnit, too?
 
 class cClient;
@@ -64,17 +63,6 @@ public:
 
 	bool isLocked() const { return lockerPlayer != NULL; }
 
-	SDL_Rect getMenuSize (const cGameGUI& gameGUI) const;
-	bool areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const;
-	void setMenuSelection (cGameGUI& gameGUI) const;
-	void drawMenu (cGameGUI& gameGUI) const;
-	void menuReleased (cGameGUI& gameGUI);
-	int getScreenPosX (const cGameGUI& gameGUI, bool movementOffset = true) const;
-	int getScreenPosY (const cGameGUI& gameGUI, bool movementOffset = true) const;
-	void center (cGameGUI& gameGUI) const;
-	void drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
-	void drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
-
 	void rotateTo (int newDir);
 
 	/** checks if the unit can attack something at the offset
@@ -92,11 +80,7 @@ public:
 
 	void deleteStoredUnits();
 
-protected:
-	void drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
-	int getNumberOfMenuEntries (const cClient& client) const;
-
-protected:
+//protected:
 	virtual bool isUnitMoving() const { return false; }
 	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }

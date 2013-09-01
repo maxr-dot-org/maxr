@@ -415,6 +415,13 @@ class cGameGUI : public cMenu
 	void selectUnit_vehicle (cVehicle& vehicle);
 	void selectUnit_building (cBuilding& building);
 
+	SDL_Rect getMenuSize (const cUnit& unit) const;
+	bool areCoordsOverMenu (const cUnit& unit, int x, int y) const;
+	void setMenuSelection (const cUnit& unit);
+	void drawMenu (const cUnit& unit);
+	void menuReleased (cUnit& unit);
+	int getNumberOfMenuEntries (const cUnit& unit) const;
+
 public:
 	cGameGUI();
 	~cGameGUI();
@@ -427,6 +434,15 @@ public:
 	void playStream (const cVehicle& vehicle);
 	void startMoveSound (const cVehicle& vehicle);
 	void stopFXLoop();
+
+	int getScreenPosX (const cUnit& unit, bool movementOffset = true) const;
+	int getScreenPosY (const cUnit& unit, bool movementOffset = true) const;
+	void center (const cUnit& unit);
+	void drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const;
+	void drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) const;
+
+	void drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const;
+
 
 	/** SDL_Timer for animations */
 	SDL_TimerID TimerID;

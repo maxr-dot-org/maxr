@@ -440,15 +440,15 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar (gameGUI, *screenPos);
+		gameGUI.drawHealthBar (*this, *screenPos);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0)
-		drawMunBar (gameGUI, *screenPos);
+		gameGUI.drawMunBar (*this, *screenPos);
 
 	//draw status
 	if (gameGUI.statusChecked())
-		drawStatus (gameGUI, *screenPos);
+		gameGUI.drawStatus (*this, *screenPos);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
@@ -1164,8 +1164,8 @@ bool cBuilding::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 //--------------------------------------------------------------------------
 void cBuilding::DrawExitPoints (const sUnitData& vehicleData, cGameGUI& gameGUI)
 {
-	int const spx = getScreenPosX (gameGUI);
-	int const spy = getScreenPosY (gameGUI);
+	int const spx = gameGUI.getScreenPosX (*this);
+	int const spy = gameGUI.getScreenPosY (*this);
 	cMap* map = gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[12] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1), T_2<int> (2, -1),

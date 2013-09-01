@@ -862,8 +862,8 @@ int cGameGUI::show (cClient* client)
 		{
 			cPlayer* player = client->getActivePlayer();
 
-			if (player->BuildingList) player->BuildingList->center (*this);
-			else if (player->VehicleList) player->VehicleList->center (*this);
+			if (player->BuildingList) center (*player->BuildingList);
+			else if (player->VehicleList) center (*player->VehicleList);
 			startup = false;
 		}
 
@@ -1763,7 +1763,7 @@ void cGameGUI::updateMouseCursor()
 			return;
 		}
 
-		if (selectedUnit && unitMenuActive && selectedUnit->areCoordsOverMenu (*this, x, y))
+		if (selectedUnit && unitMenuActive && areCoordsOverMenu (*selectedUnit, x, y))
 		{
 			mouse->SetCursor (CHand);
 		}
@@ -2126,10 +2126,10 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
 
-	if (selectedUnit && unitMenuActive && selectedUnit->areCoordsOverMenu (*this, mouseState.x, mouseState.y))
+	if (selectedUnit && unitMenuActive && areCoordsOverMenu (*selectedUnit, mouseState.x, mouseState.y))
 	{
-		if (mouseState.leftButtonPressed) selectedUnit->setMenuSelection (*this);
-		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) selectedUnit->menuReleased (*this);
+		if (mouseState.leftButtonPressed) setMenuSelection (*selectedUnit);
+		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) menuReleased (*selectedUnit);
 		return;
 	}
 
@@ -2379,7 +2379,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			//Hud.CheckButtons();
 			// check whether the mouse is over a unit menu:
-			if ( (selectedUnit && unitMenuActive && selectedUnit->areCoordsOverMenu (*this, mouseState.x, mouseState.y)))
+			if ( (selectedUnit && unitMenuActive && areCoordsOverMenu (*selectedUnit, mouseState.x, mouseState.y)))
 			{
 			}
 			else
@@ -3013,7 +3013,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb) setZoom (getZoom() + 0.05f, true, false);
 	else if (key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb) setZoom (getZoom() - 0.05f, true, false);
 	// position handling hotkeys
-	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedUnit) selectedUnit->center (*this);
+	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedUnit) center (*selectedUnit);
 	else if (key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT) savePosition (0);
 	else if (key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT) savePosition (1);
 	else if (key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT) savePosition (2);
@@ -3223,7 +3223,7 @@ void cGameGUI::helpReleased (void* parent)
 void cGameGUI::centerReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	if (gui->selectedUnit) gui->selectedUnit->center (*gui);
+	if (gui->selectedUnit) gui->center (*gui->selectedUnit);
 }
 
 void cGameGUI::reportsReleased (void* parent)
@@ -3249,7 +3249,7 @@ void cGameGUI::nextReleased (void* parent)
 	if (unit)
 	{
 		gui->selectUnit (*unit);
-		unit->center (*gui);
+		gui->center (*unit);
 	}
 }
 
@@ -3260,7 +3260,7 @@ void cGameGUI::prevReleased (void* parent)
 	if (unit)
 	{
 		gui->selectUnit (*unit);
-		unit->center (*gui);
+		gui->center (*unit);
 	}
 }
 
@@ -3278,7 +3278,7 @@ void cGameGUI::doneReleased (void* parent)
 
 	if (unit && unit->owner == gui->client->getActivePlayer())
 	{
-		unit->center (*gui);
+		gui->center (*unit);
 		unit->isMarkedAsDone = true;
 		sendMoveJobResume (*gui->client, unit->iID);
 	}
@@ -3505,7 +3505,7 @@ void cGameGUI::preDrawFunction()
 
 	drawUnitCircles();
 
-	if (selectedUnit && unitMenuActive) selectedUnit->drawMenu (*this);
+	if (selectedUnit && unitMenuActive) drawMenu (*selectedUnit);
 
 	drawFx (false);
 
@@ -4159,8 +4159,8 @@ void cGameGUI::drawUnitCircles()
 	{
 		cVehicle& v = *selectedVehicle;
 		const bool movementOffset = !v.IsBuilding && !v.IsClearing;
-		const int spx = v.getScreenPosX (*this, movementOffset);
-		const int spy = v.getScreenPosY (*this, movementOffset);
+		const int spx = getScreenPosX (v, movementOffset);
+		const int spy = getScreenPosY (v, movementOffset);
 		if (scanChecked())
 		{
 			if (v.data.isBig)
@@ -4250,8 +4250,8 @@ void cGameGUI::drawUnitCircles()
 	}
 	else if (selectedBuilding && selectedUnit->isDisabled() == false)
 	{
-		const int spx = selectedBuilding->getScreenPosX (*this);
-		const int spy = selectedBuilding->getScreenPosY (*this);
+		const int spx = getScreenPosX (*selectedBuilding);
+		const int spy = getScreenPosY (*selectedBuilding);
 		if (scanChecked())
 		{
 			if (selectedBuilding->data.isBig)
@@ -4315,7 +4315,7 @@ void cGameGUI::drawLockList (cPlayer& player)
 			i--;
 			continue;
 		}
-		const SDL_Rect screenPos = {Sint16 (unit->getScreenPosX (*this)), Sint16 (unit->getScreenPosY (*this)), 0, 0};
+		const SDL_Rect screenPos = {Sint16 (getScreenPosX (*unit)), Sint16 (getScreenPosY (*unit)), 0, 0};
 
 		if (scanChecked())
 		{
@@ -4331,9 +4331,9 @@ void cGameGUI::drawLockList (cPlayer& player)
 			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
 						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 		if (ammoChecked() && unit->data.canAttack)
-			unit->drawMunBar (*this, screenPos);
+			drawMunBar (*unit, screenPos);
 		if (hitsChecked())
-			unit->drawHealthBar (*this, screenPos);
+			drawHealthBar (*unit, screenPos);
 	}
 }
 
@@ -4399,4 +4399,897 @@ void cGameGUI::jumpToSavedPos (int slotNumber)
 	const int offsetY = savedPositions[slotNumber].offsetY - (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom() / 2);
 
 	setOffsetPosition (offsetX, offsetY);
+}
+
+//------------------------------------------------------------------------------
+/** Returns the size of the menu and the position */
+//------------------------------------------------------------------------------
+SDL_Rect cGameGUI::getMenuSize (const cUnit& unit) const
+{
+	SDL_Rect dest;
+	dest.x = getScreenPosX (unit);
+	dest.y = getScreenPosY (unit);
+	dest.h = getNumberOfMenuEntries (unit) * 22;
+	dest.w = 42;
+	const int i = dest.h;
+	int size = getTileSize();
+
+	if (unit.data.isBig)
+		size *= 2;
+
+	if (dest.x + size + 42 >= Video.getResolutionX() - 12)
+		dest.x -= 42;
+	else
+		dest.x += size;
+
+	if (dest.y - (i - size) / 2 <= 24)
+	{
+		dest.y -= (i - size) / 2;
+		dest.y += - (dest.y - 24);
+	}
+	else if (dest.y - (i - size) / 2 + i >= Video.getResolutionY() - 24)
+	{
+		dest.y -= (i - size) / 2;
+		dest.y -= (dest.y + i) - (Video.getResolutionY() - 24);
+	}
+	else
+		dest.y -= (i - size) / 2;
+
+	return dest;
+}
+
+//------------------------------------------------------------------------------
+/** Returns true, if the coordinates are in the menu's space */
+//------------------------------------------------------------------------------
+bool cGameGUI::areCoordsOverMenu (const cUnit& unit, int x, int y) const
+{
+	const SDL_Rect r = getMenuSize (unit);
+
+	if (x < r.x || x > r.x + r.w)
+		return false;
+	if (y < r.y || y > r.y + r.h)
+		return false;
+	return true;
+}
+
+//------------------------------------------------------------------------------
+void cGameGUI::setMenuSelection (const cUnit& unit)
+{
+	SDL_Rect dest = getMenuSize (unit);
+	selectedMenuButtonIndex = (mouse->y - dest.y) / 22;
+}
+
+//------------------------------------------------------------------------------
+int cGameGUI::getNumberOfMenuEntries (const cUnit& unit) const
+{
+	int result = 2; // Info/Help + Done
+
+	if (unit.owner != client->getActivePlayer())
+		return result;
+	if (unit.isDisabled()) return result;
+
+	// Attack
+	if (unit.data.canAttack && unit.data.shotsCur)
+		++result;
+
+	// Build
+	if (unit.data.canBuild.empty() == false && unit.isUnitBuildingABuilding() == false)
+		++result;
+
+	// Distribute
+	if (unit.data.canMineMaxRes > 0 && unit.isUnitWorking())
+		++result;
+
+	// Transfer
+	if (unit.data.storeResType != sUnitData::STORE_RES_NONE && unit.isUnitBuildingABuilding() == false && unit.isUnitClearing() == false)
+		++result;
+
+	// Start
+	if (unit.data.canWork && unit.buildingCanBeStarted())
+		++result;
+
+	// Auto survey
+	if (unit.data.canSurvey)
+		++result;
+
+	// Stop
+	if (unit.canBeStoppedViaUnitMenu())
+		++result;
+
+	// Remove
+	if (unit.data.canClearArea && client->getMap()->fields[client->getMap()->getOffset (unit.PosX, unit.PosY)].getRubble() && unit.isUnitClearing() == false)
+		++result;
+
+	// Manual Fire
+	if (unit.manualFireActive || unit.data.canAttack)
+		++result;
+
+	// Sentry
+	if (unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu()))
+		++result;
+
+	// Activate / Load
+	if (unit.data.storageUnitsMax > 0)
+		result += 2;
+
+	// Research
+	if (unit.data.canResearch && unit.isUnitWorking())
+		++result;
+
+	// Gold upgrades screen
+	if (unit.data.convertsGold)
+		++result;
+
+	// Update building(s)
+	if (unit.buildingCanBeUpgraded())
+		result += 2;
+
+	// Self destruct
+	if (unit.data.canSelfDestroy)
+		++result;
+
+	// Ammo
+	if (unit.data.canRearm && unit.data.storageResCur >= 1)
+		++result;
+
+	// Repair
+	if (unit.data.canRepair && unit.data.storageResCur >= 1)
+		++result;
+
+	// Lay Mines
+	if (unit.data.canPlaceMines && unit.data.storageResCur > 0)
+		++result;
+
+	// Clear Mines
+	if (unit.data.canPlaceMines && unit.data.storageResCur < unit.data.storageResMax)
+		++result;
+
+	// Sabotage/disable
+	if (unit.data.canCapture && unit.data.shotsCur)
+		++result;
+
+	// Steal
+	if (unit.data.canDisable && unit.data.shotsCur)
+		++result;
+
+	return result;
+}
+
+//------------------------------------------------------------------------------
+void cGameGUI::drawMenu (const cUnit& unit)
+{
+	if (unit.isBeeingAttacked)
+		return;
+	if (unit.isUnitMoving())
+		return;
+
+	if (mouseInputMode == activateVehicle)
+	{
+		unitMenuActive = false;
+		return;
+	}
+
+	if (unit.factoryHasJustFinishedBuilding())
+		return;
+
+	SDL_Rect dest = getMenuSize (unit);
+	bool markerPossible = (areCoordsOverMenu (unit, mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
+	int nr = 0;
+
+	if (unit.isDisabled() == false && unit.owner == client->getActivePlayer())
+	{
+		// Attack:
+		if (unit.data.canAttack && unit.data.shotsCur)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == mouseInputAttackMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Build:
+		if (unit.data.canBuild.empty() == false && unit.isUnitBuildingABuilding() == false)
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Distribute:
+		if (unit.data.canMineMaxRes > 0 && unit.isUnitWorking())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Transfer:
+		if (unit.data.storeResType != sUnitData::STORE_RES_NONE && unit.isUnitBuildingABuilding() == false && unit.isUnitClearing() == false)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == transferMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Start:
+		if (unit.data.canWork && unit.buildingCanBeStarted())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Auto survey movejob of surveyor
+		if (unit.data.canSurvey)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isAutoMoveJobActive();
+			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Stop:
+		if (unit.canBeStoppedViaUnitMenu())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Remove:
+		if (unit.data.canClearArea && client->getMap()->fields[client->getMap()->getOffset (unit.PosX, unit.PosY)].getRubble() && unit.isUnitClearing() == false)
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Manual fire
+		if ( (unit.manualFireActive || unit.data.canAttack))
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.manualFireActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Sentry status:
+		if ( (unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.sentryActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Activate / Load:
+		if (unit.data.storageUnitsMax > 0)
+		{
+			// Activate:
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+
+			// Load:
+			isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == loadMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// research
+		if (unit.data.canResearch && unit.isUnitWorking())
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// gold upgrades screen
+		if (unit.data.convertsGold)
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Updates:
+		if (unit.buildingCanBeUpgraded())
+		{
+			// Update all buildings of this type in this subbase
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+
+			// update this building
+			isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Self destruct
+		if (unit.data.canSelfDestroy)
+		{
+			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Ammo:
+		if (unit.data.canRearm && unit.data.storageResCur >= 1)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == muniActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Repair:
+		if (unit.data.canRepair && unit.data.storageResCur >= 1)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == repairActive;
+			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Lay mines:
+		if (unit.data.canPlaceMines && unit.data.storageResCur > 0)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isUnitLayingMines();
+			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Collect/clear mines:
+		if (unit.data.canPlaceMines && unit.data.storageResCur < unit.data.storageResMax)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isUnitClearingMines();
+			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Sabotage/disable:
+		if (unit.data.canDisable && unit.data.shotsCur)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == disableMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+		// Steal:
+		if (unit.data.canCapture && unit.data.shotsCur)
+		{
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == stealMode;
+			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
+			dest.y += 22;
+			++nr;
+		}
+
+	}
+	// Info:
+	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
+	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
+	dest.y += 22;
+	++nr;
+
+	// Done:
+	isMarked = markerPossible && selectedMenuButtonIndex == nr;
+	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
+}
+
+//------------------------------------------------------------------------------
+void cGameGUI::menuReleased (cUnit& unit)
+{
+	SDL_Rect dest = getMenuSize (unit);
+	int exeNr = -1000;
+	if (areCoordsOverMenu (unit, mouse->x, mouse->y))
+		exeNr = (mouse->y - dest.y) / 22;
+
+	if (exeNr != selectedMenuButtonIndex)
+	{
+		selectedMenuButtonIndex = -1;
+		return;
+	}
+	if (unit.isUnitMoving() || unit.isBeeingAttacked)
+		return;
+
+	if (unit.factoryHasJustFinishedBuilding())
+		return;
+
+	int nr = 0;
+
+	// no menu if something disabled - origina behavior -- nonsinn
+	if (unit.isDisabled() == false && unit.owner == client->getActivePlayer())
+	{
+		// attack:
+		if (unit.data.canAttack && unit.data.shotsCur)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (mouseInputAttackMode);
+				return;
+			}
+			++nr;
+		}
+
+		// Build:
+		if (unit.data.canBuild.empty() == false && unit.isUnitBuildingABuilding() == false)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				unit.executeBuildCommand (*this);
+				return;
+			}
+			++nr;
+		}
+
+		// distribute:
+		if (unit.data.canMineMaxRes > 0 && unit.isUnitWorking())
+		{
+			if (exeNr == nr)
+			{
+				cBuilding* building = static_cast<cBuilding*> (&unit);
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				building->executeMineManagerCommand (*client);
+				return;
+			}
+			++nr;
+		}
+
+		// transfer:
+		if (unit.data.storeResType != sUnitData::STORE_RES_NONE && unit.isUnitBuildingABuilding() == false && unit.isUnitClearing() == false)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (transferMode);
+				return;
+			}
+			++nr;
+		}
+
+		// Start:
+		if (unit.data.canWork && unit.buildingCanBeStarted())
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendWantStartWork (*client, unit);
+				return;
+			}
+			++nr;
+		}
+
+		// auto
+		if (unit.data.canSurvey)
+		{
+			if (exeNr == nr)
+			{
+				cVehicle* vehicle = static_cast<cVehicle*> (&unit);
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				vehicle->executeAutoMoveJobCommand (*client);
+				return;
+			}
+			++nr;
+		}
+
+		// stop:
+		if (unit.canBeStoppedViaUnitMenu())
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				unit.executeStopCommand (*client);
+				return;
+			}
+			++nr;
+		}
+
+		// remove:
+		if (unit.data.canClearArea && client->getMap()->fields[client->getMap()->getOffset (unit.PosX, unit.PosY)].getRubble() != 0 && unit.isUnitClearing() == false)
+		{
+			if (exeNr == nr)
+			{
+				assert (unit.isAVehicle());
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendWantStartClear (*client, static_cast<cVehicle&> (unit));
+				return;
+			}
+			++nr;
+		}
+
+		// manual Fire:
+		if (unit.manualFireActive || unit.data.canAttack)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendChangeManualFireStatus (*client, unit.iID, unit.isAVehicle());
+				return;
+			}
+			++nr;
+		}
+
+		// sentry:
+		if (unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu()))
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				sendChangeSentry (*client, unit.iID, unit.isAVehicle());
+				return;
+			}
+			++nr;
+		}
+
+		// activate/load:
+		if (unit.data.storageUnitsMax > 0)
+		{
+			// activate:
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				unit.executeActivateStoredVehiclesCommand (*client);
+				return;
+			}
+			++nr;
+
+			// load:
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (loadMode);
+				return;
+			}
+			++nr;
+		}
+
+		// research
+		if (unit.data.canResearch && unit.isUnitWorking())
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				cDialogResearch researchDialog (*client);
+				researchDialog.show (client);
+				return;
+			}
+			++nr;
+		}
+
+		// gold upgrades screen
+		if (unit.data.convertsGold)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				cUpgradeMenu upgradeMenu (*client);
+				upgradeMenu.show (client);
+				return;
+			}
+			++nr;
+		}
+
+		// Updates:
+		if (unit.buildingCanBeUpgraded())
+		{
+			// Update all buildings of this type in this subbase
+			if (exeNr == nr)
+			{
+				cBuilding* building = static_cast<cBuilding*> (&unit);
+
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				building->executeUpdateBuildingCommmand (*client, true);
+				return;
+			}
+			++nr;
+
+			// update this building
+			if (exeNr == nr)
+			{
+				cBuilding* building = static_cast<cBuilding*> (&unit);
+
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				building->executeUpdateBuildingCommmand (*client, false);
+				return;
+			}
+			++nr;
+		}
+
+		// Self destruct
+		if (unit.data.canSelfDestroy)
+		{
+			if (exeNr == nr)
+			{
+				cBuilding* building = static_cast<cBuilding*> (&unit);
+
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				building->executeSelfDestroyCommand (*client);
+				return;
+			}
+			++nr;
+		}
+
+		// rearm:
+		if (unit.data.canRearm && unit.data.storageResCur >= 1)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (muniActive);
+				return;
+			}
+			++nr;
+		}
+
+		// repair:
+		if (unit.data.canRepair && unit.data.storageResCur >= 1)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (repairActive);
+				return;
+			}
+			++nr;
+		}
+
+		// lay mines:
+		if (unit.data.canPlaceMines && unit.data.storageResCur > 0)
+		{
+			if (exeNr == nr)
+			{
+				cVehicle* vehicle = static_cast<cVehicle*> (&unit);
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				vehicle->executeLayMinesCommand (*client);
+				return;
+			}
+			++nr;
+		}
+
+		// clear mines:
+		if (unit.data.canPlaceMines && unit.data.storageResCur < unit.data.storageResMax)
+		{
+			if (exeNr == nr)
+			{
+				cVehicle* vehicle = static_cast<cVehicle*> (&unit);
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				vehicle->executeClearMinesCommand (*client);
+				return;
+			}
+			++nr;
+		}
+
+		// disable:
+		if (unit.data.canDisable && unit.data.shotsCur > 0)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (disableMode);
+				return;
+			}
+			++nr;
+		}
+
+		// steal:
+		if (unit.data.canCapture && unit.data.shotsCur > 0)
+		{
+			if (exeNr == nr)
+			{
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				toggleMouseInputMode (stealMode);
+				return;
+			}
+			++nr;
+		}
+	}
+	// help/info:
+	if (exeNr == nr)
+	{
+		unitMenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		cUnitHelpMenu helpMenu (&unit.data, unit.owner);
+		helpMenu.show (client);
+		return;
+	}
+	++nr;
+
+	// done:
+	if (exeNr == nr)
+	{
+		unitMenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		if (unit.owner == client->getActivePlayer())
+		{
+			unit.isMarkedAsDone = true;
+			sendMoveJobResume (*client, unit.iID);
+		}
+		return;
+	}
+}
+
+//------------------------------------------------------------------------------
+/** Returns the screen x position of the unit */
+//------------------------------------------------------------------------------
+int cGameGUI::getScreenPosX (const cUnit& unit, bool movementOffset) const
+{
+	const int offset = movementOffset ? unit.getMovementOffsetX() : 0;
+	return 180 - ( (int) ( (getOffsetX() - offset) * getZoom())) + getTileSize() * unit.PosX;
+}
+
+//------------------------------------------------------------------------------
+/** Returns the screen y position of the unit */
+//------------------------------------------------------------------------------
+int cGameGUI::getScreenPosY (const cUnit& unit, bool movementOffset) const
+{
+	const int offset = movementOffset ? unit.getMovementOffsetY() : 0;
+	return 18 - ( (int) ( (getOffsetY() - offset) * getZoom())) + getTileSize() * unit.PosY;
+}
+
+//------------------------------------------------------------------------------
+/** Centers on this unit */
+//------------------------------------------------------------------------------
+void cGameGUI::center (const cUnit& unit)
+{
+	const int offX = unit.PosX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * getTileSize())) * 64)) + 32;
+	const int offY = unit.PosY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32)  / (2 * getTileSize())) * 64)) + 32;
+	setOffsetPosition (offX, offY);
+}
+
+//------------------------------------------------------------------------------
+/** Draws the ammunition bar over the unit */
+//------------------------------------------------------------------------------
+void cGameGUI::drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const
+{
+	if (unit.owner != getClient()->getActivePlayer())
+		return;
+
+	SDL_Rect r1;
+	r1.x = screenPos.x + getTileSize() / 10 + 1;
+	r1.y = screenPos.y + getTileSize() / 10 + getTileSize() / 8;
+	r1.w = getTileSize() * 8 / 10;
+	r1.h = getTileSize() / 8;
+
+	if (r1.h <= 2)
+	{
+		r1.y += 1;
+		r1.h = 3;
+	}
+
+	SDL_Rect r2;
+	r2.x = r1.x + 1;
+	r2.y = r1.y + 1;
+	r2.w = (int) ( ( (float) (r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
+	r2.h = r1.h - 2;
+
+	SDL_FillRect (buffer, &r1, 0);
+
+	if (unit.data.ammoCur > unit.data.ammoMax / 2)
+		SDL_FillRect (buffer, &r2, 0x0004AE04);
+	else if (unit.data.ammoCur > unit.data.ammoMax / 4)
+		SDL_FillRect (buffer, &r2, 0x00DBDE00);
+	else
+		SDL_FillRect (buffer, &r2, 0x00E60000);
+}
+
+//------------------------------------------------------------------------------
+/** draws the health bar over the unit */
+//------------------------------------------------------------------------------
+void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) const
+{
+	SDL_Rect r1;
+	r1.x = screenPos.x + getTileSize() / 10 + 1;
+	r1.y = screenPos.y + getTileSize() / 10;
+	r1.w = getTileSize() * 8 / 10;
+	r1.h = getTileSize() / 8;
+
+	if (unit.data.isBig)
+	{
+		r1.w += getTileSize();
+		r1.h *= 2;
+	}
+
+	if (r1.h <= 2)
+		r1.h = 3;
+
+	SDL_Rect r2;
+	r2.x = r1.x + 1;
+	r2.y = r1.y + 1;
+	r2.w = (int) ( ( (float) (r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
+	r2.h = r1.h - 2;
+
+	SDL_FillRect (buffer, &r1, 0);
+
+	if (unit.data.hitpointsCur > unit.data.hitpointsMax / 2)
+		SDL_FillRect (buffer, &r2, 0x0004AE04);
+	else if (unit.data.hitpointsCur > unit.data.hitpointsMax / 4)
+		SDL_FillRect (buffer, &r2, 0x00DBDE00);
+	else
+		SDL_FillRect (buffer, &r2, 0x00E60000);
+}
+
+//------------------------------------------------------------------------------
+void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
+{
+	SDL_Rect speedSymbol = {244, 97, 8, 10};
+	SDL_Rect shotsSymbol = {254, 97, 5, 10};
+	SDL_Rect disabledSymbol = {150, 109, 25, 25};
+	SDL_Rect dest;
+
+	if (unit.isDisabled())
+	{
+		if (getTileSize() < 25)
+			return;
+		dest.x = screenPos.x + getTileSize() / 2 - 12;
+		dest.y = screenPos.y + getTileSize() / 2 - 12;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest);
+	}
+	else
+	{
+		dest.y = screenPos.y + getTileSize() - 11;
+		dest.x = screenPos.x + getTileSize() / 2 - 4;
+		if (unit.data.isBig)
+		{
+			dest.y += (getTileSize() / 2);
+			dest.x += (getTileSize() / 2);
+		}
+		if (unit.data.speedCur >= 4)
+		{
+			if (unit.data.shotsCur)
+				dest.x -= getTileSize() / 4;
+
+			SDL_Rect destCopy = dest;
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy);
+		}
+
+		dest.x = screenPos.x + getTileSize() / 2 - 4;
+		if (unit.data.shotsCur)
+		{
+			if (unit.data.speedCur)
+				dest.x += getTileSize() / 4;
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest);
+		}
+	}
 }

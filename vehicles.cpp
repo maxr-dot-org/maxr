@@ -395,15 +395,15 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar (gameGUI, screenPosition);
+		gameGUI.drawHealthBar (*this, screenPosition);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack)
-		drawMunBar (gameGUI, screenPosition);
+		gameGUI.drawMunBar (*this, screenPosition);
 
 	//draw status info
 	if (gameGUI.statusChecked())
-		drawStatus (gameGUI, screenPosition);
+		gameGUI.drawStatus (*this, screenPosition);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
@@ -1525,8 +1525,8 @@ bool cVehicle::provokeReactionFire (cServer& server)
 //-----------------------------------------------------------------------------
 void cVehicle::DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const
 {
-	const int spx = getScreenPosX (gameGUI);
-	const int spy = getScreenPosY (gameGUI);
+	const int spx = gameGUI.getScreenPosX (*this);
+	const int spy = gameGUI.getScreenPosY (*this);
 	const cMap* map = gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[8] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1),
