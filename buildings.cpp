@@ -1088,22 +1088,11 @@ bool cBuilding::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 		if (v->IsBuilding || v->IsClearing)
 			return false;
 
-		for (unsigned int i = 0; i < SubBase->buildings.size(); i++)
+		for (size_t i = 0; i != SubBase->buildings.size(); ++i)
 		{
 			const cBuilding* b = SubBase->buildings[i];
 
-			if (b->data.isBig)
-			{
-				if (x < b->PosX - 1 || x > b->PosX + 2 || y < b->PosY - 1 || y > b->PosY + 2)
-					continue;
-			}
-			else
-			{
-				if (x < b->PosX - 1 || x > b->PosX + 1 || y < b->PosY - 1 || y > b->PosY + 1)
-					continue;
-			}
-
-			return true;
+			if (b->isNextTo (x, y)) return true;
 		}
 
 		return false;

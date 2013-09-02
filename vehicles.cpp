@@ -1231,7 +1231,7 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 {
-	if (x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1)
+	if (isNextTo (x, y) == false)
 		return false;
 
 	if (OverUnitField->getVehicle())
