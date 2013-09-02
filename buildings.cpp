@@ -232,6 +232,48 @@ int cBuilding::refreshData()
 	return 0;
 }
 
+namespace
+{
+
+// TODO: Factorize with code in menuitems.cpp
+void DrawRectangle (SDL_Surface* surface, const SDL_Rect& rectangle, Uint32 color, Uint16 borderSize)
+{
+	SDL_Rect line_h = {rectangle.x, rectangle.y, rectangle.w, borderSize};
+	SDL_FillRect (surface, &line_h, color);
+	line_h.y += rectangle.h - borderSize;
+	SDL_FillRect (surface, &line_h, color);
+	SDL_Rect line_v = {rectangle.x, rectangle.y, borderSize, rectangle.h};
+	SDL_FillRect (surface, &line_v, color);
+	line_v.x += rectangle.w - borderSize;
+	SDL_FillRect (surface, &line_v, color);
+}
+
+// TODO: Factorize with code in menuitems.cpp
+void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint16 cornerSize, Uint32 color)
+{
+	SDL_Rect line_h = { rectangle.x, rectangle.y, cornerSize, 1 };
+	SDL_FillRect (surface, &line_h, color);
+	line_h.x += rectangle.w - 1 - cornerSize;
+	SDL_FillRect (surface, &line_h, color);
+	line_h.x = rectangle.x;
+	line_h.y += rectangle.h - 1;
+	SDL_FillRect (surface, &line_h, color);
+	line_h.x += rectangle.w - 1 - cornerSize;
+	SDL_FillRect (surface, &line_h, color);
+
+	SDL_Rect line_v = { rectangle.x, rectangle.y, 1, cornerSize };
+	SDL_FillRect (surface, &line_v, color);
+	line_v.y += rectangle.h - 1 - cornerSize;
+	SDL_FillRect (surface, &line_v, color);
+	line_v.x += rectangle.w - 1;
+	line_v.y = rectangle.y;
+	SDL_FillRect (surface, &line_v, color);
+	line_v.y += rectangle.h - 1 - cornerSize;
+	SDL_FillRect (surface, &line_v, color);
+}
+
+}
+
 //--------------------------------------------------------------------------
 void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 {
@@ -334,29 +376,11 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	// draw the mark, when a build order is finished
 	if ( ( (!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
-		SDL_Rect d, t;
-		int max, nr;
-		nr = 0xFF00 - ( (gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
-		max = (int) (gameGUI.getTileSize() - 2) * 2;
-		d.x = dest.x + 2;
-		d.y = dest.y + 2;
-		d.w = max;
-		d.h = 1;
-		t = d;
-		SDL_FillRect (buffer, &d, nr);
-		d = t;
-		d.y += max - 1;
-		t = d;
-		SDL_FillRect (buffer, &d, nr);
-		d = t;
-		d.y = dest.y + 2;
-		d.w = 1;
-		d.h = max;
-		t = d;
-		SDL_FillRect (buffer, &d, nr);
-		d = t;
-		d.x += max - 1;
-		SDL_FillRect (buffer, &d, nr);
+		const Uint32 color = 0xFF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
+		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
+		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
+
+		DrawRectangle (buffer, d, color, 3);
 	}
 
 #if 0
@@ -368,74 +392,21 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	// draw a colored frame if necessary
 	if (gameGUI.colorChecked())
 	{
-		SDL_Rect d, t;
-		int nr = *static_cast<Uint32*> (owner->getColorSurface()->pixels);
-		int max = data.isBig ? ( (int) (gameGUI.getTileSize()) - 1) * 2 : (int) (gameGUI.getTileSize()) - 1;
+		const Uint32 color = *static_cast<Uint32*> (owner->getColorSurface()->pixels);
+		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
+		SDL_Rect d = {Sint16 (dest.x + 1), Sint16 (dest.y + 1), max, max};
 
-		d.x = dest.x + 1;
-		d.y = dest.y + 1;
-		d.w = max;
-		d.h = 1;
-		t = d;
-		SDL_FillRect (buffer, &d, nr);
-		d = t;
-		d.y += max - 1;
-		t = d;
-		SDL_FillRect (buffer, &d, nr);
-		d = t;
-		d.y = dest.y + 1;
-		d.w = 1;
-		d.h = max;
-		t = d;
-		SDL_FillRect (buffer, &d, nr);
-		d = t;
-		d.x += max - 1;
-		SDL_FillRect (buffer, &d, nr);
+		DrawRectangle (buffer, d, color, 1);
 	}
 #endif
 	// draw the seleted-unit-flash-frame for bulidings
 	if (gameGUI.getSelectedUnit() == this)
 	{
-		SDL_Rect d, t;
-		int max = data.isBig ? (int) (gameGUI.getTileSize()) * 2 : (int) (gameGUI.getTileSize());
-		int len = max / 4;
-		//hor
-		d.x = dest.x + 2;
-		d.y = dest.y + 2;
-		d.w = len;
-		d.h = 1;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		d.x += max - len - 3;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		d.y += max - 4;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		d.x = dest.x + 2;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		//vert
-		d.y = dest.y + 2;
-		d.w = 1;
-		d.h = len;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		d.x += max - 4;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		d.y += max - len - 3;
-		t = d;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
-		d = t;
-		d.x = dest.x + 2;
-		SDL_FillRect (buffer, &d, gameGUI.getBlinkColor());
+		Uint16 max = data.isBig ? gameGUI.getTileSize() * 2 : gameGUI.getTileSize();
+		const int len = max / 4;
+		max -= 3;
+		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
+		DrawSelectionCorner(buffer, d, len, gameGUI.getBlinkColor());
 	}
 
 	//draw health bar
