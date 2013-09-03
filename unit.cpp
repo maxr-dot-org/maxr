@@ -22,17 +22,11 @@
 #include "attackJobs.h"
 #include "client.h"
 #include "clientevents.h"
-#include "dialog.h"
-#include "hud.h"
-#include "menus.h"
-#include "mouse.h"
+#include "map.h"
 #include "player.h"
-#include "video.h"
 
 #include "buildings.h"
 #include "vehicles.h"
-
-#include <cmath>
 
 using namespace std;
 
