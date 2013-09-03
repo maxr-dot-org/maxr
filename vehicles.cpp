@@ -952,13 +952,10 @@ void cVehicle::DecSpeed (int value)
 {
 	data.speedCur -= value;
 
-	if (data.canAttack == false) return;
+	if (data.canAttack == false || data.canDriveAndFire) return;
 
-	const float f = (float) data.shotsMax / data.speedMax;
-	const int s = (int) (data.speedCur * f);
-
-	if (!data.canDriveAndFire && s < data.shotsCur && s >= 0)
-		data.shotsCur = s;
+	const int s = data.speedCur * data.shotsMax / data.speedMax;
+	data.shotsCur = std::min (data.shotsCur, s);
 }
 
 //-----------------------------------------------------------------------------
@@ -968,7 +965,7 @@ void cVehicle::calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCo
 	iTurboBuildRounds[1] = 0;
 	iTurboBuildRounds[2] = 0;
 
-	//prevent division by zero
+	// prevent division by zero
 	if (data.needsMetal == 0) data.needsMetal = 1;
 
 	// step 1x
@@ -1339,7 +1336,8 @@ bool cVehicle::InSentryRange (cServer& server)
 //-----------------------------------------------------------------------------
 bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const
 {
-	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
+	// don't treat the cheap buildings
+	// (connectors, roads, beton blocks) as offendable
 	bool otherUnitIsCheapBuilding = (otherUnit.isABuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2); //FIXME: isn't the check inverted?
 
 	if (otherUnitIsCheapBuilding == false
@@ -1359,7 +1357,9 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 {
 	if (server.isTurnBasedGame())
 	{
-		// In the turn based game style, the opponent always fires on the unit if he can, regardless if the unit is offending or not.
+		// In the turn based game style,
+		// the opponent always fires on the unit if he can,
+		// regardless if the unit is offending or not.
 		return true;
 	}
 	else
@@ -1389,7 +1389,8 @@ bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) cons
 {
 	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
 		&& opponentUnit->canAttackObjectAt (PosX, PosY, server.Map, true)
-		// Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
+		// Possible TODO: better handling of stealth units.
+		// e.g. do reaction fire, if already detected ?
 		&& (opponentUnit->isAVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
 	{
 		if (makeAttackOnThis (server, opponentUnit, "reaction fire"))
@@ -1496,7 +1497,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->Loaded) return false;
 
-	if (data.storageUnitsCur >= data.storageUnitsMax)	return false;
+	if (data.storageUnitsCur >= data.storageUnitsMax) return false;
 
 	if (checkPosition && !isNextTo (Vehicle->PosX, Vehicle->PosY)) return false;
 
@@ -1582,16 +1583,8 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 	if (data.storageResCur <= 0)
 		return false;
 
-	if (unit->data.isBig == false)
-	{
-		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 1 || unit->PosY > PosY + 1 || unit->PosY < PosY - 1)
-			return false;
-	}
-	else
-	{
-		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 2 || unit->PosY > PosY + 1 || unit->PosY < PosY - 2)
-			return false;
-	}
+	if (unit->isNextTo (PosX, PosY) == false)
+		return false;
 
 	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0)
 		return false;
@@ -1623,7 +1616,7 @@ bool cVehicle::layMine (cServer& server)
 	if (data.storageResCur <= 0) return false;
 
 	const cMap& map = *server.Map;
-	if ( (data.factorSea > 0 && data.factorGround == 0))
+	if (data.factorSea > 0 && data.factorGround == 0)
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
 		server.addBuilding (PosX, PosY, UnitsData.specialIDSeaMine, owner, false);
@@ -1709,11 +1702,7 @@ void cVehicle::drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) 
 		sf = GraphicsData.gfx_Cdisable;
 	}
 
-	SDL_Rect r;
-	r.x = 1;
-	r.y = 28;
-	r.h = 3;
-	r.w = 35;
+	SDL_Rect r = {1, 28, 35, 3};
 
 	if (unit == 0)
 	{
@@ -1721,9 +1710,9 @@ void cVehicle::drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) 
 		return;
 	}
 
-	SDL_FillRect (sf, &r, 0xFF0000);
+	SDL_FillRect (sf, &r, 0x00FF0000);
 	r.w = 35 * calcCommandoChance (unit, steal) / 100;
-	SDL_FillRect (sf, &r, 0x00FF00);
+	SDL_FillRect (sf, &r, 0x0000FF00);
 }
 
 //-----------------------------------------------------------------------------
@@ -1732,8 +1721,10 @@ int cVehicle::calcCommandoChance (const cUnit* destUnit, bool steal) const
 	if (destUnit == 0)
 		return 0;
 
-	// TODO: include cost research and clan modifications? Or should always the basic version without clanmods be used?
-	// TODO: Bug for buildings? /3? or correctly /2, because constructing buildings takes two resources per turn?
+	// TODO: include cost research and clan modifications ?
+	// Or should always the basic version without clanmods be used ?
+	// TODO: Bug for buildings ? /3? or correctly /2,
+	// because constructing buildings takes two resources per turn ?
 	int destTurn = destUnit->data.buildCosts / 3;
 
 	int factor = steal ? 1 : 4;
@@ -1848,8 +1839,8 @@ void cVehicle::tryResetOfDetectionStateAfterMove (cServer& server)
 std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 {
 	std::vector<cPlayer*> playersThatDetectThisVehicle;
-	//check whether the vehicle has been detected by others
-	if (data.isStealthOn != TERRAIN_NONE)   // the vehicle is a stealth vehicle
+	// check whether the vehicle has been detected by others
+	if (data.isStealthOn != TERRAIN_NONE)  // the vehicle is a stealth vehicle
 	{
 		cMap& map = *server.Map;
 		int offset = map.getOffset (PosX, PosY);
@@ -1862,8 +1853,9 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 			bool isOnWater = map.isWater (offset);
 			bool isOnCoast = map.isCoast (offset) && (isOnWater == false);
 
-			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
-			//because the vehicle will drive on the bridge
+			// if the vehicle can also drive on land, we have to check,
+			// whether there is a brige, platform, etc.
+			// because the vehicle will drive on the bridge
 			const cBuilding* building = map.fields[offset].getBaseBuilding();
 			if (data.factorGround > 0 && building
 				&& (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -1894,12 +1886,12 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 //-----------------------------------------------------------------------------
 void cVehicle::makeDetection (cServer& server)
 {
-	//check whether the vehicle has been detected by others
+	// check whether the vehicle has been detected by others
 	std::vector<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
 	for (unsigned int i = 0; i < playersThatDetectThisVehicle.size(); i++)
 		setDetectedByPlayer (server, playersThatDetectThisVehicle[i]);
 
-	//detect other units
+	// detect other units
 	if (data.canDetectStealthOn == false) return;
 
 	cMap& map = *server.Map;
@@ -2125,7 +2117,7 @@ bool cVehicle::canLand (const cMap& map) const
 	}
 	if (b_it == buildings.end()) return false;
 
-	//is the landing pad already occupied?
+	// is the landing pad already occupied?
 	const std::vector<cVehicle*>& v = map[map.getOffset (PosX, PosY)].getPlanes();
 	for (std::vector<cVehicle*>::const_iterator it = v.begin(); it != v.end(); ++it)
 	{
@@ -2134,8 +2126,8 @@ bool cVehicle::canLand (const cMap& map) const
 			return false;
 	}
 
-	//returning true before checking owner, because a stolen vehicle
-	//can stay on an enemy landing pad until it is moved
+	// returning true before checking owner, because a stolen vehicle
+	// can stay on an enemy landing pad until it is moved
 	if (FlightHigh == 0) return true;
 
 	if ( (*b_it)->owner != owner) return false;
