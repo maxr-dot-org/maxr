@@ -301,14 +301,14 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (*this);
 	if (drawingSurface == NULL)
 	{
-		//no cached image found. building needs to be redrawn.
+		// no cached image found. building needs to be redrawn.
 		bDraw = true;
 		drawingSurface = gameGUI.getDCache()->createNewEntry (*this);
 	}
 
 	if (drawingSurface == NULL)
 	{
-		//image will not be cached. So blitt directly to the screen buffer.
+		// image will not be cached. So blitt directly to the screen buffer.
 		dest = *screenPos;
 		drawingSurface = buffer;
 	}
@@ -318,13 +318,13 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		render (&gameGUI, drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
 	}
 
-	//now check, whether the image has to be blitted to screen buffer
+	// now check, whether the image has to be blitted to screen buffer
 	if (drawingSurface != buffer)
 	{
 		dest = *screenPos;
 		SDL_BlitSurface (drawingSurface, NULL, buffer, &dest);
 
-		//all following graphic operations are drawn directly to buffer
+		// all following graphic operations are drawn directly to buffer
 		dest = *screenPos;
 	}
 
@@ -409,19 +409,19 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		DrawSelectionCorner(buffer, d, len, gameGUI.getBlinkColor());
 	}
 
-	//draw health bar
+	// draw health bar
 	if (gameGUI.hitsChecked())
 		gameGUI.drawHealthBar (*this, *screenPos);
 
-	//draw ammo bar
+	// draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0)
 		gameGUI.drawMunBar (*this, *screenPos);
 
-	//draw status
+	// draw status
 	if (gameGUI.statusChecked())
 		gameGUI.drawStatus (*this, *screenPos);
 
-	//attack job debug output
+	// attack job debug output
 	if (gameGUI.getAJobDebugStatus())
 	{
 		cServer* server = gameGUI.getClient()->getServer();
@@ -549,7 +549,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		src.y = 0;
 		src.w = (int) (128 * zoomFactor);
 		src.h = (int) (128 * zoomFactor);
-		//select clan image
+		// select clan image
 		if (owner->getClan() != -1)
 			src.x = (int) ( (owner->getClan() + 1) * 128 * zoomFactor);
 		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp, NULL);
@@ -582,7 +582,6 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 		render_rubble (surface, dest, zoomFactor, drawShadow);
 		return;
 	}
-
 
 	// draw the concrete
 	if (data.hasBetonUnderground && drawConcrete)
@@ -720,19 +719,18 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 
 		if (src.x != 0 || data.isConnectorGraphic)
 		{
-			//blit shadow
+			// blit shadow
 			temp = dest;
 			if (drawShadow) blittAlphaSurface (UnitsData.ptr_connector_shw, &src, surface, &temp);
-			//blit the image
+			// blit the image
 			temp = dest;
 			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
 		}
-
 	}
 	else
 	{
-		//make connector stubs of big buildings.
-		//upper left field
+		// make connector stubs of big buildings.
+		// upper left field
 		src.x = 0;
 		if (BaseN &&  BaseW) src.x = 7;
 		else if (BaseN && !BaseW) src.x = 1;
@@ -747,7 +745,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
 		}
 
-		//upper right field
+		// upper right field
 		src.x = 0;
 		dest.x += Round (64.0f * zoomFactor);
 		if (BaseBN &&  BaseE) src.x = 8;
@@ -763,7 +761,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
 		}
 
-		//lower right field
+		// lower right field
 		src.x = 0;
 		dest.y += Round (64.0f * zoomFactor);
 		if (BaseBE && BaseBS) src.x = 9;
@@ -779,7 +777,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 			SDL_BlitSurface (UnitsData.ptr_connector, &src, surface, &temp);
 		}
 
-		//lower left field
+		// lower left field
 		src.x = 0;
 		dest.x -= Round (64.0f * zoomFactor);
 		if (BaseS && BaseBW) src.x = 10;
@@ -847,7 +845,8 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs oil:
 	if (data.needsOil)
 	{
-		// check if there is enough Oil for the generators (current prodiction + reserves)
+		// check if there is enough Oil for the generators
+		// (current production + reserves)
 		if (data.needsOil + SubBase->OilNeed > SubBase->Oil + SubBase->getMaxOilProd())
 		{
 			sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
@@ -855,13 +854,14 @@ void cBuilding::ServerStartWork (cServer& server)
 		}
 		else if (data.needsOil + SubBase->OilNeed > SubBase->Oil + SubBase->getOilProd())
 		{
-			//increase oil production
+			// increase oil production
 			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->Oil + SubBase->getOilProd());
 
 			int metal = SubBase->getMetalProd();
 			int gold = SubBase->getGoldProd();
 
-			SubBase->setMetalProd (0);	//temporay decrease metal and gold production
+			// temporay decrease metal and gold production
+			SubBase->setMetalProd (0);
 			SubBase->setGoldProd (0);
 
 			SubBase->changeOilProd (missingOil);
@@ -877,11 +877,13 @@ void cBuilding::ServerStartWork (cServer& server)
 		}
 	}
 
-	// IsWorking is set to true before checking the energy production. So if an energy generator has to be started,
-	// it can use the fuel production of this building (when this building is a mine).
+	// IsWorking is set to true before checking the energy production.
+	// So if an energy generator has to be started,
+	// it can use the fuel production of this building
+	// (when this building is a mine).
 	IsWorking = true;
 
-	//set mine values. This has to be undone, if the energy is insufficient
+	// set mine values. This has to be undone, if the energy is insufficient
 	if (data.canMineMaxRes > 0)
 	{
 		int mineFree = data.canMineMaxRes;
@@ -900,12 +902,12 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (data.needsEnergy + SubBase->EnergyNeed > SubBase->EnergyProd)
 		{
-			//try to increase energy production
+			// try to increase energy production
 			if (!SubBase->increaseEnergyProd (server, data.needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd))
 			{
 				IsWorking = false;
 
-				//reset mine values
+				// reset mine values
 				if (data.canMineMaxRes > 0)
 				{
 					int metal = SubBase->getMetalProd();
@@ -1036,7 +1038,6 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 		SubBase->setMetalProd (min (metal, SubBase->getMaxAllowedMetalProd()));
 		SubBase->setGoldProd (min (gold, SubBase->getMaxAllowedGoldProd()));
 		SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
-
 	}
 
 	if (data.canResearch)
@@ -1115,7 +1116,6 @@ bool cBuilding::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -1423,17 +1423,19 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 }
 
 //--------------------------------------------------------------------------
-/** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given base costs
-	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
+/** calculates the costs and the duration of the 3 buildspeeds
+ * for the vehicle with the given base costs
+ * iRemainingMetal is only needed for recalculating costs of vehicles
+ * in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
 void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal)
 {
-	//first calc costs for a new Vehical
+	// first calc costs for a new Vehical
 
-	//1x
+	// 1x
 	iTurboBuildCosts[0] = iVehicleCosts;
 
-	//2x
+	// 2x
 	int a = iTurboBuildCosts[0];
 	iTurboBuildCosts[1] = iTurboBuildCosts[0];
 
@@ -1443,7 +1445,7 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 		a -= 2 * data.needsMetal;
 	}
 
-	//4x
+	// 4x
 	iTurboBuildCosts[2] = iTurboBuildCosts[1];
 	a = iTurboBuildCosts[1];
 
@@ -1453,13 +1455,14 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 		a -= 8 * data.needsMetal;
 	}
 
-	//now this is a litle bit tricky ...
-	//trying to calculate a plausible value, if we are changing the speed of an already started build-job
+	// now this is a litle bit tricky ...
+	// trying to calculate a plausible value,
+	// if we are changing the speed of an already started build-job
 	if (iRemainingMetal >= 0)
 	{
 		float WorkedRounds;
 
-		switch (BuildSpeed)    //BuildSpeed here is the previous build speed
+		switch (BuildSpeed)  // BuildSpeed here is the previous build speed
 		{
 			case 0:
 				WorkedRounds = (iTurboBuildCosts[0] - iRemainingMetal) / (1.f * data.needsMetal);
@@ -1484,8 +1487,7 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 		}
 	}
 
-
-	//calc needed Rounds
+	// calc needed Rounds
 	iTurboBuildRounds[0] = (int) ceilf (iTurboBuildCosts[0] / (1.f * data.needsMetal));
 
 	if (data.maxBuildFactor > 1)
@@ -1505,7 +1507,7 @@ void cBuilding::Select (cGameGUI& gameGUI)
 {
 	if (!owner) return;
 
-	//load video
+	// load video
 	if (gameGUI.getFLC() != NULL)
 	{
 		FLI_Close (gameGUI.getFLC());
@@ -1535,12 +1537,12 @@ void cBuilding::Select (cGameGUI& gameGUI)
 		{
 			if (data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
 			{
-				// red ammo-status but still ammo left */
+				// red ammo-status but still ammo left
 				PlayRandomVoice (VoiceData.VOIAmmoLow);
 			}
 			else if (data.ammoCur == 0)
-				// no ammo left */
 			{
+				// no ammo left
 				PlayRandomVoice (VoiceData.VOIAmmoEmpty);
 			}
 		}
@@ -1580,7 +1582,7 @@ void cBuilding::resetDetectedByPlayer (const cPlayer* player)
 //--------------------------------------------------------------------------
 void cBuilding::makeDetection (cServer& server)
 {
-	//check whether the building has been detected by others
+	// check whether the building has been detected by others
 	if (data.isStealthOn == TERRAIN_NONE) return;
 
 	if (data.isStealthOn & AREA_EXP_MINE)
@@ -1620,9 +1622,6 @@ void sBuildingUIData::scaleSurfaces (float factor)
 	scaleSurface (shw_org, shw, (int) (shw_org->w * factor), (int) (shw_org->h * factor));
 	if (eff_org) scaleSurface (eff_org, eff, (int) (eff_org->w * factor), (int) (eff_org->h * factor));
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
