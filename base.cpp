@@ -24,6 +24,7 @@
 #include "clist.h"
 #include "log.h"
 #include "map.h"
+#include "netmessage.h"
 #include "player.h"
 #include "server.h"
 #include "serverevents.h"
@@ -158,15 +159,9 @@ int sSubBase::calcMaxProd (int ressourceType) const
 
 		switch (ressourceType)
 		{
-			case RES_METAL:
-				maxProd += building.MaxMetalProd;
-				break;
-			case RES_OIL:
-				maxProd += building.MaxOilProd;
-				break;
-			case RES_GOLD:
-				maxProd += building.MaxGoldProd;
-				break;
+			case RES_METAL: maxProd += building.MaxMetalProd; break;
+			case RES_OIL: maxProd += building.MaxOilProd; break;
+			case RES_GOLD: maxProd += building.MaxGoldProd; break;
 		}
 	}
 	return maxProd;
@@ -476,12 +471,11 @@ void sSubBase::refresh()
 	HumanNeed = 0;
 	MaxHumanNeed = 0;
 
-	// readd all buildings
+	// read all buildings
 	for (size_t i = 0; i != buildingsCopy.size(); ++i)
 	{
 		addBuilding (buildingsCopy[i]);
 	}
-
 }
 
 bool sSubBase::checkHumanConsumer (cServer& server)
@@ -648,9 +642,7 @@ bool sSubBase::checkOil (cServer& server)
 	}
 
 	// temporary debug check
-	if (getGoldProd() < getMaxAllowedGoldProd() ||
-		getMetalProd() < getMaxAllowedMetalProd() ||
-		getOilProd() < getMaxAllowedOilProd())
+	if (isDitributionMaximized() == false)
 	{
 		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
@@ -958,12 +950,69 @@ void sSubBase::addBuilding (cBuilding* b)
 	}
 
 	// temporary debug check
-	if (getGoldProd() < getMaxAllowedGoldProd() ||
-		getMetalProd() < getMaxAllowedMetalProd() ||
-		getOilProd() < getMaxAllowedOilProd())
+	if (isDitributionMaximized() == false)
 	{
 		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
+}
+
+bool sSubBase::isDitributionMaximized() const
+{
+	return (getGoldProd() == getMaxAllowedGoldProd() &&
+			getMetalProd() == getMaxAllowedMetalProd() &&
+			getOilProd() == getMaxAllowedOilProd());
+}
+
+void sSubBase::pushInto (cNetMessage& message) const
+{
+	message.pushInt16 (EnergyProd);
+	message.pushInt16 (EnergyNeed);
+	message.pushInt16 (MaxEnergyProd);
+	message.pushInt16 (MaxEnergyNeed);
+	message.pushInt16 (Metal);
+	message.pushInt16 (MaxMetal);
+	message.pushInt16 (MetalNeed);
+	message.pushInt16 (MaxMetalNeed);
+	message.pushInt16 (getMetalProd());
+	message.pushInt16 (Gold);
+	message.pushInt16 (MaxGold);
+	message.pushInt16 (GoldNeed);
+	message.pushInt16 (MaxGoldNeed);
+	message.pushInt16 (getGoldProd());
+	message.pushInt16 (Oil);
+	message.pushInt16 (MaxOil);
+	message.pushInt16 (OilNeed);
+	message.pushInt16 (MaxOilNeed);
+	message.pushInt16 (getOilProd());
+	message.pushInt16 (HumanNeed);
+	message.pushInt16 (MaxHumanNeed);
+	message.pushInt16 (HumanProd);
+}
+
+void sSubBase::popFrom (cNetMessage& message)
+{
+	HumanProd = message.popInt16();
+	MaxHumanNeed = message.popInt16();
+	HumanNeed = message.popInt16();
+	OilProd = message.popInt16();
+	MaxOilNeed = message.popInt16();
+	OilNeed = message.popInt16();
+	MaxOil = message.popInt16();
+	Oil = message.popInt16();
+	GoldProd = message.popInt16();
+	MaxGoldNeed = message.popInt16();
+	GoldNeed = message.popInt16();
+	MaxGold = message.popInt16();
+	Gold = message.popInt16();
+	MetalProd = message.popInt16();
+	MaxMetalNeed = message.popInt16();
+	MetalNeed = message.popInt16();
+	MaxMetal = message.popInt16();
+	Metal = message.popInt16();
+	MaxEnergyNeed = message.popInt16();
+	MaxEnergyProd = message.popInt16();
+	EnergyNeed = message.popInt16();
+	EnergyProd = message.popInt16();
 }
 
 cBase::cBase() : map()

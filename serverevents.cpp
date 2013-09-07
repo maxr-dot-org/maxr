@@ -509,38 +509,15 @@ void sendStopBuild (cServer& server, int iVehicleID, int iNewPos, int iPlayer)
 //------------------------------------------------------------------------------
 void sendSubbaseValues (cServer& server, const sSubBase& subBase, int iPlayer)
 {
-	//temporary debug check
-	if (subBase.getGoldProd() < subBase.getMaxAllowedGoldProd() ||
-		subBase.getMetalProd() < subBase.getMaxAllowedMetalProd() ||
-		subBase.getOilProd() < subBase.getMaxAllowedOilProd())
+	// temporary debug check
+	if (subBase.isDitributionMaximized() == false)
 	{
 		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
 
 	cNetMessage* message = new cNetMessage (GAME_EV_SUBBASE_VALUES);
 
-	message->pushInt16 (subBase.EnergyProd);
-	message->pushInt16 (subBase.EnergyNeed);
-	message->pushInt16 (subBase.MaxEnergyProd);
-	message->pushInt16 (subBase.MaxEnergyNeed);
-	message->pushInt16 (subBase.Metal);
-	message->pushInt16 (subBase.MaxMetal);
-	message->pushInt16 (subBase.MetalNeed);
-	message->pushInt16 (subBase.MaxMetalNeed);
-	message->pushInt16 (subBase.getMetalProd());
-	message->pushInt16 (subBase.Gold);
-	message->pushInt16 (subBase.MaxGold);
-	message->pushInt16 (subBase.GoldNeed);
-	message->pushInt16 (subBase.MaxGoldNeed);
-	message->pushInt16 (subBase.getGoldProd());
-	message->pushInt16 (subBase.Oil);
-	message->pushInt16 (subBase.MaxOil);
-	message->pushInt16 (subBase.OilNeed);
-	message->pushInt16 (subBase.MaxOilNeed);
-	message->pushInt16 (subBase.getOilProd());
-	message->pushInt16 (subBase.HumanNeed);
-	message->pushInt16 (subBase.MaxHumanNeed);
-	message->pushInt16 (subBase.HumanProd);
+	subBase.pushInto (*message);
 	message->pushInt16 (subBase.getID());
 	server.sendNetMessage (message, iPlayer);
 }

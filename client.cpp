@@ -904,41 +904,18 @@ void cClient::HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message)
 	assert (message.iType == GAME_EV_SUBBASE_VALUES);
 
 	const int iID = message.popInt16();
-	sSubBase* SubBase = getSubBaseFromID (iID);
-	if (SubBase == NULL)
+	sSubBase* subBase = getSubBaseFromID (iID);
+	if (subBase == NULL)
 	{
 		Log.write (" Client: Can't add subbase values: Unknown subbase with ID: " + iToStr (iID), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: Request sync of subbases
 		return;
 	}
 
-	SubBase->HumanProd = message.popInt16();
-	SubBase->MaxHumanNeed = message.popInt16();
-	SubBase->HumanNeed = message.popInt16();
-	SubBase->OilProd = message.popInt16();
-	SubBase->MaxOilNeed = message.popInt16();
-	SubBase->OilNeed = message.popInt16();
-	SubBase->MaxOil = message.popInt16();
-	SubBase->Oil = message.popInt16();
-	SubBase->GoldProd = message.popInt16();
-	SubBase->MaxGoldNeed = message.popInt16();
-	SubBase->GoldNeed = message.popInt16();
-	SubBase->MaxGold = message.popInt16();
-	SubBase->Gold = message.popInt16();
-	SubBase->MetalProd = message.popInt16();
-	SubBase->MaxMetalNeed = message.popInt16();
-	SubBase->MetalNeed = message.popInt16();
-	SubBase->MaxMetal = message.popInt16();
-	SubBase->Metal = message.popInt16();
-	SubBase->MaxEnergyNeed = message.popInt16();
-	SubBase->MaxEnergyProd = message.popInt16();
-	SubBase->EnergyNeed = message.popInt16();
-	SubBase->EnergyProd = message.popInt16();
+	subBase->popFrom (message);
 
-	//temporary debug check
-	if (SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
-		SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
-		SubBase->getOilProd() < SubBase->getMaxAllowedOilProd())
+	// temporary debug check
+	if (subBase->isDitributionMaximized() == false)
 	{
 		Log.write (" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}

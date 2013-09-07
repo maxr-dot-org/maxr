@@ -24,40 +24,14 @@
 
 class cBuilding;
 class cMap;
+class cNetMessage;
 class cPlayer;
 class cServer;
 
 struct sSubBase
 {
 public:
-	sSubBase (cPlayer* owner_);
-public:
-	std::vector<cBuilding*> buildings;
-	cPlayer* owner;
-
-	int MaxMetal;
-	int Metal;
-	int MaxOil;
-	int Oil;
-	int MaxGold;
-	int Gold;
-
-	int MaxEnergyProd;
-	int EnergyProd;
-	int MaxEnergyNeed;
-	int EnergyNeed;
-	int MetalNeed;
-	int OilNeed;
-	int GoldNeed;
-	int MaxMetalNeed;
-	int MaxOilNeed;
-	int MaxGoldNeed;
-
-	int HumanProd;
-	int HumanNeed;
-	int MaxHumanNeed;
-
-public:
+	explicit sSubBase (cPlayer* owner_);
 	/**
 	* integrates all building of the given subbase in the own one
 	* @author eiko
@@ -94,7 +68,7 @@ public:
 	bool increaseEnergyProd (cServer& server, int value);
 
 	//-----------------------------------
-	//turn end manangement:
+	//turn end management:
 
 	/**
 	* checks if consumers have to be switched off, due to a lack of ressources
@@ -105,18 +79,18 @@ public:
 	bool checkHumanConsumer (cServer& server);
 	bool checkMetalConsumer (cServer& server);
 	/**
-	* - switch off unneeded fuel consumers(=energy producers)
+	* - switches off unneeded fuel consumers(=energy producers)
 	* - sets the optimal amount of generators and stations
 	*   to minimize fuel consumption
 	* - increases oil production, if necessary
-	* - switches off oil consumers, if to few oil is available
+	* - switches off oil consumers, if too few oil is available
 	* @return: returns true, if oil consumers have been shut down,
 	*          due to a lack of oil
 	* @author eiko
 	*/
 	bool checkOil (cServer& server);
 	/**
-	* switch off energy consumers, if necessary
+	* switches off energy consumers, if necessary
 	* @return returns true, if a energy consumers have been shut down
 	* @author eiko
 	*/
@@ -128,7 +102,7 @@ public:
 	*/
 	void prepareTurnend (cServer& server);
 	/**
-	* produce ressources, rapair/reload buildings etc.
+	* produce ressources, repair/reload buildings etc.
 	* @author eiko
 	*/
 	void makeTurnend (cServer& server);
@@ -142,7 +116,7 @@ public:
 	int getMaxOilProd() const;
 
 	/** returns the maximum allowed production
-	 * (without dereasing one of the other ones) of a ressource */
+	 * (without decreasing one of the other ones) of a ressource */
 	int getMaxAllowedMetalProd() const;
 	int getMaxAllowedGoldProd() const;
 	int getMaxAllowedOilProd() const;
@@ -164,10 +138,10 @@ public:
 	void changeGoldProd (int value);
 	void changeOilProd (int value);
 
-	// TODO: private:
-	int MetalProd;
-	int OilProd;
-	int GoldProd;
+	bool isDitributionMaximized() const;
+
+	void pushInto (cNetMessage& message) const;
+	void popFrom (cNetMessage& message);
 private:
 	/**
 	* calcs the maximum allowed production of a ressource,
@@ -185,6 +159,38 @@ private:
 	* @author eiko
 	*/
 	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
+
+public:
+//private:
+//	friend class cBase;
+	std::vector<cBuilding*> buildings;
+	cPlayer* owner;
+
+	int MaxMetal;
+	int Metal;
+	int MaxOil;
+	int Oil;
+	int MaxGold;
+	int Gold;
+
+	int MaxEnergyProd;
+	int EnergyProd;
+	int MaxEnergyNeed;
+	int EnergyNeed;
+	int MetalNeed;
+	int OilNeed;
+	int GoldNeed;
+	int MaxMetalNeed;
+	int MaxOilNeed;
+	int MaxGoldNeed;
+
+	int HumanProd;
+	int HumanNeed;
+	int MaxHumanNeed;
+
+	int MetalProd;
+	int OilProd;
+	int GoldProd;
 };
 
 class cBase
@@ -192,9 +198,6 @@ class cBase
 public:
 	cBase();
 	~cBase();
-
-	std::vector<sSubBase*> SubBases;
-	cMap* map;
 
 	/**
 	* adds a building to the base and updates the subbase structures
@@ -217,6 +220,10 @@ public:
 	*/
 	void refreshSubbases();
 	sSubBase* checkNeighbour (int iOff, const cBuilding& Building);
+
+public:
+	std::vector<sSubBase*> SubBases;
+	cMap* map;
 };
 
 #endif
