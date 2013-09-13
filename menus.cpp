@@ -112,7 +112,7 @@ string sSettings::getVictoryConditionString() const
 
 //------------------------------------------------------------------------------
 cGameDataContainer::cGameDataContainer() :
-	isServer (false),
+	server (NULL),
 	savegameNum (-1),
 	settings (0),
 	map (0),
@@ -158,8 +158,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	AutoPtr<cMap> serverMap (NULL);
 	std::vector<cPlayer*> serverPlayers;
-	AutoPtr<cServer> server (NULL);
-	if (isServer)
+	if (server)
 	{
 		serverMap = new cMap (*map);
 
@@ -172,7 +171,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 			serverPlayers[i]->initMaps (*serverMap);
 		}
 
-		server = new cServer (network);
 		server->setMap (*serverMap);
 		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
@@ -186,7 +184,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 
-	if (isServer)
+	if (server)
 	{
 		server->startNewGame (landData, landingUnits);
 		for (size_t i = 0; i != players.size(); ++i)
@@ -205,9 +203,10 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	}
 	players.clear();
 
-	if (isServer)
+	if (server)
 	{
 		server->stop();
+		server = NULL;
 	}
 }
 
@@ -926,7 +925,8 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 {
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cGameDataContainer gameDataContainer;
-	gameDataContainer.isServer = true;
+	cTCP* network = NULL;
+	gameDataContainer.server = new cServer (network);
 	gameDataContainer.settings = new sSettings;
 	sPlayer splayer (cSettings::getInstance().getPlayerName(), cl_red, 0);
 	splayer.setLocal();
@@ -935,7 +935,6 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 
 	int lastDir = 1;
 	int step = 0;
-	cTCP* network = NULL;
 	while (true)
 	{
 		int dir = 0;
@@ -961,7 +960,8 @@ void cSinglePlayerMenu::loadGameReleased (void* parent)
 {
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cGameDataContainer gameDataContainer;
-	gameDataContainer.isServer = true;
+	cTCP* network = NULL;
+	gameDataContainer.server = new cServer (network);
 	cLoadMenu loadMenu (&gameDataContainer);
 	loadMenu.show (NULL);
 	if (!gameDataContainer.savegame.empty())
@@ -2101,12 +2101,12 @@ void cStartupHangarMenu::doneReleased (void* parent)
 	}
 	else
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
-	if (menu->network && menu->gameDataContainer->isServer == false)
+	if (menu->network && menu->gameDataContainer->server == NULL)
 	{
 		sendClan (*menu->network, menu->player->getClan(), menu->player->getNr());
 		sendLandingUnits (*menu->network, *landingUnits, menu->player->getNr());
 	}
-	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->isServer ? menu : NULL);
+	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->server ? menu : NULL);
 
 	menu->end = true;
 }
@@ -2543,7 +2543,7 @@ void cLandingMenu::hitPosition()
 	if (network)
 	{
 		infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-		sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->isServer ? this : NULL);
+		sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->server ? this : NULL);
 		draw();
 	}
 	else
@@ -2908,8 +2908,6 @@ void cNetworkMenu::runGamePreparation (cPlayer& player)
 //------------------------------------------------------------------------------
 cNetworkHostMenu::cNetworkHostMenu()
 {
-	gameDataContainer.isServer = true;
-
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Host"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel);
@@ -3105,6 +3103,8 @@ void cNetworkHostMenu::startReleased (void* parent)
 	}
 	else
 	{
+		menu->gameDataContainer.server = new cServer (menu->network);
+
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + ": "  + iToStr (menu->port) + ")");
 		Log.write ("Game open (Port: " + iToStr (menu->port) + ")", cLog::eLOG_TYPE_INFO);
 		menu->portLine->setReadOnly (true);
@@ -3406,7 +3406,7 @@ cNetworkClientMenu::cNetworkClientMenu()
 	: mapReceiver (0)
 	, lastRequestedMap ("")
 {
-	gameDataContainer.isServer = false;
+	gameDataContainer.server = NULL;
 
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Client"));
 	titleLabel->setCentered (true);

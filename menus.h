@@ -171,8 +171,8 @@ struct sSettings
 class cGameDataContainer
 {
 public:
-	/** Should this instance of maxr act as the server for a TCP/IP game. */
-	bool isServer;
+	/** Should this instance of maxr act as the server. */
+	AutoPtr<cServer> server;
 
 	/** Number of the savegame or -1 for no savegame */
 	int savegameNum;
