@@ -45,10 +45,7 @@ server.cpp \
 serverevents.cpp \
 settings.cpp \
 sound.cpp \
-tinystr.cpp \
-tinyxml.cpp \
-tinyxmlerror.cpp \
-tinyxmlparser.cpp \
+tinyxml2.cpp\
 unifonts.cpp \
 unit.cpp \
 upgradecalculator.cpp \

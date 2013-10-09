@@ -39,44 +39,23 @@ fi
 LIBSDL_CFLAGS="`$SDLCONFIG --cflags`"
 AC_SUBST(LIBSDL_CFLAGS)
 
-AC_MSG_CHECKING([for lib SDL])
-if test -r `$SDLCONFIG --prefix`/lib/libSDL.la; then
-	SDL_LIBS=`$SDLCONFIG --libs`
-	AC_MSG_RESULT([yes])
-else
-        AC_MSG_RESULT([no])
-        AC_MSG_ERROR([*** SDL not found! Get SDL from www.libsdl.org.
-If you already installed it, check its in the path. If problem remains,
-please send a mail to the address that appears in ./configure --version
-indicating your platform, the version of configure script and the problem.])
-fi
+AC_CHECK_HEADER([SDL/SDL.h],,AC_MSG_ERROR([SDL headers not found.]))
+AC_CHECK_HEADER(SDL/SDL_net.h, , AC_MSG_ERROR([SDL_net header not found.]))
+AC_CHECK_HEADER(SDL/SDL_mixer.h, , AC_MSG_ERROR([SDL_mixer header not found.]))
 
-AC_MSG_CHECKING([for lib SDL_net])
-if test -r `$SDLCONFIG --prefix`/lib/libSDL_net.la; then
-	SDL_NET_LIBS=`$SDLCONFIG --prefix`/lib/libSDL_net.la
-	AC_MSG_RESULT([yes])
-else
-        AC_MSG_RESULT([no])
-	AC_MSG_ERROR([*** SDL_net lib not found! Get SDL_net from
-http://www.libsdl.org/projects/SDL_net/index.html])
-fi
 
-AC_MSG_CHECKING([for lib SDL_mixer])
-if test -r `$SDLCONFIG --prefix`/lib/libSDL_mixer.la; then
-        SDL_MIXER_LIBS=`$SDLCONFIG --prefix`/lib/libSDL_mixer.la
-        AC_MSG_RESULT([yes])
-else
-        AC_MSG_RESULT([no])
-        AC_MSG_ERROR([*** SDL_mixer lib not found! Get SDL_mixer from
-http://www.libsdl.org/projects/SDL_mixer/index.html])
-fi
-
-AC_CHECK_HEADER([SDL/SDL.h],,AC_MSG_ERROR([Cannot find headers for SDL]))
-AC_CHECK_HEADER([SDL/SDL_net.h],,AC_MSG_ERROR([Cannot find headers for SDL_net]))
-AC_CHECK_HEADER([SDL/SDL_mixer.h],,AC_MSG_ERROR([Cannot find headers for SDL_mixer]))
-
-AC_SUBST([SDL_LIBS])
-AC_SUBST([SDL_MIXER_LIBS])
-AC_SUBST([SDL_NET_LIBS])
+case "$host" in
+	i686-pc-mingw32|x86_64-pc-mingw64)
+		#simply set libs - don't check for usability since I don't know a way of doing so during cross compiling -- beko
+		AC_SUBST([SDL_LIBS], [-lSDL])
+		AC_SUBST([SDL_NET_LIBS], [-lSDL_net])
+		AC_SUBST([SDL_MIXER_LIBS], [-lSDL_mixer])
+	;;
+	*)
+		AC_CHECK_LIB(SDL, SDL_Init, AC_SUBST([SDL_LIBS], [-lSDL]), AC_MSG_ERROR([SDL not found.]))
+		AC_CHECK_LIB(SDL_net, SDLNet_Init, AC_SUBST([SDL_NET_LIBS], [-lSDL_net]), AC_MSG_ERROR([SDL_net not found.]), [${SDL_LIBS}])
+		AC_CHECK_LIB(SDL_mixer, Mix_OpenAudio, AC_SUBST([SDL_MIXER_LIBS], [-lSDL_mixer]), AC_MSG_ERROR([SDL_mixer not found.]), [${SDL_LIBS}])
+	;;
+esac
 
 AC_OUTPUT
