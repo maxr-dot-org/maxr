@@ -3896,7 +3896,7 @@ void cMenuReportsScreen::drawReportsScreen()
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
 	const cPlayer* activePlayer = client->getActivePlayer();
 
-	size_t endIndex = std::min ( (index + 1u) * maxItems, activePlayer->savedReportsList.size());
+	size_t endIndex = std::min ( (index + 1u) * maxItems, (unsigned int)activePlayer->savedReportsList.size());
 	for (size_t i = index * maxItems; i != endIndex; ++i)
 	{
 		const sSavedReportMessage& savedReport = activePlayer->savedReportsList[i];
