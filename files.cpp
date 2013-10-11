@@ -47,8 +47,8 @@
 //--------------------------------------------------------------
 bool FileExists (const char* path)
 {
-	SDL_RWops* file;
-	file = SDL_RWFromFile (path, "r");
+	SDL_RWops* file = SDL_RWFromFile (path, "r");
+
 	if (file == NULL)
 	{
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -78,11 +78,11 @@ bool DirExists (const std::string& path)
 		stat (path.c_str(), &status);
 
 		if (status.st_mode & S_IFDIR) return true;
-		else return false;	// The path is not a directory
+		else return false; // The path is not a directory
 	}
 	else return false;
 #else
-	return FileExists (path.c_str());	// on linux everything is a file
+	return FileExists (path.c_str()); // on linux everything is a file
 #endif
 }
 
@@ -122,31 +122,18 @@ std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 //--------------------------------------------------------------
 std::string getUserMapsDir()
 {
-#ifdef WIN32
+#ifdef __amigaos4__
+	return "";
+#else
 	if (cSettings::getInstance().getHomeDir().empty()) return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if (!DirExists (mapFolder))
+	if (!DirExists (mapFolder.c_str()))
 	{
-		if (_mkdir (mapFolder.c_str()) == 0)
+		if (makeDir (mapFolder.c_str()))
 			return mapFolder + PATH_DELIMITER;
 		return "";
 	}
 	return mapFolder + PATH_DELIMITER;
-#else
-# ifdef __amigaos4__
-	return "";
-# else
-	if (cSettings::getInstance().getHomeDir().empty())
-		return "";
-	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if (!FileExists (mapFolder.c_str()))
-	{
-		if (mkdir (mapFolder.c_str(), 0755) == 0)
-			return mapFolder + PATH_DELIMITER;
-		return "";
-	}
-	return mapFolder + PATH_DELIMITER;
-# endif
 #endif
 }
 
@@ -155,10 +142,7 @@ std::string getUserScreenshotsDir()
 {
 #ifdef __amigaos4__
 	return "";
-#endif
-
-	std::string screenshotsFolder = "";
-#ifdef MAC
+#elif defined(MAC)
 	char* cHome = getenv ("HOME");  //get $HOME on mac
 	if (cHome == NULL)
 		return "";
@@ -166,38 +150,27 @@ std::string getUserScreenshotsDir()
 	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
-	screenshotsFolder = homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
-	return screenshotsFolder;
-#endif
+	return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+#else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
-#ifdef WIN32
+	std::string screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
 	if (!DirExists (screenshotsFolder))
 	{
-		if (_mkdir (screenshotsFolder.c_str()) == 0)
+		if (makeDir (screenshotsFolder.c_str()))
 			return screenshotsFolder + PATH_DELIMITER;
 		return "";
 	}
-#else
-	if (!FileExists (screenshotsFolder.c_str()))
-	{
-		if (mkdir (screenshotsFolder.c_str(), 0755) == 0)
-			return screenshotsFolder + PATH_DELIMITER;
-		return "";
-	}
-#endif
 	return screenshotsFolder + PATH_DELIMITER;
+#endif
 }
+
 //--------------------------------------------------------------
 std::string getUserLogDir()
 {
 #ifdef __amigaos4__
 	return "";
-#endif
-
-	std::string LogDir = "";
-#ifdef MAC
+#elif defined(MAC)
 	char* cHome = getenv ("HOME");  //get $HOME on mac
 	if (cHome == NULL)
 		return "";
@@ -205,28 +178,20 @@ std::string getUserLogDir()
 	if (homeFolder.empty())
 		return "";
 	// store Log directly on the desktop of the user
-	LogDir = homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
-	return LogDir;
-#endif
+	return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+#else
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	LogDir = cSettings::getInstance().getHomeDir() + MAX_LOG_DIR;
-#ifdef WIN32
+	std::string LogDir = cSettings::getInstance().getHomeDir() + MAX_LOG_DIR;
+
 	if (!DirExists (LogDir))
 	{
-		if (_mkdir (LogDir.c_str()) == 0)
+		if (makeDir (LogDir.c_str()))
 			return LogDir + PATH_DELIMITER;
 		return "";
 	}
-#else
-	if (!FileExists (LogDir.c_str()))
-	{
-		if (mkdir (LogDir.c_str(), 0755) == 0)
-			return LogDir + PATH_DELIMITER;
-		return "";
-	}
-#endif
 	return LogDir + PATH_DELIMITER;
+#endif
 }
 
 //--------------------------------------------------------------
