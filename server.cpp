@@ -134,7 +134,7 @@ cServer::~cServer()
 	casualtiesTracker = 0;
 
 	// disconnect clients
-	if (network)
+	if (network && PlayerList)
 	{
 		for (size_t i = 0; i < PlayerList->size(); ++i)
 		{
@@ -152,11 +152,14 @@ cServer::~cServer()
 		delete AJobs[i];
 	}
 
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	if (PlayerList)
 	{
-		delete (*PlayerList) [i];
+		for (size_t i = 0; i != PlayerList->size(); ++i)
+		{
+			delete (*PlayerList) [i];
+		}
+		PlayerList->clear();
 	}
-	PlayerList->clear();
 	while (neutralBuildings)
 	{
 		cBuilding* nextBuilding = neutralBuildings->next;
