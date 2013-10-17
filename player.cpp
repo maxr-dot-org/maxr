@@ -35,7 +35,8 @@ sPlayer::sPlayer (const string& name_, unsigned int colorIndex_, int nr_, int so
 	name (name_),
 	colorIndex (colorIndex_),
 	Nr (nr_),
-	socketIndex (socketIndex_)
+	socketIndex (socketIndex_),
+	ready (false)
 {
 	assert (colorIndex < PLAYERCOLORS);
 }

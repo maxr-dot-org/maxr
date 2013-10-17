@@ -351,7 +351,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 
 		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
 		{
-			sMenuPlayer menuPlayer (players[player]->getName(), 0, false, players[player]->getNr(), players[player]->getSocketNum());
+			sPlayer menuPlayer (players[player]->getName(), 0, players[player]->getNr(), players[player]->getSocketNum());
 			sendReselectLanding (network, state, &menuPlayer, activeMenu);
 		}
 	}
@@ -673,7 +673,7 @@ void cMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 }
 
 //------------------------------------------------------------------------------
-void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer* player, int fromPlayerNr)
+void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player, int fromPlayerNr)
 {
 	// Attention: The playernumber will only be the real player number
 	// when it is passed to this function explicitly.
@@ -2567,7 +2567,7 @@ cNetworkMenu::cNetworkMenu()
 	playersBox = new cMenuPlayersBox (position.x + 465, position.y + 284, 167, 124, this);
 	menuItems.push_back (playersBox);
 
-	actPlayer = new sMenuPlayer (cSettings::getInstance().getPlayerName(), cSettings::getInstance().getPlayerColor(), false, 0, MAX_CLIENTS);
+	actPlayer = new sPlayer (cSettings::getInstance().getPlayerName(), cSettings::getInstance().getPlayerColor(), 0, MAX_CLIENTS);
 	players.push_back (actPlayer);
 	playersBox->setPlayers (&players);
 
@@ -2779,7 +2779,7 @@ void cNetworkMenu::saveOptions()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkMenu::changePlayerReadyState (sMenuPlayer* player)
+void cNetworkMenu::changePlayerReadyState (sPlayer* player)
 {
 	if (player != actPlayer) return;
 	if (!gameDataContainer.map && !triedLoadMap.empty())
@@ -2803,7 +2803,7 @@ bool cNetworkMenu::enteredCommand (const string& text)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkMenu::playerReadyClicked (sMenuPlayer* player)
+void cNetworkMenu::playerReadyClicked (sPlayer* player)
 {
 	if (player != actPlayer) return;
 	PlayFX (SoundData.SNDHudButton);
@@ -2946,7 +2946,7 @@ cNetworkHostMenu::~cNetworkHostMenu()
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
+void cNetworkHostMenu::checkTakenPlayerAttr (sPlayer* player)
 {
 	if (player->isReady() == false) return;
 
@@ -3018,7 +3018,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 
 		for (size_t i = 0; i != menu->players.size(); ++i)
 		{
-			cPlayer* player = new cPlayer (menu->players[i]->getsPlayer());
+			cPlayer* player = new cPlayer (*menu->players[i]);
 			menu->gameDataContainer.players.push_back (player);
 		}
 		cPlayer& localPlayer = *menu->gameDataContainer.players[0];
@@ -3146,7 +3146,7 @@ void cNetworkHostMenu::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
 {
 	assert (message->iType == TCP_ACCEPT);
 
-	sMenuPlayer* player = new sMenuPlayer (UNIDENTIFIED_PLAYER_NAME, 0, false, (int) players.size(), message->popInt16());
+	sPlayer* player = new sPlayer (UNIDENTIFIED_PLAYER_NAME, 0, (int) players.size(), message->popInt16());
 	players.push_back (player);
 	sendRequestIdentification (*network, *player);
 	playersBox->setPlayers (&players);
@@ -3203,7 +3203,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* mess
 		sendPlayerList (*network, players);
 		return;
 	}
-	sMenuPlayer* player = players[playerNr];
+	sPlayer* player = players[playerNr];
 
 	bool freshJoined = (player->getName().compare (UNIDENTIFIED_PLAYER_NAME) == 0);
 	player->setColorIndex (message->popInt16());
@@ -3513,7 +3513,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* messag
 		int color = message->popInt16();
 		bool ready = message->popBool();
 		int nr = message->popInt16();
-		sMenuPlayer* player = new sMenuPlayer (name, color, ready, nr);
+		sPlayer* player = new sPlayer (name, color, ready, nr);
 		if (player->getNr() == actPlayerNr) actPlayer = player;
 		players.push_back (player);
 	}
@@ -3629,7 +3629,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	saveOptions();
 	for (size_t i = 0; i != players.size(); ++i)
 	{
-		cPlayer* player = new cPlayer (players[i]->getsPlayer());
+		cPlayer* player = new cPlayer (*players[i]);
 		gameDataContainer.players.push_back (player);
 	}
 	if (!saveGameString.empty())
@@ -3684,7 +3684,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 		int playerCount = message->popInt16();
 
-		gameDataContainer.players.push_back (new cPlayer (actPlayer->getsPlayer()));
+		gameDataContainer.players.push_back (new cPlayer (*actPlayer));
 		while (playerCount > 1)
 		{
 			string playername = message->popString();

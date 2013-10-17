@@ -175,7 +175,7 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
 {
 	assert (message->iType == TCP_ACCEPT);
 
-	sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.size(), message->popInt16());
+	sPlayer* player = new sPlayer ("unidentified", 0, menuPlayers.size(), message->popInt16());
 	menuPlayers.push_back (player);
 	sendMenuChatMessage (*network, "type --server help for dedicated server help", player);
 	sendRequestIdentification (*network, *player);
@@ -226,7 +226,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 	unsigned int playerNr = message->popInt16();
 	if (playerNr >= menuPlayers.size())
 		return;
-	sMenuPlayer* player = menuPlayers[playerNr];
+	sPlayer* player = menuPlayers[playerNr];
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
 	player->setColorIndex (message->popInt16());
@@ -260,7 +260,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 	unsigned int senderPlyerNr = message->iPlayerNr;
 	if (senderPlyerNr >= menuPlayers.size())
 		return;
-	sMenuPlayer* senderPlayer = menuPlayers[senderPlyerNr];
+	sPlayer* senderPlayer = menuPlayers[senderPlyerNr];
 
 	// temporary workaround. TODO: good solution - player, who opened games must have "host" gui and new commands to send options/go to server
 	size_t serverStringPos = chatText.find ("--server");
@@ -287,7 +287,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				{
 					for (size_t i = 0; i < menuPlayers.size(); i++)
 					{
-						cPlayer* player = new cPlayer (menuPlayers[i]->getsPlayer());
+						cPlayer* player = new cPlayer (*menuPlayers[i]);
 						gameData->players.push_back (player);
 					}
 
@@ -422,7 +422,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderPlayer)
+void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlayer)
 {
 	if (tokens[0].compare ("res") == 0)
 	{

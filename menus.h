@@ -354,7 +354,7 @@ public:
 	 * sends a netmessage to the given player.
 	 *@author alzi
 	 */
-	static void sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer* player = NULL, int fromPlayerNr = -1);
+	static void sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player = NULL, int fromPlayerNr = -1);
 	/**
 	 * this method will receive the menu-net-messages
 	 * when this menu is active in the moment the message has been received.
@@ -781,8 +781,8 @@ protected:
 	cTCP* network;
 	std::string ip;
 	int port;
-	std::vector<sMenuPlayer*> players;
-	sMenuPlayer* actPlayer;
+	std::vector<sPlayer*> players;
+	sPlayer* actPlayer;
 
 	AutoPtr<cMenuButton> backButton;
 	AutoPtr<cMenuButton> sendButton;
@@ -819,7 +819,7 @@ protected:
 	void showMap();
 	void setColor (int color);
 	void saveOptions();
-	void changePlayerReadyState (sMenuPlayer* player);
+	void changePlayerReadyState (sPlayer* player);
 	bool enteredCommand (const std::string& text);
 	void runGamePreparation (cPlayer& player);
 
@@ -827,7 +827,7 @@ public:
 	cNetworkMenu();
 	~cNetworkMenu();
 
-	void playerReadyClicked (sMenuPlayer* player);
+	void playerReadyClicked (sPlayer* player);
 
 private:
 	virtual void playerSettingsChanged() = 0;
@@ -862,7 +862,7 @@ protected:
 	AutoPtr<cMenuButton> startButton;
 
 	int checkAllPlayersReady() const;
-	void checkTakenPlayerAttr (sMenuPlayer* player);
+	void checkTakenPlayerAttr (sPlayer* player);
 	bool runSavedGame();
 
 	std::vector<cMapSender*> mapSenders;

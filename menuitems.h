@@ -1067,41 +1067,12 @@ public:
 };
 
 /**
- * a structure that includes all information about a player needed by a multiplayermenu.
- *@author alzi
- */
-struct sMenuPlayer
-{
-public:
-	sMenuPlayer (const std::string& name_, int color_, bool ready_, int nr_, int socket_ = -1)
-		: splayer (name_, color_, nr_, socket_), ready (ready_) {}
-
-	const std::string& getName() const { return splayer.getName(); }
-	void setName (const std::string& name) { splayer.setName (name); }
-	int getNr() const { return splayer.getNr(); }
-	void setNr (int index) { splayer.setNr (index); }
-	int getColorIndex() const { return splayer.getColorIndex(); }
-	void setColorIndex (int colorIndex) { splayer.setColorIndex (colorIndex); }
-	void setToNextColorIndex() { splayer.setToNextColorIndex(); }
-	void setToPrevColorIndex() { splayer.setToPrevColorIndex(); }
-	SDL_Surface* getColorSurface() const { return splayer.getColorSurface(); }
-	int getSocketIndex() const { return splayer.getSocketIndex(); }
-	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex);}
-	void setReady (bool ready_) { ready = ready_; }
-	bool isReady() const { return ready; }
-	const sPlayer& getsPlayer() const { return splayer; }
-private:
-	sPlayer splayer;
-	bool ready;
-};
-
-/**
  * a list with players. It displays the name, the color and the readystate of the player.
  *@author alzi
  */
 class cMenuPlayersBox : public cMenuItemContainer
 {
-	std::vector<sMenuPlayer*>* players;
+	std::vector<sPlayer*>* players;
 
 	cNetworkMenu* parentMenu;
 	int maxDrawPlayers;
@@ -1118,7 +1089,7 @@ public:
 	~cMenuPlayersBox();
 	virtual void draw();
 
-	void setPlayers (std::vector<sMenuPlayer*>* player_);
+	void setPlayers (std::vector<sPlayer*>* player_);
 };
 
 /**

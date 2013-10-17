@@ -3172,7 +3172,7 @@ bool cMenuPlayersBox::preClicked()
 	return true;
 }
 
-void cMenuPlayersBox::setPlayers (std::vector<sMenuPlayer*>* player_)
+void cMenuPlayersBox::setPlayers (std::vector<sPlayer*>* player_)
 {
 	players = player_;
 

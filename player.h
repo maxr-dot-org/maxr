@@ -61,6 +61,9 @@ public:
 
 typedef std::vector<int> PointsHistory;
 
+/**
+ * a structure that includes all information needed in pre-game.
+ */
 class sPlayer
 {
 public:
@@ -80,6 +83,8 @@ public:
 	void setLocal();
 	bool isLocal() const;
 	void onSocketIndexDisconnected (int socketIndex);
+	void setReady (bool ready_) { ready = ready_; }
+	bool isReady() const { return ready; }
 
 private:
 	std::string name;
@@ -90,6 +95,7 @@ private:
 	// if MAX_CLIENTS it's the local connected player
 	// -1 for unknown
 	int socketIndex;
+	bool ready;
 };
 
 

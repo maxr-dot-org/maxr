@@ -31,7 +31,7 @@ class cNetMessage;
 class cPlayer;
 class cServer;
 class cTCP;
-struct sMenuPlayer;
+struct sPlayer;
 
 int serverGameThreadFunction (void* data);
 
@@ -85,13 +85,13 @@ protected:
 	void terminateServer();
 
 	cGameDataContainer* gameData;
-	std::vector<sMenuPlayer*> menuPlayers;
+	std::vector<sPlayer*> menuPlayers;
 
 	cMap* serverMap;
 	std::vector<cPlayer*> serverPlayers;
 
 private:
-	void configRessources (std::vector<std::string>& tokens, sMenuPlayer* senderPlayer);
+	void configRessources (std::vector<std::string>& tokens, sPlayer* senderPlayer);
 
 	//------------------------------------------------------------------------
 	cRingbuffer<cNetMessage*> eventQueue;
