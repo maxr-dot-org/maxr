@@ -985,12 +985,8 @@ void sendRequestSaveInfo (cServer& server, int saveingID)
 void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVED_REPORT);
-	message->pushInt16 (savedReport.colorNr);
-	message->pushID (savedReport.unitID);
-	message->pushInt16 (savedReport.yPos);
-	message->pushInt16 (savedReport.xPos);
-	message->pushInt16 (savedReport.type);
-	message->pushString (savedReport.message);
+
+	savedReport.pushInto (*message);
 	server.sendNetMessage (message, player);
 }
 

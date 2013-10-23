@@ -1949,12 +1949,7 @@ void cServer::handleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 	if (player == NULL) return;
 
 	sSavedReportMessage savedReport;
-	savedReport.message = message.popString();
-	savedReport.type = (sSavedReportMessage::eReportTypes) message.popInt16();
-	savedReport.xPos = message.popInt16();
-	savedReport.yPos = message.popInt16();
-	savedReport.unitID = message.popID();
-	savedReport.colorNr = message.popInt16();
+	savedReport.popFrom (message);
 
 	player->savedReportsList.push_back (savedReport);
 }

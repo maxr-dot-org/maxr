@@ -51,6 +51,8 @@ struct sSavedReportMessage
 public:
 	std::string getFullMessage() const { if (xPos == -1) return message; else return "[" + iToStr (xPos) + "," + iToStr (yPos) + "] " + message; }
 
+	void pushInto(cNetMessage& message) const;
+	void popFrom (cNetMessage& message);
 public:
 	std::string message;
 	eReportTypes type;

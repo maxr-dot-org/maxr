@@ -202,9 +202,7 @@ void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 		const int nrCasualtyReports = message->popInt16();
 		for (int i = 0; i < nrCasualtyReports; i++)
 		{
-			sID unitType;
-			unitType.iFirstPart = message->popInt16();
-			unitType.iSecondPart = message->popInt16();
+			const sID unitType = message->popID();
 			const int numberLosses = message->popInt32();
 			setCasualty (unitType, numberLosses, playerNr);
 		}
@@ -236,8 +234,7 @@ void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>&
 			}
 
 			message->pushInt32 (casualties[entryIdx].numberOfLosses);
-			message->pushInt16 (casualties[entryIdx].unitID.iSecondPart);
-			message->pushInt16 (casualties[entryIdx].unitID.iFirstPart);
+			message->pushID(casualties[entryIdx].unitID);
 			entriesInMessageForPlayer++;
 
 			if (message->iLength + 4 + 4 + 8 > PACKAGE_LENGTH)

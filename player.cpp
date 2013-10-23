@@ -24,11 +24,34 @@
 #include "client.h"
 #include "clist.h"
 #include "hud.h"
+#include "netmessage.h"
 #include "server.h"
 #include "serverevents.h"
 #include "vehicles.h"
 
 using namespace std;
+
+//------------------------------------------------------------------------------
+void sSavedReportMessage::pushInto(cNetMessage& message) const
+{
+	message.pushInt16 (colorNr);
+	message.pushID (unitID);
+	message.pushInt16 (yPos);
+	message.pushInt16 (xPos);
+	message.pushInt16 (type);
+	message.pushString (this->message);
+}
+
+//------------------------------------------------------------------------------
+void sSavedReportMessage::popFrom (cNetMessage& message)
+{
+	this->message = message.popString();
+	type = static_cast<sSavedReportMessage::eReportTypes> (message.popInt16());
+	xPos = message.popInt16();
+	yPos = message.popInt16();
+	unitID = message.popID();
+	colorNr = message.popInt16();
+}
 
 //------------------------------------------------------------------------------
 sPlayer::sPlayer (const string& name_, unsigned int colorIndex_, int nr_, int socketIndex_) :

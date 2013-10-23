@@ -358,12 +358,7 @@ void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, in
 void sendSaveReportInfo (const cClient& client, const sSavedReportMessage& savedReport, int ownerNr, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_REPORT_INFO);
-	message->pushInt16 (savedReport.colorNr);
-	message->pushID (savedReport.unitID);
-	message->pushInt16 (savedReport.yPos);
-	message->pushInt16 (savedReport.xPos);
-	message->pushInt16 (savedReport.type);
-	message->pushString (savedReport.message);
+	savedReport.pushInto (*message);
 	message->pushInt16 (ownerNr);
 	message->pushInt16 (savingID);
 	client.sendNetMessage (message);

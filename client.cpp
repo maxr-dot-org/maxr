@@ -1667,12 +1667,7 @@ void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
 	assert (message.iType == GAME_EV_SAVED_REPORT);
 
 	sSavedReportMessage savedReport;
-	savedReport.message = message.popString();
-	savedReport.type = (sSavedReportMessage::eReportTypes) message.popInt16();
-	savedReport.xPos = message.popInt16();
-	savedReport.yPos = message.popInt16();
-	savedReport.unitID = message.popID();
-	savedReport.colorNr = message.popInt16();
+	savedReport.popFrom (message);
 	ActivePlayer->savedReportsList.push_back (savedReport);
 }
 
