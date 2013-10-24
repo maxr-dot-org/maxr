@@ -31,7 +31,6 @@ class cMap;
 class cNetMessage;
 class cResearch;
 class cUnit;
-struct sHudStateContainer;
 struct sSavedReportMessage;
 struct sSubBase;
 
@@ -292,7 +291,7 @@ void sendReconnectAnswer (cTCP& network, int socketNumber);
 void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
 
 void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& player);
-void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, const cPlayer& player);
+void sendHudSettings (cServer& server, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, int player);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, int x, int y, int player);
 void sendDeleteEverything (cServer& server, int player);

@@ -1663,6 +1663,7 @@ void cGameGUI::selectUnit (cUnit& unit)
 	cBuilding* building = static_cast<cBuilding*> (unit.isABuilding() ? &unit : NULL);
 
 	deselectUnit();
+	getClient()->getActivePlayer()->savedHud->selUnitID = unit.iID;
 	selectedUnit = &unit;
 	unitMenuActive = false;
 	mouseInputMode = normalInput;
@@ -1695,6 +1696,7 @@ void cGameGUI::deselectUnit()
 
 		stopFXLoop();
 	}
+	getClient()->getActivePlayer()->savedHud->selUnitID = 0;
 	selectedUnit = NULL;
 
 	mouseInputMode = normalInput;

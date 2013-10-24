@@ -727,9 +727,11 @@ void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& 
 }
 
 //------------------------------------------------------------------------------
-void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, const cPlayer& player)
+void sendHudSettings (cServer& server, const cPlayer& player)
 {
+	const sHudStateContainer& hudStates = *player.savedHud;
 	cNetMessage* message = new cNetMessage (GAME_EV_HUD_SETTINGS);
+
 	message->pushBool (hudStates.tntChecked);
 	message->pushBool (hudStates.hitsChecked);
 	message->pushBool (hudStates.lockChecked);

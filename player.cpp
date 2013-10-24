@@ -173,7 +173,7 @@ cPlayer::cPlayer (const cPlayer& Player) :
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
 
-	savedHud = new sHudStateContainer;
+	savedHud = new sHudStateContainer (*Player.savedHud);
 
 	researchFinished = Player.researchFinished;
 }

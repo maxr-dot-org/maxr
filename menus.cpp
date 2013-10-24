@@ -239,7 +239,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		sendHudSettings (server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
+		sendHudSettings (server, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
@@ -3377,7 +3377,7 @@ bool cNetworkHostMenu::runSavedGame()
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		sendRequestResync (*client, serverPlayerList[i]->getNr());
-		sendHudSettings (server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
+		sendHudSettings (server, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{

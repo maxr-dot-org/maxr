@@ -3721,6 +3721,9 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		}
 	}
 
+	// send Hud setting
+	sendHudSettings (*this, *Player);
+
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
