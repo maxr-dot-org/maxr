@@ -101,7 +101,7 @@ private:
 };
 
 
-// Die Player-Klasse /////////////////////////////////////////////////////////
+// the Player class //////////////////////////////
 class cPlayer
 {
 public:
@@ -137,14 +137,14 @@ public:
 
 	cUnit* getNextUnit (cUnit* start);
 	cUnit* getPrevUnit (cUnit* start);
-	void addSentry (cUnit* u);
-	void deleteSentry (cUnit* u);
+	void addSentry (cUnit& u);
+	void deleteSentry (cUnit& u);
 	void startAResearch (int researchArea);
 	void stopAResearch (int researchArea);
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
 	void deleteLock (cUnit& unit);
-	void toggelLock (cMapField* OverUnitField);
+	void toggleLock (cMapField& OverUnitField);
 	void countEcoSpheres();
 	int getScore (int turn) const;
 	void setScore (int score, int turn);
@@ -155,7 +155,7 @@ public:
 	void setClan (int newClan);
 	int getClan() const { return clan; }
 
-	void addUnitToList (cUnit* addedUnit);
+	void addUnitToList (cUnit& addedUnit);
 
 	void exploreResource (int offset) { ResourceMap[offset] = 1; }
 	bool hasResourceExplored (int offset) const { return ResourceMap[offset] != 0; }
@@ -175,20 +175,20 @@ public:
 private:
 	/**
 	* draws a circle on the map for the fog
-	*@author alzi alias DoctorDeath
-	*@param iX X coordinate to the center of the circle
-	*@param iY Y coordinate to the center of the circle
-	*@param iRadius radius of the circle
-	*@param map map were to store the data of the circle
+	* @author alzi alias DoctorDeath
+	* @param iX X coordinate to the center of the circle
+	* @param iY Y coordinate to the center of the circle
+	* @param iRadius radius of the circle
+	* @param map map were to store the data of the circle
 	*/
 	void drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize);
 	/**
 	* draws a big circle on the map for the fog
-	*@author alzi alias DoctorDeath
-	*@param iX X coordinate to the center of the circle
-	*@param iY Y coordinate to the center of the circle
-	*@param iRadius radius of the circle
-	*@param map map were to store the data of the circle
+	* @author alzi alias DoctorDeath
+	* @param iX X coordinate to the center of the circle
+	* @param iY Y coordinate to the center of the circle
+	* @param iRadius radius of the circle
+	* @param map map were to store the data of the circle
 	*/
 	void drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize);
 
@@ -203,26 +203,26 @@ private:
 private:
 	sPlayer splayer;
 public:
-	std::vector<sUnitData> VehicleData; // Daten aller Vehicles f¸r diesen Player.
-	cVehicle* VehicleList;     // Liste aller Vehicles des Spielers.
-	std::vector<sUnitData> BuildingData; // Daten aller Buildings f¸r diesen Player.
-	cBuilding* BuildingList;     // Liste aller Buildings des Spielers.
+	std::vector<sUnitData> VehicleData; // Current version of vehicles.
+	cVehicle* VehicleList;     // List of all vehicles of the player.
+	std::vector<sUnitData> BuildingData; // Current version of buildings.
+	cBuilding* BuildingList;  // List of all building of the player.
 	cBase base;               // Die Basis dieses Spielers.
 private:
 	int mapSize; // Width (and Height) of the map.
 public:
-	std::vector<char> ScanMap;             // Map mit dem Scannerflags.
+	std::vector<char> ScanMap;            // seen Map tile.
 private:
-	std::vector<char> ResourceMap;         // Map with explored resources.
-	std::vector<char> SentriesMapAir;      /**< the covered air area */
-	std::vector<char> SentriesMapGround;   /**< the covered ground area */
-	std::vector<char> DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
-	std::vector<char> DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
-	std::vector<char> DetectMinesMap;      /** the area where the player can detect mines */
+	std::vector<char> ResourceMap;        // Map with explored resources.
+	std::vector<char> SentriesMapAir;     /**< the covered air area */
+	std::vector<char> SentriesMapGround;  /**< the covered ground area */
+	std::vector<char> DetectLandMap;      // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
+	std::vector<char> DetectSeaMap;       // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
+	std::vector<char> DetectMinesMap;     /** the area where the player can detect mines */
 public:
 	cResearch researchLevel;   ///< stores the current research level of the player
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
-	int ResearchCount;         ///< number of working research centers
+	int workingResearchCenterCount;  ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	sHudStateContainer* savedHud;
@@ -230,13 +230,13 @@ public:
 	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	std::vector<sSavedReportMessage> savedReportsList;
 	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
-	std::vector<cUnit*> LockList;  // Liste mit gelockten Objekten.
-	bool bFinishedTurn;     //true when player send his turn end
+	std::vector<cUnit*> LockList;  // List of locked units.
+	bool bFinishedTurn;     // true when player send his turn end
 	bool isDefeated;        // true if the player has been defeated
 	bool isRemovedFromGame; // true if the player has been removed from the game.
 	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.
 	bool researchFinished;
-	unsigned int lastDeletedUnit;  /**used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
+	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 private:
 	int clan;
 };

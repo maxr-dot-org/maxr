@@ -1098,7 +1098,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 		Vehicle->manualFireActive = !Vehicle->manualFireActive;
 		if (Vehicle->manualFireActive && Vehicle->sentryActive)
 		{
-			Vehicle->owner->deleteSentry (Vehicle);
+			Vehicle->owner->deleteSentry (*Vehicle);
 		}
 
 		sendUnitData (*this, *Vehicle, Vehicle->owner->getNr());
@@ -1113,7 +1113,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 		Building->manualFireActive = !Building->manualFireActive;
 		if (Building->manualFireActive && Building->sentryActive)
 		{
-			Building->owner->deleteSentry (Building);
+			Building->owner->deleteSentry (*Building);
 		}
 
 		sendUnitData (*this, *Building, Building->owner->getNr());
@@ -1134,11 +1134,11 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 
 		if (vehicle->sentryActive)
 		{
-			vehicle->owner->deleteSentry (vehicle);
+			vehicle->owner->deleteSentry (*vehicle);
 		}
 		else
 		{
-			vehicle->owner->addSentry (vehicle);
+			vehicle->owner->addSentry (*vehicle);
 			vehicle->manualFireActive = false;
 		}
 
@@ -1155,11 +1155,11 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 
 		if (building->sentryActive)
 		{
-			building->owner->deleteSentry (building);
+			building->owner->deleteSentry (*building);
 		}
 		else
 		{
-			building->owner->addSentry (building);
+			building->owner->addSentry (*building);
 			building->manualFireActive = false;
 		}
 
@@ -1751,7 +1751,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 		newResearchSettings[area] = message.popInt16();
 		newUsedResearch += newResearchSettings[area];
 	}
-	if (newUsedResearch > player->ResearchCount)
+	if (newUsedResearch > player->workingResearchCenterCount)
 		return; // can't turn on research centers automatically!
 
 	// needed, if newUsedResearch < player->ResearchCount
@@ -2333,7 +2333,7 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 	// generate the building:
 	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, id, uid ? uid : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
-	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
+	if (AddedBuilding->sentryActive) Player->addSentry (*AddedBuilding);
 
 	iNextUnitID++;
 
@@ -2466,7 +2466,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	}
 
 	// remove from sentry list
-	unit->owner->deleteSentry (unit);
+	unit->owner->deleteSentry (*unit);
 
 	// lose eco points
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
@@ -3777,7 +3777,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	remove_from_intrusivelist (oldOwner->VehicleList, *vehicle);
 	// add the vehicle to the list of the new player
 	vehicle->owner = newOwner;
-	newOwner->addUnitToList (vehicle);
+	newOwner->addUnitToList (*vehicle);
 
 	//the vehicle is fully operational for the new owner
 	if (vehicle->isDisabled())

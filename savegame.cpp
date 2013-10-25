@@ -439,7 +439,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 	XMLElement* researchNode = playerNode->FirstChildElement ("Research");
 	if (researchNode)
 	{
-		Player->ResearchCount = researchNode->IntAttribute ("researchCount");
+		Player->workingResearchCenterCount = researchNode->IntAttribute ("researchCount");
 		XMLElement* researchLevelNode = researchNode->FirstChildElement ("ResearchLevel");
 		if (researchLevelNode)
 			loadResearchLevel (researchLevelNode, Player->researchLevel);
@@ -617,7 +617,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
-		owner->addSentry (vehicle);
+		owner->addSentry (*vehicle);
 	}
 	if (unitNode->FirstChildElement ("ManualFire")) vehicle->manualFireActive = true;
 
@@ -739,12 +739,12 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	{
 		if (!building->sentryActive)
 		{
-			owner->addSentry (building);
+			owner->addSentry (*building);
 		}
 	}
 	else if (building->sentryActive)
 	{
-		owner->deleteSentry (building);
+		owner->deleteSentry (*building);
 	}
 	if (unitNode->FirstChildElement ("ManualFire")) building->manualFireActive = true;
 	if (unitNode->FirstChildElement ("HasBeenAttacked")) building->hasBeenAttacked = true;
@@ -1228,7 +1228,7 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	}
 
 	XMLElement* researchNode = addMainElement (playerNode, "Research");
-	researchNode->SetAttribute ("researchCount", iToStr (Player.ResearchCount).c_str());
+	researchNode->SetAttribute ("researchCount", iToStr (Player.workingResearchCenterCount).c_str());
 	XMLElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
 	writeResearchLevel (researchLevelNode, Player.researchLevel);
 	XMLElement* researchCentersWorkingOnAreaNode = addMainElement (researchNode, "CentersWorkingOnArea");

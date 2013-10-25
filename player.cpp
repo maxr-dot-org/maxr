@@ -126,7 +126,7 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 	VehicleList = NULL;
 	BuildingList = NULL;
 
-	ResearchCount = 0;
+	workingResearchCenterCount = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
 	Credits = 0;
@@ -160,7 +160,7 @@ cPlayer::cPlayer (const cPlayer& Player) :
 	BuildingList = NULL;
 
 	Credits = Player.Credits;
-	ResearchCount = Player.ResearchCount;
+	workingResearchCenterCount = Player.workingResearchCenterCount;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = Player.researchCentersWorkingOnArea[i];
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
@@ -185,10 +185,7 @@ cPlayer::~cPlayer()
 
 	for (cVehicle* ptr = VehicleList; ptr; ptr = ptr->next)
 	{
-		if (ptr->storedUnits.size())
-		{
-			ptr->deleteStoredUnits();
-		}
+		ptr->deleteStoredUnits();
 	}
 	// Jetzt alle Vehicles lˆschen:
 	while (VehicleList)
@@ -268,7 +265,7 @@ cVehicle* cPlayer::addVehicle (int posx, int posy, const sID& id, unsigned int u
 	n->PosX = posx;
 	n->PosY = posy;
 
-	addUnitToList (n);
+	addUnitToList (*n);
 
 	drawSpecialCircle (n->PosX, n->PosY, n->data.scan, ScanMap, mapSize);
 	if (n->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectLandMap, mapSize);
@@ -329,21 +326,21 @@ T* getPreviousUnitById (T* root, unsigned int id)
 	return it;
 }
 
-void cPlayer::addUnitToList (cUnit* addedUnit)
+void cPlayer::addUnitToList (cUnit& addedUnit)
 {
 	//units in the linked list are sorted in increasing order of IDs
 
 	//find unit before the added unit
-	if (addedUnit->isABuilding())
+	if (addedUnit.isABuilding())
 	{
-		cBuilding* addedBuilding = static_cast<cBuilding*> (addedUnit);
-		cBuilding* prev = getPreviousUnitById (BuildingList, addedUnit->iID);
+		cBuilding* addedBuilding = static_cast<cBuilding*> (&addedUnit);
+		cBuilding* prev = getPreviousUnitById (BuildingList, addedUnit.iID);
 		insert_after_in_intrusivelist (BuildingList, prev, *addedBuilding);
 	}
 	else
 	{
-		cVehicle* addedVehicle = static_cast<cVehicle*> (addedUnit);
-		cVehicle* prev = getPreviousUnitById (VehicleList, addedUnit->iID);
+		cVehicle* addedVehicle = static_cast<cVehicle*> (&addedUnit);
+		cVehicle* prev = getPreviousUnitById (VehicleList, addedUnit.iID);
 		insert_after_in_intrusivelist (VehicleList, prev, *addedVehicle);
 	}
 }
@@ -359,7 +356,7 @@ cBuilding* cPlayer::addBuilding (int posx, int posy, const sID& id, unsigned int
 	Building->PosX = posx;
 	Building->PosY = posy;
 
-	addUnitToList (Building);
+	addUnitToList (*Building);
 
 	if (Building->data.scan)
 	{
@@ -370,28 +367,28 @@ cBuilding* cPlayer::addBuilding (int posx, int posy, const sID& id, unsigned int
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::addSentry (cUnit* u)
+void cPlayer::addSentry (cUnit& u)
 {
-	u->sentryActive = true;
-	if (u->data.canAttack & TERRAIN_AIR)
+	u.sentryActive = true;
+	if (u.data.canAttack & TERRAIN_AIR)
 	{
-		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapAir, mapSize);
+		drawSpecialCircle (u.PosX, u.PosY, u.data.range, SentriesMapAir, mapSize);
 	}
-	if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
+	if ( (u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
 	{
-		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapGround, mapSize);
+		drawSpecialCircle (u.PosX, u.PosY, u.data.range, SentriesMapGround, mapSize);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::deleteSentry (cUnit* u)
+void cPlayer::deleteSentry (cUnit& u)
 {
-	u->sentryActive = false;
-	if (u->data.canAttack & TERRAIN_AIR)
+	u.sentryActive = false;
+	if (u.data.canAttack & TERRAIN_AIR)
 	{
 		refreshSentryAir();
 	}
-	else if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
+	else if ( (u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
 	{
 		refreshSentryGround();
 	}
@@ -431,7 +428,6 @@ void cPlayer::refreshSentryGround()
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
 	}
-
 	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
@@ -518,9 +514,9 @@ bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 	if (ScanMap[offset] == 1) return true;
 	if (!unit.data.isBig) return false;
 
-	return (ScanMap[offset + 1] == 1 ||
+	return ScanMap[offset + 1] == 1 ||
 			ScanMap[offset + getMapSize()] == 1 ||
-			ScanMap[offset + getMapSize() + 1] == 1);
+			ScanMap[offset + getMapSize() + 1] == 1;
 }
 
 cVehicle* cPlayer::getNextVehicle (cVehicle* start)
@@ -680,7 +676,7 @@ void cPlayer::startAResearch (int researchArea)
 {
 	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
 	{
-		ResearchCount++;
+		workingResearchCenterCount++;
 		researchCentersWorkingOnArea[researchArea] += 1;
 	}
 }
@@ -692,7 +688,7 @@ void cPlayer::stopAResearch (int researchArea)
 {
 	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
 	{
-		ResearchCount--;
+		workingResearchCenterCount--;
 		if (researchCentersWorkingOnArea[researchArea] > 0)
 			researchCentersWorkingOnArea[researchArea] -= 1;
 	}
@@ -707,7 +703,7 @@ void cPlayer::doResearch (cServer& server)
 	std::vector<sUnitData*> upgradedUnitDatas;
 	std::vector<int> areasReachingNextLevel;
 	reportResearchAreasFinished.clear();
-	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
+	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 &&
 			researchLevel.doResearch (researchCentersWorkingOnArea[area], area))
@@ -722,7 +718,7 @@ void cPlayer::doResearch (cServer& server)
 	{
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
-		for (unsigned int i = 0; i < upgradedUnitDatas.size(); i++)
+		for (size_t i = 0; i != upgradedUnitDatas.size(); ++i)
 			sendUnitUpgrades (server, *upgradedUnitDatas[i], getNr());
 	}
 	sendResearchLevel (server, researchLevel, getNr());
@@ -801,7 +797,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 	{
 		const sUnitData& originalData = UnitsData.getVehicle (i, getClan());
 		bool incrementVersion = false;
-		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
+		for (size_t areaCounter = 0; areaCounter != areasReachingNextLevel.size(); areaCounter++)
 		{
 			const int researchArea = areasReachingNextLevel[areaCounter];
 			const int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
@@ -850,7 +846,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 	{
 		const sUnitData& originalData = UnitsData.getBuilding (i, getClan());
 		bool incrementVersion = false;
-		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
+		for (size_t areaCounter = 0; areaCounter != areasReachingNextLevel.size(); areaCounter++)
 		{
 			const int researchArea = areasReachingNextLevel[areaCounter];
 			const int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
@@ -910,19 +906,17 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 			newResearchCount++;
 		}
 	}
-	ResearchCount = newResearchCount;
+	workingResearchCenterCount = newResearchCount;
 }
 
 //------------------------------------------------------------------------------
 bool cPlayer::mayHaveOffensiveUnit() const
 {
-	const cVehicle* vehicle = VehicleList;
-	for (; vehicle; vehicle = vehicle->next)
+	for (const cVehicle* vehicle = VehicleList; vehicle; vehicle = vehicle->next)
 	{
 		if (vehicle->data.canAttack || !vehicle->data.canBuild.empty()) return true;
 	}
-	const cBuilding* building = BuildingList;
-	for (; building; building = building->next)
+	for (const cBuilding* building = BuildingList; building; building = building->next)
 	{
 		if (building->data.canAttack || !building->data.canBuild.empty()) return true;
 	}
@@ -942,24 +936,24 @@ void cPlayer::deleteLock (cUnit& unit)
  * (when locked it's range and scan is displayed, although the unit is not selected).
 */
 //------------------------------------------------------------------------------
-void cPlayer::toggelLock (cMapField* OverUnitField)
+void cPlayer::toggleLock (cMapField& OverUnitField)
 {
 	cUnit* unit = NULL;
-	if (OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner != this)
+	if (OverUnitField.getBaseBuilding() && OverUnitField.getBaseBuilding()->owner != this)
 	{
-		unit = OverUnitField->getBaseBuilding();
+		unit = OverUnitField.getBaseBuilding();
 	}
-	else if (OverUnitField->getTopBuilding() && OverUnitField->getTopBuilding()->owner != this)
+	else if (OverUnitField.getTopBuilding() && OverUnitField.getTopBuilding()->owner != this)
 	{
-		unit = OverUnitField->getTopBuilding();
+		unit = OverUnitField.getTopBuilding();
 	}
-	if (OverUnitField->getVehicle() && OverUnitField->getVehicle()->owner != this)
+	if (OverUnitField.getVehicle() && OverUnitField.getVehicle()->owner != this)
 	{
-		unit = OverUnitField->getVehicle();
+		unit = OverUnitField.getVehicle();
 	}
-	if (OverUnitField->getPlane() && OverUnitField->getPlane()->owner != this)
+	if (OverUnitField.getPlane() && OverUnitField.getPlane()->owner != this)
 	{
-		unit = OverUnitField->getPlane();
+		unit = OverUnitField.getPlane();
 	}
 	if (unit == NULL) return;
 

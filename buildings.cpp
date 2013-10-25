@@ -950,7 +950,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// research building
 	if (data.canResearch)
 	{
-		owner->ResearchCount++;
+		owner->workingResearchCenterCount++;
 		owner->researchCentersWorkingOnArea[researchArea]++;
 	}
 
@@ -1042,7 +1042,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	if (data.canResearch)
 	{
-		owner->ResearchCount--;
+		owner->workingResearchCenterCount--;
 		owner->researchCentersWorkingOnArea[researchArea]--;
 	}
 
@@ -1197,7 +1197,7 @@ void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 	Map->deleteVehicle (*Vehicle);
 	if (Vehicle->sentryActive)
 	{
-		Vehicle->owner->deleteSentry (Vehicle);
+		Vehicle->owner->deleteSentry (*Vehicle);
 	}
 
 	Vehicle->Loaded = true;

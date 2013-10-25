@@ -965,12 +965,12 @@ cDialogResearch::cDialogResearch (cClient& client_) :
 		decButtons[i]->setReleasedFunction (&decReleased);
 		menuItems.push_back (decButtons[i]);
 
-		scroller[i] = new cMenuScrollerHandler (position.x + 90, position.y + 70 + 28 * i, 51, owner->ResearchCount);
+		scroller[i] = new cMenuScrollerHandler (position.x + 90, position.y + 70 + 28 * i, 51, owner->workingResearchCenterCount);
 		scroller[i]->setClickedFunction (&sliderClicked);
 		menuItems.push_back (scroller[i]);
 	}
 
-	unusedResearch = owner->ResearchCount;
+	unusedResearch = owner->workingResearchCenterCount;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
 		newResearchSettings[i] = owner->researchCentersWorkingOnArea[i];
@@ -1040,7 +1040,7 @@ void cDialogResearch::incReleased (void* parent)
 void cDialogResearch::decReleased (void* parent)
 {
 	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
-	if (menu->unusedResearch < menu->owner->ResearchCount)
+	if (menu->unusedResearch < menu->owner->workingResearchCenterCount)
 	{
 		menu->unusedResearch++;
 		for (int i = 0; i < cResearch::kNrResearchAreas; i++)
@@ -1064,7 +1064,7 @@ void cDialogResearch::sliderClicked (void* parent)
 		if (menu->scroller[i]->overItem (mouse->x, mouse->y))
 		{
 			int posX = mouse->x - menu->scroller[i]->getPosition().x;
-			int wantResearch = Round ( (float) menu->owner->ResearchCount / menu->scroller[i]->getPosition().w * posX);
+			int wantResearch = Round ( (float) menu->owner->workingResearchCenterCount / menu->scroller[i]->getPosition().w * posX);
 			if (wantResearch <= menu->newResearchSettings[i])
 			{
 				menu->unusedResearch += menu->newResearchSettings[i] - wantResearch;

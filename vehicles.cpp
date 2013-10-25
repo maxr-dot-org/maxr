@@ -1525,7 +1525,7 @@ void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
 	Map->deleteVehicle (*Vehicle);
 	if (Vehicle->sentryActive)
 	{
-		Vehicle->owner->deleteSentry (Vehicle);
+		Vehicle->owner->deleteSentry (*Vehicle);
 	}
 
 	Vehicle->manualFireActive = false;

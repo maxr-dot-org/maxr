@@ -2503,7 +2503,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			cPlayer* player = client->getActivePlayer();
 			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != player)
-				player->toggelLock (overUnitField);
+				player->toggleLock (*overUnitField);
 		}
 
 		mouseBox.invalidate();

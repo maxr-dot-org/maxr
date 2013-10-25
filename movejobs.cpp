@@ -420,7 +420,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int dest
 	// unset sentry status when moving vehicle
 	if (Vehicle->sentryActive)
 	{
-		Vehicle->owner->deleteSentry (Vehicle);
+		Vehicle->owner->deleteSentry (*Vehicle);
 	}
 	sendUnitData (*server, *Vehicle, Vehicle->owner->getNr());
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
