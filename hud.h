@@ -49,7 +49,7 @@ class cFxContainer;
 struct sMessage
 {
 public:
-	sMessage (std::string const&, unsigned int age);
+	sMessage (const std::string&, unsigned int age);
 	~sMessage();
 
 public:
@@ -199,7 +199,7 @@ class cGameGUI : public cMenu
 	float cyclesPerSecond;
 	unsigned int loadValue;
 
-	/** the acctual blink color */
+	/** the actual blink color */
 	unsigned int blinkColor;
 
 	bool startup;
@@ -269,11 +269,12 @@ class cGameGUI : public cMenu
 	void handleMessages();
 
 	/**
-	* opens or closes the panal over the hud
+	* opens or closes the panel over the hud
 	*@author alzi alias DoctorDeath
-	*@param bOpen if true the panal will be opened, else closed
+	*@param open if true the panel will be opened, else closed
 	*/
-	void makePanel (bool open);
+	void openPanel();
+	void closePanel();
 
 	bool checkScroll();
 	void updateUnderMouseObject();
@@ -289,13 +290,13 @@ class cGameGUI : public cMenu
 	/**
 	* checks whether the input is a command
 	*@author alzi alias DoctorDeath
-	*@param sCmd the input string
+	*@param cmd the input string
 	*/
 	void doCommand (const std::string& cmd);
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
-	*@param iDir new direction (in degree)
+	*@param dir new direction (in degree)
 	*/
 	void setWind (int dir);
 	void changeWindDir();
@@ -498,8 +499,8 @@ public:
 	/**
 	* draws an exitpoint on the ground
 	*@author alzi alias DoctorDeath
-	*@param iX X coordinate
-	*@param iY Y coordinate
+	*@param x X coordinate
+	*@param y Y coordinate
 	*/
 	void drawExitPoint (int x, int y);
 	void callMiniMapDraw();
@@ -565,7 +566,8 @@ public:
 	void toggleMouseInputMode (eMouseInputMode mode);
 
 	/**
-	* checks, whether the selected action in mouseInputMode is possible and resets the mode to normal otherwise.
+	* checks, whether the selected action in mouseInputMode is possible
+	* and resets the mode to normal otherwise.
 	*@author eiko
 	*/
 	void checkMouseInputMode();

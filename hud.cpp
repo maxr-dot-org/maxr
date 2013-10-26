@@ -826,7 +826,7 @@ int cGameGUI::show (cClient* client)
 	drawnEveryFrame = true;
 
 	// do startup actions
-	makePanel (true);
+	openPanel();
 	startup = true;
 	if (client->isFreezed()) setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", client->getPlayerFromNumber (0)->getName()), "");
 
@@ -912,7 +912,7 @@ int cGameGUI::show (cClient* client)
 	}
 	// end
 
-	makePanel (false);
+	closePanel();
 
 	// flush event queue before exiting menu
 	cEventHandling::handleInputEvents (*this, client);
@@ -1087,7 +1087,7 @@ SDL_Surface* cGameGUI::generateSurface()
 
 	if (Video.getResolutionY() > 480)
 	{
-		AutoSurface tmpSurface (LoadPCX (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "logo.pcx"));
+		AutoSurface tmpSurface (LoadPCX (gfxPath + "logo.pcx"));
 		if (tmpSurface)
 		{
 			dest.x = 9;
@@ -1147,9 +1147,9 @@ void cGameGUI::generateMiniMapSurface_fog (SDL_Surface* minimapSurface, int zoom
 			if (player->ScanMap[staticMap->getOffset (terrainx, terrainy)]) continue;
 
 			Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * MINIMAP_SIZE]);
-			color[0] = (Uint8) (color[0] * 0.6f);
-			color[1] = (Uint8) (color[1] * 0.6f);
-			color[2] = (Uint8) (color[2] * 0.6f);
+			color[0] = static_cast<Uint8> (color[0] * 0.6f);
+			color[1] = static_cast<Uint8> (color[1] * 0.6f);
+			color[2] = static_cast<Uint8> (color[2] * 0.6f);
 		}
 	}
 }
@@ -1163,11 +1163,10 @@ void cGameGUI::generateMiniMapSurface_units (SDL_Surface* minimapSurface, int zo
 	cMap& map = *client->getMap();
 	const int mapSize = client->getMap()->getSize();
 	// the size of the rect, that is drawn for each unit
-	int size = MINIMAP_SIZE * zoomFactor / mapSize;
-	size = std::max (size, 2);
+	const int size = std::max (2, MINIMAP_SIZE * zoomFactor / mapSize);
 	SDL_Rect rect;
-	rect.h = size;
 	rect.w = size;
+	rect.h = size;
 
 	const cPlayer* player = client->getActivePlayer();
 	for (int mapx = 0; mapx < mapSize; ++mapx)
@@ -3061,7 +3060,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
 				selectedVehiclesGroup[i]->executeAutoMoveJobCommand (*client);
 			}
@@ -3075,7 +3074,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		{
 			if (selectedVehicle->ClientMoveJob)
 			{
-				for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+				for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 				{
 					if (selectedVehiclesGroup[i]->ClientMoveJob) sendWantStopMove (*client, selectedVehiclesGroup[i]->iID);
 				}
@@ -3083,7 +3082,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 			}
 			else if (selectedVehicle->IsBuilding)
 			{
-				for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+				for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 				{
 					if (selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding (*client, selectedVehiclesGroup[i]->iID);
 				}
@@ -3091,7 +3090,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 			}
 			else if (selectedVehicle->IsClearing)
 			{
-				for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+				for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 				{
 					if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, *selectedVehiclesGroup[i]);
 				}
@@ -3104,7 +3103,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map.fields[map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY)].getRubble() && !selectedVehicle->IsClearing)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
 				if (selectedVehiclesGroup[i]->data.canClearArea && map.fields[map.getOffset (selectedVehiclesGroup[i]->PosX, selectedVehiclesGroup[i]->PosY)].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
 			}
@@ -3112,7 +3111,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
 				if (selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive)
 				{
@@ -3127,7 +3126,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack))
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
 				if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
 					 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
@@ -3160,7 +3159,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
 				if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0) selectedVehiclesGroup[i]->executeLayMinesCommand (*client);
 			}
@@ -3168,7 +3167,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
+			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
 				if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax) selectedVehiclesGroup[i]->executeClearMinesCommand (*client);
 			}
@@ -3662,7 +3661,7 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 {
 	const int tileSize = getTileSize();
 	SDL_Rect dest;
-	//draw rubble and all base buildings (without bridges)
+	// draw rubble and all base buildings (without bridges)
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	const cPlayer* player = client->getActivePlayer();
 	const cMap& map = *client->getMap();
@@ -3703,9 +3702,10 @@ void cGameGUI::drawTopBuildings_DebugBaseClient (const cBuilding& building, cons
 
 	SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8u };
 	if (building.data.isBig) tmp.w *= 2;
-	sSubBase* sb = building.SubBase;
+	const sSubBase* sb = building.SubBase;
 	// the VS compiler gives a warning on casting a pointer to long.
-	// therefore we will first cast to long long and then cut this to Unit32 again.
+	// therefore we will first cast to long long
+	// and then cut this to Unit32 again.
 	SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
 	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
 	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
@@ -3722,14 +3722,15 @@ void cGameGUI::drawTopBuildings_DebugBaseServer (const cBuilding& building, cons
 {
 	assert (debugOutput.debugBaseServer && building.SubBase);
 
-	sSubBase* sb = client->getServer()->Map->fields[offset].getBuilding()->SubBase;
+	const sSubBase* sb = client->getServer()->Map->fields[offset].getBuilding()->SubBase;
 	if (sb == NULL) return;
 
 	SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8u };
 	if (building.data.isBig) tmp.w *= 2;
 
 	// the VS compiler gives a warning on casting a pointer to long.
-	// therefore we will first cast to long long and then cut this to Unit32 again.
+	// therefore we will first cast to long long
+	// and then cut this to Unit32 again.
 	SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
 	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
 	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
@@ -3747,7 +3748,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 	SDL_Rect dest;
 	const int tileSize = getTileSize();
 	const cPlayer* player = client->getActivePlayer();
-	//draw top buildings (except connectors)
+	// draw top buildings (except connectors)
 	const cMap& map = *client->getMap();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
@@ -4036,11 +4037,11 @@ void cGameGUI::displayMessages()
 			SDL_Rect rDest = dest;
 			rDest.w = rColorSrc.w;
 			rDest.h = rColorSrc.h;
-			SDL_BlitSurface (color, &rColorSrc, buffer, &rDest);  //blit color
-			dest.x += rColorSrc.w + CELLSPACE; //add border for color
+			SDL_BlitSurface (color, &rColorSrc, buffer, &rDest);  // blit color
+			dest.x += rColorSrc.w + CELLSPACE; // add border for color
 			dest.w -= rColorSrc.w + CELLSPACE;
 			dest.y = font->showTextAsBlock (dest, msgString);
-			dest.x -= rColorSrc.w + CELLSPACE; //reset border from color
+			dest.x -= rColorSrc.w + CELLSPACE; // reset border from color
 			dest.w += rColorSrc.w + CELLSPACE;
 		}
 		else
@@ -4098,54 +4099,51 @@ void cGameGUI::scaleSurfaces()
 	SCALE_FX (EffectsData.fx_absorb);
 }
 
-void cGameGUI::makePanel (bool open)
+void cGameGUI::openPanel()
 {
-	SDL_Rect tmp;
-	if (open)
+	PlayFX (SoundData.SNDPanelOpen);
+	SDL_Rect top = { 0, Sint16 ( (Video.getResolutionY() / 2) - 479), 171, 479 };
+	SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY() / 2), 171, 481 };
+	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, NULL);
+	SDL_Rect tmp = bottom;
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &tmp);
+	while (top.y > -479)
 	{
-		PlayFX (SoundData.SNDPanelOpen);
-		SDL_Rect top = { 0, Sint16 ( (Video.getResolutionY() / 2) - 479), 171, 479 };
-		SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY() / 2), 171, 481 };
+		Video.draw();
+		mouse->draw (false, screen);
+		SDL_Delay (10);
+		top.y -= 10;
+		bottom.y += 10;
+		draw (false, false);
+		tmp = top;
+		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &bottom);
+	}
+}
+
+void cGameGUI::closePanel()
+{
+	PlayFX (SoundData.SNDPanelClose);
+	SDL_Rect top = { 0, -480, 171, 479 };
+	SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY()), 171, 481 };
+	while (bottom.y > Video.getResolutionY() / 2)
+	{
+		Video.draw();
+		mouse->draw (false, screen);
+		SDL_Delay (10);
+		top.y += 10;
+		if (top.y > (Video.getResolutionY() / 2) - 479 - 9) top.y = (Video.getResolutionY() / 2) - 479;
+		bottom.y -= 10;
+		if (bottom.y < Video.getResolutionY() / 2 + 9) bottom.y = Video.getResolutionY() / 2;
+		draw (false, false);
+		SDL_Rect tmp = top;
 		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
 		tmp = bottom;
 		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &tmp);
-		while (top.y > -479)
-		{
-			Video.draw();
-			mouse->draw (false, screen);
-			SDL_Delay (10);
-			top.y -= 10;
-			bottom.y += 10;
-			draw (false, false);
-			tmp = top;
-			SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
-			SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &bottom);
-		}
 	}
-	else
-	{
-		PlayFX (SoundData.SNDPanelClose);
-		SDL_Rect top = { 0, -480, 171, 479 };
-		SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY()), 171, 481 };
-		while (bottom.y > Video.getResolutionY() / 2)
-		{
-			Video.draw();
-			mouse->draw (false, screen);
-			SDL_Delay (10);
-			top.y += 10;
-			if (top.y > (Video.getResolutionY() / 2) - 479 - 9) top.y = (Video.getResolutionY() / 2) - 479;
-			bottom.y -= 10;
-			if (bottom.y < Video.getResolutionY() / 2 + 9) bottom.y = Video.getResolutionY() / 2;
-			draw (false, false);
-			tmp = top;
-			SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
-			tmp = bottom;
-			SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &tmp);
-		}
-		Video.draw();
-		mouse->draw (false, screen);
-		SDL_Delay (100);
-	}
+	Video.draw();
+	mouse->draw (false, screen);
+	SDL_Delay (100);
 }
 
 void cGameGUI::drawUnitCircles()
@@ -4159,7 +4157,7 @@ void cGameGUI::drawUnitCircles()
 
 	if (selectedVehicle && selectedUnit->isDisabled() == false)
 	{
-		cVehicle& v = *selectedVehicle;
+		const cVehicle& v = *selectedVehicle;
 		const bool movementOffset = !v.IsBuilding && !v.IsClearing;
 		const int spx = getScreenPosX (v, movementOffset);
 		const int spy = getScreenPosY (v, movementOffset);
@@ -4816,7 +4814,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 
 	int nr = 0;
 
-	// no menu if something disabled - origina behavior -- nonsinn
+	// no menu if something disabled - original behavior -- nonsinn
 	if (unit.isDisabled() == false && unit.owner == client->getActivePlayer())
 	{
 		// attack:
@@ -5244,12 +5242,14 @@ void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) cons
 
 	SDL_FillRect (buffer, &r1, 0);
 
+	Uint32 color;
 	if (unit.data.hitpointsCur > unit.data.hitpointsMax / 2)
-		SDL_FillRect (buffer, &r2, 0x0004AE04);
+		color = 0x0004AE04; // green
 	else if (unit.data.hitpointsCur > unit.data.hitpointsMax / 4)
-		SDL_FillRect (buffer, &r2, 0x00DBDE00);
+		color = 0x00DBDE00; // orange
 	else
-		SDL_FillRect (buffer, &r2, 0x00E60000);
+		color = 0x00E60000; // red
+	SDL_FillRect (buffer, &r2, color);
 }
 
 //------------------------------------------------------------------------------
