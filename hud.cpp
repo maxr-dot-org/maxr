@@ -4157,7 +4157,7 @@ void cGameGUI::drawUnitCircles()
 
 	if (selectedVehicle && selectedUnit->isDisabled() == false)
 	{
-		const cVehicle& v = *selectedVehicle;
+		cVehicle& v = *selectedVehicle;
 		const bool movementOffset = !v.IsBuilding && !v.IsClearing;
 		const int spx = getScreenPosX (v, movementOffset);
 		const int spy = getScreenPosY (v, movementOffset);
