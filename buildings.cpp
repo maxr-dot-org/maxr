@@ -1588,7 +1588,7 @@ void cBuilding::makeDetection (cServer& server)
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
 		int offset = server.Map->getOffset (PosX, PosY);
-		std::vector<cPlayer*>& playerList = *server.PlayerList;
+		std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];

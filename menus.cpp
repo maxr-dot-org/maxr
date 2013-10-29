@@ -213,7 +213,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	if (savegame.load (server) == false) return;
 	AutoPtr<cStaticMap> staticMap (server.Map->staticMap);
 	AutoPtr<cMap> serverMap (server.Map);
-	std::vector<cPlayer*>& serverPlayerList = *server.PlayerList;
+	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
 	std::vector<cPlayer*> clientPlayerList;
@@ -3280,7 +3280,7 @@ bool cNetworkHostMenu::runSavedGame()
 	if (savegame.load (server) == false) return false;
 	AutoPtr<cStaticMap> staticMap (server.Map->staticMap);
 	AutoPtr<cMap> serverMap (server.Map);
-	const std::vector<cPlayer*>& serverPlayerList = *server.PlayerList;
+	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
 	// first we check whether all necessary players are connected
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{

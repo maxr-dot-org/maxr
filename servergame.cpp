@@ -548,11 +548,11 @@ std::string cServerGame::getGameState() const
 		result << "Turn: " << server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if (server != NULL && server->PlayerList->empty() == false)
+	if (server != NULL && server->PlayerList.empty() == false)
 	{
-		for (size_t i = 0; i != server->PlayerList->size(); ++i)
+		for (size_t i = 0; i != server->PlayerList.size(); ++i)
 		{
-			const cPlayer& player = *server->PlayerList->at(i);
+			const cPlayer& player = *server->PlayerList[i];
 			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}

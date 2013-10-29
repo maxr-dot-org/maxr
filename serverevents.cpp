@@ -242,7 +242,7 @@ void sendChatMessageToClient (cServer& server, const std::string& message, int i
 void sendDoStartWork (cServer& server, const cBuilding& building)
 {
 	//check all players
-	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -260,7 +260,7 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 void sendDoStopWork (cServer& server, const cBuilding& building)
 {
 	//check all players
-	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -393,7 +393,7 @@ void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer
 {
 	if (!receiver)
 	{
-		const std::vector<cPlayer*>& playerList = *server.PlayerList;
+		const std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendScore (server, subject, turn, playerList[n]);
 	}
@@ -422,7 +422,7 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 
 	if (!receiver)
 	{
-		const std::vector<cPlayer*>& playerList = *server.PlayerList;
+		const std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendNumEcos (server, subject, playerList[n]);
 	}
@@ -697,7 +697,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 {
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
 
-	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer const* SecondPlayer = playerList[i];
@@ -858,7 +858,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 	}
 
 	// send to other players
-	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (unsigned int n = 0; n < playerList.size(); n++)
 	{
 		const cPlayer* curPlayer = playerList[n];

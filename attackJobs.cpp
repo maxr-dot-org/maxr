@@ -160,7 +160,7 @@ void cServerAttackJob::lockTarget (int offset)
 	if (target && target->data.isBig)
 		offset = map.getOffset (target->PosX, target->PosY);
 
-	const std::vector<cPlayer*>& playerList = *server->PlayerList;
+	const std::vector<cPlayer*>& playerList = server->PlayerList;
 	for (unsigned int i = 0; i  < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -217,7 +217,7 @@ void cServerAttackJob::sendFireCommand()
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
-	std::vector<cPlayer*>& playerList = *server->PlayerList;
+	std::vector<cPlayer*>& playerList = server->PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
@@ -384,7 +384,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 		// if taget is a stealth unit, make it visible on all clients
 		if (target->data.isStealthOn != TERRAIN_NONE)
 		{
-			const std::vector<cPlayer*>& playerList = *server->PlayerList;
+			const std::vector<cPlayer*>& playerList = server->PlayerList;
 			for (unsigned int i = 0; i < playerList.size(); i++)
 			{
 				cPlayer* player = playerList[i];
@@ -481,7 +481,7 @@ void cServerAttackJob::makeImpactCluster()
 //--------------------------------------------------------------------------
 void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 {
-	const std::vector<cPlayer*>& playerList = *server->PlayerList;
+	const std::vector<cPlayer*>& playerList = server->PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];

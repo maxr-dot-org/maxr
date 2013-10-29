@@ -102,7 +102,6 @@ cServer::cServer (cTCP* network_) :
 	serverState (SERVER_STATE_ROOM)
 {
 	Map = NULL;
-	this->PlayerList = new std::vector<cPlayer*>;
 	bExit = false;
 	openMapDefeat = true;
 	neutralBuildings = NULL;
@@ -134,11 +133,11 @@ cServer::~cServer()
 	casualtiesTracker = 0;
 
 	// disconnect clients
-	if (network && PlayerList)
+	if (network)
 	{
-		for (size_t i = 0; i < PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			network->close ( (*PlayerList) [i]->getSocketNum());
+			network->close (PlayerList[i]->getSocketNum());
 		}
 	}
 
@@ -152,13 +151,9 @@ cServer::~cServer()
 		delete AJobs[i];
 	}
 
-	if (PlayerList)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		for (size_t i = 0; i != PlayerList->size(); ++i)
-		{
-			delete (*PlayerList) [i];
-		}
-		delete PlayerList;
+		delete PlayerList[i];
 	}
 	while (neutralBuildings)
 	{
@@ -177,7 +172,7 @@ void cServer::setMap (cMap& map_)
 //------------------------------------------------------------------------------
 void cServer::addPlayer (cPlayer* player)
 {
-	PlayerList->push_back (player);
+	PlayerList.push_back (player);
 }
 
 //------------------------------------------------------------------------------
@@ -192,11 +187,11 @@ void cServer::changeStateToInitGame()
 	assert(serverState == SERVER_STATE_ROOM);
 	assert(gameSetting != NULL);
 	assert(Map != NULL);
-	assert(!PlayerList->empty());
+	assert(!PlayerList.empty());
 
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		PlayerList->at(i)->initMaps (*Map);
+		PlayerList[i]->initMaps (*Map);
 	}
 	serverState = SERVER_STATE_INITGAME;
 }
@@ -211,7 +206,7 @@ bool cServer::isTurnBasedGame() const
 eGameTypes cServer::getGameType() const
 {
 	if (network) return GAME_TYPE_TCPIP;
-	if (PlayerList->size() > 1 && isTurnBasedGame()) return GAME_TYPE_HOTSEAT;
+	if (PlayerList.size() > 1 && isTurnBasedGame()) return GAME_TYPE_HOTSEAT;
 	return GAME_TYPE_SINGLE;
 }
 
@@ -359,16 +354,16 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 	cPlayer* Player = NULL;
 	// resort socket numbers of the players
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		if ( (*PlayerList) [i]->getSocketNum() == iSocketNumber)
+		if (PlayerList[i]->getSocketNum() == iSocketNumber)
 		{
-			Player = (*PlayerList) [i];
+			Player = PlayerList[i];
 			break;
 		}
 	}
-	for (size_t i = 0; i != PlayerList->size(); ++i)
-		(*PlayerList) [i]->onSocketIndexDisconnected (iSocketNumber);
+	for (size_t i = 0; i != PlayerList.size(); ++i)
+		PlayerList[i]->onSocketIndexDisconnected (iSocketNumber);
 
 	if (Player)
 	{
@@ -401,7 +396,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 	if (isTurnBasedGame())
 	{
 		const cPlayer* Player = getPlayerFromNumber (message.iPlayerNr);
-		if ( (*PlayerList) [iActiveTurnPlayerNr] != Player) return;
+		if (PlayerList[iActiveTurnPlayerNr] != Player) return;
 	}
 	handleEnd (message.iPlayerNr);
 }
@@ -1909,9 +1904,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		// and let enemy units fire on him
 		// TODO: uncover the infiltrator for all players,
 		// or only for the owner of the target unit? --eiko
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			cPlayer* player = (*PlayerList) [i];
+			cPlayer* player = PlayerList[i];
 			if (player == srcVehicle->owner) continue;
 			if (!player->canSeeAnyAreaUnder (*srcVehicle)) continue;
 
@@ -2209,11 +2204,11 @@ void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
 						   const std::vector<std::vector<sLandingUnit>*>& landingUnits)
 {
 	const bool fixed = gameSetting->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
 		const int x = landPos[i].iLandX;
 		const int y = landPos[i].iLandY;
-		cPlayer* player = (*PlayerList) [i];
+		cPlayer* player = PlayerList[i];
 
 		makeLanding (x, y, player, *landingUnits[i], fixed);
 	}
@@ -2295,11 +2290,11 @@ void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::v
 {
 	assert (serverState == SERVER_STATE_INITGAME);
 	// send victory conditions to clients
-	for (size_t i = 0; i != PlayerList->size(); ++i)
-		sendGameSettings (*this, * (*PlayerList) [i]);
+	for (size_t i = 0; i != PlayerList.size(); ++i)
+		sendGameSettings (*this, *PlayerList[i]);
 	// send clan info to clients
 	if (gameSetting->clans == SETTING_CLANS_ON)
-		sendClansToClients (*this, *PlayerList);
+		sendClansToClients (*this, PlayerList);
 
 	// place resources
 	placeInitialResources (landData);
@@ -2607,26 +2602,26 @@ void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
 //------------------------------------------------------------------------------
 void cServer::checkPlayerUnits()
 {
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
 		// The player whos unit is it
-		cPlayer* UnitPlayer = (*PlayerList) [i];
+		cPlayer* UnitPlayer = PlayerList[i];
 		for (cVehicle* NextVehicle = UnitPlayer->VehicleList;
 			 NextVehicle != NULL;
 			 NextVehicle = NextVehicle->next)
 		{
-			for (size_t j = 0; j != PlayerList->size(); ++j)
+			for (size_t j = 0; j != PlayerList.size(); ++j)
 			{
-				checkPlayerUnits (*NextVehicle, * (*PlayerList) [j]);
+				checkPlayerUnits (*NextVehicle, *PlayerList[j]);
 			}
 		}
 		for (cBuilding* NextBuilding = UnitPlayer->BuildingList;
 			 NextBuilding != NULL;
 			 NextBuilding = NextBuilding->next)
 		{
-			for (size_t j = 0; j != PlayerList->size(); ++j)
+			for (size_t j = 0; j != PlayerList.size(); ++j)
 			{
-				checkPlayerUnits (*NextBuilding, * (*PlayerList) [j]);
+				checkPlayerUnits (*NextBuilding, *PlayerList[j]);
 			}
 		}
 	}
@@ -2634,9 +2629,9 @@ void cServer::checkPlayerUnits()
 	//check the neutral objects
 	for (cBuilding* building = neutralBuildings; building != NULL; building = building->next)
 	{
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			checkPlayerRubbles (*building, * (*PlayerList) [i]);
+			checkPlayerRubbles (*building, *PlayerList[i]);
 		}
 	}
 }
@@ -2658,9 +2653,9 @@ void cServer::kickPlayer (cPlayer* player)
 	// close the socket
 	const int socketIndex = player->getSocketNum();
 	if (network) network->close (socketIndex);
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		(*PlayerList) [i]->onSocketIndexDisconnected (socketIndex);
+		PlayerList[i]->onSocketIndexDisconnected (socketIndex);
 	}
 	deletePlayer (player);
 }
@@ -2668,9 +2663,9 @@ void cServer::kickPlayer (cPlayer* player)
 //------------------------------------------------------------------------------
 void cServer::markAllPlayersAsDisconnected()
 {
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer* player = (*PlayerList) [i];
+		cPlayer* player = PlayerList[i];
 		if (Contains (DisconnectedPlayerList, player) == false)
 			DisconnectedPlayerList.push_back (player);
 		player->revealMap();
@@ -2680,9 +2675,9 @@ void cServer::markAllPlayersAsDisconnected()
 //------------------------------------------------------------------------------
 cPlayer* cServer::getPlayerFromNumber (int iNum)
 {
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer* p = (*PlayerList) [i];
+		cPlayer* p = PlayerList[i];
 		if (p->getNr() == iNum) return p;
 	}
 	return NULL;
@@ -2699,9 +2694,9 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 	}
 
 	// try to find player by name
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		if ( (*PlayerList) [i]->getName().compare (playerID) == 0) return (*PlayerList) [i];
+		if (PlayerList[i]->getName().compare (playerID) == 0) return PlayerList[i];
 	}
 	return NULL;
 }
@@ -2731,7 +2726,7 @@ void cServer::handleEnd (int iPlayerNum)
 			return;
 		}
 		iActiveTurnPlayerNr++;
-		if (iActiveTurnPlayerNr >= (int) PlayerList->size())
+		if (iActiveTurnPlayerNr >= (int) PlayerList.size())
 		{
 			iActiveTurnPlayerNr = 0;
 			makeTurnEnd();
@@ -2739,13 +2734,13 @@ void cServer::handleEnd (int iPlayerNum)
 
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
-				sendMakeTurnEnd (*this, true, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->getNr(), iPlayerNum);
+				sendMakeTurnEnd (*this, true, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), iPlayerNum);
 			}
 			else
 			{
-				for (size_t i = 0; i != PlayerList->size(); ++i)
+				for (size_t i = 0; i != PlayerList.size(); ++i)
 				{
-					sendMakeTurnEnd (*this, true, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->getNr(), (*PlayerList) [i]->getNr());
+					sendMakeTurnEnd (*this, true, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), PlayerList[i]->getNr());
 				}
 			}
 		}
@@ -2753,20 +2748,20 @@ void cServer::handleEnd (int iPlayerNum)
 		{
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
-				sendMakeTurnEnd (*this, false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->getNr(), iPlayerNum);
+				sendMakeTurnEnd (*this, false, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), iPlayerNum);
 				// TODO: in hotseat:
 				// maybe send information to client about the next player
 			}
 			else
 			{
-				for (size_t i = 0; i != PlayerList->size(); ++i)
+				for (size_t i = 0; i != PlayerList.size(); ++i)
 				{
-					sendMakeTurnEnd (*this, false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->getNr(), i);
+					sendMakeTurnEnd (*this, false, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), i);
 				}
 			}
 		}
 		// send report to next player
-		sendTurnReport (*this, * (*PlayerList) [iActiveTurnPlayerNr]);
+		sendTurnReport (*this, *PlayerList[iActiveTurnPlayerNr]);
 	}
 	else // it's a simultaneous TCP/IP multiplayer game
 	{
@@ -2782,9 +2777,9 @@ void cServer::handleEnd (int iPlayerNum)
 		const bool firstTimeEnded = PlayerEndList.size() == 1;
 
 		// make sure that all defeated players are added to the endlist
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			cPlayer* player = (*PlayerList) [i];
+			cPlayer* player = PlayerList[i];
 			if (player->isDefeated)
 			{
 				if (Contains (PlayerEndList, player) == false)
@@ -2808,7 +2803,7 @@ void cServer::handleEnd (int iPlayerNum)
 			}
 		}
 
-		if (PlayerEndList.size() >= PlayerList->size())
+		if (PlayerEndList.size() >= PlayerList.size())
 		{
 			iDeadlineStartTime = 0;
 			if (checkEndActions (-1))
@@ -2836,21 +2831,21 @@ void cServer::handleWantEnd()
 	// and we can start the new turn simultaneously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			cPlayer& player = * (*PlayerList) [i];
+			cPlayer& player = *PlayerList[i];
 			if (!isPlayerDisconnected (player) && gameTimer.getReceivedTime (i) <= lastTurnEnd)
 				return;
 		}
 
 		// send reports to all players
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
 			sendMakeTurnEnd (*this, true, false, -1, i);
 		}
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			sendTurnReport (*this, * (*PlayerList) [i]);
+			sendTurnReport (*this, *PlayerList[i]);
 		}
 
 		// begin the new turn
@@ -2883,9 +2878,9 @@ bool cServer::checkEndActions (int iPlayer)
 	}
 	else
 	{
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			for (cVehicle* NextVehicle = (*PlayerList) [i]->VehicleList;
+			for (cVehicle* NextVehicle = PlayerList[i]->VehicleList;
 				 NextVehicle != NULL;
 				 NextVehicle = NextVehicle->next)
 			{
@@ -2911,9 +2906,9 @@ bool cServer::checkEndActions (int iPlayer)
 		{
 			if (iWantPlayerEndNum == -1)
 			{
-				for (size_t i = 0; i != PlayerList->size(); ++i)
+				for (size_t i = 0; i != PlayerList.size(); ++i)
 				{
-					sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, (*PlayerList) [i]->getNr());
+					sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, PlayerList[i]->getNr());
 				}
 			}
 		}
@@ -2931,9 +2926,9 @@ void cServer::makeTurnEnd()
 	lastTurnEnd = gameTimer.gameTime;
 
 	// reload all buildings
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 		for (cBuilding* Building = player.BuildingList;
 			 Building;
 			 Building = Building->next)
@@ -2961,9 +2956,9 @@ void cServer::makeTurnEnd()
 	}
 
 	// reload all vehicles
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 		for (cVehicle* Vehicle = player.VehicleList;
 			 Vehicle;
 			 Vehicle = Vehicle->next)
@@ -2991,9 +2986,9 @@ void cServer::makeTurnEnd()
 	}
 
 	// hide stealth units
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 		player.doScan(); // make sure the detection maps are up to date
 
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
@@ -3004,25 +2999,25 @@ void cServer::makeTurnEnd()
 	}
 
 	// produce resources
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		(*PlayerList) [i]->base.handleTurnend (*this);
+		PlayerList[i]->base.handleTurnend (*this);
 	}
 
 	// do research:
-	for (size_t i = 0; i != PlayerList->size(); ++i)
-		(*PlayerList) [i]->doResearch (*this);
+	for (size_t i = 0; i != PlayerList.size(); ++i)
+		PlayerList[i]->doResearch (*this);
 
 	// eco-spheres:
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		(*PlayerList) [i]->accumulateScore (*this);
+		PlayerList[i]->accumulateScore (*this);
 	}
 
 	// Gun'em down:
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -3061,9 +3056,9 @@ bool cServer::isVictoryConditionMet() const
 		case SETTINGS_VICTORY_TURNS: return iTurn >= gameSetting->duration;
 		case SETTINGS_VICTORY_POINTS:
 		{
-			for (size_t i = 0; i != PlayerList->size(); ++i)
+			for (size_t i = 0; i != PlayerList.size(); ++i)
 			{
-				const cPlayer& player = * (*PlayerList) [i];
+				const cPlayer& player = *PlayerList[i];
 				if (player.isDefeated) continue;
 				if (player.getScore (iTurn) >= gameSetting->duration) return true;
 			}
@@ -3072,9 +3067,9 @@ bool cServer::isVictoryConditionMet() const
 		case SETTINGS_VICTORY_ANNIHILATION:
 		{
 			int nbActivePlayer = 0;
-			for (size_t i = 0; i != PlayerList->size(); ++i)
+			for (size_t i = 0; i != PlayerList.size(); ++i)
 			{
-				const cPlayer& player = * (*PlayerList) [i];
+				const cPlayer& player = *PlayerList[i];
 				if (player.isDefeated) continue;
 				++nbActivePlayer;
 				if (nbActivePlayer >= 2) return false;
@@ -3089,9 +3084,9 @@ bool cServer::isVictoryConditionMet() const
 //------------------------------------------------------------------------------
 void cServer::defeatLoserPlayers()
 {
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 		if (player.isDefeated) continue;
 		if (player.mayHaveOffensiveUnit()) continue;
 
@@ -3114,9 +3109,9 @@ void cServer::checkDefeats()
 	std::set<cPlayer*> winners;
 	int best_score = -1;
 
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 		if (player.isDefeated) continue;
 		const int score = player.getScore (iTurn);
 
@@ -3131,9 +3126,9 @@ void cServer::checkDefeats()
 	}
 
 	// anyone who hasn't won has lost.
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& player = * (*PlayerList) [i];
+		cPlayer& player = *PlayerList[i];
 
 		if (player.isDefeated) continue;
 		if (winners.find (&player) != winners.end()) continue;
@@ -3155,7 +3150,7 @@ void cServer::checkDefeats()
 	// i.e. first player to get ahead in score wins.
 	if (winners.size() > 1)
 	{
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 			sendChatMessageToClient (*this, "Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, i);
 	}
 	// TODO: send win message to the winner.
@@ -3339,9 +3334,9 @@ cUnit* cServer::getUnitFromID (unsigned int iID) const
 //------------------------------------------------------------------------------
 cVehicle* cServer::getVehicleFromID (unsigned int iID) const
 {
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		for (cVehicle* vehicle = (*PlayerList) [i]->VehicleList;
+		for (cVehicle* vehicle = PlayerList[i]->VehicleList;
 			 vehicle != 0;
 			 vehicle = vehicle->next)
 		{
@@ -3355,9 +3350,9 @@ cVehicle* cServer::getVehicleFromID (unsigned int iID) const
 //------------------------------------------------------------------------------
 cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 {
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		for (cBuilding* building = (*PlayerList) [i]->BuildingList;
+		for (cBuilding* building = PlayerList[i]->BuildingList;
 			 building != 0;
 			 building = building->next)
 		{
@@ -3602,9 +3597,9 @@ void cServer::deletePlayer (cPlayer* Player)
 	}
 
 	// remove the player of all detected by player lists
-	for (unsigned int playerNum = 0; playerNum < PlayerList->size(); playerNum++)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer* UnitPlayer = (*PlayerList) [playerNum];
+		cPlayer* UnitPlayer = PlayerList[i];
 		if (UnitPlayer == Player) continue;
 
 		for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
@@ -3614,11 +3609,11 @@ void cServer::deletePlayer (cPlayer* Player)
 	}
 	// delete the player
 	sendDeletePlayer (*this, *Player);
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		if (Player == (*PlayerList) [i])
+		if (Player == PlayerList[i])
 		{
-			PlayerList->erase (PlayerList->begin() + i);
+			PlayerList.erase (PlayerList.begin() + i);
 			delete Player;
 			break;
 		}
@@ -3631,9 +3626,9 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	if (firstDelete)
 	{
-		for (size_t i = 0; i != PlayerList->size(); ++i)
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			cPlayer* UnitPlayer = (*PlayerList) [i];
+			cPlayer* UnitPlayer = PlayerList[i];
 			if (UnitPlayer == Player) continue;
 
 			for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
@@ -3658,7 +3653,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
-		sendClansToClients (*this, *PlayerList);
+		sendClansToClients (*this, PlayerList);
 	}
 	sendTurn (*this, iTurn, lastTurnEnd, *Player);
 	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->iTurnDeadline - (gameTimer.gameTime - iDeadlineStartTime), Player);
@@ -3713,9 +3708,9 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	sendRefreshResearchCount (*this, Player->getNr());
 
 	// send all players' score histories & eco-counts
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		cPlayer& subj = * (*PlayerList) [i];
+		cPlayer& subj = *PlayerList[i];
 		for (int t = 1; t <= iTurn; ++t)
 			sendScore (*this, subj, t, Player);
 		sendNumEcos (*this, subj, Player);
@@ -3912,19 +3907,19 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 			bool detectOnDest = false;
 			if (stealthVehicle->data.isStealthOn & TERRAIN_GROUND)
 			{
-				for (size_t i = 0; i != PlayerList->size(); ++i)
+				for (size_t i = 0; i != PlayerList.size(); ++i)
 				{
-					if ( (*PlayerList) [i] == stealthVehicle->owner) continue;
-					if ( (*PlayerList) [i]->hasLandDetection (Map->getOffset (x, y))) detectOnDest = true;
+					if (PlayerList[i] == stealthVehicle->owner) continue;
+					if (PlayerList[i]->hasLandDetection (Map->getOffset (x, y))) detectOnDest = true;
 				}
 				if (Map->isWater (x, y)) detectOnDest = true;
 			}
 			if (stealthVehicle->data.isStealthOn & TERRAIN_SEA)
 			{
-				for (size_t i = 0; i != PlayerList->size(); ++i)
+				for (size_t i = 0; i != PlayerList.size(); ++i)
 				{
-					if ( (*PlayerList) [i] == stealthVehicle->owner) continue;
-					if ( (*PlayerList) [i]->hasSeaDetection (Map->getOffset (x, y))) detectOnDest = true;
+					if (PlayerList[i] == stealthVehicle->owner) continue;
+					if (PlayerList[i]->hasSeaDetection (Map->getOffset (x, y))) detectOnDest = true;
 				}
 				if (!Map->isWater (x, y)) detectOnDest = true;
 

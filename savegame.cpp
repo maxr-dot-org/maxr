@@ -59,7 +59,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	writeCasualties (server);
 
 	int unitnum = 0;
-	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		const cPlayer& Player = *playerList[i];
@@ -172,7 +172,7 @@ bool cSavegame::load (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::recalcSubbases (cServer& server)
 {
-	std::vector<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		playerList[i]->base.refreshSubbases();
@@ -319,8 +319,7 @@ bool cSavegame::loadMap (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::loadPlayers (cServer& server)
 {
-	std::vector<cPlayer*>* PlayerList = new std::vector<cPlayer*>;
-	server.PlayerList = PlayerList;
+	std::vector<cPlayer*>& players = server.PlayerList;
 
 	XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	if (playersNode == NULL) return;
@@ -330,7 +329,7 @@ void cSavegame::loadPlayers (cServer& server)
 	XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
 	while (playerNode)
 	{
-		PlayerList->push_back (loadPlayer (playerNode, *map));
+		players.push_back (loadPlayer (playerNode, *map));
 		playernum++;
 		playerNode = playersNode->FirstChildElement ( ("Player_" + iToStr (playernum)).c_str());
 	}
@@ -593,7 +592,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 {
 	int tmpinteger;
 	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (*server.PlayerList, tmpinteger);
+	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
 
 	int x, y;
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
@@ -717,7 +716,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 {
 	int tmpinteger;
 	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (*server.PlayerList, tmpinteger);
+	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
 
 	int x, y;
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);

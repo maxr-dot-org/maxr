@@ -254,7 +254,7 @@ void cDebugOutput::draw()
 			font->showText (DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (size_t i = 0; i != server->PlayerList->size(); ++i)
+			for (size_t i = 0; i != server->PlayerList.size(); ++i)
 			{
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
 				if (server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer.gameTime)
@@ -2702,7 +2702,7 @@ void cGameGUI::doCommand (const string& cmd)
 		{
 			if (server)
 			{
-				const std::vector<cPlayer*>& playerList = *server->PlayerList;
+				const std::vector<cPlayer*>& playerList = server->PlayerList;
 				for (unsigned int i = 0; i < playerList.size(); i++)
 				{
 					sendRequestResync (*client, playerList[i]->getNr());

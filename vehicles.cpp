@@ -1302,7 +1302,7 @@ bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 bool cVehicle::InSentryRange (cServer& server)
 {
 	int iOff = server.Map->getOffset (PosX, PosY);
-	std::vector<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer* Player = playerList[i];
@@ -1428,7 +1428,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
 		return false;
 
-	std::vector<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer* player = playerList[i];
@@ -1844,7 +1844,7 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 	{
 		cMap& map = *server.Map;
 		int offset = map.getOffset (PosX, PosY);
-		std::vector<cPlayer*>& playerList = *server.PlayerList;
+		std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];

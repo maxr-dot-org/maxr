@@ -516,7 +516,7 @@ public:
 	/** List with all active movejobs */
 	std::vector<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */
-	std::vector<cPlayer*>* PlayerList;
+	std::vector<cPlayer*> PlayerList;
 	/** state of the server */
 	eServerState serverState;
 };
