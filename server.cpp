@@ -102,7 +102,7 @@ cServer::cServer (cTCP* network_) :
 	serverState (SERVER_STATE_ROOM)
 {
 	Map = NULL;
-	this->PlayerList = NULL;
+	this->PlayerList = new std::vector<cPlayer*>;
 	bExit = false;
 	openMapDefeat = true;
 	neutralBuildings = NULL;
@@ -158,7 +158,7 @@ cServer::~cServer()
 		{
 			delete (*PlayerList) [i];
 		}
-		PlayerList->clear();
+		delete PlayerList;
 	}
 	while (neutralBuildings)
 	{
@@ -175,15 +175,30 @@ void cServer::setMap (cMap& map_)
 }
 
 //------------------------------------------------------------------------------
-void cServer::setPlayers (std::vector<cPlayer*>* playerList_)
+void cServer::addPlayer (cPlayer* player)
 {
-	PlayerList = playerList_;
+	PlayerList->push_back (player);
 }
 
 //------------------------------------------------------------------------------
 void cServer::setGameSettings (const sSettings& gameSettings_)
 {
 	gameSetting = new sSettings (gameSettings_);
+}
+
+//------------------------------------------------------------------------------
+void cServer::changeStateToInitGame()
+{
+	assert(serverState == SERVER_STATE_ROOM);
+	assert(gameSetting != NULL);
+	assert(Map != NULL);
+	assert(!PlayerList->empty());
+
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+	{
+		PlayerList->at(i)->initMaps (*Map);
+	}
+	serverState = SERVER_STATE_INITGAME;
 }
 
 //------------------------------------------------------------------------------

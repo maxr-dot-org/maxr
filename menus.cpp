@@ -157,7 +157,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		return;
 
 	AutoPtr<cMap> serverMap (NULL);
-	std::vector<cPlayer*> serverPlayers;
 	if (server)
 	{
 		serverMap = new cMap (*map);
@@ -165,16 +164,12 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		// copy playerlist for server
 		for (size_t i = 0; i != players.size(); ++i)
 		{
-			serverPlayers.push_back (new cPlayer (*players[i]));
-
-			// TODO: move this in cServer.
-			serverPlayers[i]->initMaps (*serverMap);
+			server->addPlayer (new cPlayer (*players[i]));
 		}
 
 		server->setMap (*serverMap);
-		server->setPlayers (&serverPlayers);
 		server->setGameSettings (*settings);
-		server->serverState = SERVER_STATE_INITGAME;
+		server->changeStateToInitGame();
 	}
 
 	// init client and his players

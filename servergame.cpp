@@ -479,18 +479,17 @@ void cServerGame::startGameServer()
 {
 	serverMap = new cMap (*gameData->map);
 
-	// copy playerlist for server
-	for (unsigned int i = 0; i < gameData->players.size(); i++)
-	{
-		serverPlayers.push_back (new cPlayer (*gameData->players[i]));
-		serverPlayers[i]->initMaps (*serverMap);
-	}
-
 	// init server
 	server = new cServer (network);
+	// copy playerlist for server
+	for (size_t i = 0; i != gameData->players.size(); ++i)
+	{
+		server->addPlayer (new cPlayer (*gameData->players[i]));
+	}
+
 	server->setMap (*serverMap);
-	server->setPlayers (&serverPlayers);
 	server->setGameSettings (*gameData->settings);
+	server->changeStateToInitGame();
 
 	server->startNewGame (gameData->landData, gameData->landingUnits);
 	for (size_t i = 0; i != gameData->players.size(); ++i)
@@ -549,11 +548,11 @@ std::string cServerGame::getGameState() const
 		result << "Turn: " << server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if (server != NULL && serverPlayers.empty() == false)
+	if (server != NULL && server->PlayerList->empty() == false)
 	{
-		for (size_t i = 0; i != serverPlayers.size(); ++i)
+		for (size_t i = 0; i != server->PlayerList->size(); ++i)
 		{
-			const cPlayer& player = *serverPlayers[i];
+			const cPlayer& player = *server->PlayerList->at(i);
 			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}

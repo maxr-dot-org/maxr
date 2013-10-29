@@ -88,7 +88,6 @@ protected:
 	std::vector<sPlayer*> menuPlayers;
 
 	cMap* serverMap;
-	std::vector<cPlayer*> serverPlayers;
 
 private:
 	void configRessources (std::vector<std::string>& tokens, sPlayer* senderPlayer);

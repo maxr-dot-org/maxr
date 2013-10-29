@@ -99,9 +99,11 @@ public:
 
 	void setGameSettings (const sSettings& gameSettings);
 	void setMap (cMap& map_);
-	void setPlayers (std::vector<cPlayer*>* playerList_);
+	void addPlayer (cPlayer* player);
 	void setDeadline (int iDeadline);
 	void stop();
+
+	void changeStateToInitGame();
 
 	/** the type of the current game */
 	eGameTypes getGameType() const;
