@@ -384,7 +384,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 		// if taget is a stealth unit, make it visible on all clients
 		if (target->data.isStealthOn != TERRAIN_NONE)
 		{
-			std::vector<cPlayer*> playerList = *server->PlayerList;
+			const std::vector<cPlayer*>& playerList = *server->PlayerList;
 			for (unsigned int i = 0; i < playerList.size(); i++)
 			{
 				cPlayer* player = playerList[i];
