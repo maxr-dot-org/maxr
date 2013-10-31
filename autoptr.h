@@ -14,7 +14,7 @@ public:
 	{
 		T* const p_ = p;
 		p = NULL;
-		return p;
+		return p_;
 	}
 
 	void operator = (T* const p_)
