@@ -46,12 +46,11 @@ int serverGameThreadFunction (void* data)
 cServerGame::cServerGame (cTCP& network_) :
 	server (NULL),
 	network (&network_),
-	thread (0),
+	thread (NULL),
 	canceled (false),
 	shouldSave (false),
 	saveGameNumber (-1),
-	gameData (0),
-	serverMap (0)
+	gameData (NULL)
 {
 }
 
@@ -477,8 +476,6 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 //------------------------------------------------------------------------------
 void cServerGame::startGameServer()
 {
-	serverMap = new cMap (*gameData->map);
-
 	// init server
 	server = new cServer (network);
 	// copy playerlist for server
@@ -487,7 +484,7 @@ void cServerGame::startGameServer()
 		server->addPlayer (new cPlayer (*gameData->players[i]));
 	}
 
-	server->setMap (*serverMap);
+	server->setMap (*gameData->map);
 	server->setGameSettings (*gameData->settings);
 	server->changeStateToInitGame();
 
@@ -509,9 +506,6 @@ void cServerGame::terminateServer()
 		}
 		gameData->players.clear();
 	}
-
-	delete serverMap;
-	serverMap = NULL;
 
 	delete server;
 	server = NULL;

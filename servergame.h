@@ -26,7 +26,6 @@
 #include "ringbuffer.h"
 
 class cGameDataContainer;
-class cMap;
 class cNetMessage;
 class cPlayer;
 class cServer;
@@ -86,8 +85,6 @@ protected:
 
 	cGameDataContainer* gameData;
 	std::vector<sPlayer*> menuPlayers;
-
-	cMap* serverMap;
 
 private:
 	void configRessources (std::vector<std::string>& tokens, sPlayer* senderPlayer);

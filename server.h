@@ -98,7 +98,7 @@ public:
 	~cServer();
 
 	void setGameSettings (const sSettings& gameSettings);
-	void setMap (cMap& map_);
+	void setMap (cStaticMap& staticMap);
 	void addPlayer (cPlayer* player);
 	void setDeadline (int iDeadline);
 	void stop();
@@ -510,7 +510,7 @@ private:
 	sFreezeModes freezeModes;
 public:
 	/** the map */
-	cMap* Map;
+	AutoPtr<cMap> Map;
 	/** List with all attackjobs */
 	std::vector<cServerAttackJob*> AJobs;
 	/** List with all active movejobs */

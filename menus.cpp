@@ -156,18 +156,15 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	if (actPlayer == NULL)
 		return;
 
-	AutoPtr<cMap> serverMap (NULL);
 	if (server)
 	{
-		serverMap = new cMap (*map);
-
 		// copy playerlist for server
 		for (size_t i = 0; i != players.size(); ++i)
 		{
 			server->addPlayer (new cPlayer (*players[i]));
 		}
 
-		server->setMap (*serverMap);
+		server->setMap (*map);
 		server->setGameSettings (*settings);
 		server->changeStateToInitGame();
 	}
@@ -211,8 +208,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cServer server (network);
 	cSavegame savegame (savegameNum);
 	if (savegame.load (server) == false) return;
-	AutoPtr<cStaticMap> staticMap (server.Map->staticMap);
-	AutoPtr<cMap> serverMap (server.Map);
+	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
 	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
@@ -3278,8 +3274,7 @@ bool cNetworkHostMenu::runSavedGame()
 	cServer server (network);
 	cSavegame savegame (gameDataContainer.savegameNum);
 	if (savegame.load (server) == false) return false;
-	AutoPtr<cStaticMap> staticMap (server.Map->staticMap);
-	AutoPtr<cMap> serverMap (server.Map);
+	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
 	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
 	// first we check whether all necessary players are connected
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)

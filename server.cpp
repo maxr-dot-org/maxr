@@ -101,7 +101,6 @@ cServer::cServer (cTCP* network_) :
 	casualtiesTracker (0),
 	serverState (SERVER_STATE_ROOM)
 {
-	Map = NULL;
 	bExit = false;
 	openMapDefeat = true;
 	neutralBuildings = NULL;
@@ -164,9 +163,9 @@ cServer::~cServer()
 }
 
 //------------------------------------------------------------------------------
-void cServer::setMap (cMap& map_)
+void cServer::setMap (cStaticMap& staticMap)
 {
-	Map = &map_;
+	Map = new cMap(staticMap);
 }
 
 //------------------------------------------------------------------------------
