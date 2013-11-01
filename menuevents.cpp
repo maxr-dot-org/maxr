@@ -78,18 +78,7 @@ void sendGameData (cTCP& network, const cStaticMap* map, const sSettings* settin
 
 	if (settings)
 	{
-		message->pushInt16 (settings->iTurnDeadline);
-		message->pushChar (settings->gameType);
-		message->pushChar (settings->clans);
-		message->pushChar (settings->alienTech);
-		message->pushChar (settings->bridgeHead);
-		message->pushInt16 (settings->credits);
-		message->pushChar (settings->resFrequency);
-		message->pushChar (settings->gold);
-		message->pushChar (settings->oil);
-		message->pushChar (settings->metal);
-		message->pushChar (settings->victoryType);
-		message->pushInt16 (settings->duration);
+		settings->pushInto (*message);
 	}
 	message->pushBool (settings != NULL);
 

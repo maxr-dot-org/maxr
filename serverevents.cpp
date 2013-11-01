@@ -443,18 +443,7 @@ void sendGameSettings (cServer& server, const cPlayer& receiver)
 
 	if (gameSettings)
 	{
-		message->pushChar (gameSettings->gameType);
-		message->pushChar (gameSettings->clans);
-		message->pushChar (gameSettings->alienTech);
-		message->pushChar (gameSettings->bridgeHead);
-		message->pushInt16 (gameSettings->credits);
-		message->pushChar (gameSettings->resFrequency);
-		message->pushChar (gameSettings->gold);
-		message->pushChar (gameSettings->oil);
-		message->pushChar (gameSettings->metal);
-		message->pushChar (gameSettings->victoryType);
-		message->pushInt16 (gameSettings->duration);
-		message->pushInt16 (gameSettings->iTurnDeadline);
+		server.getGameSettings()->pushInto (*message);
 	}
 	message->pushBool (gameSettings != NULL);
 	server.sendNetMessage (message, receiver.getNr());

@@ -53,6 +53,40 @@ using namespace std;
 #define MAIN_MENU_BTN_SPACE 35
 
 //------------------------------------------------------------------------------
+void sSettings::pushInto(cNetMessage& message) const
+{
+	message.pushInt16 (iTurnDeadline);
+	message.pushInt16 (duration);
+	message.pushChar (victoryType);
+	message.pushChar (gameType);
+	message.pushChar (clans);
+	message.pushChar (alienTech);
+	message.pushChar (bridgeHead);
+	message.pushInt16 (credits);
+	message.pushChar (resFrequency);
+	message.pushChar (gold);
+	message.pushChar (oil);
+	message.pushChar (metal);
+}
+
+//------------------------------------------------------------------------------
+void sSettings::popFrom(cNetMessage& message)
+{
+	metal = (eSettingResourceValue) message.popChar();
+	oil = (eSettingResourceValue) message.popChar();
+	gold = (eSettingResourceValue) message.popChar();
+	resFrequency = (eSettingResFrequency) message.popChar();
+	credits = message.popInt16();
+	bridgeHead = (eSettingsBridgeHead) message.popChar();
+	alienTech = (eSettingsAlienTech) message.popChar();
+	clans = (eSettingsClans) message.popChar();
+	gameType = (eSettingsGameType) message.popChar();
+	victoryType = (eSettingsVictoryType) message.popChar();
+	duration = message.popInt16();
+	iTurnDeadline = message.popInt16();
+}
+
+//------------------------------------------------------------------------------
 string sSettings::getResValString (eSettingResourceValue type) const
 {
 	switch (type)
@@ -3519,20 +3553,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 	if (message->popBool())
 	{
 		if (!gameDataContainer.settings) gameDataContainer.settings = new sSettings;
-		sSettings* settings = gameDataContainer.settings;
-
-		settings->duration = message->popInt16();
-		settings->victoryType = (eSettingsVictoryType) message->popChar();
-		settings->metal = (eSettingResourceValue) message->popChar();
-		settings->oil = (eSettingResourceValue) message->popChar();
-		settings->gold = (eSettingResourceValue) message->popChar();
-		settings->resFrequency = (eSettingResFrequency) message->popChar();
-		settings->credits = message->popInt16();
-		settings->bridgeHead = (eSettingsBridgeHead) message->popChar();
-		settings->alienTech = (eSettingsAlienTech) message->popChar();
-		settings->clans = (eSettingsClans) message->popChar();
-		settings->gameType = (eSettingsGameType) message->popChar();
-		settings->iTurnDeadline = message->popInt16();
+		gameDataContainer.settings->popFrom (*message);
 	}
 	else
 	{

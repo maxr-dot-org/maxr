@@ -158,6 +158,9 @@ struct sSettings
 		victoryType (SETTINGS_VICTORY_POINTS),
 		duration (SETTINGS_DUR_MEDIUM), iTurnDeadline (90) {}
 
+	void pushInto (cNetMessage& message) const;
+	void popFrom (cNetMessage& message);
+
 	std::string getResValString (eSettingResourceValue type) const;
 	std::string getResFreqString() const;
 	std::string getVictoryConditionString() const;

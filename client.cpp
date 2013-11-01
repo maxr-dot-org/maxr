@@ -1716,21 +1716,10 @@ void cClient::HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message)
 		gameSetting = NULL;
 		return;
 	}
-	sSettings* gameSettings_ = new sSettings();
+	AutoPtr<sSettings> gameSetting_(new sSettings());
 
-	gameSettings_->iTurnDeadline = message.popInt16();
-	gameSettings_->duration = message.popInt16 ();
-	gameSettings_->victoryType = (eSettingsVictoryType) message.popChar ();
-	gameSettings_->metal = (eSettingResourceValue) message.popChar ();
-	gameSettings_->oil = (eSettingResourceValue) message.popChar ();
-	gameSettings_->gold = (eSettingResourceValue) message.popChar ();
-	gameSettings_->resFrequency = (eSettingResFrequency) message.popChar ();
-	gameSettings_->credits = message.popInt16 ();
-	gameSettings_->bridgeHead = (eSettingsBridgeHead) message.popChar ();
-	gameSettings_->alienTech = (eSettingsAlienTech) message.popChar ();
-	gameSettings_->clans = (eSettingsClans) message.popChar ();
-	gameSettings_->gameType = (eSettingsGameType) message.popChar ();
-	gameSetting = gameSettings_;
+	gameSetting_->popFrom (message);
+	gameSetting = gameSetting_.Release();
 }
 
 void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
