@@ -3024,6 +3024,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0) jumpToSavedPos (2);
 	else if (key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0) jumpToSavedPos (3);
 
+	else if (key.keysym.sym == KeysList.KeyUnitDone) { doneReleased(this); }
+	else if (key.keysym.sym == KeysList.KeyUnitDoneAndNext) { doneReleased (this); nextReleased (this); }
+	else if (key.keysym.sym == KeysList.KeyUnitNext) { nextReleased (this); }
+	else if (key.keysym.sym == KeysList.KeyUnitPrev) { prevReleased (this); }
+
 	// Hotkeys for the unit menus
 	// allowed KeyUnitMenuInfo for disabled units
 	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedUnit)

@@ -17,9 +17,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <cstdio>
-#include <cstdlib>
-
 #include "keys.h"
 
 #include "extendedtinyxml.h"
@@ -28,21 +25,19 @@
 #include "settings.h"
 #include "tinyxml2.h"
 
-using namespace std;
 using namespace tinyxml2;
 
-// Funktionen ////////////////////////////////////////////////////////////////
-
-static void LoadSingleKey (XMLDocument& KeysXml, const char* keyString, SDLKey& key, const char* defaultKeyString)
+static void LoadSingleKey (XMLDocument& KeysXml, const char* keyString,
+						   SDLKey& key, const char* defaultKeyString)
 {
-	XMLElement* xmlElement = XmlGetFirstElement (KeysXml, "Controles", "Keys", keyString, NULL);
-	string value = xmlElement->Attribute ("Text");
+	const XMLElement* xmlElement = XmlGetFirstElement (KeysXml, "Controles", "Keys", keyString, NULL);
+	const std::string value = xmlElement ? xmlElement->Attribute ("Text") : "";
 
 	if (!value.empty())
 		key = GetKeyFromString (value);
 	else
 	{
-		string msg = "keys: Can't load ";
+		std::string msg = "keys: Can't load ";
 		msg += keyString;
 		msg += " from keys.xml: using default value";
 
@@ -107,6 +102,10 @@ int LoadKeys()
 	LoadSingleKey (KeysXml, "KeySurvey", KeysList.KeySurvey, "H");
 	LoadSingleKey (KeysXml, "KeyCalcPath", KeysList.KeyCalcPath, "LSHIFT");
 	LoadSingleKey (KeysXml, "KeyCenterUnit", KeysList.KeyCenterUnit, "F");
+	LoadSingleKey (KeysXml, "KeyUnitDone", KeysList.KeyUnitDone, "E");
+	LoadSingleKey (KeysXml, "KeyUnitDoneAndNext", KeysList.KeyUnitDoneAndNext, "SPACE");
+	LoadSingleKey (KeysXml, "KeyUnitNext", KeysList.KeyUnitNext, "W");
+	LoadSingleKey (KeysXml, "KeyUnitPrev", KeysList.KeyUnitPrev, "Q");
 	LoadSingleKey (KeysXml, "KeyUnitMenuAttack", KeysList.KeyUnitMenuAttack, "A");
 	LoadSingleKey (KeysXml, "KeyUnitMenuBuild", KeysList.KeyUnitMenuBuild, "B");
 	LoadSingleKey (KeysXml, "KeyUnitMenuTransfer", KeysList.KeyUnitMenuTransfer, "X");
@@ -286,7 +285,7 @@ const char* GetKeyString (SDLKey key)
 }
 
 // Liefert den Code der Taste zurueck:
-SDLKey GetKeyFromString (const string& key)
+SDLKey GetKeyFromString (const std::string& key)
 {
 	if (!key.compare ("UNKNOWN")) return SDLK_UNKNOWN;
 	if (!key.compare ("BACKSPACE")) return SDLK_BACKSPACE;

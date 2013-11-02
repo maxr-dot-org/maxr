@@ -57,6 +57,10 @@ public:
 	SDLKey KeySurvey;
 	SDLKey KeyCalcPath;
 	SDLKey KeyCenterUnit;
+	SDLKey KeyUnitDone;
+	SDLKey KeyUnitDoneAndNext;
+	SDLKey KeyUnitNext;
+	SDLKey KeyUnitPrev;
 	SDLKey KeyUnitMenuAttack;
 	SDLKey KeyUnitMenuBuild;
 	SDLKey KeyUnitMenuTransfer;
