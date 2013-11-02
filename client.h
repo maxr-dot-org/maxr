@@ -311,7 +311,7 @@ private:
 	/** this client's copy of the gameSettings **/
 	AutoPtr<const sSettings> gameSetting;
 
-	cCasualtiesTracker* casualtiesTracker;
+	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 
 	sFreezeModes freezeModes;
 	/** the hud */

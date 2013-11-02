@@ -69,6 +69,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	network (network_),
 	eventHandling (&eventHandling_),
 	PlayerList (NULL),
+	casualtiesTracker (new cCasualtiesTracker()),
 	gameGUI (new cGameGUI ()),
 	gameTimer(),
 	FxList (new cFxContainer)
@@ -83,16 +84,12 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	iEndTurnTime = 0;
 	iStartTurnTime = 0;
 
-	casualtiesTracker = new cCasualtiesTracker();
-
 	gameTimer.start();
 }
 
 cClient::~cClient()
 {
 	gameTimer.stop();
-
-	delete casualtiesTracker;
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{

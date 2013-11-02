@@ -98,7 +98,7 @@ cServer::cServer (cTCP* network_) :
 	gameTimer(),
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
-	casualtiesTracker (0),
+	casualtiesTracker (new cCasualtiesTracker()),
 	serverState (SERVER_STATE_ROOM)
 {
 	bExit = false;
@@ -111,8 +111,6 @@ cServer::cServer (cTCP* network_) :
 	iWantPlayerEndNum = -1;
 	savingID = 0;
 	savingIndex = -1;
-
-	casualtiesTracker = new cCasualtiesTracker();
 
 	if (!DEDICATED_SERVER)
 	{
@@ -127,9 +125,6 @@ cServer::cServer (cTCP* network_) :
 cServer::~cServer()
 {
 	stop();
-
-	delete casualtiesTracker;
-	casualtiesTracker = 0;
 
 	// disconnect clients
 	if (network)

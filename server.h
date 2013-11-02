@@ -506,7 +506,7 @@ private:
 	bool executingRemainingMovements;
 
 	AutoPtr<sSettings> gameSetting;
-	cCasualtiesTracker* casualtiesTracker;
+	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 	sFreezeModes freezeModes;
 public:
 	/** the map */

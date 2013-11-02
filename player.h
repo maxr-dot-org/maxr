@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "defines.h"
+#include "autoptr.h"
 #include "base.h"
 #include "main.h" // for sID
 #include "upgradecalculator.h"
@@ -225,7 +226,7 @@ public:
 	int workingResearchCenterCount;  ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
-	sHudStateContainer* savedHud;
+	AutoPtr<sHudStateContainer> savedHud;
 	std::vector<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	std::vector<sSavedReportMessage> savedReportsList;

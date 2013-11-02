@@ -115,6 +115,7 @@ void sPlayer::setToPrevColorIndex()
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const sPlayer& splayer_) :
 	splayer (splayer_),
+	savedHud (new sHudStateContainer),
 	numEcos (0),
 	lastDeletedUnit (0),
 	clan (-1)
@@ -135,13 +136,13 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 	isRemovedFromGame = false;
 	bFinishedTurn = false;
 
-	savedHud = new sHudStateContainer;
 	researchFinished = false;
 }
 
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayer& Player) :
-	splayer (Player.splayer)
+	splayer (Player.splayer),
+	savedHud (new sHudStateContainer (*Player.savedHud))
 {
 	clan = Player.clan;
 	pointsHistory = Player.pointsHistory;
@@ -172,8 +173,6 @@ cPlayer::cPlayer (const cPlayer& Player) :
 
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
-
-	savedHud = new sHudStateContainer (*Player.savedHud);
 
 	researchFinished = Player.researchFinished;
 }
@@ -217,8 +216,6 @@ cPlayer::~cPlayer()
 		delete ReportBuildings[i];
 	}
 	ReportBuildings.clear();
-
-	delete savedHud;
 }
 
 //------------------------------------------------------------------------------
