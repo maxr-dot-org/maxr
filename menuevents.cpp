@@ -304,7 +304,7 @@ void sendGameIdentification (cTCP& network, const sPlayer& player, int socket)
 
 void sendReconnectionSuccess (cTCP& network, int playerNr)
 {
-	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCESS);
+	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCCESS);
 	message->pushInt16 (playerNr);
 	cMenu::sendMessage (network, message);
 }

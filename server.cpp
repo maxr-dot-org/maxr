@@ -1471,9 +1471,9 @@ void cServer::handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
+void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 {
-	assert (message.iType == GAME_EV_RECON_SUCESS);
+	assert (message.iType == GAME_EV_RECON_SUCCESS);
 
 	cPlayer* Player = NULL;
 	const int playerNum = message.popInt16();
@@ -2060,7 +2060,7 @@ int cServer::handleNetMessage (cNetMessage* message)
 		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (*message); break;
 		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (*message); break;
 		case GAME_EV_IDENTIFICATION: handleNetMessage_GAME_EV_IDENTIFICATION (*message); break;
-		case GAME_EV_RECON_SUCESS: handleNetMessage_GAME_EV_RECON_SUCESS (*message); break;
+		case GAME_EV_RECON_SUCCESS: handleNetMessage_GAME_EV_RECON_SUCCESS (*message); break;
 		case GAME_EV_WANT_LOAD: handleNetMessage_GAME_EV_WANT_LOAD (*message); break;
 		case GAME_EV_WANT_EXIT: handleNetMessage_GAME_EV_WANT_EXIT (*message); break;
 		case GAME_EV_REQUEST_RESYNC: handleNetMessage_GAME_EV_REQUEST_RESYNC (*message); break;

@@ -349,7 +349,7 @@ private:
 	void handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message);
 	void handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message);
 	void handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message);
-	void handleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message);
+	void handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message);
