@@ -164,15 +164,6 @@ cGameDataContainer::~cGameDataContainer()
 }
 
 //------------------------------------------------------------------------------
-void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
-{
-	if (savegameNum >= 0)
-		runSavedGame (network, playerNr);
-	else
-		runNewGame (network, playerNr, reconnect);
-}
-
-//------------------------------------------------------------------------------
 cPlayer* cGameDataContainer::findPlayerByNr (int nr)
 {
 	for (size_t i = 0; i != players.size(); ++i)
@@ -971,7 +962,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 			case 2: dir = clanSelection (network, gameDataContainer, *player, false); break;
 			case 3: dir = landingUnitsSelection (network, gameDataContainer, *player, false); break;
 			case 4: dir = landingPosSelection (network, gameDataContainer, *player); break;
-			case 5: gameDataContainer.runGame (network, player->getNr()); menu->draw(); return;
+			case 5: gameDataContainer.runNewGame (network, player->getNr()); menu->draw(); return;
 			default: break;
 		}
 		step += dir;
@@ -991,7 +982,7 @@ void cSinglePlayerMenu::loadGameReleased (void* parent)
 	loadMenu.show (NULL);
 	if (!gameDataContainer.savegame.empty())
 	{
-		gameDataContainer.runGame (NULL, 0);
+		gameDataContainer.runSavedGame (NULL, 0);
 		menu->end = true;
 	}
 	else menu->draw();
@@ -2917,7 +2908,7 @@ void cNetworkMenu::runGamePreparation (cPlayer& player)
 			case 0: dir = clanSelection (network, gameDataContainer, player, true); break;
 			case 1: dir = landingUnitsSelection (network, gameDataContainer, player, gameDataContainer.settings->clans == SETTING_CLANS_OFF); break;
 			case 2: dir = landingPosSelection (network, gameDataContainer, player); break;
-			case 3: gameDataContainer.runGame (network, player.getNr()); return;
+			case 3: gameDataContainer.runNewGame (network, player.getNr()); return;
 			default: break;
 		}
 		step += dir;
@@ -3645,7 +3636,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	}
 	if (!saveGameString.empty())
 	{
-		gameDataContainer.runGame (network, actPlayer->getNr());
+		gameDataContainer.runSavedGame (network, actPlayer->getNr());
 	}
 	else
 	{
@@ -3707,7 +3698,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 		}
 		std::sort (gameDataContainer.players.begin(), gameDataContainer.players.end(), LessByNr());
 
-		gameDataContainer.runGame (network, actPlayer->getNr(), true);
+		gameDataContainer.runNewGame (network, actPlayer->getNr(), true);
 		end = true;
 	}
 	else

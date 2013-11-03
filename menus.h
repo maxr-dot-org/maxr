@@ -201,15 +201,18 @@ public:
 	cGameDataContainer();
 	~cGameDataContainer();
 
-	/** Runs the game. If isServer is true, which means that he is the host,
-	 * a server will be started.
-	 * Else only a client will be started.
-	 * When reconnect is true, it will be reconnected to a running game.
-	 * When the container contains a savegamenumber,
-	 * the savegame will be loaded
+	/** loads and runs a saved game
 	 *@author alzi
 	 */
-	void runGame (cTCP* network, int playerNr, bool reconnect = false);
+	void runSavedGame (cTCP* network, int player);
+
+	/** Runs the game. If isServer is true,
+	 * which means that he is the host, a server will be started.
+	 * Else only a client will be started.
+	 * When reconnect is true, it will be reconnected to a running game.
+	 *@author alzi
+	 */
+	void runNewGame (cTCP* network, int playerNr, bool reconnect = false);
 
 	/** handles incoming clan information
 	 *  @author pagra */
@@ -239,12 +242,6 @@ private:
 	 *@author alzi
 	 */
 	eLandingState checkLandingState (unsigned int playerNr);
-	/** loads and runs a saved game
-	 *@author alzi
-	 */
-	void runSavedGame (cTCP* network, int player);
-
-	void runNewGame (cTCP* network, int playerNr, bool reconnect);
 
 private:
 	cEventHandling* eventHandler;
