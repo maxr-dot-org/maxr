@@ -302,11 +302,12 @@ void sendGameIdentification (cTCP& network, const sPlayer& player, int socket)
 	cMenu::sendMessage (network, message);
 }
 
-void sendReconnectionSuccess (cTCP& network, int playerNr)
+void sendReconnectionSuccess (const cClient& client)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCCESS);
-	message->pushInt16 (playerNr);
-	cMenu::sendMessage (network, message);
+
+	message->pushInt16 (client.getActivePlayer()->getNr());
+	client.sendNetMessage (message);
 }
 
 void sendRequestMap (cTCP& network, const string& mapName, int playerNr)

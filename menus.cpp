@@ -210,8 +210,8 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 		}
 	}
 
-	if (reconnect && network)
-		sendReconnectionSuccess (*network, playerNr);
+	if (reconnect)
+		sendReconnectionSuccess (*client);
 	client->getGameGUI().show (client);
 
 	for (size_t i = 0; i != players.size(); ++i)

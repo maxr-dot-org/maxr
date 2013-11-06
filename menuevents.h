@@ -72,7 +72,7 @@ void sendAllLanded (cTCP& network, cMenu* activeMenu);
 
 void sendGameIdentification (cTCP& network, const sPlayer& player, int socket);
 
-void sendReconnectionSuccess (cTCP& network, int playerNr);
+void sendReconnectionSuccess (const cClient& client);
 
 void sendRequestMap (cTCP& network, const std::string& mapName, int playerNr);
 
