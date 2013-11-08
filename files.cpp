@@ -87,9 +87,9 @@ bool DirExists (const std::string& path)
 }
 
 //--------------------------------------------------------------
-std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory)
+std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
 {
-	std::vector<std::string>* List = new std::vector<std::string>;
+	std::vector<std::string> List;
 #ifdef _WIN32
 	_finddata_t DataFile;
 	intptr_t const lFile = _findfirst ( (sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
@@ -99,7 +99,7 @@ std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 		{
 			if (DataFile.attrib & _A_SUBDIR) continue;
 			if (DataFile.name[0] == '.')     continue;
-			List->push_back (DataFile.name);
+			List.push_back (DataFile.name);
 		}
 		while (_findnext (lFile, &DataFile) == 0);
 		_findclose (lFile);
@@ -111,7 +111,7 @@ std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 		{
 			char const* const name = entry->d_name;
 			if (name[0] == '.') continue;
-			List->push_back (name);
+			List.push_back (name);
 		}
 		closedir (dir);
 	}

@@ -513,7 +513,7 @@ protected:
 	AutoPtr<cMenuImage> planetImages[8];
 	AutoPtr<cMenuLabel> planetTitles[8];
 
-	std::vector<std::string>* maps;
+	std::vector<std::string> maps;
 	int selectedMapIndex;
 	int offset;
 
@@ -940,7 +940,7 @@ protected:
 
 	AutoPtr<cMenuSaveSlot> saveSlots[10];
 
-	std::vector<std::string>* files;
+	std::vector<std::string> files;
 	std::vector<sSaveFile*> savefiles;
 
 	int offset;

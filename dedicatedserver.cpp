@@ -293,31 +293,26 @@ void cDedicatedServer::printMaps() const
 string cDedicatedServer::getAvailableMapsString() const
 {
 	stringstream oss;
-	std::vector<std::string>* maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	std::vector<std::string> maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (getUserMapsDir().empty() == false)
 	{
-		std::vector<std::string>* userMaps = getFilesOfDirectory (getUserMapsDir());
-		if (userMaps != 0)
+		std::vector<std::string> userMaps = getFilesOfDirectory (getUserMapsDir());
+		for (size_t i = 0; i != userMaps.size(); ++i)
 		{
-			for (unsigned int i = 0; i < userMaps->size(); i++)
-			{
-				if (Contains (*maps, (*userMaps) [i]) == false)
-					maps->push_back ( (*userMaps) [i]);
-			}
-			delete userMaps;
+			if (Contains (maps, userMaps[i]) == false)
+				maps.push_back (userMaps[i]);
 		}
 	}
 	oss << "----- Available maps: ------" << endl;
-	for (unsigned int i = 0; i < maps->size(); i++)
+	for (size_t i = 0; i != maps.size(); ++i)
 	{
-		string mapFilename = (*maps) [i];
-		if (mapFilename.substr (mapFilename.length() - 3, 3).compare ("WRL") == 0
-			|| mapFilename.substr (mapFilename.length() - 3, 3).compare ("wrl") == 0)
+		string mapFilename = maps[i];
+		if (mapFilename.compare (mapFilename.length() - 3, 3, "WRL") == 0
+			|| mapFilename.compare (mapFilename.length() - 3, 3, "wrl") == 0)
 		{
 			oss << mapFilename << endl;
 		}
 	}
-	delete maps;
 	return oss.str();
 }
 

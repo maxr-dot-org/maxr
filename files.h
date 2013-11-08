@@ -53,9 +53,9 @@ bool makeDir (const std::string& path);
 * Gets the filenames of all files in the directory
 * @author alzi
 * @param sDirectory Directory in which to search
-* @return A new list with all filenames (the caller is owner of the list)
+* @return A new list with all filenames
 */
-std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory);
+std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory);
 
 /**
 * Gets the map folder of the user's custom maps.

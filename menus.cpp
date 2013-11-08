@@ -1395,19 +1395,20 @@ void cPlanetsSelectionMenu::loadMaps()
 	maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (!getUserMapsDir().empty())
 	{
-		AutoPtr<std::vector<std::string> > userMaps (getFilesOfDirectory (getUserMapsDir()));
-		for (size_t i = 0; userMaps != 0 && i < userMaps->size(); ++i)
+		std::vector<std::string> userMaps (getFilesOfDirectory (getUserMapsDir()));
+		for (size_t i = 0; i != userMaps.size(); ++i)
 		{
-			if (!Contains (*maps, (*userMaps) [i]))
-				maps->push_back ( (*userMaps) [i]);
+			if (!Contains (maps, userMaps[i]))
+				maps.push_back (userMaps[i]);
 		}
 	}
-	for (size_t i = 0; i != maps->size(); ++i)
+	for (size_t i = 0; i != maps.size(); ++i)
 	{
-		const string& map = (*maps) [i];
-		if (map.substr (map.length() - 3, 3).compare ("WRL") != 0 && map.substr (map.length() - 3, 3).compare ("wrl") != 0)
+		const string& map = maps[i];
+		if (map.compare (map.length() - 3, 3, "WRL") != 0
+			&& map.compare (map.length() - 3, 3, "wrl") != 0)
 		{
-			maps->erase (maps->begin() + i);
+			maps.erase (maps.begin() + i);
 			i--;
 		}
 	}
@@ -1418,9 +1419,9 @@ void cPlanetsSelectionMenu::showMaps()
 {
 	for (int i = 0; i < 8; i++) //only 8 maps on one screen
 	{
-		if (i + offset < (int) maps->size())
+		if (i + offset < (int) maps.size())
 		{
-			string mapName = (*maps) [i + offset];
+			string mapName = maps[i + offset];
 
 			int size;
 			AutoSurface mapSurface(cStaticMap::loadMapPreview (mapName, &size));
@@ -1487,11 +1488,11 @@ void cPlanetsSelectionMenu::backReleased (void* parent)
 void cPlanetsSelectionMenu::okReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
-	if (static_cast<unsigned int>(menu->selectedMapIndex) >= menu->maps->size()) return;
+	if (static_cast<unsigned int>(menu->selectedMapIndex) >= menu->maps.size()) return;
 
 	delete menu->gameDataContainer->map;
 	menu->gameDataContainer->map = new cStaticMap(); // TODO: fix memory leak
-	menu->gameDataContainer->map->loadMap ( (*menu->maps) [menu->selectedMapIndex]);
+	menu->gameDataContainer->map->loadMap (menu->maps[menu->selectedMapIndex]);
 	if (!menu->gameDataContainer->map) return;
 
 	menu->end = true;
@@ -1501,7 +1502,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 void cPlanetsSelectionMenu::arrowDownReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
-	if (menu->offset + 8 < (int) menu->maps->size())
+	if (menu->offset + 8 < (int) menu->maps.size())
 	{
 		menu->offset += 8;
 		menu->showMaps();
@@ -3772,7 +3773,6 @@ cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds b
 //------------------------------------------------------------------------------
 cLoadMenu::~cLoadMenu()
 {
-	delete files;
 	for (size_t i = 0; i != savefiles.size(); ++i)
 	{
 		delete savefiles[i];
@@ -3782,13 +3782,13 @@ cLoadMenu::~cLoadMenu()
 //------------------------------------------------------------------------------
 void cLoadMenu::loadSaves()
 {
-	for (size_t i = 0; i != files->size(); ++i)
+	for (size_t i = 0; i != files.size(); ++i)
 	{
 		// only check for xml files and numbers for this offset
-		string const& file = (*files) [i];
-		if (file.length() < 4 || file.substr (file.length() - 3, 3).compare ("xml") != 0)
+		string const& file = files[i];
+		if (file.length() < 4 || file.compare (file.length() - 3, 3, "xml") != 0)
 		{
-			files->erase (files->begin() + i);
+			files.erase (files.begin() + i);
 			i--;
 			continue;
 		}
@@ -3967,7 +3967,6 @@ void cLoadSaveMenu::saveReleased (void* parent)
 
 	PlayVoice (VoiceData.VOISaved);
 
-	delete menu->files;
 	menu->files = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
 	for (size_t i = 0; i != menu->savefiles.size(); ++i)
 	{
