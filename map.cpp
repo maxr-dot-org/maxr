@@ -319,6 +319,58 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return surface.Release();
 }
 
+/*static*/SDL_Surface* cStaticMap::loadMapPreview (const std::string& mapName, int* mapSize)
+{
+	std::string mapPath = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
+	// if no factory map of that name exists, try the custom user maps
+
+	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
+	if (mapFile == NULL && !getUserMapsDir().empty())
+	{
+		mapPath = getUserMapsDir() + mapName;
+		mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
+	}
+
+	if (mapFile == NULL) return NULL;
+
+	SDL_RWseek (mapFile, 5, SEEK_SET);
+	int size = SDL_ReadLE16 (mapFile);
+	struct { unsigned char cBlue, cGreen, cRed; } Palette[256];
+	short sGraphCount;
+	SDL_RWseek (mapFile, 2 + size * size * 3, SEEK_CUR);
+	sGraphCount = SDL_ReadLE16 (mapFile);
+	SDL_RWseek (mapFile, 64 * 64 * sGraphCount, SEEK_CUR);
+	SDL_RWread (mapFile, &Palette, 3, 256);
+
+	AutoSurface mapSurface (SDL_CreateRGBSurface (SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
+	mapSurface->pitch = mapSurface->w;
+
+	mapSurface->format->palette->ncolors = 256;
+	for (int j = 0; j < 256; j++)
+	{
+		mapSurface->format->palette->colors[j].r = Palette[j].cBlue;
+		mapSurface->format->palette->colors[j].g = Palette[j].cGreen;
+		mapSurface->format->palette->colors[j].b = Palette[j].cRed;
+	}
+	SDL_RWseek (mapFile, 9, SEEK_SET);
+	const int byteReadCount = SDL_RWread (mapFile, mapSurface->pixels, 1, size * size);
+	SDL_RWclose (mapFile);
+
+	if (byteReadCount != size * size)
+	{
+		// error.
+		return NULL;
+	}
+	const int MAPWINSIZE = 112;
+	if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
+	{
+		mapSurface = scaleSurface (mapSurface, NULL, MAPWINSIZE, MAPWINSIZE);
+	}
+
+	if (mapSize != NULL) *mapSize = size;
+	return mapSurface.Release();
+}
+
 void cStaticMap::copySrfToTerData (SDL_Surface* surface, int iNum)
 {
 	//before the surfaces are copied, the colortable of both surfaces has to be equal

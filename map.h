@@ -124,6 +124,7 @@ public:
 	SDL_Surface* createBigSurface (int sizex, int sizey) const;
 	void generateNextAnimationFrame();
 	void scaleSurfaces (int pixelSize);
+	static SDL_Surface* loadMapPreview(const std::string& mapPath, int* mapSize = NULL);
 private:
 	static SDL_Surface* loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum);
 	void copySrfToTerData (SDL_Surface* surface, int iNum);

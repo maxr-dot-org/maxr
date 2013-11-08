@@ -889,12 +889,12 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 namespace
 {
 
-int settingSelection (cGameDataContainer& gameDataContainer)
+int settingSelection (sSettings& settings)
 {
-	cSettingsMenu settingsMenu (*gameDataContainer.settings);
+	cSettingsMenu settingsMenu (settings);
 
 	if (settingsMenu.show (NULL) == 1) return -1;
-	*gameDataContainer.settings = settingsMenu.getSettings();
+	settings = settingsMenu.getSettings();
 	return 1;
 }
 
@@ -957,7 +957,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 		switch (step)
 		{
 			case -1: menu->draw(); return;
-			case 0: dir = settingSelection (gameDataContainer); break;
+			case 0: dir = settingSelection (*gameDataContainer.settings); break;
 			case 1: dir = planetSelection (network, gameDataContainer); break;
 			case 2: dir = clanSelection (network, gameDataContainer, *player, false); break;
 			case 3: dir = landingUnitsSelection (network, gameDataContainer, *player, false); break;
@@ -1421,93 +1421,50 @@ void cPlanetsSelectionMenu::showMaps()
 		if (i + offset < (int) maps->size())
 		{
 			string mapName = (*maps) [i + offset];
-			string mapPath = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
-			// if no factory map of that name exists, try the custom user maps
-			if (!FileExists (mapPath.c_str()) && !getUserMapsDir().empty())
-				mapPath = getUserMapsDir() + mapName;
 
-			if (FileExists (mapPath.c_str()))
+			int size;
+			AutoSurface mapSurface(cStaticMap::loadMapPreview (mapName, &size));
+
+			if (mapSurface == NULL) continue;
+
+			const int MAPWINSIZE = 112;
+			const int SELECTED = 0x00C000;
+			const int UNSELECTED = 0x000000;
+			AutoSurface imageSurface (SDL_CreateRGBSurface (Video.getSurfaceType(), MAPWINSIZE + 8, MAPWINSIZE + 8, Video.getColDepth(), 0, 0, 0, 0));
+
+			if (selectedMapIndex == i + offset)
 			{
-				SDL_RWops* mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
-				if (mapFile != NULL)
+				SDL_FillRect (imageSurface, NULL, SELECTED);
+
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
-					SDL_RWseek (mapFile, 5, SEEK_SET);
-					int size = SDL_ReadLE16 (mapFile);
-
-					sColor Palette[256];
-					short sGraphCount;
-					SDL_RWseek (mapFile, 2 + size * size * 3, SEEK_CUR);
-					sGraphCount = SDL_ReadLE16 (mapFile);
-					SDL_RWseek (mapFile, 64 * 64 * sGraphCount, SEEK_CUR);
-					SDL_RWread (mapFile, &Palette, 3, 256);
-
-					AutoSurface mapSurface (SDL_CreateRGBSurface (SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
-					mapSurface->pitch = mapSurface->w;
-
-					mapSurface->format->palette->ncolors = 256;
-					for (int j = 0; j < 256; j++)
+					while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 					{
-						mapSurface->format->palette->colors[j].r = Palette[j].cBlue;
-						mapSurface->format->palette->colors[j].g = Palette[j].cGreen;
-						mapSurface->format->palette->colors[j].b = Palette[j].cRed;
+						mapName.erase (mapName.length() - 1, mapName.length());
 					}
-					SDL_RWseek (mapFile, 9, SEEK_SET);
-					const int byteReadCount = SDL_RWread (mapFile, mapSurface->pixels, 1, size * size);
-
-					if (byteReadCount != size * size)
-					{
-						// error.
-						SDL_RWclose (mapFile);
-						continue;
-					}
-					SDL_RWclose (mapFile);
-
-					const int MAPWINSIZE = 112;
-					if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE)
-					{
-						// resize map
-						mapSurface = scaleSurface (mapSurface, NULL, MAPWINSIZE, MAPWINSIZE);
-					}
-
-					const int SELECTED = 0x00C000;
-					const int UNSELECTED = 0x000000;
-					AutoSurface imageSurface (SDL_CreateRGBSurface (Video.getSurfaceType(), MAPWINSIZE + 8, MAPWINSIZE + 8, Video.getColDepth(), 0, 0, 0, 0));
-
-					if (selectedMapIndex == i + offset)
-					{
-						SDL_FillRect (imageSurface, NULL, SELECTED);
-
-						if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
-						{
-							while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
-							{
-								mapName.erase (mapName.length() - 1, mapName.length());
-							}
-							mapName = ">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<";
-						}
-						else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<";
-					}
-					else
-					{
-						SDL_FillRect (imageSurface, NULL, UNSELECTED);
-
-						if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
-						{
-							while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
-							{
-								mapName.erase (mapName.length() - 1, mapName.length());
-							}
-							mapName = mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")";
-						}
-						else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
-					}
-					SDL_Rect dest = { 4, 4, MAPWINSIZE, MAPWINSIZE };
-					SDL_BlitSurface (mapSurface, NULL, imageSurface, &dest);
-
-					planetImages[i]->setImage (imageSurface);
-					planetTitles[i]->setText (mapName);
+					mapName = ">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<";
 				}
+				else mapName = ">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<";
 			}
+			else
+			{
+				SDL_FillRect (imageSurface, NULL, UNSELECTED);
+
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+				{
+					while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+					{
+						mapName.erase (mapName.length() - 1, mapName.length());
+					}
+					mapName = mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")";
+				}
+				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
+			}
+			SDL_Rect dest = { 4, 4, MAPWINSIZE, MAPWINSIZE };
+			SDL_BlitSurface (mapSurface, NULL, imageSurface, &dest);
+
+			planetImages[i]->setImage (imageSurface);
+			planetTitles[i]->setText (mapName);
 		}
 		else
 		{
@@ -1530,7 +1487,7 @@ void cPlanetsSelectionMenu::backReleased (void* parent)
 void cPlanetsSelectionMenu::okReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
-	if (menu->selectedMapIndex < 0 || menu->selectedMapIndex >= (int) menu->maps->size()) return;
+	if (static_cast<unsigned int>(menu->selectedMapIndex) >= menu->maps->size()) return;
 
 	delete menu->gameDataContainer->map;
 	menu->gameDataContainer->map = new cStaticMap(); // TODO: fix memory leak
@@ -2717,44 +2674,10 @@ void cNetworkMenu::showSettingsText()
 void cNetworkMenu::showMap()
 {
 	if (!gameDataContainer.map) return;
-	SDL_RWops* fp = SDL_RWFromFile ( (cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getName()).c_str(), "rb");
-	if (fp == NULL && !getUserMapsDir().empty())
-		fp = SDL_RWFromFile ( (getUserMapsDir() + gameDataContainer.map->getName()).c_str(), "rb");
-	if (fp != NULL)
+
+	AutoSurface surface (cStaticMap::loadMapPreview(gameDataContainer.map->getName()));
+	if (surface != NULL)
 	{
-		SDL_RWseek (fp, 5, SEEK_SET);
-		int size = SDL_ReadLE16 (fp);
-
-		sColor Palette[256];
-		short sGraphCount;
-		SDL_RWseek (fp, 2 + size * size * 3, SEEK_CUR);
-		sGraphCount = SDL_ReadLE16 (fp);
-		SDL_RWseek (fp, 64 * 64 * sGraphCount, SEEK_CUR);
-		SDL_RWread (fp, &Palette, 3, 256);
-
-		AutoSurface surface (SDL_CreateRGBSurface (SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
-
-		if (SDL_MUSTLOCK (surface)) SDL_LockSurface (surface);
-		surface->pitch = surface->w;
-
-		surface->format->palette->ncolors = 256;
-		for (int j = 0; j < 256; j++)
-		{
-			surface->format->palette->colors[j].r = Palette[j].cBlue;
-			surface->format->palette->colors[j].g = Palette[j].cGreen;
-			surface->format->palette->colors[j].b = Palette[j].cRed;
-		}
-		SDL_RWseek (fp, 9, SEEK_SET);
-		SDL_RWread (fp, surface->pixels, 1, size * size);
-		if (SDL_MUSTLOCK (surface)) SDL_UnlockSurface (surface);
-
-		SDL_RWclose (fp);
-
-#define MAPWINSIZE 112
-		if (surface->w != MAPWINSIZE || surface->h != MAPWINSIZE) // resize map
-		{
-			surface = scaleSurface (surface, NULL, MAPWINSIZE, MAPWINSIZE);
-		}
 		mapImage->setImage (surface);
 	}
 

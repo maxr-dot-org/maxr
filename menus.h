@@ -34,11 +34,6 @@ class cMapSender;
 class cServer;
 class cTCP;
 
-struct sColor
-{
-	unsigned char cBlue, cGreen, cRed;
-};
-
 struct sLandingUnit
 {
 	sID unitID;
