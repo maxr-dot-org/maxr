@@ -499,8 +499,7 @@ private:
 class cPlanetsSelectionMenu : public cMenu
 {
 protected:
-	cTCP* network;
-	cGameDataContainer* gameDataContainer;
+	AutoPtr<cStaticMap> staticMap;
 
 	AutoPtr<cMenuLabel> titleLabel;
 
@@ -518,7 +517,8 @@ protected:
 	int offset;
 
 public:
-	cPlanetsSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_);
+	cPlanetsSelectionMenu();
+	AutoPtr<cStaticMap>& getStaticMap() { return staticMap; }
 
 private:
 	void loadMaps();

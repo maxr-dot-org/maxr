@@ -106,6 +106,7 @@ public:
 
 	void clear();
 	bool loadMap (const std::string& filename);
+	bool isValid() const;
 
 	const std::string& getName() const { return filename; }
 	int getSize() const { return size; }

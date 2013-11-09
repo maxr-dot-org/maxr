@@ -898,10 +898,14 @@ int settingSelection (sSettings& settings)
 	return 1;
 }
 
-int planetSelection (cTCP* network, cGameDataContainer& gameDataContainer)
+int planetSelection (cStaticMap*& map)
 {
-	cPlanetsSelectionMenu planetSelectionMenu (network, &gameDataContainer);
+	cPlanetsSelectionMenu planetSelectionMenu;
+	delete map;
+	map = NULL;
+
 	if (planetSelectionMenu.show (NULL) == 1) return -1;
+	map = planetSelectionMenu.getStaticMap().Release();
 	return 1;
 }
 
@@ -958,7 +962,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 		{
 			case -1: menu->draw(); return;
 			case 0: dir = settingSelection (*gameDataContainer.settings); break;
-			case 1: dir = planetSelection (network, gameDataContainer); break;
+			case 1: dir = planetSelection (gameDataContainer.map); break;
 			case 2: dir = clanSelection (network, gameDataContainer, *player, false); break;
 			case 3: dir = landingUnitsSelection (network, gameDataContainer, *player, false); break;
 			case 4: dir = landingPosSelection (network, gameDataContainer, *player); break;
@@ -1338,10 +1342,8 @@ void cSettingsMenu::updateSettings()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cPlanetsSelectionMenu::cPlanetsSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_) :
-	cMenu (LoadPCX (GFXOD_PLANET_SELECT)),
-	network (network_),
-	gameDataContainer (gameDataContainer_)
+cPlanetsSelectionMenu::cPlanetsSelectionMenu() :
+	cMenu (LoadPCX (GFXOD_PLANET_SELECT))
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Title~Choose_Planet"));
 	titleLabel->setCentered (true);
@@ -1480,7 +1482,7 @@ void cPlanetsSelectionMenu::showMaps()
 void cPlanetsSelectionMenu::backReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
-	menu->gameDataContainer->map = NULL; // TODO: fix memory leak
+	menu->staticMap = NULL;
 	menu->terminate = true;
 }
 
@@ -1490,10 +1492,8 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	if (static_cast<unsigned int>(menu->selectedMapIndex) >= menu->maps.size()) return;
 
-	delete menu->gameDataContainer->map;
-	menu->gameDataContainer->map = new cStaticMap(); // TODO: fix memory leak
-	menu->gameDataContainer->map->loadMap (menu->maps[menu->selectedMapIndex]);
-	if (!menu->gameDataContainer->map) return;
+	menu->staticMap = new cStaticMap();
+	menu->staticMap->loadMap (menu->maps[menu->selectedMapIndex]);
 
 	menu->end = true;
 }
@@ -2674,7 +2674,12 @@ void cNetworkMenu::showSettingsText()
 //------------------------------------------------------------------------------
 void cNetworkMenu::showMap()
 {
-	if (!gameDataContainer.map) return;
+	if (gameDataContainer.map == NULL || !gameDataContainer.map->isValid())
+	{
+		mapImage->setImage (NULL);
+		mapLabel->setText ("");
+		return;
+	}
 
 	AutoSurface surface (cStaticMap::loadMapPreview(gameDataContainer.map->getName()));
 	if (surface != NULL)
@@ -2972,8 +2977,15 @@ void cNetworkHostMenu::okReleased (void* parent)
 void cNetworkHostMenu::mapReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
-	cPlanetsSelectionMenu planetsSelectionMenu (menu->network, &menu->gameDataContainer);
-	planetsSelectionMenu.show (NULL);
+	cPlanetsSelectionMenu planetsSelectionMenu;
+
+	if (planetsSelectionMenu.show (NULL) == 1)
+	{
+		menu->draw();
+		return;
+	}
+	delete menu->gameDataContainer.map;
+	menu->gameDataContainer.map = planetsSelectionMenu.getStaticMap().Release();
 	menu->showSettingsText();
 	menu->showMap();
 	const cStaticMap* map = menu->gameDataContainer.map;

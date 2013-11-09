@@ -156,8 +156,14 @@ void cStaticMap::clear()
 	filename.clear();
 	size = 0;
 	delete [] terrains;
+	terrains = NULL;
 	terrainCount = 0;
 	Kacheln.clear();
+}
+
+bool cStaticMap::isValid() const
+{
+	return !filename.empty();
 }
 
 /** Loads a map file */
@@ -184,6 +190,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	if (fpMapFile == NULL)
 	{
 		Log.write ("Cannot load map file: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
+		clear();
 		return false;
 	}
 	char szFileTyp[4];
@@ -198,6 +205,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	{
 		Log.write ("Wrong file format: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose (fpMapFile);
+		clear();
 		return false;
 	}
 	SDL_RWseek (fpMapFile, 2, SEEK_CUR);
@@ -220,6 +228,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	{
 		Log.write ("Map must be quadratic!: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose (fpMapFile);
+		clear();
 		return false;
 	}
 
@@ -278,6 +287,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 		{
 			Log.write ("EOF while loading terrain number " + iToStr (iNum), cLog::eLOG_TYPE_WARNING);
 			SDL_RWclose (fpMapFile);
+			clear();
 			return false;
 		}
 		copySrfToTerData (surface, iNum);
@@ -294,6 +304,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 			{
 				Log.write ("a map field referred to a nonexisting terrain: " + iToStr (Kachel), cLog::eLOG_TYPE_WARNING);
 				SDL_RWclose (fpMapFile);
+				clear();
 				return false;
 			}
 			Kacheln[iY * size + iX] = Kachel;
