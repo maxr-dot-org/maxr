@@ -664,7 +664,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	const int oldPosX = Vehicle->PosX;
 	const int oldPosY = Vehicle->PosY;
 
-	if (Vehicle->data.canBuild.compare (Data.buildAs) != 0) return;
+	if (Vehicle->data.canBuild != Data.buildAs) return;
 
 	if (Data.isBig)
 	{
@@ -980,7 +980,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		else if (Type.getUnitDataOriginalVersion()->factorGround > 0 && Type.getUnitDataOriginalVersion()->factorSea == 0 && !bLand)
 			continue;
 
-		if (Building->data.canBuild.compare (Type.getUnitDataOriginalVersion()->buildAs) != 0)
+		if (Building->data.canBuild != Type.getUnitDataOriginalVersion()->buildAs)
 			continue;
 
 		sBuildList BuildListItem;
@@ -1460,7 +1460,7 @@ void cServer::handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 
 	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
 	{
-		if (!playerName.compare (DisconnectedPlayerList[i]->getName()))
+		if (playerName == DisconnectedPlayerList[i]->getName())
 		{
 			DisconnectedPlayerList[i]->setSocketIndex (socketNumber);
 			sendReconnectAnswer (*this, socketNumber, *DisconnectedPlayerList[i]);
@@ -2690,7 +2690,7 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 	// try to find player by name
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		if (PlayerList[i]->getName().compare (playerID) == 0) return PlayerList[i];
+		if (PlayerList[i]->getName() == playerID) return PlayerList[i];
 	}
 	return NULL;
 }

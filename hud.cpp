@@ -2557,7 +2557,7 @@ void cGameGUI::doCommand (const string& cmd)
 	else if (cmd.compare ("/players on") == 0) { debugOutput.debugPlayers = true;}
 	else if (cmd.compare ("/players off") == 0) { debugOutput.debugPlayers = false;}
 	else if (cmd.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep;}
-	else if (cmd.substr (0, 12).compare ("/cache size ") == 0)
+	else if (cmd.compare (0, 12, "/cache size ") == 0)
 	{
 		int size = atoi (cmd.substr (12, cmd.length()).c_str());
 		// since atoi is too stupid to report an error,
@@ -2581,7 +2581,7 @@ void cGameGUI::doCommand (const string& cmd)
 	{
 		debugOutput.debugCache = false;
 	}
-	else if (cmd.substr (0, 6).compare ("/kick ") == 0)
+	else if (cmd.compare (0, 6, "/kick ") == 0)
 	{
 		if (!server)
 		{
@@ -2604,7 +2604,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		server->kickPlayer (Player);
 	}
-	else if (cmd.substr (0, 9).compare ("/credits ") == 0)
+	else if (cmd.compare (0, 9, "/credits ") == 0)
 	{
 		if (!server)
 		{
@@ -2632,7 +2632,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		sendCredits (*server, credits, Player->getNr());
 	}
-	else if (cmd.substr (0, 12).compare ("/disconnect ") == 0)
+	else if (cmd.compare (0, 12, "/disconnect ") == 0)
 	{
 		if (!server)
 		{
@@ -2658,7 +2658,7 @@ void cGameGUI::doCommand (const string& cmd)
 		message->pushInt16 (Player->getSocketNum());
 		server->pushEvent (message);
 	}
-	else if (cmd.substr (0, 9).compare ("/deadline") == 0)
+	else if (cmd.compare (0, 9, "/deadline") == 0)
 	{
 		if (!server)
 		{
@@ -2681,7 +2681,7 @@ void cGameGUI::doCommand (const string& cmd)
 		server->setDeadline (i);
 		Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
 	}
-	else if (cmd.substr (0, 7).compare ("/resync") == 0)
+	else if (cmd.compare (0, 7, "/resync") == 0)
 	{
 		if (cmd.length() > 7)
 		{
@@ -2714,7 +2714,7 @@ void cGameGUI::doCommand (const string& cmd)
 			}
 		}
 	}
-	else if (cmd.substr (0, 5).compare ("/mark") == 0)
+	else if (cmd.compare (0, 5, "/mark") == 0)
 	{
 		std::string cmdArg (cmd);
 		cmdArg.erase (0, 5);
@@ -2722,7 +2722,7 @@ void cGameGUI::doCommand (const string& cmd)
 		message->pushString (cmdArg);
 		client->sendNetMessage (message);
 	}
-	else if (cmd.substr (0, 7).compare ("/color ") == 0)
+	else if (cmd.compare (0, 7, "/color ") == 0)
 	{
 		int cl = 0;
 		sscanf (cmd.c_str(), "color %d", &cl);
@@ -2749,7 +2749,7 @@ void cGameGUI::doCommand (const string& cmd)
 		client->getMap()->assignRessources (*server->Map);
 		player->revealResource();
 	}
-	else if (cmd.substr (0, 6).compare ("/pause") == 0)
+	else if (cmd.compare (0, 6, "/pause") == 0)
 	{
 		if (!server)
 		{
@@ -2758,7 +2758,7 @@ void cGameGUI::doCommand (const string& cmd)
 		}
 		server->enableFreezeMode (FREEZE_PAUSE);
 	}
-	else if (cmd.substr (0, 7).compare ("/resume") == 0)
+	else if (cmd.compare (0, 7, "/resume") == 0)
 	{
 		if (!server)
 		{

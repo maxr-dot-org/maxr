@@ -1503,12 +1503,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (checkPosition && data.factorAir > 0 && (Vehicle->PosX != PosX || Vehicle->PosY != PosY)) return false;
 
-	size_t i;
-	for (i = 0; i < data.storeUnitsTypes.size(); i++)
-	{
-		if (data.storeUnitsTypes[i].compare (Vehicle->data.isStorageType) == 0) break;
-	}
-	if (i == data.storeUnitsTypes.size()) return false;
+	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
 	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->attacking || Vehicle->MoveJobActive)) return false;
 

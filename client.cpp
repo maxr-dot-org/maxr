@@ -278,7 +278,7 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 			const string translationpath = message.popString();
 			const string inserttext = message.popString();
 			string msgString;
-			if (!inserttext.compare ("")) msgString = lngPack.i18n (translationpath);
+			if (inserttext.empty()) msgString = lngPack.i18n (translationpath);
 			else msgString = lngPack.i18n (translationpath, inserttext);
 			gameGUI->onChat_infoMessage (msgString);
 			break;
@@ -1903,7 +1903,7 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	// try to find plyer by name
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
-		if ( (*PlayerList) [i]->getName().compare (playerID) == 0) return (*PlayerList) [i];
+		if ( (*PlayerList) [i]->getName() == playerID) return (*PlayerList) [i];
 	}
 
 	return NULL;

@@ -1117,7 +1117,7 @@ void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 {
 	for (size_t i = 0; i != str.length(); ++i)
 	{
-		if (!str.substr (i, 1).compare ("1")) player.exploreResource (i);
+		if (!str.compare (i, 1, "1")) player.exploreResource (i);
 	}
 }
 
@@ -1683,7 +1683,7 @@ void cSavegame::addAttributeElement (XMLElement* node, const string& nodename, c
 {
 	XMLElement* element = addMainElement (node, nodename);
 	element->SetAttribute (attributename.c_str(), value.c_str());
-	if (attributename2.compare ("")) element->SetAttribute (attributename2.c_str(), value2.c_str());
+	if (!attributename2.empty()) element->SetAttribute (attributename2.c_str(), value2.c_str());
 }
 
 //--------------------------------------------------------------------------

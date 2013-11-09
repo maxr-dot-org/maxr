@@ -2741,7 +2741,7 @@ bool cNetworkMenu::enteredCommand (const string& text)
 {
 	if (!text.empty() && text[0] == '/')
 	{
-		if (text.substr (1, text.length()).compare ("ready") == 0) changePlayerReadyState (actPlayer);
+		if (text.compare (1, text.length(), "ready") == 0) changePlayerReadyState (actPlayer);
 		return true;
 	}
 	return false;
@@ -4059,7 +4059,7 @@ void cBuildingsBuildMenu::generateSelectionList()
 	{
 		if (UnitsData.sbuildings[i].explodesOnContact) continue;
 
-		if (vehicle->data.canBuild.compare (UnitsData.sbuildings[i].buildAs) != 0) continue;
+		if (vehicle->data.canBuild != UnitsData.sbuildings[i].buildAs) continue;
 
 		selectionList->addUnit (&vehicle->owner->BuildingData[i], player);
 
@@ -4226,7 +4226,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water) continue;
 		else if (unitData.factorGround > 0 && unitData.factorSea == 0 && !land) continue;
 
-		if (building->data.canBuild.compare (unitData.buildAs) != 0) continue;
+		if (building->data.canBuild != unitData.buildAs) continue;
 
 		selectionList->addUnit (&unitData, player, NULL, false, false);
 		selectionList->getItem (selectionList->getSize() - 1)->setResValue (-1, false);
