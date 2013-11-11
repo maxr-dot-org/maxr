@@ -553,13 +553,12 @@ protected:
 	AutoPtr<cMenuButton> okButton;
 	AutoPtr<cMenuButton> backButton;
 
-	cPlayer* player;
 	int clan;
 
 	void updateClanDescription();
 
 public:
-	cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn);
+	cClanSelectionMenu (int clan, bool noReturn, cTCP* network_, cGameDataContainer* gameDataContainer_);
 
 	int getClan() const { return clan; }
 private:
@@ -703,7 +702,7 @@ protected:
 	void addPlayerLandingUnits (cPlayer& player);
 
 public:
-	cStartupHangarMenu (cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
+	cStartupHangarMenu (cPlayer* player_, bool noReturn, cTCP* network, cGameDataContainer* gameDataContainer_);
 
 private:
 	virtual void generateSelectionList();
@@ -726,7 +725,7 @@ private:
 class cLandingMenu : public cMenu
 {
 public:
-	cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_);
+	cLandingMenu (cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_);
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);

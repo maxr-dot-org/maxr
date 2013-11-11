@@ -909,11 +909,12 @@ int planetSelection (cStaticMap*& map)
 	return 1;
 }
 
-int clanSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player, bool noReturn)
+int clanSelection (const sSettings& settings, cPlayer& player, bool noReturn,
+				   cTCP* network, cGameDataContainer* gameDataContainer)
 {
-	if (gameDataContainer.settings->clans != SETTING_CLANS_ON) return 0;
+	if (settings.clans != SETTING_CLANS_ON) return 0;
 
-	cClanSelectionMenu clanMenu (network, &gameDataContainer, &player, noReturn);
+	cClanSelectionMenu clanMenu (player.getClan(), noReturn, network, gameDataContainer);
 	if (clanMenu.show (NULL) == 1)
 	{
 		player.setClan (-1);
@@ -923,9 +924,10 @@ int clanSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer
 	return 1;
 }
 
-int landingUnitsSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player, bool noReturn)
+int landingUnitsSelection (cPlayer& player, bool noReturn,
+						   cTCP* network, cGameDataContainer* gameDataContainer)
 {
-	cStartupHangarMenu startupHangarMenu (network, &gameDataContainer, &player, noReturn);
+	cStartupHangarMenu startupHangarMenu (&player, noReturn, network, gameDataContainer);
 
 	if (startupHangarMenu.show (NULL) == 1) return -1;
 	return 1;
@@ -933,7 +935,7 @@ int landingUnitsSelection (cTCP* network, cGameDataContainer& gameDataContainer,
 
 int landingPosSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player)
 {
-	cLandingMenu landingMenu (network, &gameDataContainer, &player);
+	cLandingMenu landingMenu (*gameDataContainer.map, &player, network, &gameDataContainer);
 	if (landingMenu.show (NULL) == 1) return -1;
 	return 1;
 }
@@ -946,8 +948,9 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cGameDataContainer gameDataContainer;
 	cTCP* network = NULL;
+	sSettings* settings = new sSettings;
 	gameDataContainer.server = new cServer (network);
-	gameDataContainer.settings = new sSettings;
+	gameDataContainer.settings = settings;
 	sPlayer splayer (cSettings::getInstance().getPlayerName(), cl_red, 0);
 	splayer.setLocal();
 	cPlayer* player = new cPlayer (splayer);
@@ -961,10 +964,10 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 		switch (step)
 		{
 			case -1: menu->draw(); return;
-			case 0: dir = settingSelection (*gameDataContainer.settings); break;
+			case 0: dir = settingSelection (*settings); break;
 			case 1: dir = planetSelection (gameDataContainer.map); break;
-			case 2: dir = clanSelection (network, gameDataContainer, *player, false); break;
-			case 3: dir = landingUnitsSelection (network, gameDataContainer, *player, false); break;
+			case 2: dir = clanSelection (*settings, *player, false, network, &gameDataContainer); break;
+			case 3: dir = landingUnitsSelection (*player, false, network, &gameDataContainer); break;
 			case 4: dir = landingPosSelection (network, gameDataContainer, *player); break;
 			case 5: gameDataContainer.runNewGame (network, player->getNr()); menu->draw(); return;
 			default: break;
@@ -1544,11 +1547,11 @@ void cPlanetsSelectionMenu::mapReleased (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn)
+cClanSelectionMenu::cClanSelectionMenu (int clan_, bool noReturn, cTCP* network_, cGameDataContainer* gameDataContainer_)
 	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
 	, network (network_)
 	, gameDataContainer (gameDataContainer_)
-	, clan (std::max (0, player->getClan()))
+	, clan (std::max (0, clan_))
 {
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&cMenu::doneReleased);
@@ -1874,7 +1877,7 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
+cStartupHangarMenu::cStartupHangarMenu (cPlayer* player_, bool noReturn, cTCP* network_, cGameDataContainer* gameDataContainer_) :
 	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), player_),
 	network (network_),
 	gameDataContainer (gameDataContainer_),
@@ -2326,13 +2329,13 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_) :
+cLandingMenu::cLandingMenu (cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_) :
 	cMenu (NULL),
 	network (network_),
 	gameDataContainer (gameDataContainer_),
 	player (player_)
 {
-	map = gameDataContainer->map;
+	map = &map_;
 
 	createMap();
 	mapImage = new cMenuImage (180, 18, mapSurface);
@@ -2834,8 +2837,8 @@ void cNetworkMenu::runGamePreparation (cPlayer& player)
 		int dir = 0;
 		switch (step)
 		{
-			case 0: dir = clanSelection (network, gameDataContainer, player, true); break;
-			case 1: dir = landingUnitsSelection (network, gameDataContainer, player, gameDataContainer.settings->clans == SETTING_CLANS_OFF); break;
+			case 0: dir = clanSelection (*gameDataContainer.settings, player, true, network, &gameDataContainer); break;
+			case 1: dir = landingUnitsSelection (player, gameDataContainer.settings->clans == SETTING_CLANS_OFF, network, &gameDataContainer); break;
 			case 2: dir = landingPosSelection (network, gameDataContainer, player); break;
 			case 3: gameDataContainer.runNewGame (network, player.getNr()); return;
 			default: break;
