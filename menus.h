@@ -677,6 +677,8 @@ public:
 class cStartupHangarMenu : public cAdvListHangarMenu
 {
 protected:
+	const sSettings* gameSetting;
+	std::vector<sLandingUnit>* landingUnits;
 	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 
@@ -702,7 +704,10 @@ protected:
 	void addPlayerLandingUnits (cPlayer& player);
 
 public:
-	cStartupHangarMenu (cPlayer* player_, bool noReturn, cTCP* network, cGameDataContainer* gameDataContainer_);
+	cStartupHangarMenu (const sSettings& gameSetting_,
+						std::vector<sLandingUnit>& landingUnits_,
+						cPlayer& player_, bool noReturn,
+						cTCP* network, cGameDataContainer* gameDataContainer_);
 
 private:
 	virtual void generateSelectionList();

@@ -153,6 +153,7 @@ cGameDataContainer::cGameDataContainer() :
 	allLanded (false),
 	eventHandler (new cEventHandling)
 {
+	landingUnits.push_back (new std::vector<sLandingUnit>);
 }
 
 //------------------------------------------------------------------------------
@@ -927,9 +928,16 @@ int clanSelection (const sSettings& settings, cPlayer& player, bool noReturn,
 int landingUnitsSelection (cPlayer& player, bool noReturn,
 						   cTCP* network, cGameDataContainer* gameDataContainer)
 {
-	cStartupHangarMenu startupHangarMenu (&player, noReturn, network, gameDataContainer);
+	cStartupHangarMenu startupHangarMenu (*gameDataContainer->settings,
+										  *gameDataContainer->landingUnits[0],
+										  player, noReturn,
+										  network, gameDataContainer);
 
-	if (startupHangarMenu.show (NULL) == 1) return -1;
+	if (startupHangarMenu.show (NULL) == 1)
+	{
+		gameDataContainer->landingUnits[0]->clear();
+		return -1;
+	}
 	return 1;
 }
 
@@ -1877,17 +1885,22 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStartupHangarMenu::cStartupHangarMenu (cPlayer* player_, bool noReturn, cTCP* network_, cGameDataContainer* gameDataContainer_) :
-	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), player_),
+cStartupHangarMenu::cStartupHangarMenu (const sSettings& gameSetting_,
+										std::vector<sLandingUnit>& landingUnits_,
+										cPlayer& player_, bool noReturn,
+										cTCP* network_, cGameDataContainer* gameDataContainer_) :
+	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), &player_),
+	gameSetting (&gameSetting_),
+	landingUnits (&landingUnits_),
 	network (network_),
 	gameDataContainer (gameDataContainer_),
-	upgradeHangarContainer (this, player_),
+	upgradeHangarContainer (this, &player_),
 	chooseUnitLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
 {
 	chooseUnitLabel.setCentered (true);
 	menuItems.push_back (&chooseUnitLabel);
 
-	const int credits = gameDataContainer->settings ? gameDataContainer->settings->credits : 0;
+	const int credits = gameSetting->credits;
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -1943,9 +1956,7 @@ private:
 
 void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 {
-	if (gameDataContainer->landingUnits.empty()) return;
-	if (gameDataContainer->landingUnits[0] == NULL) return;
-	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[0];
+	std::vector<sLandingUnit>& units = *landingUnits;
 
 	if (units.empty()) return;
 	int credits = upgradeHangarContainer.getGoldBar().getCurrentValue();
@@ -1976,7 +1987,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 
 void cStartupHangarMenu::generateInitialLandingUnits()
 {
-	if (gameDataContainer->settings->bridgeHead != SETTING_BRIDGEHEAD_DEFINITE) return;
+	if (gameSetting->bridgeHead != SETTING_BRIDGEHEAD_DEFINITE) return;
 
 	const sID& constructorID = UnitsData.getConstructorID();
 	const sID& engineerID = UnitsData.getEngineerID();
@@ -1997,10 +2008,10 @@ void cStartupHangarMenu::generateInitialLandingUnits()
 	cMenuUnitListItem* surveyor = secondList->addUnit (surveyorID, player, surveyorUpgrades);
 	surveyor->setFixed (true);
 
-	if (gameDataContainer->settings->clans != SETTING_CLANS_ON || player->getClan() != 7) return;
+	if (gameSetting->clans != SETTING_CLANS_ON || player->getClan() != 7) return;
 	// Additional Units for Axis Inc. Clan
 
-	const int startCredits = gameDataContainer->settings->credits;
+	const int startCredits = gameSetting->credits;
 	int numAddConstructors = 0;
 	int numAddEngineers = 0;
 	if (startCredits < 100)
@@ -2060,28 +2071,17 @@ void cStartupHangarMenu::doneReleased (void* parent)
 
 	menu->updateUnitData();
 
-	std::vector<sLandingUnit>* landingUnits  = new std::vector<sLandingUnit>;
 	for (int i = 0; i < menu->secondList->getSize(); i++)
 	{
 		sLandingUnit landingUnit;
 		landingUnit.unitID = menu->secondList->getItem (i)->getUnitID();
 		landingUnit.cargo = menu->secondList->getItem (i)->getResValue();
-		landingUnits->push_back (landingUnit);
+		menu->landingUnits->push_back (landingUnit);
 	}
-	// the size can be != 0, if a client sent his landingunits
-	// before the host is done with the startup hangar
-	if (menu->gameDataContainer->landingUnits.empty())
-	{
-		// TODO: alzi, for clients it shouldn't be necessary
-		// to store the landing units, or? (pagra)
-		menu->gameDataContainer->landingUnits.push_back (landingUnits);
-	}
-	else
-		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if (menu->network && menu->gameDataContainer->server == NULL)
 	{
 		sendClan (*menu->network, menu->player->getClan(), menu->player->getNr());
-		sendLandingUnits (*menu->network, *landingUnits, menu->player->getNr());
+		sendLandingUnits (*menu->network, *menu->landingUnits, menu->player->getNr());
 	}
 	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->server ? menu : NULL);
 
