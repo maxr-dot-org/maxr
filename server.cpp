@@ -51,6 +51,7 @@ typedef struct tagTHREADNAME_INFO
 #include "hud.h"
 #include "jobs.h"
 #include "log.h"
+#include "menuevents.h"
 #include "menus.h"
 #include "movejobs.h"
 #include "netmessage.h"
@@ -187,7 +188,20 @@ void cServer::changeStateToInitGame()
 	{
 		PlayerList[i]->initMaps (*Map);
 	}
+	landingPositions.clear();
+	landingPositions.resize (PlayerList.size());
+	landingUnits.clear();
+	landingUnits.resize (PlayerList.size());
+
 	serverState = SERVER_STATE_INITGAME;
+}
+
+//------------------------------------------------------------------------------
+void cServer::cancelStateInitGame()
+{
+	assert(serverState == SERVER_STATE_INITGAME);
+
+	serverState = SERVER_STATE_ROOM;
 }
 
 //------------------------------------------------------------------------------
@@ -324,6 +338,120 @@ void cServer::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 	assert (message.iType == TCP_ACCEPT);
 
 	sendRequestIdentification (*network, message.popInt16());
+}
+
+//------------------------------------------------------------------------------
+void cServer::handleNetMessage_MU_MSG_CLAN (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_CLAN);
+	assert (serverState == SERVER_STATE_INITGAME);
+
+	unsigned int playerNr = message.popInt16();
+	int clanNr = message.popInt16();  // -1 = no clan
+	PlayerList[playerNr]->setClan (clanNr);
+}
+
+//------------------------------------------------------------------------------
+void cServer::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_LANDING_VEHICLES);
+	assert (serverState == SERVER_STATE_INITGAME);
+
+	unsigned int playerNr = message.popInt16();
+
+	std::vector<sLandingUnit>& playerLandingUnits = landingUnits[playerNr];
+
+	int iCount = message.popInt16();
+	for (int i = 0; i < iCount; i++)
+	{
+		sLandingUnit unit;
+		unit.cargo = message.popInt16();
+		unit.unitID = message.popID();
+		playerLandingUnits.push_back (unit);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cServer::handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_UPGRADES);
+	assert (serverState == SERVER_STATE_INITGAME);
+
+	// TODO: check that it is possible (gold...)
+	const int playerNr = message.popInt16();
+	const int count = message.popInt16();
+	for (int i = 0; i < count; i++)
+	{
+		const sID ID = message.popID();
+		sUnitData& unitData = *PlayerList[playerNr]->getUnitDataCurrentVersion (ID);
+
+		unitData.damage = message.popInt16();
+		unitData.shotsMax = message.popInt16();
+		unitData.range = message.popInt16();
+		unitData.ammoMax = message.popInt16();
+		unitData.armor = message.popInt16();
+		unitData.hitpointsMax = message.popInt16();
+		unitData.scan = message.popInt16();
+		if (ID.isAVehicle()) unitData.speedMax = message.popInt16();
+		unitData.version++;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_LANDING_COORDS);
+	assert (serverState == SERVER_STATE_INITGAME);
+
+	int playerNr = message.popChar();
+	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
+	sClientLandData& c = landingPositions[playerNr];
+	// save last coords, so that a player can confirm his position
+	// after a warning about nearby players
+	c.iLastLandX = c.iLandX;
+	c.iLastLandY = c.iLandY;
+	c.iLandX = message.popInt16();
+	c.iLandY = message.popInt16();
+	c.receivedOK = true;
+
+	for (size_t player = 0; player != landingPositions.size(); ++player)
+	{
+		if (!landingPositions[player].receivedOK) return;
+	}
+
+	// now check the landing positions
+	for (size_t player = 0; player != landingPositions.size(); ++player)
+	{
+		const sClientLandData& landingPos = landingPositions[player];
+		eLandingState state = sClientLandData::checkLandingState (landingPositions, player);
+		const std::string posStr = iToStr (landingPos.iLandX) + ", " + iToStr (landingPos.iLandY);
+
+		Log.write ("Server: Player " + iToStr (player) + "has state " + ToString (state) + ", Position:" + posStr, cLog::eLOG_TYPE_NET_DEBUG);
+
+		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
+		{
+			sendReselectLanding (*this, state, PlayerList[player]->getNr());
+		}
+	}
+
+	// now remove all players with warning
+	bool ok = true;
+	for (size_t player = 0; player != landingPositions.size(); ++player)
+	{
+		sClientLandData& landingPos = landingPositions[player];
+		eLandingState state = landingPos.landingState;
+		if (state != LANDING_POSITION_OK && state != LANDING_POSITION_CONFIRMED)
+		{
+			landingPos.receivedOK = false;
+			ok = false;
+		}
+	}
+	if (!ok) return;
+
+	sendAllLanded (*this);
+
+	startNewGame();
 }
 
 //------------------------------------------------------------------------------
@@ -2030,6 +2158,11 @@ int cServer::handleNetMessage (cNetMessage* message)
 	switch (message->iType)
 	{
 		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (*message); break;
+		case MU_MSG_CLAN: handleNetMessage_MU_MSG_CLAN (*message); break;
+		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (*message); break;
+		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (*message); break;
+		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (*message); break;
+
 		case TCP_CLOSE: // Follow
 		case GAME_EV_WANT_DISCONNECT:
 			handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (*message);
@@ -2209,6 +2342,20 @@ void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
 }
 
 //------------------------------------------------------------------------------
+void cServer::makeLanding()
+{
+	const bool fixed = gameSetting->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
+	for (size_t i = 0; i != PlayerList.size(); ++i)
+	{
+		const int x = landingPositions[i].iLandX;
+		const int y = landingPositions[i].iLandY;
+		cPlayer* player = PlayerList[i];
+
+		makeLanding (x, y, player, landingUnits[i], fixed);
+	}
+}
+
+//------------------------------------------------------------------------------
 void cServer::makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed)
 {
 	// Find place for mine if bridgehead is fixed
@@ -2280,7 +2427,7 @@ void cServer::correctLandingPos (int& iX, int& iY)
 }
 
 //------------------------------------------------------------------------------
-void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits)
+void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits_)
 {
 	assert (serverState == SERVER_STATE_INITGAME);
 	// send victory conditions to clients
@@ -2293,7 +2440,25 @@ void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::v
 	// place resources
 	placeInitialResources (landData);
 	// make the landing
-	makeLanding (landData, landingUnits);
+	makeLanding (landData, landingUnits_);
+	serverState = SERVER_STATE_INGAME;
+}
+
+//------------------------------------------------------------------------------
+void cServer::startNewGame()
+{
+	assert (serverState == SERVER_STATE_INITGAME);
+	// send victory conditions to clients
+	for (size_t i = 0; i != PlayerList.size(); ++i)
+		sendGameSettings (*this, *PlayerList[i]);
+	// send clan info to clients
+	if (gameSetting->clans == SETTING_CLANS_ON)
+		sendClansToClients (*this, PlayerList);
+
+	// place resources
+	placeInitialResources (landingPositions);
+	// make the landing
+	makeLanding();
 	serverState = SERVER_STATE_INGAME;
 }
 

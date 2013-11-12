@@ -103,6 +103,11 @@ enum CHAT_MESSAGE_TYPES
 	SERVER_INFO_MESSAGE,
 };
 
+void sendClan (const cClient& client);
+void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& landingList);
+void sendUnitUpgrades (const cClient& client);
+void sendLandingCoords (const cClient& client, const sClientLandData& c);
+
 /**
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.

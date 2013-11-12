@@ -24,12 +24,153 @@
 #include "events.h"
 #include "hud.h"
 #include "log.h"
+#include "menuevents.h"
 #include "netmessage.h"
 #include "network.h"
 #include "player.h"
 #include "vehicles.h"
 
 using namespace std;
+
+void sendClan (const cClient& client)
+{
+	cNetMessage* message = new cNetMessage (MU_MSG_CLAN);
+	const cPlayer& player = *client.getActivePlayer();
+
+	message->pushInt16 (player.getClan());
+	message->pushInt16 (player.getNr());
+
+	client.sendNetMessage (message);
+}
+
+void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& landingList)
+{
+	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_VEHICLES);
+
+	for (size_t i = 0; i != landingList.size(); ++i)
+	{
+		message->pushID (landingList[i].unitID);
+		message->pushInt16 (landingList[i].cargo);
+	}
+	message->pushInt16 ( (int) landingList.size());
+	message->pushInt16 (client.getActivePlayer()->getNr());
+
+	client.sendNetMessage (message);
+}
+
+void sendUnitUpgrades (const cClient& client)
+{
+	const cPlayer& player = *client.getActivePlayer();
+	cNetMessage* message = NULL;
+	int count = 0;
+
+	// send vehicles
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
+	{
+		const sUnitData& playerData = player.VehicleData[i];
+		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan());
+		if (playerData.damage == originalData.damage &&
+			playerData.shotsMax == originalData.shotsMax &&
+			playerData.range == originalData.range &&
+			playerData.ammoMax == originalData.ammoMax &&
+			playerData.armor == originalData.armor &&
+			playerData.hitpointsMax == originalData.hitpointsMax &&
+			playerData.scan == originalData.scan &&
+			playerData.speedMax == originalData.speedMax)
+		{
+			continue;
+		}
+		if (message == NULL)
+		{
+			message = new cNetMessage (MU_MSG_UPGRADES);
+		}
+		message->pushInt16 (playerData.speedMax);
+		message->pushInt16 (playerData.scan);
+		message->pushInt16 (playerData.hitpointsMax);
+		message->pushInt16 (playerData.armor);
+		message->pushInt16 (playerData.ammoMax);
+		message->pushInt16 (playerData.range);
+		message->pushInt16 (playerData.shotsMax);
+		message->pushInt16 (playerData.damage);
+		message->pushID (playerData.ID);
+
+		count++;
+
+		if (message->iLength + 38 > PACKAGE_LENGTH)
+		{
+			message->pushInt16 (count);
+			message->pushInt16 (player.getNr());
+			client.sendNetMessage (message);
+			message = NULL;
+			count = 0;
+		}
+	}
+	if (message != NULL)
+	{
+		message->pushInt16 (count);
+		message->pushInt16 (player.getNr());
+		client.sendNetMessage (message);
+		message = NULL;
+		count = 0;
+	}
+
+	// send buildings
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
+	{
+		const sUnitData& playerData = player.BuildingData[i];
+		const sUnitData& originalData = UnitsData.getBuilding (i, player.getClan());
+		if (playerData.damage == originalData.damage &&
+			playerData.shotsMax == originalData.shotsMax &&
+			playerData.range == originalData.range &&
+			playerData.ammoMax == originalData.ammoMax &&
+			playerData.armor == originalData.armor &&
+			playerData.hitpointsMax == originalData.hitpointsMax &&
+			playerData.scan == originalData.scan)
+		{
+			continue;
+		}
+		if (message == NULL)
+		{
+			message = new cNetMessage (MU_MSG_UPGRADES);
+		}
+		message->pushInt16 (playerData.scan);
+		message->pushInt16 (playerData.hitpointsMax);
+		message->pushInt16 (playerData.armor);
+		message->pushInt16 (playerData.ammoMax);
+		message->pushInt16 (playerData.range);
+		message->pushInt16 (playerData.shotsMax);
+		message->pushInt16 (playerData.damage);
+		message->pushID (playerData.ID);
+
+		count++;
+
+		if (message->iLength + 34 > PACKAGE_LENGTH)
+		{
+			message->pushInt16 (count);
+			message->pushInt16 (player.getNr());
+			client.sendNetMessage (message);
+			message = NULL;
+			count = 0;
+		}
+	}
+	if (message != NULL)
+	{
+		message->pushInt16 (count);
+		message->pushInt16 (player.getNr());
+		client.sendNetMessage (message);
+	}
+}
+
+void sendLandingCoords (const cClient& client, const sClientLandData& c)
+{
+	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
+	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_COORDS);
+	message->pushInt16 (c.iLandY);
+	message->pushInt16 (c.iLandX);
+	message->pushChar (client.getActivePlayer()->getNr());
+
+	client.sendNetMessage (message);
+}
 
 void sendChatMessageToServer (const cClient& client, const string& sMsg)
 {

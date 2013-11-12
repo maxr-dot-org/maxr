@@ -21,9 +21,10 @@
 
 #include <string>
 #include "defines.h"
-#include "network.h"
 #include "main.h" // for sID
+#include "menus.h"
 #include "movejobs.h"
+#include "network.h"
 
 class cBuilding;
 class cHud;
@@ -84,6 +85,16 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_REQUEST_CASUALTIES_REPORT, // a client wants to have the current casualties data
 	NET_GAME_TIME_CLIENT,			//reports the current gametime of the client to server
 };
+
+/*
+* Send the landing state.
+*/
+void sendReselectLanding (cServer& server, eLandingState state, int iPlayer);
+
+/*
+* All player has landed, game can start.
+*/
+void sendAllLanded (cServer& server);
 
 /**
 * Sends an event to a player that a new unit has to be added

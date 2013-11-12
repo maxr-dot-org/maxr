@@ -109,6 +109,11 @@ void cClient::setMap (cStaticMap& staticMap)
 	initPlayersWithMap();
 }
 
+void cClient::setGameSetting (const sSettings& gameSetting_)
+{
+	gameSetting = new sSettings (gameSetting_);
+}
+
 void cClient::setPlayers (std::vector<cPlayer*>* playerList, cPlayer* Player)
 {
 	PlayerList = playerList;

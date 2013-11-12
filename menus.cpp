@@ -112,7 +112,7 @@ string sSettings::getResFreqString() const
 	return "";
 }
 
-static std::string ToString (eLandingState state)
+std::string ToString (eLandingState state)
 {
 	switch (state)
 	{
@@ -124,6 +124,88 @@ static std::string ToString (eLandingState state)
 	}
 	assert (0);
 	return "unknown";
+}
+
+//------------------------------------------------------------------------------
+/*static*/ eLandingState sClientLandData::checkLandingState (std::vector<sClientLandData>& landData, unsigned int playerNr)
+{
+	int posX = landData[playerNr].iLandX;
+	int posY = landData[playerNr].iLandY;
+	int lastPosX = landData[playerNr].iLastLandX;
+	int lastPosY = landData[playerNr].iLastLandY;
+	bool bPositionTooClose = false;
+	bool bPositionWarning = false;
+
+	// check distances to all other players
+	for (size_t i = 0; i != landData.size(); ++i)
+	{
+		const sClientLandData& c = landData[i];
+		if (c.receivedOK == false) continue;
+		if (i == playerNr) continue;
+
+		const int sqDistance = Square (c.iLandX - posX) + Square (c.iLandY - posY);
+
+		if (sqDistance < Square (LANDING_DISTANCE_TOO_CLOSE))
+		{
+			bPositionTooClose = true;
+		}
+		if (sqDistance < Square (LANDING_DISTANCE_WARNING))
+		{
+			bPositionWarning = true;
+		}
+	}
+
+	// now set the new landing state,
+	// depending on the last state, the last position, the current position,
+	//  bPositionTooClose and bPositionWarning
+	eLandingState lastState = landData[playerNr].landingState;
+	eLandingState newState = LANDING_STATE_UNKNOWN;
+
+	if (bPositionTooClose)
+	{
+		newState = LANDING_POSITION_TOO_CLOSE;
+	}
+	else if (bPositionWarning)
+	{
+		if (lastState == LANDING_POSITION_WARNING)
+		{
+			const int sqDelta = Square (posX - lastPosX) + Square (posY - lastPosY);
+			if (sqDelta <= Square (LANDING_DISTANCE_TOO_CLOSE))
+			{
+				// the player has chosen the same position after a warning
+				// so further warnings will be ignored
+				newState = LANDING_POSITION_CONFIRMED;
+			}
+			else
+			{
+				newState = LANDING_POSITION_WARNING;
+			}
+		}
+		else if (lastState == LANDING_POSITION_CONFIRMED)
+		{
+			// player is in state LANDING_POSITION_CONFIRMED,
+			// so ignore the warning
+			newState = LANDING_POSITION_CONFIRMED;
+		}
+		else
+		{
+			newState = LANDING_POSITION_WARNING;
+		}
+	}
+	else
+	{
+		if (lastState == LANDING_POSITION_CONFIRMED)
+		{
+			newState = LANDING_POSITION_CONFIRMED;
+		}
+		else
+		{
+			newState = LANDING_POSITION_OK;
+		}
+	}
+
+	landData[playerNr].landingState = newState;
+	return newState;
 }
 
 //------------------------------------------------------------------------------
@@ -361,7 +443,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	// now check the landing positions
 	for (size_t player = 0; player != landData.size(); ++player)
 	{
-		eLandingState state = checkLandingState (player);
+		eLandingState state = sClientLandData::checkLandingState (landData, player);
 		const std::string posStr = iToStr (landData[player].iLandX) + ", " + iToStr (landData[player].iLandY);
 
 		Log.write ("Server: Player " + iToStr (player) + "has state " + ToString (state) + ", Position:" + posStr, cLog::eLOG_TYPE_NET_DEBUG);
@@ -388,89 +470,6 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	allLanded = true;
 	sendAllLanded (network, activeMenu);
 }
-
-//------------------------------------------------------------------------------
-eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
-{
-	int posX = landData[playerNr].iLandX;
-	int posY = landData[playerNr].iLandY;
-	int lastPosX = landData[playerNr].iLastLandX;
-	int lastPosY = landData[playerNr].iLastLandY;
-	bool bPositionTooClose = false;
-	bool bPositionWarning = false;
-
-	// check distances to all other players
-	for (size_t i = 0; i != players.size(); ++i)
-	{
-		const sClientLandData& c = landData[i];
-		if (c.receivedOK == false) continue;
-		if (i == playerNr) continue;
-
-		const int sqDistance = Square (c.iLandX - posX) + Square (c.iLandY - posY);
-
-		if (sqDistance < Square (LANDING_DISTANCE_TOO_CLOSE))
-		{
-			bPositionTooClose = true;
-		}
-		if (sqDistance < Square (LANDING_DISTANCE_WARNING))
-		{
-			bPositionWarning = true;
-		}
-	}
-
-	// now set the new landing state,
-	// depending on the last state, the last position, the current position,
-	//  bPositionTooClose and bPositionWarning
-	eLandingState lastState = landData[playerNr].landingState;
-	eLandingState newState = LANDING_STATE_UNKNOWN;
-
-	if (bPositionTooClose)
-	{
-		newState = LANDING_POSITION_TOO_CLOSE;
-	}
-	else if (bPositionWarning)
-	{
-		if (lastState == LANDING_POSITION_WARNING)
-		{
-			const int sqDelta = Square (posX - lastPosX) + Square (posY - lastPosY);
-			if (sqDelta <= Square (LANDING_DISTANCE_TOO_CLOSE))
-			{
-				// the player has chosen the same position after a warning
-				// so further warnings will be ignored
-				newState = LANDING_POSITION_CONFIRMED;
-			}
-			else
-			{
-				newState = LANDING_POSITION_WARNING;
-			}
-		}
-		else if (lastState == LANDING_POSITION_CONFIRMED)
-		{
-			// player is in state LANDING_POSITION_CONFIRMED,
-			// so ignore the warning
-			newState = LANDING_POSITION_CONFIRMED;
-		}
-		else
-		{
-			newState = LANDING_POSITION_WARNING;
-		}
-	}
-	else
-	{
-		if (lastState == LANDING_POSITION_CONFIRMED)
-		{
-			newState = LANDING_POSITION_CONFIRMED;
-		}
-		else
-		{
-			newState = LANDING_POSITION_OK;
-		}
-	}
-
-	landData[playerNr].landingState = newState;
-	return newState;
-}
-
 
 //------------------------------------------------------------------------------
 // cMenu implementation
@@ -925,25 +924,32 @@ int clanSelection (const sSettings& settings, cPlayer& player, bool noReturn,
 	return 1;
 }
 
-int landingUnitsSelection (cPlayer& player, bool noReturn,
+int landingUnitsSelection (const sSettings& gameSetting,
+						   std::vector<sLandingUnit>& landingUnits,
+						   cClient* client, cPlayer& player, bool noReturn,
 						   cTCP* network, cGameDataContainer* gameDataContainer)
 {
-	cStartupHangarMenu startupHangarMenu (*gameDataContainer->settings,
-										  *gameDataContainer->landingUnits[0],
+	cStartupHangarMenu startupHangarMenu (gameSetting, landingUnits,
 										  player, noReturn,
 										  network, gameDataContainer);
 
 	if (startupHangarMenu.show (NULL) == 1)
 	{
-		gameDataContainer->landingUnits[0]->clear();
+		landingUnits.clear();
 		return -1;
+	}
+	if (client != NULL)
+	{
+		sendClan (*client);
+		sendLandingUnits (*client, landingUnits);
+		sendUnitUpgrades (*client);
 	}
 	return 1;
 }
 
-int landingPosSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player)
+int landingPosSelection (cClient* client, cStaticMap& map, cPlayer& player, cTCP* network, cGameDataContainer* gameDataContainer)
 {
-	cLandingMenu landingMenu (*gameDataContainer.map, &player, network, &gameDataContainer);
+	cLandingMenu landingMenu (client, map, &player, network, gameDataContainer);
 	if (landingMenu.show (NULL) == 1) return -1;
 	return 1;
 }
@@ -954,15 +960,22 @@ int landingPosSelection (cTCP* network, cGameDataContainer& gameDataContainer, c
 void cSinglePlayerMenu::newGameReleased (void* parent)
 {
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
-	cGameDataContainer gameDataContainer;
-	cTCP* network = NULL;
-	sSettings* settings = new sSettings;
-	gameDataContainer.server = new cServer (network);
-	gameDataContainer.settings = settings;
+	cTCP* const network = NULL;
+	cGameDataContainer* const gameDataContainer = NULL;
+	sSettings settings;
 	sPlayer splayer (cSettings::getInstance().getPlayerName(), cl_red, 0);
 	splayer.setLocal();
-	cPlayer* player = new cPlayer (splayer);
-	gameDataContainer.players.push_back (player);
+	cServer server (network);
+	cEventHandling eventHandling;
+	cClient client (&server, network, eventHandling);
+	cStaticMap* map = NULL;
+	std::vector<sLandingUnit> landingUnits;
+	std::vector<cPlayer*> players;
+	cPlayer clientPlayer(splayer);
+
+	server.addPlayer (new cPlayer (splayer));
+	players.push_back (&clientPlayer);
+	client.setPlayers (&players, &clientPlayer);
 
 	int lastDir = 1;
 	int step = 0;
@@ -972,12 +985,37 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 		switch (step)
 		{
 			case -1: menu->draw(); return;
-			case 0: dir = settingSelection (*settings); break;
-			case 1: dir = planetSelection (gameDataContainer.map); break;
-			case 2: dir = clanSelection (*settings, *player, false, network, &gameDataContainer); break;
-			case 3: dir = landingUnitsSelection (*player, false, network, &gameDataContainer); break;
-			case 4: dir = landingPosSelection (network, gameDataContainer, *player); break;
-			case 5: gameDataContainer.runNewGame (network, player->getNr()); menu->draw(); return;
+			case 0: dir = settingSelection (settings); break;
+			case 1:
+			{
+				dir = planetSelection (map);
+				if (dir == 1)
+				{
+					server.setMap (*map);
+					server.setGameSettings (settings);
+					server.changeStateToInitGame();
+					client.setMap (*map);
+					client.setGameSetting (settings);
+				}
+				break;
+			}
+			case 2:
+			{
+				dir = clanSelection (settings, clientPlayer, false, network, gameDataContainer); break;
+				if (dir != 1 && lastDir != -1)
+				{
+					server.cancelStateInitGame();
+				}
+			}
+			case 3: dir = landingUnitsSelection (settings, landingUnits, &client, clientPlayer, false, network, gameDataContainer); break;
+			case 4: dir = landingPosSelection (&client, *map, clientPlayer, network, gameDataContainer); break;
+			case 5:
+			{
+				client.getGameGUI().show (&client);
+				server.stop();
+				menu->draw();
+				return;
+			}
 			default: break;
 		}
 		step += dir;
@@ -1669,7 +1707,7 @@ void cClanSelectionMenu::updateClanDescription()
 //------------------------------------------------------------------------------
 /*virtual*/ void cClanSelectionMenu::handleNetMessages()
 {
-	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+	if (gameDataContainer) gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
 }
 
 //------------------------------------------------------------------------------
@@ -2083,8 +2121,10 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		sendClan (*menu->network, menu->player->getClan(), menu->player->getNr());
 		sendLandingUnits (*menu->network, *menu->landingUnits, menu->player->getNr());
 	}
-	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->server ? menu : NULL);
-
+	if (menu->gameDataContainer)
+	{
+		sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->server ? menu : NULL);
+	}
 	menu->end = true;
 }
 
@@ -2265,7 +2305,7 @@ void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 //------------------------------------------------------------------------------
 /*virtual*/ void cStartupHangarMenu::handleNetMessages()
 {
-	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+	if (gameDataContainer) gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
 }
 
 //------------------------------------------------------------------------------
@@ -2329,8 +2369,9 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLandingMenu::cLandingMenu (cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_) :
+cLandingMenu::cLandingMenu (cClient* client_, cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_) :
 	cMenu (NULL),
+	client (client_),
 	network (network_),
 	gameDataContainer (gameDataContainer_),
 	player (player_)
@@ -2469,7 +2510,8 @@ void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 //------------------------------------------------------------------------------
 /*virtual*/ void cLandingMenu::handleNetMessages()
 {
-	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+	if (gameDataContainer) gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+	else if (client) client->getEventHandling().handleNetMessages (client, this);
 }
 
 //------------------------------------------------------------------------------
@@ -2523,11 +2565,17 @@ void cLandingMenu::hitPosition()
 		sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->server ? this : NULL);
 		draw();
 	}
-	else
+	else if (gameDataContainer)
 	{
 		gameDataContainer->landData.resize (gameDataContainer->players.size());
 		gameDataContainer->landData[player->getNr()] = landData;
 		end = true;
+	}
+	else
+	{
+		infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
+		sendLandingCoords (*client, landData);
+		draw();
 	}
 }
 
@@ -2830,6 +2878,7 @@ void cNetworkMenu::setDefaultPort (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::runGamePreparation (cPlayer& player)
 {
+	cClient* client = NULL;
 	int step = 0;
 	int lastDir = 1;
 	while (true)
@@ -2838,8 +2887,8 @@ void cNetworkMenu::runGamePreparation (cPlayer& player)
 		switch (step)
 		{
 			case 0: dir = clanSelection (*gameDataContainer.settings, player, true, network, &gameDataContainer); break;
-			case 1: dir = landingUnitsSelection (player, gameDataContainer.settings->clans == SETTING_CLANS_OFF, network, &gameDataContainer); break;
-			case 2: dir = landingPosSelection (network, gameDataContainer, player); break;
+			case 1: dir = landingUnitsSelection (*gameDataContainer.settings, *gameDataContainer.landingUnits[0], client, player, gameDataContainer.settings->clans == SETTING_CLANS_OFF, network, &gameDataContainer); break;
+			case 2: dir = landingPosSelection (client, *gameDataContainer.map, player, network, &gameDataContainer); break;
 			case 3: gameDataContainer.runNewGame (network, player.getNr()); return;
 			default: break;
 		}

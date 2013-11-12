@@ -50,6 +50,8 @@ enum eLandingState
 	//because the player has confirmed his position
 };
 
+std::string ToString (eLandingState state);
+
 struct sClientLandData
 {
 	int iLandX, iLandY;
@@ -61,6 +63,11 @@ struct sClientLandData
 		iLandX (0), iLandY (0), iLastLandX (0), iLastLandY (0),
 		landingState (LANDING_STATE_UNKNOWN), receivedOK (false)
 	{}
+
+	/** checks whether the landing positions are okay
+	 *@author alzi
+	 */
+	static eLandingState checkLandingState (std::vector<sClientLandData>& landData, unsigned int playerNr);
 };
 
 enum eSettingResourceValue
@@ -232,11 +239,6 @@ public:
 private:
 
 	cPlayer* findPlayerByNr (int nr);
-
-	/** checks whether the landing positions are okay
-	 *@author alzi
-	 */
-	eLandingState checkLandingState (unsigned int playerNr);
 
 private:
 	cEventHandling* eventHandler;
@@ -730,7 +732,7 @@ private:
 class cLandingMenu : public cMenu
 {
 public:
-	cLandingMenu (cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_);
+	cLandingMenu (cClient* client_, cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_);
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
@@ -748,6 +750,7 @@ private:
 	static void mouseMoved (void* parent);
 
 protected:
+	cClient* client;
 	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 	cPlayer* player;

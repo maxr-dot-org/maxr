@@ -184,6 +184,7 @@ public:
 	cPlayer* getActivePlayer() { return ActivePlayer; }
 	const cGameGUI& getGameGUI() const { return *gameGUI; }
 	cGameGUI& getGameGUI() { return *gameGUI; }
+	void setGameSetting (const sSettings& gameSetting_);
 	const sSettings* getGameSetting() const { return gameSetting; }
 private:
 	void initPlayersWithMap();

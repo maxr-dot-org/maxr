@@ -104,6 +104,7 @@ public:
 	void stop();
 
 	void changeStateToInitGame();
+	void cancelStateInitGame();
 
 	/** the type of the current game */
 	eGameTypes getGameType() const;
@@ -291,6 +292,8 @@ public:
 private:
 	void placeInitialResources (std::vector<sClientLandData>& landData);
 
+	void startNewGame();
+
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath
@@ -302,6 +305,7 @@ private:
 	*/
 	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
 	void makeLanding (const std::vector<sClientLandData>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
+	void makeLanding();
 	/**
 	 *
 	 */
@@ -322,6 +326,10 @@ private:
 	cNetMessage* pollEvent();
 
 	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
+	void handleNetMessage_MU_MSG_CLAN (cNetMessage& message);
+	void handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message);
+	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message);
+	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
 	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
@@ -460,6 +468,9 @@ public:
 private:
 	/** local client if any. */
 	cClient* localClient;
+
+	std::vector<sClientLandData> landingPositions;
+	std::vector<std::vector<sLandingUnit> > landingUnits;
 
 	/** controls the timesynchoneous actions on server and client */
 	cGameTimerServer gameTimer;
