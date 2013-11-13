@@ -23,9 +23,10 @@
 #include <SDL.h>
 #include <string>
 #include <vector>
+#include "autoptr.h"
+#include "menus.h"
 #include "ringbuffer.h"
 
-class cGameDataContainer;
 class cNetMessage;
 class cPlayer;
 class cServer;
@@ -60,6 +61,8 @@ public:
 	//------------------------------------------------------------------------
 protected:
 	cServer* server;
+	sSettings settings;
+	AutoPtr<cStaticMap> map;
 	cTCP* network;
 	SDL_Thread* thread;
 	bool canceled;
@@ -75,15 +78,9 @@ protected:
 	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
 	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message);
 	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
-	void handleNetMessage_MU_MSG_CLAN (cNetMessage* message);
-	void handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage* message);
-	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage* message);
-	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage* message);
 
-	void startGameServer();
 	void terminateServer();
 
-	cGameDataContainer* gameData;
 	std::vector<sPlayer*> menuPlayers;
 
 private:

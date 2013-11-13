@@ -49,8 +49,7 @@ cServerGame::cServerGame (cTCP& network_) :
 	thread (NULL),
 	canceled (false),
 	shouldSave (false),
-	saveGameNumber (-1),
-	gameData (NULL)
+	saveGameNumber (-1)
 {
 }
 
@@ -66,9 +65,6 @@ cServerGame::~cServerGame()
 
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 		delete menuPlayers[i];
-
-	delete gameData;
-	gameData = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -105,23 +101,20 @@ void cServerGame::saveGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::prepareGameData()
 {
-	gameData = new cGameDataContainer();
-	sSettings* settings = new sSettings();
-	settings->metal = SETTING_RESVAL_MUCH;
-	settings->oil = SETTING_RESVAL_NORMAL;
-	settings->gold = SETTING_RESVAL_NORMAL;
-	settings->resFrequency = SETTING_RESFREQ_NORMAL;
-	settings->credits = SETTING_CREDITS_NORMAL;
-	settings->bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
-	settings->alienTech = SETTING_ALIENTECH_OFF;
-	settings->clans = SETTING_CLANS_ON;
-	settings->gameType = SETTINGS_GAMETYPE_SIMU;
-	settings->victoryType = SETTINGS_VICTORY_ANNIHILATION;
-	settings->duration = SETTINGS_DUR_LONG;
-	gameData->settings = settings;
-	gameData->map = new cStaticMap();
-	string mapName = "Mushroom.wrl";
-	gameData->map->loadMap (mapName);
+	settings.metal = SETTING_RESVAL_MUCH;
+	settings.oil = SETTING_RESVAL_NORMAL;
+	settings.gold = SETTING_RESVAL_NORMAL;
+	settings.resFrequency = SETTING_RESFREQ_NORMAL;
+	settings.credits = SETTING_CREDITS_NORMAL;
+	settings.bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
+	settings.alienTech = SETTING_ALIENTECH_OFF;
+	settings.clans = SETTING_CLANS_ON;
+	settings.gameType = SETTINGS_GAMETYPE_SIMU;
+	settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
+	settings.duration = SETTINGS_DUR_LONG;
+	map = new cStaticMap();
+	const std::string mapName = "Mushroom.wrl";
+	map->loadMap (mapName);
 }
 
 //------------------------------------------------------------------------------
@@ -133,7 +126,7 @@ void cServerGame::run()
 
 		if (event)
 		{
-			if (server != 0)
+			if (server != NULL)
 			{
 				server->handleNetMessage (event);
 				server->checkPlayerUnits();
@@ -242,10 +235,8 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 
 	sendPlayerList (*network, menuPlayers);
 
-	const cStaticMap* map = gameData->map;
-	const sSettings* settings = gameData->settings;
 	//sendGameData (*network, map, settings, saveGameString, player);
-	sendGameData (*network, map, settings, "", player);
+	sendGameData (*network, map, &settings, "", player);
 }
 
 //------------------------------------------------------------------------------
@@ -284,12 +275,16 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				}
 				if (allReady)
 				{
-					for (size_t i = 0; i < menuPlayers.size(); i++)
+					server = new cServer (network);
+					// copy playerlist for server
+					for (size_t i = 0; i != menuPlayers.size(); ++i)
 					{
-						cPlayer* player = new cPlayer (*menuPlayers[i]);
-						gameData->players.push_back (player);
+						server->addPlayer (new cPlayer (*menuPlayers[i]));
 					}
 
+					server->setMap (*map);
+					server->setGameSettings (settings);
+					server->changeStateToInitGame();
 					sendGo (*network);
 				}
 				else
@@ -306,12 +301,9 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					mapName += " ";
 					mapName += tokens[i];
 				}
-				if (gameData->map != 0 && gameData->map->loadMap (mapName))
+				if (map != NULL && map->loadMap (mapName))
 				{
-					const cStaticMap* map = gameData->map;
-					const sSettings* settings = gameData->settings;
-
-					sendGameData (*network, map, settings, "");
+					sendGameData (*network, map, &settings, "");
 					string reply = senderPlayer->getName();
 					reply += " changed the map.";
 					sendMenuChatMessage (*network, reply);
@@ -339,10 +331,8 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					}
 					else
 					{
-						sSettings* settings = gameData->settings;
-						settings->credits = credits;
-						const cStaticMap* map = gameData->map;
-						sendGameData (*network, map, settings, "");
+						settings.credits = credits;
+						sendGameData (*network, map, &settings, "");
 						string reply = senderPlayer->getName();
 						reply += " changed the starting credits.";
 						sendMenuChatMessage (*network, reply);
@@ -366,40 +356,6 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 	}
 }
 
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_MU_MSG_CLAN (cNetMessage* message)
-{
-	assert (message->iType == MU_MSG_CLAN);
-
-	gameData->receiveClan (message);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage* message)
-{
-	assert (message->iType == MU_MSG_LANDING_VEHICLES);
-
-	gameData->receiveLandingUnits (message);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_MU_MSG_UPGRADES (cNetMessage* message)
-{
-	assert (message->iType == MU_MSG_UPGRADES);
-
-	gameData->receiveUnitUpgrades (message);
-}
-
-//------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage* message)
-{
-	assert (message->iType == MU_MSG_LANDING_COORDS);
-
-	gameData->receiveLandingPosition (*network, message, NULL);
-	if (gameData->allLanded)
-		startGameServer();
-}
-
 void cServerGame::handleNetMessage (cNetMessage* message)
 {
 	cout << "Msg received: " << message->getTypeAsString() << endl;
@@ -411,11 +367,6 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
 		case MU_MSG_IDENTIFIKATION: handleNetMessage_MU_MSG_IDENTIFIKATION (message); break;
 		case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
-		case MU_MSG_CLAN: handleNetMessage_MU_MSG_CLAN (message); break;
-		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (message); break;
-		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (message); break;
-		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (message); break;
-			//case MU_MSG_ALL_LANDED: break;
 		default: break;
 	}
 }
@@ -432,10 +383,8 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 		else if (tokens[1].compare ("most") == 0) density = SETTING_RESFREQ_MOST;
 		if (density != -1)
 		{
-			sSettings* settings = gameData->settings;
-			settings->resFrequency = (eSettingResFrequency) density;
-			const cStaticMap* map = gameData->map;
-			sendGameData (*network, map, settings, "");
+			settings.resFrequency = (eSettingResFrequency) density;
+			sendGameData (*network, map, &settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
@@ -454,12 +403,10 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 		else if (tokens[1].compare ("most") == 0) amount = SETTING_RESVAL_MOST;
 		if (amount != -1)
 		{
-			sSettings* settings = gameData->settings;
-			if (tokens[0].compare ("oil") == 0) settings->oil = (eSettingResourceValue) amount;
-			else if (tokens[0].compare ("metal") == 0) settings->metal = (eSettingResourceValue) amount;
-			else if (tokens[0].compare ("gold") == 0) settings->gold = (eSettingResourceValue) amount;
-			const cStaticMap* map = gameData->map;
-			sendGameData (*network, map, settings, "");
+			if (tokens[0].compare ("oil") == 0) settings.oil = (eSettingResourceValue) amount;
+			else if (tokens[0].compare ("metal") == 0) settings.metal = (eSettingResourceValue) amount;
+			else if (tokens[0].compare ("gold") == 0) settings.gold = (eSettingResourceValue) amount;
+			sendGameData (*network, map, &settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";
 			reply += tokens[0];
@@ -474,39 +421,8 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::startGameServer()
-{
-	// init server
-	server = new cServer (network);
-	// copy playerlist for server
-	for (size_t i = 0; i != gameData->players.size(); ++i)
-	{
-		server->addPlayer (new cPlayer (*gameData->players[i]));
-	}
-
-	server->setMap (*gameData->map);
-	server->setGameSettings (*gameData->settings);
-	server->changeStateToInitGame();
-
-	server->startNewGame (gameData->landData, gameData->landingUnits);
-	for (size_t i = 0; i != gameData->players.size(); ++i)
-	{
-		delete gameData->landingUnits[i];
-	}
-}
-
-//------------------------------------------------------------------------------
 void cServerGame::terminateServer()
 {
-	if (gameData != 0)
-	{
-		for (size_t i = 0; i != gameData->players.size(); ++i)
-		{
-			delete gameData->players[i];
-		}
-		gameData->players.clear();
-	}
-
 	delete server;
 	server = NULL;
 }
@@ -530,14 +446,15 @@ std::string cServerGame::getGameState() const
 {
 	std::stringstream result;
 	result << "GameState: ";
-	if (server != NULL)
-		result << "Game is active" << endl;
-	else if (gameData != 0 && gameData->players.empty())
-		result << "Game is open for new players" << endl;
-	else
-		result << "Game has started, players are setting up" << endl;
 
-	result << "Map: " << (gameData != 0 ? gameData->map->getName() : "none") << endl;
+	if (server == NULL || server->serverState == SERVER_STATE_ROOM)
+		result << "Game is open for new players" << endl;
+	else if (server->serverState == SERVER_STATE_INITGAME)
+		result << "Game has started, players are setting up" << endl;
+	else if (server->serverState == SERVER_STATE_INGAME)
+		result << "Game is active" << endl;
+
+	result << "Map: " << (map != NULL ? map->getName() : "none") << endl;
 	if (server != NULL)
 		result << "Turn: " << server->getTurn() << endl;
 
@@ -549,11 +466,6 @@ std::string cServerGame::getGameState() const
 			const cPlayer& player = *server->PlayerList[i];
 			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
-	}
-	else if (gameData->players.empty() == false)
-	{
-		for (size_t i = 0; i < gameData->players.size(); i++)
-			result << " " << gameData->players[i]->getName() << endl;
 	}
 	else if (menuPlayers.empty() == false)
 	{
