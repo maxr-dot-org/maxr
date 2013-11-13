@@ -3510,13 +3510,15 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* messag
 		delete players[i];
 	}
 	players.clear();
+	actPlayer = NULL;
 	for (int i = 0; i < playerCount; i++)
 	{
 		string name = message->popString();
 		int color = message->popInt16();
 		bool ready = message->popBool();
 		int nr = message->popInt16();
-		sPlayer* player = new sPlayer (name, color, ready, nr);
+		sPlayer* player = new sPlayer (name, color, nr);
+		player->setReady (ready);
 		if (player->getNr() == actPlayerNr) actPlayer = player;
 		players.push_back (player);
 	}
