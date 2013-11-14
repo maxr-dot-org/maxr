@@ -311,58 +311,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 }
 
 //------------------------------------------------------------------------------
-void cGameDataContainer::runSavedGame (cTCP* network, int player)
-{
-	cServer server (network);
-	cSavegame savegame (savegameNum);
-	if (savegame.load (server) == false) return;
-	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
-	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
-	if (player >= (int) serverPlayerList.size()) return;
-
-	std::vector<cPlayer*> clientPlayerList;
-
-	// copy players for client
-	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
-	{
-		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
-	}
-	// init client and his player
-	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
-	client->setMap (*server.Map->staticMap);
-	client->setPlayers (&clientPlayerList, clientPlayerList[player]);
-
-	// in singleplayer only the first player is important
-	serverPlayerList[player]->setLocal();
-	sendRequestResync (*client, serverPlayerList[player]->getNr());
-
-	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
-	{
-		sendHudSettings (server, *serverPlayerList[i]);
-		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.size(); ++j)
-		{
-			sendSavedReport (server, reportList[j], serverPlayerList[i]->getNr());
-		}
-		reportList.clear();
-	}
-
-	// exit menu and start game
-	server.serverState = SERVER_STATE_INGAME;
-	client->getGameGUI().show (client);
-
-	for (size_t i = 0; i != clientPlayerList.size(); ++i)
-	{
-		delete clientPlayerList[i];
-	}
-	clientPlayerList.clear();
-
-	server.stop();
-
-	reloadUnitValues();
-}
-
-//------------------------------------------------------------------------------
 void cGameDataContainer::receiveClan (cNetMessage* message)
 {
 	if (message->iType != MU_MSG_CLAN)
@@ -1028,17 +976,77 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 void cSinglePlayerMenu::loadGameReleased (void* parent)
 {
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
-	cGameDataContainer gameDataContainer;
-	cTCP* network = NULL;
-	gameDataContainer.server = new cServer (network);
-	cLoadMenu loadMenu (&gameDataContainer);
-	loadMenu.show (NULL);
-	if (!gameDataContainer.savegame.empty())
+	int savegameNum = -1;
 	{
-		gameDataContainer.runSavedGame (NULL, 0);
-		menu->end = true;
+		cLoadMenu loadMenu;
+
+		if (loadMenu.show (NULL) == 1)
+		{
+			menu->draw();
+			return;
+		}
+		savegameNum = loadMenu.getLoadingSlotNumber();
 	}
-	else menu->draw();
+	runSavedGame (savegameNum);
+	menu->draw();
+}
+
+//------------------------------------------------------------------------------
+void cSinglePlayerMenu::runSavedGame (int savegameNum)
+{
+	cTCP* network = NULL;
+	cServer server (network);
+	cSavegame savegame (savegameNum);
+	if (savegame.load (server) == false) return;
+	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
+	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
+
+	if (serverPlayerList.empty()) return;
+	const int player = 0;
+
+	// Following may be simplified according to serverGame::loadGame
+	std::vector<cPlayer*> clientPlayerList;
+
+	// copy players for client
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	{
+		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
+	}
+	// init client and his player
+	cEventHandling eventHandler;
+	cClient client (&server, network, eventHandler);
+	client.setMap (*server.Map->staticMap);
+	client.setPlayers (&clientPlayerList, clientPlayerList[player]);
+
+	// in singleplayer only the first player is important
+	serverPlayerList[player]->setLocal();
+	sendRequestResync (client, serverPlayerList[player]->getNr());
+
+	// TODO: move that in server
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	{
+		sendHudSettings (server, *serverPlayerList[i]);
+		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
+		for (size_t j = 0; j != reportList.size(); ++j)
+		{
+			sendSavedReport (server, reportList[j], serverPlayerList[i]->getNr());
+		}
+		reportList.clear();
+	}
+
+	// start game
+	server.serverState = SERVER_STATE_INGAME;
+	client.getGameGUI().show (&client);
+
+	for (size_t i = 0; i != clientPlayerList.size(); ++i)
+	{
+		delete clientPlayerList[i];
+	}
+	clientPlayerList.clear();
+
+	server.stop();
+
+	reloadUnitValues();
 }
 
 //------------------------------------------------------------------------------
@@ -3070,8 +3078,15 @@ void cNetworkHostMenu::settingsReleased (void* parent)
 void cNetworkHostMenu::loadReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
-	cLoadMenu loadMenu (&menu->gameDataContainer);
-	loadMenu.show (NULL);
+	cLoadMenu loadMenu;
+	if (loadMenu.show (NULL) == 1)
+	{
+		menu->draw();
+		return;
+	}
+	menu->gameDataContainer.savegame = loadMenu.getFilename();
+	menu->gameDataContainer.savegameNum = loadMenu.getLoadingSlotNumber();
+
 	if (!menu->gameDataContainer.savegame.empty())
 	{
 		delete menu->gameDataContainer.settings;
@@ -3626,7 +3641,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	}
 	if (!saveGameString.empty())
 	{
-		gameDataContainer.runSavedGame (network, actPlayer->getNr());
+		gameDataContainer.runNewGame (network, actPlayer->getNr());
 	}
 	else
 	{
@@ -3792,9 +3807,8 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds backgroundType_)
-	: cMenu (LoadPCX (GFXOD_SAVELOAD), backgroundType_)
-	, gameDataContainer (gameDataContainer_)
+cLoadMenu::cLoadMenu (eMenuBackgrounds backgroundType_) :
+	cMenu (LoadPCX (GFXOD_SAVELOAD), backgroundType_)
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 12, lngPack.i18n ("Text~Title~Load"));
 	titleLabel->setCentered (true);
@@ -3921,10 +3935,14 @@ void cLoadMenu::loadReleased (void* parent)
 	}
 	if (savefile)
 	{
-		menu->gameDataContainer->savegame = savefile->filename;
-		menu->gameDataContainer->savegameNum = menu->selected + 1;
+		menu->selectedFilename = savefile->filename;
+		menu->end = true;
 	}
-	menu->end = true;
+	else
+	{
+		menu->selectedFilename.clear();
+		menu->terminate = true;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -3982,7 +4000,7 @@ void cLoadMenu::slotClicked (void* parent)
 
 //------------------------------------------------------------------------------
 cLoadSaveMenu::cLoadSaveMenu (cClient& client_, cServer* server_) :
-	cLoadMenu (&gameDataContainer, MNU_BG_ALPHA),
+	cLoadMenu (MNU_BG_ALPHA),
 	client (&client_),
 	server (server_)
 {

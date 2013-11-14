@@ -428,6 +428,7 @@ public:
 private:
 	static void newGameReleased (void* parent);
 	static void loadGameReleased (void* parent);
+	static void runSavedGame (int savegameNum);
 };
 
 /**
@@ -935,8 +936,6 @@ private:
 class cLoadMenu : public cMenu
 {
 protected:
-	cGameDataContainer* gameDataContainer;
-
 	AutoPtr<cMenuLabel> titleLabel;
 
 	AutoPtr<cMenuButton> backButton;
@@ -953,13 +952,17 @@ protected:
 	int offset;
 	int selected;
 
+	std::string selectedFilename;
+
 	void loadSaves();
 	void displaySaves();
 
 public:
-	cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
+	explicit cLoadMenu (eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 	~cLoadMenu();
 
+	const std::string& getFilename() const { return selectedFilename; }
+	int getLoadingSlotNumber() const { return selected + 1; }
 private:
 	virtual void extendedSlotClicked (int oldSelection) {}
 
@@ -978,7 +981,6 @@ private:
 class cLoadSaveMenu : public cLoadMenu
 {
 protected:
-	cGameDataContainer gameDataContainer;
 	cClient* client;
 	cServer* server;
 	AutoPtr<cMenuButton> exitButton;
