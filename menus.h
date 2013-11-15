@@ -179,12 +179,6 @@ public:
 	/** Should this instance of maxr act as the server. */
 	AutoPtr<cServer> server;
 
-	/** Number of the savegame or -1 for no savegame */
-	int savegameNum;
-	/** name of the savegame if the savefile is only on the server and
-	 * this container is set by a client */
-	std::string savegame;
-
 	/** The settings for the game */
 	sSettings* settings;
 	/** The map for the game */
@@ -815,6 +809,8 @@ protected:
 	AutoPtr<cMenuPlayersBox> playersBox;
 
 	cGameDataContainer gameDataContainer;
+	int savegameNum;
+	std::string savegame;
 	std::string saveGameString;
 	std::string triedLoadMap;
 

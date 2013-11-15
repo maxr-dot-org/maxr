@@ -229,7 +229,6 @@ string sSettings::getVictoryConditionString() const
 //------------------------------------------------------------------------------
 cGameDataContainer::cGameDataContainer() :
 	server (NULL),
-	savegameNum (-1),
 	settings (0),
 	map (0),
 	allLanded (false),
@@ -2592,7 +2591,8 @@ void cLandingMenu::hitPosition()
 //------------------------------------------------------------------------------
 
 cNetworkMenu::cNetworkMenu()
-	: cMenu (LoadPCX (GFXOD_MULT))
+	: cMenu (LoadPCX (GFXOD_MULT)),
+	savegameNum (-1)
 {
 	ip = cSettings::getInstance().getIP();
 	port = cSettings::getInstance().getPort();
@@ -2705,11 +2705,11 @@ void cNetworkMenu::showSettingsText()
 		text += lngPack.i18n ("Text~Title~Map") + ": " + gameDataContainer.map->getName();
 		text += " (" + iToStr (gameDataContainer.map->getSize()) + "x" + iToStr (gameDataContainer.map->getSize()) + ")\n";
 	}
-	else if (gameDataContainer.savegame.empty()) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
+	else if (savegame.empty()) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
 
 	text += "\n";
 
-	if (gameDataContainer.savegame.empty() && saveGameString.empty())
+	if (savegame.empty() && saveGameString.empty())
 	{
 		if (gameDataContainer.settings)
 		{
@@ -2991,7 +2991,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 
 	int playerNr;
-	if ( (!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->gameDataContainer.savegame.empty())
+	if ( (!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->savegame.empty())
 	{
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
 		menu->draw();
@@ -3010,7 +3010,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 		return;
 	}
 	menu->saveOptions();
-	if (!menu->gameDataContainer.savegame.empty())
+	if (!menu->savegame.empty())
 	{
 		if (!menu->runSavedGame())
 		{
@@ -3084,14 +3084,14 @@ void cNetworkHostMenu::loadReleased (void* parent)
 		menu->draw();
 		return;
 	}
-	menu->gameDataContainer.savegame = loadMenu.getFilename();
-	menu->gameDataContainer.savegameNum = loadMenu.getLoadingSlotNumber();
+	menu->savegame = loadMenu.getFilename();
+	menu->savegameNum = loadMenu.getLoadingSlotNumber();
 
-	if (!menu->gameDataContainer.savegame.empty())
+	if (!menu->savegame.empty())
 	{
 		delete menu->gameDataContainer.settings;
 		menu->gameDataContainer.settings = NULL;
-		cSavegame savegame (menu->gameDataContainer.savegameNum);
+		cSavegame savegame (menu->savegameNum);
 		savegame.loadHeader (&menu->saveGameString, NULL, NULL);
 		menu->saveGameString += "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n" + savegame.getPlayerNames();
 
@@ -3300,7 +3300,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 bool cNetworkHostMenu::runSavedGame()
 {
 	cServer server (network);
-	cSavegame savegame (gameDataContainer.savegameNum);
+	cSavegame savegame (savegameNum);
 	if (savegame.load (server) == false) return false;
 	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
 	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
