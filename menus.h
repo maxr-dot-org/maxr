@@ -134,6 +134,13 @@ enum eSettingsDuration
 	SETTINGS_DUR_LONG = 400
 };
 
+enum ePlayerType
+{
+	PLAYERTYPE_HUMAN,
+	PLAYERTYPE_NONE,
+	PLAYERTYPE_PC
+};
+
 /**
  * A class that contains all settings for a new game.
  *@author alzi
@@ -682,6 +689,35 @@ protected:
 	AutoPtr<cMenuButton> backButton;
 
 	sClientLandData landData;
+};
+
+/**
+ * Menu for hotSeat games.
+ */
+class cHotSeatMenu : public cMenu
+{
+public:
+	explicit cHotSeatMenu (/*const sSetting& setting*/);
+
+private:
+	void setClan (int player, int clan);
+	void choosePlayerType(int player, ePlayerType playerType);
+
+private:
+	static void onClanClicked (void* parent);
+	static void onPlayerTypeClicked (void* parent);
+
+private:
+	AutoPtr<cMenuButton> backButton;
+	AutoPtr<cMenuButton> okButton;
+
+	AutoPtr<cMenuImage> clanImages[4];
+	AutoPtr<cMenuImage> playerTypeImages[4][3];
+
+	AutoSurface clanSurfaces[8];
+
+	ePlayerType playerTypes[4];
+	int clans[4];
 };
 
 /**

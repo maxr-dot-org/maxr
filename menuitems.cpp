@@ -432,7 +432,8 @@ Uint32 cMenuTimerBase::sdlTimerCallback (Uint32 intervall, void* param)
 }
 
 
-cMenuImage::cMenuImage (int x, int y, SDL_Surface* image_) : cMenuItem (x, y)
+cMenuImage::cMenuImage (int x, int y, SDL_Surface* image_) : cMenuItem (x, y),
+	hidden (false)
 {
 	setImage (image_);
 }
@@ -460,7 +461,7 @@ void cMenuImage::setImage (SDL_Surface* image_)
 
 void cMenuImage::draw()
 {
-	if (image)
+	if (image && !isHidden())
 	{
 		SDL_BlitSurface (image, NULL, buffer, &position);
 	}

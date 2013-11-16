@@ -390,9 +390,14 @@ public:
 	cMenuImage (int x, int y, SDL_Surface* image_ = NULL);
 	void setImage (SDL_Surface* image_);
 
+	void hide() { hidden = true; }
+	void unhide() { hidden = false; }
+	bool isHidden() const {return hidden; }
+
 	virtual void draw();
 private:
 	AutoSurface image;
+	bool hidden;
 };
 
 /**

@@ -773,6 +773,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 				{
 					server.cancelStateInitGame();
 				}
+				break;
 			}
 			case 3:
 			{
@@ -932,9 +933,13 @@ void cMultiPlayersMenu::tcpClientReleased (void* parent)
 void cMultiPlayersMenu::newHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
+
 	// TODO: implement it
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show (NULL);
+
+	cHotSeatMenu hotSeatMenu;
+	hotSeatMenu.show (NULL);
 	menu->draw();
 }
 
@@ -2296,6 +2301,134 @@ void cLandingMenu::hitPosition()
 	infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
 	sendLandingCoords (*client, landData);
 	draw();
+}
+
+//------------------------------------------------------------------------------
+// cHotSeatMenu implementation
+//------------------------------------------------------------------------------
+
+cHotSeatMenu::cHotSeatMenu() :
+	//cMenu (LoadPCX (GFXOD_HOTSEAT))     // 8 players
+	cMenu (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
+{
+	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Button~Back"));
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
+	menuItems.push_back (backButton);
+
+	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Button~OK"));
+	//okButton->setReleasedFunction (&okReleased);
+	menuItems.push_back (okButton);
+
+	okButton->setLocked (true);
+
+	const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
+	clanSurfaces[0] = LoadPCX (gfxPath + "clanlogo1.pcx");
+	clanSurfaces[1] = LoadPCX (gfxPath + "clanlogo2.pcx");
+	clanSurfaces[2] = LoadPCX (gfxPath + "clanlogo3.pcx");
+	clanSurfaces[3] = LoadPCX (gfxPath + "clanlogo4.pcx");
+	clanSurfaces[4] = LoadPCX (gfxPath + "clanlogo5.pcx");
+	clanSurfaces[5] = LoadPCX (gfxPath + "clanlogo6.pcx");
+	clanSurfaces[6] = LoadPCX (gfxPath + "clanlogo7.pcx");
+	clanSurfaces[7] = LoadPCX (gfxPath + "clanlogo8.pcx");
+
+	AutoSurface playerHumanSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
+	AutoSurface playerNoneSurface (LoadPCX (GFXOD_PLAYER_NONE));
+	AutoSurface playerPCSurface (LoadPCX (GFXOD_PLAYER_PC));
+
+	for (int i = 0; i != 4; ++i)
+	{
+		clanImages[i] = new cMenuImage (position.x + 501, position.y + 67 + 92 * i);
+		clanImages[i]->setReleasedFunction (onClanClicked);
+		menuItems.push_back (clanImages[i]);
+		setClan(i, 0);
+
+		playerTypeImages[i][0] = new cMenuImage (position.x + 175 + 109 * 0, position.y + 67 + 92 * i, playerHumanSurface);
+		playerTypeImages[i][0]->setReleasedFunction (onPlayerTypeClicked);
+		menuItems.push_back (playerTypeImages[i][0]);
+
+		playerTypeImages[i][1] = new cMenuImage (position.x + 175 + 109 * 1, position.y + 67 + 92 * i, playerNoneSurface);
+		playerTypeImages[i][1]->setReleasedFunction (onPlayerTypeClicked);
+		menuItems.push_back (playerTypeImages[i][1]);
+
+		playerTypeImages[i][2] = new cMenuImage (position.x + 175 + 109 * 2, position.y + 67 + 92 * i, playerPCSurface);
+		playerTypeImages[i][2]->setReleasedFunction (onPlayerTypeClicked);
+		menuItems.push_back (playerTypeImages[i][2]);
+
+		choosePlayerType(i, PLAYERTYPE_NONE);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cHotSeatMenu::setClan (int player, int clan)
+{
+	clans[player] = clan;
+
+	if (clan == -1)
+	{
+		clanImages[player]->setImage (NULL);
+	}
+	else
+	{
+		clanImages[player]->setImage (clanSurfaces[clan]);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cHotSeatMenu::choosePlayerType(int player, ePlayerType playerType)
+{
+	playerTypes[player] = playerType;
+
+	playerTypeImages[player][0]->hide();
+	playerTypeImages[player][1]->hide();
+	playerTypeImages[player][2]->hide();
+
+	switch (playerType)
+	{
+		case PLAYERTYPE_HUMAN: playerTypeImages[player][0]->unhide(); break;
+		case PLAYERTYPE_NONE: playerTypeImages[player][1]->unhide(); break;
+		case PLAYERTYPE_PC: playerTypeImages[player][2]->unhide(); break;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cHotSeatMenu::onClanClicked (void* parent)
+{
+	cHotSeatMenu* menu = static_cast<cHotSeatMenu*> (parent);
+
+	int player = 0;
+	for (int i = 0; i != 4; ++i)
+	{
+		if (menu->clanImages[i]->overItem(mouse->x, mouse->y))
+		{
+			player = i;
+			break;
+		}
+	}
+
+	cClanSelectionMenu clanSelectionMenu (menu->clans[player], false);
+
+	if (clanSelectionMenu.show (NULL) != 1)
+	{
+		menu->setClan (player, clanSelectionMenu.getClan());
+	}
+	menu->draw();
+}
+
+//------------------------------------------------------------------------------
+void cHotSeatMenu::onPlayerTypeClicked (void* parent)
+{
+	cHotSeatMenu* menu = static_cast<cHotSeatMenu*> (parent);
+
+	for (int player = 0; player != 4; ++player)
+	{
+		for (int i = 0; i != 3; ++i)
+		if (menu->playerTypeImages[player][i]->overItem(mouse->x, mouse->y))
+		{
+			menu->choosePlayerType (player, ePlayerType (i));
+			menu->draw();
+			return;
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
