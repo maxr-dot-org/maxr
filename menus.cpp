@@ -223,202 +223,6 @@ string sSettings::getVictoryConditionString() const
 }
 
 //------------------------------------------------------------------------------
-// cGameDataContainer implementation
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-cGameDataContainer::cGameDataContainer() :
-	server (NULL),
-	settings (0),
-	map (0),
-	allLanded (false),
-	eventHandler (new cEventHandling)
-{
-	landingUnits.push_back (new std::vector<sLandingUnit>);
-}
-
-//------------------------------------------------------------------------------
-cGameDataContainer::~cGameDataContainer()
-{
-	delete eventHandler;
-	delete settings;
-	delete map;
-}
-
-//------------------------------------------------------------------------------
-cPlayer* cGameDataContainer::findPlayerByNr (int nr)
-{
-	for (size_t i = 0; i != players.size(); ++i)
-	{
-		if (players[i]->getNr() == nr)
-			return players[i];
-	}
-	return NULL;
-}
-
-//------------------------------------------------------------------------------
-void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect)
-{
-	cPlayer* actPlayer = findPlayerByNr (playerNr);
-	if (actPlayer == NULL)
-		return;
-
-	if (server)
-	{
-		// copy playerlist for server
-		for (size_t i = 0; i != players.size(); ++i)
-		{
-			server->addPlayer (new cPlayer (*players[i]));
-		}
-
-		server->setMap (*map);
-		server->setGameSettings (*settings);
-		server->changeStateToInitGame();
-	}
-
-	// init client and his players
-	AutoPtr<cClient> client (new cClient (server, network, *eventHandler));
-	client->setMap (*map);
-	client->setPlayers (&players, actPlayer);
-
-	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-
-	if (server)
-	{
-		server->startNewGame (landData, landingUnits);
-		for (size_t i = 0; i != players.size(); ++i)
-		{
-			delete landingUnits[i];
-		}
-	}
-
-	if (reconnect)
-		sendReconnectionSuccess (*client);
-	client->getGameGUI().show (client);
-
-	for (size_t i = 0; i != players.size(); ++i)
-	{
-		delete players[i];
-	}
-	players.clear();
-
-	if (server)
-	{
-		server->stop();
-		server = NULL;
-	}
-}
-
-//------------------------------------------------------------------------------
-void cGameDataContainer::receiveClan (cNetMessage* message)
-{
-	if (message->iType != MU_MSG_CLAN)
-		return;
-	unsigned int playerNr = message->popInt16();
-	int clanNr = message->popInt16();  // -1 = no clan
-	players[playerNr]->setClan (clanNr);
-}
-
-//------------------------------------------------------------------------------
-void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
-{
-	if (message->iType != MU_MSG_LANDING_VEHICLES) return;
-
-	unsigned int playerNr = message->popInt16();
-
-	landingUnits.resize (players.size(), NULL);
-
-	if (landingUnits[playerNr] == NULL) landingUnits[playerNr] = new std::vector<sLandingUnit>;
-	std::vector<sLandingUnit>* playerLandingUnits = landingUnits[playerNr];
-
-	int iCount = message->popInt16();
-	for (int i = 0; i < iCount; i++)
-	{
-		sLandingUnit unit;
-		unit.cargo = message->popInt16();
-		unit.unitID = message->popID();
-		playerLandingUnits->push_back (unit);
-	}
-}
-
-//------------------------------------------------------------------------------
-void cGameDataContainer::receiveUnitUpgrades (cNetMessage* message)
-{
-	const int playerNr = message->popInt16();
-	const int count = message->popInt16();
-	for (int i = 0; i < count; i++)
-	{
-		const sID ID = message->popID();
-		sUnitData* unitData = players[playerNr]->getUnitDataCurrentVersion (ID);
-
-		unitData->damage = message->popInt16();
-		unitData->shotsMax = message->popInt16();
-		unitData->range = message->popInt16();
-		unitData->ammoMax = message->popInt16();
-		unitData->armor = message->popInt16();
-		unitData->hitpointsMax = message->popInt16();
-		unitData->scan = message->popInt16();
-		if (ID.isAVehicle()) unitData->speedMax = message->popInt16();
-		unitData->version++;
-	}
-}
-
-//------------------------------------------------------------------------------
-void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* message, cMenu* activeMenu)
-{
-	if (message->iType != MU_MSG_LANDING_COORDS) return;
-
-	int playerNr = message->popChar();
-	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
-
-	landData.resize (players.size());
-
-	sClientLandData& c = landData[playerNr];
-	// save last coords, so that a player can confirm his position
-	// after a warning about nearby players
-	c.iLastLandX = c.iLandX;
-	c.iLastLandY = c.iLandY;
-	c.iLandX = message->popInt16();
-	c.iLandY = message->popInt16();
-	c.receivedOK = true;
-
-	for (size_t player = 0; player != landData.size(); ++player)
-	{
-		if (!landData[player].receivedOK) return;
-	}
-
-	// now check the landing positions
-	for (size_t player = 0; player != landData.size(); ++player)
-	{
-		eLandingState state = sClientLandData::checkLandingState (landData, player);
-		const std::string posStr = iToStr (landData[player].iLandX) + ", " + iToStr (landData[player].iLandY);
-
-		Log.write ("Server: Player " + iToStr (player) + "has state " + ToString (state) + ", Position:" + posStr, cLog::eLOG_TYPE_NET_DEBUG);
-
-		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
-		{
-			sPlayer menuPlayer (players[player]->getName(), 0, players[player]->getNr(), players[player]->getSocketNum());
-			sendReselectLanding (network, state, &menuPlayer, activeMenu);
-		}
-	}
-
-	// now remove all players with warning
-	bool ok = true;
-	for (size_t player = 0; player != landData.size(); ++player)
-	{
-		if (landData[player].landingState != LANDING_POSITION_OK && landData[player].landingState != LANDING_POSITION_CONFIRMED)
-		{
-			landData[player].receivedOK = false;
-			ok = false;
-		}
-	}
-	if (!ok) return;
-
-	allLanded = true;
-	sendAllLanded (network, activeMenu);
-}
-
-//------------------------------------------------------------------------------
 // cMenu implementation
 //------------------------------------------------------------------------------
 
@@ -856,12 +660,12 @@ int planetSelection (cStaticMap*& map)
 	return 1;
 }
 
-int clanSelection (const sSettings& settings, cPlayer& player, bool noReturn,
-				   cTCP* network, cGameDataContainer* gameDataContainer)
+int clanSelection (cClient& client, bool noReturn)
 {
-	if (settings.clans != SETTING_CLANS_ON) return 0;
+	if (client.getGameSetting()->clans != SETTING_CLANS_ON) return 0;
 
-	cClanSelectionMenu clanMenu (player.getClan(), noReturn, network, gameDataContainer);
+	cPlayer& player = *client.getActivePlayer();
+	cClanSelectionMenu clanMenu (player.getClan(), noReturn);
 	if (clanMenu.show (NULL) == 1)
 	{
 		player.setClan (-1);
@@ -871,34 +675,52 @@ int clanSelection (const sSettings& settings, cPlayer& player, bool noReturn,
 	return 1;
 }
 
-int landingUnitsSelection (const sSettings& gameSetting,
+int landingUnitsSelection (cClient& client,
 						   std::vector<sLandingUnit>& landingUnits,
-						   cClient* client, cPlayer& player, bool noReturn,
-						   cTCP* network, cGameDataContainer* gameDataContainer)
+						   bool noReturn)
 {
-	cStartupHangarMenu startupHangarMenu (gameSetting, landingUnits,
-										  player, noReturn,
-										  network, gameDataContainer);
+	cStartupHangarMenu startupHangarMenu (client, landingUnits, noReturn);
 
 	if (startupHangarMenu.show (NULL) == 1)
 	{
-		landingUnits.clear();
 		return -1;
 	}
-	if (client != NULL)
-	{
-		sendClan (*client);
-		sendLandingUnits (*client, landingUnits);
-		sendUnitUpgrades (*client);
-	}
+	sendClan (client);
+	sendLandingUnits (client, landingUnits);
+	sendUnitUpgrades (client);
 	return 1;
 }
 
-int landingPosSelection (cClient* client, cStaticMap& map, cPlayer& player, cTCP* network, cGameDataContainer* gameDataContainer)
+int landingPosSelection (cClient& client, cStaticMap& map)
 {
-	cLandingMenu landingMenu (client, map, &player, network, gameDataContainer);
+	cLandingMenu landingMenu (client, map);
 	if (landingMenu.show (NULL) == 1) return -1;
 	return 1;
+}
+
+//------------------------------------------------------------------------------
+int runGamePreparation (cClient& client, cStaticMap& map, bool noReturn)
+{
+	const sSettings& settings = *client.getGameSetting();
+	std::vector<sLandingUnit> landingUnits;
+	int step = 0;
+	int lastDir = 1;
+	while (true)
+	{
+		int dir = 0;
+		switch (step)
+		{
+			case -1: return -1;
+			case 0: dir = clanSelection (client, noReturn); break;
+			case 1: dir = landingUnitsSelection (client, landingUnits, noReturn && settings.clans == SETTING_CLANS_OFF); break;
+			case 2: dir = landingPosSelection (client, map); break;
+			case 3: return 1;
+			default: break;
+		}
+		step += dir;
+		if (dir == 0) step += lastDir;
+		else lastDir = dir;
+	}
 }
 
 }
@@ -908,7 +730,6 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 {
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cTCP* const network = NULL;
-	cGameDataContainer* const gameDataContainer = NULL;
 	sSettings settings;
 	sPlayer splayer (cSettings::getInstance().getPlayerName(), cl_red, 0);
 	splayer.setLocal();
@@ -916,7 +737,6 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	cEventHandling eventHandling;
 	cClient client (&server, network, eventHandling);
 	cStaticMap* map = NULL;
-	std::vector<sLandingUnit> landingUnits;
 	std::vector<cPlayer*> players;
 	cPlayer clientPlayer(splayer);
 
@@ -948,15 +768,13 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 			}
 			case 2:
 			{
-				dir = clanSelection (settings, clientPlayer, false, network, gameDataContainer); break;
-				if (dir != 1 && lastDir != -1)
+				dir = runGamePreparation (client, *map, false);
+				if (dir == -1 || (dir == 0 && lastDir != -1))
 				{
 					server.cancelStateInitGame();
 				}
 			}
-			case 3: dir = landingUnitsSelection (settings, landingUnits, &client, clientPlayer, false, network, gameDataContainer); break;
-			case 4: dir = landingPosSelection (&client, *map, clientPlayer, network, gameDataContainer); break;
-			case 5:
+			case 3:
 			{
 				client.getGameGUI().show (&client);
 				server.stop();
@@ -1600,11 +1418,9 @@ void cPlanetsSelectionMenu::mapReleased (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cClanSelectionMenu::cClanSelectionMenu (int clan_, bool noReturn, cTCP* network_, cGameDataContainer* gameDataContainer_)
-	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
-	, network (network_)
-	, gameDataContainer (gameDataContainer_)
-	, clan (std::max (0, clan_))
+cClanSelectionMenu::cClanSelectionMenu (int clan_, bool noReturn) :
+	cMenu (LoadPCX (GFXOD_CLAN_SELECT)),
+	clan (std::max (0, clan_))
 {
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&cMenu::doneReleased);
@@ -1708,35 +1524,6 @@ void cClanSelectionMenu::updateClanDescription()
 	{
 		clanDescription1->setText ("Unknown");
 		clanDescription1->setText ("");
-	}
-}
-
-//------------------------------------------------------------------------------
-/*virtual*/ void cClanSelectionMenu::handleNetMessages()
-{
-	if (gameDataContainer) gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
-}
-
-//------------------------------------------------------------------------------
-void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
-{
-	switch (message->iType)
-	{
-		case TCP_ACCEPT:
-			sendReconnectAnswer (*network, message->popInt16());
-			break;
-		case MU_MSG_CLAN:
-			gameDataContainer->receiveClan (message);
-			break;
-		case MU_MSG_LANDING_VEHICLES:
-			gameDataContainer->receiveLandingUnits (message);
-			break;
-		case MU_MSG_UPGRADES:
-			gameDataContainer->receiveUnitUpgrades (message);
-			break;
-		case MU_MSG_LANDING_COORDS:
-			gameDataContainer->receiveLandingPosition (*network, message, this);
-			break;
 	}
 }
 
@@ -1930,16 +1717,14 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStartupHangarMenu::cStartupHangarMenu (const sSettings& gameSetting_,
+cStartupHangarMenu::cStartupHangarMenu (cClient& client_,
 										std::vector<sLandingUnit>& landingUnits_,
-										cPlayer& player_, bool noReturn,
-										cTCP* network_, cGameDataContainer* gameDataContainer_) :
-	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), &player_),
-	gameSetting (&gameSetting_),
+										bool noReturn) :
+	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), client_.getActivePlayer()),
+	gameSetting (client_.getGameSetting()),
+	client (&client_),
 	landingUnits (&landingUnits_),
-	network (network_),
-	gameDataContainer (gameDataContainer_),
-	upgradeHangarContainer (this, &player_),
+	upgradeHangarContainer (this, client_.getActivePlayer()),
 	chooseUnitLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
 {
 	chooseUnitLabel.setCentered (true);
@@ -2123,15 +1908,6 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		landingUnit.cargo = menu->secondList->getItem (i)->getResValue();
 		menu->landingUnits->push_back (landingUnit);
 	}
-	if (menu->network && menu->gameDataContainer->server == NULL)
-	{
-		sendClan (*menu->network, menu->player->getClan(), menu->player->getNr());
-		sendLandingUnits (*menu->network, *menu->landingUnits, menu->player->getNr());
-	}
-	if (menu->gameDataContainer)
-	{
-		sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->server ? menu : NULL);
-	}
 	menu->end = true;
 }
 
@@ -2310,35 +2086,6 @@ void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 }
 
 //------------------------------------------------------------------------------
-/*virtual*/ void cStartupHangarMenu::handleNetMessages()
-{
-	if (gameDataContainer) gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
-}
-
-//------------------------------------------------------------------------------
-void cStartupHangarMenu::handleNetMessage (cNetMessage* message)
-{
-	switch (message->iType)
-	{
-		case TCP_ACCEPT:
-			sendReconnectAnswer (*network, message->popInt16());
-			break;
-		case MU_MSG_CLAN:
-			gameDataContainer->receiveClan (message);
-			break;
-		case MU_MSG_LANDING_VEHICLES:
-			gameDataContainer->receiveLandingUnits (message);
-			break;
-		case MU_MSG_UPGRADES:
-			gameDataContainer->receiveUnitUpgrades (message);
-			break;
-		case MU_MSG_LANDING_COORDS:
-			gameDataContainer->receiveLandingPosition (*network, message, this);
-			break;
-	}
-}
-
-//------------------------------------------------------------------------------
 void cStartupHangarMenu::selectionChanged (void* parent)
 {
 	cStartupHangarMenu* menu;
@@ -2376,15 +2123,11 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLandingMenu::cLandingMenu (cClient* client_, cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_) :
+cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_) :
 	cMenu (NULL),
-	client (client_),
-	network (network_),
-	gameDataContainer (gameDataContainer_),
-	player (player_)
+	client (&client_),
+	map (&map_)
 {
-	map = &map_;
-
 	createMap();
 	mapImage = new cMenuImage (180, 18, mapSurface);
 	mapImage->setClickedFunction (&mapClicked);
@@ -2517,81 +2260,51 @@ void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 //------------------------------------------------------------------------------
 /*virtual*/ void cLandingMenu::handleNetMessages()
 {
-	if (gameDataContainer) gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
-	else if (client) client->getEventHandling().handleNetMessages (client, this);
+	client->getEventHandling().handleNetMessages(client, this);
+}
+
+//------------------------------------------------------------------------------
+void cLandingMenu::handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_RESELECT_LANDING);
+	eLandingState landingState = (eLandingState) message.popChar();
+
+	Log.write ("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
+	landData.landingState = landingState;
+	backButton->setLocked (landingState == LANDING_POSITION_OK || landingState == LANDING_POSITION_CONFIRMED);
+
+	if (landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
+	else if (landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
+
+	draw();
+	mouseMoved (this); // update cursor
 }
 
 //------------------------------------------------------------------------------
 void cLandingMenu::handleNetMessage (cNetMessage* message)
 {
-	// because the messages for landing units
-	// and landing positions can be send when the host is in the hangar menu
-	// or in the landing selection menu,
-	// the gameGataContainer class will receive and
-	// handle the messages directly
 	switch (message->iType)
 	{
-		case TCP_ACCEPT:
-			sendReconnectAnswer (*network, message->popInt16());
-			break;
-		case MU_MSG_CLAN:
-			gameDataContainer->receiveClan (message);
-			break;
-		case MU_MSG_LANDING_VEHICLES:
-			gameDataContainer->receiveLandingUnits (message);
-			break;
-		case MU_MSG_UPGRADES:
-			gameDataContainer->receiveUnitUpgrades (message);
-			break;
-		case MU_MSG_LANDING_COORDS:
-			gameDataContainer->receiveLandingPosition (*network, message, this);
-			break;
-		case MU_MSG_RESELECT_LANDING:
-			Log.write ("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
-			landData.landingState = (eLandingState) message->popChar();
-			backButton->setLocked (landData.landingState == LANDING_POSITION_OK || landData.landingState == LANDING_POSITION_CONFIRMED);
-
-			if (landData.landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
-			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
-
-			draw();
-			mouseMoved (this); // update cursor
-			break;
-		case MU_MSG_ALL_LANDED:
-			end = true;
-			break;
+		case MU_MSG_RESELECT_LANDING: handleNetMessage_MU_MSG_RESELECT_LANDING (*message); break;
+		case MU_MSG_ALL_LANDED: end = true; break;
 	}
 }
 
 //------------------------------------------------------------------------------
 void cLandingMenu::hitPosition()
 {
-	if (network)
-	{
-		infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-		sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->server ? this : NULL);
-		draw();
-	}
-	else if (gameDataContainer)
-	{
-		gameDataContainer->landData.resize (gameDataContainer->players.size());
-		gameDataContainer->landData[player->getNr()] = landData;
-		end = true;
-	}
-	else
-	{
-		infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-		sendLandingCoords (*client, landData);
-		draw();
-	}
+	infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
+	sendLandingCoords (*client, landData);
+	draw();
 }
 
 //------------------------------------------------------------------------------
 // cNetworkMenu implementation
 //------------------------------------------------------------------------------
 
-cNetworkMenu::cNetworkMenu()
-	: cMenu (LoadPCX (GFXOD_MULT)),
+cNetworkMenu::cNetworkMenu() :
+	cMenu (LoadPCX (GFXOD_MULT)),
+	eventHandler (new cEventHandling),
 	savegameNum (-1)
 {
 	ip = cSettings::getInstance().getIP();
@@ -2674,7 +2387,7 @@ cNetworkMenu::cNetworkMenu()
 	menuItems.push_back (colorImage);
 
 	network = new cTCP;
-	network->setMessageReceiver (&gameDataContainer.getEventHandler());
+	network->setMessageReceiver (eventHandler);
 	triedLoadMap = "";
 
 	Log.write (string (PACKAGE_NAME) + " " + PACKAGE_VERSION + " " + PACKAGE_REV, cLog::eLOG_TYPE_NET_DEBUG);
@@ -2689,7 +2402,7 @@ cNetworkMenu::~cNetworkMenu()
 //------------------------------------------------------------------------------
 /*virtual*/ void cNetworkMenu::handleNetMessages()
 {
-	gameDataContainer.getEventHandler().handleNetMessages (NULL, this);
+	eventHandler->handleNetMessages (NULL, this);
 }
 
 //------------------------------------------------------------------------------
@@ -2700,10 +2413,10 @@ void cNetworkMenu::showSettingsText()
 
 	if (!saveGameString.empty()) text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameString + "\n";
 
-	if (gameDataContainer.map)
+	if (map)
 	{
-		text += lngPack.i18n ("Text~Title~Map") + ": " + gameDataContainer.map->getName();
-		text += " (" + iToStr (gameDataContainer.map->getSize()) + "x" + iToStr (gameDataContainer.map->getSize()) + ")\n";
+		text += lngPack.i18n ("Text~Title~Map") + ": " + map->getName();
+		text += " (" + iToStr (map->getSize()) + "x" + iToStr (map->getSize()) + ")\n";
 	}
 	else if (savegame.empty()) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
 
@@ -2711,19 +2424,18 @@ void cNetworkMenu::showSettingsText()
 
 	if (savegame.empty() && saveGameString.empty())
 	{
-		if (gameDataContainer.settings)
+		if (settings)
 		{
-			const sSettings& settings = *gameDataContainer.settings;
-			text += lngPack.i18n ("Text~Comp~GameEndsAt") + " " + settings.getVictoryConditionString() + "\n";
-			text += lngPack.i18n ("Text~Title~Metal") + ": " + settings.getResValString (settings.metal) + "\n";
-			text += lngPack.i18n ("Text~Title~Oil") + ": " + settings.getResValString (settings.oil) + "\n";
-			text += lngPack.i18n ("Text~Title~Gold") + ": " + settings.getResValString (settings.gold) + "\n";
-			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + settings.getResFreqString() + "\n";
-			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (settings.credits) + "\n";
-			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + (settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ("Text~Option~Definite") : lngPack.i18n ("Text~Option~Mobile")) + "\n";
-			//text += lngPack.i18n ("Text~Title~Alien_Tech") + ": " + (settings.alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += string ("Clans") + ": " + (settings.clans == SETTING_CLANS_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings.gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
+			text += lngPack.i18n ("Text~Comp~GameEndsAt") + " " + settings->getVictoryConditionString() + "\n";
+			text += lngPack.i18n ("Text~Title~Metal") + ": " + settings->getResValString (settings->metal) + "\n";
+			text += lngPack.i18n ("Text~Title~Oil") + ": " + settings->getResValString (settings->oil) + "\n";
+			text += lngPack.i18n ("Text~Title~Gold") + ": " + settings->getResValString (settings->gold) + "\n";
+			text += lngPack.i18n ("Text~Title~Resource_Density") + ": " + settings->getResFreqString() + "\n";
+			text += lngPack.i18n ("Text~Title~Credits")  + ": " + iToStr (settings->credits) + "\n";
+			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + (settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ("Text~Option~Definite") : lngPack.i18n ("Text~Option~Mobile")) + "\n";
+			//text += lngPack.i18n ("Text~Title~Alien_Tech") + ": " + (settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
+			text += string ("Clans") + ": " + (settings->clans == SETTING_CLANS_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
+			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
@@ -2733,21 +2445,21 @@ void cNetworkMenu::showSettingsText()
 //------------------------------------------------------------------------------
 void cNetworkMenu::showMap()
 {
-	if (gameDataContainer.map == NULL || !gameDataContainer.map->isValid())
+	if (map == NULL || !map->isValid())
 	{
 		mapImage->setImage (NULL);
 		mapLabel->setText ("");
 		return;
 	}
 
-	AutoSurface surface (cStaticMap::loadMapPreview(gameDataContainer.map->getName()));
+	AutoSurface surface (cStaticMap::loadMapPreview(map->getName()));
 	if (surface != NULL)
 	{
 		mapImage->setImage (surface);
 	}
 
-	string mapName = gameDataContainer.map->getName();
-	int size = gameDataContainer.map->getSize();
+	string mapName = map->getName();
+	int size = map->getSize();
 
 	if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 	{
@@ -2786,7 +2498,7 @@ void cNetworkMenu::saveOptions()
 void cNetworkMenu::changePlayerReadyState (sPlayer* player)
 {
 	if (player != actPlayer) return;
-	if (!gameDataContainer.map && !triedLoadMap.empty())
+	if (!map && !triedLoadMap.empty())
 	{
 		if (!player->isReady()) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", triedLoadMap));
 		player->setReady (false);
@@ -2884,29 +2596,6 @@ void cNetworkMenu::setDefaultPort (void* parent)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkMenu::runGamePreparation (cPlayer& player)
-{
-	cClient* client = NULL;
-	int step = 0;
-	int lastDir = 1;
-	while (true)
-	{
-		int dir = 0;
-		switch (step)
-		{
-			case 0: dir = clanSelection (*gameDataContainer.settings, player, true, network, &gameDataContainer); break;
-			case 1: dir = landingUnitsSelection (*gameDataContainer.settings, *gameDataContainer.landingUnits[0], client, player, gameDataContainer.settings->clans == SETTING_CLANS_OFF, network, &gameDataContainer); break;
-			case 2: dir = landingPosSelection (client, *gameDataContainer.map, player, network, &gameDataContainer); break;
-			case 3: gameDataContainer.runNewGame (network, player.getNr()); return;
-			default: break;
-		}
-		step += dir;
-		if (dir == 0) step += lastDir;
-		else lastDir = dir;
-	}
-}
-
-//------------------------------------------------------------------------------
 // cNetworkHostMenu implementation
 //------------------------------------------------------------------------------
 
@@ -2991,7 +2680,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 
 	int playerNr;
-	if ( (!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->savegame.empty())
+	if ( (!menu->settings || !menu->map) && menu->savegame.empty())
 	{
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
 		menu->draw();
@@ -3019,16 +2708,30 @@ void cNetworkHostMenu::okReleased (void* parent)
 	}
 	else
 	{
-		sendGo (*menu->network);
+		cServer server (menu->network);
 
+		std::vector<cPlayer*> clientPlayers;
 		for (size_t i = 0; i != menu->players.size(); ++i)
 		{
-			cPlayer* player = new cPlayer (*menu->players[i]);
-			menu->gameDataContainer.players.push_back (player);
+			server.addPlayer (new cPlayer (*menu->players[i]));
+			clientPlayers.push_back (new cPlayer (*menu->players[i]));
 		}
-		cPlayer& localPlayer = *menu->gameDataContainer.players[0];
+		cPlayer& localPlayer = *clientPlayers[0];
+		cClient client (&server, NULL, *menu->eventHandler);
+		client.setPlayers (&clientPlayers, &localPlayer);
 
-		menu->runGamePreparation (localPlayer);
+		server.setMap (*menu->map);
+		server.setGameSettings (*menu->settings);
+		server.changeStateToInitGame();
+		client.setMap (*menu->map);
+		client.setGameSetting (*menu->settings);
+
+		sendGo (*menu->network);
+
+		runGamePreparation (client, *menu->map, true);
+
+		client.getGameGUI().show (&client);
+		server.stop();
 	}
 	menu->end = true;
 }
@@ -3044,13 +2747,10 @@ void cNetworkHostMenu::mapReleased (void* parent)
 		menu->draw();
 		return;
 	}
-	delete menu->gameDataContainer.map;
-	menu->gameDataContainer.map = planetsSelectionMenu.getStaticMap().Release();
+	menu->map = planetsSelectionMenu.getStaticMap().Release();
 	menu->showSettingsText();
 	menu->showMap();
-	const cStaticMap* map = menu->gameDataContainer.map;
-	const sSettings* settings = menu->gameDataContainer.settings;
-	sendGameData (*menu->network, map, settings, menu->saveGameString);
+	sendGameData (*menu->network, menu->map, menu->settings, menu->saveGameString);
 	menu->draw();
 }
 
@@ -3058,19 +2758,16 @@ void cNetworkHostMenu::mapReleased (void* parent)
 void cNetworkHostMenu::settingsReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
-	if (menu->gameDataContainer.settings == NULL) menu->gameDataContainer.settings = new sSettings;
+	if (menu->settings == NULL) menu->settings = new sSettings;
 
-	cSettingsMenu settingsMenu (*menu->gameDataContainer.settings);
-	if (settingsMenu.show (NULL) == 0) *menu->gameDataContainer.settings = settingsMenu.getSettings();
+	cSettingsMenu settingsMenu (*menu->settings);
+	if (settingsMenu.show (NULL) == 0) *menu->settings = settingsMenu.getSettings();
 	else
 	{
-		delete menu->gameDataContainer.settings;
-		menu->gameDataContainer.settings = NULL;
+		menu->settings = NULL;
 	}
 	menu->showSettingsText();
-	const cStaticMap* map = menu->gameDataContainer.map;
-	const sSettings* settings = menu->gameDataContainer.settings;
-	sendGameData (*menu->network, map, settings, menu->saveGameString);
+	sendGameData (*menu->network, menu->map, menu->settings, menu->saveGameString);
 	menu->draw();
 }
 
@@ -3089,19 +2786,15 @@ void cNetworkHostMenu::loadReleased (void* parent)
 
 	if (!menu->savegame.empty())
 	{
-		delete menu->gameDataContainer.settings;
-		menu->gameDataContainer.settings = NULL;
+		menu->settings = NULL;
 		cSavegame savegame (menu->savegameNum);
 		savegame.loadHeader (&menu->saveGameString, NULL, NULL);
 		menu->saveGameString += "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n" + savegame.getPlayerNames();
 
-		delete menu->gameDataContainer.map;
-		cStaticMap* map = new cStaticMap;
-		map->loadMap (savegame.getMapName());
-		menu->gameDataContainer.map = map;
-		const sSettings* settings = menu->gameDataContainer.settings;
+		menu->map = new cStaticMap;
+		menu->map->loadMap (savegame.getMapName());
 
-		sendGameData (*menu->network, map, settings, menu->saveGameString);
+		sendGameData (*menu->network, menu->map, menu->settings, menu->saveGameString);
 		menu->showSettingsText();
 		menu->showMap();
 	}
@@ -3122,8 +2815,6 @@ void cNetworkHostMenu::startReleased (void* parent)
 	}
 	else
 	{
-		menu->gameDataContainer.server = new cServer (menu->network);
-
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + ": "  + iToStr (menu->port) + ")");
 		Log.write ("Game open (Port: " + iToStr (menu->port) + ")", cLog::eLOG_TYPE_INFO);
 		menu->portLine->setReadOnly (true);
@@ -3238,8 +2929,6 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* mess
 
 	draw();
 	sendPlayerList (*network, players);
-	const cStaticMap* map = gameDataContainer.map;
-	const sSettings* settings = gameDataContainer.settings;
 	sendGameData (*network, map, settings, saveGameString, player);
 }
 
@@ -3247,7 +2936,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 {
 	assert (message->iType == MU_MSG_REQUEST_MAP);
 
-	if (gameDataContainer.map == NULL || MapDownload::isMapOriginal (gameDataContainer.map->getName())) return;
+	if (map == NULL || MapDownload::isMapOriginal (map->getName())) return;
 
 	const size_t receiverNr = message->popInt16();
 	if (receiverNr >= players.size()) return;
@@ -3263,7 +2952,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 			mapSenders.erase (mapSenders.begin() + i);
 		}
 	}
-	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->getName(), players[receiverNr]->getName());
+	cMapSender* mapSender = new cMapSender (*network, socketNr, eventHandler, map->getName(), players[receiverNr]->getName());
 	mapSenders.push_back (mapSender);
 	mapSender->runInThread (this);
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->getName()));
@@ -3387,7 +3076,7 @@ bool cNetworkHostMenu::runSavedGame()
 		clientPlayerList[i]->BuildingData = UnitsData.getUnitData_Buildings (addedPlayer->getClan());
 	}
 	// init client and his player
-	AutoPtr<cClient> client (new cClient (&server, network, gameDataContainer.getEventHandler()));
+	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
 	client->setMap (*server.Map->staticMap);
 	client->setPlayers (&clientPlayerList, localPlayer);
 
@@ -3424,8 +3113,6 @@ cNetworkClientMenu::cNetworkClientMenu()
 	: mapReceiver (0)
 	, lastRequestedMap ("")
 {
-	gameDataContainer.server = NULL;
-
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Client"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel);
@@ -3548,34 +3235,29 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 
 	if (message->popBool())
 	{
-		if (!gameDataContainer.settings) gameDataContainer.settings = new sSettings;
-		gameDataContainer.settings->popFrom (*message);
+		if (!settings) settings = new sSettings;
+		settings->popFrom (*message);
 	}
 	else
 	{
-		delete gameDataContainer.settings;
-		gameDataContainer.settings = NULL;
+		settings = NULL;
 	}
 
 	if (message->popBool())
 	{
 		string mapName = message->popString();
 		Sint32 mapCheckSum = message->popInt32();
-		if (!gameDataContainer.map || gameDataContainer.map->getName() != mapName)
+		if (!map || map->getName() != mapName)
 		{
-			delete gameDataContainer.map;
-
 			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
-			cStaticMap* map = new cStaticMap;
+			map = new cStaticMap;
 			if (mapCheckSumsEqual && map->loadMap (mapName))
 			{
-				gameDataContainer.map = map;
 				triedLoadMap = "";
 			}
 			else
 			{
-				delete map;
-				gameDataContainer.map = NULL;
+				map = NULL;
 
 				if (actPlayer->isReady())
 				{
@@ -3616,10 +3298,9 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 			showMap();
 		}
 	}
-	else if (gameDataContainer.map)
+	else if (map)
 	{
-		delete gameDataContainer.map;
-		gameDataContainer.map = NULL;
+		map = NULL;
 		showMap();
 	}
 
@@ -3634,20 +3315,38 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	assert (message->iType == MU_MSG_GO);
 
 	saveOptions();
+
+	cServer* const server = NULL;
+	std::vector<cPlayer*> clientPlayers;
+	cPlayer* localPlayer = NULL;
 	for (size_t i = 0; i != players.size(); ++i)
 	{
 		cPlayer* player = new cPlayer (*players[i]);
-		gameDataContainer.players.push_back (player);
+		clientPlayers.push_back (player);
+		if (players[i] == actPlayer) localPlayer = player;
 	}
-	if (!saveGameString.empty())
+	cClient client (server, network, *eventHandler);
+	client.setPlayers (&clientPlayers, localPlayer);
+
+	client.setMap (*map);
+	client.setGameSetting (*settings);
+
+	if (settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+
+	//if (reconnect) sendReconnectionSuccess (client);
+
+	if (saveGameString.empty())
 	{
-		gameDataContainer.runNewGame (network, actPlayer->getNr());
+		runGamePreparation (client, *map, true);
 	}
-	else
+	client.getGameGUI().show (&client);
+
+	for (size_t i = 0; i != clientPlayers.size(); ++i)
 	{
-		cPlayer& localPlayer = *gameDataContainer.players[actPlayer->getNr()];
-		this->runGamePreparation (localPlayer);
+		delete clientPlayers[i];
 	}
+	clientPlayers.clear();
+
 	end = true;
 }
 //------------------------------------------------------------------------------
@@ -3685,25 +3384,43 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 	{
 		actPlayer->setNr (message->popInt16());
 		actPlayer->setColorIndex (message->popInt16());
-		cStaticMap* Map = new cStaticMap;
-		if (!Map->loadMap (message->popString())) return;
-		gameDataContainer.map = Map;
+		map = new cStaticMap;
+		if (!map->loadMap (message->popString())) return;
 
 		int playerCount = message->popInt16();
 
-		gameDataContainer.players.push_back (new cPlayer (*actPlayer));
+		std::vector<cPlayer*> clientPlayers;
+		cPlayer* localPlayer = new cPlayer (*actPlayer);
+
+		clientPlayers.push_back (localPlayer);
 		while (playerCount > 1)
 		{
-			string playername = message->popString();
+			std::string playername = message->popString();
 			int playercolor = message->popInt16();
 			int playernr = message->popInt16();
 			sPlayer splayer (playername, playercolor, playernr);
-			gameDataContainer.players.push_back (new cPlayer (splayer));
+			clientPlayers.push_back (new cPlayer (splayer));
 			playerCount--;
 		}
-		std::sort (gameDataContainer.players.begin(), gameDataContainer.players.end(), LessByNr());
+		std::sort (clientPlayers.begin(), clientPlayers.end(), LessByNr());
 
-		gameDataContainer.runNewGame (network, actPlayer->getNr(), true);
+		cServer* const server = NULL;
+		cClient client (server, network, *eventHandler);
+		client.setPlayers (&clientPlayers, localPlayer);
+
+		client.setMap (*map);
+		//client.setGameSetting (*settings);
+
+		sendReconnectionSuccess (client);
+
+		client.getGameGUI().show (&client);
+
+		for (size_t i = 0; i != clientPlayers.size(); ++i)
+		{
+			delete clientPlayers[i];
+		}
+		clientPlayers.clear();
+
 		end = true;
 	}
 	else
@@ -3788,11 +3505,9 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 
 	mapReceiver->finished();
 
-	cStaticMap* map = new cStaticMap;
-	if (map->loadMap (mapReceiver->getMapName()))
-		gameDataContainer.map = map;
-	else
-		delete map;
+	map = new cStaticMap;
+	if (!map->loadMap (mapReceiver->getMapName())) map = NULL;
+
 	showSettingsText();
 	showMap();
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));

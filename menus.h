@@ -168,76 +168,6 @@ struct sSettings
 	std::string getVictoryConditionString() const;
 };
 
-/**
- * A class that contains all information to start a new or loaded game.
- * This class can run games automaticaly out of this information.
- *@author alzi
- */
-class cGameDataContainer
-{
-public:
-	/** Should this instance of maxr act as the server. */
-	AutoPtr<cServer> server;
-
-	/** The settings for the game */
-	sSettings* settings;
-	/** The map for the game */
-	cStaticMap* map;
-
-	/** list with all players for the game */
-	std::vector<cPlayer*> players;
-	/** list with the selected landing units by each player */
-	std::vector<std::vector<sLandingUnit>*> landingUnits;
-	/** the client landing data (landing positions) of the players */
-	std::vector<sClientLandData> landData;
-	/** indicates, whether all players have landed */
-	bool allLanded;
-
-public:
-	cGameDataContainer();
-	~cGameDataContainer();
-
-	/** loads and runs a saved game
-	 *@author alzi
-	 */
-	void runSavedGame (cTCP* network, int player);
-
-	/** Runs the game. If isServer is true,
-	 * which means that he is the host, a server will be started.
-	 * Else only a client will be started.
-	 * When reconnect is true, it will be reconnected to a running game.
-	 *@author alzi
-	 */
-	void runNewGame (cTCP* network, int playerNr, bool reconnect = false);
-
-	/** handles incoming clan information
-	 *  @author pagra */
-	void receiveClan (cNetMessage* message);
-
-	/** handles incoming landing units
-	 *@author alzi
-	 */
-	void receiveLandingUnits (cNetMessage* message);
-
-	/** handles incoming unit upgrades
-	 *@author alzi
-	 */
-	void receiveUnitUpgrades (cNetMessage* message);
-
-	/** handles an incoming landing position
-	 *@author alzi
-	 */
-	void receiveLandingPosition (cTCP& network, cNetMessage* message, cMenu* activeMenu);
-
-	cEventHandling& getEventHandler() { return *eventHandler; }
-private:
-
-	cPlayer* findPlayerByNr (int nr);
-
-private:
-	cEventHandling* eventHandler;
-};
-
 enum eMenuBackgrounds
 {
 	MNU_BG_BLACK,
@@ -536,9 +466,6 @@ private:
 class cClanSelectionMenu : public cMenu
 {
 protected:
-	cTCP* network;
-	cGameDataContainer* gameDataContainer;
-
 	AutoPtr<cMenuLabel> titleLabel;
 
 	AutoPtr<cMenuImage> clanImages[8];
@@ -555,12 +482,9 @@ protected:
 	void updateClanDescription();
 
 public:
-	cClanSelectionMenu (int clan, bool noReturn, cTCP* network_, cGameDataContainer* gameDataContainer_);
+	cClanSelectionMenu (int clan, bool noReturn);
 
 	int getClan() const { return clan; }
-private:
-	virtual void handleNetMessage (cNetMessage* message);
-	virtual void handleNetMessages();
 
 private:
 	static void clanSelected (void* parent);
@@ -675,9 +599,8 @@ class cStartupHangarMenu : public cAdvListHangarMenu
 {
 protected:
 	const sSettings* gameSetting;
+	cClient* client;
 	std::vector<sLandingUnit>* landingUnits;
-	cTCP* network;
-	cGameDataContainer* gameDataContainer;
 
 	cUpgradeHangarContainer upgradeHangarContainer;
 	cMenuLabel chooseUnitLabel;
@@ -701,15 +624,12 @@ protected:
 	void addPlayerLandingUnits (cPlayer& player);
 
 public:
-	cStartupHangarMenu (const sSettings& gameSetting_,
+	cStartupHangarMenu (cClient& client,
 						std::vector<sLandingUnit>& landingUnits_,
-						cPlayer& player_, bool noReturn,
-						cTCP* network, cGameDataContainer* gameDataContainer_);
+						bool noReturn);
 
 private:
 	virtual void generateSelectionList();
-	virtual void handleNetMessage (cNetMessage* message);
-	virtual void handleNetMessages();
 
 private:
 	static void selectionChanged (void* parent);
@@ -727,13 +647,14 @@ private:
 class cLandingMenu : public cMenu
 {
 public:
-	cLandingMenu (cClient* client_, cStaticMap& map_, cPlayer* player_, cTCP* network_, cGameDataContainer* gameDataContainer_);
+	cLandingMenu (cClient& client_, cStaticMap& map_);
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-	virtual void handleNetMessage (cNetMessage* message);
 	virtual void handleNetMessages();
 
+	void handleNetMessage (cNetMessage* message);
+	void handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& message);
 protected:
 	void createHud();
 	void createMap();
@@ -746,9 +667,6 @@ private:
 
 protected:
 	cClient* client;
-	cTCP* network;
-	cGameDataContainer* gameDataContainer;
-	cPlayer* player;
 
 	cStaticMap* map;
 
@@ -808,7 +726,9 @@ protected:
 
 	AutoPtr<cMenuPlayersBox> playersBox;
 
-	cGameDataContainer gameDataContainer;
+	AutoPtr<cEventHandling> eventHandler;
+	AutoPtr<cStaticMap> map;
+	AutoPtr<sSettings> settings;
 	int savegameNum;
 	std::string savegame;
 	std::string saveGameString;
@@ -820,7 +740,6 @@ protected:
 	void saveOptions();
 	void changePlayerReadyState (sPlayer* player);
 	bool enteredCommand (const std::string& text);
-	void runGamePreparation (cPlayer& player);
 
 public:
 	cNetworkMenu();
