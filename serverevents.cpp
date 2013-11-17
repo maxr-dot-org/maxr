@@ -36,6 +36,13 @@
 
 
 //------------------------------------------------------------------------------
+void sendGo (cServer& server)
+{
+	cNetMessage* message = new cNetMessage (MU_MSG_GO);
+	server.sendNetMessage (message);
+}
+
+//------------------------------------------------------------------------------
 void sendReselectLanding (cServer& server, eLandingState state, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_RESELECT_LANDING);
@@ -689,13 +696,13 @@ void sendRequestIdentification (cTCP& network, int iSocket)
 }
 
 //------------------------------------------------------------------------------
-void sendReconnectAnswer (cTCP& network, int socketNumber)
+void sendReconnectAnswer (cServer& server, int socketNumber)
 {
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
 	message.pushBool (false);
 
 	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	network.sendTo (socketNumber, message.iLength, message.serialize());
+	server.network->sendTo (socketNumber, message.iLength, message.serialize());
 }
 
 //------------------------------------------------------------------------------

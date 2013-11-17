@@ -1595,7 +1595,7 @@ void cServer::handleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 			return;
 		}
 	}
-	sendReconnectAnswer (*network, socketNumber);
+	sendReconnectAnswer (*this, socketNumber);
 }
 
 //------------------------------------------------------------------------------

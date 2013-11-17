@@ -24,7 +24,6 @@
 #include "events.h"
 #include "hud.h"
 #include "log.h"
-#include "menuevents.h"
 #include "netmessage.h"
 #include "network.h"
 #include "player.h"
@@ -158,6 +157,68 @@ void sendUnitUpgrades (const cClient& client)
 		message->pushInt16 (count);
 		message->pushInt16 (player.getNr());
 		client.sendNetMessage (message);
+	}
+}
+
+void sendReconnectionSuccess (const cClient& client)
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCCESS);
+
+	message->pushInt16 (client.getActivePlayer()->getNr());
+	client.sendNetMessage (message);
+}
+
+void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrades)
+{
+	const cPlayer* player = client.getActivePlayer();
+	cNetMessage* msg = NULL;
+	int iCount = 0;
+
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); ++i)
+	{
+		const cUnitUpgrade& curUpgrade = unitUpgrades[i];
+
+		if (!curUpgrade.hasBeenPurchased()) continue;
+
+		if (msg == NULL)
+		{
+			msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
+			iCount = 0;
+		}
+
+		const sUnitData* currentVersion;
+		if (i < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[i];
+		else currentVersion = &player->BuildingData[i - UnitsData.getNrVehicles()];
+
+		if (i < UnitsData.getNrVehicles()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->ammoMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->range));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->shotsMax));
+		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->damage));
+		msg->pushID (currentVersion->ID);
+
+		iCount++; // msg contains one more upgrade struct
+
+		// the msg would be too long,
+		// if another upgrade would be written into it.
+		// So send it and put the next upgrades in a new message.
+		if (msg->iLength + 38 > PACKAGE_LENGTH)
+		{
+			msg->pushInt16 (iCount);
+			msg->pushInt16 (player->getNr());
+			client.sendNetMessage (msg);
+			msg = NULL;
+		}
+	}
+
+	if (msg != NULL)
+	{
+		msg->pushInt16 (iCount);
+		msg->pushInt16 (player->getNr());
+		client.sendNetMessage (msg);
 	}
 }
 

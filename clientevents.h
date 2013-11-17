@@ -18,6 +18,7 @@
  ***************************************************************************/
 #ifndef clienteventsH
 #define clienteventsH
+
 #include "defines.h"
 #include "network.h"
 #include "serverevents.h"
@@ -107,6 +108,9 @@ void sendClan (const cClient& client);
 void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& landingList);
 void sendUnitUpgrades (const cClient& client);
 void sendLandingCoords (const cClient& client, const sClientLandData& c);
+
+void sendReconnectionSuccess (const cClient& client);
+void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrade);
 
 /**
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary

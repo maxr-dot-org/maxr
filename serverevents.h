@@ -80,11 +80,23 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
 
+	GAME_EV_REQ_RECON_IDENT,        // a server of a running game requests an identification of a player who wants to reconnect
+	GAME_EV_RECONNECT_ANSWER,       // a server returns an answer for the reconnect
+
+	// Preparation room
+	MU_MSG_CLAN,                // a player sends his clan
+	MU_MSG_LANDING_VEHICLES,    // the list of purchased vehicles
+	MU_MSG_UPGRADES,            // data of upgraded units
+	MU_MSG_LANDING_COORDS,      // the selected landing coords of a client
+
 	// DEDICATED_SERVER
 	GAME_EV_WANT_DISCONNECT,		// the player wants to disconnect (but later reconnect to the dedicated server)
 	GAME_EV_REQUEST_CASUALTIES_REPORT, // a client wants to have the current casualties data
 	NET_GAME_TIME_CLIENT,			//reports the current gametime of the client to server
 };
+
+
+void sendGo (cServer& server);
 
 /*
 * Send the landing state.
@@ -298,7 +310,7 @@ void sendRequestIdentification (cTCP& network, int iSocket);
 * the server gives its ok to the reconnection
 *@author alzi alias DoctorDeath
 */
-void sendReconnectAnswer (cTCP& network, int socketNumber);
+void sendReconnectAnswer (cServer& server, int socketNumber);
 void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
 
 void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& player);

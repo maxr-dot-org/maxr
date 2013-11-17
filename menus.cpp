@@ -2859,7 +2859,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 		client.setMap (*menu->map);
 		client.setGameSetting (*menu->settings);
 
-		sendGo (*menu->network);
+		sendGo (server);
 
 		runGamePreparation (client, *menu->map, true);
 
@@ -3193,7 +3193,7 @@ bool cNetworkHostMenu::runSavedGame()
 	sendPlayerList (*network, players);
 
 	// send client that the game has to be started
-	sendGo (*network);
+	sendGo (server);
 
 	std::vector<cPlayer*> clientPlayerList;
 

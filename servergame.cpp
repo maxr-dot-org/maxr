@@ -285,7 +285,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					server->setMap (*map);
 					server->setGameSettings (settings);
 					server->changeStateToInitGame();
-					sendGo (*network);
+					sendGo (*server);
 				}
 				else
 					sendMenuChatMessage (*network, "Not all players are ready...", senderPlayer);
