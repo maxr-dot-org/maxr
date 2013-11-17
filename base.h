@@ -143,6 +143,12 @@ public:
 	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);
 private:
+
+	void makeTurnend_reparation (cServer& server, cBuilding& building);
+	void makeTurnend_reload (cServer& server, cBuilding& building);
+	void makeTurnend_build (cServer& server, cBuilding& building);
+
+
 	/**
 	* calcs the maximum allowed production of a ressource,
 	* without decreasing the production of the other two

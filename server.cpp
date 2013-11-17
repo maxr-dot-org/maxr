@@ -2212,6 +2212,7 @@ int cServer::handleNetMessage (cNetMessage* message)
 		case NET_GAME_TIME_CLIENT: gameTimer.handleSyncMessage (*message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
+			break;
 	}
 
 	CHECK_MEMORY;
@@ -4152,6 +4153,7 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 			break;
 		default:
 			Log.write (" Server: Tried to enable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+			break;
 	}
 
 	sendFreeze (*this, mode, freezeModes.getPlayerNumber());
@@ -4170,6 +4172,7 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 			break;
 		default:
 			Log.write (" Server: Tried to disable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+			break;
 	}
 
 	if (!freezeModes.pause && !freezeModes.waitForReconnect)

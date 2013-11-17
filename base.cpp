@@ -275,43 +275,50 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	return maxAllowedProd;
 }
 
+
+static bool isAOnlineStation (const cBuilding& building)
+{
+	return building.data.produceEnergy > 1 && building.IsWorking;
+}
+
+static bool isAOfflineStation (const cBuilding& building)
+{
+	return building.data.produceEnergy > 1 && !building.IsWorking;
+}
+
+static bool isAOnlineGenerator(const cBuilding& building)
+{
+	return building.data.produceEnergy == 1 && building.IsWorking;
+}
+
+static bool isAOfflineGenerator (const cBuilding& building)
+{
+	return building.data.produceEnergy == 1 && !building.IsWorking;
+}
+
+template <typename T>
+static std::vector<cBuilding*> getFilteredBuildings (std::vector<cBuilding*>& buildings, T filter)
+{
+	std::vector<cBuilding*> res;
+	for (size_t i = 0; i != buildings.size(); ++i)
+	{
+		cBuilding& building = *buildings[i];
+
+		if (filter (building)) res.push_back (&building);
+	}
+	return res;
+}
+
 bool sSubBase::increaseEnergyProd (cServer& server, int value)
 {
 	// TODO: the energy production and fuel consumption
 	// of generators and stations are hardcoded in this function
-	std::vector<cBuilding*> onlineStations;
-	std::vector<cBuilding*> onlineGenerators;
-	std::vector<cBuilding*> offlineStations;
-	std::vector<cBuilding*> offlineGenerators;
-	int availableStations = 0;
-	int availableGenerators = 0;
-
-	// generate lists with energy producers
-	for (size_t i = 0; i != buildings.size(); ++i)
-	{
-		cBuilding& b = *buildings[i];
-
-		if (!b.data.produceEnergy) continue;
-
-		if (b.data.produceEnergy == 1)
-		{
-			availableGenerators++;
-
-			if (b.IsWorking)
-				onlineGenerators.push_back (&b);
-			else
-				offlineGenerators.push_back (&b);
-		}
-		else
-		{
-			availableStations++;
-
-			if (b.IsWorking)
-				onlineStations.push_back (&b);
-			else
-				offlineStations.push_back (&b);
-		}
-	}
+	std::vector<cBuilding*> onlineStations = getFilteredBuildings (buildings, &isAOnlineStation);
+	std::vector<cBuilding*> onlineGenerators = getFilteredBuildings (buildings, &isAOnlineGenerator);
+	std::vector<cBuilding*> offlineStations = getFilteredBuildings (buildings, &isAOfflineStation);
+	std::vector<cBuilding*> offlineGenerators = getFilteredBuildings (buildings, &isAOfflineGenerator);
+	const int availableStations = onlineStations.size() + offlineStations.size();
+	const int availableGenerators = onlineGenerators.size() + offlineGenerators.size();
 
 	// calc the optimum amount of energy stations and generators
 	const int energy = EnergyProd + value;
@@ -530,39 +537,12 @@ bool sSubBase::checkOil (cServer& server)
 {
 	// TODO: the energy production and fuel consumption of generators and
 	// stations are hardcoded in this function
-	std::vector<cBuilding*> onlineStations;
-	std::vector<cBuilding*> onlineGenerators;
-	std::vector<cBuilding*> offlineStations;
-	std::vector<cBuilding*> offlineGenerators;
-	int availableStations = 0;
-	int availableGenerators = 0;
-
-	// generate lists with energy producers
-	for (size_t i = 0; i != buildings.size(); ++i)
-	{
-		cBuilding& b = *buildings[i];
-
-		if (!b.data.produceEnergy) continue;
-
-		if (b.data.produceEnergy == 1)
-		{
-			availableGenerators++;
-
-			if (b.IsWorking)
-				onlineGenerators.push_back (&b);
-			else
-				offlineGenerators.push_back (&b);
-		}
-		else
-		{
-			availableStations++;
-
-			if (b.IsWorking)
-				onlineStations.push_back (&b);
-			else
-				offlineStations.push_back (&b);
-		}
-	}
+	std::vector<cBuilding*> onlineStations = getFilteredBuildings (buildings, &isAOnlineStation);
+	std::vector<cBuilding*> onlineGenerators = getFilteredBuildings (buildings, &isAOnlineGenerator);
+	std::vector<cBuilding*> offlineStations = getFilteredBuildings (buildings, &isAOfflineStation);
+	std::vector<cBuilding*> offlineGenerators = getFilteredBuildings (buildings, &isAOfflineGenerator);
+	const int availableStations = onlineStations.size() + offlineStations.size();
+	const int availableGenerators = onlineGenerators.size() + offlineGenerators.size();
 
 	// calc the optimum amount of energy stations and generators
 	int stations   = min ( (EnergyNeed + 3) / 6, availableStations);
@@ -740,6 +720,68 @@ void sSubBase::prepareTurnend (cServer& server)
 		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->getNr());
 }
 
+void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
+{
+	// repair (do not repair buildings that have been attacked in this turn):
+	if (building.data.hitpointsCur >= building.data.hitpointsMax
+		|| Metal <= 0 || building.hasBeenAttacked)
+	{
+		return;
+	}
+	// calc new hitpoints
+	building.data.hitpointsCur += Round ( ( (float) building.data.hitpointsMax / building.data.buildCosts) * 4);
+	building.data.hitpointsCur = std::min (building.data.hitpointsMax, building.data.hitpointsCur);
+	addMetal (server, -1);
+	sendUnitData (server, building, owner->getNr());
+	for (size_t j = 0; j != building.seenByPlayerList.size(); ++j)
+	{
+		sendUnitData (server, building, building.seenByPlayerList[j]->getNr());
+	}
+}
+
+void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
+{
+	// reload:
+	if (building.data.canAttack && building.data.ammoCur == 0 && Metal > 0)
+	{
+		building.data.ammoCur = building.data.ammoMax;
+		addMetal (server, -1);
+		// ammo is not visible to enemies. So only send to the owner
+		sendUnitData (server, building, owner->getNr());
+	}
+}
+
+void sSubBase::makeTurnend_build (cServer& server, cBuilding& building)
+{
+	// build:
+	if (!building.IsWorking || building.data.canBuild.empty() || building.BuildList.empty())
+	{
+		return;
+	}
+
+	sBuildList& buildListItem = building.BuildList[0];
+	if (buildListItem.metall_remaining > 0)
+	{
+		// in this block the metal consumption of the factory
+		// in the next round can change
+		// so we first subtract the old value from MetalNeed and
+		// then add the new one, to hold the base up to date
+		MetalNeed -= min (building.MetalPerRound, buildListItem.metall_remaining);
+
+		buildListItem.metall_remaining -= min (building.MetalPerRound, buildListItem.metall_remaining);
+		buildListItem.metall_remaining = std::max (buildListItem.metall_remaining, 0);
+
+		MetalNeed += min (building.MetalPerRound, buildListItem.metall_remaining);
+		sendBuildList (server, building);
+		sendSubbaseValues (server, *this, owner->getNr());
+	}
+	if (buildListItem.metall_remaining <= 0)
+	{
+		server.addReport (buildListItem.type, owner->getNr());
+		building.ServerStopWork (server, false);
+	}
+}
+
 void sSubBase::makeTurnend (cServer& server)
 {
 	prepareTurnend (server);
@@ -759,57 +801,12 @@ void sSubBase::makeTurnend (cServer& server)
 	// make repairs/build/reload
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
-		cBuilding& Building = *buildings[i];
+		cBuilding& building = *buildings[i];
 
-		// repair (do not repair buildings that have been attacked in this turn):
-		if (Building.data.hitpointsCur < Building.data.hitpointsMax && Metal > 0 && !Building.hasBeenAttacked)
-		{
-			// calc new hitpoints
-			Building.data.hitpointsCur += Round ( ( (float) Building.data.hitpointsMax / Building.data.buildCosts) * 4);
-			Building.data.hitpointsCur = std::min (Building.data.hitpointsMax, Building.data.hitpointsCur);
-			addMetal (server, -1);
-			sendUnitData (server, Building, owner->getNr());
-			for (size_t j = 0; j != Building.seenByPlayerList.size(); ++j)
-			{
-				sendUnitData (server, Building, Building.seenByPlayerList[j]->getNr());
-			}
-		}
-		Building.hasBeenAttacked = false;
-
-		// reload:
-		if (Building.data.canAttack && Building.data.ammoCur == 0 && Metal > 0)
-		{
-			Building.data.ammoCur = Building.data.ammoMax;
-			addMetal (server, -1);
-			// ammo is not visible to enemies. So only send to the owner
-			sendUnitData (server, Building, owner->getNr());
-		}
-
-		// build:
-		if (Building.IsWorking && !Building.data.canBuild.empty() && !Building.BuildList.empty())
-		{
-			sBuildList& BuildListItem = Building.BuildList[0];
-			if (BuildListItem.metall_remaining > 0)
-			{
-				// in this block the metal consumption of the factory
-				// in the next round can change
-				// so we first subtract the old value from MetalNeed and
-				// then add the new one, to hold the base up to date
-				MetalNeed -= min (Building.MetalPerRound, BuildListItem.metall_remaining);
-
-				BuildListItem.metall_remaining -= min (Building.MetalPerRound, BuildListItem.metall_remaining);
-				BuildListItem.metall_remaining = std::max (BuildListItem.metall_remaining, 0);
-
-				MetalNeed += min (Building.MetalPerRound, BuildListItem.metall_remaining);
-				sendBuildList (server, Building);
-				sendSubbaseValues (server, *this, owner->getNr());
-			}
-			if (BuildListItem.metall_remaining <= 0)
-			{
-				server.addReport (BuildListItem.type, owner->getNr());
-				Building.ServerStopWork (server, false);
-			}
-		}
+		makeTurnend_reparation (server, building);
+		building.hasBeenAttacked = false;
+		makeTurnend_reload (server, building);
+		makeTurnend_build (server, building);
 	}
 
 	// check maximum storage limits
@@ -860,7 +857,7 @@ void sSubBase::merge (sSubBase* sb)
 
 int sSubBase::getID() const
 {
-	assert (buildings.size());
+	assert (!buildings.empty());
 
 	return buildings[0]->iID;
 }
@@ -1036,7 +1033,7 @@ sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 		b->CheckNeighbours (map);
 		return b->SubBase;
 	}
-	else return NULL;
+	return NULL;
 }
 
 void cBase::addBuilding (cBuilding* building, cServer* server)
@@ -1046,15 +1043,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	std::vector<sSubBase*> NeighbourList;
 
 	// check for neighbours
-	if (!building->data.isBig)
-	{
-		// small building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->getSize(), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 1             , *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->getSize(), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1             , *building)) NeighbourList.push_back (SubBase);
-	}
-	else
+	if (building->data.isBig)
 	{
 		// big building
 		if (sSubBase* SubBase = checkNeighbour (pos - map->getSize(),         *building)) NeighbourList.push_back (SubBase);
@@ -1065,6 +1054,14 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		if (sSubBase* SubBase = checkNeighbour (pos + map->getSize() * 2 + 1, *building)) NeighbourList.push_back (SubBase);
 		if (sSubBase* SubBase = checkNeighbour (pos - 1,                      *building)) NeighbourList.push_back (SubBase);
 		if (sSubBase* SubBase = checkNeighbour (pos - 1 + map->getSize(),     *building)) NeighbourList.push_back (SubBase);
+	}
+	else
+	{
+		// small building
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->getSize(), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 1             , *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->getSize(), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1             , *building)) NeighbourList.push_back (SubBase);
 	}
 	building->CheckNeighbours (map);
 

@@ -142,7 +142,7 @@ int cLog::write (const std::string& s, int TYPE)
 			case LOG_TYPE_DEBUG :   str = str.insert (0, DD); break;
 			case LOG_TYPE_INFO :    str = str.insert (0, II); break;
 			case LOG_TYPE_MEM :     str = str.insert (0, MM); break;
-			default :               str = str.insert (0, II);
+			default :               str = str.insert (0, II); break;
 		}
 		str += TEXT_FILE_LF;
 		return writeMessage (str);   //add log message itself to tmp and send it for writing

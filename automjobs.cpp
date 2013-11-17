@@ -172,15 +172,16 @@ void cAutoMJob::PlanNextMove (const std::vector<cAutoMJob*>& jobs)
 		}
 	}
 
-	if (maxFactor != FIELD_BLOCKED)
+	if (maxFactor == FIELD_BLOCKED)
+	{
+		// no fields to survey next to the surveyor
+		PlanLongMove (jobs);
+	}
+	else
 	{
 		client->addMoveJob (vehicle, bestX, bestY);
 		lastDestX = bestX;
 		lastDestY = bestY;
-	}
-	else //no fields to survey next to the surveyor
-	{
-		PlanLongMove (jobs);
 	}
 }
 
@@ -295,7 +296,14 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 			// TODO: check, if a path can be found to the coordinates
 		}
 	}
-	if (minValue != 0)
+	if (minValue == 0)
+	{
+		const string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
+		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+		client->getGameGUI().addCoords (report);
+		finished = true;
+	}
+	else
 	{
 		if (client->addMoveJob (vehicle, bestX, bestY))
 		{
@@ -309,13 +317,6 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 			client->getGameGUI().addCoords (report);
 			finished = true;
 		}
-	}
-	else
-	{
-		const string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
-		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
-		client->getGameGUI().addCoords (report);
-		finished = true;
 	}
 }
 
