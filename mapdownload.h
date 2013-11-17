@@ -25,39 +25,39 @@
 
 class cEventHandling;
 class cNetMessage;
-class cNetworkHostMenu;
 class cTCP;
 
 int mapSenderThreadFunction (void* data);
 
 namespace MapDownload
 {
-/** @return is this a map that originates from the original M.A.X. ?*/
+
+/** @return is this a map that originates from the original M.A.X. ? */
 bool isMapOriginal (const std::string& mapName, Sint32 checksum = 0);
 
-/** @return the path to the map (in user or factory maps directory), or empty string if not found */
+/** @return the path to the map (in user or factory maps directory),
+ *          or empty string if not found */
 std::string getExistingMapFilePath (const std::string& mapName);
 
 /** @return a 32 bit checksum of the given map */
 Sint32 calculateCheckSum (const std::string& mapName);
-};
 
-//-------------------------------------------------------------------------------
+} // namespace MapDownload
+
+//--------------------------------------------------------------------
 class cMapReceiver
 {
 public:
 	cMapReceiver (const std::string& mapName, int mapSize);
-	virtual ~cMapReceiver();
+	~cMapReceiver();
 
-	bool receiveData (cNetMessage* message, int bytesInMsg);
+	bool receiveData (cNetMessage& message);
 	bool finished();
 
 	const std::string& getMapName() const { return mapName; }
 	int getMapSize() const { return mapSize; }
 	int getBytesReceived() const { return bytesReceived; }
 
-
-	//-------------------------------------------------------------------------------
 private:
 	std::string mapName;
 	int mapSize;
@@ -65,17 +65,29 @@ private:
 	char* readBuffer;
 };
 
-//-------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 class cMapSender
 {
 public:
-	cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandling_, const std::string& mapName, const std::string& receivingPlayerName);
-	virtual ~cMapSender();
+	cMapSender (cTCP& network_, int toSocket,
+				cEventHandling* eventHandling_,
+				const std::string& mapName,
+				const std::string& receivingPlayerName);
+	~cMapSender();
 
 	int getToSocket() const { return toSocket; }
 
-	void runInThread (cNetworkHostMenu* hostMenu);
-	//-------------------------------------------------------------------------------
+	void runInThread();
+
+private:
+	friend int mapSenderThreadFunction (void* data);
+
+private:
+	void run();
+
+	bool getMapFileContent();
+	void sendMsg (cNetMessage& msg);
+
 private:
 	cTCP* network;
 	int toSocket;
@@ -88,11 +100,6 @@ private:
 
 	SDL_Thread* thread;
 	bool canceled;
-
-	friend int mapSenderThreadFunction (void* data);
-
-	void run();
-	void sendMsg (cNetMessage& msg);
 };
 
 #endif // mapdownloadH

@@ -32,7 +32,6 @@
 #include "files.h"
 #include "log.h"
 #include "menuevents.h"
-#include "menus.h"
 #include "netmessage.h"
 #include "settings.h"
 
@@ -42,64 +41,56 @@ using namespace std;
 bool MapDownload::isMapOriginal (const std::string& mapName, Sint32 checksum)
 {
 	std::string lowerMapName (mapName);
-	std::transform (lowerMapName.begin(), lowerMapName.end(), lowerMapName.begin(), static_cast<int (*) (int) > (std::tolower));
-	if (lowerMapName == "bottleneck.wrl"
-		|| lowerMapName == "flash point.wrl"
-		|| lowerMapName == "freckles.wrl"
-		|| lowerMapName == "frigia.wrl"
-		|| lowerMapName == "great circle.wrl"
-		|| lowerMapName == "great divide.wrl"
-		|| lowerMapName == "hammerhead.wrl"
-		|| lowerMapName == "high impact.wrl"
-		|| lowerMapName == "ice berg.wrl"
-		|| lowerMapName == "iron cross.wrl"
-		|| lowerMapName == "islandia.wrl"
-		|| lowerMapName == "long floes.wrl"
-		|| lowerMapName == "long passage.wrl"
-		|| lowerMapName == "middle sea.wrl"
-		|| lowerMapName == "new luzon.wrl"
-		|| lowerMapName == "peak-a-boo.wrl"
-		|| lowerMapName == "sanctuary.wrl"
-		|| lowerMapName == "sandspit.wrl"
-		|| lowerMapName == "snowcrab.wrl"
-		|| lowerMapName == "splatterscape.wrl"
-		|| lowerMapName == "the cooler.wrl"
-		|| lowerMapName == "three rings.wrl"
-		|| lowerMapName == "ultima thule.wrl"
-		|| lowerMapName == "valentine's planet.wrl")
+	std::transform (lowerMapName.begin(), lowerMapName.end(),
+					lowerMapName.begin(),
+					static_cast<int (*) (int)> (std::tolower));
+
+	const struct {
+		const char* filename;
+		Sint32 checksum;
+	} maps[] = {
+		{ "bottleneck.wrl"        , 344087468},
+		{ "flash point.wrl"       , 1702427970},
+		{ "freckles.wrl"          , 1401869069},
+		{ "frigia.wrl"            , 1612651246},
+		{ "great circle.wrl"      , 1041139234},
+		{ "great divide.wrl"      , 117739146},
+		{ "hammerhead.wrl"        , 1969035068},
+		{ "high impact.wrl"       , 268073155},
+		{ "ice berg.wrl"          , 1382754034},
+		{ "iron cross.wrl"        , 1704409466},
+		{ "islandia.wrl"          , 1893077128},
+		{ "long floes.wrl"        , 289119678},
+		{ "long passage.wrl"      , 231873358},
+		{ "middle sea.wrl"        , 959897984},
+		{ "new luzon.wrl"         , 1422663356},
+		{ "peak-a-boo.wrl"        , 2072925938},
+		{ "sanctuary.wrl"         , 1286420600},
+		{ "sandspit.wrl"          , 2040193020},
+		{ "snowcrab.wrl"          , 10554807},
+		{ "splatterscape.wrl"     , 486474018},
+		{ "the cooler.wrl"        , 451439582},
+		{ "three rings.wrl"       , 1682525072},
+		{ "ultima thule.wrl"      , 1397392934},
+		{ "valentine's planet.wrl", 280492815}
+	};
+
+	for (int i = 0; i != sizeof(maps) / sizeof(*maps); ++i)
 	{
-		return true;
+		if (lowerMapName.compare(maps[i].filename) == 0)
+		{
+			return true;
+		}
 	}
 	if (checksum == 0)
 		checksum = calculateCheckSum (lowerMapName);
-	if (checksum == 344087468
-		|| checksum == 1702427970
-		|| checksum == 1401869069
-		|| checksum == 1612651246
-		|| checksum == 1041139234
-		|| checksum == 117739146
-		|| checksum == 1969035068
-		|| checksum == 268073155
-		|| checksum == 1382754034
-		|| checksum == 1704409466
-		|| checksum == 1893077128
-		|| checksum == 289119678
-		|| checksum == 231873358
-		|| checksum == 959897984
-		|| checksum == 1422663356
-		|| checksum == 2072925938
-		|| checksum == 1286420600
-		|| checksum == 2040193020
-		|| checksum == 10554807
-		|| checksum == 486474018
-		|| checksum == 451439582
-		|| checksum == 1682525072
-		|| checksum == 1397392934
-		|| checksum == 280492815)
+	for (int i = 0; i != sizeof(maps) / sizeof(*maps); ++i)
 	{
-		return true;
+		if (maps[i].checksum == checksum)
+		{
+			return true;
+		}
 	}
-
 	return false;
 }
 
@@ -133,14 +124,16 @@ Sint32 MapDownload::calculateCheckSum (const std::string& mapName)
 	}
 	if (file->is_open())
 	{
-		int mapSize = (int) file->tellg();
+		const int mapSize = (int) file->tellg();
 		char* data = new char [mapSize];
 		file->seekg (0, ios::beg);
 
 		file->read (data, 9);  // read only header
-		int width = data[5] + data[6] * 256;
-		int height = data[7] + data[8] * 256;
-		int relevantMapDataSize = width * height * 3; // the information after this is only for graphic stuff and not necessary for comparing two maps
+		const int width = data[5] + data[6] * 256;
+		const int height = data[7] + data[8] * 256;
+		// the information after this is only for graphic stuff
+		// and not necessary for comparing two maps
+		const int relevantMapDataSize = width * height * 3;
 
 		if (relevantMapDataSize + 9 <= mapSize)
 		{
@@ -160,11 +153,11 @@ Sint32 MapDownload::calculateCheckSum (const std::string& mapName)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize)
-	: mapName (mapName)
-	, mapSize (mapSize)
-	, bytesReceived (0)
-	, readBuffer (0)
+cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize) :
+	mapName (mapName),
+	mapSize (mapSize),
+	bytesReceived (0),
+	readBuffer (NULL)
 {
 	if (mapSize > 0)
 		readBuffer = new char [mapSize];
@@ -177,17 +170,21 @@ cMapReceiver::~cMapReceiver()
 }
 
 //------------------------------------------------------------------------------
-bool cMapReceiver::receiveData (cNetMessage* message, int bytesInMsg)
+bool cMapReceiver::receiveData (cNetMessage& message)
 {
-	if (readBuffer == 0 || message == 0 || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
+	assert (message.iType == MU_MSG_MAP_DOWNLOAD_DATA);
+
+	const int bytesInMsg = message.popInt32();
+	if (readBuffer == NULL || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
 		return false;
 
 	for (int i = bytesInMsg - 1; i >= 0; i--)
-		readBuffer[bytesReceived + i] = message->popChar();
+		readBuffer[bytesReceived + i] = message.popChar();
 
 	bytesReceived += bytesInMsg;
 	std::ostringstream os;
-	os << "MapReceiver: Received Data for map " << mapName << ": " << bytesReceived << "/" << mapSize;
+	os << "MapReceiver: Received Data for map " << mapName << ": "
+	   << bytesReceived << "/" << mapSize;
 	Log.write (os.str(), cLog::eLOG_TYPE_DEBUG);
 	return true;
 }
@@ -196,13 +193,13 @@ bool cMapReceiver::receiveData (cNetMessage* message, int bytesInMsg)
 bool cMapReceiver::finished()
 {
 	Log.write ("MapReceiver: Received complete map", cLog::eLOG_TYPE_DEBUG);
+
 	if (bytesReceived != mapSize)
 		return false;
-
 	std::string mapsFolder = getUserMapsDir();
 	if (mapsFolder.empty())
 		mapsFolder = cSettings::getInstance().getMapsPath() + PATH_DELIMITER;
-	std::string filename = mapsFolder + mapName;
+	const std::string filename = mapsFolder + mapName;
 	std::ofstream newMapFile;
 	newMapFile.open (filename.c_str(), ios::out | ios::binary);
 	if (newMapFile.bad())
@@ -217,7 +214,6 @@ bool cMapReceiver::finished()
 	return true;
 }
 
-
 //------------------------------------------------------------------------------
 // cMapSender implementation
 //------------------------------------------------------------------------------
@@ -231,33 +227,37 @@ int mapSenderThreadFunction (void* data)
 }
 
 //------------------------------------------------------------------------------
-cMapSender::cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandling_, const std::string& mapName, const std::string& receivingPlayerName)
-	: network (&network_)
-	, toSocket (toSocket)
-	, eventHandling (eventHandling_)
-	, receivingPlayerName (receivingPlayerName)
-	, mapName (mapName)
-	, mapSize (0)
-	, bytesSent (0)
-	, sendBuffer (0)
-	, thread (0)
-	, canceled (false)
+cMapSender::cMapSender (cTCP& network_, int toSocket,
+						cEventHandling* eventHandling_,
+						const std::string& mapName,
+						const std::string& receivingPlayerName) :
+	network (&network_),
+	toSocket (toSocket),
+	eventHandling (eventHandling_),
+	receivingPlayerName (receivingPlayerName),
+	mapName (mapName),
+	mapSize (0),
+	bytesSent (0),
+	sendBuffer (NULL),
+	thread (NULL),
+	canceled (false)
 {
 }
 
 //------------------------------------------------------------------------------
 cMapSender::~cMapSender()
 {
-	if (thread != 0)
+	if (thread != NULL)
 	{
 		canceled = true;
 		SDL_WaitThread (thread, NULL);
-		thread = 0;
+		thread = NULL;
 	}
-	if (sendBuffer != 0)
+	if (sendBuffer != NULL)
 	{
 		delete[] sendBuffer;
-		// the thread was not finished yet (else it would have deleted sendBuffer already)
+		// the thread was not finished yet
+		// (else it would have deleted sendBuffer already)
 		// send a canceled msg to the client
 		cNetMessage msg (MU_MSG_CANCELED_MAP_DOWNLOAD);
 		sendMsg (msg);
@@ -266,43 +266,43 @@ cMapSender::~cMapSender()
 }
 
 //------------------------------------------------------------------------------
-void cMapSender::runInThread (cNetworkHostMenu* hostMenu)
+void cMapSender::runInThread()
 {
-	thread = SDL_CreateThread (mapSenderThreadFunction, this);  // the thread will quit, when it finished uploading the map
+	// the thread will quit, when it finished uploading the map
+	thread = SDL_CreateThread (mapSenderThreadFunction, this);
+}
+
+//------------------------------------------------------------------------------
+bool cMapSender::getMapFileContent()
+{
+	// read map file in memory
+	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName.c_str();
+	ifstream file (filename.c_str(), ios::in | ios::binary | ios::ate);
+	if (!file.is_open() && !getUserMapsDir().empty())
+	{
+		// try to open the map from the user's maps dir
+		filename = getUserMapsDir() + mapName.c_str();
+		file.open (filename.c_str(), ios::in | ios::binary | ios::ate);
+	}
+	if (!file.is_open())
+	{
+		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_WARNING);
+		return false;
+	}
+	mapSize = (int) file.tellg();
+	sendBuffer = new char [mapSize];
+	file.seekg (0, ios::beg);
+	file.read (sendBuffer, mapSize);
+	file.close();
+	Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_DEBUG);
+	return true;
 }
 
 //------------------------------------------------------------------------------
 void cMapSender::run()
 {
 	if (canceled) return;
-
-	// read map file in memory
-	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName.c_str();
-	ifstream* file = new ifstream (filename.c_str(), ios::in | ios::binary | ios::ate);
-	if (!file->is_open() && !getUserMapsDir().empty())
-	{
-		// try to open the map from the user's maps dir
-		filename = getUserMapsDir() + mapName.c_str();
-		delete file;
-		file = new ifstream (filename.c_str(), ios::in | ios::binary | ios::ate);
-	}
-	if (file->is_open())
-	{
-		mapSize = (int) file->tellg();
-		sendBuffer = new char [mapSize];
-		file->seekg (0, ios::beg);
-		file->read (sendBuffer, mapSize);
-		file->close();
-		delete file;
-		Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_DEBUG);
-	}
-	else
-	{
-		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_WARNING);
-		delete file;
-		return;
-	}
-
+	getMapFileContent();
 	if (canceled) return;
 
 	{
@@ -318,7 +318,7 @@ void cMapSender::run()
 
 		cNetMessage msg (MU_MSG_MAP_DOWNLOAD_DATA);
 		int bytesToSend = mapSize - bytesSent;
-		if (msg.iLength + bytesToSend + 4 > PACKAGE_LENGTH)
+		if (bytesToSend + msg.iLength + 4 > PACKAGE_LENGTH)
 			bytesToSend = PACKAGE_LENGTH - msg.iLength - 4;
 		for (int i = 0; i < bytesToSend; i++)
 			msg.pushChar (sendBuffer[bytesSent + i]);
@@ -333,14 +333,17 @@ void cMapSender::run()
 
 	// finished
 	delete[] sendBuffer;
-	sendBuffer = 0;
+	sendBuffer = NULL;
 
 	cNetMessage msg (MU_MSG_FINISHED_MAP_DOWNLOAD);
 	msg.pushString (receivingPlayerName);
 	sendMsg (msg);
 
-	// Push message also to client, that belongs to the host, to give feedback about the finished upload state.
-	// The EventHandler mechanism is used, because this code runs in another thread than the code, that must display the msg.
+	// Push message also to client, that belongs to the host,
+	// to give feedback about the finished upload state.
+	// The EventHandler mechanism is used,
+	// because this code runs in another thread than the code,
+	// that must display the msg.
 	if (eventHandling)
 	{
 		cNetMessage* message = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);

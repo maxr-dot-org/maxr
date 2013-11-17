@@ -3087,7 +3087,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 	}
 	cMapSender* mapSender = new cMapSender (*network, socketNr, eventHandler, map->getName(), players[receiverNr]->getName());
 	mapSenders.push_back (mapSender);
-	mapSender->runInThread (this);
+	mapSender->runInThread();
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->getName()));
 	draw();
 }
@@ -3604,8 +3604,7 @@ void cNetworkClientMenu::receiveMapData (cNetMessage* message)
 	if (mapReceiver == 0)
 		return;
 
-	int nrBytesInMsg = message->popInt32();
-	mapReceiver->receiveData (message, nrBytesInMsg);
+	mapReceiver->receiveData (*message);
 
 	int size = mapReceiver->getMapSize();
 	int received = mapReceiver->getBytesReceived();

@@ -31,7 +31,7 @@ class cNetMessage;
 class cPlayer;
 class cServer;
 class cTCP;
-struct sPlayer;
+class sPlayer;
 
 int serverGameThreadFunction (void* data);
 
