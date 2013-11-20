@@ -19,10 +19,8 @@
 #ifndef filesH
 #define filesH
 
-#include <SDL.h>
-
 #include <string>
-#include "defines.h"
+//#include "defines.h"
 #include <vector>
 
 
@@ -78,7 +76,7 @@ void copyFile (const std::string& source, const std::string& dest);
 * @author pagra
 * @return a checksum of all bytes in the given data chunk
 */
-Uint32 calcCheckSum (const char* data, size_t dataSize, Uint32 checksum = 0);
-Uint32 calcCheckSum (Uint32 data, Uint32 checksum);
+uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum = 0);
+uint32_t calcCheckSum (uint32_t data, uint32_t checksum);
 
 #endif

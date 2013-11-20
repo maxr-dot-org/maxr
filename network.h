@@ -63,7 +63,7 @@ enum SOCKET_STATES
 */
 struct sDataBuffer
 {
-	Uint32 iLength;
+	uint32_t iLength;
 	char data[5 * PACKAGE_LENGTH];
 
 	char* getWritePointer();

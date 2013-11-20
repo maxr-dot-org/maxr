@@ -17,7 +17,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <string>
 #include "netmessage.h"
 
 #include "clientevents.h"
@@ -147,7 +146,7 @@ Sint16 cNetMessage::popInt16()
 	return SDL_SwapLE16 (*data16);
 }
 
-void cNetMessage::pushInt32 (Sint32 i)
+void cNetMessage::pushInt32 (int32_t i)
 {
 	if (iLength > PACKAGE_LENGTH - 4)
 	{
@@ -156,12 +155,12 @@ void cNetMessage::pushInt32 (Sint32 i)
 	}
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	Sint32* data32 = reinterpret_cast<Sint32*> (data + iLength);
+	int32_t* data32 = reinterpret_cast<int32_t*> (data + iLength);
 	*data32 = SDL_SwapLE32 (i);
 	iLength += 4;
 }
 
-Sint32 cNetMessage::popInt32()
+int32_t cNetMessage::popInt32()
 {
 	if (iLength <= 9)
 	{
@@ -171,7 +170,7 @@ Sint32 cNetMessage::popInt32()
 	iLength -= 4;
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	const Sint32* data32 = reinterpret_cast<Sint32*> (data + iLength);
+	const int32_t* data32 = reinterpret_cast<int32_t*> (data + iLength);
 	return SDL_SwapLE32 (*data32);
 }
 
@@ -248,12 +247,12 @@ bool cNetMessage::popBool()
 	else return false;
 }
 
+#define BITS 32
+#define EXPBITS 8
+
 void cNetMessage::pushFloat (float f)
 {
-	float fnorm;
-	int shift;
-	Uint32 sign, exp, significand;
-	unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
+	const unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
 
 	if (f == 0.0f)
 	{
@@ -261,6 +260,8 @@ void cNetMessage::pushFloat (float f)
 		return;
 	}
 
+	float fnorm;
+	int sign;
 	// check sign and begin normalization
 	if (f < 0)
 	{
@@ -274,7 +275,7 @@ void cNetMessage::pushFloat (float f)
 	}
 
 	// get the normalized form of f and track the exponent
-	shift = 0;
+	uint32_t shift = 0;
 	while (fnorm >= 2.0f)
 	{
 		fnorm /= 2.0f;
@@ -288,35 +289,32 @@ void cNetMessage::pushFloat (float f)
 	fnorm -= 1.0f;
 
 	// calculate the binary form (non-float) of the significand data
-	significand = Uint32 (fnorm * ( (1LL << significandbits) + 0.5f));
+	const uint32_t significand = uint32_t (fnorm * ( (1LL << significandbits) + 0.5f));
 
 	// get the biased exponent
-	exp = shift + ( (1 << (EXPBITS - 1)) - 1);     // shift + bias
+	const uint32_t exp = shift + ( (1 << (EXPBITS - 1)) - 1);  // shift + bias
 
-	//store result in netMessage
+	// store result in netMessage
 	pushInt32 ( (sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
 }
 
 float cNetMessage::popFloat()
 {
-	float result;
-	long long shift;
-	unsigned bias;
-	unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
+	const unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
 
-	//get data from netMessage
-	Uint32 i = popInt32();
+	// get data from netMessage
+	uint32_t i = popInt32();
 
 	if (i == 0) return 0.0f;
 
 	// pull the significand
-	result = float (i & ( (1LL << significandbits) - 1));    // mask
+	float result (i & ( (1LL << significandbits) - 1));    // mask
 	result /= (1LL << significandbits);   // convert back to float
 	result += 1.0f; // add the one back on
 
 	// deal with the exponent
-	bias = (1 << (EXPBITS - 1)) - 1;
-	shift = ( (i >> significandbits) & ( (1LL << EXPBITS) - 1)) - bias;
+	unsigned bias = (1 << (EXPBITS - 1)) - 1;
+	long long shift = ( (i >> significandbits) & ( (1LL << EXPBITS) - 1)) - bias;
 	while (shift > 0)
 	{
 		result *= 2.0f;

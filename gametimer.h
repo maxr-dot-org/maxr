@@ -94,8 +94,8 @@ public:
 	void handleSyncMessage (cNetMessage& message);
 };
 
-Uint32 calcClientChecksum (const cClient& client);
-Uint32 calcServerChecksum (const cServer& server, const cPlayer* player);
+uint32_t calcClientChecksum (const cClient& client);
+uint32_t calcServerChecksum (const cServer& server, const cPlayer* player);
 
 void compareGameData (const cClient& client, const cServer& server);
 

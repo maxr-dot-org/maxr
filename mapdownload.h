@@ -21,11 +21,11 @@
 #define mapdownloadH
 
 #include <string>
-#include <SDL.h>
 
 class cEventHandling;
 class cNetMessage;
 class cTCP;
+struct SDL_Thread;
 
 int mapSenderThreadFunction (void* data);
 
@@ -33,14 +33,14 @@ namespace MapDownload
 {
 
 /** @return is this a map that originates from the original M.A.X. ? */
-bool isMapOriginal (const std::string& mapName, Sint32 checksum = 0);
+bool isMapOriginal (const std::string& mapName, int32_t checksum = 0);
 
 /** @return the path to the map (in user or factory maps directory),
  *          or empty string if not found */
 std::string getExistingMapFilePath (const std::string& mapName);
 
 /** @return a 32 bit checksum of the given map */
-Sint32 calculateCheckSum (const std::string& mapName);
+int32_t calculateCheckSum (const std::string& mapName);
 
 } // namespace MapDownload
 

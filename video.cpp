@@ -19,25 +19,28 @@
 
 #include "main.h"
 #include "video.h"
-#include "log.h"
+
 #include "autosurface.h"
 #include "defines.h"
+#include "log.h"
 #include "pcx.h"
+
 #include <vector>
 
-using namespace std;
+cVideo Video;
 
 /**
-*Will store either our detected videomodes or some generic video modes if auto-detection in doDetect() failed
+* Will store either our detected videomodes
+* or some generic video modes if auto-detection in doDetect() failed
 */
-static vector<sVidMode> vVideoMode;
+static std::vector<sVidMode> vVideoMode;
 
 /**
  * Some possible video modes. Don't use external!'
  */
 static const sVidMode videoModes[] =
 {
-	{  MINWIDTH,  MINHEIGHT,  0 },
+	{ MINWIDTH, MINHEIGHT, 0 },
 	{  800,  600,  1 },
 	{  960,  720,  2 },
 	{ 1024,  768,  3 },
@@ -47,7 +50,7 @@ static const sVidMode videoModes[] =
 	{ 1280, 1024,  7 },
 	{ 1040, 1050,  8 },
 	{ 1600, 1200,  9 },
-	{ 2048, 1536, 10 }, //unusual resolutions start here
+	{ 2048, 1536, 10 }, // unusual resolutions start here
 	{ 1024,  480, 11 }, // Sony VAIO Pocketbook
 	{ 1152,  768, 12 }, // Apple TiBook
 	{ 1280,  854, 13 }, // Apple TiBook
@@ -63,18 +66,18 @@ static const sVidMode videoModes[] =
 };
 
 /**
-*Stores our actual video data
+* Stores our actual video data
 */
 static sVidData videoData = { MINWIDTH, MINHEIGHT, 0, SDL_SWSURFACE, 32, false };
 
 /**
-*cvar for centered splash on screen
+* cvar for centered splash on screen
 */
 static char cVideoPos[] = "SDL_VIDEO_CENTERED=1";
 
 int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 {
-	//BEGIN SANITY CHECK SCREEN RES
+	// BEGIN SANITY CHECK SCREEN RES
 
 	if (validateMode (iWidth, iHeight) >= 0)
 	{
@@ -92,7 +95,7 @@ int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 			Log.write ("cVideo:  => Couldn''t even find my minimal video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " - Panik! ;(", cLog::eLOG_TYPE_WARNING);
 		}
 	}
-	//END SANITY CHECK SCREEN RES
+	// END SANITY CHECK SCREEN RES
 
 	videoData.width = iWidth;
 	videoData.height = iHeight;
@@ -106,7 +109,8 @@ int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 
 int cVideo::setColDepth (unsigned iDepth)
 {
-	//TODO: Implement other colourdepths beside 32 & add sanity checks. validate new color depth
+	// TODO: Implement other colourdepths beside 32 & add sanity checks.
+	//       validate new color depth
 	if (iDepth != 32)
 	{
 		Log.write ("cVideo: TODO: Implement other colourdepths beside 32. Desired " + iToStr (iDepth) + "bpp ignored.", cLog::eLOG_TYPE_WARNING);
@@ -137,7 +141,7 @@ int cVideo::getColDepth() const
 int cVideo::setWindowMode (bool bWindowMode, bool bApply)
 {
 	videoData.bWindowMode = bWindowMode;
-	Log.write ("cVideo: Window mode settings changed to " + string (Video.getWindowMode() ? "windowmode" : "fullscreen"), cLog::eLOG_TYPE_DEBUG);
+	Log.write ("cVideo: Window mode settings changed to " + std::string (Video.getWindowMode() ? "windowmode" : "fullscreen"), cLog::eLOG_TYPE_DEBUG);
 
 	if (bApply)
 	{
@@ -148,7 +152,7 @@ int cVideo::setWindowMode (bool bWindowMode, bool bApply)
 
 void cVideo::draw()
 {
-	//TODO: add sanity check to redraw function
+	// TODO: add sanity check to redraw function
 	SDL_BlitSurface (buffer, NULL, screen, NULL);
 
 	if (getWindowMode())
@@ -185,7 +189,7 @@ int cVideo::applySettings()
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_ERROR);
 		setResolution (oldX, oldY, false);
 		setColDepth (oldDepth);
-		//TODO: Don't know how to reset fullscreen mode proper from old values
+		// TODO: Don't know how to reset fullscreen mode proper from old values
 		Log.write ("cVideo: TODO: Don't know how to reset fullscreen mode proper from old values.", cLog::eLOG_TYPE_WARNING);
 		screen = SDL_SetVideoMode (oldX, oldY, oldDepth, oldSurface);
 		draw();
@@ -207,11 +211,11 @@ void cVideo::clearBuffer()
 }
 
 /**
- *Shows splashscreen
+ * Shows splashscreen
  */
 void cVideo::initSplash()
 {
-	if (putenv (cVideoPos) != 0)    //set window to center of screen.
+	if (putenv (cVideoPos) != 0)  // set window to center of screen.
 	{
 		Log.write ("cVideo: Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
 	}
@@ -219,12 +223,12 @@ void cVideo::initSplash()
 	buffer = LoadPCX (SPLASH_BACKGROUND);
 	SDL_WM_SetIcon (AutoSurface (SDL_LoadBMP (MAXR_ICON)), NULL);
 
-	//BEGIN VERSION STRING
-	string sVersion = PACKAGE_NAME; sVersion += " ";
+	// BEGIN VERSION STRING
+	std::string sVersion = PACKAGE_NAME; sVersion += " ";
 	sVersion += PACKAGE_VERSION; sVersion += " ";
 	sVersion += PACKAGE_REV; sVersion += " ";
 	SDL_WM_SetCaption (sVersion.c_str(), 0);
-	//END VERSION STRING
+	// END VERSION STRING
 
 	screen = SDL_SetVideoMode (getSplashW(), getSplashH(), getColDepth(), getSurfaceType() | SDL_NOFRAME);
 	draw();
@@ -247,7 +251,7 @@ int cVideo::getResolutionY() const
 
 void cVideo::setSurfaceType (Uint32 iSurfaceType)
 {
-	//TODO: set all surfaces to new surface type
+	// TODO: set all surfaces to new surface type
 	if (videoData.iSurfaceType != iSurfaceType)
 	{
 		Log.write ("cVideo: Surface type " + getSurfaceName (getSurfaceType()) + " overwritten with " + getSurfaceName (iSurfaceType), cLog::eLOG_TYPE_INFO);
@@ -265,9 +269,10 @@ int cVideo::getVideoNum() const
 	return sizeof (videoModes) / sizeof (sVidMode);
 }
 
-string cVideo::getVideoMode (unsigned int iMode) const
+std::string cVideo::getVideoMode (unsigned int iMode) const
 {
-	string sTmp = iToStr (getMinW()) + "x" + iToStr (getMinH());   //if no valid mode is given we return minimal video mode
+	// if no valid mode is given we return minimal video mode
+	std::string sTmp = iToStr (getMinW()) + "x" + iToStr (getMinH());
 	bool bFound = false;
 
 	for (unsigned int i = 0; i < vVideoMode.size(); i++)
@@ -301,13 +306,16 @@ bool cVideo::doDetection()
 
 	if (rDetectedModes == NULL)
 	{
-		switchSurface(); //try SWSURFACE if HWSURFACE doesn't work and vice versa
-		rDetectedModes = SDL_ListModes (vInfo->vfmt, SDL_FULLSCREEN | getSurfaceType());  //try with SWSURFACE
+		// try SWSURFACE if HWSURFACE doesn't work and vice versa
+		switchSurface();
+		// try with SWSURFACE
+		rDetectedModes = SDL_ListModes (vInfo->vfmt, SDL_FULLSCREEN | getSurfaceType());
 		if (rDetectedModes == NULL)
 		{
 			Log.write ("cVideo: No video modes detected. Probably bad!", cLog::eLOG_TYPE_ERROR);
 			vVideoMode.resize (getVideoNum());
-			for (unsigned int i = 0; i < vVideoMode.size(); i++)   //write some default video modes
+			// write some default video modes
+			for (size_t i = 0; i != vVideoMode.size(); ++i)
 			{
 				Log.write ("cVideo: Offering default video mode " + iToStr (i) + " (" + getVideoMode (i) + ")", cLog::eLOG_TYPE_WARNING);
 				vVideoMode.at (i) = videoModes[i];
@@ -327,7 +335,8 @@ bool cVideo::doDetection()
 	/* Print and store detected modes */
 	for (unsigned int i = 0; rDetectedModes[i]; ++i)
 	{
-		//write detected video modes (don't write modes *below* the minimum mode'
+		// write detected video modes
+		// (don't write modes *below* the minimum mode'
 		if (rDetectedModes[i]->w >= MINWIDTH && rDetectedModes[i]->h >= MINHEIGHT)
 		{
 			sVidMode tmp = {rDetectedModes[i]->w, rDetectedModes[i]->h, i};
@@ -336,7 +345,8 @@ bool cVideo::doDetection()
 		}
 	}
 
-	bHaveMinMode(); //sanity check on minimal needed screen resolution that we need at last
+	// sanity check on minimal needed screen resolution that we need at last
+	bHaveMinMode();
 
 	return true;
 }
@@ -393,7 +403,7 @@ int cVideo::getMinH() const
 	return MINHEIGHT;
 }
 
-string cVideo::getSurfaceName (Uint32 iSurfaceType) const
+std::string cVideo::getSurfaceName (Uint32 iSurfaceType) const
 {
 	if (iSurfaceType == SDL_SWSURFACE) return "SDL_SWSURFACE";
 	else if (iSurfaceType == SDL_HWSURFACE) return "SDL_HWSURFACE";
@@ -406,6 +416,3 @@ void cVideo::switchSurface()
 	else if (getSurfaceType() == SDL_HWSURFACE) setSurfaceType (SDL_SWSURFACE);
 	else Log.write ("cVideo: Can't' switch surface types. Unknown surface type " + iToStr (getSurfaceType()) + " detected.", cLog::eLOG_TYPE_ERROR);
 }
-
-
-cVideo Video;

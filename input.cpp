@@ -44,7 +44,8 @@ cInput::cInput() :
 void cInput::inputkey (cMenu& activeMenu, SDL_KeyboardEvent& key)
 {
 	// give the key to the active menu
-	// But do not send events to a menu, after an event triggered the termination
+	// But do not send events to a menu,
+	// after an event triggered the termination
 	// the user wouldn't expects the menu to execute further events
 	// after clicking the exit button
 	if (!activeMenu.exiting())
@@ -156,24 +157,21 @@ void cInput::inputMouseButton (cMenu& activeMenu, SDL_MouseButtonEvent& button)
 
 std::string cInput::getUTF16Char (Uint16 ch)
 {
-	int count;
-	Uint32 bitmask;
-
 	// convert from UTF-16 to UTF-8
-	count = 1;
+	int count = 1;
 	if (ch >= 0x80) count++;
 
-	bitmask = 0x800;
+	uint32_t bitmask = 0x0800;
 	for (int i = 0; i < 5; i++)
 	{
-		if ( (Uint32) ch >= bitmask) count++;
+		if (static_cast<uint32_t> (ch) >= bitmask) count++;
 		bitmask <<= 5;
 	}
 
 	std::string returnStr = "";
 	if (count == 1)
 	{
-		returnStr += (char) ch;
+		returnStr += static_cast<char> (ch);
 	}
 	else
 	{

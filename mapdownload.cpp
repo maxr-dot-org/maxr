@@ -19,13 +19,13 @@
 
 /* Author: Paul Grathwohl */
 
+#include "mapdownload.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <algorithm> // std::transform
 #include <cctype> // std::tolower
-
-#include "mapdownload.h"
 
 #include "defines.h"
 #include "events.h"
@@ -38,7 +38,7 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-bool MapDownload::isMapOriginal (const std::string& mapName, Sint32 checksum)
+bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 {
 	std::string lowerMapName (mapName);
 	std::transform (lowerMapName.begin(), lowerMapName.end(),
@@ -47,7 +47,7 @@ bool MapDownload::isMapOriginal (const std::string& mapName, Sint32 checksum)
 
 	const struct {
 		const char* filename;
-		Sint32 checksum;
+		int32_t checksum;
 	} maps[] = {
 		{ "bottleneck.wrl"        , 344087468},
 		{ "flash point.wrl"       , 1702427970},
@@ -110,9 +110,9 @@ std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 }
 
 //------------------------------------------------------------------------------
-Sint32 MapDownload::calculateCheckSum (const std::string& mapName)
+int32_t MapDownload::calculateCheckSum (const std::string& mapName)
 {
-	Sint32 result = 0;
+	int32_t result = 0;
 	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
 	ifstream* file = new ifstream (filename.c_str(), ios::in | ios::binary | ios::ate);
 	if (!file->is_open() && !getUserMapsDir().empty())

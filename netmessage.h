@@ -20,7 +20,6 @@
 #ifndef _net_message_h
 #define _net_message_h
 
-#include <SDL.h>
 #include <string>
 #include "network.h"
 
@@ -47,7 +46,9 @@ public:
 
 	/** length of the containing data in bytes */
 	int iLength;
-	/** should be set by the send function. Client->Host: message source, Host->Client: message destination */
+	/** should be set by the send function.
+	 * Client->Host: message source,
+	 * Host->Client: message destination */
 	int iPlayerNr;
 	/** the type of the message */
 	int iType;
@@ -66,7 +67,8 @@ public:
 
 	//~cNetMessage();
 
-	/** return a pointer to a platform independend serial representation of the NetMessage
+	/** return a pointer to a platform independend
+	 * serial representation of the NetMessage
 	* Byte 0: START_CHAR
 	* Bytes 1 - 2: Total length of the message, in little endian
 	* Bytes 3 - 4: Type of the message, little endian
@@ -78,7 +80,8 @@ public:
 
 	eNetMessageClass getClass() const;
 
-	/** rewinds a received and already read (via popXYZ) msg, so that it's content can be popped a second time.
+	/** rewinds a received and already read (via popXYZ) msg,
+	 * so that it's content can be popped a second time.
 	 * @author Pagra
 	 */
 	void rewind();
@@ -107,17 +110,17 @@ public:
 	*/
 	Sint16 popInt16();
 
-	/** pushes a Sint32 to the end of the netMessage
+	/** pushes a int32_t to the end of the netMessage
 	* @author Eiko
-	* @param i the Sint32 to push to the message
+	* @param i the int32_t to push to the message
 	*/
-	void pushInt32 (Sint32 i);
+	void pushInt32 (int32_t i);
 
-	/** pops a Sint 32 from the end of the netMessage
+	/** pops a int32 from the end of the netMessage
 	* @author Eiko
-	* @return the Sint32 poped from the message
+	* @return the int32_t poped from the message
 	*/
-	Sint32 popInt32();
+	int32_t popInt32();
 
 	/** pushes a string to the end of the netMessage
 	* @author Eiko
@@ -143,8 +146,6 @@ public:
 	*/
 	bool popBool();
 
-#define BITS 32
-#define EXPBITS 8
 	/** pushes a float to the end of the netMessage
 	* @author Eiko
 	* @param f the float to push to the message

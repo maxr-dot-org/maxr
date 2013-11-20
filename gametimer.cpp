@@ -278,15 +278,15 @@ void cGameTimerServer::run (cServer& server)
 
 		cNetMessage* message = new cNetMessage (NET_GAME_TIME_SERVER);
 		message->pushInt32 (gameTime);
-		Uint32 checkSum = calcServerChecksum (server, player);
+		uint32_t checkSum = calcServerChecksum (server, player);
 		message->pushInt32 (checkSum);
 		server.sendNetMessage (message, player->getNr());
 	}
 }
 
-Uint32 calcClientChecksum (const cClient& client)
+uint32_t calcClientChecksum (const cClient& client)
 {
-	Uint32 crc = 0;
+	uint32_t crc = 0;
 	const std::vector<cPlayer*>& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -305,9 +305,9 @@ Uint32 calcClientChecksum (const cClient& client)
 	return crc;
 }
 
-Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
+uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 {
-	Uint32 crc = 0;
+	uint32_t crc = 0;
 	const std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{

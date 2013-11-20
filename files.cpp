@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "files.h"
+
 #include <iostream>
 #include <SDL.h>
 #include <SDL_endian.h>
-
-#include "files.h"
 
 #include "log.h"
 #include "settings.h"
@@ -195,13 +195,13 @@ std::string getUserLogDir()
 }
 
 //--------------------------------------------------------------
-Uint32 calcCheckSum (Uint32 data, Uint32 checksum)
+uint32_t calcCheckSum (uint32_t data, uint32_t checksum)
 {
 	data = SDL_SwapLE32 (data);// The calculation must be endian safe.
 	return calcCheckSum (reinterpret_cast<char*> (&data), 4, checksum);
 }
 
-Uint32 calcCheckSum (const char* data, size_t dataSize, Uint32 checksum)
+uint32_t calcCheckSum (const char* data, size_t dataSize, uint32_t checksum)
 {
 	for (const char* i = data; i != data + dataSize; ++i)
 	{

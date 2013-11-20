@@ -467,7 +467,7 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 			const sTerrain& t = this->getTerrain (terrainx, terrainy);
 			unsigned int ColorNr = * (static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
 
-			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Sint32*> (mapSurface->pixels) [x + y * mapSurface->w]);
+			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Uint32*> (mapSurface->pixels) [x + y * mapSurface->w]);
 			pixel[0] = palette[ColorNr].b;
 			pixel[1] = palette[ColorNr].g;
 			pixel[2] = palette[ColorNr].r;

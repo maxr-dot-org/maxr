@@ -3379,7 +3379,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 	if (message->popBool())
 	{
 		string mapName = message->popString();
-		Sint32 mapCheckSum = message->popInt32();
+		int32_t mapCheckSum = message->popInt32();
 		if (!map || map->getName() != mapName)
 		{
 			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
