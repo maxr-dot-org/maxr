@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include <SDL.h>
 #include <SDL_thread.h>

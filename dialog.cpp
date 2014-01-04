@@ -19,6 +19,7 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <sstream>
+#include <algorithm>
 
 #include "dialog.h"
 
