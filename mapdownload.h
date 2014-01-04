@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include <SDL.h>
+
 class cEventHandling;
 class cNetMessage;
 class cTCP;

@@ -23,6 +23,7 @@
 //#include "defines.h"
 #include <vector>
 
+#include <SDL.h>
 
 /**
 * Checks whether a file exists or not
