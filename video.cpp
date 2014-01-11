@@ -85,14 +85,14 @@ int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 	else
 	{
-		Log.write ("cVideo:  => Couldn't' find requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :(", cLog::eLOG_TYPE_WARNING);
+		Log.write ("cVideo:  => Couldn't find requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :(", cLog::eLOG_TYPE_WARNING);
 		if (bHaveMinMode())
 		{
 			Log.write ("cVideo:  => Edit your config and try default video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " if I crash now!", cLog::eLOG_TYPE_WARNING);
 		}
 		else
 		{
-			Log.write ("cVideo:  => Couldn''t even find my minimal video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " - Panik! ;(", cLog::eLOG_TYPE_WARNING);
+			Log.write ("cVideo:  => Couldn't even find my minimal video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " - panic! ;(", cLog::eLOG_TYPE_WARNING);
 		}
 	}
 	// END SANITY CHECK SCREEN RES
@@ -374,7 +374,7 @@ int cVideo::validateMode (unsigned int iWidth, unsigned int iHeight) const
 			return i;
 		}
 	}
-	Log.write ("cVideo: Provided video mode (" + iToStr (iWidth) + "x" + iToStr (iHeight) + ") not detected. Resume on own risk!", cLog::eLOG_TYPE_WARNING);
+	Log.write ("cVideo: Configured video mode (" + iToStr (iWidth) + "x" + iToStr (iHeight) + ") not detected. Resume on own risk!", cLog::eLOG_TYPE_WARNING);
 	return -1;
 }
 
@@ -414,5 +414,5 @@ void cVideo::switchSurface()
 {
 	if (getSurfaceType() == SDL_SWSURFACE) setSurfaceType (SDL_HWSURFACE);
 	else if (getSurfaceType() == SDL_HWSURFACE) setSurfaceType (SDL_SWSURFACE);
-	else Log.write ("cVideo: Can't' switch surface types. Unknown surface type " + iToStr (getSurfaceType()) + " detected.", cLog::eLOG_TYPE_ERROR);
+	else Log.write ("cVideo: Can't switch surface types. Unknown surface type " + iToStr (getSurfaceType()) + " detected.", cLog::eLOG_TYPE_ERROR);
 }
