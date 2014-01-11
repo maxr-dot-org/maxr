@@ -109,7 +109,7 @@ int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 	}
 	else
 	{
-		Log.write ("cVideo:  Resolution set to " + iToStr (iWidth) + "x" + iToStr (iHeight) + " but was not applied yet", cLog::eLOG_TYPE_DEBUG);
+		Log.write ("cVideo: Resolution set to " + iToStr (iWidth) + "x" + iToStr (iHeight) + " but was not applied yet", cLog::eLOG_TYPE_INFO);
 	}
 
 	return 0;
