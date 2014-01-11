@@ -414,7 +414,7 @@ void cSettings::initialize()
 		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load resolution from config file: using default value", LOG_TYPE_WARNING);
-			Video.setResolution (Video.getMinW(), Video.getMinH());
+			Video.setResolution (Video.getMinW(), Video.getMinH(), false);
 			saveResolution();
 		}
 		else
@@ -422,7 +422,7 @@ void cSettings::initialize()
 			std::string temp = xmlElement->Attribute ("Text");
 			int wTmp = atoi (temp.substr (0, temp.find (".", 0)).c_str());
 			int hTmp = atoi (temp.substr (temp.find (".", 0) + 1, temp.length()).c_str());
-			Video.setResolution (wTmp, hTmp);
+			Video.setResolution (wTmp, hTmp, false);
 		}
 
 		// =====================================================================

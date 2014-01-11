@@ -77,33 +77,41 @@ static char cVideoPos[] = "SDL_VIDEO_CENTERED=1";
 
 int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 {
-	// BEGIN SANITY CHECK SCREEN RES
+        videoData.width = iWidth;
+        videoData.height = iHeight;
 
-	if (validateMode (iWidth, iHeight) >= 0)
+	//validate only if we should apply because the resolution may be set during reading of settings and at this point does no SDL context exist yet
+	if (bApply)
 	{
-		Log.write ("cVideo:  => Found requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :)", cLog::eLOG_TYPE_INFO);
-	}
-	else
-	{
-		Log.write ("cVideo:  => Couldn't find requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :(", cLog::eLOG_TYPE_WARNING);
-		if (bHaveMinMode())
+		//detect what modes we have
+		doDetection();
+		// BEGIN SANITY CHECK SCREEN RES
+
+		if (validateMode (iWidth, iHeight) >= 0)
 		{
-			Log.write ("cVideo:  => Edit your config and try default video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " if I crash now!", cLog::eLOG_TYPE_WARNING);
+			Log.write ("cVideo:  => Found requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :)", cLog::eLOG_TYPE_INFO);
 		}
 		else
 		{
-			Log.write ("cVideo:  => Couldn't even find my minimal video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " - panic! ;(", cLog::eLOG_TYPE_WARNING);
+			Log.write ("cVideo:  => Couldn't find requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :(", cLog::eLOG_TYPE_WARNING);
+			if (bHaveMinMode())
+			{
+				Log.write ("cVideo:  => Edit your config and try default video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " if I crash now!", cLog::eLOG_TYPE_WARNING);
+			}
+			else
+			{
+				Log.write ("cVideo:  => Couldn't even find my minimal video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " - panic! ;(", cLog::eLOG_TYPE_WARNING);
+			}
 		}
-	}
-	// END SANITY CHECK SCREEN RES
+		// END SANITY CHECK SCREEN RES
 
-	videoData.width = iWidth;
-	videoData.height = iHeight;
-
-	if (bApply)
-	{
 		return applySettings();
 	}
+	else
+	{
+		Log.write ("cVideo:  Resolution set to " + iToStr (iWidth) + "x" + iToStr (iHeight) + " but was not applied yet", cLog::eLOG_TYPE_DEBUG);
+	}
+
 	return 0;
 }
 

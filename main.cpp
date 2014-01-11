@@ -102,9 +102,6 @@ int main (int argc, char* argv[])
 
 	if (!DEDICATED_SERVER)
 	{
-		// detect some video modes for us
-		Video.doDetection();
-
 		Video.initSplash(); // show splashscreen
 		initSound(); // now config is loaded and we can init sound and net
 	}
