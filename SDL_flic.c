@@ -28,9 +28,9 @@ Version 1.2: added function FLI_Skip to skip the current frame without rendering
              added function FLI_Version that returns the library version
 */
 #include "SDL_flic.h"
+#include <string.h>
 #include <setjmp.h>
 #include <stdlib.h>
-//#include <mem.h>
 
 /* Library version. */
 #define FLI_MAJOR 1
@@ -46,6 +46,14 @@ Version 1.2: added function FLI_Skip to skip the current frame without rendering
 #define FLI_COPY     16
 #define FLI_PSTAMP   18
 
+#if 1 // TODO: [SDL2]: SDL_SetColors
+inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
+{
+	SDL_SetPaletteColors (surface->format->palette, colors, index, size);
+}
+#endif
+
+
 typedef struct {
         Uint32 size, type, numchunks;
 } FLI_Frame;
@@ -54,7 +62,7 @@ typedef struct {
         Uint32 size, type, index;
 } FLI_Chunk;
 
-static void readbuffer(FLI_Animation *flic, void *buffer, int size) {
+static void readbuffer(FLI_Animation *flic, void *buffer, unsigned int size) {
         if (SDL_RWread(flic->rwops, buffer, 1, size) != size)
                 longjmp(flic->error, FLI_READERROR);
 }
@@ -97,7 +105,7 @@ static Uint32 readu32(FLI_Animation *flic) {
 
 static void readheader(FLI_Animation *flic) {
         /* Skip size, we don't need it. */
-        SDL_RWseek(flic->rwops, 4, SEEK_CUR);
+        SDL_RWseek(flic->rwops, 4, RW_SEEK_CUR);
         /* Read and check magic. */
         flic->format = readu16(flic);
         if (flic->format != FLI_FLI && flic->format != FLI_FLC)
@@ -120,7 +128,7 @@ static void readheader(FLI_Animation *flic) {
         /* Read the delay between frames. */
         flic->delay = (flic->format == FLI_FLI) ? readu16(flic) : readu32(flic);
         /* Skip rest of the header. */
-        SDL_RWseek(flic->rwops, (flic->format == FLI_FLI) ? 110 : 108, SEEK_CUR);
+        SDL_RWseek(flic->rwops, (flic->format == FLI_FLI) ? 110 : 108, RW_SEEK_CUR);
 }
 
 static void readframe(FLI_Animation *flic, FLI_Frame *frame) {
@@ -135,7 +143,7 @@ static void readframe(FLI_Animation *flic, FLI_Frame *frame) {
         /* Read the number of chunks in this frame. */
         frame->numchunks = readu16(flic);
         /* Skip rest of the data. */
-        SDL_RWseek(flic->rwops, 8, SEEK_CUR);
+        SDL_RWseek(flic->rwops, 8, RW_SEEK_CUR);
 }
 
 static void readchunk(FLI_Animation *flic, FLI_Chunk *chunk) {
@@ -357,7 +365,7 @@ FLI_Animation *FLI_Open(SDL_RWops *rwops, int *error) {
         readframe(flic, &frame);
         /* If it's a prefix frame, skip it. */
         if (frame.type == 0xF100) {
-                SDL_RWseek(rwops, frame.size - 16, SEEK_CUR);
+                SDL_RWseek(rwops, frame.size - 16, RW_SEEK_CUR);
                 flic->offframe1 = SDL_RWtell(rwops);
                 flic->numframes--;
         }
@@ -393,7 +401,7 @@ int FLI_NextFrame(FLI_Animation *flic) {
                 return error;
         }
         /* Seek to the current frame. */
-        SDL_RWseek(flic->rwops, flic->offnextframe, SEEK_SET);
+        SDL_RWseek(flic->rwops, flic->offnextframe, RW_SEEK_SET);
         /* Read the current frame. */
         readframe(flic, &frame);
         /* Read and process each of the chunks of this frame. */
@@ -426,7 +434,7 @@ int FLI_NextFrame(FLI_Animation *flic) {
                                 break;
                         case FLI_PSTAMP:
                                 /* Ignore this chunk. */
-								SDL_RWseek( flic->rwops, chunk.size - 6, SEEK_CUR );
+								SDL_RWseek( flic->rwops, chunk.size - 6, RW_SEEK_CUR );
                                 break;
                         default:
                                 longjmp(flic->error, FLI_CORRUPTEDFILE);
@@ -457,7 +465,7 @@ int FLI_Skip(FLI_Animation *flic) {
         if (error != 0)
                 return error;
         /* Seek to the current frame. */
-        SDL_RWseek(flic->rwops, flic->offnextframe, SEEK_SET);
+        SDL_RWseek(flic->rwops, flic->offnextframe, RW_SEEK_SET);
         /* Read the current frame. */
         readframe(flic, &frame);
         /* Skip to the next frame without rendering. */

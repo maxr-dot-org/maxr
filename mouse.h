@@ -19,11 +19,12 @@
 #ifndef mouseH
 #define mouseH
 
-#include "autosurface.h"
 #include "defines.h"
-#include <SDL.h>
 
 class cGameGUI;
+struct SDL_Surface;
+struct SDL_Cursor;
+
 
 // Die Mauszeigertypen ///////////////////////////////////////////////////////
 enum eCursor {CHand, CNo, CSelect, CMove, CPfeil1, CPfeil2, CPfeil3, CPfeil4, CPfeil6, CPfeil7, CPfeil8, CPfeil9, CHelp, CAttack, CBand, CTransf, CLoad, CMuni, CRepair, CSteal, CDisable, CActivate, CMoveDraft, CAttackOOR};
@@ -33,22 +34,16 @@ class cMouse
 {
 public:
 	cMouse();
-
-	void draw (bool draw_back, SDL_Surface* sf);
+	~cMouse();
 
 	// Set a new cursor.
 	bool SetCursor (eCursor);
 
-	void GetBack (SDL_Surface* sf);
-	/**
-	* Draws the currently stored background to sf
-	*/
-	void restoreBack (SDL_Surface* sf);
-	void GetPos();
+	void updatePos();
 	void getCursorOffset (int& x, int& y) const;
 	bool moved();
-	void Show() {LastX = -100; visible = true;}
-	void Hide() {visible = false;}
+	void Show();
+	void Hide();
 	/**
 	* return the X Coordinate of the Cursor on the map
 	*/
@@ -57,19 +52,14 @@ public:
 	* return the Y Coordinate of the Cursor on the map
 	*/
 	int getKachelY (const cGameGUI& gameGUI) const;
-private:
-	bool visible; // Gibt an, ob die Maus angezeigt werden soll.
+
 public:
 	SDL_Surface* cur; // Current Cursor.
 private:
-	AutoSurface back; // Zum Speichern des Maushintergrundes.
+	SDL_Cursor* sdlCursor;
 public:
 	int x, y; /** the pixel position of the cursor on the map */
 	bool isDoubleClick;
-private:
-	int prevScreenX, prevScreenY;
-	int LastX, LastY; // Die letzte Position der Maus.
-	int DrawX, DrawY; // Die Position, an die die Maus gezeichnet werden soll.
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////

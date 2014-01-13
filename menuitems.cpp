@@ -442,10 +442,10 @@ void cMenuImage::setImage (SDL_Surface* image_)
 {
 	if (image_ != NULL)
 	{
-		image = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0);
+		image = SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0);
 
 		SDL_FillRect (image, NULL, 0xFF00FF);
-		SDL_SetColorKey (image, SDL_SRCCOLORKEY, 0xFF00FF);
+		SDL_SetColorKey (image, SDL_TRUE, 0xFF00FF);
 
 		SDL_BlitSurface (image_, NULL, image, NULL);
 
@@ -702,8 +702,8 @@ void cMenuButton::renewButtonSurface()
 			src.y = isClicked ? 0 : 132;
 			break;
 	}
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
 	if (buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
 	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
@@ -716,7 +716,6 @@ void cMenuButton::redraw()
 	renewButtonSurface();
 	draw();
 	Video.draw();
-	mouse->draw (false, screen);
 }
 
 int cMenuButton::getTextYOffset() const
@@ -899,7 +898,6 @@ void cMenuDestroyButton::draw()
 	}
 
 	Video.draw();
-	mouse->draw (false, screen);
 }
 
 void cMenuDestroyButton::animationCallback()
@@ -1048,7 +1046,7 @@ void cMenuCheckButton::renewButtonSurface()
 	}
 	if (src.w > 0)
 	{
-		surface = SDL_CreateRGBSurface (Video.getSurfaceType(), src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
+		surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
 		if (buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
 		else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
 	}
@@ -1070,7 +1068,6 @@ bool cMenuCheckButton::preClicked()
 	}
 	draw();
 	Video.draw();
-	mouse->draw (false, screen);
 	return true;
 }
 
@@ -1112,7 +1109,7 @@ void cMenuCheckButton::draw()
 			font->showText (position.x, position.y, text, fontType);
 			if (checked)
 			{
-				const Uint32 selection_color (0x00E3DACF);
+				const Uint32 selection_color (0xFFE3DACF);
 				const SDL_Rect dest = {Sint16 (position.x - 2), Sint16 (position.y - 1), Uint16 (position.w + 5), Uint16 (position.h + 2) };
 				DrawRectangle (buffer, dest, selection_color);
 			}
@@ -1209,7 +1206,7 @@ bool cMenuRadioGroup::overItem (int x, int y) const
 
 void cMenuRadioGroup::clicked (void* parent)
 {
-	mouse->GetPos();
+	mouse->updatePos();
 	for (unsigned int i = 0; i < buttonList.size(); i++)
 	{
 		if (buttonList[i]->overItem (mouse->x, mouse->y))
@@ -1252,8 +1249,8 @@ cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, cUn
 void cMenuUnitListItem::init()
 {
 	const int UNIT_IMAGE_SIZE = 32;
-	surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0x00FF00FF);
+	surface = SDL_CreateRGBSurface (0, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_TRUE, 0x00FF00FF);
 	SDL_FillRect (surface, NULL, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
@@ -1288,7 +1285,7 @@ void cMenuUnitListItem::draw()
 	if (selected)
 	{
 		const SDL_Rect dest = { Sint16 (position.x - 4), Sint16 (position.y - 4), 38, 38};
-		DrawSelectionCorner (buffer, dest, 8, 0x00E0E0E0);
+		DrawSelectionCorner (buffer, dest, 8, 0xFFE0E0E0);
 	}
 
 	switch (displayType)
@@ -1484,7 +1481,7 @@ void cMenuUnitsList::draw()
 
 void cMenuUnitsList::released (void* parent)
 {
-	mouse->GetPos();
+	mouse->updatePos();
 	for (int i = offset; i < offset + maxDisplayUnits; i++)
 	{
 		if (i >= (int) unitsList.size()) break;
@@ -1674,7 +1671,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 	dest.x += src.w + 3;
 	SDL_Rect mark = { Sint16 (dest.x - src.w / 2), dest.y, 1, src.h };
 
-	SDL_FillRect (buffer, &mark, 0xFC0000);
+	SDL_FillRect (buffer, &mark, 0xFFFC0000);
 
 	if (symType == MENU_SYMBOLS_METAL)
 	{
@@ -1905,11 +1902,11 @@ void cMenuUnitDetails::draw()
 	if (drawLines)
 	{
 		SDL_Rect lineRect = { Sint16 (position.x + 2), Sint16 (position.y + 14), 153, 1 };
-		SDL_FillRect (buffer, &lineRect, 0x743904);
+		SDL_FillRect (buffer, &lineRect, 0xFF743904);
 		lineRect.y += 12;
-		SDL_FillRect (buffer, &lineRect, 0x743904);
+		SDL_FillRect (buffer, &lineRect, 0xFF743904);
 		lineRect.y += 12;
-		SDL_FillRect (buffer, &lineRect, 0x743904);
+		SDL_FillRect (buffer, &lineRect, 0xFF743904);
 	}
 	if (unit == NULL) return;
 	const sUnitData* data = &unit->data;
@@ -2127,7 +2124,7 @@ void cMenuUnitDetailsBig::draw()
 	const int DETAIL_COLUMN_1 = dest.x + 27;
 	const int DETAIL_COLUMN_2 = dest.x + 42;
 	const int DETAIL_COLUMN_3 = dest.x + 95;
-#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect (buffer, &dest, 0xFC0000); y += 19;
+#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect (buffer, &dest, 0xFFFC0000); y += 19;
 
 	if (data->canAttack)
 	{
@@ -2349,8 +2346,8 @@ void cMenuMaterialBar::setType (eMaterialBarTypes materialType_)
 void cMenuMaterialBar::generateSurface()
 {
 	SDL_Rect src = { 114, 336, position.w, position.h };
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
 
 	switch (materialType)
@@ -2568,11 +2565,11 @@ cMenuScroller::cMenuScroller (int x, int y, eMenuScrollerTypes scrollerType_, cM
 	position.h = src.h;
 	mouseXOff = mouseYOff = 0;
 
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, position.w, position.h, Video.getColDepth(), 0, 0, 0, 0);
+	surface = SDL_CreateRGBSurface (0, position.w, position.h, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
 	if (scrollerType == SCROLLER_TYPE_HUD_ZOOM) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
 	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 }
 
 void cMenuScroller::draw()
@@ -2663,7 +2660,7 @@ void cMenuScrollBar::createSurface()
 {
 	SDL_Rect src = { 234, 1, 16, 48};
 	SDL_Rect dest = { 0, 0, 0, 0 };
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType(), 16, position.h - 28, Video.getColDepth(), 0, 0, 0, 0);
+	surface = SDL_CreateRGBSurface (0, 16, position.h - 28, Video.getColDepth(), 0, 0, 0, 0);
 	do
 	{
 		if (position.h - 28 - dest.y < 48) src.h = position.h - 28 - dest.x;
@@ -2961,7 +2958,7 @@ int cMenuLineEdit::getBorderSize() const
 	}
 }
 
-bool cMenuLineEdit::handleKeyInput (SDL_keysym keysym, const string& ch, void* parent)
+bool cMenuLineEdit::handleKeyInput (const SDL_Keysym& keysym, cMenu* parent)
 {
 	if (readOnly) return false;
 
@@ -2995,32 +2992,39 @@ bool cMenuLineEdit::handleKeyInput (SDL_keysym keysym, const string& ch, void* p
 			if (wasKeyInput) wasKeyInput (parent);
 			break;
 		default: // no special key - handle as normal character:
-			if (keysym.unicode >= 32)
-			{
-				if (keysym.unicode >= 48 && keysym.unicode <= 57)
-				{
-					if (!takeNumerics) break;
-				}
-				else if (!takeChars) break;
-
-				text.insert (cursorPos, ch);
-				if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
-				if (cursorPos >= endOffset)
-				{
-					doPosIncrease (endOffset, endOffset);
-					while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosIncrease (startOffset, startOffset);
-				}
-				else
-				{
-					if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
-					else doPosIncrease (endOffset, cursorPos);
-				}
-				if (wasKeyInput) wasKeyInput (parent);
-			}
+			addText (keysym, parent);
 			break;
 	}
 	parentMenu->draw();
 	return true;
+}
+
+void cMenuLineEdit::addText (const SDL_Keysym& keysym, cMenu* parent)
+{
+	if (keysym.sym >= 32)
+	{
+		if (keysym.sym >= 48 && keysym.sym <= 57)
+		{
+			if (!takeNumerics) return;
+		}
+		else if (!takeChars) return;
+
+		std::string ch = cInput::getUTF16Char (keysym.sym);
+
+		text.insert (cursorPos, ch);
+		if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
+		if (cursorPos >= endOffset)
+		{
+			doPosIncrease (endOffset, endOffset);
+			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosIncrease (startOffset, startOffset);
+		}
+		else
+		{
+			if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
+			else doPosIncrease (endOffset, cursorPos);
+		}
+		if (wasKeyInput) wasKeyInput (parent);
+	}
 }
 
 void cMenuLineEdit::setReturnPressedFunc (void (*returnPressed_) (void*))
@@ -3038,9 +3042,9 @@ void cMenuChatBox::generateSurface()
 {
 	if (Video.getResolutionX() - HUD_TOTAL_WIDTH - 20 < 60) return;
 
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType(), Video.getResolutionX() - HUD_TOTAL_WIDTH - 20, 48, Video.getColDepth(), 0, 0, 0, 0);
+	surface = SDL_CreateRGBSurface (0, Video.getResolutionX() - HUD_TOTAL_WIDTH - 20, 48, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 
 	SDL_Rect src = { 0, 0, 30, 48 };
 	SDL_Rect dest = { 0, 0, 0, 0 };
@@ -3118,14 +3122,14 @@ void cMenuPlayersBox::draw()
 {
 	SDL_Rect src = { 10, 0, 10, 10 };
 
-	AutoSurface readySurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface, SDL_SRCCOLORKEY, 0xFF00FF);
+	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (readySurface, SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (readySurface, NULL, 0xFF00FF);
 	SDL_BlitSurface (GraphicsData.gfx_player_ready, &src, readySurface, NULL);
 
 	src.x -= 10;
-	AutoSurface notReadySurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (notReadySurface, SDL_SRCCOLORKEY, 0xFF00FF);
+	AutoSurface notReadySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (notReadySurface, SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (notReadySurface, NULL, 0xFF00FF);
 	SDL_BlitSurface (GraphicsData.gfx_player_ready, &src, notReadySurface, NULL);
 
@@ -3137,7 +3141,7 @@ void cMenuPlayersBox::draw()
 			if ( (*players) [i]->isReady()) playerReadys[index]->setImage (readySurface);
 			else playerReadys[index]->setImage (notReadySurface);
 
-			AutoSurface colorSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+			AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 			SDL_BlitSurface ( (*players) [i]->getColorSurface(), &src, colorSurface, NULL);
 			playerColors[index]->setImage (colorSurface);
 
@@ -3420,7 +3424,7 @@ cMenuSlider::cMenuSlider (int x, int y, float minValue_, float maxValue_, cMenu*
 			position.w = src.w;
 			position.h = src.h;
 
-			surface = SDL_CreateRGBSurface (Video.getSurfaceType(), src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
+			surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
 			SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
 
 			scroller = new cMenuScroller (x - 7, y - 7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved);
@@ -3612,7 +3616,7 @@ void cMenuReportsScreen::drawUnitsScreen()
 	{
 		const int selIndex = selected - index * maxItems;
 		const SDL_Rect rect = {Sint16 (position.x + 13), Sint16 (position.y + 26 + 55 * selIndex), 38, 38};
-		DrawSelectionCorner (buffer, rect, 8, 0x00E0E0E0);
+		DrawSelectionCorner (buffer, rect, 8, 0xFFE0E0E0);
 	}
 }
 
@@ -3941,7 +3945,7 @@ void cMenuReportsScreen::drawReportsScreen()
 		{
 			int selIndex = selected - index * maxItems;
 			const SDL_Rect rect = {Sint16 (position.x + 15), Sint16 (position.y + 23 + 55 * selIndex), 450, 53 };
-			DrawRectangle (buffer, rect, 0x00E0E0E0);
+			DrawRectangle (buffer, rect, 0xFFE0E0E0);
 		}
 	}
 }
@@ -4112,8 +4116,8 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	float zoomFactor = (float) UNIT_IMAGE_SIZE / (unit->data.isBig ? 128.0f : 64.0f);
 	SDL_Rect dest = { 0, 0, 0, 0};
 
-	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_Surface* surface = SDL_CreateRGBSurface (0, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 	//SDL_FillRect (surface, NULL, 0xFF00FF);
 
 	if (unit->isABuilding())

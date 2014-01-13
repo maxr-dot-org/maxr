@@ -35,13 +35,15 @@ sMouseState::sMouseState()
 cInput::cInput() :
 	LastClickTicks (0)
 {
+#if 0 // TODO: [SDL2]: setting for repeat key ?
 	// enables that SDL puts the unicode values to the keyevents.
 	SDL_EnableUNICODE (1);
 	// enables keyrepetition
 	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+#endif
 }
 
-void cInput::inputkey (cMenu& activeMenu, SDL_KeyboardEvent& key)
+void cInput::inputkey (cMenu& activeMenu, const SDL_KeyboardEvent& key)
 {
 	// give the key to the active menu
 	// But do not send events to a menu,
@@ -50,7 +52,7 @@ void cInput::inputkey (cMenu& activeMenu, SDL_KeyboardEvent& key)
 	// after clicking the exit button
 	if (!activeMenu.exiting())
 	{
-		activeMenu.handleKeyInput (key, getUTF16Char (key.keysym.unicode));
+		activeMenu.handleKeyInput (key);
 	}
 }
 
@@ -86,8 +88,7 @@ bool cInput::IsDoubleClicked()
 	}
 }
 
-
-void cInput::inputMouseButton (cMenu& activeMenu, SDL_MouseButtonEvent& button)
+void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseButtonEvent& button)
 {
 	MouseState.x = button.x;
 	MouseState.y = button.y;
@@ -106,27 +107,7 @@ void cInput::inputMouseButton (cMenu& activeMenu, SDL_MouseButtonEvent& button)
 			MouseState.rightButtonReleased = false;
 			MouseState.leftButtonReleased = false;
 		}
-		else if (button.button == SDL_BUTTON_WHEELUP)
-		{
-			MouseState.wheelUp = true;
-			MouseState.leftButtonReleased = false;
-			MouseState.rightButtonReleased = false;
-		}
-		else if (button.button == SDL_BUTTON_WHEELDOWN)
-		{
-			MouseState.wheelDown = true;
-			MouseState.leftButtonReleased = false;
-			MouseState.rightButtonReleased = false;
-		}
-
-		if (IsDoubleClicked())
-		{
-			MouseState.isDoubleClick = true;
-		}
-		else
-		{
-			MouseState.isDoubleClick = false;
-		}
+		MouseState.isDoubleClick = IsDoubleClicked();
 	}
 	else if (button.state == SDL_RELEASED)
 	{
@@ -142,8 +123,6 @@ void cInput::inputMouseButton (cMenu& activeMenu, SDL_MouseButtonEvent& button)
 			MouseState.rightButtonReleased = true;
 			MouseState.leftButtonReleased = false;
 		}
-		else if (button.button == SDL_BUTTON_WHEELUP) MouseState.wheelUp = false;
-		else if (button.button == SDL_BUTTON_WHEELDOWN) MouseState.wheelDown = false;
 	}
 
 	// do not send events to a menu, after an event triggered the termination
@@ -152,6 +131,24 @@ void cInput::inputMouseButton (cMenu& activeMenu, SDL_MouseButtonEvent& button)
 	if (!activeMenu.exiting())
 	{
 		activeMenu.handleMouseInput (MouseState);
+	}
+}
+
+void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseWheelEvent& wheel)
+{
+	MouseState.wheelUp = false;
+	MouseState.wheelDown = false;
+	if (wheel.y > 0)
+	{
+		MouseState.wheelUp = true;
+		MouseState.leftButtonReleased = false;
+		MouseState.rightButtonReleased = false;
+	}
+	else if (wheel.y < 0)
+	{
+		MouseState.wheelDown = true;
+		MouseState.leftButtonReleased = false;
+		MouseState.rightButtonReleased = false;
 	}
 }
 

@@ -466,7 +466,7 @@ public:
 
 	void updateInfoTexts();
 
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 
 	const cClient* getClient() const { return client; }
 	cClient* getClient() { return client; }

@@ -16,70 +16,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include <algorithm>
 
 #include "mouse.h"
+
 #include "main.h"
 #include "client.h"
 #include "settings.h"
 #include "hud.h"
 
+#include <SDL.h>
 
-cMouse::cMouse()
+cMouse::cMouse() : sdlCursor (NULL)
 {
-	visible = false;
 	cur = NULL;
-	LastX = -100;
-	LastY = -100;
 	x = 0;
 	y = 0;
 	isDoubleClick = false;
-	prevScreenX = 0;
-	prevScreenY = 0;
-
-	DrawX = 0;
-	DrawY = 0;
 }
 
-// Malt die Maus, und wenn draw_back gesetzt ist, auch den alten Hintergrund:
-void cMouse::draw (bool draw_back, SDL_Surface* sf)
+cMouse::~cMouse()
 {
-	if (!visible || cur == NULL) return;
-	GetPos();
-
-	// restore old background
-	if (back && draw_back && LastX != -100)
-	{
-		SDL_Rect dest;
-		dest.x = LastX;
-		dest.y = LastY;
-		SDL_BlitSurface (back, NULL, sf, &dest);
-
-		SDL_UpdateRect (sf, dest.x, dest.y, dest.w, dest.h);
-	}
-
-	//change size of back surface if necessary, e.g. when the mouse cursor has changed
-	if (!back || back->h != cur->h || back->w != cur->w)
-	{
-		back = SDL_CreateRGBSurface (Video.getSurfaceType(), cur->w, cur->h, 32, 0, 0, 0, 0);
-	}
-
-	// store new background
-	GetBack (sf);
-	SDL_Rect dest;
-	dest.x = DrawX;
-	dest.y = DrawY;
-	LastX = DrawX;
-	LastY = DrawY;
-
-	//draw mouse
-	SDL_BlitSurface (cur, NULL, sf, &dest);
-	SDL_UpdateRect (sf, dest.x, dest.y, dest.w, dest.h);
+	if (sdlCursor) SDL_FreeCursor (sdlCursor);
 }
 
 bool cMouse::SetCursor (eCursor const typ)
 {
 	const SDL_Surface* const lastCur = cur;
+
 	switch (typ)
 	{
 		default:
@@ -108,56 +73,50 @@ bool cMouse::SetCursor (eCursor const typ)
 		case CDisable:   cur = GraphicsData.gfx_Cdisable;    break;
 		case CActivate:  cur = GraphicsData.gfx_Cactivate;   break;
 	}
-	return lastCur != cur;
-}
-
-// Liest den Hintergrund in das Back-Surface ein:
-void cMouse::GetBack (SDL_Surface* sf)
-{
-	SDL_Rect scr;
-	GetPos();
-	scr.x = DrawX;
-	scr.y = DrawY;
-	scr.w = back->w;
-	scr.h = back->h;
-	SDL_BlitSurface (sf, &scr, back, NULL);
-}
-
-void cMouse::restoreBack (SDL_Surface* sf)
-{
-	SDL_Rect dest;
-	dest.x = LastX;
-	dest.y = LastY;
-	SDL_BlitSurface (back, NULL, sf, &dest);
+	if (lastCur == cur)
+	{
+		return false;
+	}
+	if (sdlCursor) SDL_FreeCursor (sdlCursor);
+	int hotx = 0;
+	int hoty = 0;
+	getCursorOffset (hotx, hoty);
+	sdlCursor = SDL_CreateColorCursor (cur, hotx, hoty);
+	SDL_SetCursor (sdlCursor);
+	return true;
 }
 
 //updates the internal mouse position
-void cMouse::GetPos()
+void cMouse::updatePos()
 {
 	SDL_GetMouseState (&x, &y);
-
-	// Cursor Offset bestimmen:
-	int offX;
-	int offY;
-
-	getCursorOffset (offX, offY);
-
-	DrawX = x + offX;
-	DrawY = y + offY;
 }
 
 // gets the cursor offset. transforms screenspace to clickspace
 void cMouse::getCursorOffset (int& x, int& y) const
 {
-	if (cur == GraphicsData.gfx_Cselect || cur == GraphicsData.gfx_Chelp || cur == GraphicsData.gfx_Cmove || cur == GraphicsData.gfx_Cmove_draft || cur == GraphicsData.gfx_Cno || cur == GraphicsData.gfx_Ctransf || cur == GraphicsData.gfx_Cband || cur == GraphicsData.gfx_Cload || cur == GraphicsData.gfx_Cmuni || cur == GraphicsData.gfx_Crepair || cur == GraphicsData.gfx_Cactivate)
+	if (cur == GraphicsData.gfx_Cselect
+		|| cur == GraphicsData.gfx_Chelp
+		|| cur == GraphicsData.gfx_Cmove
+		|| cur == GraphicsData.gfx_Cmove_draft
+		|| cur == GraphicsData.gfx_Cno
+		|| cur == GraphicsData.gfx_Ctransf
+		|| cur == GraphicsData.gfx_Cband
+		|| cur == GraphicsData.gfx_Cload
+		|| cur == GraphicsData.gfx_Cmuni
+		|| cur == GraphicsData.gfx_Crepair
+		|| cur == GraphicsData.gfx_Cactivate)
 	{
-		x = -12;
-		y = -12;
+		x = 12;
+		y = 12;
 	}
-	else if (cur == GraphicsData.gfx_Cattack || cur == GraphicsData.gfx_Csteal || cur == GraphicsData.gfx_Cdisable || cur == GraphicsData.gfx_Cattackoor)
+	else if (cur == GraphicsData.gfx_Cattack
+			 || cur == GraphicsData.gfx_Csteal
+			 || cur == GraphicsData.gfx_Cdisable
+			 || cur == GraphicsData.gfx_Cattackoor)
 	{
-		x = -19;
-		y = -16;
+		x = 19;
+		y = 16;
 	}
 	else
 	{
@@ -175,6 +134,16 @@ bool cMouse::moved()
 	lastX = x;
 	lastY = y;
 	return moved;
+}
+
+void cMouse::Show()
+{
+	SDL_ShowCursor (true);
+}
+
+void cMouse::Hide()
+{
+	SDL_ShowCursor (false);
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:

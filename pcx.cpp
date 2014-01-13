@@ -112,7 +112,7 @@ SDL_Surface* LoadPCX (const std::string& name)
 	if (!FileExists (name.c_str()))
 	{
 		// File not found, create empty surface.
-		SDL_Surface* const s = SDL_CreateRGBSurface (Video.getSurfaceType(), 100, 20, Video.getColDepth(), 0, 0, 0, 0);
+		SDL_Surface* const s = SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0);
 		return s;
 	}
 
@@ -120,20 +120,20 @@ SDL_Surface* LoadPCX (const std::string& name)
 	if (!bufferedFile.open (name.c_str(), "rb"))
 	{
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);  // Image corrupted, create empty surface.
-		SDL_Surface* const s = SDL_CreateRGBSurface (Video.getSurfaceType(), 100, 20, Video.getColDepth(), 0, 0, 0, 0);
+		SDL_Surface* const s = SDL_CreateRGBSurface (0, 100, 20, Video.getColDepth(), 0, 0, 0, 0);
 		return s;
 	}
 	// Load the image.
 	bufferedFile.seek (8, SEEK_SET);
 	Uint16       const x = bufferedFile.readLE16() + 1;
 	Uint16       const y = bufferedFile.readLE16() + 1;
-	SDL_Surface* const s = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, x, y, 32, 0, 0, 0, 0);
+	SDL_Surface* const s = SDL_CreateRGBSurface (0, x, y, 32, 0, 0, 0, 0);
 	if (!s)
 	{
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_ERROR);
 		return NULL; //app will crash using this
 	}
-	SDL_SetColorKey (s, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_SetColorKey (s, SDL_TRUE, 0xFF00FF);
 
 	Uint32* const buf = static_cast<Uint32*> (s->pixels);
 	bufferedFile.seek (128, RW_SEEK_SET);

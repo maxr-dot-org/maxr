@@ -139,6 +139,16 @@ int LoadKeys()
 	return 1;
 }
 
+#if 0 // TODO: [SDL2]: obsolete keys... use scancode ?
+SDLK_KP0;SDLK_KP1;SDLK_KP2;SDLK_KP3;SDLK_KP4;
+SDLK_KP5;SDLK_KP6;SDLK_KP7;SDLK_KP8;SDLK_KP9;
+SDLK_NUMLOCK;SDLK_SCROLLOCK;
+SDLK_RMETA;SDLK_LMETA;
+SDLK_LSUPER;SDLK_RSUPER;
+SDLK_COMPOSE;SDLK_PRINT;SDLK_BREAK;SDLK_EURO;
+#endif
+
+
 // Liefert einen String mit dem Namen der Taste zurueck:
 const char* GetKeyString (SDLKey key)
 {
@@ -216,16 +226,6 @@ const char* GetKeyString (SDLKey key)
 		case SDLK_y: return "Y";
 		case SDLK_z: return "Z";
 		case SDLK_DELETE: return "DELETE";
-		case SDLK_KP0: return "KP0";
-		case SDLK_KP1: return "KP1";
-		case SDLK_KP2: return "KP2";
-		case SDLK_KP3: return "KP3";
-		case SDLK_KP4: return "KP4";
-		case SDLK_KP5: return "KP5";
-		case SDLK_KP6: return "KP6";
-		case SDLK_KP7: return "KP7";
-		case SDLK_KP8: return "KP8";
-		case SDLK_KP9: return "KP9";
 		case SDLK_KP_PERIOD: return "KP_PERIOD";
 		case SDLK_KP_DIVIDE: return "KP_DIVIDE";
 		case SDLK_KP_MULTIPLY: return "KP_MULTIPLY";
@@ -257,28 +257,18 @@ const char* GetKeyString (SDLKey key)
 		case SDLK_F13: return "F13";
 		case SDLK_F14: return "F14";
 		case SDLK_F15: return "F15";
-		case SDLK_NUMLOCK: return "NUMLOCK";
 		case SDLK_CAPSLOCK: return "CAPSLOCK";
-		case SDLK_SCROLLOCK: return "SCROLLOCK";
 		case SDLK_RSHIFT: return "RSHIFT";
 		case SDLK_LSHIFT: return "LSHIFT";
 		case SDLK_RCTRL: return "RCTRL";
 		case SDLK_LCTRL: return "LCTRL";
 		case SDLK_RALT: return "RALT";
 		case SDLK_LALT: return "LALT";
-		case SDLK_RMETA: return "RMETA";
-		case SDLK_LMETA: return "LMETA";
-		case SDLK_LSUPER: return "LSUPER";
-		case SDLK_RSUPER: return "RSUPER";
 		case SDLK_MODE: return "MODE";
-		case SDLK_COMPOSE: return "COMPOSE";
 		case SDLK_HELP: return "HELP";
-		case SDLK_PRINT: return "PRINT";
 		case SDLK_SYSREQ: return "SYSREQ";
-		case SDLK_BREAK: return "BREAK";
 		case SDLK_MENU: return "MENU";
 		case SDLK_POWER: return "POWER";
-		case SDLK_EURO: return "EURO";
 		case SDLK_UNDO: return "UNDO";
 		default: return "?";
 	}
@@ -359,16 +349,6 @@ SDLKey GetKeyFromString (const std::string& key)
 	if (!key.compare ("Y")) return SDLK_y;
 	if (!key.compare ("Z")) return SDLK_z;
 	if (!key.compare ("DELETE")) return SDLK_DELETE;
-	if (!key.compare ("KP0")) return SDLK_KP0;
-	if (!key.compare ("KP1")) return SDLK_KP1;
-	if (!key.compare ("KP2")) return SDLK_KP2;
-	if (!key.compare ("KP3")) return SDLK_KP3;
-	if (!key.compare ("KP4")) return SDLK_KP4;
-	if (!key.compare ("KP5")) return SDLK_KP5;
-	if (!key.compare ("KP6")) return SDLK_KP6;
-	if (!key.compare ("KP7")) return SDLK_KP7;
-	if (!key.compare ("KP8")) return SDLK_KP8;
-	if (!key.compare ("KP9")) return SDLK_KP9;
 	if (!key.compare ("KP_PERIOD")) return SDLK_KP_PERIOD;
 	if (!key.compare ("KP_DIVIDE")) return SDLK_KP_DIVIDE;
 	if (!key.compare ("KP_MULTIPLY")) return SDLK_KP_MULTIPLY;
@@ -400,28 +380,18 @@ SDLKey GetKeyFromString (const std::string& key)
 	if (!key.compare ("F13")) return SDLK_F13;
 	if (!key.compare ("F14")) return SDLK_F14;
 	if (!key.compare ("F15")) return SDLK_F15;
-	if (!key.compare ("NUMLOCK")) return SDLK_NUMLOCK;
 	if (!key.compare ("CAPSLOCK")) return SDLK_CAPSLOCK;
-	if (!key.compare ("SCROLLOCK")) return SDLK_SCROLLOCK;
 	if (!key.compare ("RSHIFT")) return SDLK_RSHIFT;
 	if (!key.compare ("LSHIFT")) return SDLK_LSHIFT;
 	if (!key.compare ("RCTRL")) return SDLK_RCTRL;
 	if (!key.compare ("LCTRL")) return SDLK_LCTRL;
 	if (!key.compare ("RALT")) return SDLK_RALT;
 	if (!key.compare ("LALT")) return SDLK_LALT;
-	if (!key.compare ("RMETA")) return SDLK_RMETA;
-	if (!key.compare ("LMETA")) return SDLK_LMETA;
-	if (!key.compare ("LSUPER")) return SDLK_LSUPER;
-	if (!key.compare ("RSUPER")) return SDLK_RSUPER;
 	if (!key.compare ("MODE")) return SDLK_MODE;
-	if (!key.compare ("COMPOSE")) return SDLK_COMPOSE;
 	if (!key.compare ("HELP")) return SDLK_HELP;
-	if (!key.compare ("PRINT")) return SDLK_PRINT;
 	if (!key.compare ("SYSREQ")) return SDLK_SYSREQ;
-	if (!key.compare ("BREAK")) return SDLK_BREAK;
 	if (!key.compare ("MENU")) return SDLK_MENU;
 	if (!key.compare ("POWER")) return SDLK_POWER;
-	if (!key.compare ("EURO")) return SDLK_EURO;
 	if (!key.compare ("UNDO")) return SDLK_UNDO;
 	return SDLK_UNKNOWN;
 }

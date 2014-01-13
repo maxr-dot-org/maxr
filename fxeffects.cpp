@@ -293,7 +293,7 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetAlpha (images[1], SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (images[1], alpha);
 
 	SDL_Rect dest;
 	dest = gameGUI.calcScreenPos (posX - images[0]->w / 2, posY - images[0]->h / 2);
@@ -338,7 +338,7 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetAlpha (images[1], SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (images[1], alpha);
 
 	SDL_Rect src, dest;
 	src.y = 0;
@@ -473,6 +473,6 @@ void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 	dest = gameGUI.calcScreenPos ( (int) (posX + tick * dx), (int) (posY + tick * dy));
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetAlpha (images[1], SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (images[1], alpha);
 	SDL_BlitSurface (images[1], &src, buffer, &dest);
 }

@@ -28,7 +28,6 @@
 #include <SDL_thread.h>
 #include <SDL_net.h>
 #include <SDL_mixer.h>
-#include <SDL_getenv.h>
 
 #define __main__
 #include "main.h"
@@ -109,7 +108,7 @@ int main (int argc, char* argv[])
 
 	// load files
 	int loadingState = LOAD_GOING;
-	SDL_Thread* dataThread = SDL_CreateThread (LoadData, &loadingState);
+	SDL_Thread* dataThread = SDL_CreateThread (LoadData, "loadingData", &loadingState);
 
 	SDL_Event event;
 	while (loadingState != LOAD_FINISHED)
@@ -122,8 +121,12 @@ int main (int argc, char* argv[])
 		}
 		while (SDL_PollEvent (&event))
 		{
-			if (event.type == SDL_ACTIVEEVENT && !DEDICATED_SERVER)
-				SDL_UpdateRect (screen, 0, 0, 0, 0);
+			if (!DEDICATED_SERVER
+				&& event.type == SDL_WINDOWEVENT
+				&& event.window.event == SDL_WINDOWEVENT_EXPOSED)
+			{
+				Video.draw();
+			}
 		}
 		SDL_Delay (100);
 	}
@@ -170,7 +173,6 @@ int main (int argc, char* argv[])
 	else
 	{
 		Video.setResolution (Video.getResolutionX(), Video.getResolutionY(), true);
-		SDL_ShowCursor (0);
 		Video.clearBuffer();
 
 		mouse = new cMouse;
@@ -333,7 +335,7 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	if (height > scr->h && dest) height = scr->h;
 
 	// generate new surface if necessary
-	if (dest == NULL) surface = SDL_CreateRGBSurface (scr->flags, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+	if (dest == NULL) surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
 	else
 	{
 		// else set the size of the old one
@@ -419,8 +421,8 @@ drawline:
 SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
 {
 	SDL_Surface* sf;
-	sf = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, size, size, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (sf, SDL_SRCCOLORKEY, 0x00FF00FF);
+	sf = SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (sf, SDL_TRUE, 0x00FF00FF);
 	SDL_FillRect (sf, NULL, 0x00FF00FF);
 	SDL_LockSurface (sf);
 
@@ -972,8 +974,8 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 	if (!dst || !src) return;
 
 	//check surface formats
-	if (!dst->format->Amask) return;
-	if (src->format->Amask || ! (src->flags & SDL_SRCALPHA)) return;
+	if (!dst->format->Amask || src->format->Amask) return;
+	if (SDL_GetSurfaceAlphaMod(src, NULL) != 0) return;
 
 	if (srcrect == NULL)
 	{
@@ -1035,7 +1037,8 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 	if (SDL_MUSTLOCK (dst)) SDL_LockSurface (dst);
 
 	//setup needed variables
-	const Uint32 srcAlpha = src->format->alpha;
+	Uint8 srcAlpha = 0;
+	SDL_GetSurfaceAlphaMod (src, &srcAlpha);
 	const int srmask = src->format->Rmask;
 	const int sgmask = src->format->Gmask;
 	const int sbmask = src->format->Bmask;
@@ -1047,8 +1050,8 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 	const int gshift = src->format->Gshift - dst->format->Gshift;
 	const int bshift = src->format->Bshift - dst->format->Bshift;
 	const int ashift = dst->format->Ashift;
-	const Uint32 colorKey = src->format->colorkey;
-	const bool useColorKey = (src->flags & SDL_SRCCOLORKEY) != 0;
+	Uint32 colorKey = 0;
+	const bool useColorKey = SDL_GetColorKey (src, &colorKey) == 0;
 
 	Uint32* dstPixel = static_cast<Uint32*> (dst->pixels) + dstrect->x + dstrect->y * dst->w;
 	Uint32* srcPixel = static_cast<Uint32*> (src->pixels) + srcrect->x + srcrect->y * src->w;
@@ -1105,7 +1108,8 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 
 void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
 {
-	if (dst->format->Amask && (src->flags & SDL_SRCALPHA))
+	// TODO: [SDL2] special blitSurface seems useless.
+	if (dst->format->Amask && SDL_GetSurfaceAlphaMod(src, NULL) == 0)
 		blittPerSurfaceAlphaToAlphaChannel (src, srcrect, dst, dstrect);
 	else
 		SDL_BlitSurface (src, srcrect, dst, dstrect);

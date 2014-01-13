@@ -70,7 +70,7 @@ cServerGame::~cServerGame()
 //------------------------------------------------------------------------------
 void cServerGame::runInThread()
 {
-	thread = SDL_CreateThread (serverGameThreadFunction, this);
+	thread = SDL_CreateThread (serverGameThreadFunction, "servergame", this);
 }
 
 //------------------------------------------------------------------------------

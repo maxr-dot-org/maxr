@@ -72,7 +72,7 @@ cDialogYesNo::cDialogYesNo (const string& text) :
 	menuItems.push_back (&noButton);
 }
 
-void cDialogYesNo::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cDialogYesNo::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	switch (key.keysym.sym)
 	{
@@ -107,7 +107,7 @@ cDialogOK::cDialogOK (const string& text) :
 	menuItems.push_back (&okButton);
 }
 
-void cDialogOK::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cDialogOK::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	if (key.keysym.sym == SDLK_RETURN)
 	{
@@ -249,7 +249,7 @@ void cDialogLicence::resetText()
 	draw();
 }
 
-void cDialogLicence::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cDialogLicence::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	if (key.keysym.sym == SDLK_RETURN)
 	{
@@ -633,13 +633,13 @@ void cDialogTransfer::getNamesNCargoNImages()
 {
 	const int UNIT_IMAGE_SIZE = 64;
 
-	SDL_Surface* unitImage1 = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_Surface* unitImage1 = SDL_CreateRGBSurface (0, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (unitImage1, NULL, 0xFF00FF);
-	SDL_SetColorKey (unitImage1, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_SetColorKey (unitImage1, SDL_TRUE, 0xFF00FF);
 
-	SDL_Surface* unitImage2 = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_Surface* unitImage2 = SDL_CreateRGBSurface (0, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (unitImage2, NULL, 0xFF00FF);
-	SDL_SetColorKey (unitImage2, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_SetColorKey (unitImage2, SDL_TRUE, 0xFF00FF);
 
 	SDL_Rect dest = {0, 0, 0, 0};
 
@@ -778,7 +778,7 @@ void cDialogTransfer::setCargos()
 		// little hack: flip part of the image that represent the arrow
 		const unsigned int w = 40;
 		const unsigned int h = 20;
-		SDL_Surface* arrowSurface = SDL_CreateRGBSurface (Video.getSurfaceType(), w, h, Video.getColDepth(), 0, 0, 0, 0);
+		SDL_Surface* arrowSurface = SDL_CreateRGBSurface (0, w, h, Video.getColDepth(), 0, 0, 0, 0);
 		const Sint16 x = arrowImage.getPosition().x - position.x; // 140
 		const Sint16 y = arrowImage.getPosition().y - position.y; //  77
 		SDL_Rect src = {x, y, w, h};
@@ -792,7 +792,7 @@ void cDialogTransfer::setCargos()
 	resBar->setCurrentValue ( (int) (223.f * (destCargo + transferValue) / maxDestCargo));
 }
 
-void cDialogTransfer::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cDialogTransfer::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	switch (key.keysym.sym)
 	{
@@ -995,7 +995,7 @@ void cDialogResearch::setData()
 	}
 }
 
-void cDialogResearch::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cDialogResearch::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	switch (key.keysym.sym)
 	{

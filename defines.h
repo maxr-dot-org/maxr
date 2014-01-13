@@ -20,12 +20,12 @@
 #define definesH
 #include "settings.h"
 
-#define GRID_COLOR         0x00305C04 // color of the grid
-#define SCAN_COLOR         0x00E3E300 // color of scan circles
-#define RANGE_GROUND_COLOR 0x00E20000 // color of range circles for ground attack
-#define RANGE_AIR_COLOR    0x00FCA800 // color of range circles for air attack
-#define PFEIL_COLOR        0x000000FF // color of a waypointarrow
-#define PFEILS_COLOR       0x0000FF00 // color of a special waypointarrow
+#define GRID_COLOR         0xFF305C04 // color of the grid
+#define SCAN_COLOR         0xFFE3E300 // color of scan circles
+#define RANGE_GROUND_COLOR 0xFFE20000 // color of range circles for ground attack
+#define RANGE_AIR_COLOR    0xFFFCA800 // color of range circles for air attack
+#define PFEIL_COLOR        0xFF0000FF // color of a waypointarrow
+#define PFEILS_COLOR       0xFF00FF00 // color of a special waypointarrow
 #define MOVE_SPEED 2     // speed of vehiclemovements
 #define MSG_TICKS  30000 // number of ticks for how long a message will be displayed
 #define LANDING_DISTANCE_WARNING   28
@@ -33,7 +33,7 @@
 #define MAX_PLANES_PER_FIELD 5
 
 // minimap configuration
-#define MINIMAP_COLOR 0x00FC0000 // color of the screen borders on the minimap
+#define MINIMAP_COLOR 0xFFFC0000 // color of the screen borders on the minimap
 #define MINIMAP_POS_X 15         // the position of the map on the screen
 #define MINIMAP_POS_Y 356        // the position of the map on the screen
 #define MINIMAP_SIZE  112        // the size of the minimap in pixels

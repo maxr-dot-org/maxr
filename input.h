@@ -45,14 +45,8 @@ struct sMouseState
 class cInput
 {
 private:
-
 	sMouseState MouseState;
-	/**
-	 * Decodes the character from UTF-16 to UTF-8 and adds him to the input string.
-	 * @author alzi alias DoctorDeath
-	 * @param ch character which is to be added.
-	 */
-	std::string getUTF16Char (Uint16 ch);
+
 public:
 	cInput();
 	/**
@@ -60,13 +54,22 @@ public:
 	 * If input is active the character will be added to the inpput string,
 	 * else the information will be given to the client to handle hotkeys.
 	 * @author alzi alias DoctorDeath
-	 * @param keysym SDL_keysym with pressed key information.
+	 * @param keysym SDL_Keysym with pressed key information.
 	 */
-	void inputkey (cMenu& activeMenu, SDL_KeyboardEvent& key);
+	void inputkey (cMenu& activeMenu, const SDL_KeyboardEvent& key);
 
 	long LastClickTicks;
-	void inputMouseButton (cMenu& avtiveMenu, SDL_MouseButtonEvent& button);
+	void inputMouseButton (cMenu& avtiveMenu, const SDL_MouseButtonEvent& button);
+	void inputMouseButton (cMenu& activeMenu, const SDL_MouseWheelEvent& wheel);
 	bool IsDoubleClicked();
+
+public:
+	/**
+	 * Decodes the character from UTF-16 to UTF-8 and adds him to the input string.
+	 * @author alzi alias DoctorDeath
+	 * @param ch character which is to be added.
+	 */
+	static std::string getUTF16Char (Uint16 ch);
 };
 
 EX cInput* InputHandler;

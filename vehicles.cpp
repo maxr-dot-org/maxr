@@ -216,12 +216,12 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		}
 	}
 
-	if (IsBuilding && !job && BigBetonAlpha < 255u)
+	if (IsBuilding && !job && BigBetonAlpha < 254u)
 	{
 		if (gameGUI.timer50ms)
 			BigBetonAlpha += 25;
 
-		BigBetonAlpha = std::min (255u, BigBetonAlpha);
+		BigBetonAlpha = std::min (254u, BigBetonAlpha);
 	}
 
 	// calculate screen position
@@ -287,7 +287,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	// draw indication, when building is complete
 	if (IsBuilding && BuildRounds == 0 && owner == gameGUI.getClient()->getActivePlayer() && !BuildPath)
 	{
-		const Uint32 color = 0xFF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
+		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
 
@@ -297,7 +297,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	// Draw the colored frame if necessary
 	if (gameGUI.colorChecked())
 	{
-		const Uint32 color = *static_cast<Uint32*> (owner->getColorSurface()->pixels);
+		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (owner->getColorSurface()->pixels);
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
 
 		SDL_Rect d = {Sint16 (screenPosition.x + 1), Sint16 (screenPosition.y + 1), max, max};
@@ -307,7 +307,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	// draw the group selected frame if necessary
 	if (groupSelected)
 	{
-		const Uint32 color = 0x00FFFF00;
+		const Uint32 color = 0xFFFFFF00;
 		const Uint16 tilesize = gameGUI.getTileSize() - 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), tilesize, tilesize};
 
@@ -320,7 +320,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		const int len = max / 4;
 		max -= 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
-		DrawSelectionCorner(buffer, d, len, gameGUI.getBlinkColor());
+		DrawSelectionCorner(buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
 	}
 
 	// draw health bar
@@ -360,7 +360,7 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	tmp.x += offset;
 	tmp.y += offset;
 
-	SDL_SetAlpha (uiData->overlay, SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (uiData->overlay, alpha);
 	blitWithPreScale (uiData->overlay_org, uiData->overlay, &src, surface, &tmp, zoomFactor);
 }
 
@@ -374,7 +374,7 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 		frameNr = client->getGameGUI().getAnimationSpeed() % (uiData->overlay_org->w / uiData->overlay_org->h);
 	}
 
-	int alpha = 255;
+	int alpha = 254;
 	if (StartUp && cSettings::getInstance().isAlphaEffects())
 		alpha = StartUp;
 	drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alpha);
@@ -388,7 +388,7 @@ void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface*
 	const cMap& map = *client.getMap();
 	if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
 	{
-		SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha);
+		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, BigBetonAlpha);
 		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
 		SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
 	}
@@ -409,7 +409,7 @@ void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface*
 	src.x = 0;
 	src.y = 0;
 	tmp = dest;
-	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, 254);
 	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
@@ -434,7 +434,7 @@ void cVehicle::render_smallClearing (const cClient& client, SDL_Surface* surface
 	src.x = 0;
 	src.y = 0;
 	tmp = dest;
-	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, 254);
 	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
@@ -442,8 +442,8 @@ void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const
 {
 	if (client.getMap()->isWater (PosX, PosY) && (data.isStealthOn & TERRAIN_SEA)) return;
 
-	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (uiData->shw[dir], SDL_SRCALPHA, StartUp / 5);
-	else SDL_SetAlpha (uiData->shw[dir], SDL_SRCALPHA, 50);
+	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetSurfaceAlphaMod (uiData->shw[dir], StartUp / 5);
+	else SDL_SetSurfaceAlphaMod (uiData->shw[dir], 50);
 	SDL_Rect tmp = dest;
 
 	// draw shadow
@@ -491,7 +491,7 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 	src.y = 0;
 	SDL_Rect tmp = dest;
 
-	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, alpha);
 	blittAlphaSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
@@ -523,7 +523,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		render_shadow (*client, surface, dest, zoomFactor);
 	}
 
-	int alpha = 255;
+	int alpha = 254;
 	if (client)
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects())

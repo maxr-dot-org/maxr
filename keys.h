@@ -22,6 +22,10 @@
 #include <string>
 #include "defines.h"
 
+#if 1 // TODO [SDL2]: use scancode or keycode ?
+typedef SDL_Keycode SDLKey;
+#endif
+
 // Globale Daten /////////////////////////////////////////////////////////////
 class cKeysList
 {

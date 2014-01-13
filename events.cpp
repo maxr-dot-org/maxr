@@ -60,17 +60,6 @@ static std::string TakeScreenShot()
 	return screenshotfile;
 }
 
-static void HandleInputEvent_SDL_ACTIVEEVENT (SDL_Event& event)
-{
-	assert (event.type == SDL_ACTIVEEVENT);
-#if 1
-	// This is an workaround for a SDL bug.
-	// See Ticket #86 on bugtracker.
-	// will hopefully not be required anymore in SDL 1.3
-	if (event.active.state & SDL_APPINPUTFOCUS) SDL_SetModState (KMOD_NONE);
-#endif
-}
-
 static void HandleInputEvent_KEY (cMenu& activeMenu, SDL_Event& event, cClient* client)
 {
 	assert (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP);
@@ -96,12 +85,14 @@ static void HandleInputEvent (cMenu& activeMenu, SDL_Event& event, cClient* clie
 {
 	switch (event.type)
 	{
-		case SDL_ACTIVEEVENT: HandleInputEvent_SDL_ACTIVEEVENT (event); break;
 		case SDL_KEYDOWN:
 		case SDL_KEYUP: HandleInputEvent_KEY (activeMenu, event, client); break;
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP: InputHandler->inputMouseButton (activeMenu, event.button); break;
+		case SDL_MOUSEWHEEL: InputHandler->inputMouseButton (activeMenu, event.wheel); break;
 		case SDL_QUIT: Quit(); break;
+		case SDL_MOUSEMOTION: break;
+		case SDL_WINDOWEVENT: Video.draw(); break;
 		default: break;
 	}
 }

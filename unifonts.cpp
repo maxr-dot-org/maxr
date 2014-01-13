@@ -148,21 +148,21 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 				else if (charset == CHARSET_ISO8559_1) unicodeplace = currentChar + 128 + 2 * 16;
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
-			chars[unicodeplace] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, Rect.w, Rect.h, 32, 0, 0, 0, 0);
+			chars[unicodeplace] = SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0);
 
 			// change color of smal fonts
 			switch (fonttype)
 			{
 				case FONT_LATIN_SMALL_RED:
-					SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xf0d8b8);
+					SDL_SetColorKey (surface, SDL_TRUE, 0xf0d8b8);
 					SDL_FillRect (chars[unicodeplace], NULL, 0xe60000);
 					break;
 				case FONT_LATIN_SMALL_GREEN:
-					SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xf0d8b8);
+					SDL_SetColorKey (surface, SDL_TRUE, 0xf0d8b8);
 					SDL_FillRect (chars[unicodeplace], NULL, 0x04ae04);
 					break;
 				case FONT_LATIN_SMALL_YELLOW:
-					SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xf0d8b8);
+					SDL_SetColorKey (surface, SDL_TRUE, 0xf0d8b8);
 					SDL_FillRect (chars[unicodeplace], NULL, 0xdbde00);
 					break;
 				default:
@@ -170,7 +170,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					break;
 			}
 			SDL_BlitSurface (surface, &Rect, chars[unicodeplace], NULL);
-			SDL_SetColorKey (chars[unicodeplace], SDL_SRCCOLORKEY, 0xFF00FF);
+			SDL_SetColorKey (chars[unicodeplace], SDL_TRUE, 0xFF00FF);
 
 			//goto next character
 			currentChar++;

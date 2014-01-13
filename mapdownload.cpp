@@ -269,7 +269,7 @@ cMapSender::~cMapSender()
 void cMapSender::runInThread()
 {
 	// the thread will quit, when it finished uploading the map
-	thread = SDL_CreateThread (mapSenderThreadFunction, this);
+	thread = SDL_CreateThread (mapSenderThreadFunction, "mapSender", this);
 }
 
 //------------------------------------------------------------------------------

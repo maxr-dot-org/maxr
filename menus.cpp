@@ -234,7 +234,6 @@ cMenu::cMenu (SDL_Surface* background_, eMenuBackgrounds backgroundType_) :
 	end = false;
 	terminate = false;
 	activeItem = NULL;
-	drawnEveryFrame = false;
 
 	lastScreenResX = Video.getResolutionX();
 	lastScreenResY = Video.getResolutionY();
@@ -292,10 +291,13 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 		case MNU_BG_BLACK:
 			// fill the whole screen with black to prevent
 			// old garbage from menus that don't support resolutions > 640x480
-			SDL_FillRect (buffer, NULL, 0x000000);
+			SDL_FillRect (buffer, NULL, 0xFF000000);
 			break;
 		case MNU_BG_ALPHA:
-			if (cSettings::getInstance().isAlphaEffects() && firstDraw) SDL_BlitSurface (GraphicsData.gfx_shadow, NULL, buffer, NULL);
+			if (cSettings::getInstance().isAlphaEffects() && firstDraw)
+				SDL_BlitSurface (GraphicsData.gfx_shadow, NULL, buffer, NULL);
+			else
+				SDL_FillRect (buffer, NULL, SDL_MapRGBA (buffer->format, 0, 0, 0, 0));
 			break;
 		case MNU_BG_TRANSPARENT:
 			// do nothing here
@@ -318,17 +320,13 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 
 	if (showScreen)
 	{
-		if (drawnEveryFrame) mouse->draw (true, buffer);
 		Video.draw();
-		if (!drawnEveryFrame) mouse->draw (false, screen);
 	}
 }
 
 //------------------------------------------------------------------------------
 int cMenu::show (cClient* client)
 {
-	drawnEveryFrame = false;
-
 	mouse->SetCursor (CHand);
 	draw (true);
 
@@ -357,11 +355,9 @@ int cMenu::show (cClient* client)
 			lastResY = Video.getResolutionY();
 		}
 
-		mouse->GetPos();
+		mouse->updatePos();
 		if (mouse->moved())
 		{
-			mouse->draw (true, screen);
-
 			for (unsigned int i = 0; i < menuItems.size(); i++)
 			{
 				cMenuItem* menuItem = menuItems[i];
@@ -406,7 +402,7 @@ bool cMenu::exiting() const
 //------------------------------------------------------------------------------
 void cMenu::handleMouseInput (sMouseState mouseState)
 {
-	mouse->GetPos();
+	mouse->updatePos();
 	mouse->isDoubleClick = mouseState.isDoubleClick;
 
 	for (size_t i = 0; i != menuItems.size(); ++i)
@@ -434,9 +430,9 @@ void cMenu::handleMouseInput (sMouseState mouseState)
 }
 
 //------------------------------------------------------------------------------
-void cMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cMenu::handleKeyInput (const SDL_KeyboardEvent& key)
 {
-	if (activeItem && key.state == SDL_PRESSED) activeItem->handleKeyInput (key.keysym, ch, this);
+	if (activeItem && key.state == SDL_PRESSED) activeItem->handleKeyInput (key.keysym, this);
 }
 
 //------------------------------------------------------------------------------
@@ -539,7 +535,6 @@ void cMainMenu::infoImageReleased (void* parent)
 	menu->infoImage->setImage (surface);
 	menu->infoImage->draw();
 	Video.draw();
-	mouse->draw (false, screen);
 }
 
 //------------------------------------------------------------------------------
@@ -1312,7 +1307,7 @@ void cPlanetsSelectionMenu::showMaps()
 			const int MAPWINSIZE = 112;
 			const int SELECTED = 0x00C000;
 			const int UNSELECTED = 0x000000;
-			AutoSurface imageSurface (SDL_CreateRGBSurface (Video.getSurfaceType(), MAPWINSIZE + 8, MAPWINSIZE + 8, Video.getColDepth(), 0, 0, 0, 0));
+			AutoSurface imageSurface (SDL_CreateRGBSurface (0, MAPWINSIZE + 8, MAPWINSIZE + 8, Video.getColDepth(), 0, 0, 0, 0));
 
 			if (selectedMapIndex == i + offset)
 			{
@@ -1461,7 +1456,7 @@ cClanSelectionMenu::cClanSelectionMenu (int clan_, bool noReturn) :
 			yCount = 1;
 		}
 		SDL_Surface* img = LoadPCX (clanLogoPaths[i].c_str());
-		SDL_SetColorKey (img, SDL_SRCCOLORKEY, 0xFF00FF);
+		SDL_SetColorKey (img, SDL_TRUE, 0xFF00FF);
 		clanImages[i] = new cMenuImage (position.x + 88 + xCount * 154 - (img ? (img->w / 2) : 0), position.y + 48 + yCount * 150, img);
 		clanImages[i]->setReleasedFunction (&clanSelected);
 		menuItems.push_back (clanImages[i]);
@@ -2215,9 +2210,9 @@ void cLandingMenu::mapClicked (void* parent)
 	menu->landData.landingState = LANDING_POSITION_OK;
 	menu->backButton->setLocked (true);
 	{
-		AutoSurface circleSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
+		AutoSurface circleSurface (SDL_CreateRGBSurface (0, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (circleSurface, NULL, 0xFF00FF);
-		SDL_SetColorKey (circleSurface, SDL_SRCCOLORKEY, 0xFF00FF);
+		SDL_SetColorKey (circleSurface, SDL_TRUE, 0xFF00FF);
 
 		int posX = (int) (menu->landData.iLandX * fakx);
 		int posY = (int) (menu->landData.iLandY * faky);
@@ -2231,7 +2226,6 @@ void cLandingMenu::mapClicked (void* parent)
 
 	Video.draw();
 	mouse->SetCursor (CHand);
-	mouse->draw (false, screen);
 
 	menu->hitPosition();
 }
@@ -2251,7 +2245,7 @@ void cLandingMenu::mouseMoved (void* parent)
 }
 
 //------------------------------------------------------------------------------
-void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cLandingMenu::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	if (key.keysym.sym == SDLK_ESCAPE && key.state == SDL_PRESSED)
 	{
@@ -2610,7 +2604,7 @@ void cNetworkMenu::showMap()
 void cNetworkMenu::setColor (int color)
 {
 	SDL_Rect src = { 0, 0, 83, 10 };
-	AutoSurface colorSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_BlitSurface (OtherData.colors[color], &src, colorSurface, NULL);
 	colorImage->setImage (colorSurface);
 }
@@ -4608,7 +4602,7 @@ void cStorageMenu::resetInfos()
 				upgradeButtons[pos]->setLocked (true);
 			}
 
-			SDL_Surface* surface = SDL_CreateRGBSurface (Video.getSurfaceType(), srcSurface->w, srcSurface->h, Video.getColDepth(), 0, 0, 0, 0);
+			SDL_Surface* surface = SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth(), 0, 0, 0, 0);
 			SDL_BlitSurface (srcSurface, NULL, surface, NULL);
 			unitImages[pos]->setImage (surface);
 

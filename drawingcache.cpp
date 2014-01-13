@@ -79,10 +79,10 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 		width  = 130;
 		height = 130;
 	}
-	surface = SDL_CreateRGBSurface (SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	surface = SDL_CreateRGBSurface (0, width, height, 32,
+									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
-	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
+	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding& building)
@@ -108,10 +108,10 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding& buildin
 	int width  = (int) std::max (building.uiData->img_org->w * zoom, building.uiData->shw_org->w * zoom);
 	if (building.data.hasFrames) width = (int) (building.uiData->shw_org->w * zoom);
 
-	surface = SDL_CreateRGBSurface (SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	surface = SDL_CreateRGBSurface (0, width, height, 32,
+									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
-	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
+	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 cDrawingCache::cDrawingCache()
@@ -348,7 +348,7 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 		return false;
 	}
 
-	if (vehicle.IsBuilding && vehicle.data.isBig && vehicle.BigBetonAlpha < 255)
+	if (vehicle.IsBuilding && vehicle.data.isBig && vehicle.BigBetonAlpha < 254u)
 	{
 		notCached++;
 		return false;

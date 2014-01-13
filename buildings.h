@@ -220,7 +220,7 @@ public:
 	* draws the main image of the building onto the given surface
 	*/
 	void render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete);
-	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 255);
+	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254);
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
 	void executeSelfDestroyCommand (cClient& client);

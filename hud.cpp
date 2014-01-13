@@ -151,7 +151,7 @@ void cDebugOutput::draw()
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (buffer, &rBlackOut, 0x00000000);
+				SDL_FillRect (buffer, &rBlackOut, 0xFF000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			else
@@ -159,7 +159,7 @@ void cDebugOutput::draw()
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (buffer, &rBlackOut, 0x00000000);
+				SDL_FillRect (buffer, &rBlackOut, 0xFF000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			// use 10 for pixel high of dots instead of text high
@@ -823,8 +823,6 @@ void cGameGUI::addCoords (const sSavedReportMessage& msg)
 
 int cGameGUI::show (cClient* client)
 {
-	drawnEveryFrame = true;
-
 	// do startup actions
 	openPanel();
 	startup = true;
@@ -838,7 +836,7 @@ int cGameGUI::show (cClient* client)
 		cEventHandling::handleInputEvents (*this, client);
 		client->gameTimer.run (this);
 
-		mouse->GetPos();
+		mouse->updatePos();
 		if (mouse->moved())
 		{
 			handleMouseMove();
@@ -1021,10 +1019,10 @@ void cGameGUI::onVehicleStored (const cUnit& storingUnit, const cVehicle& stored
 
 SDL_Surface* cGameGUI::generateSurface()
 {
-	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_HWSURFACE, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);
+	SDL_Surface* surface = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);
 
 	SDL_FillRect (surface, NULL, 0x00FF00FF);
-	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0x00FF00FF);
+	SDL_SetColorKey (surface, SDL_TRUE, 0x00FF00FF);
 
 	const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
 	{
@@ -1260,7 +1258,7 @@ void cGameGUI::generateMiniMapSurface_borders (SDL_Surface* minimapSurface, int 
 
 SDL_Surface* cGameGUI::generateMiniMapSurface()
 {
-	SDL_Surface* minimapSurface = SDL_CreateRGBSurface (SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
+	SDL_Surface* minimapSurface = SDL_CreateRGBSurface (0, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
 
 	// set zoom factor
 	const int displayedMapWidth = (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
@@ -2940,7 +2938,7 @@ bool cGameGUI::loadPanelGraphics()
 	return true;
 }
 
-void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
+void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 {
 	if (key.keysym.sym == SDLK_LSHIFT || key.keysym.sym == SDLK_RSHIFT)
 	{
@@ -2981,7 +2979,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
 		if (yesNoDialog.show (client) == 0) end = true;
 	}
-	else if (activeItem && !activeItem->isDisabled() && activeItem->handleKeyInput (key.keysym, ch, this))
+	else if (activeItem && !activeItem->isDisabled() && activeItem->handleKeyInput (key.keysym, this))
 	{}
 	else if (key.keysym.sym == KeysList.KeyJumpToAction)
 	{
@@ -3970,7 +3968,7 @@ void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 	const int mouseTopY = static_cast<int> (min (mouseBox.startY, mouseBox.endY) * getTileSize());
 	const int mouseBottomX = static_cast<int> (max (mouseBox.startX, mouseBox.endX) * getTileSize());
 	const int mouseBottomY = static_cast<int> (max (mouseBox.startY, mouseBox.endY) * getTileSize());
-	const Uint32 color = 0x00FFFF00;
+	const Uint32 color = 0xFFFFFF00;
 	SDL_Rect d;
 
 	d.x = mouseTopX - zoomOffX + HUD_LEFT_WIDTH;
@@ -4115,7 +4113,6 @@ void cGameGUI::openPanel()
 	while (top.y > -479)
 	{
 		Video.draw();
-		mouse->draw (false, screen);
 		SDL_Delay (10);
 		top.y -= 10;
 		bottom.y += 10;
@@ -4134,7 +4131,6 @@ void cGameGUI::closePanel()
 	while (bottom.y > Video.getResolutionY() / 2)
 	{
 		Video.draw();
-		mouse->draw (false, screen);
 		SDL_Delay (10);
 		top.y += 10;
 		if (top.y > (Video.getResolutionY() / 2) - 479 - 9) top.y = (Video.getResolutionY() / 2) - 479;
@@ -4147,7 +4143,6 @@ void cGameGUI::closePanel()
 		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &tmp);
 	}
 	Video.draw();
-	mouse->draw (false, screen);
 	SDL_Delay (100);
 }
 
@@ -5209,14 +5204,14 @@ void cGameGUI::drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const
 	r2.w = (int) ( ( (float) (r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
 	r2.h = r1.h - 2;
 
-	SDL_FillRect (buffer, &r1, 0);
+	SDL_FillRect (buffer, &r1, 0xFF000000);
 
 	if (unit.data.ammoCur > unit.data.ammoMax / 2)
-		SDL_FillRect (buffer, &r2, 0x0004AE04);
+		SDL_FillRect (buffer, &r2, 0xFF04AE04);
 	else if (unit.data.ammoCur > unit.data.ammoMax / 4)
-		SDL_FillRect (buffer, &r2, 0x00DBDE00);
+		SDL_FillRect (buffer, &r2, 0xFFDBDE00);
 	else
-		SDL_FillRect (buffer, &r2, 0x00E60000);
+		SDL_FillRect (buffer, &r2, 0xFFE60000);
 }
 
 //------------------------------------------------------------------------------
@@ -5245,15 +5240,15 @@ void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) cons
 	r2.w = (int) ( ( (float) (r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
 	r2.h = r1.h - 2;
 
-	SDL_FillRect (buffer, &r1, 0);
+	SDL_FillRect (buffer, &r1, 0xFF000000);
 
 	Uint32 color;
 	if (unit.data.hitpointsCur > unit.data.hitpointsMax / 2)
-		color = 0x0004AE04; // green
+		color = 0xFF04AE04; // green
 	else if (unit.data.hitpointsCur > unit.data.hitpointsMax / 4)
-		color = 0x00DBDE00; // orange
+		color = 0xFFDBDE00; // orange
 	else
-		color = 0x00E60000; // red
+		color = 0xFFE60000; // red
 	SDL_FillRect (buffer, &r2, color);
 }
 

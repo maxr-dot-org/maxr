@@ -277,7 +277,6 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 //--------------------------------------------------------------------------
 void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 {
-	SDL_Rect dest, tmp;
 	float factor = (float) gameGUI.getTileSize() / 64.0f;
 	cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 	// draw the damage effects
@@ -296,7 +295,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		}
 	}
 
-	dest.x = dest.y = 0;
+	SDL_Rect dest = {0, 0, 0, 0};
 	bool bDraw = false;
 	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (*this);
 	if (drawingSurface == NULL)
@@ -342,8 +341,8 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	// draw the effect if necessary
 	if (data.powerOnGraphic && cSettings::getInstance().isAnimations() && (IsWorking || !data.canWork))
 	{
-		tmp = dest;
-		SDL_SetAlpha (uiData->eff, SDL_SRCALPHA, EffectAlpha);
+		SDL_Rect tmp = dest;
+		SDL_SetSurfaceAlphaMod (uiData->eff, EffectAlpha);
 
 		CHECK_SCALING (uiData->eff, uiData->eff_org, factor);
 		SDL_BlitSurface (uiData->eff, NULL, buffer, &tmp);
@@ -356,7 +355,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 				if (EffectAlpha > 220)
 				{
-					EffectAlpha = 255;
+					EffectAlpha = 254;
 					EffectInc = false;
 				}
 			}
@@ -376,7 +375,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	// draw the mark, when a build order is finished
 	if ( ( (!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
-		const Uint32 color = 0xFF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
+		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
 		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
 
@@ -392,7 +391,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	// draw a colored frame if necessary
 	if (gameGUI.colorChecked())
 	{
-		const Uint32 color = *static_cast<Uint32*> (owner->getColorSurface()->pixels);
+		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (owner->getColorSurface()->pixels);
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
 		SDL_Rect d = {Sint16 (dest.x + 1), Sint16 (dest.y + 1), max, max};
 
@@ -406,7 +405,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		const int len = max / 4;
 		max -= 3;
 		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
-		DrawSelectionCorner(buffer, d, len, gameGUI.getBlinkColor());
+		DrawSelectionCorner(buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
 	}
 
 	// draw health bar
@@ -493,9 +492,9 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
 
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp);
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, StartUp);
 		else
-			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255);
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, 254);
 
 		SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
 	}
@@ -503,12 +502,12 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	{
 		CHECK_SCALING (UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, zoomFactor);
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp);
+			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, StartUp);
 		else
-			SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, 255);
+			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
 
 		SDL_BlitSurface (UnitsData.ptr_small_beton, NULL, surface, &tmp);
-		SDL_SetAlpha (UnitsData.ptr_small_beton, SDL_SRCALPHA, 255);
+		SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
 	}
 }
 
@@ -531,7 +530,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	// blit the players color and building graphic
 	if (data.hasPlayerColor) SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	else SDL_FillRect (GraphicsData.gfx_tmp, NULL, 0x00FF00FF);
+	else SDL_FillRect (GraphicsData.gfx_tmp, NULL, 0xFFFF00FF);
 
 	if (data.hasFrames)
 	{
@@ -566,7 +565,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	src.x = 0;
 	src.y = 0;
 
-	SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, alpha);
 	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
@@ -588,7 +587,6 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 	{
 		render_beton (surface, dest, zoomFactor);
 	}
-
 	// draw the connector slots:
 	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic)
 	{
@@ -601,9 +599,9 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 	{
 		SDL_Rect tmp = dest;
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetAlpha (uiData->shw, SDL_SRCALPHA, StartUp / 5);
+			SDL_SetSurfaceAlphaMod (uiData->shw, StartUp / 5);
 		else
-			SDL_SetAlpha (uiData->shw, SDL_SRCALPHA, 50);
+			SDL_SetSurfaceAlphaMod (uiData->shw, 50);
 
 		CHECK_SCALING (uiData->shw, uiData->shw_org, zoomFactor);
 		blittAlphaSurface (uiData->shw, NULL, surface, &tmp);
@@ -616,7 +614,7 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 		frameNr = (gameGUI->getAnimationSpeed() % data.hasFrames);
 	}
 
-	int alpha = 255;
+	int alpha = 254;
 	if (StartUp && cSettings::getInstance().isAlphaEffects()) alpha = StartUp;
 	render_simple (surface, dest, zoomFactor, frameNr, alpha);
 }
@@ -668,7 +666,6 @@ void cBuilding::CheckNeighbours (const cMap* Map)
 	}
 	else
 	{
-
 		CHECK_NEIGHBOUR (PosX    , PosY - 1, BaseN)
 		CHECK_NEIGHBOUR (PosX + 1, PosY - 1, BaseBN)
 		CHECK_NEIGHBOUR (PosX + 2, PosY    , BaseE)
@@ -690,8 +687,8 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 	CHECK_SCALING (UnitsData.ptr_connector, UnitsData.ptr_connector_org, zoomFactor);
 	CHECK_SCALING (UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, zoomFactor);
 
-	if (StartUp) SDL_SetAlpha (UnitsData.ptr_connector, SDL_SRCALPHA, StartUp);
-	else SDL_SetAlpha (UnitsData.ptr_connector, SDL_SRCALPHA, 255);
+	if (StartUp) SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, StartUp);
+	else SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, 254);
 
 	src.y = 0;
 	src.x = 0;
@@ -1346,6 +1343,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 	dest.x = x;
 	dest.y = y;
 
+	Uint32 color = SDL_MapRGB (sf->format, 0xFC, 0, 0);
 	for (int i = 0; i < value; i++)
 	{
 		if (i == orgvalue)
@@ -1356,7 +1354,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 			mark.y = dest.y;
 			mark.w = 1;
 			mark.h = src.h;
-			SDL_FillRect (sf, &mark, 0xFC0000);
+			SDL_FillRect (sf, &mark, color);
 		}
 
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, sf, &dest);

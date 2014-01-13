@@ -28,6 +28,14 @@
 #include "vehicles.h"
 #include "video.h"
 
+#if 1 // TODO: [SDL2]: SDL_SetColors
+inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
+{
+	SDL_SetPaletteColors (surface->format->palette, colors, index, size);
+}
+#endif
+
+
 sTerrain::sTerrain() :
 	water (false),
 	coast (false),
@@ -250,6 +258,8 @@ bool cStaticMap::loadMap (const std::string& filename_)
 		palette_shw[i].r = (unsigned char) (palette[i].r * 0.6f);
 		palette_shw[i].g = (unsigned char) (palette[i].g * 0.6f);
 		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6f);
+		palette[i].a = 255;
+		palette_shw[i].a = 255;
 	}
 
 	// Load necessary Terrain Graphics
@@ -314,13 +324,13 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return true;
 }
 
-/*static*/SDL_Surface* cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum)
+/*static*/SDL_Surface* cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
 {
 	// Create new surface and copy palette
-	AutoSurface surface (SDL_CreateRGBSurface (SDL_SWSURFACE, 64, 64, 8, 0, 0, 0, 0));
+	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	surface->pitch = surface->w;
 
-	SDL_SetColors (surface, Palette, 0, 256);
+	SDL_SetPaletteColors (surface->format->palette, colors, 0, 256);
 
 	// Go to position of filedata
 	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * (iNum), SEEK_SET);
@@ -353,7 +363,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	SDL_RWseek (mapFile, 64 * 64 * sGraphCount, SEEK_CUR);
 	SDL_RWread (mapFile, &Palette, 3, 256);
 
-	AutoSurface mapSurface (SDL_CreateRGBSurface (SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
+	AutoSurface mapSurface (SDL_CreateRGBSurface (0, size, size, 8, 0, 0, 0, 0));
 	mapSurface->pitch = mapSurface->w;
 
 	mapSurface->format->palette->ncolors = 256;
@@ -388,20 +398,20 @@ void cStaticMap::copySrfToTerData (SDL_Surface* surface, int iNum)
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrains
-	terrains[iNum].sf_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrains[iNum].sf_org, surface->format->palette->colors, 0, 256);
+	terrains[iNum].sf_org = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
+	SDL_SetPaletteColors (terrains[iNum].sf_org->format->palette, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrains[iNum].sf_org, NULL);
 
-	terrains[iNum].sf = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrains[iNum].sf, surface->format->palette->colors, 0, 256);
+	terrains[iNum].sf = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
+	SDL_SetPaletteColors (terrains[iNum].sf->format->palette, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrains[iNum].sf, NULL);
 
 	//copy the terrains with fog
-	terrains[iNum].shw_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
+	terrains[iNum].shw_org = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
 	SDL_SetColors (terrains[iNum].shw_org, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrains[iNum].shw_org, NULL);
 
-	terrains[iNum].shw = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
+	terrains[iNum].shw = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
 	SDL_SetColors (terrains[iNum].shw, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrains[iNum].shw, NULL);
 
@@ -451,7 +461,7 @@ void cStaticMap::generateNextAnimationFrame()
 
 SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 {
-	SDL_Surface* mapSurface = SDL_CreateRGBSurface (Video.getSurfaceType(), sizex, sizey, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_Surface* mapSurface = SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0);
 
 	if (SDL_MUSTLOCK (mapSurface)) SDL_LockSurface (mapSurface);
 	for (int x = 0; x < mapSurface->w; ++x)

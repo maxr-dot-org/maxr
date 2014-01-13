@@ -357,12 +357,12 @@ int LoadData (void* data)
 			if (pos == 0)   //need full line for first entry version information
 			{
 				SDL_BlitSurface (buffer, NULL, screen, NULL);
-				SDL_UpdateRect (screen, rDest.x, rDest.y + rDest.h * pos, rDest.w + rDest2.w, rDest.h);
+				Video.draw();
 			}
 			else
 			{
 				SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
-				SDL_UpdateRect (screen, rDest.x, rDest.y + rDest.h * pos, rDest.w, rDest.h);
+				Video.draw();
 			}
 			break;
 
@@ -380,7 +380,7 @@ int LoadData (void* data)
 		rSrc = rDest2;
 		rSrc.y = rDest2.y + rDest2.h * pos;
 		SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
-		SDL_UpdateRect (screen, rDest2.x, rDest2.y + rDest2.h * pos, rDest2.w, rDest2.h);
+		Video.draw();
 	}
 }
 
@@ -474,8 +474,8 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* direct
 
 	dest[0] = LoadPCX (filepath);
 	dest[1] = CloneSDLSurface (dest[0]);
-	SDL_SetAlpha (dest[0], SDL_SRCALPHA, alpha);
-	SDL_SetAlpha (dest[1], SDL_SRCALPHA, alpha);
+	SDL_SetSurfaceAlphaMod (dest[0], alpha);
+	SDL_SetSurfaceAlphaMod (dest[1], alpha);
 
 	filepath.insert (0, "Effectalpha loaded: ");
 	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
@@ -607,7 +607,7 @@ void cEffectsData::load (const char* path)
 	LoadEffectGraphicToSurface (fx_rocket, path, "rocket.pcx");
 	LoadEffectAlphaToSurface (fx_dark_smoke, path, "dark_smoke.pcx", 100);
 	LoadEffectAlphaToSurface (fx_tracks, path, "tracks.pcx", 100);
-	LoadEffectAlphaToSurface (fx_corpse, path, "corpse.pcx", 255);
+	LoadEffectAlphaToSurface (fx_corpse, path, "corpse.pcx", 254);
 	LoadEffectAlphaToSurface (fx_absorb, path, "absorb.pcx", 150);
 }
 
@@ -855,17 +855,17 @@ static int LoadGraphics (const char* path)
 
 	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
 	// Shadow:
-	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (Video.getSurfaceType(), Video.getResolutionX(),
-													Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);
+	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
+													Video.getColDepth(), 0, 0, 0, 0);
 	SDL_FillRect (GraphicsData.gfx_shadow, NULL, 0x0);
-	SDL_SetAlpha (GraphicsData.gfx_shadow, SDL_SRCALPHA, 50);
-	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (Video.getSurfaceType(), 128, 128, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_shadow, 50);
+	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (GraphicsData.gfx_tmp, SDL_TRUE, 0xFF00FF);
 
 	// Glas:
 	Log.write ("Glassgraphic...", LOG_TYPE_DEBUG);
 	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx");
-	SDL_SetAlpha (GraphicsData.gfx_destruction_glas, SDL_SRCALPHA, 150);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas, 150);
 
 	// Waypoints:
 	Log.write ("Waypointgraphics...", LOG_TYPE_DEBUG);
@@ -922,21 +922,21 @@ void cResourceData::load (const char* path)
 	if (LoadGraphicToSurface (res_metal_org, path, "res.pcx") == 1)
 	{
 		res_metal = CloneSDLSurface (res_metal_org);
-		SDL_SetColorKey (res_metal, SDL_SRCCOLORKEY, 0xFF00FF);
+		SDL_SetColorKey (res_metal, SDL_TRUE, 0xFF00FF);
 	}
 
 	// gold
 	if (LoadGraphicToSurface (res_gold_org, path, "gold.pcx") == 1)
 	{
 		res_gold = CloneSDLSurface (res_gold_org);
-		SDL_SetColorKey (res_gold, SDL_SRCCOLORKEY, 0xFF00FF);
+		SDL_SetColorKey (res_gold, SDL_TRUE, 0xFF00FF);
 	}
 
 	// fuel
 	if (LoadGraphicToSurface (res_oil_org, path, "fuel.pcx") == 1)
 	{
 		res_oil = CloneSDLSurface (res_oil_org);
-		SDL_SetColorKey (res_oil, SDL_SRCCOLORKEY, 0xFF00FF);
+		SDL_SetColorKey (res_oil, SDL_TRUE, 0xFF00FF);
 	}
 }
 
@@ -1040,8 +1040,8 @@ static int LoadVehicles()
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
-				ui.img[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
+				ui.img[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.img[n], SDL_TRUE, 0x00FFFFFF);
 				SDL_FillRect (ui.img[n], NULL, 0x00FF00FF);
 
 				for (int j = 0; j < 13; j++)
@@ -1066,16 +1066,16 @@ static int LoadVehicles()
 						}
 					}
 				}
-				ui.img_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.img[n], SDL_SRCCOLORKEY, 0x00FFFFFF);
+				ui.img_org[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.img[n], SDL_TRUE, 0x00FFFFFF);
 				SDL_FillRect (ui.img_org[n], NULL, 0x00FFFFFF);
 				SDL_BlitSurface (ui.img[n], NULL, ui.img_org[n], NULL);
 
-				ui.shw[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.shw[n], SDL_SRCCOLORKEY, 0x00FF00FF);
+				ui.shw[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.shw[n], SDL_TRUE, 0x00FF00FF);
 				SDL_FillRect (ui.shw[n], NULL, 0x00FF00FF);
-				ui.shw_org[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.shw_org[n], SDL_SRCCOLORKEY, 0x00FF00FF);
+				ui.shw_org[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
+				SDL_SetColorKey (ui.shw_org[n], SDL_TRUE, 0x00FF00FF);
 				SDL_FillRect (ui.shw_org[n], NULL, 0x00FF00FF);
 
 				rcDest.x = 3;
@@ -1091,8 +1091,8 @@ static int LoadVehicles()
 				}
 				SDL_UnlockSurface (ui.shw_org[n]);
 				SDL_BlitSurface (ui.shw_org[n], NULL, ui.shw[n], NULL);
-				SDL_SetAlpha (ui.shw_org[n], SDL_SRCALPHA, 50);
-				SDL_SetAlpha (ui.shw[n], SDL_SRCALPHA, 50);
+				SDL_SetSurfaceAlphaMod (ui.shw_org[n], 50);
+				SDL_SetSurfaceAlphaMod (ui.shw[n], 50);
 			}
 		}
 		// load other vehicle graphics
@@ -1110,8 +1110,8 @@ static int LoadVehicles()
 				{
 					ui.img_org[n] = LoadPCX (sTmpString);
 					ui.img[n] = CloneSDLSurface (ui.img_org[n]);
-					SDL_SetColorKey (ui.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-					SDL_SetColorKey (ui.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+					SDL_SetColorKey (ui.img_org[n], SDL_TRUE, 0xFFFFFF);
+					SDL_SetColorKey (ui.img[n], SDL_TRUE, 0xFFFFFF);
 				}
 				else
 				{
@@ -1125,7 +1125,7 @@ static int LoadVehicles()
 				{
 					ui.shw_org[n] = LoadPCX (sTmpString);
 					ui.shw[n] = CloneSDLSurface (ui.shw_org[n]);
-					SDL_SetAlpha (ui.shw[n], SDL_SRCALPHA, 50);
+					SDL_SetSurfaceAlphaMod (ui.shw[n], 50);
 				}
 				else
 				{
@@ -1210,8 +1210,8 @@ static int LoadVehicles()
 			{
 				ui.build_org = LoadPCX (sTmpString);
 				ui.build = CloneSDLSurface (ui.build_org);
-				SDL_SetColorKey (ui.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey (ui.build, SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_SetColorKey (ui.build_org, SDL_TRUE, 0xFFFFFF);
+				SDL_SetColorKey (ui.build, SDL_TRUE, 0xFFFFFF);
 			}
 			else
 			{
@@ -1227,7 +1227,7 @@ static int LoadVehicles()
 			{
 				ui.build_shw_org = LoadPCX (sTmpString);
 				ui.build_shw = CloneSDLSurface (ui.build_shw_org);
-				SDL_SetAlpha (ui.build_shw, SDL_SRCALPHA, 50);
+				SDL_SetSurfaceAlphaMod (ui.build_shw, 50);
 			}
 			else
 			{
@@ -1255,8 +1255,8 @@ static int LoadVehicles()
 			{
 				ui.clear_small_org = LoadPCX (sTmpString);
 				ui.clear_small = CloneSDLSurface (ui.clear_small_org);
-				SDL_SetColorKey (ui.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey (ui.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_SetColorKey (ui.clear_small_org, SDL_TRUE, 0xFFFFFF);
+				SDL_SetColorKey (ui.clear_small, SDL_TRUE, 0xFFFFFF);
 			}
 			else
 			{
@@ -1272,7 +1272,7 @@ static int LoadVehicles()
 			{
 				ui.clear_small_shw_org = LoadPCX (sTmpString);
 				ui.clear_small_shw = CloneSDLSurface (ui.clear_small_shw_org);
-				SDL_SetAlpha (ui.clear_small_shw, SDL_SRCALPHA, 50);
+				SDL_SetSurfaceAlphaMod (ui.clear_small_shw, 50);
 			}
 			else
 			{
@@ -1288,8 +1288,8 @@ static int LoadVehicles()
 			{
 				ui.build_org = LoadPCX (sTmpString);
 				ui.build = CloneSDLSurface (ui.build_org);
-				SDL_SetColorKey (ui.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey (ui.build, SDL_SRCCOLORKEY, 0xFFFFFF);
+				SDL_SetColorKey (ui.build_org, SDL_TRUE, 0xFFFFFF);
+				SDL_SetColorKey (ui.build, SDL_TRUE, 0xFFFFFF);
 			}
 			else
 			{
@@ -1305,7 +1305,7 @@ static int LoadVehicles()
 			{
 				ui.build_shw_org = LoadPCX (sTmpString);
 				ui.build_shw = CloneSDLSurface (ui.build_shw_org);
-				SDL_SetAlpha (ui.build_shw, SDL_SRCALPHA, 50);
+				SDL_SetSurfaceAlphaMod (ui.build_shw, 50);
 			}
 			else
 			{
@@ -1594,8 +1594,8 @@ static int LoadBuildings()
 		{
 			ui.img_org = LoadPCX (sTmpString);
 			ui.img = CloneSDLSurface (ui.img_org);
-			SDL_SetColorKey (ui.img_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-			SDL_SetColorKey (ui.img, SDL_SRCCOLORKEY, 0xFFFFFF);
+			SDL_SetColorKey (ui.img_org, SDL_TRUE, 0xFFFFFF);
+			SDL_SetColorKey (ui.img, SDL_TRUE, 0xFFFFFF);
 		}
 		else
 		{
@@ -1609,7 +1609,7 @@ static int LoadBuildings()
 		{
 			ui.shw_org = LoadPCX (sTmpString);
 			ui.shw     = CloneSDLSurface (ui.shw_org);
-			SDL_SetAlpha (ui.shw, SDL_SRCALPHA, 50);
+			SDL_SetSurfaceAlphaMod (ui.shw, 50);
 		}
 
 		// load video
@@ -1633,7 +1633,7 @@ static int LoadBuildings()
 			{
 				ui.eff_org = LoadPCX (sTmpString);
 				ui.eff = CloneSDLSurface (ui.eff_org);
-				SDL_SetAlpha (ui.eff, SDL_SRCALPHA, 10);
+				SDL_SetSurfaceAlphaMod (ui.eff, 10);
 			}
 		}
 		else
@@ -1655,16 +1655,16 @@ static int LoadBuildings()
 			b.isConnectorGraphic = true;
 			UnitsData.ptr_connector = ui.img;
 			UnitsData.ptr_connector_org = ui.img_org;
-			SDL_SetColorKey (UnitsData.ptr_connector, SDL_SRCCOLORKEY, 0xFF00FF);
+			SDL_SetColorKey (UnitsData.ptr_connector, SDL_TRUE, 0xFF00FF);
 			UnitsData.ptr_connector_shw = ui.shw;
 			UnitsData.ptr_connector_shw_org = ui.shw_org;
-			SDL_SetColorKey (UnitsData.ptr_connector_shw, SDL_SRCCOLORKEY, 0xFF00FF);
+			SDL_SetColorKey (UnitsData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
 		}
 		else if (b.ID == UnitsData.specialIDSmallBeton)
 		{
 			UnitsData.ptr_small_beton = ui.img;
 			UnitsData.ptr_small_beton_org = ui.img_org;
-			SDL_SetColorKey (UnitsData.ptr_small_beton, SDL_SRCCOLORKEY, 0xFF00FF);
+			SDL_SetColorKey (UnitsData.ptr_small_beton, SDL_TRUE, 0xFF00FF);
 		}
 
 		// Check if there is more than one frame
@@ -1680,12 +1680,12 @@ static int LoadBuildings()
 		UnitsData.dirt_big = CloneSDLSurface (UnitsData.dirt_big_org);
 		LoadGraphicToSurface (UnitsData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
 		UnitsData.dirt_big_shw = CloneSDLSurface (UnitsData.dirt_big_shw_org);
-		if (UnitsData.dirt_big_shw) SDL_SetAlpha (UnitsData.dirt_big_shw, SDL_SRCALPHA, 50);
+		if (UnitsData.dirt_big_shw) SDL_SetSurfaceAlphaMod (UnitsData.dirt_big_shw, 50);
 		LoadGraphicToSurface (UnitsData.dirt_small_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
 		UnitsData.dirt_small = CloneSDLSurface (UnitsData.dirt_small_org);
 		LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
 		UnitsData.dirt_small_shw = CloneSDLSurface (UnitsData.dirt_small_shw_org);
-		if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
+		if (UnitsData.dirt_small_shw) SDL_SetSurfaceAlphaMod (UnitsData.dirt_small_shw, 50);
 	}
 	return 1;
 }

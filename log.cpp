@@ -104,7 +104,7 @@ bool cLog::open (int TYPE)
 		fprintf (stderr, "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n");
 		return false;
 	}
-	if (blocks < 0)
+	if (blocks <= 0)
 	{
 		fprintf (stderr, "(EE): Couldn't read maxr.log!\n Please check file/directory permissions\n");
 
@@ -173,9 +173,9 @@ int cLog::writeMessage (const std::string& str)
 {
 	if (logfile)
 	{
-		int const wrote = SDL_RWwrite (logfile, str.c_str(), 1, (int) str.length());
+		const int wrote = SDL_RWwrite (logfile, str.c_str(), 1, (int) str.length());
 		std::cout << str;
-		if (wrote < 0)   //sanity check - was file writable?
+		if (wrote <= 0)   //sanity check - was file writable?
 		{
 			fprintf (stderr, "Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str());
 			return -1;

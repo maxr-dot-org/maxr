@@ -32,7 +32,7 @@ public:
 	explicit cDialogYesNo (const std::string& text);
 
 private:
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 
 private:
 	cMenuLabel textLabel;
@@ -49,7 +49,7 @@ public:
 	explicit cDialogOK (const std::string& text);
 
 private:
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 
 private:
 	cMenuLabel textLabel;
@@ -80,7 +80,7 @@ public:
 	cDialogLicence();
 
 private:
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 
 private:
 	static void upReleased (void* parent);
@@ -201,7 +201,7 @@ public:
 	~cDialogTransfer();
 
 private:
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:
@@ -244,7 +244,7 @@ public:
 	explicit cDialogResearch (cClient& client_);
 
 private:
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 	virtual void handleDestroyUnit (cUnit& destroyedUnit);
 
 private:

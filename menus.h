@@ -192,7 +192,6 @@ enum eMenuBackgrounds
 class cMenu
 {
 protected:
-	bool drawnEveryFrame;
 	/** When this is true the show-loop will be end and give 0 as return.
 	 * Should be used when the menu is closed by ok or done.
 	 */
@@ -276,7 +275,7 @@ public:
 	 * delegates the keyinput to the active menuitem.
 	 *@author alzi
 	 */
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 
 	/**
 	 * sends a netmessage to the given player.
@@ -657,7 +656,7 @@ public:
 	cLandingMenu (cClient& client_, cStaticMap& map_);
 
 private:
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 	virtual void handleNetMessages();
 
 	void handleNetMessage (cNetMessage* message);

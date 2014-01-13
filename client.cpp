@@ -2005,7 +2005,7 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 #endif
 	// reset the screen
 	gameGUI->deselectUnit();
-	SDL_Surface* sf = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, Video.getResolutionX(), Video.getResolutionY(), 32, 0, 0, 0, 0);
+	SDL_Surface* sf = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), 32, 0, 0, 0, 0);
 	SDL_Rect scr = { 15, 356, 112u, 112u};
 	SDL_BlitSurface (sf, NULL, buffer, NULL);
 	SDL_BlitSurface (sf, &scr, buffer, &scr);

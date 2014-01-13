@@ -212,7 +212,7 @@ public:
 	 *@param ch the encoded key
 	 *@param parent pointer to the calling menu
 	 */
-	virtual bool handleKeyInput (SDL_keysym keysym, const std::string& ch, void* parent) { return false; }
+	virtual bool handleKeyInput (const SDL_Keysym& keysym, cMenu* parent) { return false; }
 
 
 	/**
@@ -1028,6 +1028,7 @@ protected:
 	bool readOnly;
 	bool takeChars, takeNumerics;
 
+	void addText (const SDL_Keysym& keysym, cMenu* parent);
 	void resetTextPosition();
 	void doPosIncrease (int& value, int pos);
 	void doPosDecrease (int& pos);
@@ -1055,7 +1056,7 @@ public:
 	void setText (const std::string& text_);
 	const std::string& getText() const;
 	void setSize (int w, int h);
-	virtual bool handleKeyInput (SDL_keysym keysym, const std::string& ch, void* parent);
+	virtual bool handleKeyInput (const SDL_Keysym& keysym, cMenu* parent);
 
 	void setReturnPressedFunc (void (*returnPressed_) (void*));
 };

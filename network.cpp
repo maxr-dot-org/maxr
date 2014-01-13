@@ -88,7 +88,7 @@ cTCP::cTCP() :
 	bHost = false;
 
 	bExit = false;
-	TCPHandleThread = SDL_CreateThread (CallbackHandleNetworkThread, this);
+	TCPHandleThread = SDL_CreateThread (CallbackHandleNetworkThread, "network", this);
 }
 
 //------------------------------------------------------------------------

@@ -20,24 +20,6 @@
 #include <cassert>
 #include <set>
 
-#ifdef _MSC_VER
-
-# define NOMINMAX // do not use min, max as macro
-# include <windows.h>
-const DWORD MS_VC_EXCEPTION = 0x406D1388;
-
-# pragma pack (push, 8)
-typedef struct tagTHREADNAME_INFO
-{
-	DWORD dwType; // Must be 0x1000.
-	LPCSTR szName; // Pointer to name (in user addr space).
-	DWORD dwThreadID; // Thread ID (-1=caller thread).
-	DWORD dwFlags; // Reserved for future use, must be zero.
-} THREADNAME_INFO;
-# pragma pack (pop)
-#endif
-
-
 #include "server.h"
 
 #include "attackJobs.h"
@@ -71,22 +53,6 @@ typedef struct tagTHREADNAME_INFO
 //------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
 {
-#if defined _MSC_VER && defined DEBUG //set a readable thread name for debugging
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = "Server Thread";
-	info.dwThreadID = -1;
-	info.dwFlags = 0;
-
-	__try
-	{
-		RaiseException (MS_VC_EXCEPTION, 0, sizeof (info) / sizeof (ULONG_PTR), reinterpret_cast<ULONG_PTR*> (&info));
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER)
-	{
-	}
-#endif
-
 	cServer* server = reinterpret_cast<cServer*> (arg);
 	server->run();
 	return 0;
@@ -116,7 +82,7 @@ cServer::cServer (cTCP* network_) :
 	if (!DEDICATED_SERVER)
 	{
 		if (network) network->setMessageReceiver (this);
-		serverThread = SDL_CreateThread (CallbackRunServerThread, this);
+		serverThread = SDL_CreateThread (CallbackRunServerThread, "server", this);
 	}
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
