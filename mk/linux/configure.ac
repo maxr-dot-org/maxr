@@ -31,30 +31,30 @@ AS_IF([test "x$enable_win32" = "xyes"], [
 	AC_SUBST(DWIN)
 ])
 
-AC_CHECK_PROGS([SDLCONFIG], [sdl-config], [:])
+AC_CHECK_PROGS([SDLCONFIG], [sdl2-config], [:])
 if test "$SDLCONFIG" = :; then
 	AC_MSG_ERROR([This package needs sdl-config.])
 fi
 
 LIBSDL_CFLAGS="`$SDLCONFIG --cflags`"
+LIBS="$LIBS `$SDLCONFIG --libs`"
 AC_SUBST(LIBSDL_CFLAGS)
 
-AC_CHECK_HEADER([SDL/SDL.h],,AC_MSG_ERROR([SDL headers not found.]))
-AC_CHECK_HEADER(SDL/SDL_net.h, , AC_MSG_ERROR([SDL_net header not found.]))
-AC_CHECK_HEADER(SDL/SDL_mixer.h, , AC_MSG_ERROR([SDL_mixer header not found.]))
-
+AC_CHECK_HEADER([SDL2/SDL.h],,AC_MSG_ERROR([SDL headers not found.]))
+AC_CHECK_HEADER(SDL2/SDL_net.h, , AC_MSG_ERROR([SDL_net header not found.]))
+AC_CHECK_HEADER(SDL2/SDL_mixer.h, , AC_MSG_ERROR([SDL_mixer header not found.]))
 
 case "$host" in
 	i686-pc-mingw32|x86_64-pc-mingw64)
 		#simply set libs - don't check for usability since I don't know a way of doing so during cross compiling -- beko
-		AC_SUBST([SDL_LIBS], [-lSDL])
-		AC_SUBST([SDL_NET_LIBS], [-lSDL_net])
-		AC_SUBST([SDL_MIXER_LIBS], [-lSDL_mixer])
+		AC_SUBST([SDL_LIBS], [-l2SDL])
+		AC_SUBST([SDL_NET_LIBS], [-lSDL2_net])
+		AC_SUBST([SDL_MIXER_LIBS], [-lSDL2_mixer])
 	;;
 	*)
-		AC_CHECK_LIB(SDL, SDL_Init, AC_SUBST([SDL_LIBS], [-lSDL]), AC_MSG_ERROR([SDL not found.]))
-		AC_CHECK_LIB(SDL_net, SDLNet_Init, AC_SUBST([SDL_NET_LIBS], [-lSDL_net]), AC_MSG_ERROR([SDL_net not found.]), [${SDL_LIBS}])
-		AC_CHECK_LIB(SDL_mixer, Mix_OpenAudio, AC_SUBST([SDL_MIXER_LIBS], [-lSDL_mixer]), AC_MSG_ERROR([SDL_mixer not found.]), [${SDL_LIBS}])
+		AC_CHECK_LIB(SDL2, SDL_Init, AC_SUBST([SDL_LIBS], [-lSDL2]), AC_MSG_ERROR([SDL not found.]))
+		AC_CHECK_LIB(SDL2_net, SDLNet_Init, AC_SUBST([SDL_NET_LIBS], [-lSDL2_net]), AC_MSG_ERROR([SDL_net not found.]), [${SDL_LIBS}])
+		AC_CHECK_LIB(SDL2_mixer, Mix_OpenAudio, AC_SUBST([SDL_MIXER_LIBS], [-lSDL2_mixer]), AC_MSG_ERROR([SDL_mixer not found.]), [${SDL_LIBS}])
 	;;
 esac
 
