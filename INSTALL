@@ -3,9 +3,9 @@ PREREQUISITES
 You'll need to have these libraries (with equivalent devel versions
 for building) to play M.A.X.R.:
 
- libsdl1.2
- libsdl-mixer1.2 (with Vorbis support)
- libsdl-net
+ sdl2
+ sdl-mixer 2.0(with Vorbis support)
+ sdl-net 2.0
 
 SDL libraries can be found at http://www.libsdl.org
 
