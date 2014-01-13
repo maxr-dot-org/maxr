@@ -341,3 +341,385 @@ int cVideo::getMinH() const
 {
 	return MINHEIGHT;
 }
+
+void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
+{
+	SDL_Rect temp1, temp2;
+
+	if (!dst || !src) return;
+
+	//check surface formats
+	if (!dst->format->Amask || src->format->Amask) return;
+	if (SDL_GetSurfaceAlphaMod(src, NULL) != 0) return;
+
+	if (srcrect == NULL)
+	{
+		srcrect = &temp1;
+		srcrect->x = 0;
+		srcrect->y = 0;
+		srcrect->h = src->h;
+		srcrect->w = src->w;
+	}
+
+	if (dstrect == NULL)
+	{
+		dstrect = &temp2;
+		dstrect->x = 0;
+		dstrect->y = 0;
+	}
+
+	int width  = srcrect->w;
+	int height = srcrect->h;
+
+	//clip source rect to the source surface
+	if (srcrect->x < 0)
+	{
+		width += srcrect->x;
+		srcrect->x = 0;
+	}
+	if (srcrect->y < 0)
+	{
+		height += srcrect->y;
+		srcrect->y = 0;
+	}
+	width  = std::min (src->w - srcrect->x, width);
+	height = std::min (src->h - srcrect->y, height);
+
+	//clip the dest rect to the destination clip rect
+	if (dstrect->x < dst->clip_rect.x)
+	{
+		width -= dst->clip_rect.x - dstrect->x;
+		srcrect->x += dst->clip_rect.x - dstrect->x;
+		dstrect->x = dst->clip_rect.x;
+	}
+	if (dstrect->y < dst->clip_rect.y)
+	{
+		height -= dst->clip_rect.y - dstrect->y;
+		srcrect->y += dst->clip_rect.y - dstrect->y;
+		dstrect->y = dst->clip_rect.y;
+	}
+	width  = std::min (dst->clip_rect.x + dst->clip_rect.w - dstrect->x, width);
+	height = std::min (dst->clip_rect.y + dst->clip_rect.h - dstrect->y, height);
+
+	if (width <= 0 || height <= 0)
+	{
+		dstrect->w = 0;
+		dstrect->h = 0;
+		return;
+	}
+
+	if (SDL_MUSTLOCK (src)) SDL_LockSurface (src);
+	if (SDL_MUSTLOCK (dst)) SDL_LockSurface (dst);
+
+	//setup needed variables
+	Uint8 srcAlpha = 0;
+	SDL_GetSurfaceAlphaMod (src, &srcAlpha);
+	const int srmask = src->format->Rmask;
+	const int sgmask = src->format->Gmask;
+	const int sbmask = src->format->Bmask;
+	const int damask = dst->format->Amask;
+	const int drmask = dst->format->Rmask;
+	const int dgmask = dst->format->Gmask;
+	const int dbmask = dst->format->Bmask;
+	const int rshift = src->format->Rshift - dst->format->Rshift;
+	const int gshift = src->format->Gshift - dst->format->Gshift;
+	const int bshift = src->format->Bshift - dst->format->Bshift;
+	const int ashift = dst->format->Ashift;
+	Uint32 colorKey = 0;
+	const bool useColorKey = SDL_GetColorKey (src, &colorKey) == 0;
+
+	Uint32* dstPixel = static_cast<Uint32*> (dst->pixels) + dstrect->x + dstrect->y * dst->w;
+	Uint32* srcPixel = static_cast<Uint32*> (src->pixels) + srcrect->x + srcrect->y * src->w;
+
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			const Uint32 dcolor = *dstPixel;
+			const Uint32 scolor = *srcPixel;
+
+			if (useColorKey && scolor == colorKey)
+			{
+				dstPixel++;
+				srcPixel++;
+				continue;
+			}
+
+			Uint32 r = (scolor & srmask) >> rshift;
+			Uint32 g = (scolor & sgmask) >> gshift;
+			Uint32 b = (scolor & sbmask) >> bshift;
+			Uint32 dalpha = (dcolor & damask) >> ashift;
+
+			r = ( ( (dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha) + r * srcAlpha;
+			g = ( ( (dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
+			b = ( ( (dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
+
+			const Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha) / 255;
+
+			if (a > 0)
+			{
+				r /= a;
+				g /= a;
+				b /= a;
+			}
+
+			r = r & drmask;
+			g = g & dgmask;
+			b = b & dbmask;
+
+			*dstPixel = r | g | b | a << ashift;
+
+			dstPixel++;
+			srcPixel++;
+		}
+
+		dstPixel += dst->pitch / 4 - width;
+		srcPixel += src->pitch / 4 - width;
+	}
+
+	if (SDL_MUSTLOCK (src)) SDL_UnlockSurface (src);
+	if (SDL_MUSTLOCK (dst)) SDL_UnlockSurface (dst);
+}
+
+void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
+{
+	// TODO: [SDL2] special blitSurface seems useless.
+	if (dst->format->Amask && SDL_GetSurfaceAlphaMod(src, NULL) == 0)
+		blittPerSurfaceAlphaToAlphaChannel (src, srcrect, dst, dstrect);
+	else
+		SDL_BlitSurface (src, srcrect, dst, dstrect);
+}
+
+/**
+ * draws one line of the source surface scaled to the destination surface.
+ * @author alzi alias DoctorDeath
+ * @param srcPixelData pointer to the first byte of the line in the pixeldate
+ *        of the source surface.
+ * @param srcWidth width of the line in the sourcesurface.
+ * @param destPixelData pointer to the first byte where in the pixeldate
+ *        of the source surface the line should be drawn.
+ * @param destWidth Directory width of the line how it should be drawn
+ *        to the destination surface.
+ */
+template<typename Type> static void drawStetchedLine (Type* srcPixelData, int srcWidth, Type* destPixelData, int destWidth)
+{
+	int i = 0;
+	int width = destWidth;
+	Type pixel = 0;
+	Type* srcEnd = srcPixelData + srcWidth;
+	// go trough all pixel in this line
+	while (srcPixelData < srcEnd)
+	{
+		pixel = *srcPixelData;
+drawpixel:
+		// copy the pixel
+		*destPixelData++ = pixel;
+		width--;
+		i += srcWidth;
+		if (!width) break;
+		// draw pixel once more if necessary
+		if (i < destWidth) goto drawpixel;
+		// skip pixels when necessary
+		do
+		{
+			i -= destWidth;
+			srcPixelData++;
+		}
+		while (i >= destWidth);
+	}
+}
+
+SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height)
+{
+	if (width <= 0 || height <= 0 || !scr) return NULL;
+	SDL_Surface* surface;
+
+	//can not enlage an existing surface
+	if (width > scr->w && dest) width = scr->w;
+	if (height > scr->h && dest) height = scr->h;
+
+	// generate new surface if necessary
+	if (dest == NULL) surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+	else
+	{
+		// else set the size of the old one
+		surface = dest;
+		surface->w = width;
+		surface->h = height;
+	}
+
+	if (SDL_MUSTLOCK (scr)) SDL_LockSurface (scr);
+	if (SDL_MUSTLOCK (surface)) SDL_LockSurface (surface);
+
+#if 0
+	// just blit the surface when the new size is identic to the old one
+	if (scr->w == width && scr->h == height)
+	{
+		SDL_BlitSurface (scr, NULL, surface, NULL);
+		return surface;
+	}
+#endif
+	// copy palette when necessary
+	if (scr->format->BitsPerPixel == 8 && !dest)
+	{
+		for (int i = 0; i < 256; i++)
+		{
+			surface->format->palette->colors[i].r = scr->format->palette->colors[i].r;
+			surface->format->palette->colors[i].g = scr->format->palette->colors[i].g;
+			surface->format->palette->colors[i].b = scr->format->palette->colors[i].b;
+		}
+	}
+
+	int srcRow = 0;
+	int destRow = 0;
+	int i = 0;
+	// go trough all rows
+	while (srcRow < scr->h)
+	{
+		Uint8* srcPixelData = static_cast<Uint8*> (scr->pixels) + (srcRow * scr->pitch);
+		// draw the complete line
+drawline:
+		Uint8* destPixelData = static_cast<Uint8*> (surface->pixels) + (destRow * surface->pitch);
+
+		// pay attention to different surface formats
+		switch (scr->format->BytesPerPixel)
+		{
+			case 1:
+				drawStetchedLine<Uint8> (srcPixelData, scr->w, destPixelData, surface->w);
+				break;
+			case 2:
+				drawStetchedLine<Uint16> (reinterpret_cast<Uint16*> (srcPixelData), scr->w, (Uint16*) destPixelData, surface->w);
+				break;
+			case 3:
+				// not yet supported
+				break;
+			case 4:
+				drawStetchedLine<Uint32> (reinterpret_cast<Uint32*> (srcPixelData), scr->w, (Uint32*) destPixelData, surface->w);
+				break;
+		}
+		destRow++;
+		i += scr->h;
+		// break when we have already finished
+		if (destRow == surface->h) break;
+		// draw the line once more when the destiniation surface has
+		// a bigger height than the source surface
+		if (i < surface->h) goto drawline;
+		// skip lines in the source surface when the destination surface has
+		// a smaller height than the source surface
+		do
+		{
+			i -= surface->h;
+			srcRow++;
+		}
+		while (i >= surface->h);
+	}
+
+	if (SDL_MUSTLOCK (scr)) SDL_UnlockSurface (scr);
+	if (SDL_MUSTLOCK (surface)) SDL_UnlockSurface (surface);
+
+	return surface;
+}
+
+// CreatePfeil ////////////////////////////////////////////////////////////////
+// Erzeigt ein Pfeil-Surface:
+SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
+{
+	SDL_Surface* sf;
+	sf = SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (sf, SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (sf, NULL, 0x00FF00FF);
+	SDL_LockSurface (sf);
+
+	const float fak = size / 64.0f;
+	p1x = Round (p1x * fak);
+	p1y = Round (p1y * fak);
+	p2x = Round (p2x * fak);
+	p2y = Round (p2y * fak);
+	p3x = Round (p3x * fak);
+	p3y = Round (p3y * fak);
+	line (p1x, p1y, p2x, p2y, color, sf);
+	line (p2x, p2y, p3x, p3y, color, sf);
+	line (p3x, p3y, p1x, p1y, color, sf);
+
+	SDL_UnlockSurface (sf);
+	return sf;
+}
+
+
+void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
+{
+	if (x2 < x1)
+	{
+		std::swap (x1, x2);
+		std::swap (y1, y2);
+	}
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+	int dir = 1;
+	if (dy < 0) {dy = -dy; dir = -1;}
+	int error = 0;
+	Uint32* ptr = static_cast<Uint32*> (sf->pixels);
+	if (dx > dy)
+	{
+		for (; x1 != x2; x1++, error += dy)
+		{
+			if (error > dx) {error -= dx; y1 += dir;}
+			if (x1 < sf->w && x1 >= 0 && y1 >= 0 && y1 < sf->h)
+				ptr[x1 + y1 * sf->w] = color;
+		}
+		return;
+	}
+	for (; y1 != y2; y1 += dir, error += dx)
+	{
+		if (error > dy) {error -= dy; x1++;}
+		if (x1 < sf->w && x1 >= 0 && y1 >= 0 && y1 < sf->h)
+			ptr[x1 + y1 * sf->w] = color;
+	}
+}
+void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
+{
+	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() ||
+		iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;
+	SDL_LockSurface (surface);
+
+	int d = 0;
+	int xx = 0;
+	int yy = iRadius;
+	int bry = Round (0.70710678f * iRadius);
+	while (yy > bry)
+	{
+		int da = d + (xx << 1) + 1;
+		int db = da - (yy << 1) + 1;
+		if (abs (da) < abs (db))
+		{
+			d = da;
+			xx++;
+		}
+		else
+		{
+			d = db;
+			xx++;
+			yy--;
+		}
+		setPixel (surface, iX + xx, iY + yy, iColor);
+		setPixel (surface, iX + yy, iY + xx, iColor);
+		setPixel (surface, iX + yy, iY - xx, iColor);
+		setPixel (surface, iX + xx, iY - yy, iColor);
+		setPixel (surface, iX - xx, iY + yy, iColor);
+		setPixel (surface, iX - yy, iY + xx, iColor);
+		setPixel (surface, iX - yy, iY - xx, iColor);
+		setPixel (surface, iX - xx, iY - yy, iColor);
+	}
+	SDL_UnlockSurface (surface);
+}
+
+void setPixel (SDL_Surface* surface, int x, int y, int iColor)
+{
+	//check the surface size
+	if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) return;
+	//check the clip rect
+	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w ||
+		y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
+
+	static_cast<Uint32*> (surface->pixels) [x + y * surface->w] = iColor;
+}

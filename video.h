@@ -163,4 +163,51 @@ private:
 
 extern cVideo Video;
 
+/**
+* Works like SDL_BlittSurface.
+* But unlike SDL it respects the destination alpha channel of the surface.
+* This function is only designed to blitt from a surface
+* with per surface alpha value to a surface with alpha channel.
+* A source color key is also supported.
+*/
+void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
+/**
+* Works like SDL_BlittSurface.
+* This function choses the right blitt function to use for blitting.
+*/
+void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
+
+/**
+ * scale a surface to the overgiven sice.
+ * The scaled surface will be drawn to the destination surface.
+ * If the destiniation surface is NULL a new surface will be created.
+ * @author alzi alias DoctorDeath
+ * @param scr the surface to be scaled.
+ * @param dest the surface that will receive the new pixel data.
+ *        If it is NUll a new surface will be created.
+ * @param width width of the new surface.
+ * @param height height of the new surface.
+ * @return returns the destination surface.
+ */
+SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height);
+
+/** this function checks, whether the surface has to be rescaled,
+ * and scales it if necessary */
+inline void CHECK_SCALING (SDL_Surface* surface, SDL_Surface* surface_org, float factor)
+{
+	if (!cSettings::getInstance().shouldDoPrescale() &&
+		(surface->w != (int) (surface_org->w * factor) ||
+		 surface->h != (int) (surface_org->h * (factor))))
+		scaleSurface (surface_org, surface, (int) (surface_org->w * factor), (int) (surface_org->h * factor));
+}
+
+SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
+
+/** Draws a line on the surface */
+void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf);
+/** Draws a circle on the surface */
+void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface);
+/** Sets a pixel on the surface */
+void setPixel (SDL_Surface* surface, int x, int y, int iColor);
+
 #endif
