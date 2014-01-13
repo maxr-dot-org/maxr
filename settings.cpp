@@ -241,7 +241,7 @@ void cSettings::setPaths()
 			exePath += PATH_DELIMITER;
 
 			// check for binary itself in bin folder
-			if (FileExists ( (exePath + "maxr").c_str()))
+			if (FileExists ((exePath + "maxr").c_str()))
 			{
 				Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
 			}
@@ -253,7 +253,7 @@ void cSettings::setPaths()
 				if (cPathToExe[iPos - 1] == 'r' && cPathToExe[iPos - 2] == 'x' && cPathToExe[iPos - 3] == 'a' && cPathToExe[iPos - 4] == 'm')
 				{
 					exePath = exePath.substr (0, iPos - 5);
-					if (FileExists ( (exePath + "maxr").c_str()))
+					if (FileExists ((exePath + "maxr").c_str()))
 					{
 						Log.write ("Path to binary is: " + exePath, cLog::eLOG_TYPE_INFO);
 					}
@@ -511,7 +511,7 @@ void cSettings::initialize()
 	{
 		language = xmlElement->Attribute ("Text");
 		for (std::string::iterator i = language.begin(), end = language.end(); i != end; ++i)
-			*i = std::toupper ( (unsigned char) * i);
+			*i = std::toupper ((unsigned char) * i);
 	}
 
 	// =========================================================================
@@ -525,7 +525,7 @@ void cSettings::initialize()
 	{
 		voiceLanguage = xmlElement->Attribute ("Text");
 		for (std::string::iterator i = voiceLanguage.begin(), end = voiceLanguage.end(); i != end; ++i)
-			*i = std::tolower ( (unsigned char) * i);
+			*i = std::tolower ((unsigned char) * i);
 	}
 
 	// GAME
@@ -846,7 +846,7 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load saves path from config file: using default value", LOG_TYPE_WARNING);
-		setSavesPath ( (homeDir + "saves").c_str());
+		setSavesPath ((homeDir + "saves").c_str());
 	}
 	else
 	{

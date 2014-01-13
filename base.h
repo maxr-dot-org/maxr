@@ -167,8 +167,8 @@ private:
 	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
 
 public:
-//private:
-//	friend class cBase;
+	//private:
+	//	friend class cBase;
 	std::vector<cBuilding*> buildings;
 	cPlayer* owner;
 

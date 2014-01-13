@@ -80,7 +80,7 @@ public:
 
 	void deleteStoredUnits();
 
-//protected:
+	//protected:
 	virtual bool isUnitMoving() const { return false; }
 	virtual bool isAutoMoveJobActive() const { return false; }
 	virtual bool isUnitWorking() const { return false; }

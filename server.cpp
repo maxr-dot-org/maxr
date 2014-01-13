@@ -127,7 +127,7 @@ cServer::~cServer()
 //------------------------------------------------------------------------------
 void cServer::setMap (cStaticMap& staticMap)
 {
-	Map = new cMap(staticMap);
+	Map = new cMap (staticMap);
 }
 
 //------------------------------------------------------------------------------
@@ -145,10 +145,10 @@ void cServer::setGameSettings (const sSettings& gameSettings_)
 //------------------------------------------------------------------------------
 void cServer::changeStateToInitGame()
 {
-	assert(serverState == SERVER_STATE_ROOM);
-	assert(gameSetting != NULL);
-	assert(Map != NULL);
-	assert(!PlayerList.empty());
+	assert (serverState == SERVER_STATE_ROOM);
+	assert (gameSetting != NULL);
+	assert (Map != NULL);
+	assert (!PlayerList.empty());
 
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
@@ -165,7 +165,7 @@ void cServer::changeStateToInitGame()
 //------------------------------------------------------------------------------
 void cServer::cancelStateInitGame()
 {
-	assert(serverState == SERVER_STATE_INITGAME);
+	assert (serverState == SERVER_STATE_INITGAME);
 
 	serverState = SERVER_STATE_ROOM;
 }
@@ -894,7 +894,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 	if (message.popBool()) DestVehicle = getVehicleFromID (message.popInt16());
 	else DestBuilding = getBuildingFromID (message.popInt16());
 
-	if ( (!SrcBuilding && !SrcVehicle) || (!DestBuilding && !DestVehicle)) return;
+	if ((!SrcBuilding && !SrcVehicle) || (!DestBuilding && !DestVehicle)) return;
 
 	const int iTranfer = message.popInt16();
 	const int iType = message.popInt16();
@@ -1024,7 +1024,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		std::vector<cBuilding*>& buildings = Map->fields[iOff].getBuildings();
 		std::vector<cBuilding*>::iterator b_it = buildings.begin();
 		std::vector<cBuilding*>::iterator b_end = buildings.end();
-		while (b_it != b_end && ( (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
+		while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
 		if (!Map->isWaterOrCoast (iX, iY) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
 		else if (Map->isWaterOrCoast (iX, iY) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
@@ -1297,7 +1297,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	if (message.popBool()) DestVehicle = getVehicleFromID (message.popInt16());
 	else DestBuilding = getBuildingFromID (message.popInt16());
 
-	if ( (!SrcVehicle && !SrcBuilding) || (!DestVehicle && !DestBuilding)) return;
+	if ((!SrcVehicle && !SrcBuilding) || (!DestVehicle && !DestBuilding)) return;
 
 	// check whether the supply is ok and reduce cargo of sourceunit
 	int iValue;
@@ -1319,7 +1319,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 			iValue = DestData->hitpointsCur;
 			while (SrcVehicle->data.storageResCur > 0 && iValue < DestData->hitpointsMax)
 			{
-				iValue += Round ( ( (float) DestData->hitpointsMax / DestData->buildCosts) * 4);
+				iValue += Round (((float) DestData->hitpointsMax / DestData->buildCosts) * 4);
 				SrcVehicle->data.storageResCur--;
 			}
 			iValue = std::min (DestData->hitpointsMax, iValue);
@@ -1346,7 +1346,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 			iValue = DestVehicle->data.hitpointsCur;
 			while (SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.hitpointsMax)
 			{
-				iValue += Round ( ( (float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
+				iValue += Round (((float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
 				SrcBuilding->SubBase->addMetal (*this, -1);
 			}
 			iValue = std::min (DestVehicle->data.hitpointsMax, iValue);
@@ -1460,10 +1460,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		sideStepStealthUnit (building->PosX    , building->PosY + 1, *Vehicle, rubbleoffset);
 		sideStepStealthUnit (building->PosX + 1, building->PosY + 1, *Vehicle, rubbleoffset);
 
-		if ( (!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY) && rubbleoffset != off) ||
-			 (!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY) && rubbleoffset + 1 != off) ||
-			 (!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY + 1) && rubbleoffset + Map->getSize() != off) ||
-			 (!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY + 1) && rubbleoffset + Map->getSize() + 1 != off))
+		if ((!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY) && rubbleoffset != off) ||
+			(!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY) && rubbleoffset + 1 != off) ||
+			(!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY + 1) && rubbleoffset + Map->getSize() != off) ||
+			(!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY + 1) && rubbleoffset + Map->getSize() + 1 != off))
 		{
 			sendClearAnswer (*this, 1, *Vehicle, 0, -1, Vehicle->owner->getNr());
 			return;
@@ -1922,10 +1922,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (destUnit == NULL) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ( (destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, Map, steal)) ||
-			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, Map, steal)) ||
-			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map, steal)) ||
-			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map, steal)))) return;
+	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map, steal)))) return;
 
 	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
@@ -1948,7 +1948,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			// As higher his level is as slower he rises onto the next one.
 			// every 5 rankings he needs one successful disabling more,
 			// to get to the next ranking
-			srcVehicle->CommandoRank += 1.f / ( ( (int) srcVehicle->CommandoRank + 5) / 5);
+			srcVehicle->CommandoRank += 1.f / (((int) srcVehicle->CommandoRank + 5) / 5);
 
 			const int strength = srcVehicle->calcCommandoTurns (destUnit);
 			// stop the unit and make it disabled
@@ -2491,9 +2491,9 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ( (*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ( (*buildings) [i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2501,9 +2501,9 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ( (*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ( (*buildings) [i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2511,9 +2511,9 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ( (*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ( (*buildings) [i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2521,9 +2521,9 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ( (*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ( (*buildings) [i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2565,7 +2565,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		return;
 	}
 
-	if (unit->owner && casualtiesTracker && ( (unit->isABuilding() && unit->data.buildCosts <= 2) == false))
+	if (unit->owner && casualtiesTracker && ((unit->isABuilding() && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->getNr());
 
 	if (unit->isABuilding())
@@ -3070,7 +3070,7 @@ void cServer::makeTurnEnd()
 				}
 				forceSendUnitData = true;
 			}
-			if ( (Building->data.canAttack && Building->refreshData()) || forceSendUnitData)
+			if ((Building->data.canAttack && Building->refreshData()) || forceSendUnitData)
 			{
 				for (size_t k = 0; k != Building->seenByPlayerList.size(); ++k)
 				{
@@ -3513,10 +3513,10 @@ void cServer::destroyUnit (cVehicle* vehicle)
 	while (b_it != buildings->end())
 	{
 		// this seems to be rubble
-		if ( (*b_it)->owner == 0 && (*b_it)->RubbleValue > 0)
+		if ((*b_it)->owner == 0 && (*b_it)->RubbleValue > 0)
 		{
 			oldRubbleValue += (*b_it)->RubbleValue;
-			if ( (*b_it)->data.isBig)
+			if ((*b_it)->data.isBig)
 			{
 				rubblePosX = (*b_it)->PosX;
 				rubblePosY = (*b_it)->PosY;

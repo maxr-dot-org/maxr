@@ -286,7 +286,7 @@ static bool isAOfflineStation (const cBuilding& building)
 	return building.data.produceEnergy > 1 && !building.IsWorking;
 }
 
-static bool isAOnlineGenerator(const cBuilding& building)
+static bool isAOnlineGenerator (const cBuilding& building)
 {
 	return building.data.produceEnergy == 1 && building.IsWorking;
 }
@@ -323,7 +323,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int value)
 	// calc the optimum amount of energy stations and generators
 	const int energy = EnergyProd + value;
 
-	int stations   = min ( (energy + 3) / 6, availableStations);
+	int stations   = min ((energy + 3) / 6, availableStations);
 	int generators = max (energy - stations * 6, 0);
 
 	if (generators > availableGenerators)
@@ -545,7 +545,7 @@ bool sSubBase::checkOil (cServer& server)
 	const int availableGenerators = onlineGenerators.size() + offlineGenerators.size();
 
 	// calc the optimum amount of energy stations and generators
-	int stations   = min ( (EnergyNeed + 3) / 6, availableStations);
+	int stations   = min ((EnergyNeed + 3) / 6, availableStations);
 	int generators = max (EnergyNeed - stations * 6, 0);
 
 	if (generators > availableGenerators)
@@ -568,8 +568,8 @@ bool sSubBase::checkOil (cServer& server)
 	if (neededOil > availableOil)
 	{
 		// reduce energy production to maximum possible value
-		stations = min ( (availableOil) / 6, availableStations);
-		generators = min ( (availableOil - (stations * 6)) / 2, availableGenerators);
+		stations = min ((availableOil) / 6, availableStations);
+		generators = min ((availableOil - (stations * 6)) / 2, availableGenerators);
 
 		oilMissing = true;
 	}
@@ -729,7 +729,7 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 		return;
 	}
 	// calc new hitpoints
-	building.data.hitpointsCur += Round ( ( (float) building.data.hitpointsMax / building.data.buildCosts) * 4);
+	building.data.hitpointsCur += Round (((float) building.data.hitpointsMax / building.data.buildCosts) * 4);
 	building.data.hitpointsCur = std::min (building.data.hitpointsMax, building.data.hitpointsCur);
 	addMetal (server, -1);
 	sendUnitData (server, building, owner->getNr());

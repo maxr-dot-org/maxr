@@ -164,7 +164,7 @@ void StartMusic()
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
 	if (MusicFiles.empty()) return;
-	PlayMusic (MusicFiles[random ( (int) MusicFiles.size())].c_str());
+	PlayMusic (MusicFiles[random ((int) MusicFiles.size())].c_str());
 }
 
 // callback when end of music title is reached
@@ -172,7 +172,7 @@ static void MusicFinished()
 {
 	if (!cSettings::getInstance().isSoundEnabled()) return;
 	if (MusicFiles.empty()) return;
-	PlayMusic (MusicFiles[random ( (int) MusicFiles.size())].c_str());
+	PlayMusic (MusicFiles[random ((int) MusicFiles.size())].c_str());
 }
 
 // starts a loop sound

@@ -45,10 +45,12 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 					lowerMapName.begin(),
 					static_cast<int (*) (int)> (std::tolower));
 
-	const struct {
+	const struct
+	{
 		const char* filename;
 		int32_t checksum;
-	} maps[] = {
+	} maps[] =
+	{
 		{ "bottleneck.wrl"        , 344087468},
 		{ "flash point.wrl"       , 1702427970},
 		{ "freckles.wrl"          , 1401869069},
@@ -75,16 +77,16 @@ bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 		{ "valentine's planet.wrl", 280492815}
 	};
 
-	for (int i = 0; i != sizeof(maps) / sizeof(*maps); ++i)
+	for (int i = 0; i != sizeof (maps) / sizeof (*maps); ++i)
 	{
-		if (lowerMapName.compare(maps[i].filename) == 0)
+		if (lowerMapName.compare (maps[i].filename) == 0)
 		{
 			return true;
 		}
 	}
 	if (checksum == 0)
 		checksum = calculateCheckSum (lowerMapName);
-	for (int i = 0; i != sizeof(maps) / sizeof(*maps); ++i)
+	for (int i = 0; i != sizeof (maps) / sizeof (*maps); ++i)
 	{
 		if (maps[i].checksum == checksum)
 		{

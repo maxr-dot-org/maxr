@@ -177,7 +177,7 @@ cClanData::~cClanData()
 //--------------------------------------------------
 cClan* cClanData::addClan()
 {
-	cClan* clan = new cClan ( (int) clans.size());
+	cClan* clan = new cClan ((int) clans.size());
 	clans.push_back (clan);
 	return clan;
 }

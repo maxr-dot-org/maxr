@@ -105,7 +105,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 		if (makeDir (cSettings::getInstance().getSavesPath())) Log.write ("Created new save directory: " + cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_INFO);
 		else Log.write ("Can't create save directory: " + cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_ERROR);
 	}
-	SaveFile.SaveFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str());
+	SaveFile.SaveFile ((cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str());
 
 	return 1;
 }
@@ -145,7 +145,7 @@ bool cSavegame::load (cServer& server)
 				loadStandardUnitValues (unitNode);
 
 				unitnum++;
-				unitNode = unitValuesNode->FirstChildElement ( ("UnitVal_" + iToStr (unitnum)).c_str());
+				unitNode = unitValuesNode->FirstChildElement (("UnitVal_" + iToStr (unitnum)).c_str());
 			}
 		}
 	}
@@ -237,9 +237,9 @@ string cSavegame::getPlayerNames() const
 	int playernum = 0;
 	while (playerNode)
 	{
-		playernames += ( (string) playerNode->FirstChildElement ("Name")->Attribute ("string")) + "\n";
+		playernames += ((string) playerNode->FirstChildElement ("Name")->Attribute ("string")) + "\n";
 		playernum++;
-		playerNode = playersNode->FirstChildElement ( ("Player_" + iToStr (playernum)).c_str());
+		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
 	}
 	return playernames;
 }
@@ -331,7 +331,7 @@ void cSavegame::loadPlayers (cServer& server)
 	{
 		players.push_back (loadPlayer (playerNode, *map));
 		playernum++;
-		playerNode = playersNode->FirstChildElement ( ("Player_" + iToStr (playernum)).c_str());
+		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
 	}
 }
 
@@ -431,7 +431,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 				loadUpgrade (upgradeNode, &Player->BuildingData[num]);
 			}
 			upgradenum++;
-			upgradeNode = upgradesNode->FirstChildElement ( ("Unit_" + iToStr (upgradenum)).c_str());
+			upgradeNode = upgradesNode->FirstChildElement (("Unit_" + iToStr (upgradenum)).c_str());
 		}
 	}
 
@@ -465,7 +465,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 				SubBasesLoad.push_back (subBaseLoad);
 			}
 			subbasenum++;
-			subbaseNode = subbasesNode->FirstChildElement ( ("Subbase_" + iToStr (subbasenum)).c_str());
+			subbaseNode = subbasesNode->FirstChildElement (("Subbase_" + iToStr (subbasenum)).c_str());
 		}
 	}
 	return Player;
@@ -569,7 +569,7 @@ void cSavegame::loadUnits (cServer& server)
 		else if (ID.isABuilding()) loadBuilding (server, unitNode, ID);
 
 		unitnum++;
-		unitNode = unitsNode->FirstChildElement ( ("Unit_" + iToStr (unitnum)).c_str());
+		unitNode = unitsNode->FirstChildElement (("Unit_" + iToStr (unitnum)).c_str());
 	}
 	// read nextid-value before loading rubble,
 	// so that the rubble will get new ids.
@@ -582,7 +582,7 @@ void cSavegame::loadUnits (cServer& server)
 	{
 		loadRubble (server, rubbleNode);
 		rubblenum++;
-		rubbleNode = unitsNode->FirstChildElement ( ("Rubble_" + iToStr (rubblenum)).c_str());
+		rubbleNode = unitsNode->FirstChildElement (("Rubble_" + iToStr (rubblenum)).c_str());
 	}
 	generateMoveJobs (server);
 }
@@ -666,7 +666,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	if (XMLElement* const detectedNode = unitNode->FirstChildElement ("IsDetectedByPlayers"))
 	{
 		int playerNodeNum = 0;
-		while (XMLElement* const element = detectedNode->FirstChildElement ( ("Player_" + iToStr (playerNodeNum)).c_str()))
+		while (XMLElement* const element = detectedNode->FirstChildElement (("Player_" + iToStr (playerNodeNum)).c_str()))
 		{
 			int playerNum;
 			element->QueryIntAttribute ("nr", &playerNum);
@@ -775,7 +775,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 			building->BuildList.push_back (listitem);
 
 			itemnum++;
-			itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ( ("Item_" + iToStr (itemnum)).c_str());
+			itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement (("Item_" + iToStr (itemnum)).c_str());
 		}
 	}
 
@@ -783,7 +783,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	if (XMLElement* const detectedNode = unitNode->FirstChildElement ("IsDetectedByPlayers"))
 	{
 		int playerNodeNum = 0;
-		while (XMLElement* const element = detectedNode->FirstChildElement ( ("Player_" + iToStr (playerNodeNum)).c_str()))
+		while (XMLElement* const element = detectedNode->FirstChildElement (("Player_" + iToStr (playerNodeNum)).c_str()))
 		{
 			int playerNum;
 			element->QueryIntAttribute ("nr", &playerNum);
@@ -1627,7 +1627,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 	XMLElement* playerNode = NULL;
 	do
 	{
-		playerNode = playersNode->FirstChildElement ( ("Player_" + iToStr (playernum)).c_str());
+		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
 		if (!playerNode) return;
 		int number;
 		playerNode->FirstChildElement ("Number")->QueryIntAttribute ("num", &number);
@@ -1675,7 +1675,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 		else Log.write ("Can't create save directory: " + cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_ERROR);
 	}
 
-	SaveFile.SaveFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str());
+	SaveFile.SaveFile ((cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str());
 }
 
 //--------------------------------------------------------------------------

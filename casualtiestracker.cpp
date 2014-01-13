@@ -234,7 +234,7 @@ void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>&
 			}
 
 			message->pushInt32 (casualties[entryIdx].numberOfLosses);
-			message->pushID(casualties[entryIdx].unitID);
+			message->pushID (casualties[entryIdx].unitID);
 			entriesInMessageForPlayer++;
 
 			if (message->iLength + 4 + 4 + 8 > PACKAGE_LENGTH)

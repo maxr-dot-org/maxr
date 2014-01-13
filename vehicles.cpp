@@ -165,7 +165,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		cSettings::getInstance().isDamageEffects() &&
 		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
-		int intense = (int) (100 - 100 * ( (float) data.hitpointsCur / data.hitpointsMax));
+		int intense = (int) (100 - 100 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir()));
 	}
 
@@ -210,7 +210,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 		// max StartUp value for undetected stealth units is 100,
 		// because they stay half visible
-		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == gameGUI.getClient()->getActivePlayer())
+		if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == gameGUI.getClient()->getActivePlayer())
 		{
 			if (StartUp > 100) StartUp = 0;
 		}
@@ -320,7 +320,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		const int len = max / 4;
 		max -= 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
-		DrawSelectionCorner(buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
+		DrawSelectionCorner (buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
 	}
 
 	// draw health bar
@@ -382,7 +382,7 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 
 void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
 {
-	assert ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL);
+	assert ((IsBuilding || (IsClearing && data.isBig)) && job == NULL);
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
 	const cMap& map = *client.getMap();
@@ -449,7 +449,7 @@ void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const
 	// draw shadow
 	if (FlightHigh > 0)
 	{
-		int high = ( (int) ( (int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
+		int high = ((int) ((int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
 		tmp.x += high;
 		tmp.y += high;
 
@@ -918,7 +918,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 			return lngPack.i18n ("Text~Comp~Sentry");
 	}
 	// for infiltrators
-	else if ( (data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
+	else if ((data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
 		// TODO should it be original behavior (as it is now) or
 		// don't display CommandRank for enemy (could also be a bug in original...)
 	{
@@ -938,7 +938,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else if (CommandoRank < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
 		else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
 		if (CommandoRank > 0.f)
-			sTmp += " +" + iToStr ( (int) CommandoRank);
+			sTmp += " +" + iToStr ((int) CommandoRank);
 		return sTmp;
 	}
 
@@ -1651,7 +1651,7 @@ bool cVehicle::clearMine (cServer& server)
 //-----------------------------------------------------------------------------
 bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) const
 {
-	if ( (steal && data.canCapture == false) || (steal == false && data.canDisable == false))
+	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
 
 	if (isNextTo (x, y) == false || data.shotsCur == 0)
@@ -1732,7 +1732,7 @@ int cVehicle::calcCommandoChance (const cUnit* destUnit, bool steal) const
 	// The chance of a unexperienced infiltrator will be calculated like
 	// he has the ranking 7.
 	// Disabling has a 4 times higher chance than stealing.
-	int chance = Round ( (8.f * srcLevel) / (35 * destTurn) * factor * 100);
+	int chance = Round ((8.f * srcLevel) / (35 * destTurn) * factor * 100);
 	chance = std::min (90, chance);
 
 	return chance;
@@ -1861,15 +1861,15 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 				isOnCoast = false;
 			}
 
-			if ( (data.isStealthOn & TERRAIN_GROUND)
-				 && (player->hasLandDetection (offset) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
-					 || isOnWater))
+			if ((data.isStealthOn & TERRAIN_GROUND)
+				&& (player->hasLandDetection (offset) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
+					|| isOnWater))
 			{
 				playersThatDetectThisVehicle.push_back (player);
 			}
 
-			if ( (data.isStealthOn & TERRAIN_SEA)
-				 && (player->hasSeaDetection (offset) || isOnWater == false))
+			if ((data.isStealthOn & TERRAIN_SEA)
+				&& (player->hasSeaDetection (offset) || isOnWater == false))
 			{
 				playersThatDetectThisVehicle.push_back (player);
 			}
@@ -1905,18 +1905,18 @@ void cVehicle::makeDetection (cServer& server)
 
 			if (vehicle && vehicle->owner != owner)
 			{
-				if ( (data.canDetectStealthOn & TERRAIN_GROUND) && owner->hasLandDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
+				if ((data.canDetectStealthOn & TERRAIN_GROUND) && owner->hasLandDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
 				{
 					vehicle->setDetectedByPlayer (server, owner);
 				}
-				if ( (data.canDetectStealthOn & TERRAIN_SEA) && owner->hasSeaDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_SEA))
+				if ((data.canDetectStealthOn & TERRAIN_SEA) && owner->hasSeaDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_SEA))
 				{
 					vehicle->setDetectedByPlayer (server, owner);
 				}
 			}
 			if (building && building->owner != owner)
 			{
-				if ( (data.canDetectStealthOn & AREA_EXP_MINE) && owner->hasMineDetection (offset) && (building->data.isStealthOn & AREA_EXP_MINE))
+				if ((data.canDetectStealthOn & AREA_EXP_MINE) && owner->hasMineDetection (offset) && (building->data.isStealthOn & AREA_EXP_MINE))
 				{
 					building->setDetectedByPlayer (server, owner);
 				}
@@ -2107,7 +2107,7 @@ bool cVehicle::canLand (const cMap& map) const
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	for (; b_it != buildings.end(); ++b_it)
 	{
-		if ( (*b_it)->data.canBeLandedOn)
+		if ((*b_it)->data.canBeLandedOn)
 			break;
 	}
 	if (b_it == buildings.end()) return false;
@@ -2125,7 +2125,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// can stay on an enemy landing pad until it is moved
 	if (FlightHigh == 0) return true;
 
-	if ( (*b_it)->owner != owner) return false;
+	if ((*b_it)->owner != owner) return false;
 
 	return true;
 }

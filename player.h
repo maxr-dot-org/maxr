@@ -52,7 +52,7 @@ struct sSavedReportMessage
 public:
 	std::string getFullMessage() const { if (xPos == -1) return message; else return "[" + iToStr (xPos) + "," + iToStr (yPos) + "] " + message; }
 
-	void pushInto(cNetMessage& message) const;
+	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);
 public:
 	std::string message;
@@ -110,7 +110,7 @@ public:
 	cPlayer (const cPlayer& Player);
 	~cPlayer();
 
-	const std::string& getName () const { return splayer.getName(); }
+	const std::string& getName() const { return splayer.getName(); }
 	void setName (const std::string& name) { splayer.setName (name); }
 	unsigned int getColor() const { return splayer.getColorIndex(); }
 	void setColor (unsigned int index) { return splayer.setColorIndex (index); }

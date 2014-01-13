@@ -116,7 +116,7 @@ void cDebugOutput::draw()
 
 	if (debugPlayers)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ( (int) client->PlayerList->size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->PlayerList->size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
@@ -170,34 +170,34 @@ void cDebugOutput::draw()
 
 	if (debugAjobs)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) client->attackJobs.size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ((int) client->attackJobs.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		if (server)
 		{
-			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) server->AJobs.size()), FONT_LATIN_SMALL_WHITE);
+			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ((int) server->AJobs.size()), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		}
 	}
 
 	if (debugBaseClient)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) player->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) player->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
 	if (debugBaseServer)
 	{
 		cPlayer* serverPlayer = server->getPlayerFromNumber (player->getNr());
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
 	if (debugFX)
 	{
 #if 0
-		font->showText (DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr ( (int) FXList.size() + (int) FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr ((int) FXList.size() + (int) FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ( (int) (fWindDir * 57.29577f)), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ((int) (fWindDir * 57.29577f)), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 #endif
 	}
@@ -372,7 +372,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ( (int) vehicle.storedUnits.size());
+	tmpString = " stored_vehicles_count: " + iToStr ((int) vehicle.storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -426,7 +426,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ( (int) building.storedUnits.size());
+	tmpString = " stored_vehicles_count: " + iToStr ((int) building.storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -441,7 +441,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	tmpString =
 		"build_speed: "        + iToStr (building.BuildSpeed) +
 		" repeat_build: "      + iToStr (building.RepeatBuild) +
-		" build_list_count: +" + iToStr ( (int) buildingBuildListSize);
+		" build_list_count: +" + iToStr ((int) buildingBuildListSize);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -663,8 +663,8 @@ void cGameGUI::setClient (cClient* client)
 float cGameGUI::calcMinZoom() const
 {
 	const int mapSize = client->getMap()->getSize();
-	float minZoom = (float) ( (max (Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float) mapSize) / 64.0f);
-	minZoom = max (minZoom, ( (int) (64.0f * minZoom) + (minZoom >= 1.0f ? 0 : 1)) / 64.0f);
+	float minZoom = (float) ((max (Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float) mapSize) / 64.0f);
+	minZoom = max (minZoom, ((int) (64.0f * minZoom) + (minZoom >= 1.0f ? 0 : 1)) / 64.0f);
 
 	return minZoom;
 }
@@ -784,7 +784,7 @@ void cGameGUI::handleTimer()
 	iLast = iTimerTime;
 	timer50ms = true;
 	if (iTimerTime & 0x1) timer100ms = true;
-	if ( (iTimerTime & 0x3) == 3) timer400ms = true;
+	if ((iTimerTime & 0x3) == 3) timer400ms = true;
 }
 
 void cGameGUI::handleMessages()
@@ -1109,13 +1109,13 @@ void cGameGUI::generateMiniMapSurface_landscape (SDL_Surface* minimapSurface, in
 
 		// calculate the position within the terrain graphic
 		// (for better rendering of maps < 112)
-		const int offsetx = ( (miniMapX * mapSize) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+		const int offsetx = ((miniMapX * mapSize) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
 		for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; ++miniMapY)
 		{
 			int terrainy = (miniMapY * mapSize) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 			terrainy = std::min (terrainy, mapSize - 1);
-			const int offsety = ( (miniMapY * mapSize) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+			const int offsety = ((miniMapY * mapSize) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
 			const sTerrain& terrain = staticMap->getTerrain (terrainx, terrainy);
 			const Uint8* terrainPixels = reinterpret_cast<const Uint8*> (terrain.sf_org->pixels);
@@ -1169,11 +1169,11 @@ void cGameGUI::generateMiniMapSurface_units (SDL_Surface* minimapSurface, int zo
 	const cPlayer* player = client->getActivePlayer();
 	for (int mapx = 0; mapx < mapSize; ++mapx)
 	{
-		rect.x = ( (mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / mapSize;
+		rect.x = ((mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / mapSize;
 		if (rect.x < 0 || rect.x >= MINIMAP_SIZE) continue;
 		for (int mapy = 0; mapy < mapSize; ++mapy)
 		{
-			rect.y = ( (mapy - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / mapSize;
+			rect.y = ((mapy - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / mapSize;
 			if (rect.y < 0 || rect.y >= MINIMAP_SIZE) continue;
 
 			const int offset = map.getOffset (mapx, mapy);
@@ -1220,10 +1220,10 @@ void cGameGUI::generateMiniMapSurface_units (SDL_Surface* minimapSurface, int zo
 void cGameGUI::generateMiniMapSurface_borders (SDL_Surface* minimapSurface, int zoomFactor)
 {
 	const int mapSize = client->getMap()->getSize();
-	int startx = (int) ( ( (offX / 64.0f - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / mapSize);
-	int starty = (int) ( ( (offY / 64.0f - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / mapSize);
-	int endx = (int) (startx + ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (mapSize * (getZoom() * 64.0f)));
-	int endy = (int) (starty + ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (mapSize * (getZoom() * 64.0f)));
+	int startx = (int) (((offX / 64.0f - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / mapSize);
+	int starty = (int) (((offY / 64.0f - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / mapSize);
+	int endx = (int) (startx + ((Video.getResolutionX() - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (mapSize * (getZoom() * 64.0f)));
+	int endy = (int) (starty + ((Video.getResolutionY() - HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (mapSize * (getZoom() * 64.0f)));
 
 	// workaround
 	if (endx == MINIMAP_SIZE) endx = MINIMAP_SIZE - 1;
@@ -1261,8 +1261,8 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 	SDL_Surface* minimapSurface = SDL_CreateRGBSurface (0, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
 
 	// set zoom factor
-	const int displayedMapWidth = (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
-	const int displayedMapHight = (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
+	const int displayedMapWidth = (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
+	const int displayedMapHight = (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
 	const int zoomFactor = twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
 	if (zoomFactor != 1)
@@ -1309,8 +1309,8 @@ void cGameGUI::checkOffsetPosition()
 	offY = max (offY, 0);
 	const int mapSize = client->getMap()->getSize();
 
-	const int maxX = mapSize * 64 - (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
-	const int maxY = mapSize * 64 - (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
+	const int maxX = mapSize * 64 - (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
+	const int maxY = mapSize * 64 - (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
 	offX = min (offX, maxX);
 	offY = min (offY, maxY);
 
@@ -1334,7 +1334,7 @@ void cGameGUI::setZoom (float newZoom, bool setScroller, bool centerToMouse)
 		int off;
 		if (centerToMouse)
 		{
-			off = (int) ( (lastScreenPixel - newScreenPixel) * (mouse->x - HUD_LEFT_WIDTH) / (Video.getResolutionX() - HUD_TOTAL_WIDTH));
+			off = (int) ((lastScreenPixel - newScreenPixel) * (mouse->x - HUD_LEFT_WIDTH) / (Video.getResolutionX() - HUD_TOTAL_WIDTH));
 		}
 		else
 		{
@@ -1348,7 +1348,7 @@ void cGameGUI::setZoom (float newZoom, bool setScroller, bool centerToMouse)
 		newScreenPixel  = (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom();
 		if (centerToMouse)
 		{
-			off = (int) ( (lastScreenPixel - newScreenPixel) * (mouse->y - HUD_TOP_HIGHT) / (Video.getResolutionY() - HUD_TOTAL_HIGHT));
+			off = (int) ((lastScreenPixel - newScreenPixel) * (mouse->y - HUD_TOP_HIGHT) / (Video.getResolutionY() - HUD_TOTAL_HIGHT));
 		}
 		else
 		{
@@ -1459,7 +1459,7 @@ void cGameGUI::handleFramesPerSecond()
 		cyclesPerSecond = (1.f - a) * cycles * 1000.f / (ticks - lastTicks) + a * cyclesPerSecond;
 		cycles = 0;
 
-		loadValue = Round ( (1.f - a) * (1000.f - inverseLoad) + a * loadValue);
+		loadValue = Round ((1.f - a) * (1000.f - inverseLoad) + a * loadValue);
 		inverseLoad = 0;
 
 		lastTicks = ticks;
@@ -1495,13 +1495,13 @@ bool cGameGUI::checkScroll()
 		doScroll (6);
 		return true;
 	}
-	else if ( (mouse->x <= 0 && mouse->y <= 30) || (mouse->y <= 0 && mouse->x <= 30))
+	else if ((mouse->x <= 0 && mouse->y <= 30) || (mouse->y <= 0 && mouse->x <= 30))
 	{
 		mouse->SetCursor (CPfeil7);
 		doScroll (7);
 		return true;
 	}
-	else if ( (mouse->x >= Video.getResolutionX() - 18 && mouse->y <= 30) || (mouse->y <= 0 && mouse->x >= Video.getResolutionX() - 30 - 18))
+	else if ((mouse->x >= Video.getResolutionX() - 18 && mouse->y <= 30) || (mouse->y <= 0 && mouse->x >= Video.getResolutionX() - 30 - 18))
 	{
 		mouse->SetCursor (CPfeil9);
 		doScroll (9);
@@ -1519,13 +1519,13 @@ bool cGameGUI::checkScroll()
 		doScroll (2);
 		return true;
 	}
-	else if ( (mouse->x <= 0 && mouse->y >= Video.getResolutionY() - 30 - 18) || (mouse->y >= Video.getResolutionY() - 18 && mouse->x <= 30))
+	else if ((mouse->x <= 0 && mouse->y >= Video.getResolutionY() - 30 - 18) || (mouse->y >= Video.getResolutionY() - 18 && mouse->x <= 30))
 	{
 		mouse->SetCursor (CPfeil1);
 		doScroll (1);
 		return true;
 	}
-	else if ( (mouse->x >= Video.getResolutionX() - 18 && mouse->y >= Video.getResolutionY() - 30 - 18) || (mouse->y >= Video.getResolutionY() - 18 && mouse->x >= Video.getResolutionX() - 30 - 18))
+	else if ((mouse->x >= Video.getResolutionX() - 18 && mouse->y >= Video.getResolutionY() - 30 - 18) || (mouse->y >= Video.getResolutionY() - 18 && mouse->x >= Video.getResolutionX() - 30 - 18))
 	{
 		mouse->SetCursor (CPfeil3);
 		doScroll (3);
@@ -1740,7 +1740,7 @@ void cGameGUI::updateMouseCursor()
 			mouse->SetCursor (CNo);
 		}
 	}
-	else if ( (selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == client->getActivePlayer()))
+	else if ((selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == client->getActivePlayer()))
 	{
 		if (overUnitField && selectedUnit->CanTransferTo (mouseMapX, mouseMapY, overUnitField))
 		{
@@ -1989,9 +1989,9 @@ void cGameGUI::updateMouseCursor()
 			}
 			else if (selectedVehicle->IsBuilding || selectedVehicle->IsClearing)
 			{
-				if ( ( (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
-					   (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)) &&
-					 client->getMap()->possiblePlace (*selectedVehicle, mouseMapX, mouseMapY) && selectedVehicle->isNextTo (mouseMapX, mouseMapY))
+				if (((selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
+					 (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)) &&
+					client->getMap()->possiblePlace (*selectedVehicle, mouseMapX, mouseMapY) && selectedVehicle->isNextTo (mouseMapX, mouseMapY))
 				{
 					mouse->SetCursor (CMove);
 				}
@@ -2154,8 +2154,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		if (selectedUnit && selectedUnit->data.isBig && mouseMapX >= selectedUnit->PosX && mouseMapX <= selectedUnit->PosX + 1
 			&& mouseMapY >= selectedUnit->PosY && mouseMapY <= selectedUnit->PosY + 1) mouseOverSelectedUnit = true;
 
-		if ( (mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) ||
-			 (MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased))
+		if ((mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) ||
+			(MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased))
 		{
 			if (helpActive)
 			{
@@ -2378,7 +2378,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			//Hud.CheckButtons();
 			// check whether the mouse is over a unit menu:
-			if ( (selectedUnit && unitMenuActive && areCoordsOverMenu (*selectedUnit, mouseState.x, mouseState.y)))
+			if ((selectedUnit && unitMenuActive && areCoordsOverMenu (*selectedUnit, mouseState.x, mouseState.y)))
 			{
 			}
 			else
@@ -2828,13 +2828,13 @@ bool cGameGUI::selectUnit (cMapField* OverUnitField, bool base)
 	}
 	cBuilding* topBuilding = OverUnitField->getTopBuilding();
 	const cVehicle* selectedVehicle = getSelectedVehicle();
-	if (topBuilding && (base || ( (topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!OverUnitField->getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
+	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!OverUnitField->getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
 	{
 		selectUnit_building (*topBuilding);
 		return true;
 	}
 	cBuilding* baseBuilding = OverUnitField->getBaseBuilding();
-	if ( (base || !selectedVehicle) && baseBuilding && baseBuilding->owner != NULL)
+	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->owner != NULL)
 	{
 		selectUnit_building (*baseBuilding);
 		return true;
@@ -2953,7 +2953,7 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 	}
 
 	// first check whether the end key was pressed
-	if ( (activeItem != &chatBox || chatBox.isDisabled()) && activeItem != &selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->isFreezed())
+	if ((activeItem != &chatBox || chatBox.isDisabled()) && activeItem != &selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->isFreezed())
 	{
 		if (key.state == SDL_PRESSED && !endButton.getIsClicked()) endButton.clicked (this);
 		else if (key.state == SDL_RELEASED && endButton.getIsClicked() && !client->bWantToEnd) endButton.released (this);
@@ -2985,8 +2985,8 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 	{
 		if (msgCoordsX != -1)
 		{
-			const int offsetX = msgCoordsX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize())) * 64.f)) + 32;
-			const int offsetY = msgCoordsY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / (2 * getTileSize())) * 64.f)) + 32;
+			const int offsetX = msgCoordsX * 64 - ((int) (((float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize())) * 64.f)) + 32;
+			const int offsetY = msgCoordsY * 64 - ((int) (((float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / (2 * getTileSize())) * 64.f)) + 32;
 			setOffsetPosition (offsetX, offsetY);
 			msgCoordsX = -1;
 		}
@@ -3022,7 +3022,7 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 	else if (key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0) jumpToSavedPos (2);
 	else if (key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0) jumpToSavedPos (3);
 
-	else if (key.keysym.sym == KeysList.KeyUnitDone) { doneReleased(this); }
+	else if (key.keysym.sym == KeysList.KeyUnitDone) { doneReleased (this); }
 	else if (key.keysym.sym == KeysList.KeyUnitDoneAndNext) { doneReleased (this); nextReleased (this); }
 	else if (key.keysym.sym == KeysList.KeyUnitNext) { nextReleased (this); }
 	else if (key.keysym.sym == KeysList.KeyUnitPrev) { prevReleased (this); }
@@ -3131,8 +3131,8 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 		{
 			for (size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
-				if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
-					 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
+				if ((selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
+					&& selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
 				{
 					sendChangeManualFireStatus (*client, selectedVehiclesGroup[i]->iID, true);
 				}
@@ -3343,13 +3343,13 @@ void cGameGUI::miniMapClicked (void* parent)
 
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 
-	const int displayedMapWidth = (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / gui->getZoom());
-	const int displayedMapHight = (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / gui->getZoom());
+	const int displayedMapWidth = (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / gui->getZoom());
+	const int displayedMapHight = (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / gui->getZoom());
 	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 	const int mapSize = gui->client->getMap()->getSize();
 
-	gui->offX = gui->miniMapOffX * 64 + ( (x - MINIMAP_POS_X) * mapSize * 64) / (MINIMAP_SIZE * zoomFactor);
-	gui->offY = gui->miniMapOffY * 64 + ( (y - MINIMAP_POS_Y) * mapSize * 64) / (MINIMAP_SIZE * zoomFactor);
+	gui->offX = gui->miniMapOffX * 64 + ((x - MINIMAP_POS_X) * mapSize * 64) / (MINIMAP_SIZE * zoomFactor);
+	gui->offY = gui->miniMapOffY * 64 + ((y - MINIMAP_POS_Y) * mapSize * 64) / (MINIMAP_SIZE * zoomFactor);
 	gui->offX -= displayedMapWidth / 2;
 	gui->offY -= displayedMapHight / 2;
 
@@ -3370,8 +3370,8 @@ void cGameGUI::miniMapRightClicked (void* parent)
 	const int y = mouse->y;
 	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 	const int mapSize = gui->client->getMap()->getSize();
-	const int destX = gui->miniMapOffX + ( (x - MINIMAP_POS_X) * mapSize) / (MINIMAP_SIZE * zoomFactor);
-	const int destY = gui->miniMapOffY + ( (y - MINIMAP_POS_Y) * mapSize) / (MINIMAP_SIZE * zoomFactor);
+	const int destX = gui->miniMapOffX + ((x - MINIMAP_POS_X) * mapSize) / (MINIMAP_SIZE * zoomFactor);
+	const int destY = gui->miniMapOffY + ((y - MINIMAP_POS_Y) * mapSize) / (MINIMAP_SIZE * zoomFactor);
 
 	gui->client->addMoveJob (selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
 }
@@ -3496,7 +3496,7 @@ void cGameGUI::preDrawFunction()
 		drawResources (startX, startY, endX, endY, zoomOffX, zoomOffY);
 	}
 
-	if (selectedVehicle && ( (selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
+	if (selectedVehicle && ((selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
 	{
 		selectedVehicle->DrawPath (*this);
 	}
@@ -3610,8 +3610,8 @@ void cGameGUI::runFx()
 SDL_Rect cGameGUI::calcScreenPos (int x, int y) const
 {
 	SDL_Rect pos;
-	pos.x = HUD_LEFT_WIDTH - ( (int) ( (offX - x) * getZoom()));
-	pos.y = HUD_TOP_HIGHT  - ( (int) ( (offY - y) * getZoom()));
+	pos.x = HUD_LEFT_WIDTH - ((int) ((offX - x) * getZoom()));
+	pos.y = HUD_TOP_HIGHT  - ((int) ((offY - y) * getZoom()));
 
 	return pos;
 }
@@ -3633,14 +3633,14 @@ void cGameGUI::drawAttackCursor (int x, int y) const
 	}
 
 	int t = target->data.hitpointsCur;
-	int wc = (int) ( (float) t / target->data.hitpointsMax * 35);
+	int wc = (int) ((float) t / target->data.hitpointsMax * 35);
 
 	t = target->calcHealth (data.damage);
 
 	int wp = 0;
 	if (t)
 	{
-		wp = (int) ( (float) t / target->data.hitpointsMax * 35);
+		wp = (int) ((float) t / target->data.hitpointsMax * 35);
 	}
 	SDL_Rect r = {1, 29, Uint16 (wp), 3};
 
@@ -3678,15 +3678,15 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 			std::vector<cBuilding*>& buildings = map.fields[pos].getBuildings();
 			for (std::vector<cBuilding*>::reverse_iterator it = buildings.rbegin(); it != buildings.rend(); ++it)
 			{
-				if ( (*it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
-					 (*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-					 (*it)->owner) break;
+				if ((*it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
+					(*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+					(*it)->owner) break;
 
 				if (player->canSeeAnyAreaUnder (**it))
 				{
 					// Draw big unit only once
 					// TODO: bug when (x,y) is outside of the drawing screen.
-					if ( (*it)->PosX == x && (*it)->PosY == y)
+					if ((*it)->PosX == x && (*it)->PosY == y)
 					{
 						(*it)->draw (&dest, *this);
 					}
@@ -3816,14 +3816,14 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 
 			for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
 			{
-				if ( (*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+				if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 				{
 					(*it)->draw (&dest, *this);
 				}
 			}
 			for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
 			{
-				if ( (*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+				if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 				{
 					(*it)->draw (&dest, *this);
 				}
@@ -4105,7 +4105,7 @@ void cGameGUI::scaleSurfaces()
 void cGameGUI::openPanel()
 {
 	PlayFX (SoundData.SNDPanelOpen);
-	SDL_Rect top = { 0, Sint16 ( (Video.getResolutionY() / 2) - 479), 171, 479 };
+	SDL_Rect top = { 0, Sint16 ((Video.getResolutionY() / 2) - 479), 171, 479 };
 	SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY() / 2), 171, 481 };
 	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, NULL);
 	SDL_Rect tmp = bottom;
@@ -4387,16 +4387,16 @@ void cGameGUI::savePosition (int slotNumber)
 {
 	if (slotNumber < 0 || slotNumber >= MAX_SAVE_POSITIONS) return;
 
-	savedPositions[slotNumber].offsetX = offX + (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom() / 2);
-	savedPositions[slotNumber].offsetY = offY + (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom() / 2);
+	savedPositions[slotNumber].offsetX = offX + (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom() / 2);
+	savedPositions[slotNumber].offsetY = offY + (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom() / 2);
 }
 
 void cGameGUI::jumpToSavedPos (int slotNumber)
 {
 	if (slotNumber < 0 || slotNumber >= MAX_SAVE_POSITIONS) return;
 
-	const int offsetX = savedPositions[slotNumber].offsetX - (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom() / 2);
-	const int offsetY = savedPositions[slotNumber].offsetY - (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom() / 2);
+	const int offsetX = savedPositions[slotNumber].offsetX - (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom() / 2);
+	const int offsetY = savedPositions[slotNumber].offsetY - (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom() / 2);
 
 	setOffsetPosition (offsetX, offsetY);
 }
@@ -4651,7 +4651,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		}
 
 		// Manual fire
-		if ( (unit.manualFireActive || unit.data.canAttack))
+		if ((unit.manualFireActive || unit.data.canAttack))
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.manualFireActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
@@ -4660,7 +4660,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		}
 
 		// Sentry status:
-		if ( (unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
+		if ((unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.sentryActive;
 			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
@@ -5156,7 +5156,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 int cGameGUI::getScreenPosX (const cUnit& unit, bool movementOffset) const
 {
 	const int offset = movementOffset ? unit.getMovementOffsetX() : 0;
-	return 180 - ( (int) ( (getOffsetX() - offset) * getZoom())) + getTileSize() * unit.PosX;
+	return 180 - ((int) ((getOffsetX() - offset) * getZoom())) + getTileSize() * unit.PosX;
 }
 
 //------------------------------------------------------------------------------
@@ -5165,7 +5165,7 @@ int cGameGUI::getScreenPosX (const cUnit& unit, bool movementOffset) const
 int cGameGUI::getScreenPosY (const cUnit& unit, bool movementOffset) const
 {
 	const int offset = movementOffset ? unit.getMovementOffsetY() : 0;
-	return 18 - ( (int) ( (getOffsetY() - offset) * getZoom())) + getTileSize() * unit.PosY;
+	return 18 - ((int) ((getOffsetY() - offset) * getZoom())) + getTileSize() * unit.PosY;
 }
 
 //------------------------------------------------------------------------------
@@ -5173,8 +5173,8 @@ int cGameGUI::getScreenPosY (const cUnit& unit, bool movementOffset) const
 //------------------------------------------------------------------------------
 void cGameGUI::center (const cUnit& unit)
 {
-	const int offX = unit.PosX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * getTileSize())) * 64)) + 32;
-	const int offY = unit.PosY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32)  / (2 * getTileSize())) * 64)) + 32;
+	const int offX = unit.PosX * 64 - ((int) (((float) (Video.getResolutionX() - 192) / (2 * getTileSize())) * 64)) + 32;
+	const int offY = unit.PosY * 64 - ((int) (((float) (Video.getResolutionY() - 32)  / (2 * getTileSize())) * 64)) + 32;
 	setOffsetPosition (offX, offY);
 }
 
@@ -5201,7 +5201,7 @@ void cGameGUI::drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int) ( ( (float) (r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
+	r2.w = (int) (((float) (r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (buffer, &r1, 0xFF000000);
@@ -5237,7 +5237,7 @@ void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) cons
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int) ( ( (float) (r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
+	r2.w = (int) (((float) (r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (buffer, &r1, 0xFF000000);

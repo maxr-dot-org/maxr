@@ -203,7 +203,7 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 		message->pushInt16 (vehicle.BuildRounds);
 		message->pushBool (vehicle.IsBuilding);
 		message->pushBool (vehicle.IsClearing);
-		message->pushInt16 ( (int) vehicle.CommandoRank);
+		message->pushInt16 ((int) vehicle.CommandoRank);
 	}
 	else
 	{
@@ -547,7 +547,7 @@ void sendBuildList (cServer& server, const cBuilding& building)
 		message->pushInt16 (building.BuildList[i].metall_remaining);
 		message->pushID (building.BuildList[i].type);
 	}
-	message->pushInt16 ( (int) building.BuildList.size());
+	message->pushInt16 ((int) building.BuildList.size());
 	message->pushInt16 (building.iID);
 	server.sendNetMessage (message, building.owner->getNr());
 }
@@ -719,7 +719,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 		message.pushInt16 (SecondPlayer->getColor());
 		message.pushString (SecondPlayer->getName());
 	}
-	message.pushInt16 ( (int) playerList.size());
+	message.pushInt16 ((int) playerList.size());
 	message.pushString (server.Map->getName());
 	message.pushInt16 (player.getColor());
 	message.pushInt16 (player.getNr());
@@ -856,7 +856,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 		buildingsInMsg++;
 		if (message->iLength + 8 > PACKAGE_LENGTH)
 		{
-			message->pushInt16 ( (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
+			message->pushInt16 ((totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 			message->pushInt16 (buildingsInMsg);
 			server.sendNetMessage (message, player);
 			message = NULL;
@@ -864,7 +864,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 	}
 	if (message != NULL)
 	{
-		message->pushInt16 ( (int) (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
+		message->pushInt16 ((int) (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 		message->pushInt16 (buildingsInMsg);
 		server.sendNetMessage (message, player);
 		message = NULL;
@@ -901,7 +901,7 @@ void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgrade
 
 	message->pushInt32 (storingBuildingID);
 	message->pushInt16 (totalCosts);
-	message->pushInt16 ( (int) upgradedVehicles.size());
+	message->pushInt16 ((int) upgradedVehicles.size());
 	server.sendNetMessage (message, player);
 
 	//TODO: send to other players as well?

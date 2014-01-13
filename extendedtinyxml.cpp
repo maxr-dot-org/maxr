@@ -40,7 +40,7 @@ XMLElement* XmlGetFirstElementVa (XMLDocument& xmlDoc, const char* first, va_lis
 	}
 
 	char* elementName;
-	while ( (elementName = va_arg (vaList, char*)) != NULL)
+	while ((elementName = va_arg (vaList, char*)) != NULL)
 	{
 		xmlElement = xmlElement->FirstChildElement (elementName);
 		if (xmlElement == NULL)
@@ -114,11 +114,11 @@ int getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* first, ...)
 		va_start (list, first);
 		string pathText = string (first);
 		char* elementName;
-		while ( (elementName = va_arg (list, char*)) != NULL)
+		while ((elementName = va_arg (list, char*)) != NULL)
 			pathText += string ("~") + elementName;
 		va_end (list);
 
-		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write (((string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
 		return 0;
 	}
 }
@@ -142,11 +142,11 @@ float getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* first, 
 		va_start (list, first);
 		string pathText = string (first);
 		char* elementName;
-		while ( (elementName = va_arg (list, char*)) != NULL)
+		while ((elementName = va_arg (list, char*)) != NULL)
 			pathText += string ("~") + elementName;
 		va_end (list);
 
-		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write (((string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
 		return 0;
 	}
 }
@@ -167,11 +167,11 @@ string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attri
 		va_start (list, first);
 		string pathText = string (first);
 		char* elementName;
-		while ( (elementName = va_arg (list, char*)) != NULL)
+		while ((elementName = va_arg (list, char*)) != NULL)
 			pathText += string ("~") + elementName;
 		va_end (list);
 
-		Log.write ( ( (string) "Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write (((string) "Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
 		return "";
 	}
 
@@ -198,11 +198,11 @@ bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ..
 		va_start (list, first);
 		string pathText = string (first);
 		char* elementName;
-		while ( (elementName = va_arg (list, char*)) != NULL)
+		while ((elementName = va_arg (list, char*)) != NULL)
 			pathText += string ("~") + elementName;
 		va_end (list);
 
-		Log.write ( ( (string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write (((string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 }

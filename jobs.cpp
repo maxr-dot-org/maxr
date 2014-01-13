@@ -124,7 +124,7 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 			vehicle->OffX += deltaX;
 			vehicle->OffY += deltaY;
 
-			if ( (vehicle->OffX > 32 && deltaX > 0) || (vehicle->OffX < 32 && deltaX < 0))
+			if ((vehicle->OffX > 32 && deltaX > 0) || (vehicle->OffX < 32 && deltaX < 0))
 			{
 				vehicle->OffX = 32;
 				vehicle->OffY = 32;

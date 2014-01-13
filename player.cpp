@@ -32,7 +32,7 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-void sSavedReportMessage::pushInto(cNetMessage& message) const
+void sSavedReportMessage::pushInto (cNetMessage& message) const
 {
 	message.pushInt16 (colorNr);
 	message.pushID (unitID);
@@ -99,13 +99,13 @@ SDL_Surface* sPlayer::getColorSurface() const
 //------------------------------------------------------------------------------
 void sPlayer::setToNextColorIndex()
 {
-	setColorIndex ( (colorIndex + 1) % PLAYERCOLORS);
+	setColorIndex ((colorIndex + 1) % PLAYERCOLORS);
 }
 
 //------------------------------------------------------------------------------
 void sPlayer::setToPrevColorIndex()
 {
-	setColorIndex ( (colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
+	setColorIndex ((colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
 }
 
 //------------------------------------------------------------------------------
@@ -371,7 +371,7 @@ void cPlayer::addSentry (cUnit& u)
 	{
 		drawSpecialCircle (u.PosX, u.PosY, u.data.range, SentriesMapAir, mapSize);
 	}
-	if ( (u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
+	if ((u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
 	{
 		drawSpecialCircle (u.PosX, u.PosY, u.data.range, SentriesMapGround, mapSize);
 	}
@@ -385,7 +385,7 @@ void cPlayer::deleteSentry (cUnit& u)
 	{
 		refreshSentryAir();
 	}
-	else if ( (u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
+	else if ((u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
 	{
 		refreshSentryGround();
 	}
@@ -420,14 +420,14 @@ void cPlayer::refreshSentryGround()
 
 	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
-		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
+		if (unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
 	}
 	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
-		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
+		if (unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
@@ -512,8 +512,8 @@ bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 	if (!unit.data.isBig) return false;
 
 	return ScanMap[offset + 1] == 1 ||
-			ScanMap[offset + getMapSize()] == 1 ||
-			ScanMap[offset + getMapSize() + 1] == 1;
+		   ScanMap[offset + getMapSize()] == 1 ||
+		   ScanMap[offset + getMapSize() + 1] == 1;
 }
 
 cVehicle* cPlayer::getNextVehicle (cVehicle* start)

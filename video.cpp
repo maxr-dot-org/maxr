@@ -162,17 +162,17 @@ void cVideo::draw()
 	// TODO: add sanity check to redraw function
 	SDL_BlitSurface (buffer, NULL, screen, NULL);
 
-	SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-	SDL_RenderClear(sdlRenderer);
-	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-	SDL_RenderPresent(sdlRenderer);
+	SDL_UpdateTexture (sdlTexture, NULL, screen->pixels, screen->pitch);
+	SDL_RenderClear (sdlRenderer);
+	SDL_RenderCopy (sdlRenderer, sdlTexture, NULL, NULL);
+	SDL_RenderPresent (sdlRenderer);
 }
 
 int cVideo::applySettings()
 {
 	Log.write ("cVideo: Applying new video settings", cLog::eLOG_TYPE_DEBUG);
 
-	SDL_SetWindowBordered(sdlWindow, SDL_TRUE);
+	SDL_SetWindowBordered (sdlWindow, SDL_TRUE);
 	SDL_SetWindowSize (sdlWindow, getResolutionX(), getResolutionY());
 	// TODO: [SDL2]: manage window mode correctly
 	if (SDL_SetWindowFullscreen (sdlWindow, !getWindowMode()) == -1)
@@ -186,17 +186,17 @@ int cVideo::applySettings()
 	if (screen) SDL_FreeSurface (screen);
 	screen = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
 								   0, 0, 0, 0);
-								   //0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	SDL_RenderSetLogicalSize(sdlRenderer, getResolutionX(), getResolutionY());
+	//0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	SDL_RenderSetLogicalSize (sdlRenderer, getResolutionX(), getResolutionY());
 	if (buffer) SDL_FreeSurface (buffer);
 	buffer = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
 								   //0, 0, 0, 0);
 								   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
-	sdlTexture = SDL_CreateTexture(sdlRenderer,
-								   SDL_PIXELFORMAT_ARGB8888,
-								   SDL_TEXTUREACCESS_STREAMING,
-								   getResolutionX(), getResolutionY());
+	sdlTexture = SDL_CreateTexture (sdlRenderer,
+									SDL_PIXELFORMAT_ARGB8888,
+									SDL_TEXTUREACCESS_STREAMING,
+									getResolutionX(), getResolutionY());
 	draw();
 	return 0;
 }
@@ -215,28 +215,28 @@ void cVideo::initSplash()
 
 	std::string sVersion = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV " ";
 
-	sdlWindow = SDL_CreateWindow(sVersion.c_str(),
-								 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-								 getSplashW(), getSplashH(),
-								 SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
+	sdlWindow = SDL_CreateWindow (sVersion.c_str(),
+								  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+								  getSplashW(), getSplashH(),
+								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 	SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)));
 	SDL_SetWindowFullscreen (sdlWindow, !getWindowMode());
-	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
 
-	screen = SDL_CreateRGBSurface(0, getSplashW(), getSplashH(), getColDepth(),
-								  0, 0, 0, 0);
-	buffer = SDL_CreateRGBSurface(0, getSplashW(), getSplashH(), getColDepth(),
-								  0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	screen = SDL_CreateRGBSurface (0, getSplashW(), getSplashH(), getColDepth(),
+								   0, 0, 0, 0);
+	buffer = SDL_CreateRGBSurface (0, getSplashW(), getSplashH(), getColDepth(),
+								   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
 	SDL_BlitSurface (splash, NULL, buffer, NULL);
 
-	sdlTexture = SDL_CreateTexture(sdlRenderer,
-								   SDL_PIXELFORMAT_ARGB8888,
-								   SDL_TEXTUREACCESS_STREAMING,
-								   getSplashW(), getSplashH());
+	sdlTexture = SDL_CreateTexture (sdlRenderer,
+									SDL_PIXELFORMAT_ARGB8888,
+									SDL_TEXTUREACCESS_STREAMING,
+									getSplashW(), getSplashH());
 	// make the scaled rendering look smoother.
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-	SDL_RenderSetLogicalSize(sdlRenderer, getSplashW(), getSplashH());
+	SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+	SDL_RenderSetLogicalSize (sdlRenderer, getSplashW(), getSplashH());
 
 	draw();
 }
@@ -266,7 +266,7 @@ void cVideo::doDetection()
 	Log.write ("cVideo: Screen resolution detection started. Results may vary!", cLog::eLOG_TYPE_INFO);
 
 	const int displayIndex = sdlWindow ? SDL_GetWindowDisplayIndex (sdlWindow) : 0;
-	const unsigned int modeCount = SDL_GetNumDisplayModes(displayIndex);
+	const unsigned int modeCount = SDL_GetNumDisplayModes (displayIndex);
 	/* Print and store detected modes */
 	for (unsigned int i = 0; i != modeCount; ++i)
 	{
@@ -350,7 +350,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 
 	//check surface formats
 	if (!dst->format->Amask || src->format->Amask) return;
-	if (SDL_GetSurfaceAlphaMod(src, NULL) != 0) return;
+	if (SDL_GetSurfaceAlphaMod (src, NULL) != 0) return;
 
 	if (srcrect == NULL)
 	{
@@ -450,9 +450,9 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 			Uint32 b = (scolor & sbmask) >> bshift;
 			Uint32 dalpha = (dcolor & damask) >> ashift;
 
-			r = ( ( (dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha) + r * srcAlpha;
-			g = ( ( (dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
-			b = ( ( (dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
+			r = (((dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha) + r * srcAlpha;
+			g = (((dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
+			b = (((dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
 
 			const Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha) / 255;
 
@@ -484,7 +484,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
 {
 	// TODO: [SDL2] special blitSurface seems useless.
-	if (dst->format->Amask && SDL_GetSurfaceAlphaMod(src, NULL) == 0)
+	if (dst->format->Amask && SDL_GetSurfaceAlphaMod (src, NULL) == 0)
 		blittPerSurfaceAlphaToAlphaChannel (src, srcrect, dst, dstrect);
 	else
 		SDL_BlitSurface (src, srcrect, dst, dstrect);

@@ -700,7 +700,7 @@ public:
 
 private:
 	void setClan (int player, int clan);
-	void choosePlayerType(int player, ePlayerType playerType);
+	void choosePlayerType (int player, ePlayerType playerType);
 
 private:
 	static void onClanClicked (void* parent);

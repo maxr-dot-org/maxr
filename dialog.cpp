@@ -324,17 +324,17 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 	disableVoicesChBox.setClickedFunction (&voicesMuteChanged);
 	menuItems.push_back (&disableVoicesChBox);
 
-	musicSlider.setValue ( (float) cSettings::getInstance().getMusicVol());
+	musicSlider.setValue ((float) cSettings::getInstance().getMusicVol());
 	musicSlider.setMoveCallback (&musicVolumeChanged);
 	menuItems.push_back (&musicSlider);
 	menuItems.push_back (musicSlider.scroller);
 
-	effectsSlider.setValue ( (float) cSettings::getInstance().getSoundVol());
+	effectsSlider.setValue ((float) cSettings::getInstance().getSoundVol());
 	effectsSlider.setMoveCallback (&effectsVolumeChanged);
 	menuItems.push_back (&effectsSlider);
 	menuItems.push_back (effectsSlider.scroller);
 
-	voicesSlider.setValue ( (float) cSettings::getInstance().getVoiceVol());
+	voicesSlider.setValue ((float) cSettings::getInstance().getVoiceVol());
 	voicesSlider.setMoveCallback (&voicesVolumeChanged);
 	menuItems.push_back (&voicesSlider);
 	menuItems.push_back (voicesSlider.scroller);
@@ -352,7 +352,7 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 	menuItems.push_back (&tracksChBox);
 
 	menuItems.push_back (&scrollSpeedLabel);
-	scrollSpeedSlider.setValue ( (float) cSettings::getInstance().getScrollSpeed());
+	scrollSpeedSlider.setValue ((float) cSettings::getInstance().getScrollSpeed());
 	menuItems.push_back (&scrollSpeedSlider);
 	menuItems.push_back (scrollSpeedSlider.scroller);
 
@@ -435,7 +435,7 @@ void cDialogPreferences::saveValues()
 	cSettings::getInstance().saveWindowMode();
 	cSettings::getInstance().setShadows (shadowsChBox.isChecked());
 
-	cSettings::getInstance().setScrollSpeed ( (int) scrollSpeedSlider.getValue());
+	cSettings::getInstance().setScrollSpeed ((int) scrollSpeedSlider.getValue());
 
 	// save resolution
 	int oldScreenW = Video.getResolutionX();
@@ -493,21 +493,21 @@ void cDialogPreferences::cancelReleased (void* parent)
 void cDialogPreferences::musicVolumeChanged (void* parent)
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*> (parent);
-	cSettings::getInstance().setMusicVol ( (int) menu->musicSlider.getValue());
+	cSettings::getInstance().setMusicVol ((int) menu->musicSlider.getValue());
 	if (cSettings::getInstance().isSoundEnabled()) Mix_VolumeMusic (cSettings::getInstance().getMusicVol());
 }
 
 void cDialogPreferences::effectsVolumeChanged (void* parent)
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*> (parent);
-	cSettings::getInstance().setSoundVol ( (int) menu->effectsSlider.getValue());
+	cSettings::getInstance().setSoundVol ((int) menu->effectsSlider.getValue());
 	if (cSettings::getInstance().isSoundEnabled()) Mix_Volume (SoundLoopChannel, cSettings::getInstance().getSoundVol());
 }
 
 void cDialogPreferences::voicesVolumeChanged (void* parent)
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*> (parent);
-	cSettings::getInstance().setVoiceVol ( (int) menu->voicesSlider.getValue());
+	cSettings::getInstance().setVoiceVol ((int) menu->voicesSlider.getValue());
 }
 
 void cDialogPreferences::musicMuteChanged (void* parent)
@@ -789,7 +789,7 @@ void cDialogTransfer::setCargos()
 	}
 	transferLabel.setText (iToStr (abs (transferValue)));
 
-	resBar->setCurrentValue ( (int) (223.f * (destCargo + transferValue) / maxDestCargo));
+	resBar->setCurrentValue ((int) (223.f * (destCargo + transferValue) / maxDestCargo));
 }
 
 void cDialogTransfer::handleKeyInput (const SDL_KeyboardEvent& key)
@@ -844,7 +844,7 @@ void cDialogTransfer::decReleased (void* parent)
 void cDialogTransfer::barClicked (void* parent)
 {
 	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*> (parent);
-	menu->transferValue = Round ( (mouse->x - menu->resBar->getPosition().x) * (menu->maxDestCargo / 223.0f) - menu->destCargo);
+	menu->transferValue = Round ((mouse->x - menu->resBar->getPosition().x) * (menu->maxDestCargo / 223.0f) - menu->destCargo);
 	menu->setCargos();
 	menu->draw();
 }
@@ -1065,7 +1065,7 @@ void cDialogResearch::sliderClicked (void* parent)
 		if (menu->scroller[i]->overItem (mouse->x, mouse->y))
 		{
 			int posX = mouse->x - menu->scroller[i]->getPosition().x;
-			int wantResearch = Round ( (float) menu->owner->workingResearchCenterCount / menu->scroller[i]->getPosition().w * posX);
+			int wantResearch = Round ((float) menu->owner->workingResearchCenterCount / menu->scroller[i]->getPosition().w * posX);
 			if (wantResearch <= menu->newResearchSettings[i])
 			{
 				menu->unusedResearch += menu->newResearchSettings[i] - wantResearch;

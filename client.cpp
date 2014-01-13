@@ -70,7 +70,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	eventHandling (&eventHandling_),
 	PlayerList (NULL),
 	casualtiesTracker (new cCasualtiesTracker()),
-	gameGUI (new cGameGUI ()),
+	gameGUI (new cGameGUI()),
 	gameTimer(),
 	FxList (new cFxContainer)
 {
@@ -134,8 +134,8 @@ void cClient::initPlayersWithMap()
 	// generate subbase for enemy players
 	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
-		if ( (*PlayerList) [i] == ActivePlayer) continue;
-		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ( (*PlayerList) [i]));
+		if ((*PlayerList) [i] == ActivePlayer) continue;
+		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ((*PlayerList) [i]));
 	}
 	gameGUI->setClient (this);
 }
@@ -527,7 +527,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	const int iPosY = message.popInt16();
 	const int iPosX = message.popInt16();
 
-	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ( (int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (iPosX) + ", YPos: " + iToStr (iPosY), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (iPosX) + ", YPos: " + iToStr (iPosY), cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle* Vehicle = NULL;
 	sUnitData* Data = NULL;
 	bool bWasBuilding = false;
@@ -991,7 +991,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 
 	const int nrResearchAreasFinished = message.popChar();
 	const bool bFinishedResearch = (nrResearchAreasFinished > 0);
-	if ( (iCount == 0 || !playVoice) && !bFinishedResearch) PlayVoice (VoiceData.VOIStartNone);
+	if ((iCount == 0 || !playVoice) && !bFinishedResearch) PlayVoice (VoiceData.VOIStartNone);
 	if (iCount == 1)
 	{
 		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
@@ -1718,7 +1718,7 @@ void cClient::HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message)
 		gameSetting = NULL;
 		return;
 	}
-	AutoPtr<sSettings> gameSetting_(new sSettings());
+	AutoPtr<sSettings> gameSetting_ (new sSettings());
 
 	gameSetting_->popFrom (message);
 	gameSetting = gameSetting_.Release();
@@ -1908,7 +1908,7 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	// try to find plyer by name
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
-		if ( (*PlayerList) [i]->getName() == playerID) return (*PlayerList) [i];
+		if ((*PlayerList) [i]->getName() == playerID) return (*PlayerList) [i];
 	}
 
 	return NULL;

@@ -64,9 +64,9 @@ char* cNetMessage::serialize()
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
 	Sint16* data16 = reinterpret_cast<Sint16*> (data + 1);
 	//write iLenght to byte array
-	*data16 = SDL_SwapLE16 ( (Sint16) iLength);
+	*data16 = SDL_SwapLE16 ((Sint16) iLength);
 	//write iType to byte array
-	* (data16 + 1) = SDL_SwapLE16 ( (Sint16) iType);
+	* (data16 + 1) = SDL_SwapLE16 ((Sint16) iType);
 	//write iPlayernr to byte array
 	data[5] = (char) iPlayerNr;
 
@@ -289,13 +289,13 @@ void cNetMessage::pushFloat (float f)
 	fnorm -= 1.0f;
 
 	// calculate the binary form (non-float) of the significand data
-	const uint32_t significand = uint32_t (fnorm * ( (1LL << significandbits) + 0.5f));
+	const uint32_t significand = uint32_t (fnorm * ((1LL << significandbits) + 0.5f));
 
 	// get the biased exponent
-	const uint32_t exp = shift + ( (1 << (EXPBITS - 1)) - 1);  // shift + bias
+	const uint32_t exp = shift + ((1 << (EXPBITS - 1)) - 1);   // shift + bias
 
 	// store result in netMessage
-	pushInt32 ( (sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
+	pushInt32 ((sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
 }
 
 float cNetMessage::popFloat()
@@ -308,13 +308,13 @@ float cNetMessage::popFloat()
 	if (i == 0) return 0.0f;
 
 	// pull the significand
-	float result (i & ( (1LL << significandbits) - 1));    // mask
+	float result (i & ((1LL << significandbits) - 1));     // mask
 	result /= (1LL << significandbits);   // convert back to float
 	result += 1.0f; // add the one back on
 
 	// deal with the exponent
 	unsigned bias = (1 << (EXPBITS - 1)) - 1;
-	long long shift = ( (i >> significandbits) & ( (1LL << EXPBITS) - 1)) - bias;
+	long long shift = ((i >> significandbits) & ((1LL << EXPBITS) - 1)) - bias;
 	while (shift > 0)
 	{
 		result *= 2.0f;
@@ -327,7 +327,7 @@ float cNetMessage::popFloat()
 	}
 
 	// sign it
-	result *= ( (i >> (BITS - 1)) & 1) ? -1.0f : 1.0f;
+	result *= ((i >> (BITS - 1)) & 1) ? -1.0f : 1.0f;
 
 	return result;
 }

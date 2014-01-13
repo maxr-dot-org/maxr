@@ -92,7 +92,7 @@ std::vector<std::string> getFilesOfDirectory (const std::string& sDirectory)
 	std::vector<std::string> List;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	intptr_t const lFile = _findfirst ( (sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
+	intptr_t const lFile = _findfirst ((sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
 	if (lFile != -1)
 	{
 		do

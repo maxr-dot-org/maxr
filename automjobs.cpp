@@ -287,7 +287,7 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 			//  just to avoid or by-pass an impassable rocky terrain)
 			const float factor = D * distanceOP + E * distanceSurv + F * distancesSurv;
 
-			if ( (factor < minValue) || (minValue == 0))
+			if ((factor < minValue) || (minValue == 0))
 			{
 				minValue = factor;
 				bestX = x;

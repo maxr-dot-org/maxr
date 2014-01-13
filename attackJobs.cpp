@@ -101,7 +101,7 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOf
 	unit->data.shotsCur--;
 	unit->data.ammoCur--;
 	if (unit->isAVehicle() && unit->data.canDriveAndFire == false)
-		unit->data.speedCur -= (int) ( ( (float) unit->data.speedMax) / unit->data.shotsMax);
+		unit->data.speedCur -= (int) (((float) unit->data.speedMax) / unit->data.shotsMax);
 	unit->attacking = true;
 
 	sendFireCommand();
@@ -135,7 +135,7 @@ void cServerAttackJob::lockTarget (int offset)
 
 	// if the aggressor can attack air and land units,
 	// decide whether it is currently attacking air or land targets
-	if ( (attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
+	if ((attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
 	{
 		if (isAir)
 			//TODO: can alien units attack submarines?
@@ -335,7 +335,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 		}
 	}
 
-	Log.write (" Server: waiting for " + iToStr ( (int) executingClients.size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Server: waiting for " + iToStr ((int) executingClients.size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (executingClients.empty())
 	{

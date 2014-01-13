@@ -138,10 +138,10 @@ int LoadData (void* data)
 	if (!DEDICATED_SERVER)
 	{
 		const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
-		if (!FileExists ( (fontPath + "latin_normal.pcx").c_str())
-			|| !FileExists ( (fontPath + "latin_big.pcx").c_str())
-			|| !FileExists ( (fontPath + "latin_big_gold.pcx").c_str())
-			|| !FileExists ( (fontPath + "latin_small.pcx").c_str()))
+		if (!FileExists ((fontPath + "latin_normal.pcx").c_str())
+			|| !FileExists ((fontPath + "latin_big.pcx").c_str())
+			|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
+			|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
 		{
 			Log.write ("Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR);
 			loadingState = LOAD_ERROR;
@@ -1449,7 +1449,7 @@ static bool translateUnitData (sID ID, bool vehicle)
 
 			Data->description = value;
 			size_t pos;
-			while ( (pos = Data->description.find ("\\n")) != string::npos)
+			while ((pos = Data->description.find ("\\n")) != string::npos)
 			{
 				Data->description.replace (pos, 2, "\n");
 			}
@@ -1761,7 +1761,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	{
 		Data->description = XMLElement->GetText();
 		size_t pos;
-		while ( (pos = Data->description.find ("\\n")) != string::npos)
+		while ((pos = Data->description.find ("\\n")) != string::npos)
 		{
 			Data->description.replace (pos, 2, "\n");
 		}

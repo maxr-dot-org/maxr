@@ -1943,7 +1943,7 @@ void cMenuUnitDetails::draw()
 		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, tot, lim);
 	}
-	else if ( (data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == activePlayer)
+	else if ((data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == activePlayer)
 	{
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE, buffer);
 
@@ -2239,7 +2239,7 @@ void cMenuUnitDetailsBig::draw()
 	if (data->speedMax)
 	{
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED);
-		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->getCurValue() : data->speedMax) / 4));    //FIXME: might crash if e.g. speedMax = 3
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ((upgrade ? upgrade->getCurValue() : data->speedMax) / 4));     //FIXME: might crash if e.g. speedMax = 3
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Speed"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3, y - 2, (upgrade ? upgrade->getCurValue() : data->speedMax) / 4, oriData->speedMax / 4);
 		DETAIL_DOLINEBREAK
@@ -2402,8 +2402,8 @@ void cMenuMaterialBar::draw()
 {
 	if (currentValue <= 0 && maxValue <= 0) return;
 	SDL_Rect src;
-	src.h = horizontal ? surface->h : (int) ( (float) currentValue / maxValue * surface->h);
-	src.w = horizontal ? (int) ( (float) currentValue / maxValue * surface->w) : surface->w;
+	src.h = horizontal ? surface->h : (int) ((float) currentValue / maxValue * surface->h);
+	src.w = horizontal ? (int) ((float) currentValue / maxValue * surface->w) : surface->w;
 	src.x = horizontal ? surface->w - src.w : 0;
 	src.y = 0;
 	SDL_Rect dest;
@@ -2763,7 +2763,7 @@ void cMenuListBox::addLine (const string& line)
 	}
 	while (pos < line_.length());
 
-	scrollBar->setMaximalScroll ( (int) lines.size() * 14);
+	scrollBar->setMaximalScroll ((int) lines.size() * 14);
 }
 
 cMenuLineEdit::cMenuLineEdit (int x, int y, int w, int h, cMenu* parentMenu_, eUnicodeFontType fontType_, eLineEditType lineEditType_) :
@@ -2856,8 +2856,8 @@ void cMenuLineEdit::doPosIncrease (int& value, int pos)
 	if (pos < (int) text.length())
 	{
 		unsigned char c = text[pos];
-		if ( (c & 0xE0) == 0xE0) value += 3;
-		else if ( (c & 0xC0) == 0xC0) value += 2;
+		if ((c & 0xE0) == 0xE0) value += 3;
+		else if ((c & 0xC0) == 0xC0) value += 2;
 		else value += 1;
 	}
 }
@@ -2867,7 +2867,7 @@ void cMenuLineEdit::doPosDecrease (int& pos)
 	if (pos > 0)
 	{
 		unsigned char c = text[pos - 1];
-		while ( ( (c & 0xE0) != 0xE0) && ( (c & 0xC0) != 0xC0) && ( (c & 0x80) == 0x80))
+		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
 		{
 			pos--;
 			c = text[pos - 1];
@@ -2905,7 +2905,7 @@ void cMenuLineEdit::deleteLeft()
 	if (cursorPos > 0)
 	{
 		unsigned char c = text[cursorPos - 1];
-		while ( ( (c & 0xE0) != 0xE0) && ( (c & 0xC0) != 0xC0) && ( (c & 0x80) == 0x80))
+		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
 		{
 			text.erase (cursorPos - 1, 1);
 			cursorPos--;
@@ -2924,8 +2924,8 @@ void cMenuLineEdit::deleteRight()
 	if (cursorPos < (int) text.length())
 	{
 		unsigned char c = text[cursorPos];
-		if ( (c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
-		else if ( (c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
+		if ((c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
+		else if ((c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
 		else text.erase (cursorPos, 1);
 		endOffset = std::min<int> (text.length(), endOffset);
 	}
@@ -3138,14 +3138,14 @@ void cMenuPlayersBox::draw()
 		int index = i - scrollBar->offset;
 		if (i < (int) players->size())
 		{
-			if ( (*players) [i]->isReady()) playerReadys[index]->setImage (readySurface);
+			if ((*players) [i]->isReady()) playerReadys[index]->setImage (readySurface);
 			else playerReadys[index]->setImage (notReadySurface);
 
 			AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-			SDL_BlitSurface ( (*players) [i]->getColorSurface(), &src, colorSurface, NULL);
+			SDL_BlitSurface ((*players) [i]->getColorSurface(), &src, colorSurface, NULL);
 			playerColors[index]->setImage (colorSurface);
 
-			playerNames[index]->setText ( (*players) [i]->getName());
+			playerNames[index]->setText ((*players) [i]->getName());
 		}
 		else
 		{
@@ -3170,7 +3170,7 @@ bool cMenuPlayersBox::preClicked()
 			if (i >= (int) players->size()) break;
 			if (mouse->y > position.y + 12 + 14 * (i - scrollBar->offset) && mouse->y < position.y + 12 + 14 * (i - scrollBar->offset) + 10)
 			{
-				parentMenu->playerReadyClicked ( (*players) [i]);
+				parentMenu->playerReadyClicked ((*players) [i]);
 			}
 		}
 	}
@@ -3461,10 +3461,10 @@ void cMenuSlider::setValue (float value)
 	switch (direction)
 	{
 		case SLIDER_DIR_LEFTMIN:
-			scroller->move ( (int) ( ( (minValue + curValue) * (position.w - ( (type == SLIDER_TYPE_HUD_ZOOM) ? scroller->getPosition().w : 0))) / (maxValue - minValue) + position.x - ( (type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7)));
+			scroller->move ((int) (((minValue + curValue) * (position.w - ((type == SLIDER_TYPE_HUD_ZOOM) ? scroller->getPosition().w : 0))) / (maxValue - minValue) + position.x - ((type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7)));
 			break;
 		case SLIDER_DIR_RIGHTMIN:
-			scroller->move ( (int) ( ( (maxValue - curValue) * (position.w - ( (type == SLIDER_TYPE_HUD_ZOOM) ? scroller->getPosition().w : 0))) / (maxValue - minValue) + position.x - ( (type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7)));
+			scroller->move ((int) (((maxValue - curValue) * (position.w - ((type == SLIDER_TYPE_HUD_ZOOM) ? scroller->getPosition().w : 0))) / (maxValue - minValue) + position.x - ((type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7)));
 			break;
 	}
 }
@@ -3482,24 +3482,24 @@ void cMenuSlider::setMoveCallback (void (*movedCallback_) (void*))
 void cMenuSlider::scrollerMoved (void* parent_)
 {
 	cMenuSlider* This = reinterpret_cast<cMenuSlider*> (parent_);
-	int pos = This->scroller->getPosition().x - This->position.x + ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7);
+	int pos = This->scroller->getPosition().x - This->position.x + ((This->type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7);
 	if (pos < 0)
 	{
 		pos = 0;
-		This->scroller->move (This->position.x - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7));
+		This->scroller->move (This->position.x - ((This->type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7));
 	}
-	if (pos > This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))
+	if (pos > This->position.w - ((This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))
 	{
-		pos = This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 7);
-		This->scroller->move (This->position.x + This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 7));
+		pos = This->position.w - ((This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 7);
+		This->scroller->move (This->position.x + This->position.w - ((This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 7));
 	}
 	switch (This->direction)
 	{
 		case SLIDER_DIR_LEFTMIN:
-			This->curValue = This->minValue + ( (This->maxValue - This->minValue) / (float) (This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))) * (float) pos;
+			This->curValue = This->minValue + ((This->maxValue - This->minValue) / (float) (This->position.w - ((This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))) * (float) pos;
 			break;
 		case SLIDER_DIR_RIGHTMIN:
-			This->curValue = This->maxValue - ( (This->maxValue - This->minValue) / (float) (This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))) * (float) pos;
+			This->curValue = This->maxValue - ((This->maxValue - This->minValue) / (float) (This->position.w - ((This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))) * (float) pos;
 			break;
 	}
 	This->parent->draw();
@@ -3531,7 +3531,7 @@ void cMenuScrollerHandler::draw()
 void cMenuScrollerHandler::setValue (int value)
 {
 	currentValue = value;
-	int pos = position.x + ( (position.w - 14) * currentValue) / maxValue;
+	int pos = position.x + ((position.w - 14) * currentValue) / maxValue;
 	scroller->move (pos);
 }
 
@@ -3853,14 +3853,14 @@ void cMenuReportsScreen::drawScoreGraph()
 		const int points_lim = gameSetting.duration;
 		if (points_lim > min_points && points_lim < max_points)
 		{
-			const int y = y1 - (int) ( (points_lim - min_points) * pix_per_point);
+			const int y = y1 - (int) ((points_lim - min_points) * pix_per_point);
 
 			drawLine (buffer, x0, y, x1, y, limit_colour);
 			font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
 		}
 	}
 	// Draw Labels
-	int my = y1 - (int) ( (max_points - min_points) * pix_per_point);
+	int my = y1 - (int) ((max_points - min_points) * pix_per_point);
 
 	font->showTextCentered (x0,    y1 + 8, iToStr (min_turns), FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered (now_x, y1 + 8, iToStr (now),       FONT_LATIN_SMALL_WHITE);
@@ -4231,8 +4231,8 @@ void cMenuReportsScreen::released (void* parent)
 			gameGUI.addMessage (savedReport.message);
 			if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
 			{
-				int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
-				int offY = savedReport.yPos * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+				int offX = savedReport.xPos * 64 - ((int) (((float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+				int offY = savedReport.yPos * 64 - ((int) (((float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
 				gameGUI.setOffsetPosition (offX, offY);
 			}
 			return;

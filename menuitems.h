@@ -355,7 +355,7 @@ public:
 	*@intervall the timer intervall in milliseconds
 	*@author eiko
 	*/
-	cMenuTimer (T& obj_, void (T::*method_) (), Uint32  intervall);
+	cMenuTimer (T& obj_, void (T::*method_)(), Uint32  intervall);
 
 	/**
 	* this function will be called by the menu to run the callback.
@@ -364,11 +364,11 @@ public:
 
 private:
 	T& object;
-	void (T::*method) ();
+	void (T::*method)();
 };
 
 
-template <typename T> cMenuTimer<T>::cMenuTimer (T& obj_, void (T::*method_) (), Uint32 intervall) :
+template <typename T> cMenuTimer<T>::cMenuTimer (T& obj_, void (T::*method_)(), Uint32 intervall) :
 	cMenuTimerBase (intervall),
 	object (obj_),
 	method (method_)
@@ -376,7 +376,7 @@ template <typename T> cMenuTimer<T>::cMenuTimer (T& obj_, void (T::*method_) (),
 
 template <typename T> void cMenuTimer<T>::callback()
 {
-	(object.*method) ();
+	(object.*method)();
 }
 
 

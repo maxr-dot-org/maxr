@@ -64,11 +64,11 @@ bool cLog::open (int TYPE)
 		char timestr[25];
 		strftime (timestr, 21, "%Y-%m-%d-%H%M_", tmTime);
 		std::string sTime = timestr;
-		cSettings::getInstance().setNetLogPath ( (getUserLogDir() + sTime + MAX_NET_LOG).c_str());
+		cSettings::getInstance().setNetLogPath ((getUserLogDir() + sTime + MAX_NET_LOG).c_str());
 		bFirstRun = false;
 	}
 
-	if (logfile == NULL || ( (TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted))
+	if (logfile == NULL || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted))
 	{
 		if (TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
 		{
@@ -125,7 +125,7 @@ int cLog::write (const std::string& s, int TYPE)
 	std::string str (s);
 	cMutex::Lock l (mutex);
 
-	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())    //in case debug is disabled we skip message
+	if ((TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())     //in case debug is disabled we skip message
 	{
 		return 0;
 	}

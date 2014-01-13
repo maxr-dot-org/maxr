@@ -345,7 +345,7 @@ void cUnicodeFont::showText (int x, int y, const string& text, eUnicodeFontType 
 			if (encode)
 			{
 				int increase;
-				uni = encodeUTF8Char ( (unsigned char*) p, &increase);
+				uni = encodeUTF8Char ((unsigned char*) p, &increase);
 				p += increase;
 			}
 			else
@@ -542,7 +542,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 			if (encode)
 			{
 				int increase;
-				uni = encodeUTF8Char ( (unsigned char*) p, &increase);
+				uni = encodeUTF8Char ((unsigned char*) p, &increase);
 				p += increase;
 			}
 			else
@@ -611,14 +611,14 @@ Uint16 cUnicodeFont::encodeUTF8Char (const unsigned char* pch, int* increase) co
 	Uint16 uni = 0;
 	unsigned char ch = *pch;
 	// we do not need encoding 4 byte long characters because SDL only returns the BMP of the unicode table
-	if ( (ch & 0xE0) == 0xE0)
+	if ((ch & 0xE0) == 0xE0)
 	{
 		uni |= (ch & 0x0F) << 12;
 		uni |= (* (pch + 1) & 0x3F) << 6;
 		uni |= (* (pch + 2) & 0x3F);
 		*increase = 3;
 	}
-	else if ( (ch & 0xC0) == 0xC0)
+	else if ((ch & 0xC0) == 0xC0)
 	{
 		uni |= (ch & 0x1F) << 6;
 		uni |= (* (pch + 1) & 0x3F);

@@ -832,7 +832,7 @@ int cUpgradeCalculator::calcChangeByResearch (int startValue, int curResearchLev
 	{
 		// cost makes a decrease based on the formula 1/x
 		// (where x is the research level)
-		float realCost = startValue / ( (100.0f + curResearchLevel) / 100.0f);
+		float realCost = startValue / ((100.0f + curResearchLevel) / 100.0f);
 
 		// now the real cost is rounded to the next possible cost value
 		// (Unit factories: steps of 3,
@@ -1012,7 +1012,7 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 	double a, b, c;
 	switch (upgradeKind)
 	{
-			// Treffer, Panzerung, Munition & Angriff
+		// Treffer, Panzerung, Munition & Angriff
 		case 0:
 			switch (org)
 			{
@@ -1105,7 +1105,7 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 					break;
 			}
 			break;
-			// Geschwindgigkeit
+		// Geschwindgigkeit
 		case 1:
 			org = org / 4;
 			value = value / 4;
@@ -1181,7 +1181,7 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 					break;
 			}
 			break;
-			// Shots
+		// Shots
 		case 2:
 			switch (org)
 			{
@@ -1197,7 +1197,7 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 					break;
 			}
 			break;
-			// Reichweite, Scan
+		// Reichweite, Scan
 		case 3:
 			switch (org)
 			{
@@ -1269,7 +1269,7 @@ void cUpgradeCalculator::printToLog (const char* str, int value) const
 			return 0;
 	}
 
-	tmp = (int) Round ( (a * pow ( (value - b), c)), 0);
+	tmp = (int) Round ((a * pow ((value - b), c)), 0);
 	return tmp;
 }
 #endif

@@ -46,9 +46,9 @@ using namespace std;
 
 //--------------------------------------------------------------------------
 cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
-	cUnit ( (Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
-			Owner,
-			ID),
+	cUnit ((Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
+		   Owner,
+		   ID),
 	next (0),
 	prev (0),
 	BuildList (0)
@@ -285,7 +285,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		cSettings::getInstance().isDamageEffects() &&
 		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
-		int intense = (int) (200 - 200 * ( (float) data.hitpointsCur / data.hitpointsMax));
+		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir()));
 
 		if (data.isBig && intense > 50)
@@ -373,7 +373,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw the mark, when a build order is finished
-	if ( ( (!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
+	if (((!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
@@ -405,7 +405,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		const int len = max / 4;
 		max -= 3;
 		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
-		DrawSelectionCorner(buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
+		DrawSelectionCorner (buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
 	}
 
 	// draw health bar
@@ -550,7 +550,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		src.h = (int) (128 * zoomFactor);
 		// select clan image
 		if (owner->getClan() != -1)
-			src.x = (int) ( (owner->getClan() + 1) * 128 * zoomFactor);
+			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
 		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp, NULL);
 	}
 	else
@@ -588,7 +588,7 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 		render_beton (surface, dest, zoomFactor);
 	}
 	// draw the connector slots:
-	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic)
+	if ((this->SubBase && !StartUp) || data.isConnectorGraphic)
 	{
 		drawConnectors (surface, dest, zoomFactor, drawShadow);
 		if (data.isConnectorGraphic) return;

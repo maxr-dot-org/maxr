@@ -51,7 +51,7 @@ void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& l
 		message->pushID (landingList[i].unitID);
 		message->pushInt16 (landingList[i].cargo);
 	}
-	message->pushInt16 ( (int) landingList.size());
+	message->pushInt16 ((int) landingList.size());
 	message->pushInt16 (client.getActivePlayer()->getNr());
 
 	client.sendNetMessage (message);
@@ -377,7 +377,7 @@ void sendWantBuildList (const cClient& client, const cBuilding& building, const 
 	{
 		message->pushID (buildList[i].type);
 	}
-	message->pushInt16 ( (int) buildList.size());
+	message->pushInt16 ((int) buildList.size());
 	message->pushInt16 (buildSpeed);
 	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);

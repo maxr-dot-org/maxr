@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
 		Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	srand ( (unsigned) time (NULL)); // start random number generator
+	srand ((unsigned) time (NULL));  // start random number generator
 
 	if (!DEDICATED_SERVER)
 	{
@@ -136,14 +136,14 @@ int main (int argc, char* argv[])
 		// play intro if we're supposed to and the file exists
 		if (cSettings::getInstance().shouldShowIntro())
 		{
-			if (FileExists ( (cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+			if (FileExists ((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
 			{
 				// Close maxr sound for intro movie
 				CloseSound();
 
 				char mvereturn;
 				Log.write ("Starting movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG);
-				mvereturn = MVEPlayer ( (cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !cSettings::getInstance().isSoundMute());
+				mvereturn = MVEPlayer ((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !cSettings::getInstance().isSoundMute());
 				Log.write ("MVEPlayer returned " + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
 				//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 
@@ -288,7 +288,7 @@ void Quit()
 
 int random (int const x)
 {
-	return (int) ( (double) rand() / RAND_MAX * x);
+	return (int) ((double) rand() / RAND_MAX * x);
 }
 
 string iToStr (int x)

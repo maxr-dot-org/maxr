@@ -75,9 +75,9 @@ cBuilding* cMapField::getTopBuilding()
 	if (buildings.empty()) return NULL;
 	cBuilding* building = *buildings.begin();
 
-	if ( (building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
-		  building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
-		 building->owner)
+	if ((building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
+		 building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
+		building->owner)
 		return building;
 	return NULL;
 }
@@ -466,13 +466,13 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 	if (SDL_MUSTLOCK (mapSurface)) SDL_LockSurface (mapSurface);
 	for (int x = 0; x < mapSurface->w; ++x)
 	{
-		const int terrainx = std::min ( (x * size) / mapSurface->w, size - 1);
-		const int offsetx = ( (x * size) % mapSurface->w) * 64 / mapSurface->w;
+		const int terrainx = std::min ((x * size) / mapSurface->w, size - 1);
+		const int offsetx = ((x * size) % mapSurface->w) * 64 / mapSurface->w;
 
 		for (int y = 0; y < mapSurface->h; y++)
 		{
-			const int terrainy = std::min ( (y * size) / mapSurface->h, size - 1);
-			const int offsety = ( (y * size) % mapSurface->h) * 64 / mapSurface->h;
+			const int terrainy = std::min ((y * size) / mapSurface->h, size - 1);
+			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
 
 			const sTerrain& t = this->getTerrain (terrainx, terrainy);
 			unsigned int ColorNr = * (static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
@@ -533,7 +533,7 @@ void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
 		resSpotTypes = new int[resSpotCount];
 	}
 	resSpotTypes[resCurrentSpotCount] = RES_METAL;
-	resSpots[resCurrentSpotCount] = T_2<int> ( (x & ~1) + (RES_METAL % 2), (y & ~1) + ( (RES_METAL / 2) % 2));
+	resSpots[resCurrentSpotCount] = T_2<int> ((x & ~1) + (RES_METAL % 2), (y & ~1) + ((RES_METAL / 2) % 2));
 	resCurrentSpotCount++;
 }
 
@@ -672,7 +672,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 		resSpots[i].x += type % 2;
 		resSpots[i].y += (type / 2) % 2;
 
-		resSpotTypes[i] = ( (resSpots[i].y % 2) * 2) + (resSpots[i].x % 2);
+		resSpotTypes[i] = ((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2);
 	}
 	// Resourcen platzieren
 	for (int i = 0; i < resSpotCount; i++)
@@ -693,7 +693,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 
 				int index = getOffset (absPos.x, absPos.y);
 				if (type != RES_NONE &&
-					( (hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
+					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
 					!isBlocked (index))
 				{
 					Resources[index].typ = type;
@@ -945,21 +945,21 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	{
 		if (isBlocked (offset)) return false;
 
-		if ( (isWater (offset) && vehicleData.factorSea == 0) ||
-			 (isCoast (offset) && vehicleData.factorCoast == 0))
+		if ((isWater (offset) && vehicleData.factorSea == 0) ||
+			(isCoast (offset) && vehicleData.factorCoast == 0))
 		{
 			if (checkPlayer && player && !player->ScanMap[offset]) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if (b_it == b_end) return false;
-			if ( (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
-				 (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				 (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
+			if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
 		}
 		//check for enemy mines
 		if (player && b_it != b_end && (*b_it)->owner != player &&
 			(*b_it)->data.explodesOnContact &&
-			( (*b_it)->isDetectedByPlayer (player) || checkPlayer))
+			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
 			return false;
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
@@ -969,11 +969,11 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
 			// (connectors have been skiped, so doesn't matter here)
-			if ( (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
-				 (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				 (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE &&
-				 (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
-				 (*b_it)->owner) return false;
+			if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
+				(*b_it)->owner) return false;
 		}
 	}
 	else if (vehicleData.factorSea > 0)
@@ -998,7 +998,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 			(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA)
 		{
 			// if the building is a landmine, we have to check whether it's on a bridge or not
-			if ( (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+			if ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
 				++b_it;
 				if (b_it == b_end || (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA) return false;
@@ -1033,7 +1033,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 	const std::vector<cBuilding*>& buildings = field.getBuildings();
 	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
 	{
-		if ( (*it)->data.ID == buildingData.ID)
+		if ((*it)->data.ID == buildingData.ID)
 		{
 			return false;
 		}
@@ -1048,7 +1048,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 	{
 		if (buildingData.surfacePosition == (*it)->data.surfacePosition &&
 			(*it)->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
-		switch ( (*it)->data.surfacePosition)
+		switch ((*it)->data.surfacePosition)
 		{
 			case sUnitData::SURFACE_POS_GROUND:
 			case sUnitData::SURFACE_POS_ABOVE_SEA: // bridge
@@ -1070,9 +1070,9 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 				break;
 		}
 	}
-	if ( (water && buildingData.factorSea == 0) ||
-		 (coast && buildingData.factorCoast == 0) ||
-		 (ground && buildingData.factorGround == 0)) return false;
+	if ((water && buildingData.factorSea == 0) ||
+		(coast && buildingData.factorCoast == 0) ||
+		(ground && buildingData.factorGround == 0)) return false;
 
 	//can not build on rubble
 	if (field.getRubble() &&
