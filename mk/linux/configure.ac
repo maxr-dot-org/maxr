@@ -45,9 +45,9 @@ AC_CHECK_HEADER(SDL2/SDL_net.h, , AC_MSG_ERROR([SDL_net header not found.]))
 AC_CHECK_HEADER(SDL2/SDL_mixer.h, , AC_MSG_ERROR([SDL_mixer header not found.]))
 
 case "$host" in
-	i686-pc-mingw32|x86_64-pc-mingw64)
+	i686-pc-mingw32|x86_64-pc-mingw64|i686-w64-mingw32)
 		#simply set libs - don't check for usability since I don't know a way of doing so during cross compiling -- beko
-		AC_SUBST([SDL_LIBS], [-l2SDL])
+		AC_SUBST([SDL_LIBS], [-lSDL2])
 		AC_SUBST([SDL_NET_LIBS], [-lSDL2_net])
 		AC_SUBST([SDL_MIXER_LIBS], [-lSDL2_mixer])
 	;;
