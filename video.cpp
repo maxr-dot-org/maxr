@@ -44,7 +44,7 @@ cVideo Video;
 /** Slashscreen height  */
 #define SPLASHHEIGHT 420
 #define COLOURDEPTH 32
-/**Minimum video mode resultion we need */
+/** Minimum video mode resultion we need */
 #define MINWIDTH 640
 #define MINHEIGHT 480
 
@@ -348,7 +348,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 
 	if (!dst || !src) return;
 
-	//check surface formats
+	// check surface formats
 	if (!dst->format->Amask || src->format->Amask) return;
 	if (SDL_GetSurfaceAlphaMod (src, NULL) != 0) return;
 
@@ -385,7 +385,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 	width  = std::min (src->w - srcrect->x, width);
 	height = std::min (src->h - srcrect->y, height);
 
-	//clip the dest rect to the destination clip rect
+	// clip the dest rect to the destination clip rect
 	if (dstrect->x < dst->clip_rect.x)
 	{
 		width -= dst->clip_rect.x - dstrect->x;
@@ -501,7 +501,8 @@ void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, S
  * @param destWidth Directory width of the line how it should be drawn
  *        to the destination surface.
  */
-template<typename Type> static void drawStetchedLine (Type* srcPixelData, int srcWidth, Type* destPixelData, int destWidth)
+template<typename Type>
+static void drawStetchedLine (Type* srcPixelData, int srcWidth, Type* destPixelData, int destWidth)
 {
 	int i = 0;
 	int width = destWidth;
@@ -534,7 +535,7 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	if (width <= 0 || height <= 0 || !scr) return NULL;
 	SDL_Surface* surface;
 
-	//can not enlage an existing surface
+	// can not enlage an existing surface
 	if (width > scr->w && dest) width = scr->w;
 	if (height > scr->h && dest) height = scr->h;
 
@@ -620,33 +621,7 @@ drawline:
 	return surface;
 }
 
-// CreatePfeil ////////////////////////////////////////////////////////////////
-// Erzeigt ein Pfeil-Surface:
-SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
-{
-	SDL_Surface* sf;
-	sf = SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (sf, SDL_TRUE, 0x00FF00FF);
-	SDL_FillRect (sf, NULL, 0x00FF00FF);
-	SDL_LockSurface (sf);
-
-	const float fak = size / 64.0f;
-	p1x = Round (p1x * fak);
-	p1y = Round (p1y * fak);
-	p2x = Round (p2x * fak);
-	p2y = Round (p2y * fak);
-	p3x = Round (p3x * fak);
-	p3y = Round (p3y * fak);
-	line (p1x, p1y, p2x, p2y, color, sf);
-	line (p2x, p2y, p3x, p3y, color, sf);
-	line (p3x, p3y, p1x, p1y, color, sf);
-
-	SDL_UnlockSurface (sf);
-	return sf;
-}
-
-
-void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
+static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
 {
 	if (x2 < x1)
 	{
@@ -676,6 +651,43 @@ void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
 			ptr[x1 + y1 * sf->w] = color;
 	}
 }
+
+// CreatePfeil ////////////////////////////////////////////////////////////////
+// Erzeigt ein Pfeil-Surface:
+SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
+{
+	SDL_Surface* sf;
+	sf = SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (sf, SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (sf, NULL, 0x00FF00FF);
+	SDL_LockSurface (sf);
+
+	const float fak = size / 64.0f;
+	p1x = Round (p1x * fak);
+	p1y = Round (p1y * fak);
+	p2x = Round (p2x * fak);
+	p2y = Round (p2y * fak);
+	p3x = Round (p3x * fak);
+	p3y = Round (p3y * fak);
+	line (p1x, p1y, p2x, p2y, color, sf);
+	line (p2x, p2y, p3x, p3y, color, sf);
+	line (p3x, p3y, p1x, p1y, color, sf);
+
+	SDL_UnlockSurface (sf);
+	return sf;
+}
+
+static void setPixel (SDL_Surface* surface, int x, int y, int iColor)
+{
+	// check the surface size
+	if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) return;
+	// check the clip rect
+	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w ||
+		y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
+
+	static_cast<Uint32*> (surface->pixels) [x + y * surface->w] = iColor;
+}
+
 void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
 {
 	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() ||
@@ -711,15 +723,4 @@ void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
 		setPixel (surface, iX - xx, iY - yy, iColor);
 	}
 	SDL_UnlockSurface (surface);
-}
-
-void setPixel (SDL_Surface* surface, int x, int y, int iColor)
-{
-	//check the surface size
-	if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) return;
-	//check the clip rect
-	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w ||
-		y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
-
-	static_cast<Uint32*> (surface->pixels) [x + y * surface->w] = iColor;
 }
