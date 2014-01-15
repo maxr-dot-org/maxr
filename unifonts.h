@@ -87,8 +87,7 @@ public:
 	 */
 	void showText (SDL_Rect rDest, const std::string& sText,
 				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-				   SDL_Surface* surface = buffer,
-				   bool encode = true);
+				   SDL_Surface* surface = buffer);
 	/**
 	 * Displays a text
 	 * @author beko
@@ -100,8 +99,7 @@ public:
 	 */
 	void showText (int x, int y, const std::string& sText,
 				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-				   SDL_Surface* surface = buffer,
-				   bool encode = true);
+				   SDL_Surface* surface = buffer);
 	/**
 	 * Displays a text as block.<br><br>
 	 * This does <b>not</b> allow blanks in line. Linebreaks are interpreted.
@@ -117,8 +115,7 @@ public:
 	 */
 	int showTextAsBlock (SDL_Rect rDest, const std::string& sText,
 						 eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						 SDL_Surface* surface = buffer,
-						 bool encode = true);
+						 SDL_Surface* surface = buffer);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
@@ -130,8 +127,7 @@ public:
 	 */
 	void showTextCentered (SDL_Rect rDest, const std::string& sText,
 						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						   SDL_Surface* surface = buffer,
-						   bool encode = true);
+						   SDL_Surface* surface = buffer);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
@@ -143,8 +139,7 @@ public:
 	 */
 	void showTextCentered (int x, int y, const std::string& sText,
 						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						   SDL_Surface* surface = buffer,
-						   bool encode = true);
+						   SDL_Surface* surface = buffer);
 	/**
 	 * Calculates the needed width for a text in pixels
 	 * @author beko
@@ -153,8 +148,7 @@ public:
 	 * @return needed width for text
 	 */
 	int getTextWide (const std::string& sText,
-					 eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-					 bool encode = true);
+					 eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Calculates the needed space for a text in pixels
 	 * @author beko
@@ -163,8 +157,7 @@ public:
 	 * @return SDL_Rect with needed width and height for text
 	 */
 	SDL_Rect getTextSize (const std::string& sText,
-						  eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						  bool encode = true);
+						  eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Holds information of font height
 	 * @author beko
@@ -183,6 +176,7 @@ public:
 	std::string shortenStringToSize (const std::string& str, int size,
 									 eUnicodeFontType fonttype);
 private:
+	typedef AutoSurface FontTypeSurfaces[0xFFFF];
 	// character surfaces.
 	// Since SDL maximal gives us the unicodes
 	// from BMP we maximaly need 0xFFFF surfaces
@@ -209,7 +203,7 @@ private:
 	 *        array should be returned.
 	 * @return the character array for the fonttype.
 	 */
-	AutoSurface* getFontTypeSurfaces (eUnicodeFontType fonttype);
+	FontTypeSurfaces* getFontTypeSurfaces (eUnicodeFontType fonttype);
 	/**
 	 * loads the ISO-8859 bitmap font surface
 	 * @author alzi alias DoctorDeath
@@ -228,10 +222,9 @@ private:
 	const unsigned short* getIsoPage (eUnicodeFontCharset charset);
 	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText,
 							eUnicodeFontType fonttype,
-							SDL_Surface* surface,
-							bool encode);
+							SDL_Surface* surface);
 	/**
-	 * encodes a UTF-8 character to his unicode position
+	 * encodes a UTF-8 character to its unicode position
 	 * @author alzi alias DoctorDeath
 	 * @param pch pointer to the character string
 	 * @param increase number which will be changed to the value

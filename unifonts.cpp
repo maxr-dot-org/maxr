@@ -363,12 +363,13 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 		// LOG: error while loading font
 		return;
 	}
-	AutoSurface* const chars = getFontTypeSurfaces (fonttype);
-	if (!chars)
+	AutoSurface (*pchars)[0xFFFF] = getFontTypeSurfaces (fonttype);
+	if (!pchars)
 	{
 		// LOG: error while loading font
 		return;
 	}
+	AutoSurface (&chars)[0xFFFF] = *pchars;
 	const unsigned short* iso8859_to_uni = getIsoPage (charset);
 
 	int highcount;
@@ -437,7 +438,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			else unicodeplace = iso8859_to_uni[currentChar];
 			chars[unicodeplace] = SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0);
 
-			// change color of smal fonts
+			// change color of small fonts
 			switch (fonttype)
 			{
 				case FONT_LATIN_SMALL_RED:
@@ -474,17 +475,18 @@ Uint32 cUnicodeFont::getPixel32 (int x, int y, SDL_Surface* surface)
 	return pixels[ (y * surface->w) + x];
 }
 
-AutoSurface* cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
+cUnicodeFont::FontTypeSurfaces*
+cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
 {
 	switch (fonttype)
 	{
-		case FONT_LATIN_NORMAL: return charsNormal;
-		case FONT_LATIN_BIG: return charsBig;
-		case FONT_LATIN_BIG_GOLD: return charsBigGold;
-		case FONT_LATIN_SMALL_WHITE: return charsSmallWhite;
-		case FONT_LATIN_SMALL_RED: return charsSmallRed;
-		case FONT_LATIN_SMALL_GREEN: return charsSmallGreen;
-		case FONT_LATIN_SMALL_YELLOW: return charsSmallYellow;
+		case FONT_LATIN_NORMAL: return &charsNormal;
+		case FONT_LATIN_BIG: return &charsBig;
+		case FONT_LATIN_BIG_GOLD: return &charsBigGold;
+		case FONT_LATIN_SMALL_WHITE: return &charsSmallWhite;
+		case FONT_LATIN_SMALL_RED: return &charsSmallRed;
+		case FONT_LATIN_SMALL_GREEN: return &charsSmallGreen;
+		case FONT_LATIN_SMALL_YELLOW: return &charsSmallYellow;
 	}
 	return NULL;
 }
@@ -555,22 +557,20 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)
 
 void cUnicodeFont::showText (SDL_Rect rDest, const string& sText,
 							 eUnicodeFontType fonttype,
-							 SDL_Surface* surface,
-							 bool encode)
+							 SDL_Surface* surface)
 {
-	showText (rDest.x, rDest.y, sText, fonttype, surface, encode);
+	showText (rDest.x, rDest.y, sText, fonttype, surface);
 }
 
 void cUnicodeFont::showText (int x, int y, const string& text,
 							 eUnicodeFontType fonttype,
-							 SDL_Surface* surface,
-							 bool encode)
+							 SDL_Surface* surface)
 {
 	string sText (text);
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
-	const AutoSurface* const chars = getFontTypeSurfaces (fonttype);
+	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 
 	// make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts
@@ -597,7 +597,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 		// is space?
 		if (*p == ' ')
 		{
-			if (chars[97]) offX += chars[97]->w;
+			if (chars['a']) offX += chars['a']->w;
 			p++;
 		} //is new line?
 		else if (*p == '\n')
@@ -609,28 +609,19 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 		else if ('\r' == *p)
 		{
 			p++;
-			//ignore - is breakline in file
+			// ignore - is breakline in file
 		}
 		else
 		{
-			Uint16 uni;
-			if (encode)
-			{
-				int increase;
-				uni = encodeUTF8Char (reinterpret_cast<const unsigned char*> (p), &increase);
-				p += increase;
-			}
-			else
-			{
-				uni = *reinterpret_cast<const unsigned char*> (p);
-				p++;
-			}
+			int increase;
+			Uint16 uni = encodeUTF8Char (reinterpret_cast<const unsigned char*> (p), &increase);
+			p += increase;
 			if (chars[uni] != NULL)
 			{
 				SDL_Rect rTmp = {Sint16 (offX), Sint16 (offY), 16, 16};
 				SDL_BlitSurface (chars[uni], NULL, surface, &rTmp);
 
-				//move one px forward for space between signs
+				// move one px forward for space between signs
 				offX += chars[uni]->w + iSpace;
 			}
 		}
@@ -639,13 +630,12 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 
 int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 									  eUnicodeFontType fonttype,
-									  SDL_Surface* surface,
-									  bool encode)
+									  SDL_Surface* surface)
 {
 	string sText (text);
 	string drawString = "";
 
-	while (getTextWide (sText, fonttype, encode) > rDest.w)
+	while (getTextWide (sText, fonttype) > rDest.w)
 	{
 		// get the position of the end of as many words
 		// from the text as fit in rDest.w
@@ -655,26 +645,26 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 			lastPos = pos;
 			pos = sText.find (" ", pos + 1);
 		}
-		while (getTextWide (sText.substr (0, pos), fonttype, encode) < rDest.w && pos != string::npos);
+		while (getTextWide (sText.substr (0, pos), fonttype) < rDest.w && pos != string::npos);
 
 		// get the words.
-		// If there was no " " in the text we get the hole text string
+		// If there was no " " in the text we get the whole text string
 		if (lastPos != 0) drawString = sText.substr (0, lastPos);
 		else drawString = sText;
 
 		// if there is only one word in the string it is possible
 		// that this word is to long.
 		// we will check this, and cut it if necessary
-		while (getTextWide (drawString, fonttype, encode) > rDest.w)
+		while (getTextWide (drawString, fonttype) > rDest.w)
 		{
 			string stringPart = drawString;
 
 			// delete as many chars as it is needed to fit into the line
-			while (getTextWide (stringPart, fonttype, encode) + getTextWide ("-", fonttype, encode) > rDest.w) stringPart.erase (stringPart.length() - 1, 1);
+			while (getTextWide (stringPart, fonttype) + getTextWide ("-", fonttype) > rDest.w) stringPart.erase (stringPart.length() - 1, 1);
 			stringPart += "-";
 
 			// show the part of the word
-			showText (rDest, stringPart, fonttype, surface, encode);
+			showText (rDest, stringPart, fonttype, surface);
 			rDest.y += getFontHeight (fonttype);
 
 			// erase the part from the line and from the hole text
@@ -683,7 +673,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 		}
 
 		// draw the rest of the line
-		showText (rDest, drawString, fonttype, surface, encode);
+		showText (rDest, drawString, fonttype, surface);
 		rDest.y += getFontHeight (fonttype);
 
 		sText.erase (0, drawString.length());
@@ -691,7 +681,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 	}
 
 	// draw the rest of the text
-	showText (rDest, sText, fonttype, surface, encode);
+	showText (rDest, sText, fonttype, surface);
 	rDest.y += getFontHeight (fonttype);
 
 	return rDest.y;
@@ -699,8 +689,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 
 int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 								   eUnicodeFontType fonttype,
-								   SDL_Surface* surface,
-								   bool encode)
+								   SDL_Surface* surface)
 {
 	string sText (text);
 	size_t k;
@@ -750,44 +739,42 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 			sTmp.erase (k, sTmp.size());
 
 			// draw first part of text and proceed searching for breaklines
-			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype, surface, encode);
+			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype, surface);
 			// += getFontHeight(eBitmapFontType); //add newline for each breakline
 		}
 	}
 	while (k != string::npos);
 
 	// draw rest of text
-	return drawWithBreakLines (rDest, sText, fonttype, surface, encode);
+	return drawWithBreakLines (rDest, sText, fonttype, surface);
 }
 
 void cUnicodeFont::showTextCentered (SDL_Rect rDest, const string& sText,
 									 eUnicodeFontType fonttype,
-									 SDL_Surface* surface,
-									 bool encode)
+									 SDL_Surface* surface)
 {
-	showTextCentered (rDest.x, rDest.y, sText, fonttype, surface, encode);
+	showTextCentered (rDest.x, rDest.y, sText, fonttype, surface);
 }
 
 void cUnicodeFont::showTextCentered (int x, int y, const string& sText,
 									 eUnicodeFontType fonttype,
-									 SDL_Surface* surface,
-									 bool encode)
+									 SDL_Surface* surface)
 {
-	SDL_Rect rTmp = getTextSize (sText, fonttype, encode);
-	showText (x - rTmp.w / 2, y, sText, fonttype, surface, encode);
+	SDL_Rect rTmp = getTextSize (sText, fonttype);
+	showText (x - rTmp.w / 2, y, sText, fonttype, surface);
 }
 
-int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype, bool encode)
+int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype)
 {
-	SDL_Rect rTmp = getTextSize (sText, fonttype, encode);
+	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	return rTmp.w;
 }
 
-SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttype, bool encode)
+SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttype)
 {
 	string sText (text);
 	int iSpace = 0;
-	const AutoSurface* const chars = getFontTypeSurfaces (fonttype);
+	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	SDL_Rect rTmp = {0, 0, 0, 0};
 
 	// make sure only upper characters are read for the small fonts
@@ -816,7 +803,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		if (*p == ' ')
 		{
 			// we will use the wight of the 'a' for spaces
-			if (chars[97]) rTmp.w += chars[97]->w;
+			if (chars['a']) rTmp.w += chars['a']->w;
 			p++;
 		} // is new line?
 		else if (*p == '\n')
@@ -831,18 +818,9 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		}
 		else
 		{
-			Uint16 uni;
-			if (encode)
-			{
-				int increase;
-				uni = encodeUTF8Char (reinterpret_cast<const unsigned char*> (p), &increase);
-				p += increase;
-			}
-			else
-			{
-				uni = *reinterpret_cast<const unsigned char*> (p);
-				p++;
-			}
+			int increase;
+			Uint16 uni = encodeUTF8Char (reinterpret_cast<const unsigned char*> (p), &increase);
+			p += increase;
 			if (chars[uni] != NULL)
 			{
 				rTmp.w += chars[uni]->w + iSpace;
@@ -855,7 +833,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 
 int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype)
 {
-	const AutoSurface* const chars = getFontTypeSurfaces (fonttype);
+	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
 	// we will return the height of the first character in the list
 	for (int i = 0; i < 0xFFFF; i++)
 	{
@@ -900,7 +878,7 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 
 Uint16 cUnicodeFont::encodeUTF8Char (const unsigned char* pch, int* increase) const
 {
-	// encode the UTF-8 character to his unicode position
+	// encode the UTF-8 character to its unicode position
 	Uint16 uni = 0;
 	unsigned char ch = *pch;
 	// we do not need encoding 4 byte long characters
@@ -908,14 +886,14 @@ Uint16 cUnicodeFont::encodeUTF8Char (const unsigned char* pch, int* increase) co
 	if ((ch & 0xE0) == 0xE0)
 	{
 		uni |= (ch & 0x0F) << 12;
-		uni |= (* (pch + 1) & 0x3F) << 6;
-		uni |= (* (pch + 2) & 0x3F);
+		uni |= (pch[1] & 0x3F) << 6;
+		uni |= pch[2] & 0x3F;
 		*increase = 3;
 	}
 	else if ((ch & 0xC0) == 0xC0)
 	{
 		uni |= (ch & 0x1F) << 6;
-		uni |= (* (pch + 1) & 0x3F);
+		uni |= pch[1] & 0x3F;
 		*increase = 2;
 	}
 	else
