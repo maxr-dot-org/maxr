@@ -23,8 +23,9 @@
 
 #include "main.h"
 #include "client.h"
-#include "settings.h"
 #include "hud.h"
+#include "settings.h"
+#include "video.h"
 
 #include <SDL.h>
 

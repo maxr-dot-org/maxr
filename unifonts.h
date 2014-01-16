@@ -23,7 +23,6 @@
 #include <SDL.h>
 #include <string>
 #include "defines.h"
-#include "video.h"
 
 /** different fonttypes*/
 enum eUnicodeFontType
@@ -83,11 +82,9 @@ public:
 	 * @param rdest destination to start drawing
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
-	 * @param surface SDL_Surface to draw on. Default is buffer
 	 */
 	void showText (SDL_Rect rDest, const std::string& sText,
-				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-				   SDL_Surface* surface = buffer);
+				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Displays a text
 	 * @author beko
@@ -95,11 +92,9 @@ public:
 	 * @param y position y to start drawing
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
-	 * @param surface SDL_Surface to draw on. Default is buffer
 	 */
 	void showText (int x, int y, const std::string& sText,
-				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-				   SDL_Surface* surface = buffer);
+				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Displays a text as block.<br><br>
 	 * This does <b>not</b> allow blanks in line. Linebreaks are interpreted.
@@ -111,11 +106,9 @@ public:
 	 *        Height is not taken care of!
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
-	 * @param surface SDL_Surface to draw on. Default is buffer
 	 */
 	int showTextAsBlock (SDL_Rect rDest, const std::string& sText,
-						 eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						 SDL_Surface* surface = buffer);
+						 eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
@@ -123,11 +116,9 @@ public:
 	 *              <br>Y is not taken care of!
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
-	 * @param surface SDL_Surface to draw on. Default is buffer
 	 */
 	void showTextCentered (SDL_Rect rDest, const std::string& sText,
-						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						   SDL_Surface* surface = buffer);
+						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Displays a text centered on given X
 	 * @author beko
@@ -135,11 +126,9 @@ public:
 	 * @param y position y to start drawing
 	 * @param sText text to draw
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
-	 * @param surface SDL_Surface to draw on. Default is buffer
 	 */
 	void showTextCentered (int x, int y, const std::string& sText,
-						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL,
-						   SDL_Surface* surface = buffer);
+						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Calculates the needed width for a text in pixels
 	 * @author beko
@@ -175,6 +164,8 @@ public:
 
 	std::string shortenStringToSize (const std::string& str, int size,
 									 eUnicodeFontType fonttype);
+
+	void setTargetSurface(SDL_Surface* surface) { this->surface = surface; }
 private:
 	typedef AutoSurface FontTypeSurfaces[0xFFFF];
 	// character surfaces.
@@ -187,6 +178,9 @@ private:
 	AutoSurface charsSmallYellow[0xFFFF];
 	AutoSurface charsBig[0xFFFF];
 	AutoSurface charsBigGold[0xFFFF];
+
+	// target surface where to draw.
+	SDL_Surface* surface;
 
 	/**
 	 * loads all characters of a ISO table and fonttype.
@@ -221,8 +215,7 @@ private:
 	 */
 	const unsigned short* getIsoPage (eUnicodeFontCharset charset);
 	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText,
-							eUnicodeFontType fonttype,
-							SDL_Surface* surface);
+							eUnicodeFontType fonttype);
 	/**
 	 * encodes a UTF-8 character to its unicode position
 	 * @author alzi alias DoctorDeath

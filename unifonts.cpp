@@ -556,15 +556,13 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)
 }
 
 void cUnicodeFont::showText (SDL_Rect rDest, const string& sText,
-							 eUnicodeFontType fonttype,
-							 SDL_Surface* surface)
+							 eUnicodeFontType fonttype)
 {
-	showText (rDest.x, rDest.y, sText, fonttype, surface);
+	showText (rDest.x, rDest.y, sText, fonttype);
 }
 
 void cUnicodeFont::showText (int x, int y, const string& text,
-							 eUnicodeFontType fonttype,
-							 SDL_Surface* surface)
+							 eUnicodeFontType fonttype)
 {
 	string sText (text);
 	int offX = x;
@@ -629,8 +627,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 }
 
 int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
-									  eUnicodeFontType fonttype,
-									  SDL_Surface* surface)
+									  eUnicodeFontType fonttype)
 {
 	string sText (text);
 	string drawString = "";
@@ -664,7 +661,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 			stringPart += "-";
 
 			// show the part of the word
-			showText (rDest, stringPart, fonttype, surface);
+			showText (rDest, stringPart, fonttype);
 			rDest.y += getFontHeight (fonttype);
 
 			// erase the part from the line and from the hole text
@@ -673,7 +670,7 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 		}
 
 		// draw the rest of the line
-		showText (rDest, drawString, fonttype, surface);
+		showText (rDest, drawString, fonttype);
 		rDest.y += getFontHeight (fonttype);
 
 		sText.erase (0, drawString.length());
@@ -681,15 +678,14 @@ int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 	}
 
 	// draw the rest of the text
-	showText (rDest, sText, fonttype, surface);
+	showText (rDest, sText, fonttype);
 	rDest.y += getFontHeight (fonttype);
 
 	return rDest.y;
 }
 
 int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
-								   eUnicodeFontType fonttype,
-								   SDL_Surface* surface)
+								   eUnicodeFontType fonttype)
 {
 	string sText (text);
 	size_t k;
@@ -739,29 +735,27 @@ int cUnicodeFont::showTextAsBlock (SDL_Rect rDest, const string& text,
 			sTmp.erase (k, sTmp.size());
 
 			// draw first part of text and proceed searching for breaklines
-			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype, surface);
+			rDest.y = drawWithBreakLines (rDest, sTmp, fonttype);
 			// += getFontHeight(eBitmapFontType); //add newline for each breakline
 		}
 	}
 	while (k != string::npos);
 
 	// draw rest of text
-	return drawWithBreakLines (rDest, sText, fonttype, surface);
+	return drawWithBreakLines (rDest, sText, fonttype);
 }
 
 void cUnicodeFont::showTextCentered (SDL_Rect rDest, const string& sText,
-									 eUnicodeFontType fonttype,
-									 SDL_Surface* surface)
+									 eUnicodeFontType fonttype)
 {
-	showTextCentered (rDest.x, rDest.y, sText, fonttype, surface);
+	showTextCentered (rDest.x, rDest.y, sText, fonttype);
 }
 
 void cUnicodeFont::showTextCentered (int x, int y, const string& sText,
-									 eUnicodeFontType fonttype,
-									 SDL_Surface* surface)
+									 eUnicodeFontType fonttype)
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
-	showText (x - rTmp.w / 2, y, sText, fonttype, surface);
+	showText (x - rTmp.w / 2, y, sText, fonttype);
 }
 
 int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype)

@@ -25,6 +25,7 @@
 #include "hud.h"
 #include "main.h"
 #include "player.h"
+#include "video.h"
 
 cFx::cFx (bool bottom_, int x, int y) :
 	posX (x),

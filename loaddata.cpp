@@ -149,7 +149,7 @@ int LoadData (void* data)
 		}
 
 		font = new cUnicodeFont; // init ascii fonts
-
+		font->setTargetSurface (buffer);
 		Log.mark();
 	}
 

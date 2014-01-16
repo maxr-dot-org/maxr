@@ -35,6 +35,7 @@
 #include "player.h"
 #include "settings.h"
 #include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 
@@ -1731,7 +1732,7 @@ void cUnitDataSymbolHandler::drawNumber (int x, int y, int value, int maximalVal
 	else if (value > maximalValue / 4) efont = FONT_LATIN_SMALL_YELLOW;
 	else efont = FONT_LATIN_SMALL_RED;
 	const std::string text = iToStr (value) + "/" + iToStr (maximalValue);
-	font->showTextCentered (x, y, text, efont, buffer);
+	font->showTextCentered (x, y, text, efont);
 }
 
 SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition (eUnitDataSymbols symType)
@@ -1916,14 +1917,14 @@ void cMenuUnitDetails::draw()
 
 	// Die Hitpoints anzeigen:
 	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax);
-	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE, buffer);
+	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE);
 	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data->hitpointsCur, data->hitpointsMax);
 
 	// Den Speed anzeigen:
 	if (data->speedMax > 0)
 	{
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, data->speedCur / 4, data->speedMax / 4);
-		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Speed"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Speed"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, data->speedCur / 4, data->speedMax / 4);
 	}
 
@@ -1936,16 +1937,16 @@ void cMenuUnitDetails::draw()
 		const int lim = (gameSetting.victoryType == SETTINGS_VICTORY_POINTS) ? gameSetting.duration : tot;
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, score, score);
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, tot, lim);
-		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, tot, lim);
 	}
 	else if ((data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == activePlayer)
 	{
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE);
 
 		if (data->storeResType > 0)
 		{
@@ -1953,7 +1954,7 @@ void cMenuUnitDetails::draw()
 			{
 				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageResCur, data->storageResMax);
 
-				font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+				font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 
 				switch (data->storeResType)
 				{
@@ -2022,31 +2023,31 @@ void cMenuUnitDetails::draw()
 		{
 			// Munition:
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->ammoCur, data->ammoMax);
-			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data->ammoCur, data->ammoMax);
 		}
 
 		// shots
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data->shotsCur, data->shotsMax);
-		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Shots"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Shots"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data->shotsCur, data->shotsMax);
 	}
 	else if (data->produceEnergy && building)
 	{
 		// EnergieProduktion:
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
 
 		if (unitOwner == activePlayer)
 		{
 			// Gesammt:
-			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 28, 70, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 
 			// Verbrauch:
-			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 41, 70, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 		}
@@ -2055,18 +2056,18 @@ void cMenuUnitDetails::draw()
 	{
 		// HumanProduktion:
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->produceHumans, data->produceHumans);
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE, buffer);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->produceHumans, data->produceHumans);
 
 		if (unitOwner == activePlayer)
 		{
 			// Gesammt:
-			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanProd, building->SubBase->HumanProd);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanProd, building->SubBase->HumanProd);
 
 			// Verbrauch:
-			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
@@ -2077,20 +2078,20 @@ void cMenuUnitDetails::draw()
 		if (building->IsWorking)
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->needsHumans, data->needsHumans);
-			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->needsHumans, data->needsHumans);
 		}
 		else
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, 0, data->needsHumans);
-			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, 0, data->needsHumans);
 		}
 
 		if (unitOwner == activePlayer)
 		{
 			// Gesammt:
-			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}

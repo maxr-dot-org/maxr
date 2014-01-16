@@ -37,6 +37,7 @@
 #include "settings.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 

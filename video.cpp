@@ -25,6 +25,7 @@
 #include "log.h"
 #include "mouse.h"
 #include "pcx.h"
+#include "unifonts.h"
 
 #include <algorithm>
 #include <vector>
@@ -192,6 +193,7 @@ int cVideo::applySettings()
 	buffer = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
 								   //0, 0, 0, 0);
 								   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	if (font != NULL) font->setTargetSurface (buffer);
 	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
 	sdlTexture = SDL_CreateTexture (sdlRenderer,
 									SDL_PIXELFORMAT_ARGB8888,
@@ -227,6 +229,7 @@ void cVideo::initSplash()
 								   0, 0, 0, 0);
 	buffer = SDL_CreateRGBSurface (0, getSplashW(), getSplashH(), getColDepth(),
 								   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	if (font != NULL) font->setTargetSurface (buffer);
 
 	SDL_BlitSurface (splash, NULL, buffer, NULL);
 

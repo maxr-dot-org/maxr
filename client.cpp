@@ -41,6 +41,7 @@
 #include "serverevents.h"
 #include "settings.h"
 #include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 

@@ -35,6 +35,7 @@
 #include "serverevents.h"
 #include "settings.h"
 #include "vehicles.h"
+#include "video.h"
 
 cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, const cVehicle* srcVehicle_, const cUnit* destUnit_) :
 	type (type_),
