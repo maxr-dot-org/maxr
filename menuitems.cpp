@@ -464,7 +464,7 @@ void cMenuImage::draw()
 {
 	if (image && !isHidden())
 	{
-		SDL_BlitSurface (image, NULL, buffer, &position);
+		SDL_BlitSurface (image, NULL, cVideo::buffer, &position);
 	}
 }
 
@@ -804,7 +804,7 @@ void cMenuButton::draw()
 {
 	if (surface)
 	{
-		SDL_BlitSurface (surface, NULL, buffer, &position);
+		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 
 		if (buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES)
 		{
@@ -884,18 +884,18 @@ void cMenuDestroyButton::draw()
 	if (isClicked)
 	{
 		SDL_Rect src = {6, 269, 59, 56};
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &position);
 	}
 	else
 	{
 		SDL_Rect src = {15, 13, 59, 56};
-		SDL_BlitSurface (GraphicsData.gfx_destruction, &src, buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_destruction, &src, cVideo::buffer, &position);
 	}
 
 	if (glassHeight < 56)
 	{
 		SDL_Rect src = { 0, Sint16 (glassHeight), 59, Uint16 (56 - glassHeight) };
-		SDL_BlitSurface (GraphicsData.gfx_destruction_glas, &src, buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_destruction_glas, &src, cVideo::buffer, &position);
 	}
 
 	Video.draw();
@@ -1096,7 +1096,7 @@ void cMenuCheckButton::draw()
 		default:
 		case CHECKBOX_TYPE_STANDARD:
 		case RADIOBTN_TYPE_BTN_ROUND:
-			SDL_BlitSurface (surface, NULL, buffer, &position);
+			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 			font->showText (textDestx, textDesty, text, fontType);
 			break;
 		case CHECKBOX_TYPE_TANK:
@@ -1104,7 +1104,7 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_TYPE_SHIP:
 		case CHECKBOX_TYPE_BUILD:
 		case CHECKBOX_TYPE_TNT:
-			SDL_BlitSurface (surface, NULL, buffer, &position);
+			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 			break;
 		case RADIOBTN_TYPE_TEXT_ONLY:
 			font->showText (position.x, position.y, text, fontType);
@@ -1112,11 +1112,11 @@ void cMenuCheckButton::draw()
 			{
 				const Uint32 selection_color (0xFFE3DACF);
 				const SDL_Rect dest = {Sint16 (position.x - 2), Sint16 (position.y - 1), Uint16 (position.w + 5), Uint16 (position.h + 2) };
-				DrawRectangle (buffer, dest, selection_color);
+				DrawRectangle (cVideo::buffer, dest, selection_color);
 			}
 			break;
 		case RADIOBTN_TYPE_ANGULAR_BUTTON:
-			SDL_BlitSurface (surface, NULL, buffer, &position);
+			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + 5, text, fontType);
 			else font->showTextCentered (position.x + position.w / 2, position.y + 4, text, fontType);
 			break;
@@ -1132,7 +1132,7 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_HUD_INDEX_21:
 		case CHECKBOX_HUD_INDEX_22:
 			if (textDesty != 6 && textDesty != 7) textDesty = 5;
-			SDL_BlitSurface (surface, NULL, buffer, &position);
+			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, FONT_LATIN_SMALL_GREEN);
 			else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, FONT_LATIN_SMALL_RED);
 			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
@@ -1281,12 +1281,12 @@ void cMenuUnitListItem::draw()
 {
 	SDL_Rect src = { 0, 0, 32, 32 };
 	SDL_Rect dest = { position.x, position.y, 0, 0 };
-	SDL_BlitSurface (surface, &src, buffer, &dest);
+	SDL_BlitSurface (surface, &src, cVideo::buffer, &dest);
 
 	if (selected)
 	{
 		const SDL_Rect dest = { Sint16 (position.x - 4), Sint16 (position.y - 4), 38, 38};
-		DrawSelectionCorner (buffer, dest, 8, 0xFFE0E0E0);
+		DrawSelectionCorner (cVideo::buffer, dest, 8, 0xFFE0E0E0);
 	}
 
 	switch (displayType)
@@ -1663,7 +1663,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 
 	for (int i = 0; i != value1; ++i)
 	{
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &dest);
 
 		dest.x += offX;
 	}
@@ -1672,7 +1672,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 	dest.x += src.w + 3;
 	SDL_Rect mark = { Sint16 (dest.x - src.w / 2), dest.y, 1, src.h };
 
-	SDL_FillRect (buffer, &mark, 0xFFFC0000);
+	SDL_FillRect (cVideo::buffer, &mark, 0xFFFC0000);
 
 	if (symType == MENU_SYMBOLS_METAL)
 	{
@@ -1680,7 +1680,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 	}
 	for (int i = value1; i != value2; ++i)
 	{
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &dest);
 
 		dest.x += offX;
 	}
@@ -1718,7 +1718,7 @@ void cUnitDataSymbolHandler::drawSmallSymbols (eUnitDataSymbols symType, int x, 
 	{
 		if (value1 <= 0) src.x = oriSrcX + src.w;
 
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &dest);
 
 		dest.x += offX;
 		value1 -= step;
@@ -1903,11 +1903,11 @@ void cMenuUnitDetails::draw()
 	if (drawLines)
 	{
 		SDL_Rect lineRect = { Sint16 (position.x + 2), Sint16 (position.y + 14), 153, 1 };
-		SDL_FillRect (buffer, &lineRect, 0xFF743904);
+		SDL_FillRect (cVideo::buffer, &lineRect, 0xFF743904);
 		lineRect.y += 12;
-		SDL_FillRect (buffer, &lineRect, 0xFF743904);
+		SDL_FillRect (cVideo::buffer, &lineRect, 0xFF743904);
 		lineRect.y += 12;
-		SDL_FillRect (buffer, &lineRect, 0xFF743904);
+		SDL_FillRect (cVideo::buffer, &lineRect, 0xFF743904);
 	}
 	if (unit == NULL) return;
 	const sUnitData* data = &unit->data;
@@ -2125,7 +2125,7 @@ void cMenuUnitDetailsBig::draw()
 	const int DETAIL_COLUMN_1 = dest.x + 27;
 	const int DETAIL_COLUMN_2 = dest.x + 42;
 	const int DETAIL_COLUMN_3 = dest.x + 95;
-#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect (buffer, &dest, 0xFFFC0000); y += 19;
+#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect (cVideo::buffer, &dest, 0xFFFC0000); y += 19;
 
 	if (data->canAttack)
 	{
@@ -2418,7 +2418,7 @@ void cMenuMaterialBar::draw()
 		src.x = 0;
 	}
 
-	SDL_BlitSurface (surface, &src, buffer, &dest);
+	SDL_BlitSurface (surface, &src, cVideo::buffer, &dest);
 
 	if (showLabel) valueLabel->draw();
 }
@@ -2575,7 +2575,7 @@ cMenuScroller::cMenuScroller (int x, int y, eMenuScrollerTypes scrollerType_, cM
 
 void cMenuScroller::draw()
 {
-	SDL_BlitSurface (surface, NULL, buffer, &position);
+	SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 }
 
 bool cMenuScroller::preClicked()
@@ -2676,7 +2676,7 @@ void cMenuScrollBar::draw()
 	SDL_Rect dest = position;
 	dest.x++;
 	dest.y += 14;
-	SDL_BlitSurface (surface, NULL, buffer, &dest);
+	SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
 	upButton->draw();
 	downButton->draw();
 	scroller->move (position.y + 17 + offset * scrollerSteps);
@@ -3081,7 +3081,7 @@ void cMenuChatBox::draw()
 
 	if (surface)
 	{
-		SDL_BlitSurface (surface, NULL, buffer, &position);
+		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 	}
 
 	font->showText (position.x + 28, position.y + 5, text.substr (startOffset, endOffset - startOffset));
@@ -3446,7 +3446,7 @@ cMenuSlider::cMenuSlider (int x, int y, float minValue_, float maxValue_, cMenu*
 
 void cMenuSlider::draw()
 {
-	if (surface) SDL_BlitSurface (surface, NULL, buffer, &position);
+	if (surface) SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 	cMenuSlider::scroller->draw();
 }
 
@@ -3617,7 +3617,7 @@ void cMenuReportsScreen::drawUnitsScreen()
 	{
 		const int selIndex = selected - index * maxItems;
 		const SDL_Rect rect = {Sint16 (position.x + 13), Sint16 (position.y + 26 + 55 * selIndex), 38, 38};
-		DrawSelectionCorner (buffer, rect, 8, 0xFFE0E0E0);
+		DrawSelectionCorner (cVideo::buffer, rect, 8, 0xFFE0E0E0);
 	}
 }
 
@@ -3704,7 +3704,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						{
 							continue;
 						}
-						SDL_BlitSurface (surface, NULL, buffer, &dest);
+						SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
 					}
 
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
@@ -3761,7 +3761,7 @@ void cMenuReportsScreen::drawScoreScreen()
 		const int ecos = p.numEcos;
 
 		SDL_Rect r = {Sint16 (position.x + 24), Sint16 (position.y + y + 3), 8, 8};
-		SDL_FillRect (buffer, &r, getPlayerColour (&p));
+		SDL_FillRect (cVideo::buffer, &r, getPlayerColour (&p));
 
 		std::stringstream ss;
 		ss << p.getName() << ": "
@@ -3777,8 +3777,8 @@ void cMenuReportsScreen::drawScoreScreen()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawScoreGraph()
 {
-	const Uint32 axis_colour = SDL_MapRGB (buffer->format, 164, 164, 164);
-	const Uint32 limit_colour = SDL_MapRGB (buffer->format, 128, 128, 128);
+	const Uint32 axis_colour = SDL_MapRGB (cVideo::buffer->format, 164, 164, 164);
+	const Uint32 limit_colour = SDL_MapRGB (cVideo::buffer->format, 128, 128, 128);
 
 	const int px = position.x;
 	const int py = position.y;
@@ -3833,7 +3833,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	}
 
 	// Draw Limits
-	drawLine (buffer, now_x, y0, now_x, y1, limit_colour);
+	drawLine (cVideo::buffer, now_x, y0, now_x, y1, limit_colour);
 
 	const sSettings& gameSetting = *client->getGameSetting();
 
@@ -3845,7 +3845,7 @@ void cMenuReportsScreen::drawScoreGraph()
 		{
 			const int x = x0 + (turn_lim - min_turns) * pix_per_turn;
 
-			drawLine (buffer, x, y0, x, y1, limit_colour);
+			drawLine (cVideo::buffer, x, y0, x, y1, limit_colour);
 			font->showTextCentered (x, y1 + 8, iToStr (turn_lim), FONT_LATIN_SMALL_WHITE);
 		}
 	}
@@ -3856,7 +3856,7 @@ void cMenuReportsScreen::drawScoreGraph()
 		{
 			const int y = y1 - (int) ((points_lim - min_points) * pix_per_point);
 
-			drawLine (buffer, x0, y, x1, y, limit_colour);
+			drawLine (cVideo::buffer, x0, y, x1, y, limit_colour);
 			font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
 		}
 	}
@@ -3885,15 +3885,15 @@ void cMenuReportsScreen::drawScoreGraph()
 			const int x = x0 + pix_per_turn * (turn - min_turns);
 			const int y = y1 - (int) (pix_per_point * (points - min_points));
 
-			drawLine (buffer, lx, ly, x, y, player_colour);
+			drawLine (cVideo::buffer, lx, ly, x, y, player_colour);
 			lx = x;
 			ly = y;
 		}
 	}
 
 	// Draw Axes
-	drawLine (buffer, x0, y0, x0, y1, axis_colour);
-	drawLine (buffer, x0, y1, x1, y1, axis_colour);
+	drawLine (cVideo::buffer, x0, y0, x0, y1, axis_colour);
+	drawLine (cVideo::buffer, x0, y1, x1, y1, axis_colour);
 }
 
 //-----------------------------------------------------------------------------
@@ -3931,7 +3931,7 @@ void cMenuReportsScreen::drawReportsScreen()
 				{
 					break;
 				}
-				SDL_BlitSurface (surface, NULL, buffer, &dest);
+				SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
 			}
 			break;
 			case sSavedReportMessage::REPORT_TYPE_CHAT:
@@ -3946,7 +3946,7 @@ void cMenuReportsScreen::drawReportsScreen()
 		{
 			int selIndex = selected - index * maxItems;
 			const SDL_Rect rect = {Sint16 (position.x + 15), Sint16 (position.y + 23 + 55 * selIndex), 450, 53 };
-			DrawRectangle (buffer, rect, 0xFFE0E0E0);
+			DrawRectangle (cVideo::buffer, rect, 0xFFE0E0E0);
 		}
 	}
 }
@@ -3999,7 +3999,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 			{
 				cVehicle vehicle (nextVehicle->data, nextVehicle->owner, 0);
 				AutoSurface surface (generateUnitSurface (&vehicle));
-				SDL_BlitSurface (surface, NULL, buffer, &dest);
+				SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
 			}
 
 			font->showTextAsBlock (nameDest, nextVehicle->getDisplayName());
@@ -4031,7 +4031,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 				{
 					cBuilding building (&nextBuilding->data, nextBuilding->owner, 0);
 					AutoSurface surface (generateUnitSurface (&building));
-					SDL_BlitSurface (surface, NULL, buffer, &dest);
+					SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
 				}
 
 				font->showTextAsBlock (nameDest, nextBuilding->getDisplayName());
@@ -4266,7 +4266,7 @@ void cMenuPlayerInfo::draw()
 	{
 		SDL_Rect srcRect = { Sint16 (sourceX), 0, Uint16 (GraphicsData.gfx_hud_extra_players->w), Uint16 (GraphicsData.gfx_hud_extra_players->h) };
 
-		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players, &srcRect, buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players, &srcRect, cVideo::buffer, &position);
 	}
 
 
@@ -4277,12 +4277,12 @@ void cMenuPlayerInfo::draw()
 			SDL_Rect srcDotRect = { Sint16 (player->bFinishedTurn ? 10 : 0), 0, 10, 10 };
 			SDL_Rect destDotRect = { Sint16 (position.x + 23 - sourceX), Sint16 (position.y + 6), srcDotRect.w, srcDotRect.h };
 
-			SDL_BlitSurface (GraphicsData.gfx_player_ready, &srcDotRect, buffer, &destDotRect);
+			SDL_BlitSurface (GraphicsData.gfx_player_ready, &srcDotRect, cVideo::buffer, &destDotRect);
 		}
 
 		SDL_Rect srcColorRect = { 0, 0, 10, 12 };
 		SDL_Rect destColorRect = { Sint16 (position.x + 40 - sourceX), Sint16 (position.y + 6), srcColorRect.w, srcColorRect.h };
-		SDL_BlitSurface (player->getColorSurface(), &srcColorRect, buffer, &destColorRect);
+		SDL_BlitSurface (player->getColorSurface(), &srcColorRect, cVideo::buffer, &destColorRect);
 	}
 	else
 	{

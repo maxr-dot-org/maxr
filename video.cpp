@@ -40,6 +40,10 @@ static SDL_Texture* sdlTexture;
 
 cVideo Video;
 
+/*static*/ SDL_Surface* cVideo::screen = NULL; // Der Bildschirm
+/*static*/ SDL_Surface* cVideo::buffer = NULL; // Der Bildschirm-Buffer
+
+
 /** Slashscreen width  */
 #define SPLASHWIDTH 500
 /** Slashscreen height  */

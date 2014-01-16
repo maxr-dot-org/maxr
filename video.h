@@ -24,10 +24,6 @@
 
 struct SDL_Surface;
 
-// Screenbuffers //////////////////////////////////////////////////////////////
-EX SDL_Surface* screen; // Der Bildschirm
-EX SDL_Surface* buffer; // Der Bildschirm-Buffer
-
 /**
  * cVideo class.
  * Stores videosettings (and can hopefully operate 'em too one day'):-)
@@ -146,6 +142,10 @@ public:
 	* Blits or updates buffer to screen depending on windowmode
 	*/
 	void draw();
+
+	// Screenbuffers ///////////////////////////////////
+	static SDL_Surface* screen; // Der Bildschirm
+	static SDL_Surface* buffer; // Der Bildschirm-Buffer
 
 private:
 	/**

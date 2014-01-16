@@ -310,7 +310,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	{
 		// image will not be cached. So blitt directly to the screen buffer.
 		dest = *screenPos;
-		drawingSurface = buffer;
+		drawingSurface = cVideo::buffer;
 	}
 
 	if (bDraw)
@@ -319,10 +319,10 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
-	if (drawingSurface != buffer)
+	if (drawingSurface != cVideo::buffer)
 	{
 		dest = *screenPos;
-		SDL_BlitSurface (drawingSurface, NULL, buffer, &dest);
+		SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
 
 		// all following graphic operations are drawn directly to buffer
 		dest = *screenPos;
@@ -346,7 +346,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		SDL_SetSurfaceAlphaMod (uiData->eff, EffectAlpha);
 
 		CHECK_SCALING (uiData->eff, uiData->eff_org, factor);
-		SDL_BlitSurface (uiData->eff, NULL, buffer, &tmp);
+		SDL_BlitSurface (uiData->eff, NULL, cVideo::buffer, &tmp);
 
 		if (gameGUI.timer100ms)
 		{
@@ -380,7 +380,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
 		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
 
-		DrawRectangle (buffer, d, color, 3);
+		DrawRectangle (cVideo::buffer, d, color, 3);
 	}
 
 #if 0
@@ -396,7 +396,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
 		SDL_Rect d = {Sint16 (dest.x + 1), Sint16 (dest.y + 1), max, max};
 
-		DrawRectangle (buffer, d, color, 1);
+		DrawRectangle (cVideo::buffer, d, color, 1);
 	}
 #endif
 	// draw the seleted-unit-flash-frame for bulidings
@@ -406,7 +406,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		const int len = max / 4;
 		max -= 3;
 		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
-		DrawSelectionCorner (buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
+		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
 	}
 
 	// draw health bar

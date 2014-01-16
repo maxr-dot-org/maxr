@@ -2008,8 +2008,8 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 	gameGUI->deselectUnit();
 	SDL_Surface* sf = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), 32, 0, 0, 0, 0);
 	SDL_Rect scr = { 15, 356, 112u, 112u};
-	SDL_BlitSurface (sf, NULL, buffer, NULL);
-	SDL_BlitSurface (sf, &scr, buffer, &scr);
+	SDL_BlitSurface (sf, NULL, cVideo::buffer, NULL);
+	SDL_BlitSurface (sf, &scr, cVideo::buffer, &scr);
 
 	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->getName()));
 	okDialog.show (this);

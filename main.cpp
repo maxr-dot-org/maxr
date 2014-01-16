@@ -279,8 +279,8 @@ void Quit()
 	//unload files here
 	CloseSound();
 	SDLNet_Quit();
-	SDL_FreeSurface (buffer);
-	SDL_FreeSurface (screen);
+	SDL_FreeSurface (cVideo::buffer);
+	SDL_FreeSurface (cVideo::screen);
 	SDL_Quit();
 	Log.write ("EOF");
 	exit (0);

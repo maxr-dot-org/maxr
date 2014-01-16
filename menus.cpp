@@ -291,13 +291,13 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 		case MNU_BG_BLACK:
 			// fill the whole screen with black to prevent
 			// old garbage from menus that don't support resolutions > 640x480
-			SDL_FillRect (buffer, NULL, 0xFF000000);
+			SDL_FillRect (cVideo::buffer, NULL, 0xFF000000);
 			break;
 		case MNU_BG_ALPHA:
 			if (cSettings::getInstance().isAlphaEffects() && firstDraw)
-				SDL_BlitSurface (GraphicsData.gfx_shadow, NULL, buffer, NULL);
+				SDL_BlitSurface (GraphicsData.gfx_shadow, NULL, cVideo::buffer, NULL);
 			else
-				SDL_FillRect (buffer, NULL, SDL_MapRGBA (buffer->format, 0, 0, 0, 0));
+				SDL_FillRect (cVideo::buffer, NULL, SDL_MapRGBA (cVideo::buffer->format, 0, 0, 0, 0));
 			break;
 		case MNU_BG_TRANSPARENT:
 			// do nothing here
@@ -307,7 +307,7 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 	preDrawFunction();
 
 	// draw the menu background
-	if (background) SDL_BlitSurface (background, NULL, buffer, &position);
+	if (background) SDL_BlitSurface (background, NULL, cVideo::buffer, &position);
 
 	// show mouse
 	mouse->Show();

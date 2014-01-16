@@ -1221,11 +1221,11 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (bSpezial)
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->getGameGUI().getTileSize()], NULL, buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
 	}
 	else
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->getGameGUI().getTileSize()], NULL, buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
 	}
 }
 

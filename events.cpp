@@ -56,7 +56,7 @@ static std::string TakeScreenShot()
 	}
 	while (FileExists (screenshotfile.c_str()));
 	Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
-	SDL_SaveBMP (screen, screenshotfile.c_str());
+	SDL_SaveBMP (cVideo::screen, screenshotfile.c_str());
 	return screenshotfile;
 }
 

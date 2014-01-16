@@ -149,7 +149,7 @@ int LoadData (void* data)
 		}
 
 		font = new cUnicodeFont; // init ascii fonts
-		font->setTargetSurface (buffer);
+		font->setTargetSurface (cVideo::buffer);
 		Log.mark();
 	}
 
@@ -356,12 +356,12 @@ int LoadData (void* data)
 			rSrc.y = rDest.y + rDest.h * pos;
 			if (pos == 0)   //need full line for first entry version information
 			{
-				SDL_BlitSurface (buffer, NULL, screen, NULL);
+				SDL_BlitSurface (cVideo::buffer, NULL, cVideo::screen, NULL);
 				Video.draw();
 			}
 			else
 			{
-				SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
+				SDL_BlitSurface (cVideo::buffer, &rSrc, cVideo::screen, &rSrc);
 				Video.draw();
 			}
 			break;
@@ -379,7 +379,7 @@ int LoadData (void* data)
 	{
 		rSrc = rDest2;
 		rSrc.y = rDest2.y + rDest2.h * pos;
-		SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
+		SDL_BlitSurface (cVideo::buffer, &rSrc, cVideo::screen, &rSrc);
 		Video.draw();
 	}
 }

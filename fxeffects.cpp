@@ -126,7 +126,7 @@ void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 	src.h = images[1]->h;
 	SDL_Rect dest = gameGUI.calcScreenPos (posX, posY);
 
-	SDL_BlitSurface (images[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -186,7 +186,7 @@ void cFxExplo::draw (const cGameGUI& gameGUI) const
 	src.h = images[1]->h;
 	dest = gameGUI.calcScreenPos (posX - images[0]->w / (frames * 2), posY - images[0]->h / 2);
 
-	SDL_BlitSurface (images[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -298,7 +298,7 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 
 	SDL_Rect dest;
 	dest = gameGUI.calcScreenPos (posX - images[0]->w / 2, posY - images[0]->h / 2);
-	SDL_BlitSurface (images[1], NULL, buffer, &dest);
+	SDL_BlitSurface (images[1], NULL, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -348,7 +348,7 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 	src.h = images[1]->h;
 	dest = gameGUI.calcScreenPos (posX, posY);
 
-	SDL_BlitSurface (images[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -397,7 +397,7 @@ void cFxRocket::draw (const cGameGUI& gameGUI) const
 	src.w = images[1]->w / 8;
 	dest = gameGUI.calcScreenPos (posX - images[0]->w / 16, posY - images[0]->h / 2);
 
-	SDL_BlitSurface (images[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 void cFxRocket::run()
@@ -475,5 +475,5 @@ void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetSurfaceAlphaMod (images[1], alpha);
-	SDL_BlitSurface (images[1], &src, buffer, &dest);
+	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }

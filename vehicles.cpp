@@ -252,7 +252,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	{
 		// image will not be cached. So blitt directly to the screen buffer.
 		dest = screenPosition;
-		drawingSurface = buffer;
+		drawingSurface = cVideo::buffer;
 	}
 
 	if (bDraw)
@@ -261,14 +261,14 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
-	if (drawingSurface != buffer)
+	if (drawingSurface != cVideo::buffer)
 	{
 		dest = screenPosition;
-		SDL_BlitSurface (drawingSurface, NULL, buffer, &dest);
+		SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
 	}
 
 	// draw overlay if necessary:
-	drawOverlayAnimation (gameGUI.getClient(), buffer, screenPosition, gameGUI.getZoom());
+	drawOverlayAnimation (gameGUI.getClient(), cVideo::buffer, screenPosition, gameGUI.getZoom());
 
 	// remove the dithering for the following operations
 	if (FlightHigh > 0)
@@ -291,7 +291,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
 
-		DrawRectangle (buffer, d, color, 3);
+		DrawRectangle (cVideo::buffer, d, color, 3);
 	}
 
 	// Draw the colored frame if necessary
@@ -301,7 +301,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
 
 		SDL_Rect d = {Sint16 (screenPosition.x + 1), Sint16 (screenPosition.y + 1), max, max};
-		DrawRectangle (buffer, d, color, 1);
+		DrawRectangle (cVideo::buffer, d, color, 1);
 	}
 
 	// draw the group selected frame if necessary
@@ -311,7 +311,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		const Uint16 tilesize = gameGUI.getTileSize() - 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), tilesize, tilesize};
 
-		DrawRectangle (buffer, d, color, 1);
+		DrawRectangle (cVideo::buffer, d, color, 1);
 	}
 	// draw the seleted-unit-flash-frame for vehicles
 	if (gameGUI.getSelectedUnit() == this)
@@ -320,7 +320,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		const int len = max / 4;
 		max -= 3;
 		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
-		DrawSelectionCorner (buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
+		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
 	}
 
 	// draw health bar
@@ -749,7 +749,7 @@ void cVehicle::drawPath_BuildPath (cGameGUI& gameGUI)
 		dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * mx;
 		dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * my;
 
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, cVideo::buffer, &dest);
 
 		if (mx < BandX)
 			mx++;
@@ -765,7 +765,7 @@ void cVehicle::drawPath_BuildPath (cGameGUI& gameGUI)
 	dest.x = 180 - (int) (gameGUI.getOffsetX() * gameGUI.getZoom()) + gameGUI.getTileSize() * mx;
 	dest.y = 18 - (int) (gameGUI.getOffsetY() * gameGUI.getZoom()) + gameGUI.getTileSize() * my;
 
-	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest);
+	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, cVideo::buffer, &dest);
 }
 
 //-----------------------------------------------------------------------------

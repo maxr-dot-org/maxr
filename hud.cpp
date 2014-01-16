@@ -131,27 +131,27 @@ void cDebugOutput::draw()
 
 			if (playerList[i]->bFinishedTurn /* && playerList[i] != player*/)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
 			}
 #if 0
 			else if (playerList[i] == player && client->bWantToEnd)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
 			}
 #endif
 			else
 			{
 				rDot.x = 0; // for red dot
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
 			}
 
-			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, buffer, &rDest);
+			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, cVideo::buffer, &rDest);
 			if (playerList[i] == player)
 			{
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (buffer, &rBlackOut, 0xFF000000);
+				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			else
@@ -159,7 +159,7 @@ void cDebugOutput::draw()
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (buffer, &rBlackOut, 0xFF000000);
+				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			// use 10 for pixel high of dots instead of text high
@@ -3473,7 +3473,7 @@ void cGameGUI::preDrawFunction()
 	if (timer400ms) staticMap.generateNextAnimationFrame();
 
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
-	SDL_SetClipRect (buffer, &clipRect);
+	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	drawTerrain (zoomOffX, zoomOffY);
 	if (gridChecked()) drawGrid (zoomOffX, zoomOffY);
@@ -3505,7 +3505,7 @@ void cGameGUI::preDrawFunction()
 
 	drawSelectionBox (zoomOffX, zoomOffY);
 
-	SDL_SetClipRect (buffer, NULL);
+	SDL_SetClipRect (cVideo::buffer, NULL);
 
 	drawUnitCircles();
 
@@ -3543,12 +3543,12 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 					if (fogChecked() && !player->ScanMap[pos])
 					{
 						if (!cSettings::getInstance().shouldDoPrescale() && (terr.shw->w != tileSize || terr.shw->h != tileSize)) scaleSurface (terr.shw_org, terr.shw, tileSize, tileSize);
-						SDL_BlitSurface (terr.shw, NULL, buffer, &tmp);
+						SDL_BlitSurface (terr.shw, NULL, cVideo::buffer, &tmp);
 					}
 					else
 					{
 						if (!cSettings::getInstance().shouldDoPrescale() && (terr.sf->w != tileSize || terr.sf->h != tileSize)) scaleSurface (terr.sf_org, terr.sf, tileSize, tileSize);
-						SDL_BlitSurface (terr.sf, NULL, buffer, &tmp);
+						SDL_BlitSurface (terr.sf, NULL, cVideo::buffer, &tmp);
 					}
 				}
 				pos++;
@@ -3571,7 +3571,7 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 	dest.h = 1;
 	for (int y = 0; y < (Video.getResolutionY() - HUD_TOTAL_HIGHT) / tileSize + 1; y++)
 	{
-		SDL_FillRect (buffer, &dest, GRID_COLOR);
+		SDL_FillRect (cVideo::buffer, &dest, GRID_COLOR);
 		dest.y += tileSize;
 	}
 	dest.x = HUD_LEFT_WIDTH + tileSize - (zoomOffX % tileSize);
@@ -3580,7 +3580,7 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 	dest.h = Video.getResolutionY() - HUD_TOTAL_HIGHT;
 	for (int x = 0; x < (Video.getResolutionX() - HUD_TOTAL_WIDTH) / tileSize + 1; x++)
 	{
-		SDL_FillRect (buffer, &dest, GRID_COLOR);
+		SDL_FillRect (cVideo::buffer, &dest, GRID_COLOR);
 		dest.x += tileSize;
 	}
 }
@@ -3593,13 +3593,14 @@ void cGameGUI::addFx (cFx* fx)
 
 void cGameGUI::drawFx (bool bottom) const
 {
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };	SDL_SetClipRect (buffer, &clipRect);
-	SDL_SetClipRect (buffer, &clipRect);
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
+	SDL_SetClipRect (cVideo::buffer, &clipRect);
+	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	client->FxList->draw (*this, bottom);
 	FxList->draw (*this, bottom);
 
-	SDL_SetClipRect (buffer, NULL);
+	SDL_SetClipRect (cVideo::buffer, NULL);
 }
 
 void cGameGUI::runFx()
@@ -3709,7 +3710,7 @@ void cGameGUI::drawTopBuildings_DebugBaseClient (const cBuilding& building, cons
 	// the VS compiler gives a warning on casting a pointer to long.
 	// therefore we will first cast to long long
 	// and then cut this to Unit32 again.
-	SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
+	SDL_FillRect (cVideo::buffer, &tmp, (Uint32) (long long) (sb));
 	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
 	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
@@ -3734,7 +3735,7 @@ void cGameGUI::drawTopBuildings_DebugBaseServer (const cBuilding& building, cons
 	// the VS compiler gives a warning on casting a pointer to long.
 	// therefore we will first cast to long long
 	// and then cut this to Unit32 again.
-	SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
+	SDL_FillRect (cVideo::buffer, &tmp, (Uint32) (long long) (sb));
 	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
 	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
@@ -3934,7 +3935,7 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 				src.x = 0;
 				tmp = dest;
 				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
-				SDL_BlitSurface (ResourceData.res_metal, &src, buffer, &tmp);
+				SDL_BlitSurface (ResourceData.res_metal, &src, cVideo::buffer, &tmp);
 			}
 			else
 			{
@@ -3943,17 +3944,17 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 				if (resource.typ == RES_METAL)
 				{
 					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
-					SDL_BlitSurface (ResourceData.res_metal, &src, buffer, &tmp);
+					SDL_BlitSurface (ResourceData.res_metal, &src, cVideo::buffer, &tmp);
 				}
 				else if (resource.typ == RES_OIL)
 				{
 					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * tileSize || ResourceData.res_oil->h != tileSize)) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * tileSize, tileSize);
-					SDL_BlitSurface (ResourceData.res_oil, &src, buffer, &tmp);
+					SDL_BlitSurface (ResourceData.res_oil, &src, cVideo::buffer, &tmp);
 				}
 				else // Gold
 				{
 					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * tileSize || ResourceData.res_gold->h != tileSize)) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * tileSize, tileSize);
-					SDL_BlitSurface (ResourceData.res_gold, &src, buffer, &tmp);
+					SDL_BlitSurface (ResourceData.res_gold, &src, cVideo::buffer, &tmp);
 				}
 			}
 		}
@@ -3975,25 +3976,25 @@ void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 	d.y = mouseBottomY - zoomOffY + 20;
 	d.w = mouseBottomX - mouseTopX;
 	d.h = 1;
-	SDL_FillRect (buffer, &d, color);
+	SDL_FillRect (cVideo::buffer, &d, color);
 
 	d.x = mouseTopX - zoomOffX + HUD_LEFT_WIDTH;
 	d.y = mouseTopY - zoomOffY + 20;
 	d.w = mouseBottomX - mouseTopX;
 	d.h = 1;
-	SDL_FillRect (buffer, &d, color);
+	SDL_FillRect (cVideo::buffer, &d, color);
 
 	d.x = mouseTopX - zoomOffX + HUD_LEFT_WIDTH;
 	d.y = mouseTopY - zoomOffY + 20;
 	d.w = 1;
 	d.h = mouseBottomY - mouseTopY;
-	SDL_FillRect (buffer, &d, color);
+	SDL_FillRect (cVideo::buffer, &d, color);
 
 	d.x = mouseBottomX - zoomOffX + HUD_LEFT_WIDTH;
 	d.y = mouseTopY - zoomOffY + 20;
 	d.w = 1;
 	d.h = mouseBottomY - mouseTopY;
-	SDL_FillRect (buffer, &d, color);
+	SDL_FillRect (cVideo::buffer, &d, color);
 }
 
 void cGameGUI::displayMessages()
@@ -4009,7 +4010,7 @@ void cGameGUI::displayMessages()
 	SDL_Rect scr = { 0, 0, Uint16 (Video.getResolutionX() - 200), Uint16 (height + 6) };
 	SDL_Rect dest = { 180, 30, 0, 0 };
 
-	if (cSettings::getInstance().isAlphaEffects()) SDL_BlitSurface (GraphicsData.gfx_shadow, &scr, buffer, &dest);
+	if (cSettings::getInstance().isAlphaEffects()) SDL_BlitSurface (GraphicsData.gfx_shadow, &scr, cVideo::buffer, &dest);
 	dest.x = 180 + 2; dest.y = 34;
 	dest.w = Video.getResolutionX() - 204;
 	dest.h = height;
@@ -4040,7 +4041,7 @@ void cGameGUI::displayMessages()
 			SDL_Rect rDest = dest;
 			rDest.w = rColorSrc.w;
 			rDest.h = rColorSrc.h;
-			SDL_BlitSurface (color, &rColorSrc, buffer, &rDest);  // blit color
+			SDL_BlitSurface (color, &rColorSrc, cVideo::buffer, &rDest);  // blit color
 			dest.x += rColorSrc.w + CELLSPACE; // add border for color
 			dest.w -= rColorSrc.w + CELLSPACE;
 			dest.y = font->showTextAsBlock (dest, msgString);
@@ -4107,9 +4108,9 @@ void cGameGUI::openPanel()
 	PlayFX (SoundData.SNDPanelOpen);
 	SDL_Rect top = { 0, Sint16 ((Video.getResolutionY() / 2) - 479), 171, 479 };
 	SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY() / 2), 171, 481 };
-	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, NULL);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, NULL);
 	SDL_Rect tmp = bottom;
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &tmp);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &tmp);
 	while (top.y > -479)
 	{
 		Video.draw();
@@ -4118,8 +4119,8 @@ void cGameGUI::openPanel()
 		bottom.y += 10;
 		draw (false, false);
 		tmp = top;
-		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
-		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &bottom);
+		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &bottom);
 	}
 }
 
@@ -4138,9 +4139,9 @@ void cGameGUI::closePanel()
 		if (bottom.y < Video.getResolutionY() / 2 + 9) bottom.y = Video.getResolutionY() / 2;
 		draw (false, false);
 		SDL_Rect tmp = top;
-		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, &tmp);
 		tmp = bottom;
-		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &tmp);
 	}
 	Video.draw();
 	SDL_Delay (100);
@@ -4149,7 +4150,7 @@ void cGameGUI::closePanel()
 void cGameGUI::drawUnitCircles()
 {
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
-	SDL_SetClipRect (buffer, &clipRect);
+	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	cBuilding* selectedBuilding = getSelectedBuilding();
@@ -4165,17 +4166,17 @@ void cGameGUI::drawUnitCircles()
 		{
 			if (v.data.isBig)
 			{
-				drawCircle (spx + getTileSize(), spy + getTileSize(), v.data.scan * getTileSize(), SCAN_COLOR, buffer);
+				drawCircle (spx + getTileSize(), spy + getTileSize(), v.data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.scan * getTileSize(), SCAN_COLOR, buffer);
+				drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
 			}
 		}
 		if (rangeChecked())
 		{
-			if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, buffer);
-			else drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, buffer);
+			if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
+			else drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, cVideo::buffer);
 		}
 		if (v.owner == player &&
 			(
@@ -4220,7 +4221,7 @@ void cGameGUI::drawUnitCircles()
 				dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * v.BandX;
 				dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * v.BandY;
 				CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getTileSize() / 64.0f);
-				SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, buffer, &dest);
+				SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
 			}
 			else
 			{
@@ -4232,7 +4233,7 @@ void cGameGUI::drawUnitCircles()
 					dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * x;
 					dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * y;
 					CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getTileSize() / 64.0f);
-					SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, buffer, &dest);
+					SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
 					v.BandX = x;
 					v.BandY = y;
 				}
@@ -4258,26 +4259,26 @@ void cGameGUI::drawUnitCircles()
 			{
 				drawCircle (spx + getTileSize(),
 							spy + getTileSize(),
-							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, buffer);
+							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
 			}
 			else
 			{
 				drawCircle (spx + getTileSize() / 2,
 							spy + getTileSize() / 2,
-							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, buffer);
+							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
 			}
 		}
 		if (rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
 		{
 			drawCircle (spx + getTileSize() / 2,
 						spy + getTileSize() / 2,
-						selectedBuilding->data.range * getTileSize() + 2, RANGE_GROUND_COLOR, buffer);
+						selectedBuilding->data.range * getTileSize() + 2, RANGE_GROUND_COLOR, cVideo::buffer);
 		}
 		if (rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_AIR))
 		{
 			drawCircle (spx + getTileSize() / 2,
 						spy + getTileSize() / 2,
-						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, buffer);
+						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
 		}
 
 		if (selectedBuilding->BuildList.empty() == false &&
@@ -4294,7 +4295,7 @@ void cGameGUI::drawUnitCircles()
 	}
 	drawLockList (*client->getActivePlayer());
 
-	SDL_SetClipRect (buffer, NULL);
+	SDL_SetClipRect (cVideo::buffer, NULL);
 }
 
 //--------------------------------------------------------------------------
@@ -4320,16 +4321,16 @@ void cGameGUI::drawLockList (cPlayer& player)
 		if (scanChecked())
 		{
 			if (unit->data.isBig)
-				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, buffer);
+				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, cVideo::buffer);
 			else
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, buffer);
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, cVideo::buffer);
 		}
 		if (rangeChecked() && (unit->data.canAttack & TERRAIN_GROUND))
 			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
+						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, cVideo::buffer);
 		if (rangeChecked() && (unit->data.canAttack & TERRAIN_AIR))
 			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
+						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, cVideo::buffer);
 		if (ammoChecked() && unit->data.canAttack)
 			drawMunBar (*unit, screenPos);
 		if (hitsChecked())
@@ -4351,7 +4352,7 @@ void cGameGUI::drawExitPoint (int x, int y)
 	const float factor = getTileSize() / 64.0f;
 
 	CHECK_SCALING (GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, factor);
-	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, buffer, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, cVideo::buffer, &dest);
 }
 
 void cGameGUI::toggleMouseInputMode (eMouseInputMode mode)
@@ -4582,7 +4583,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canAttack && unit.data.shotsCur)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == mouseInputAttackMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4591,7 +4592,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canBuild.empty() == false && unit.isUnitBuildingABuilding() == false)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4600,7 +4601,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canMineMaxRes > 0 && unit.isUnitWorking())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4609,7 +4610,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.storeResType != sUnitData::STORE_RES_NONE && unit.isUnitBuildingABuilding() == false && unit.isUnitClearing() == false)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == transferMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4618,7 +4619,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canWork && unit.buildingCanBeStarted())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4627,7 +4628,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canSurvey)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isAutoMoveJobActive();
-			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4636,7 +4637,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.canBeStoppedViaUnitMenu())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4645,7 +4646,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canClearArea && client->getMap()->fields[client->getMap()->getOffset (unit.PosX, unit.PosY)].getRubble() && unit.isUnitClearing() == false)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4654,7 +4655,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if ((unit.manualFireActive || unit.data.canAttack))
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.manualFireActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4663,7 +4664,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if ((unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.sentryActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4673,13 +4674,13 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		{
 			// Activate:
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 
 			// Load:
 			isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == loadMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4688,7 +4689,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canResearch && unit.isUnitWorking())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4697,7 +4698,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.convertsGold)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4707,13 +4708,13 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		{
 			// Update all buildings of this type in this subbase
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 
 			// update this building
 			isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4722,7 +4723,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canSelfDestroy)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4731,7 +4732,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canRearm && unit.data.storageResCur >= 1)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == muniActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4740,7 +4741,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canRepair && unit.data.storageResCur >= 1)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == repairActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4749,7 +4750,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canPlaceMines && unit.data.storageResCur > 0)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isUnitLayingMines();
-			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4758,7 +4759,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canPlaceMines && unit.data.storageResCur < unit.data.storageResMax)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isUnitClearingMines();
-			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4767,7 +4768,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canDisable && unit.data.shotsCur)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == disableMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4776,7 +4777,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canCapture && unit.data.shotsCur)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == stealMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
+			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4784,13 +4785,13 @@ void cGameGUI::drawMenu (const cUnit& unit)
 	}
 	// Info:
 	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
+	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, cVideo::buffer);
 	dest.y += 22;
 	++nr;
 
 	// Done:
 	isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
+	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, cVideo::buffer);
 }
 
 //------------------------------------------------------------------------------
@@ -5204,14 +5205,14 @@ void cGameGUI::drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const
 	r2.w = (int) (((float) (r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
 	r2.h = r1.h - 2;
 
-	SDL_FillRect (buffer, &r1, 0xFF000000);
+	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
 	if (unit.data.ammoCur > unit.data.ammoMax / 2)
-		SDL_FillRect (buffer, &r2, 0xFF04AE04);
+		SDL_FillRect (cVideo::buffer, &r2, 0xFF04AE04);
 	else if (unit.data.ammoCur > unit.data.ammoMax / 4)
-		SDL_FillRect (buffer, &r2, 0xFFDBDE00);
+		SDL_FillRect (cVideo::buffer, &r2, 0xFFDBDE00);
 	else
-		SDL_FillRect (buffer, &r2, 0xFFE60000);
+		SDL_FillRect (cVideo::buffer, &r2, 0xFFE60000);
 }
 
 //------------------------------------------------------------------------------
@@ -5240,7 +5241,7 @@ void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) cons
 	r2.w = (int) (((float) (r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
 	r2.h = r1.h - 2;
 
-	SDL_FillRect (buffer, &r1, 0xFF000000);
+	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
 	Uint32 color;
 	if (unit.data.hitpointsCur > unit.data.hitpointsMax / 2)
@@ -5249,7 +5250,7 @@ void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) cons
 		color = 0xFFDBDE00; // orange
 	else
 		color = 0xFFE60000; // red
-	SDL_FillRect (buffer, &r2, color);
+	SDL_FillRect (cVideo::buffer, &r2, color);
 }
 
 //------------------------------------------------------------------------------
@@ -5266,7 +5267,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 			return;
 		dest.x = screenPos.x + getTileSize() / 2 - 12;
 		dest.y = screenPos.y + getTileSize() / 2 - 12;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, cVideo::buffer, &dest);
 	}
 	else
 	{
@@ -5283,7 +5284,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 				dest.x -= getTileSize() / 4;
 
 			SDL_Rect destCopy = dest;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, cVideo::buffer, &destCopy);
 		}
 
 		dest.x = screenPos.x + getTileSize() / 2 - 4;
@@ -5291,7 +5292,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 		{
 			if (unit.data.speedCur)
 				dest.x += getTileSize() / 4;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, cVideo::buffer, &dest);
 		}
 	}
 }
