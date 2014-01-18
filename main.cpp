@@ -61,7 +61,7 @@ using namespace std;
 static int initNet();
 static int initSDL();
 static int initSound();
-#undef main
+
 int main (int argc, char* argv[])
 {
 	if (!cSettings::getInstance().isInitialized())
