@@ -75,7 +75,7 @@ public:
 private:
 	typedef std::map<std::string, std::string> StrStrMap;
 
-	int         ReadSingleTranslation (char const* pszCurrent, ...);
+	int         ReadSingleTranslation (const char* pszCurrent, ...);
 	std::string ReadSingleTranslation (const std::string& strInput);
 	int         ReadLanguagePackHeader();
 	int         ReadLanguagePackHeader (const std::string& strLanguageCode);
