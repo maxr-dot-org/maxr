@@ -132,7 +132,7 @@ static void LoadUnitGraphicData (sUnitData* Data, char const* directory);
 // Loads all relevant files and data:
 int LoadData (void* data)
 {
-	int& loadingState = *static_cast<int*> (data);
+	volatile int& loadingState = *static_cast<volatile int*> (data);
 	loadingState = LOAD_GOING;
 
 	if (!DEDICATED_SERVER)
@@ -361,7 +361,8 @@ int LoadData (void* data)
 			font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
 			break;
 	}
-	Video.draw();
+	// TODO: Warn that screen has been changed
+	// so that Video.draw() can be called in main thread.
 }
 
 static SDL_Surface* CloneSDLSurface (SDL_Surface* src)

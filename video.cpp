@@ -184,6 +184,11 @@ int cVideo::setWindowMode (bool bWindowMode, bool bApply)
 
 void cVideo::draw()
 {
+	// SDL2: Some SDL2 functions must be called from the main thread only
+	// at least in some platform/configuration.
+	// Check for all configurations.
+	assert (is_main_thread());
+
 	// TODO: add sanity check to redraw function
 	SDL_BlitSurface (buffer, NULL, screen, NULL);
 

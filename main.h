@@ -497,6 +497,12 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Return if it is the main thread.
+ * @note: should be called by main once by the main thread to initialize.
+ */
+bool is_main_thread();
+
 // returns a random number in the range 0 <= r < x
 int random (int x);
 

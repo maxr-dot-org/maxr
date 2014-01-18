@@ -61,6 +61,8 @@ using namespace std;
 static int initNet();
 static int initSDL();
 static int initSound();
+static void logMAXRVersion();
+static void showIntro();
 
 int main (int argc, char* argv[])
 {
@@ -69,32 +71,13 @@ int main (int argc, char* argv[])
 		Quit();
 		return -1;
 	}
-	//stop on error during init of SDL basics. WARNINGS will be ignored!
+	// stop on error during init of SDL basics. WARNINGS will be ignored!
 	if (initSDL() == -1) return -1;
-	{
-		string sVersion = PACKAGE_NAME; sVersion += " ";
-		sVersion += PACKAGE_VERSION; sVersion += " ";
-		sVersion += PACKAGE_REV; sVersion += " ";
-		Log.write (sVersion, cLog::eLOG_TYPE_INFO);
-		string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
-		Log.write (sBuild, cLog::eLOG_TYPE_INFO);
-#if HAVE_AUTOVERSION_H
-		string sBuildVerbose = "On: ";
-		sBuildVerbose += BUILD_UNAME_S;
-		sBuildVerbose += " ";
-		sBuildVerbose += BUILD_UNAME_R;
-		Log.write (sBuildVerbose, cLog::eLOG_TYPE_INFO);
 
-		sBuildVerbose = "From: ";
-		sBuildVerbose += BUILD_USER;
-		sBuildVerbose += " at ";
-		sBuildVerbose += BUILD_UNAME_N;
-		Log.write (sBuildVerbose, cLog::eLOG_TYPE_INFO);
-#endif
-		Log.mark();
-		Log.write (sVersion, cLog::eLOG_TYPE_NET_DEBUG);
-		Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);
-	}
+	// call it once to initialize
+	is_main_thread();
+
+	logMAXRVersion();
 
 	srand ((unsigned) time (NULL));  // start random number generator
 
@@ -106,8 +89,8 @@ int main (int argc, char* argv[])
 	initNet();
 
 	// load files
-	int loadingState = LOAD_GOING;
-	SDL_Thread* dataThread = SDL_CreateThread (LoadData, "loadingData", &loadingState);
+	volatile int loadingState = LOAD_GOING;
+	SDL_Thread* dataThread = SDL_CreateThread (LoadData, "loadingData", const_cast<int*> (&loadingState));
 
 	SDL_Event event;
 	while (loadingState != LOAD_FINISHED)
@@ -128,6 +111,10 @@ int main (int argc, char* argv[])
 			}
 		}
 		SDL_Delay (100);
+		if (!DEDICATED_SERVER) {
+			// The draw may be conditionned when screen has changed.
+			Video.draw();
+		}
 	}
 
 	if (!DEDICATED_SERVER)
@@ -135,27 +122,7 @@ int main (int argc, char* argv[])
 		// play intro if we're supposed to and the file exists
 		if (cSettings::getInstance().shouldShowIntro())
 		{
-			if (FileExists ((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
-			{
-				// Close maxr sound for intro movie
-				CloseSound();
-
-				char mvereturn;
-				Log.write ("Starting movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG);
-				mvereturn = MVEPlayer ((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !cSettings::getInstance().isSoundMute());
-				Log.write ("MVEPlayer returned " + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
-				//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
-
-				// reinit maxr sound
-				if (cSettings::getInstance().isSoundEnabled() && !InitSound (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize()))
-				{
-					Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
-				}
-			}
-			else
-			{
-				Log.write ("Couldn't find movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING);
-			}
+			showIntro();
 		}
 		else
 		{
@@ -183,7 +150,6 @@ int main (int argc, char* argv[])
 	Quit();
 	return 0;
 }
-
 
 /**
  *Inits SDL
@@ -260,6 +226,71 @@ static int initNet()
 	}
 	Log.write ("Net started", cLog::eLOG_TYPE_INFO);
 	return 0;
+}
+
+static void logMAXRVersion()
+{
+	std::string sVersion = PACKAGE_NAME; sVersion += " ";
+	sVersion += PACKAGE_VERSION; sVersion += " ";
+	sVersion += PACKAGE_REV; sVersion += " ";
+	Log.write (sVersion, cLog::eLOG_TYPE_INFO);
+	std::string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
+	Log.write (sBuild, cLog::eLOG_TYPE_INFO);
+#if HAVE_AUTOVERSION_H
+	std::string sBuildVerbose = "On: ";
+	sBuildVerbose += BUILD_UNAME_S;
+	sBuildVerbose += " ";
+	sBuildVerbose += BUILD_UNAME_R;
+	Log.write (sBuildVerbose, cLog::eLOG_TYPE_INFO);
+
+	sBuildVerbose = "From: ";
+	sBuildVerbose += BUILD_USER;
+	sBuildVerbose += " at ";
+	sBuildVerbose += BUILD_UNAME_N;
+	Log.write (sBuildVerbose, cLog::eLOG_TYPE_INFO);
+#endif
+	Log.mark();
+	Log.write (sVersion, cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);
+}
+
+
+
+static void showIntro()
+{
+	const std::string filename = cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE";
+
+	if (!FileExists (filename.c_str()))
+	{
+		Log.write ("Couldn't find movie " + filename, cLog::eLOG_TYPE_WARNING);
+	}
+	// Close maxr sound for intro movie
+	CloseSound();
+
+	Log.write ("Starting movie " + filename, cLog::eLOG_TYPE_DEBUG);
+	const int mvereturn = MVEPlayer (filename.c_str(),
+									 Video.getResolutionX(), Video.getResolutionY(),
+									 !Video.getWindowMode(),
+									 !cSettings::getInstance().isSoundMute());
+	Log.write ("MVEPlayer returned " + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+	//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
+
+	// reinit maxr sound
+	if (cSettings::getInstance().isSoundEnabled()
+		&& !InitSound (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize()))
+	{
+		Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+	}
+}
+
+/**
+ * Return if it is the main thread.
+ * @note: should be called by main once by the main thread to initialize.
+ */
+bool is_main_thread()
+{
+	static const SDL_threadID main_thread_id = SDL_ThreadID();
+	return main_thread_id == SDL_ThreadID();
 }
 
 /**
