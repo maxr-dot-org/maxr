@@ -346,24 +346,11 @@ int LoadData (void* data)
 	}
 	const SDL_Rect rDest = {22, 152, 228, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
 	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
-	SDL_Rect rSrc;
 
 	switch (ok)
 	{
 		case 0:
 			font->showText (rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL);
-			rSrc = rDest;
-			rSrc.y = rDest.y + rDest.h * pos;
-			if (pos == 0)   //need full line for first entry version information
-			{
-				SDL_BlitSurface (cVideo::buffer, NULL, cVideo::screen, NULL);
-				Video.draw();
-			}
-			else
-			{
-				SDL_BlitSurface (cVideo::buffer, &rSrc, cVideo::screen, &rSrc);
-				Video.draw();
-			}
 			break;
 
 		case 1:
@@ -374,14 +361,7 @@ int LoadData (void* data)
 			font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
 			break;
 	}
-
-	if (ok != 0)
-	{
-		rSrc = rDest2;
-		rSrc.y = rDest2.y + rDest2.h * pos;
-		SDL_BlitSurface (cVideo::buffer, &rSrc, cVideo::screen, &rSrc);
-		Video.draw();
-	}
+	Video.draw();
 }
 
 static SDL_Surface* CloneSDLSurface (SDL_Surface* src)

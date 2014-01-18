@@ -20,8 +20,10 @@
 #ifndef videoH
 #define videoH
 
-#include <string>
-
+#include "autosurface.h"
+class SDL_Texture;
+class SDL_Renderer;
+class SDL_Window;
 struct SDL_Surface;
 
 /**
@@ -33,6 +35,11 @@ struct SDL_Surface;
 class cVideo
 {
 public:
+	cVideo();
+	~cVideo();
+
+	void clearMemory();
+
 	/**
 	* Sets whether app should appear windowed or in fullscreen mode
 	* @param bWindowMode pass true if app should work in windowed mode
@@ -143,11 +150,14 @@ public:
 	*/
 	void draw();
 
+
+	void takeScreenShot(const std::string& filename) const;
+
 	// Screenbuffers ///////////////////////////////////
-	static SDL_Surface* screen; // Der Bildschirm
 	static SDL_Surface* buffer; // Der Bildschirm-Buffer
 
 private:
+
 	/**
 	* Checks whether our minimal needed videomode has been autodetected
 	* @return true if mininal video mode looks valid
@@ -159,6 +169,12 @@ private:
 	* @return 0 on success
 	*/
 	int applySettings();
+private:
+	SDL_Window* sdlWindow;
+	SDL_Renderer* sdlRenderer;
+	SDL_Texture* sdlTexture;
+
+	AutoSurface screen; // Der Bildschirm
 };
 
 extern cVideo Video;

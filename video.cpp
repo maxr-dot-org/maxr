@@ -20,10 +20,8 @@
 #include "main.h"
 #include "video.h"
 
-#include "autosurface.h"
 #include "defines.h"
 #include "log.h"
-#include "mouse.h"
 #include "pcx.h"
 #include "unifonts.h"
 
@@ -32,15 +30,8 @@
 
 #include <SDL.h>
 
-// TODO: [SDL2] move static into Video
-
-static SDL_Window* sdlWindow;
-static SDL_Renderer* sdlRenderer;
-static SDL_Texture* sdlTexture;
-
 cVideo Video;
 
-/*static*/ SDL_Surface* cVideo::screen = NULL; // Der Bildschirm
 /*static*/ SDL_Surface* cVideo::buffer = NULL; // Der Bildschirm-Buffer
 
 
@@ -88,15 +79,44 @@ static std::vector<sVidMode> vVideoMode;
 */
 static sVidData videoData = { MINWIDTH, MINHEIGHT, 32, false };
 
+cVideo::cVideo() :
+	sdlWindow (NULL),
+	sdlRenderer (NULL),
+	sdlTexture (NULL)
+{
+}
+
+cVideo::~cVideo()
+{
+	SDL_FreeSurface (cVideo::buffer);
+	SDL_DestroyTexture (sdlTexture);
+	SDL_DestroyRenderer (sdlRenderer);
+	SDL_DestroyWindow (sdlWindow);
+}
+
+void cVideo::clearMemory()
+{
+	SDL_FreeSurface (cVideo::buffer);
+	SDL_DestroyTexture (sdlTexture);
+	SDL_DestroyRenderer (sdlRenderer);
+	SDL_DestroyWindow (sdlWindow);
+	cVideo::buffer = NULL;
+	sdlTexture = NULL;
+	sdlRenderer = NULL;
+	sdlWindow = NULL;
+}
+
 int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 {
 	videoData.width = iWidth;
 	videoData.height = iHeight;
 
-	//validate only if we should apply because the resolution may be set during reading of settings and at this point does no SDL context exist yet
+	// validate only if we should apply
+	// because the resolution may be set during reading of settings
+	// and at this point does no SDL context exist yet
 	if (bApply)
 	{
-		//detect what modes we have
+		// detect what modes we have
 		doDetection();
 		// BEGIN SANITY CHECK SCREEN RES
 
@@ -188,10 +208,9 @@ int cVideo::applySettings()
 		return -1;
 	}
 
-	if (screen) SDL_FreeSurface (screen);
 	screen = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
+								   //0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 								   0, 0, 0, 0);
-	//0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	SDL_RenderSetLogicalSize (sdlRenderer, getResolutionX(), getResolutionY());
 	if (buffer) SDL_FreeSurface (buffer);
 	buffer = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
@@ -347,6 +366,11 @@ int cVideo::getMinW() const
 int cVideo::getMinH() const
 {
 	return MINHEIGHT;
+}
+
+void cVideo::takeScreenShot(const std::string& filename) const
+{
+	SDL_SaveBMP (screen, filename.c_str());
 }
 
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)

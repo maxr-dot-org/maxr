@@ -32,7 +32,6 @@
 #define __main__
 #include "main.h"
 
-#include "autosurface.h"
 #include "base.h"
 #include "buildings.h"
 #include "clans.h"
@@ -62,7 +61,7 @@ using namespace std;
 static int initNet();
 static int initSDL();
 static int initSound();
-
+#undef main
 int main (int argc, char* argv[])
 {
 	if (!cSettings::getInstance().isInitialized())
@@ -279,8 +278,7 @@ void Quit()
 	//unload files here
 	CloseSound();
 	SDLNet_Quit();
-	SDL_FreeSurface (cVideo::buffer);
-	SDL_FreeSurface (cVideo::screen);
+	Video.clearMemory();
 	SDL_Quit();
 	Log.write ("EOF");
 	exit (0);
