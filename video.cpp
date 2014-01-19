@@ -191,9 +191,8 @@ void cVideo::draw()
 	assert (is_main_thread());
 
 	// TODO: add sanity check to redraw function
-	SDL_BlitSurface (buffer, NULL, screen, NULL);
 
-	SDL_UpdateTexture (sdlTexture, NULL, screen->pixels, screen->pitch);
+	SDL_UpdateTexture (sdlTexture, NULL, buffer->pixels, buffer->pitch);
 	SDL_RenderClear (sdlRenderer);
 	SDL_RenderCopy (sdlRenderer, sdlTexture, NULL, NULL);
 	SDL_RenderPresent (sdlRenderer);
@@ -208,20 +207,16 @@ int cVideo::applySettings()
 	// TODO: [SDL2]: manage window mode correctly
 	if (SDL_SetWindowFullscreen (sdlWindow, !getWindowMode()) == -1)
 	{
-		videoData.width = screen->w;
-		videoData.height = screen->h;
+		videoData.width = buffer->w;
+		videoData.height = buffer->h;
 		SDL_SetWindowSize (sdlWindow, getResolutionX(), getResolutionY());
 		return -1;
 	}
 
-	screen = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
-								   //0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-								   0, 0, 0, 0);
 	SDL_RenderSetLogicalSize (sdlRenderer, getResolutionX(), getResolutionY());
 	if (buffer) SDL_FreeSurface (buffer);
 	buffer = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
-								   //0, 0, 0, 0);
-								   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+								   0, 0, 0, 0);
 	if (font != NULL) font->setTargetSurface (buffer);
 	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
 	sdlTexture = SDL_CreateTexture (sdlRenderer,
@@ -254,10 +249,8 @@ void cVideo::initSplash()
 	SDL_SetWindowFullscreen (sdlWindow, !getWindowMode());
 	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
 
-	screen = SDL_CreateRGBSurface (0, getSplashW(), getSplashH(), getColDepth(),
-								   0, 0, 0, 0);
 	buffer = SDL_CreateRGBSurface (0, getSplashW(), getSplashH(), getColDepth(),
-								   0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+								   0, 0, 0, 0);
 	if (font != NULL) font->setTargetSurface (buffer);
 
 	SDL_BlitSurface (splash, NULL, buffer, NULL);
@@ -376,7 +369,16 @@ int cVideo::getMinH() const
 
 void cVideo::takeScreenShot(const std::string& filename) const
 {
-	SDL_SaveBMP (screen, filename.c_str());
+	SDL_SaveBMP (buffer, filename.c_str());
+}
+
+void cVideo::applyShadow(const SDL_Rect* rect)
+{
+	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
+	if (rect == NULL) rect = &fullscreen;
+	SDL_Rect src = { rect->x, rect->y, rect->w, rect->h };
+	SDL_Rect dest = { rect->x, rect->y, 0, 0 };
+	SDL_BlitSurface (GraphicsData.gfx_shadow, &src, cVideo::buffer, &dest);
 }
 
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)

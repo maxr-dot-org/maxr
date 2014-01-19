@@ -836,10 +836,12 @@ static int LoadGraphics (const char* path)
 
 	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
 	// Shadow:
+	// TODO: reduce size once we use texture.
 	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
-													Video.getColDepth(), 0, 0, 0, 0);
-	SDL_FillRect (GraphicsData.gfx_shadow, NULL, 0x0);
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_shadow, 50);
+													Video.getColDepth(),
+													0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	SDL_FillRect (GraphicsData.gfx_shadow, NULL, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+
 	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_SetColorKey (GraphicsData.gfx_tmp, SDL_TRUE, 0xFF00FF);
 

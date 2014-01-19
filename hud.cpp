@@ -4007,13 +4007,13 @@ void cGameGUI::displayMessages()
 		const sMessage* message = messages[i];
 		height += 17 + font->getFontHeight() * (message->len / (Video.getResolutionX() - 300));
 	}
-	SDL_Rect scr = { 0, 0, Uint16 (Video.getResolutionX() - 200), Uint16 (height + 6) };
-	SDL_Rect dest = { 180, 30, 0, 0 };
 
-	if (cSettings::getInstance().isAlphaEffects()) SDL_BlitSurface (GraphicsData.gfx_shadow, &scr, cVideo::buffer, &dest);
-	dest.x = 180 + 2; dest.y = 34;
-	dest.w = Video.getResolutionX() - 204;
-	dest.h = height;
+	if (cSettings::getInstance().isAlphaEffects())
+	{
+		SDL_Rect rect = { 180, 30, Uint16 (Video.getResolutionX() - 200), Uint16 (height + 6) };
+		Video.applyShadow(&rect);
+	}
+	SDL_Rect dest = { 180 + 2, 34, Video.getResolutionX() - 204, height};
 
 	for (unsigned int i = 0; i < messages.size(); i++)
 	{

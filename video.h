@@ -153,6 +153,8 @@ public:
 
 	void takeScreenShot(const std::string& filename) const;
 
+	void applyShadow(const SDL_Rect* rect);
+
 	// Screenbuffers ///////////////////////////////////
 	static SDL_Surface* buffer; // Der Bildschirm-Buffer
 
@@ -173,8 +175,6 @@ private:
 	SDL_Window* sdlWindow;
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* sdlTexture;
-
-	AutoSurface screen; // Der Bildschirm
 };
 
 extern cVideo Video;

@@ -295,9 +295,7 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 			break;
 		case MNU_BG_ALPHA:
 			if (cSettings::getInstance().isAlphaEffects() && firstDraw)
-				SDL_BlitSurface (GraphicsData.gfx_shadow, NULL, cVideo::buffer, NULL);
-			else
-				SDL_FillRect (cVideo::buffer, NULL, SDL_MapRGBA (cVideo::buffer->format, 0, 0, 0, 0));
+				Video.applyShadow(NULL);
 			break;
 		case MNU_BG_TRANSPARENT:
 			// do nothing here
