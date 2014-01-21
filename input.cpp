@@ -150,6 +150,13 @@ void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseWheelEvent& whe
 		MouseState.leftButtonReleased = false;
 		MouseState.rightButtonReleased = false;
 	}
+	// do not send events to a menu, after an event triggered the termination
+	// the user wouldn't expects the menu to execute further events
+	// after clicking the exit button
+	if (!activeMenu.exiting())
+	{
+		activeMenu.handleMouseInput (MouseState);
+	}
 }
 
 std::string cInput::getUTF16Char (Uint16 ch)
