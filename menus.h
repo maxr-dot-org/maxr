@@ -696,7 +696,7 @@ protected:
 class cHotSeatMenu : public cMenu
 {
 public:
-	explicit cHotSeatMenu (/*const sSetting& setting*/);
+	explicit cHotSeatMenu (const sSettings& setting);
 
 private:
 	void setClan (int player, int clan);

@@ -931,9 +931,63 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show (NULL);
 
-	cHotSeatMenu hotSeatMenu;
-	hotSeatMenu.show (NULL);
-	menu->draw();
+	sSettings settings;
+	cStaticMap* map = NULL;
+
+	int lastDir = 1;
+	int step = 0;
+	while (true)
+	{
+		int dir = 0;
+		switch (step)
+		{
+			case -1: menu->draw(); delete map; return;
+			case 0: dir = settingSelection (settings); break;
+			case 1: dir = planetSelection (map); break;
+			case 2:
+			{
+				cHotSeatMenu hotSeatMenu (settings);
+				if (hotSeatMenu.show (NULL) == 1) dir = -1;
+				else dir = 1;
+
+				if (dir == 1)
+				{
+					// TODO
+					// Start Server.
+					// Create clients.
+				}
+				break;
+			}
+#if 0
+			case 3:
+			{
+				// For each client
+				dir = runGamePreparation (client, *map, false);
+
+				if (dir == -1)
+				{
+					// Cancel Server, clients
+				}
+				break;
+			}
+			case 4:
+			{
+				// while game is not finished
+				{
+					// For each client
+					client.getGameGUI().show (&client);
+				}
+				server.stop();
+				menu->draw();
+				return;
+			}
+#endif
+			default: break;
+		}
+		step += dir;
+		if (dir == 0) step += lastDir;
+		else lastDir = dir;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -2299,7 +2353,7 @@ void cLandingMenu::hitPosition()
 // cHotSeatMenu implementation
 //------------------------------------------------------------------------------
 
-cHotSeatMenu::cHotSeatMenu() :
+cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	//cMenu (LoadPCX (GFXOD_HOTSEAT))     // 8 players
 	cMenu (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
 {
@@ -2313,27 +2367,40 @@ cHotSeatMenu::cHotSeatMenu() :
 
 	okButton->setLocked (true);
 
-	const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
-	clanSurfaces[0] = LoadPCX (gfxPath + "clanlogo1.pcx");
-	clanSurfaces[1] = LoadPCX (gfxPath + "clanlogo2.pcx");
-	clanSurfaces[2] = LoadPCX (gfxPath + "clanlogo3.pcx");
-	clanSurfaces[3] = LoadPCX (gfxPath + "clanlogo4.pcx");
-	clanSurfaces[4] = LoadPCX (gfxPath + "clanlogo5.pcx");
-	clanSurfaces[5] = LoadPCX (gfxPath + "clanlogo6.pcx");
-	clanSurfaces[6] = LoadPCX (gfxPath + "clanlogo7.pcx");
-	clanSurfaces[7] = LoadPCX (gfxPath + "clanlogo8.pcx");
-
 	AutoSurface playerHumanSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
 	AutoSurface playerNoneSurface (LoadPCX (GFXOD_PLAYER_NONE));
 	AutoSurface playerPCSurface (LoadPCX (GFXOD_PLAYER_PC));
 
+	if (settings.clans == SETTING_CLANS_ON)
+	{
+		const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
+		clanSurfaces[0] = LoadPCX (gfxPath + "clanlogo1.pcx");
+		clanSurfaces[1] = LoadPCX (gfxPath + "clanlogo2.pcx");
+		clanSurfaces[2] = LoadPCX (gfxPath + "clanlogo3.pcx");
+		clanSurfaces[3] = LoadPCX (gfxPath + "clanlogo4.pcx");
+		clanSurfaces[4] = LoadPCX (gfxPath + "clanlogo5.pcx");
+		clanSurfaces[5] = LoadPCX (gfxPath + "clanlogo6.pcx");
+		clanSurfaces[6] = LoadPCX (gfxPath + "clanlogo7.pcx");
+		clanSurfaces[7] = LoadPCX (gfxPath + "clanlogo8.pcx");
+
+		for (int i = 0; i != 4; ++i)
+		{
+			clanImages[i] = new cMenuImage (position.x + 501, position.y + 67 + 92 * i);
+			clanImages[i]->setReleasedFunction (onClanClicked);
+			menuItems.push_back (clanImages[i]);
+			setClan (i, 0);
+		}
+	}
+	else
+	{
+		for (int i = 0; i != 4; ++i)
+		{
+			setClan (i, -1);
+		}
+	}
+
 	for (int i = 0; i != 4; ++i)
 	{
-		clanImages[i] = new cMenuImage (position.x + 501, position.y + 67 + 92 * i);
-		clanImages[i]->setReleasedFunction (onClanClicked);
-		menuItems.push_back (clanImages[i]);
-		setClan (i, 0);
-
 		playerTypeImages[i][0] = new cMenuImage (position.x + 175 + 109 * 0, position.y + 67 + 92 * i, playerHumanSurface);
 		playerTypeImages[i][0]->setReleasedFunction (onPlayerTypeClicked);
 		menuItems.push_back (playerTypeImages[i][0]);
@@ -2357,7 +2424,7 @@ void cHotSeatMenu::setClan (int player, int clan)
 
 	if (clan == -1)
 	{
-		clanImages[player]->setImage (NULL);
+		if (clanImages[player] != NULL) clanImages[player]->setImage (NULL);
 	}
 	else
 	{
