@@ -47,7 +47,7 @@ Version 1.2: added function FLI_Skip to skip the current frame without rendering
 #define FLI_PSTAMP   18
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
-inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
+/*inline*/ void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
 {
 	SDL_SetPaletteColors (surface->format->palette, colors, index, size);
 }
