@@ -36,6 +36,7 @@
 
 #include <cassert>
 #include <vector>
+#include <algorithm>
 
 /* define (potentially) handled opcode types */
 #define STOP_PLAYBACK			0x00
