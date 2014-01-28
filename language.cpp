@@ -61,7 +61,7 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 		return -1;
 	}
 	if (szLanguageCode.find_first_not_of
-		("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != std::string::npos)
+		("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") != std::string::npos)
 	{
 		return -1;
 	}
@@ -69,9 +69,9 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 	m_szLanguage = szLanguageCode;
 	for (int i = 0; i <= 2; i++)
 	{
-		if (m_szLanguage[i] < 97)
+		if (m_szLanguage[i] < 'a')
 		{
-			m_szLanguage[i] += 32;
+			m_szLanguage[i] += 'a' - 'A';
 		}
 	}
 
@@ -99,10 +99,7 @@ std::string cLanguage::i18n (const std::string& szInputText)
 	}
 	else
 	{
-		if (impTranslation->second != "")
-			return impTranslation->second;
-		else
-			return "";
+		return impTranslation->second;
 	}
 }
 
@@ -566,8 +563,8 @@ int cLanguage::ReadRecursiveLanguagePack (XMLElement* xmlElement, std::string st
 
 std::string cLanguage::ReadSingleTranslation (const std::string& strInput)
 {
-	std::string strPath = strInput;
-	if (strPath == "") return "";
+	if (strInput.empty()) return "";
+	const std::string& strPath = strInput;
 
 	XMLElement* xmlElement = m_XmlDoc.RootElement();
 	try

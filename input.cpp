@@ -58,34 +58,30 @@ void cInput::inputkey (cMenu& activeMenu, const SDL_KeyboardEvent& key)
 
 bool cInput::IsDoubleClicked()
 {
-	/* First time this function is called, LastClickTicks
-	    has not been initialised yet. */
+	const long CurrentClickTicks = SDL_GetTicks();
+
+	// First time this function is called,
+	// LastClickTicks has not been initialised yet.
 	if (! LastClickTicks)
 	{
-		LastClickTicks = SDL_GetTicks();
-		return (false);
+		LastClickTicks = CurrentClickTicks;
+		return false;
 	}
-	else
+
+	// If the period between the two clicks is smaller
+	// or equal to a pre-defined number,
+	// we report a DoubleClick event.
+	if (CurrentClickTicks - LastClickTicks <= 500)
 	{
-		const long CurrentClickTicks = SDL_GetTicks();
-
-		/* If the period between the two clicks is smaller
-		    or equal to a pre-defined number, we report a
-		    DoubleClick event. */
-
-		if (CurrentClickTicks - LastClickTicks <= 500)
-		{
-			/* Update LastClickTicks and signal a DoubleClick. */
-
-			LastClickTicks = CurrentClickTicks;
-			return (true);
-		}
-
-		/* Update LastClickTicks and signal a SingleClick. */
+		// Update LastClickTicks and signal a DoubleClick.
 
 		LastClickTicks = CurrentClickTicks;
-		return (false);
+		return true;
 	}
+
+	// Update LastClickTicks and signal a SingleClick.
+	LastClickTicks = CurrentClickTicks;
+	return false;
 }
 
 void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseButtonEvent& button)

@@ -3004,7 +3004,7 @@ void cMenuLineEdit::addText (const SDL_Keysym& keysym, cMenu* parent)
 {
 	if (keysym.sym >= 32)
 	{
-		if (keysym.sym >= 48 && keysym.sym <= 57)
+		if (keysym.sym >= '0' && keysym.sym <= '9')
 		{
 			if (!takeNumerics) return;
 		}

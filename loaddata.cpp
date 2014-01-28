@@ -168,9 +168,9 @@ int LoadData (void* data)
 	// that the file always exists with lower cases
 	for (int i = 0; i <= 2; i++)
 	{
-		if (sLang[i] < 97)
+		if (sLang[i] < 'a')
 		{
-			sLang[i] += 32;
+			sLang[i] += 'a' - 'A';
 		}
 	}
 	string sTmpString = cSettings::getInstance().getLangPath();

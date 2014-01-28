@@ -60,15 +60,17 @@ static std::string TakeScreenShot()
 	return screenshotfile;
 }
 
-static void HandleInputEvent_KEY (cMenu& activeMenu, SDL_Event& event, cClient* client)
+static void HandleInputEvent_KEY (cMenu& activeMenu,
+								  const SDL_KeyboardEvent& event,
+								  cClient* client)
 {
 	assert (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP);
 
-	if (event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod & KMOD_ALT)   //alt+enter makes us go fullscreen|windowmode
+	if (event.state == SDL_PRESSED && event.keysym.sym == SDLK_RETURN && event.keysym.mod & KMOD_ALT)   //alt+enter makes us go fullscreen|windowmode
 	{
 		Video.setWindowMode (!Video.getWindowMode(), true);
 	}
-	else if (event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_c && event.key.keysym.mod & KMOD_ALT)
+	else if (event.state == SDL_PRESSED && event.keysym.sym == SDLK_c && event.keysym.mod & KMOD_ALT)
 	{
 		// Screenshot
 		const std::string screenshotfile = TakeScreenShot();
@@ -77,16 +79,18 @@ static void HandleInputEvent_KEY (cMenu& activeMenu, SDL_Event& event, cClient* 
 	}
 	else
 	{
-		InputHandler->inputkey (activeMenu, event.key);
+		InputHandler->inputkey (activeMenu, event);
 	}
 }
 
-static void HandleInputEvent (cMenu& activeMenu, SDL_Event& event, cClient* client)
+static void HandleInputEvent (cMenu& activeMenu, const SDL_Event& event, cClient* client)
 {
 	switch (event.type)
 	{
 		case SDL_KEYDOWN:
-		case SDL_KEYUP: HandleInputEvent_KEY (activeMenu, event, client); break;
+		case SDL_KEYUP: HandleInputEvent_KEY (activeMenu, event.key, client); break;
+		// case SDL_TEXTEDITING: HandleTextEditingEvent (activeMenu, event.edit, client); break;
+		// case SDL_TEXTINPUT: HandleTextInputEvent (activeMenu, event.text, client); break;
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP: InputHandler->inputMouseButton (activeMenu, event.button); break;
 		case SDL_MOUSEWHEEL: InputHandler->inputMouseButton (activeMenu, event.wheel); break;
@@ -123,14 +127,8 @@ static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& m
 			activeMenu->handleNetMessage (&message);
 			break;
 		case NET_MSG_STATUS:
-			if (client)
-			{
-				client->HandleNetMessage (&message, activeMenu);
-			}
-			else if (activeMenu)
-			{
-				activeMenu->handleNetMessage (&message);
-			}
+			if (client) client->HandleNetMessage (&message, activeMenu);
+			else if (activeMenu) activeMenu->handleNetMessage (&message);
 			break;
 		default:
 			break;
@@ -152,7 +150,7 @@ void cEventHandling::HandleEvents (cMenu& activeMenu, cClient* client)
 
 void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
 {
-	//do not read client messages, until client is started
+	// Do not read client messages, until client is started
 	if (!client && eventQueue.size() > 0 && eventQueue.peep()->getClass() == NET_MSG_CLIENT)
 	{
 		Log.write ("Netmessage for Client received, but no client active. Net event handling paused", cLog::eLOG_TYPE_NET_DEBUG);
@@ -161,8 +159,7 @@ void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
 
 	while (eventQueue.size() > 0 && (!client || !client->gameTimer.nextMsgIsNextGameTime))
 	{
-		cNetMessage* message = eventQueue.read();
+		AutoPtr<cNetMessage> message (eventQueue.read());
 		HandleNetMessage (client, activeMenu, *message);
-		delete message;
 	}
 }
