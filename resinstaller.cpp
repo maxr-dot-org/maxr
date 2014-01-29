@@ -3818,22 +3818,22 @@ void installMusic()
 //-------------------------------------------------------------
 void initialize ()
 {
-    // at startup SDL_Init should be called before all other SDL functions
-    if (SDL_Init(SDL_INIT_VIDEO) == -1)
+	// at startup SDL_Init should be called before all other SDL functions
+	if (SDL_Init(SDL_INIT_VIDEO) == -1)
 	{
 		printf("Can't init SDL:  %s\n", SDL_GetError());
 		exit (-1);
 	}
 	
-    /*
+	/*
 	 Uncommented since you do break any terminal I/O for users at least
 	 under linux with that too. You may write some WIN32 DEFINED code 
 	 to prevend stdout.txt to be created on windows -- beko
 	 */
-    // added code to prevent writing to stdout.txt and stderr.txt
-    // freopen( "CON", "w", stdout );
+	// added code to prevent writing to stdout.txt and stderr.txt
+	// freopen( "CON", "w", stdout );
 	
-    atexit(SDL_Quit);	
+	atexit(SDL_Quit);	
 }
 
 //-------------------------------------------------------------
@@ -4089,6 +4089,28 @@ bool validateOutputPath (string& outputPath)
 	return false;
 }
 
+bool gNewGrafic = false;
+
+void getResChoiceFromUser()
+{
+	string sChoiceFromUser = "";
+
+	// use original MAX graphics?
+	cout << "Would you like to use the new M.A.X. Reloaded graphics? Type y for yes." << endl;
+	getline(cin, sChoiceFromUser);
+	writeLog("sChoiceFromUser from command line: " + sChoiceFromUser + TEXT_FILE_LF);
+	sChoiceFromUser = toupper(sChoiceFromUser[0]);
+	writeLog("sChoiceFromUser from command line: toupper " + sChoiceFromUser + TEXT_FILE_LF);
+	if(sChoiceFromUser != "Y")
+	{
+		gNewGrafic = false;
+	}
+	else
+	{
+		gNewGrafic = true;
+	}
+}
+
 //-------------------------------------------------------------
 string getOutputPathFromUser (string cmdLineOutputPath)
 {
@@ -4215,11 +4237,21 @@ int installEverything (void*)
 	gFinishedInstalling = false;
 	installBuildingSounds ();
 	installVehicleSounds ();
-	installFX ();
-	installGfx ();
-	installVehicleVideos ();
-	installVehicleGraphics ();
-	installBuildingGraphics ();
+
+	if(!(gNewGrafic))
+	{
+		installFX();
+		installGfx();
+		installVehicleVideos();
+		installVehicleGraphics();
+		installBuildingGraphics();
+	}
+	else
+	{
+		cout << "========================================================================\n";
+		cout << "Skip old graphics\n";
+	}
+
 	installVoices ();
 	installMaps ();
 	installSounds ();
@@ -4276,6 +4308,10 @@ int main ( int argc, char* argv[] )
 	if (argc > 3) sLanguage = argv[3];
 	else sLanguage = "";
 
+	// 4. Parameter for gNewGrafic yes / no
+	if (argc > 4) sResChoice = argv[4];
+	else sResChoice = "";
+
 	if (string(argv[argc-1]) == "/donotelevate")
 		bDoNotElevate = true;
 	else
@@ -4289,6 +4325,23 @@ int main ( int argc, char* argv[] )
 	if (sOutputPath.size () == 0)
 		exit (-1);
 
+	if(!sResChoice.empty())
+	{
+		writeLog("UserNewGrafics argument from command line: " + sResChoice);
+		if(sResChoice.compare("-Gyes") == 0)
+		{
+			gNewGrafic = true;
+		}
+		else
+		{
+			gNewGrafic = false;
+		}
+	}
+	else
+	{
+		// keep old graphics? user input
+		getResChoiceFromUser();
+	}
 	
 	// test with a sound file, which languages are available at the install source
 	string testFileName = "F001";	

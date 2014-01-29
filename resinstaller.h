@@ -46,6 +46,7 @@ EX string sMAXPath;
 EX string sVoicePath;
 EX string sOutputPath;
 EX string sLanguage;
+EX string sResChoice;
 EX string waveExtension;
 EX SDL_RWops *res ZERO;
 EX SDL_RWops *logFile ZERO;
