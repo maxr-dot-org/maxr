@@ -206,14 +206,15 @@ public:
 	virtual void somewhereMoved() {}
 
 	/**
-	 * function that will be called when this item is the currently active one and there has been keyboard input.
+	 * function that will be called when this item is the currently active one
+	 * and there has been keyboard input.
 	 *@author alzi
 	 *@param keysym the SDL keysym with the information about the pressed key
-	 *@param ch the encoded key
 	 *@param parent pointer to the calling menu
 	 */
 	virtual bool handleKeyInput (const SDL_Keysym& keysym, cMenu* parent) { return false; }
 
+	virtual void handleTextInputEvent (const SDL_TextInputEvent& event, cMenu* parent) {}
 
 	/**
 	 *@author eiko
@@ -1028,7 +1029,6 @@ protected:
 	bool readOnly;
 	bool takeChars, takeNumerics;
 
-	void addText (const SDL_Keysym& keysym, cMenu* parent);
 	void resetTextPosition();
 	void doPosIncrease (int& value, int pos);
 	void doPosDecrease (int& pos);
@@ -1044,6 +1044,7 @@ public:
 	virtual void draw();
 
 	virtual bool preClicked();
+	virtual void setActivity(bool active_);
 
 	void setReadOnly (bool readOnly_);
 	/**
@@ -1057,6 +1058,7 @@ public:
 	const std::string& getText() const;
 	void setSize (int w, int h);
 	virtual bool handleKeyInput (const SDL_Keysym& keysym, cMenu* parent);
+	virtual void handleTextInputEvent (const SDL_TextInputEvent& event, cMenu* parent);
 
 	void setReturnPressedFunc (void (*returnPressed_) (void*));
 };

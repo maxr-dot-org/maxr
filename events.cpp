@@ -66,6 +66,12 @@ static void HandleInputEvent_KEY (cMenu& activeMenu,
 {
 	assert (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP);
 
+	// Do not send events to a menu,
+	// after an event triggered the termination
+	// the user wouldn't expects the menu to execute further events
+	// after clicking the exit button
+	if (activeMenu.exiting()) return;
+
 	if (event.state == SDL_PRESSED && event.keysym.sym == SDLK_RETURN && event.keysym.mod & KMOD_ALT)   //alt+enter makes us go fullscreen|windowmode
 	{
 		Video.setWindowMode (!Video.getWindowMode(), true);
@@ -79,7 +85,7 @@ static void HandleInputEvent_KEY (cMenu& activeMenu,
 	}
 	else
 	{
-		InputHandler->inputkey (activeMenu, event);
+		activeMenu.handleKeyInput (event);
 	}
 }
 
@@ -89,8 +95,8 @@ static void HandleInputEvent (cMenu& activeMenu, const SDL_Event& event, cClient
 	{
 		case SDL_KEYDOWN:
 		case SDL_KEYUP: HandleInputEvent_KEY (activeMenu, event.key, client); break;
-		// case SDL_TEXTEDITING: HandleTextEditingEvent (activeMenu, event.edit, client); break;
-		// case SDL_TEXTINPUT: HandleTextInputEvent (activeMenu, event.text, client); break;
+		//case SDL_TEXTEDITING: HandleTextEditingEvent (activeMenu, event.edit, client); break;
+		case SDL_TEXTINPUT: activeMenu.handleTextInputEvent (event.text); break;
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP: InputHandler->inputMouseButton (activeMenu, event.button); break;
 		case SDL_MOUSEWHEEL: InputHandler->inputMouseButton (activeMenu, event.wheel); break;

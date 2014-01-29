@@ -276,6 +276,7 @@ public:
 	 *@author alzi
 	 */
 	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
+	void handleTextInputEvent (const SDL_TextInputEvent& event);
 
 	/**
 	 * sends a netmessage to the given player.

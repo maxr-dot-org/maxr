@@ -434,6 +434,12 @@ void cMenu::handleKeyInput (const SDL_KeyboardEvent& key)
 }
 
 //------------------------------------------------------------------------------
+void cMenu::handleTextInputEvent (const SDL_TextInputEvent& event)
+{
+	if (activeItem) activeItem->handleTextInputEvent (event, this);
+}
+
+//------------------------------------------------------------------------------
 void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player, int fromPlayerNr)
 {
 	// Attention: The playernumber will only be the real player number

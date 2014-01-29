@@ -35,25 +35,6 @@ sMouseState::sMouseState()
 cInput::cInput() :
 	LastClickTicks (0)
 {
-#if 0 // TODO: [SDL2]: setting for repeat key ?
-	// enables that SDL puts the unicode values to the keyevents.
-	SDL_EnableUNICODE (1);
-	// enables keyrepetition
-	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-#endif
-}
-
-void cInput::inputkey (cMenu& activeMenu, const SDL_KeyboardEvent& key)
-{
-	// give the key to the active menu
-	// But do not send events to a menu,
-	// after an event triggered the termination
-	// the user wouldn't expects the menu to execute further events
-	// after clicking the exit button
-	if (!activeMenu.exiting())
-	{
-		activeMenu.handleKeyInput (key);
-	}
 }
 
 bool cInput::IsDoubleClicked()
@@ -153,35 +134,4 @@ void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseWheelEvent& whe
 	{
 		activeMenu.handleMouseInput (MouseState);
 	}
-}
-
-std::string cInput::getUTF16Char (Uint16 ch)
-{
-	// convert from UTF-16 to UTF-8
-	int count = 1;
-	if (ch >= 0x80) count++;
-
-	uint32_t bitmask = 0x0800;
-	for (int i = 0; i < 5; i++)
-	{
-		if (static_cast<uint32_t> (ch) >= bitmask) count++;
-		bitmask <<= 5;
-	}
-
-	std::string returnStr = "";
-	if (count == 1)
-	{
-		returnStr += static_cast<char> (ch);
-	}
-	else
-	{
-		for (int i = count - 1; i >= 0; i--)
-		{
-			unsigned char c = (ch >> (6 * i)) & 0x3f;
-			c |= 0x80;
-			if (i == count - 1) c |= 0xff << (8 - count);
-			returnStr += c;
-		}
-	}
-	return returnStr;
 }

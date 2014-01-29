@@ -2795,6 +2795,13 @@ void cMenuLineEdit::draw()
 	if (active && !readOnly) font->showText (position.x + offsetRect.x + cursorXOffset + font->getTextWide (text.substr (startOffset, cursorPos - startOffset), fontType), position.y + offsetRect.y, "|", fontType);
 }
 
+/*virtual*/ void cMenuLineEdit::setActivity(bool active_)
+{
+	active = active_;
+	if (active) SDL_StartTextInput();
+	else SDL_StopTextInput();
+}
+
 bool cMenuLineEdit::preClicked()
 {
 	if (active)
@@ -2970,6 +2977,7 @@ bool cMenuLineEdit::handleKeyInput (const SDL_Keysym& keysym, cMenu* parent)
 			{
 				PlayFX (SoundData.SNDHudButton);
 				returnPressed (parent);
+				SDL_StopTextInput();
 			}
 			break;
 		case SDLK_LEFT:
@@ -2992,40 +3000,37 @@ bool cMenuLineEdit::handleKeyInput (const SDL_Keysym& keysym, cMenu* parent)
 			deleteRight();
 			if (wasKeyInput) wasKeyInput (parent);
 			break;
-		default: // no special key - handle as normal character:
-			addText (keysym, parent);
+		default: // normal characters are handled as textInput:
 			break;
 	}
 	parentMenu->draw();
 	return true;
 }
 
-void cMenuLineEdit::addText (const SDL_Keysym& keysym, cMenu* parent)
+/*virtual*/ void cMenuLineEdit::handleTextInputEvent (const SDL_TextInputEvent& event,
+													  cMenu* parent)
 {
-	if (keysym.sym >= 32)
+	if (isdigit(event.text[0]))
 	{
-		if (keysym.sym >= '0' && keysym.sym <= '9')
-		{
-			if (!takeNumerics) return;
-		}
-		else if (!takeChars) return;
-
-		std::string ch = cInput::getUTF16Char (keysym.sym);
-
-		text.insert (cursorPos, ch);
-		if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
-		if (cursorPos >= endOffset)
-		{
-			doPosIncrease (endOffset, endOffset);
-			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosIncrease (startOffset, startOffset);
-		}
-		else
-		{
-			if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
-			else doPosIncrease (endOffset, cursorPos);
-		}
-		if (wasKeyInput) wasKeyInput (parent);
+		if (!takeNumerics) return;
 	}
+	else if (!takeChars) return;
+
+	text.insert (cursorPos, event.text);
+	if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
+	if (cursorPos >= endOffset)
+	{
+		doPosIncrease (endOffset, endOffset);
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosIncrease (startOffset, startOffset);
+	}
+	else
+	{
+		if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
+		else doPosIncrease (endOffset, cursorPos);
+	}
+	if (wasKeyInput) wasKeyInput (parent);
+
+	parent->draw();
 }
 
 void cMenuLineEdit::setReturnPressedFunc (void (*returnPressed_) (void*))
