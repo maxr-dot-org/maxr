@@ -4011,7 +4011,7 @@ void cGameGUI::displayMessages()
 	if (cSettings::getInstance().isAlphaEffects())
 	{
 		SDL_Rect rect = { 180, 30, Uint16 (Video.getResolutionX() - 200), Uint16 (height + 6) };
-		Video.applyShadow(&rect);
+		Video.applyShadow (&rect);
 	}
 	SDL_Rect dest = { 180 + 2, 34, Video.getResolutionX() - 204, height};
 

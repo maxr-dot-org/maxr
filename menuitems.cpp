@@ -2795,7 +2795,7 @@ void cMenuLineEdit::draw()
 	if (active && !readOnly) font->showText (position.x + offsetRect.x + cursorXOffset + font->getTextWide (text.substr (startOffset, cursorPos - startOffset), fontType), position.y + offsetRect.y, "|", fontType);
 }
 
-/*virtual*/ void cMenuLineEdit::setActivity(bool active_)
+/*virtual*/ void cMenuLineEdit::setActivity (bool active_)
 {
 	active = active_;
 	if (active) SDL_StartTextInput();
@@ -3010,7 +3010,7 @@ bool cMenuLineEdit::handleKeyInput (const SDL_Keysym& keysym, cMenu* parent)
 /*virtual*/ void cMenuLineEdit::handleTextInputEvent (const SDL_TextInputEvent& event,
 													  cMenu* parent)
 {
-	if (isdigit(event.text[0]))
+	if (isdigit (event.text[0]))
 	{
 		if (!takeNumerics) return;
 	}

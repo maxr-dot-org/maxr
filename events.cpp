@@ -56,7 +56,7 @@ static std::string TakeScreenShot()
 	}
 	while (FileExists (screenshotfile.c_str()));
 	Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
-	Video.takeScreenShot(screenshotfile);
+	Video.takeScreenShot (screenshotfile);
 	return screenshotfile;
 }
 

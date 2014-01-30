@@ -295,7 +295,7 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 			break;
 		case MNU_BG_ALPHA:
 			if (cSettings::getInstance().isAlphaEffects() && firstDraw)
-				Video.applyShadow(NULL);
+				Video.applyShadow (NULL);
 			break;
 		case MNU_BG_TRANSPARENT:
 			// do nothing here

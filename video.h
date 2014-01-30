@@ -151,9 +151,9 @@ public:
 	void draw();
 
 
-	void takeScreenShot(const std::string& filename) const;
+	void takeScreenShot (const std::string& filename) const;
 
-	void applyShadow(const SDL_Rect* rect);
+	void applyShadow (const SDL_Rect* rect);
 
 	// Screenbuffers ///////////////////////////////////
 	static SDL_Surface* buffer; // Der Bildschirm-Buffer

@@ -367,12 +367,12 @@ int cVideo::getMinH() const
 	return MINHEIGHT;
 }
 
-void cVideo::takeScreenShot(const std::string& filename) const
+void cVideo::takeScreenShot (const std::string& filename) const
 {
 	SDL_SaveBMP (buffer, filename.c_str());
 }
 
-void cVideo::applyShadow(const SDL_Rect* rect)
+void cVideo::applyShadow (const SDL_Rect* rect)
 {
 	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
 	if (rect == NULL) rect = &fullscreen;

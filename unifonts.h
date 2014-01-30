@@ -165,7 +165,7 @@ public:
 	std::string shortenStringToSize (const std::string& str, int size,
 									 eUnicodeFontType fonttype);
 
-	void setTargetSurface(SDL_Surface* surface) { this->surface = surface; }
+	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
 private:
 	typedef AutoSurface FontTypeSurfaces[0xFFFF];
 	// character surfaces.
