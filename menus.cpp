@@ -55,6 +55,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 void sSettings::pushInto (cNetMessage& message) const
 {
+	message.pushBool (hotseat);
 	message.pushInt16 (iTurnDeadline);
 	message.pushInt16 (duration);
 	message.pushChar (victoryType);
@@ -84,6 +85,7 @@ void sSettings::popFrom (cNetMessage& message)
 	victoryType = (eSettingsVictoryType) message.popChar();
 	duration = message.popInt16();
 	iTurnDeadline = message.popInt16();
+	hotseat = message.popBool();
 }
 
 //------------------------------------------------------------------------------
@@ -690,9 +692,9 @@ int landingUnitsSelection (cClient& client,
 	return 1;
 }
 
-int landingPosSelection (cClient& client, cStaticMap& map)
+int landingPosSelection (cClient& client, cStaticMap& map, sClientLandData& landingData)
 {
-	cLandingMenu landingMenu (client, map);
+	cLandingMenu landingMenu (client, map, landingData);
 	if (landingMenu.show (NULL) == 1) return -1;
 	return 1;
 }
@@ -702,6 +704,7 @@ int runGamePreparation (cClient& client, cStaticMap& map, bool noReturn)
 {
 	const sSettings& settings = *client.getGameSetting();
 	std::vector<sLandingUnit> landingUnits;
+	sClientLandData landingData;
 	int step = 0;
 	int lastDir = 1;
 	while (true)
@@ -712,7 +715,7 @@ int runGamePreparation (cClient& client, cStaticMap& map, bool noReturn)
 			case -1: return -1;
 			case 0: dir = clanSelection (client, noReturn); break;
 			case 1: dir = landingUnitsSelection (client, landingUnits, noReturn && settings.clans == SETTING_CLANS_OFF); break;
-			case 2: dir = landingPosSelection (client, map); break;
+			case 2: dir = landingPosSelection (client, map, landingData); break;
 			case 3: return 1;
 			default: break;
 		}
@@ -939,6 +942,20 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 
 	sSettings settings;
 	cStaticMap* map = NULL;
+	settings.hotseat = true;
+
+#if 0
+	cTCP* const network = NULL;
+	cServer server (network);
+
+	sPlayer splayer1 (cSettings::getInstance().getPlayerName(), cl_red, 0);
+	splayer1.setLocal();
+	cEventHandling eventHandling;
+	cClient client (&server, network, eventHandling);
+	std::vector<cPlayer*> players;
+	cPlayer clientPlayer (splayer);
+	std::vector<cClient*> clients;
+#endif
 
 	int lastDir = 1;
 	int step = 0;
@@ -958,9 +975,13 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 
 				if (dir == 1)
 				{
+					//server.setMap (*map);
+					//server.setGameSettings (settings);
 					// TODO
-					// Start Server.
 					// Create clients.
+					// client.setMap (*map);
+					// client.setGameSetting (settings);
+					//server.changeStateToInitGame();
 				}
 				break;
 			}
@@ -2181,10 +2202,11 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_) :
+cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData& landData_) :
 	cMenu (NULL),
 	client (&client_),
-	map (&map_)
+	map (&map_),
+	landData (&landData_)
 {
 	createMap();
 	mapImage = new cMenuImage (180, 18, mapSurface);
@@ -2254,7 +2276,7 @@ void cLandingMenu::mapClicked (void* parent)
 {
 	cLandingMenu* menu = reinterpret_cast<cLandingMenu*> (parent);
 
-	if (menu->landData.landingState == LANDING_POSITION_OK) return;
+	if (menu->landData->landingState == LANDING_POSITION_OK) return;
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
@@ -2263,17 +2285,17 @@ void cLandingMenu::mapClicked (void* parent)
 	//pixel per field in y direction
 	const float faky = (Video.getResolutionY() - 32.0f) / menu->map->getSize();
 
-	menu->landData.iLandX = (int) ((mouse->x - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
-	menu->landData.iLandY = (int) ((mouse->y - 18) / (448.0f / menu->map-> getSize()) * (448.0f / (Video.getResolutionY() - 32)));
-	menu->landData.landingState = LANDING_POSITION_OK;
+	menu->landData->iLandX = (int) ((mouse->x - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
+	menu->landData->iLandY = (int) ((mouse->y - 18) / (448.0f / menu->map-> getSize()) * (448.0f / (Video.getResolutionY() - 32)));
+	menu->landData->landingState = LANDING_POSITION_OK;
 	menu->backButton->setLocked (true);
 	{
 		AutoSurface circleSurface (SDL_CreateRGBSurface (0, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (circleSurface, NULL, 0xFF00FF);
 		SDL_SetColorKey (circleSurface, SDL_TRUE, 0xFF00FF);
 
-		int posX = (int) (menu->landData.iLandX * fakx);
-		int posY = (int) (menu->landData.iLandY * faky);
+		int posX = (int) (menu->landData->iLandX * fakx);
+		int posY = (int) (menu->landData->iLandY * faky);
 		// for non 4:3 screen resolutions, the size of the circles is
 		// only correct in x dimension, because I don't draw an ellipse
 		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
@@ -2327,7 +2349,7 @@ void cLandingMenu::handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& messag
 	eLandingState landingState = (eLandingState) message.popChar();
 
 	Log.write ("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
-	landData.landingState = landingState;
+	landData->landingState = landingState;
 	backButton->setLocked (landingState == LANDING_POSITION_OK || landingState == LANDING_POSITION_CONFIRMED);
 
 	if (landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
@@ -2351,7 +2373,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 void cLandingMenu::hitPosition()
 {
 	infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-	sendLandingCoords (*client, landData);
+	sendLandingCoords (*client, *landData);
 	draw();
 }
 

@@ -158,6 +158,7 @@ struct sSettings
 	int duration;
 	/** deadline in seconds when the first player has finished his turn */
 	int iTurnDeadline;
+	bool hotseat;
 
 	sSettings() :
 		metal (SETTING_RESVAL_NORMAL), oil (SETTING_RESVAL_NORMAL), gold (SETTING_RESVAL_NORMAL),
@@ -165,7 +166,7 @@ struct sSettings
 		bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech (SETTING_ALIENTECH_OFF),
 		clans (SETTING_CLANS_ON), gameType (SETTINGS_GAMETYPE_SIMU),
 		victoryType (SETTINGS_VICTORY_POINTS),
-		duration (SETTINGS_DUR_MEDIUM), iTurnDeadline (90) {}
+		duration (SETTINGS_DUR_MEDIUM), iTurnDeadline (90), hotseat (false) {}
 
 	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);
@@ -654,7 +655,7 @@ private:
 class cLandingMenu : public cMenu
 {
 public:
-	cLandingMenu (cClient& client_, cStaticMap& map_);
+	cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData& clientLandData_);
 
 private:
 	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
@@ -688,7 +689,7 @@ protected:
 
 	AutoPtr<cMenuButton> backButton;
 
-	sClientLandData landData;
+	sClientLandData* landData;
 };
 
 /**
