@@ -180,8 +180,8 @@ public:
 	cMap* getMap() { return Map; }
 	const std::vector<cPlayer*>& getPlayerList() const { return *PlayerList; }
 	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
-	const cPlayer* getActivePlayer() const { return ActivePlayer; }
-	cPlayer* getActivePlayer() { return ActivePlayer; }
+	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
+	cPlayer& getActivePlayer() { return *ActivePlayer; }
 	const cGameGUI& getGameGUI() const { return *gameGUI; }
 	cGameGUI& getGameGUI() { return *gameGUI; }
 	void setGameSetting (const sSettings& gameSetting_);

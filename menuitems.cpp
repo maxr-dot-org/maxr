@@ -1910,26 +1910,26 @@ void cMenuUnitDetails::draw()
 		SDL_FillRect (cVideo::buffer, &lineRect, 0xFF743904);
 	}
 	if (unit == NULL) return;
-	const sUnitData* data = &unit->data;
-	const cPlayer* activePlayer = client->getActivePlayer();
+	const sUnitData& data = unit->data;
+	const cPlayer& activePlayer = client->getActivePlayer();
 	const cPlayer* unitOwner = unit->owner;
 	const cBuilding* building = unit->isABuilding() ? static_cast<cBuilding*> (unit) : NULL;
 
 	// Die Hitpoints anzeigen:
-	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax);
+	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data.hitpointsCur, data.hitpointsMax);
 	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE);
-	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data->hitpointsCur, data->hitpointsMax);
+	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data.hitpointsCur, data.hitpointsMax);
 
 	// Den Speed anzeigen:
-	if (data->speedMax > 0)
+	if (data.speedMax > 0)
 	{
-		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, data->speedCur / 4, data->speedMax / 4);
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, data.speedCur / 4, data.speedMax / 4);
 		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Speed"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, data->speedCur / 4, data->speedMax / 4);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, data.speedCur / 4, data.speedMax / 4);
 	}
 
 	// additional values
-	if (data->canScore)
+	if (data.canScore)
 	{
 		const int score = building->points;
 		const int tot = unit->owner->getScore (client->getTurn());
@@ -1944,34 +1944,34 @@ void cMenuUnitDetails::draw()
 		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, tot, lim);
 	}
-	else if ((data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == activePlayer)
+	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unitOwner == &activePlayer)
 	{
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE);
 
-		if (data->storeResType > 0)
+		if (data.storeResType > 0)
 		{
 			if (building)
 			{
-				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageResCur, data->storageResMax);
+				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.storageResCur, data.storageResMax);
 
 				font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 
-				switch (data->storeResType)
+				switch (data.storeResType)
 				{
 					case sUnitData::STORE_RES_METAL:
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
 						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Metal, building->SubBase->MaxMetal);
 						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, building->SubBase->Metal, building->SubBase->MaxMetal);
 						break;
 					case sUnitData::STORE_RES_OIL:
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
 						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Oil, building->SubBase->MaxOil);
 						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, building->SubBase->Oil, building->SubBase->MaxOil);
 						break;
 					case sUnitData::STORE_RES_GOLD:
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, data.storageResCur, data.storageResMax);
 						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Gold, building->SubBase->MaxGold);
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80,  position.y + 28, 70, building->SubBase->Gold, building->SubBase->MaxGold);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 28, 70, building->SubBase->Gold, building->SubBase->MaxGold);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;
@@ -1979,17 +1979,17 @@ void cMenuUnitDetails::draw()
 			}
 			else
 			{
-				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageResCur, data->storageResMax);
-				switch (data->storeResType)
+				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.storageResCur, data.storageResMax);
+				switch (data.storeResType)
 				{
 					case sUnitData::STORE_RES_METAL:
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
 						break;
 					case sUnitData::STORE_RES_OIL:
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
 						break;
 					case sUnitData::STORE_RES_GOLD:
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;
@@ -1998,102 +1998,102 @@ void cMenuUnitDetails::draw()
 		}
 		else
 		{
-			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageUnitsCur, data->storageUnitsMax);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.storageUnitsCur, data.storageUnitsMax);
 
-			switch (data->storeUnitsImageType)
+			switch (data.storeUnitsImageType)
 			{
 				case sUnitData::STORE_UNIT_IMG_TANK:
 				case sUnitData::STORE_UNIT_IMG_SHIP:
-					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x + 80, position.y + 15, 70, data->storageUnitsCur, data->storageUnitsMax);
+					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x + 80, position.y + 15, 70, data.storageUnitsCur, data.storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_PLANE:
-					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x + 80, position.y + 15, 70, data->storageUnitsCur, data->storageUnitsMax);
+					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x + 80, position.y + 15, 70, data.storageUnitsCur, data.storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_HUMAN:
-					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 15, 70, data->storageUnitsCur, data->storageUnitsMax);
+					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 15, 70, data.storageUnitsCur, data.storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_NONE:
 					break;
 			}
 		}
 	}
-	else if (data->canAttack && !data->explodesOnContact)
+	else if (data.canAttack && !data.explodesOnContact)
 	{
-		if (unitOwner == activePlayer)
+		if (unitOwner == &activePlayer)
 		{
 			// Munition:
-			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->ammoCur, data->ammoMax);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.ammoCur, data.ammoMax);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data->ammoCur, data->ammoMax);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data.ammoCur, data.ammoMax);
 		}
 
 		// shots
-		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data->shotsCur, data->shotsMax);
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data.shotsCur, data.shotsMax);
 		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Shots"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data->shotsCur, data->shotsMax);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data.shotsCur, data.shotsMax);
 	}
-	else if (data->produceEnergy && building)
+	else if (data.produceEnergy && building)
 	{
 		// EnergieProduktion:
-		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data.produceEnergy : 0), data.produceEnergy);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data.produceEnergy : 0), data.produceEnergy);
 
-		if (unitOwner == activePlayer)
+		if (unitOwner == &activePlayer)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 28, 70, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 28, 70, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 
 			// Verbrauch:
-			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
-			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 41, 70, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
+			font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 41, 70, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 		}
 	}
-	else if (data->produceHumans && building)
+	else if (data.produceHumans && building)
 	{
 		// HumanProduktion:
-		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->produceHumans, data->produceHumans);
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.produceHumans, data.produceHumans);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->produceHumans, data->produceHumans);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data.produceHumans, data.produceHumans);
 
-		if (unitOwner == activePlayer)
+		if (unitOwner == &activePlayer)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanProd, building->SubBase->HumanProd);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanProd, building->SubBase->HumanProd);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, building->SubBase->HumanProd, building->SubBase->HumanProd);
 
 			// Verbrauch:
-			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
-			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
+			font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
-	else if (data->needsHumans && building)
+	else if (data.needsHumans && building)
 	{
 		// HumanNeed:
 		if (building->IsWorking)
 		{
-			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->needsHumans, data->needsHumans);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.needsHumans, data.needsHumans);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->needsHumans, data->needsHumans);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data.needsHumans, data.needsHumans);
 		}
 		else
 		{
-			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, 0, data->needsHumans);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, 0, data.needsHumans);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, 0, data->needsHumans);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, 0, data.needsHumans);
 		}
 
-		if (unitOwner == activePlayer)
+		if (unitOwner == &activePlayer)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
 }
@@ -3554,9 +3554,9 @@ cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& cli
 	position.w = w;
 	position.h = h;
 
-	const cPlayer* activePlayer = client->getActivePlayer();
-	vehicles = activePlayer->VehicleList;
-	buildings = activePlayer->BuildingList;
+	const cPlayer& activePlayer = client->getActivePlayer();
+	vehicles = activePlayer.VehicleList;
+	buildings = activePlayer.BuildingList;
 	index = 0;
 	selected = -1;
 	filterPlanes = filterGround = filterSea = filterBuilding = false;
@@ -3697,12 +3697,12 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						AutoSurface surface;
 						if (unitID.isABuilding())
 						{
-							cBuilding building (unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
+							cBuilding building (unitID.getUnitDataOriginalVersion(), &client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&building);
 						}
 						else if (unitID.isAVehicle())
 						{
-							cVehicle vehicle (*unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
+							cVehicle vehicle (*unitID.getUnitDataOriginalVersion(), &client->getActivePlayer(), 0);
 							surface = generateUnitSurface (&vehicle);
 						}
 						else
@@ -3905,12 +3905,12 @@ void cMenuReportsScreen::drawScoreGraph()
 void cMenuReportsScreen::drawReportsScreen()
 {
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
-	const cPlayer* activePlayer = client->getActivePlayer();
+	const cPlayer& activePlayer = client->getActivePlayer();
 
-	size_t endIndex = std::min<size_t> (maxItems * (index + 1u), activePlayer->savedReportsList.size());
+	size_t endIndex = std::min<size_t> (maxItems * (index + 1u), activePlayer.savedReportsList.size());
 	for (size_t i = index * maxItems; i != endIndex; ++i)
 	{
-		const sSavedReportMessage& savedReport = activePlayer->savedReportsList[i];
+		const sSavedReportMessage& savedReport = activePlayer.savedReportsList[i];
 
 		switch (savedReport.type)
 		{
@@ -3924,12 +3924,12 @@ void cMenuReportsScreen::drawReportsScreen()
 				AutoSurface surface;
 				if (savedReport.unitID.isAVehicle())
 				{
-					cVehicle vehicle (*savedReport.unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
+					cVehicle vehicle (*savedReport.unitID.getUnitDataOriginalVersion(), &client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&vehicle);
 				}
 				else if (savedReport.unitID.isABuilding())
 				{
-					cBuilding building (savedReport.unitID.getUnitDataOriginalVersion(), client->getActivePlayer(), 0);
+					cBuilding building (savedReport.unitID.getUnitDataOriginalVersion(), &client->getActivePlayer(), 0);
 					surface = generateUnitSurface (&building);
 				}
 				else
@@ -4106,8 +4106,8 @@ void cMenuReportsScreen::setType (bool unitsChecked, bool disadvaChecked, bool s
 	else if (scoreChecked) screenType = REP_SCR_TYPE_SCORE;
 	else if (reportsChecked)
 	{
-		const cPlayer* activePlayer = client->getActivePlayer();
-		index = activePlayer->savedReportsList.size() / maxItems;
+		const cPlayer& activePlayer = client->getActivePlayer();
+		index = activePlayer.savedReportsList.size() / maxItems;
 		screenType = REP_SCR_TYPE_REPORTS;
 	}
 
@@ -4157,8 +4157,8 @@ void cMenuReportsScreen::updateScrollButtons()
 			break;
 		case REP_SCR_TYPE_REPORTS:
 		{
-			const cPlayer* activePlayer = client->getActivePlayer();
-			parentMenu->scrollCallback (index > 0, maxItems * (index + 1u) < activePlayer->savedReportsList.size());
+			const cPlayer& activePlayer = client->getActivePlayer();
+			parentMenu->scrollCallback (index > 0, maxItems * (index + 1u) < activePlayer.savedReportsList.size());
 			break;
 		}
 	}
@@ -4179,9 +4179,9 @@ void cMenuReportsScreen::scrollDown()
 			break;
 		case REP_SCR_TYPE_REPORTS:
 		{
-			const cPlayer* activePlayer = client->getActivePlayer();
+			const cPlayer& activePlayer = client->getActivePlayer();
 
-			if (maxItems * (index + 1u) < activePlayer->savedReportsList.size())
+			if (maxItems * (index + 1u) < activePlayer.savedReportsList.size())
 				index++;
 			break;
 		}
@@ -4225,12 +4225,12 @@ void cMenuReportsScreen::released (void* parent)
 			break;
 		case REP_SCR_TYPE_REPORTS:
 		{
-			const cPlayer* activePlayer = client->getActivePlayer();
+			const cPlayer& activePlayer = client->getActivePlayer();
 
-			if (clickedIndex > (int) activePlayer->savedReportsList.size()) return;
+			if (clickedIndex > (int) activePlayer.savedReportsList.size()) return;
 			if (clickedIndex != selected) break;
 
-			const sSavedReportMessage& savedReport = activePlayer->savedReportsList[clickedIndex];
+			const sSavedReportMessage& savedReport = activePlayer.savedReportsList[clickedIndex];
 			parentMenu->close();
 			cGameGUI& gameGUI = client->getGameGUI();
 

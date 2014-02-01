@@ -110,7 +110,7 @@ void cDebugOutput::draw()
 {
 	const int DEBUGOUT_X_POS (Video.getResolutionX() - 200);
 	const cGameGUI& gui = client->getGameGUI();
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 
 	int debugOff = 30;
 
@@ -129,12 +129,12 @@ void cDebugOutput::draw()
 			// HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = { 10, 0, 10, 10 }; // for green dot
 
-			if (playerList[i]->bFinishedTurn /* && playerList[i] != player*/)
+			if (playerList[i]->bFinishedTurn /* && playerList[i] != &player*/)
 			{
 				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
 			}
 #if 0
-			else if (playerList[i] == player && client->bWantToEnd)
+			else if (playerList[i] == &player && client->bWantToEnd)
 			{
 				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
 			}
@@ -146,7 +146,7 @@ void cDebugOutput::draw()
 			}
 
 			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, cVideo::buffer, &rDest);
-			if (playerList[i] == player)
+			if (playerList[i] == &player)
 			{
 				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
 				// black out background for better recognizing
@@ -181,13 +181,13 @@ void cDebugOutput::draw()
 
 	if (debugBaseClient)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) player->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) player.base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
 	if (debugBaseServer)
 	{
-		cPlayer* serverPlayer = server->getPlayerFromNumber (player->getNr());
+		cPlayer* serverPlayer = server->getPlayerFromNumber (player.getNr());
 		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
@@ -733,7 +733,7 @@ void cGameGUI::playStream (const cVehicle& vehicle)
 	bool water = map.isWater (vehicle.PosX, vehicle.PosY);
 	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-	if (vehicle.IsBuilding && (vehicle.BuildRounds || client->getActivePlayer() != vehicle.owner))
+	if (vehicle.IsBuilding && (vehicle.BuildRounds || &client->getActivePlayer() != vehicle.owner))
 		playFXLoop (SoundData.SNDBuilding);
 	else if (vehicle.IsClearing)
 		playFXLoop (SoundData.SNDClearing);
@@ -858,10 +858,10 @@ int cGameGUI::show (cClient* client)
 
 		if (startup)
 		{
-			cPlayer* player = client->getActivePlayer();
+			const cPlayer& player = client->getActivePlayer();
 
-			if (player->BuildingList) center (*player->BuildingList);
-			else if (player->VehicleList) center (*player->VehicleList);
+			if (player.BuildingList) center (*player.BuildingList);
+			else if (player.VehicleList) center (*player.VehicleList);
 			startup = false;
 		}
 
@@ -973,13 +973,13 @@ void cGameGUI::onLostConnection()
 {
 	const string msgString = lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server");
 	addMessage (msgString);
-	client->getActivePlayer()->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
+	client->getActivePlayer().addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 	//TODO: ask user for reconnect
 }
 
 void cGameGUI::onAddedBuilding (const cBuilding& building)
 {
-	if (building.owner != client->getActivePlayer()) return;
+	if (building.owner != &client->getActivePlayer()) return;
 	if (building.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace);
 	else if (building.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace);
 }
@@ -988,20 +988,20 @@ void cGameGUI::onChat_errorMessage (const std::string& msg)
 {
 	PlayFX (SoundData.SNDQuitsch);
 	addMessage (msg);
-	client->getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
+	client->getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
 }
 
 void cGameGUI::onChat_infoMessage (const std::string& msg)
 {
 	addMessage (msg);
-	client->getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
+	client->getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
 }
 
 void cGameGUI::onChat_userMessage (const std::string& msg)
 {
 	PlayFX (SoundData.SNDChat);
 	addMessage (msg);
-	client->getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_CHAT);
+	client->getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_CHAT);
 }
 
 void cGameGUI::onVehicleStored (const cUnit& storingUnit, const cVehicle& storedVehicle)
@@ -1131,7 +1131,7 @@ void cGameGUI::generateMiniMapSurface_landscape (SDL_Surface* minimapSurface, in
 void cGameGUI::generateMiniMapSurface_fog (SDL_Surface* minimapSurface, int zoomFactor)
 {
 	Uint32* minimap = static_cast<Uint32*> (minimapSurface->pixels);
-	cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	const cStaticMap* staticMap = client->getMap()->staticMap;
 	const int mapSize = client->getMap()->getSize();
 
@@ -1142,7 +1142,7 @@ void cGameGUI::generateMiniMapSurface_fog (SDL_Surface* minimapSurface, int zoom
 		{
 			int terrainy = (miniMapY * mapSize) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 
-			if (player->ScanMap[staticMap->getOffset (terrainx, terrainy)]) continue;
+			if (player.ScanMap[staticMap->getOffset (terrainx, terrainy)]) continue;
 
 			Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * MINIMAP_SIZE]);
 			color[0] = static_cast<Uint8> (color[0] * 0.6f);
@@ -1166,7 +1166,7 @@ void cGameGUI::generateMiniMapSurface_units (SDL_Surface* minimapSurface, int zo
 	rect.w = size;
 	rect.h = size;
 
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	for (int mapx = 0; mapx < mapSize; ++mapx)
 	{
 		rect.x = ((mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / mapSize;
@@ -1177,7 +1177,7 @@ void cGameGUI::generateMiniMapSurface_units (SDL_Surface* minimapSurface, int zo
 			if (rect.y < 0 || rect.y >= MINIMAP_SIZE) continue;
 
 			const int offset = map.getOffset (mapx, mapy);
-			if (!player->ScanMap[offset]) continue;
+			if (!player.ScanMap[offset]) continue;
 
 			cMapField& field = map[offset];
 
@@ -1550,9 +1550,9 @@ void cGameGUI::updateUnderMouseObject()
 	char str[8];
 	TIXML_SNPRINTF (str, sizeof (str), "%.3d-%.3d", x, y);
 	coordsLabel.setText (str);
-	cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 
-	if (!player->ScanMap[map.getOffset (x, y)])
+	if (!player.ScanMap[map.getOffset (x, y)])
 	{
 		overUnitField = NULL;
 		if (mouse->cur == GraphicsData.gfx_Cattack)
@@ -1660,7 +1660,7 @@ void cGameGUI::selectUnit (cUnit& unit)
 	cBuilding* building = static_cast<cBuilding*> (unit.isABuilding() ? &unit : NULL);
 
 	deselectUnit();
-	getClient()->getActivePlayer()->savedHud->selUnitID = unit.iID;
+	getClient()->getActivePlayer().savedHud->selUnitID = unit.iID;
 	selectedUnit = &unit;
 	unitMenuActive = false;
 	mouseInputMode = normalInput;
@@ -1693,7 +1693,7 @@ void cGameGUI::deselectUnit()
 
 		stopFXLoop();
 	}
-	getClient()->getActivePlayer()->savedHud->selUnitID = 0;
+	getClient()->getActivePlayer().savedHud->selUnitID = 0;
 	selectedUnit = NULL;
 
 	mouseInputMode = normalInput;
@@ -1729,7 +1729,7 @@ void cGameGUI::updateMouseCursor()
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	cBuilding* selectedBuilding = getSelectedBuilding();
-	if (selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == client->getActivePlayer())
+	if (selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == &client->getActivePlayer())
 	{
 		if (x >= HUD_LEFT_WIDTH)
 		{
@@ -1740,7 +1740,7 @@ void cGameGUI::updateMouseCursor()
 			mouse->SetCursor (CNo);
 		}
 	}
-	else if ((selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == client->getActivePlayer()))
+	else if ((selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == &client->getActivePlayer()))
 	{
 		if (overUnitField && selectedUnit->CanTransferTo (mouseMapX, mouseMapY, overUnitField))
 		{
@@ -1766,7 +1766,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor (CHand);
 		}
-		else if (selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
+		else if (selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
 			if (! (selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !client->getMap()->isWaterOrCoast (mouseMapX, mouseMapY)))
 			{
@@ -1782,7 +1782,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		// Infiltrators: manual action from unit-menu
 		// disable vs. vehicle/building
-		else if (selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
+		else if (selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
 			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false)
 				&& (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false)
@@ -1800,7 +1800,7 @@ void cGameGUI::updateMouseCursor()
 			}
 		}
 		// steal vs. vehicle
-		else if (selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
+		else if (selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
 			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), true))
 			{
@@ -1816,12 +1816,12 @@ void cGameGUI::updateMouseCursor()
 		}
 		// Infiltrators: auto-action
 		// no disable vs. disabled building
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && overUnitField->getBuilding() && overUnitField->getBuilding()->isDisabled())
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && overUnitField->getBuilding() && overUnitField->getBuilding()->isDisabled())
 		{
 			mouse->SetCursor (CNo);
 		}
 		// vehicle can be disabled, and if it is ...
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false))
 		{
 			if (mouse->SetCursor (CDisable))
 			{
@@ -1830,14 +1830,14 @@ void cGameGUI::updateMouseCursor()
 		}
 		// ... disabled (the) vehicle can be stolen
 		// (without selecting the 'steal' from menu)
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), true))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), true))
 		{
 			if (mouse->SetCursor (CSteal))
 			{
 				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
 			}
 		}
-		else if (selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
+		else if (selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
 			if (selectedBuilding->isInRange (mouseMapX, mouseMapY))
 			{
@@ -1851,21 +1851,21 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && selectedVehicle->canAttackObjectAt (mouseMapX, mouseMapY, client->getMap(), false, false))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && selectedVehicle->canAttackObjectAt (mouseMapX, mouseMapY, client->getMap(), false, false))
 		{
 			if (mouse->SetCursor (CAttack))
 			{
 				drawAttackCursor (mouseMapX, mouseMapY);
 			}
 		}
-		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && selectedBuilding->canAttackObjectAt (mouseMapX, mouseMapY, client->getMap()))
+		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && selectedBuilding->canAttackObjectAt (mouseMapX, mouseMapY, client->getMap()))
 		{
 			if (mouse->SetCursor (CAttack))
 			{
 				drawAttackCursor (mouseMapX, mouseMapY);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == muniActive)
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == muniActive)
 		{
 			if (selectedVehicle->canSupply (*client, mouseMapX, mouseMapY, SUPPLY_TYPE_REARM))
 			{
@@ -1876,7 +1876,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == repairActive)
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == repairActive)
 		{
 			if (selectedVehicle->canSupply (*client, mouseMapX, mouseMapY, SUPPLY_TYPE_REPAIR))
 			{
@@ -1898,7 +1898,7 @@ void cGameGUI::updateMouseCursor()
 				 ) &&
 				 (
 					 !selectedVehicle ||
-					 selectedVehicle->owner != client->getActivePlayer() ||
+					 selectedVehicle->owner != &client->getActivePlayer() ||
 					 (
 						 (
 							 selectedVehicle->data.factorAir > 0 ||
@@ -1933,7 +1933,7 @@ void cGameGUI::updateMouseCursor()
 				 ) &&
 				 (
 					 !selectedBuilding ||
-					 selectedBuilding->owner != client->getActivePlayer() ||
+					 selectedBuilding->owner != &client->getActivePlayer() ||
 					 (
 						 (
 							 selectedBuilding->BuildList.empty() ||
@@ -1948,7 +1948,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor (CSelect);
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == loadMode)
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == loadMode)
 		{
 			if (selectedVehicle->canLoad (mouseMapX, mouseMapY, client->getMap(), false))
 			{
@@ -1959,7 +1959,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == activateVehicle)
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == activateVehicle)
 		{
 			if (selectedVehicle->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedVehicle->storedUnits[vehicleToActivate]->data) && selectedUnit->isDisabled() == false)
 			{
@@ -1970,7 +1970,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < HUD_LEFT_WIDTH + (Video.getResolutionX() - HUD_TOTAL_WIDTH) && y < HUD_TOP_HIGHT + (Video.getResolutionY() - HUD_TOTAL_HIGHT))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < HUD_LEFT_WIDTH + (Video.getResolutionX() - HUD_TOTAL_WIDTH) && y < HUD_TOP_HIGHT + (Video.getResolutionY() - HUD_TOTAL_HIGHT))
 		{
 			if (!selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && mouseInputMode != activateVehicle)
 			{
@@ -2003,7 +2003,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (
 			selectedBuilding &&
-			selectedBuilding->owner == client->getActivePlayer() &&
+			selectedBuilding->owner == &client->getActivePlayer() &&
 			!selectedBuilding->BuildList.empty() &&
 			!selectedBuilding->IsWorking &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0)
@@ -2017,7 +2017,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->isDisabled() == false)
+		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->isDisabled() == false)
 		{
 			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->data))
 			{
@@ -2028,7 +2028,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && mouseInputMode == loadMode)
+		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && mouseInputMode == loadMode)
 		{
 			if (selectedBuilding->canLoad (mouseMapX, mouseMapY, *client->getMap(), false))
 			{
@@ -2498,9 +2498,9 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		// if it is newly selected / deselected
 		if (overUnitField && lockChecked())
 		{
-			cPlayer* player = client->getActivePlayer();
-			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != player)
-				player->toggleLock (*overUnitField);
+			cPlayer& player = client->getActivePlayer();
+			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != &player)
+				player.toggleLock (*overUnitField);
 		}
 
 		mouseBox.invalidate();
@@ -2536,7 +2536,7 @@ void cGameGUI::doScroll (int dir)
 void cGameGUI::doCommand (const string& cmd)
 {
 	cServer* server = client->getServer();
-	cPlayer* player = client->getActivePlayer();
+	cPlayer& player = client->getActivePlayer();
 
 	if (cmd.compare ("/fps on") == 0) { debugOutput.showFPS = true;}
 	else if (cmd.compare ("/fps off") == 0) { debugOutput.showFPS = false;}
@@ -2646,7 +2646,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		// server cannot be disconnected
 		// can not disconnect local players
-		if (!player || Player->getNr() == 0 || Player->isLocal())
+		if (!Player || Player->getNr() == 0 || Player->isLocal())
 		{
 			addMessage ("Wrong parameter");
 			return;
@@ -2708,7 +2708,7 @@ void cGameGUI::doCommand (const string& cmd)
 			}
 			else
 			{
-				sendRequestResync (*client, client->getActivePlayer()->getNr());
+				sendRequestResync (*client, client->getActivePlayer().getNr());
 			}
 		}
 	}
@@ -2725,7 +2725,7 @@ void cGameGUI::doCommand (const string& cmd)
 		int cl = 0;
 		sscanf (cmd.c_str(), "color %d", &cl);
 		cl %= 8;
-		player->setColor (cl);
+		player.setColor (cl);
 	}
 	else if (cmd.compare ("/fog off") == 0)
 	{
@@ -2734,8 +2734,8 @@ void cGameGUI::doCommand (const string& cmd)
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		server->getPlayerFromNumber (player->getNr())->revealMap();
-		player->revealMap();
+		server->getPlayerFromNumber (player.getNr())->revealMap();
+		player.revealMap();
 	}
 	else if (cmd.compare ("/survey") == 0)
 	{
@@ -2745,7 +2745,7 @@ void cGameGUI::doCommand (const string& cmd)
 			return;
 		}
 		client->getMap()->assignRessources (*server->Map);
-		player->revealResource();
+		player.revealResource();
 	}
 	else if (cmd.compare (0, 6, "/pause") == 0)
 	{
@@ -2782,7 +2782,7 @@ void cGameGUI::selectUnit_vehicle (cVehicle& vehicle)
 	// TO FIX: add that the unit renaming will be aborted here when active
 	if (selectedUnit == &vehicle)
 	{
-		if (selectedUnit->owner == client->getActivePlayer())
+		if (selectedUnit->owner == &client->getActivePlayer())
 		{
 			unitMenuActive = !unitMenuActive;
 			PlayFX (SoundData.SNDHudButton);
@@ -2799,7 +2799,7 @@ void cGameGUI::selectUnit_building (cBuilding& building)
 	// TO FIX: add that the unit renaming will be aborted here when active
 	if (selectedUnit == &building)
 	{
-		if (selectedUnit->owner == client->getActivePlayer())
+		if (selectedUnit->owner == &client->getActivePlayer())
 		{
 			unitMenuActive = !unitMenuActive;
 			PlayFX (SoundData.SNDHudButton);
@@ -2821,7 +2821,7 @@ bool cGameGUI::selectUnit (cMapField* OverUnitField, bool base)
 		return true;
 	}
 	cVehicle* vehicle = OverUnitField->getVehicle();
-	if (vehicle && !vehicle->moving && ! (plane && (unitMenuActive || vehicle->owner != client->getActivePlayer())))
+	if (vehicle && !vehicle->moving && ! (plane && (unitMenuActive || vehicle->owner != &client->getActivePlayer())))
 	{
 		selectUnit_vehicle (*vehicle);
 		return true;
@@ -2852,7 +2852,7 @@ void cGameGUI::selectBoxVehicles (const sMouseBox& box)
 	const int endFieldY = (int) std::max (box.startY, box.endY);
 
 	deselectGroup();
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	cMap& map = *client->getMap();
 	bool newSelected = true;
 	for (int x = startFieldX; x <= endFieldX; x++)
@@ -2862,9 +2862,9 @@ void cGameGUI::selectBoxVehicles (const sMouseBox& box)
 			const int offset = map.getOffset (x, y);
 
 			cVehicle* vehicle = map[offset].getVehicle();
-			if (!vehicle || vehicle->owner != player) vehicle = map[offset].getPlane();
+			if (!vehicle || vehicle->owner != &player) vehicle = map[offset].getPlane();
 
-			if (vehicle && vehicle->owner == player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
+			if (vehicle && vehicle->owner == &player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
 			{
 				if (vehicle == selectedUnit)
 				{
@@ -2971,7 +2971,7 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	cBuilding* selectedBuilding = getSelectedBuilding();
-	cPlayer* player = client->getActivePlayer();
+	cPlayer& player = client->getActivePlayer();
 	const cMap& map = *client->getMap();
 
 	if (key.keysym.sym == KeysList.KeyExit)
@@ -3035,7 +3035,7 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 		helpMenu.show (client);
 	}
 	// disable most hotkeys while selected unit is disabled
-	else if (selectedUnit && selectedUnit->isDisabled() == false && selectedUnit->owner == player && !client->isFreezed())
+	else if (selectedUnit && selectedUnit->isDisabled() == false && selectedUnit->owner == &player && !client->isFreezed())
 	{
 		if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedUnit->data.canAttack && selectedUnit->data.shotsCur)
 		{
@@ -3045,12 +3045,12 @@ void cGameGUI::handleKeyInput (const SDL_KeyboardEvent& key)
 		else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding)
 		{
 			sendWantStopMove (*client, selectedVehicle->iID);
-			cBuildingsBuildMenu buildMenu (*client, player, selectedVehicle);
+			cBuildingsBuildMenu buildMenu (*client, &player, selectedVehicle);
 			buildMenu.show (client);
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty())
 		{
-			cVehiclesBuildMenu buildMenu (*this, player, selectedBuilding);
+			cVehiclesBuildMenu buildMenu (*this, &player, selectedBuilding);
 			buildMenu.show (client);
 		}
 		else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing)
@@ -3249,7 +3249,7 @@ void cGameGUI::chatReleased (void* parent)
 void cGameGUI::nextReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cUnit* unit = gui->client->getActivePlayer()->getNextUnit (gui->getSelectedUnit());
+	cUnit* unit = gui->client->getActivePlayer().getNextUnit (gui->getSelectedUnit());
 	if (unit)
 	{
 		gui->selectUnit (*unit);
@@ -3260,7 +3260,7 @@ void cGameGUI::nextReleased (void* parent)
 void cGameGUI::prevReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cUnit* unit = gui->client->getActivePlayer()->getPrevUnit (gui->getSelectedUnit());
+	cUnit* unit = gui->client->getActivePlayer().getPrevUnit (gui->getSelectedUnit());
 	if (unit)
 	{
 		gui->selectUnit (*unit);
@@ -3280,7 +3280,7 @@ void cGameGUI::doneReleased (void* parent)
 
 	cUnit* unit = gui->selectedUnit;
 
-	if (unit && unit->owner == gui->client->getActivePlayer())
+	if (unit && unit->owner == &gui->client->getActivePlayer())
 	{
 		gui->center (*unit);
 		unit->isMarkedAsDone = true;
@@ -3364,7 +3364,7 @@ void cGameGUI::miniMapRightClicked (void* parent)
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 
 	cVehicle* selectedVehicle = gui->getSelectedVehicle();
-	if (!selectedVehicle || selectedVehicle->owner != gui->client->getActivePlayer()) return;
+	if (!selectedVehicle || selectedVehicle->owner != &gui->client->getActivePlayer()) return;
 
 	const int x = mouse->x;
 	const int y = mouse->y;
@@ -3401,7 +3401,7 @@ void cGameGUI::endReleased (void* parent)
 void cGameGUI::preferencesReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cDialogPreferences preferencesDialog (gui->getClient()->getActivePlayer());
+	cDialogPreferences preferencesDialog (&gui->getClient()->getActivePlayer());
 	preferencesDialog.show (gui->getClient());
 }
 
@@ -3437,7 +3437,7 @@ void cGameGUI::chatBoxReturnPressed (void* parent)
 	if (!chatString.empty())
 	{
 		if (chatString[0] == '/') gui->doCommand (chatString);
-		else sendChatMessageToServer (*gui->client, gui->client->getActivePlayer()->getName() + ": " + chatString);
+		else sendChatMessageToServer (*gui->client, gui->client->getActivePlayer().getName() + ": " + chatString);
 		gui->chatBox.setText ("");
 	}
 	gui->chatBox.setActivity (false);
@@ -3491,7 +3491,7 @@ void cGameGUI::preDrawFunction()
 	drawPlanes (startX, startY, endX, endY, zoomOffX, zoomOffY);
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
-	if (surveyChecked() || (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && selectedVehicle->data.canSurvey))
+	if (surveyChecked() || (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && selectedVehicle->data.canSurvey))
 	{
 		drawResources (startX, startY, endX, endY, zoomOffX, zoomOffY);
 	}
@@ -3518,7 +3518,7 @@ void cGameGUI::preDrawFunction()
 
 void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 {
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	const int tileSize = getTileSize();
 	SDL_Rect dest;
 	dest.y = HUD_TOP_HIGHT - zoomOffY;
@@ -3540,7 +3540,7 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 					const sTerrain& terr = staticMap.getTerrain (pos);
 
 					// draw the fog:
-					if (fogChecked() && !player->ScanMap[pos])
+					if (fogChecked() && !player.ScanMap[pos])
 					{
 						if (!cSettings::getInstance().shouldDoPrescale() && (terr.shw->w != tileSize || terr.shw->h != tileSize)) scaleSurface (terr.shw_org, terr.shw, tileSize, tileSize);
 						SDL_BlitSurface (terr.shw, NULL, cVideo::buffer, &tmp);
@@ -3667,7 +3667,7 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 	SDL_Rect dest;
 	// draw rubble and all base buildings (without bridges)
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	const cMap& map = *client->getMap();
 
 	for (int y = startY; y <= endY; y++)
@@ -3683,7 +3683,7 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 					(*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
 					(*it)->owner) break;
 
-				if (player->canSeeAnyAreaUnder (**it))
+				if (player.canSeeAnyAreaUnder (**it))
 				{
 					// Draw big unit only once
 					// TODO: bug when (x,y) is outside of the drawing screen.
@@ -3751,7 +3751,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 {
 	SDL_Rect dest;
 	const int tileSize = getTileSize();
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	// draw top buildings (except connectors)
 	const cMap& map = *client->getMap();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
@@ -3764,7 +3764,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 			cBuilding* building = map.fields[pos].getBuilding();
 			if (building == NULL) continue;
 			if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND) continue;
-			if (!player->canSeeAnyAreaUnder (*building)) continue;
+			if (!player.canSeeAnyAreaUnder (*building)) continue;
 			// make sure a big building is drawn only once
 			// TODO: BUG: when PosX,PosY is outside of drawing screen
 			if (building->PosX != x || building->PosY != y) continue;
@@ -3804,7 +3804,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 {
 	SDL_Rect dest;
 	const int tileSize = getTileSize();
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	const cMap& map = *client->getMap();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
@@ -3832,7 +3832,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 
 			cVehicle* vehicle = map.fields[pos].getVehicle();
 			if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) &&
-				player->canSeeAnyAreaUnder (*vehicle))
+				player.canSeeAnyAreaUnder (*vehicle))
 			{
 				// make sure a big vehicle is drawn only once
 				// TODO: BUG: when PosX,PosY is outside of drawing screen
@@ -3916,7 +3916,7 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	const int tileSize = getTileSize();
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 	const cMap& map = *client->getMap();
 	SDL_Rect dest, tmp, src = { 0, 0, Uint16 (tileSize), Uint16 (tileSize) };
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
@@ -3926,7 +3926,7 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 		int pos = map.getOffset (startX, y);
 		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (!player->hasResourceExplored (pos)) continue;
+			if (!player.hasResourceExplored (pos)) continue;
 			if (map.isBlocked (pos)) continue;
 
 			const sResources& resource = map.getResource (pos);
@@ -4154,7 +4154,7 @@ void cGameGUI::drawUnitCircles()
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	cBuilding* selectedBuilding = getSelectedBuilding();
-	const cPlayer* player = client->getActivePlayer();
+	const cPlayer& player = client->getActivePlayer();
 
 	if (selectedVehicle && selectedUnit->isDisabled() == false)
 	{
@@ -4178,7 +4178,7 @@ void cGameGUI::drawUnitCircles()
 			if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
 			else drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, cVideo::buffer);
 		}
-		if (v.owner == player &&
+		if (v.owner == &player &&
 			(
 				(v.IsBuilding && v.BuildRounds == 0) ||
 				(v.IsClearing && v.ClearingRounds == 0)
@@ -4244,7 +4244,7 @@ void cGameGUI::drawUnitCircles()
 				}
 			}
 		}
-		if (mouseInputMode == activateVehicle && v.owner == player)
+		if (mouseInputMode == activateVehicle && v.owner == &player)
 		{
 			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->data, *this);
 		}
@@ -4284,16 +4284,16 @@ void cGameGUI::drawUnitCircles()
 		if (selectedBuilding->BuildList.empty() == false &&
 			!selectedBuilding->IsWorking &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
-			selectedBuilding->owner == player)
+			selectedBuilding->owner == &player)
 		{
 			selectedBuilding->DrawExitPoints (*selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion(), *this);
 		}
-		if (mouseInputMode == activateVehicle && selectedBuilding->owner == player)
+		if (mouseInputMode == activateVehicle && selectedBuilding->owner == &player)
 		{
 			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->data, *this);
 		}
 	}
-	drawLockList (*client->getActivePlayer());
+	drawLockList (client->getActivePlayer());
 
 	SDL_SetClipRect (cVideo::buffer, NULL);
 }
@@ -4465,7 +4465,7 @@ int cGameGUI::getNumberOfMenuEntries (const cUnit& unit) const
 {
 	int result = 2; // Info/Help + Done
 
-	if (unit.owner != client->getActivePlayer())
+	if (unit.owner != &client->getActivePlayer())
 		return result;
 	if (unit.isDisabled()) return result;
 
@@ -4577,7 +4577,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 	bool markerPossible = (areCoordsOverMenu (unit, mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
 	int nr = 0;
 
-	if (unit.isDisabled() == false && unit.owner == client->getActivePlayer())
+	if (unit.isDisabled() == false && unit.owner == &client->getActivePlayer())
 	{
 		// Attack:
 		if (unit.data.canAttack && unit.data.shotsCur)
@@ -4816,7 +4816,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 	int nr = 0;
 
 	// no menu if something disabled - original behavior -- nonsinn
-	if (unit.isDisabled() == false && unit.owner == client->getActivePlayer())
+	if (unit.isDisabled() == false && unit.owner == &client->getActivePlayer())
 	{
 		// attack:
 		if (unit.data.canAttack && unit.data.shotsCur)
@@ -5142,7 +5142,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 	{
 		unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
-		if (unit.owner == client->getActivePlayer())
+		if (unit.owner == &client->getActivePlayer())
 		{
 			unit.isMarkedAsDone = true;
 			sendMoveJobResume (*client, unit.iID);
@@ -5184,7 +5184,7 @@ void cGameGUI::center (const cUnit& unit)
 //------------------------------------------------------------------------------
 void cGameGUI::drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const
 {
-	if (unit.owner != getClient()->getActivePlayer())
+	if (unit.owner != &getClient()->getActivePlayer())
 		return;
 
 	SDL_Rect r1;

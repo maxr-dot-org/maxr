@@ -1859,14 +1859,14 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit,
 		//this unit was captured by an infiltrator
 		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
 		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName());
-		const sSavedReportMessage& report = getActivePlayer()->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
+		const sSavedReportMessage& report = getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
 		gameGUI->addCoords (report);
 	}
 	else if (AddedVehicle->owner != ActivePlayer)
 	{
 		// make report
 		const string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
-		const sSavedReportMessage& report = getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
+		const sSavedReportMessage& report = getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
 		gameGUI->addCoords (report);
 
 		if (AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack)

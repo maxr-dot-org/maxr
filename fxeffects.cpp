@@ -112,7 +112,7 @@ cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
 
 void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 {
-	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (pImages == NULL) return;
@@ -170,7 +170,7 @@ cFxExplo::cFxExplo (int x, int y, int frames_) :
 
 void cFxExplo::draw (const cGameGUI& gameGUI) const
 {
-	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
@@ -286,7 +286,7 @@ cFxFade::cFxFade (int x, int y, bool bottom, int start, int end) :
 
 void cFxFade::draw (const cGameGUI& gameGUI) const
 {
-	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
@@ -331,7 +331,7 @@ cFxTracks::cFxTracks (int x, int y, int dir_) :
 
 void cFxTracks::draw (const cGameGUI& gameGUI) const
 {
-	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return; //ja, nein, vielleicht?
 	if (!pImages) return;
@@ -382,7 +382,7 @@ void cFxRocket::draw (const cGameGUI& gameGUI) const
 	}
 
 	//draw rocket
-	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
 	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
@@ -459,7 +459,7 @@ cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 
 void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 {
-	//if (!client.getActivePlayer()->ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
+	//if (!client.getActivePlayer().ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());

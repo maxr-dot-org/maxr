@@ -665,7 +665,7 @@ int clanSelection (cClient& client, bool noReturn)
 {
 	if (client.getGameSetting()->clans != SETTING_CLANS_ON) return 0;
 
-	cPlayer& player = *client.getActivePlayer();
+	cPlayer& player = client.getActivePlayer();
 	cClanSelectionMenu clanMenu (player.getClan(), noReturn);
 	if (clanMenu.show (NULL) == 1)
 	{
@@ -1799,11 +1799,11 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 cStartupHangarMenu::cStartupHangarMenu (cClient& client_,
 										std::vector<sLandingUnit>& landingUnits_,
 										bool noReturn) :
-	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), client_.getActivePlayer()),
+	cAdvListHangarMenu (LoadPCX (GFXOD_HANGAR), &client_.getActivePlayer()),
 	gameSetting (client_.getGameSetting()),
 	client (&client_),
 	landingUnits (&landingUnits_),
-	upgradeHangarContainer (this, client_.getActivePlayer()),
+	upgradeHangarContainer (this, &client_.getActivePlayer()),
 	chooseUnitLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
 {
 	chooseUnitLabel.setCentered (true);
@@ -4364,9 +4364,9 @@ void cUpgradeHangarContainer::computePurchased (const cPlayer& player)
 
 //------------------------------------------------------------------------------
 cUpgradeMenu::cUpgradeMenu (cClient& client_) :
-	cHangarMenu (LoadPCX (GFXOD_UPGRADE), client_.getActivePlayer(), MNU_BG_ALPHA),
+	cHangarMenu (LoadPCX (GFXOD_UPGRADE), &client_.getActivePlayer(), MNU_BG_ALPHA),
 	client (&client_),
-	upgradeHangarContainer (this, client_.getActivePlayer())
+	upgradeHangarContainer (this, &client_.getActivePlayer())
 {
 	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Upgrades_Menu"));
 	titleLabel->setCentered (true);
@@ -4375,7 +4375,7 @@ cUpgradeMenu::cUpgradeMenu (cClient& client_) :
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
-	const int credits = client_.getActivePlayer()->Credits;
+	const int credits = client_.getActivePlayer().Credits;
 	upgradeHangarContainer.getGoldBar().setMaximalValue (credits);
 	upgradeHangarContainer.getGoldBar().setCurrentValue (credits);
 

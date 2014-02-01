@@ -160,10 +160,10 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 {
 	// make damage effect
-	const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax &&
 		cSettings::getInstance().isDamageEffects() &&
-		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
+		(owner == &activePlayer || activePlayer.canSeeAnyAreaUnder (*this)))
 	{
 		int intense = (int) (100 - 100 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir()));
@@ -210,7 +210,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 		// max StartUp value for undetected stealth units is 100,
 		// because they stay half visible
-		if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == gameGUI.getClient()->getActivePlayer())
+		if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == &gameGUI.getClient()->getActivePlayer())
 		{
 			if (StartUp > 100) StartUp = 0;
 		}
@@ -285,7 +285,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// draw indication, when building is complete
-	if (IsBuilding && BuildRounds == 0 && owner == gameGUI.getClient()->getActivePlayer() && !BuildPath)
+	if (IsBuilding && BuildRounds == 0 && owner == &gameGUI.getClient()->getActivePlayer() && !BuildPath)
 	{
 		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
@@ -540,7 +540,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 			cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == client->getActivePlayer()) alpha = 100;
+			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == &client->getActivePlayer()) alpha = 100;
 		}
 	}
 	render_simple (surface, dest, zoomFactor, alpha);
@@ -727,7 +727,7 @@ bool cVehicle::refreshData()
 
 void cVehicle::drawPath_BuildPath (cGameGUI& gameGUI)
 {
-	assert (!ClientMoveJob || !ClientMoveJob->Waypoints || owner != gameGUI.getClient()->getActivePlayer());
+	assert (!ClientMoveJob || !ClientMoveJob->Waypoints || owner != &gameGUI.getClient()->getActivePlayer());
 
 	if (!BuildPath || (BandX == PosX && BandY == PosY) || gameGUI.mouseInputMode == placeBand) return;
 
@@ -773,7 +773,7 @@ void cVehicle::drawPath_BuildPath (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 void cVehicle::DrawPath (cGameGUI& gameGUI)
 {
-	if (!ClientMoveJob || !ClientMoveJob->Waypoints || owner != gameGUI.getClient()->getActivePlayer())
+	if (!ClientMoveJob || !ClientMoveJob->Waypoints || owner != &gameGUI.getClient()->getActivePlayer())
 	{
 		drawPath_BuildPath (gameGUI);
 		return;
@@ -853,7 +853,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		return lngPack.i18n ("Text~Comp~Surveying");
 	else if (IsBuilding)
 	{
-		if (owner != gameGUI.getClient()->getActivePlayer())
+		if (owner != &gameGUI.getClient()->getActivePlayer())
 			return lngPack.i18n ("Text~Comp~Producing");
 		else
 		{
@@ -1145,7 +1145,7 @@ void cVehicle::doSurvey (const cServer& server)
 //-----------------------------------------------------------------------------
 void cVehicle::MakeReport (cGameGUI& gameGUI)
 {
-	if (owner != gameGUI.getClient()->getActivePlayer())
+	if (owner != &gameGUI.getClient()->getActivePlayer())
 		return;
 
 	if (isDisabled())

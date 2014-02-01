@@ -1021,7 +1021,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (Vehicle->moving) doEndMoveVehicle();
 			Log.write (" Client: next field is blocked: DestX: " + iToStr (Waypoints->next->X) + ", DestY: " + iToStr (Waypoints->next->Y), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if (Vehicle->owner != client->getActivePlayer())
+			if (Vehicle->owner != &client->getActivePlayer())
 			{
 				bFinished = true;
 				break;
@@ -1110,7 +1110,7 @@ void cClientMoveJob::moveVehicle()
 	// Ggf Tracks malen:
 	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWaterOrCoast (Vehicle->PosX, Vehicle->PosY) && !
 		(Waypoints && Waypoints->next && Map->isWater (Waypoints->next->X, Waypoints->next->Y)) &&
-		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->canSeeAnyAreaUnder (*Vehicle)))
+		(Vehicle->owner == &client->getActivePlayer() || client->getActivePlayer().canSeeAnyAreaUnder (*Vehicle)))
 	{
 		if (abs (Vehicle->OffX) == 64 || abs (Vehicle->OffY) == 64)
 		{

@@ -639,13 +639,13 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 			unit->data.speedCur = message->popInt16();
 	}
 	const bool sentryReaction = message->popBool();
-	if (sentryReaction && unit && unit->owner == client->getActivePlayer())
+	if (sentryReaction && unit && unit->owner == &client->getActivePlayer())
 	{
 		const int x = unit->PosX;
 		const int y = unit->PosY;
 		const string name = unit->getDisplayName();
 		const sID id = unit->data.ID;
-		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
+		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
 		client->getGameGUI().addCoords (report);
 		PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
@@ -896,7 +896,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			Log.write (" Client: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr (targetVehicle->iID) + ") hit. Remaining HP: " + iToStr (targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 
 			name = targetVehicle->getDisplayName();
-			if (targetVehicle->owner == client.getActivePlayer()) ownUnit = true;
+			if (targetVehicle->owner == &client.getActivePlayer()) ownUnit = true;
 
 			if (targetVehicle->data.hitpointsCur <= 0)
 			{
@@ -919,7 +919,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			Log.write (" Client: building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 
 			name = targetBuilding->getDisplayName();
-			if (targetBuilding->owner == client.getActivePlayer()) ownUnit = true;
+			if (targetBuilding->owner == &client.getActivePlayer()) ownUnit = true;
 
 			if (targetBuilding->data.hitpointsCur <= 0)
 			{
@@ -958,7 +958,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			message = name + " " + lngPack.i18n ("Text~Comp~Attacked");
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
-		const sSavedReportMessage& report = client.getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
+		const sSavedReportMessage& report = client.getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
 		client.getGameGUI().addCoords (report);
 	}
 

@@ -34,7 +34,7 @@ using namespace std;
 void sendClan (const cClient& client)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_CLAN);
-	const cPlayer& player = *client.getActivePlayer();
+	const cPlayer& player = client.getActivePlayer();
 
 	message->pushInt16 (player.getClan());
 	message->pushInt16 (player.getNr());
@@ -52,14 +52,14 @@ void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& l
 		message->pushInt16 (landingList[i].cargo);
 	}
 	message->pushInt16 ((int) landingList.size());
-	message->pushInt16 (client.getActivePlayer()->getNr());
+	message->pushInt16 (client.getActivePlayer().getNr());
 
 	client.sendNetMessage (message);
 }
 
 void sendUnitUpgrades (const cClient& client)
 {
-	const cPlayer& player = *client.getActivePlayer();
+	const cPlayer& player = client.getActivePlayer();
 	cNetMessage* message = NULL;
 	int count = 0;
 
@@ -164,13 +164,13 @@ void sendReconnectionSuccess (const cClient& client)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCCESS);
 
-	message->pushInt16 (client.getActivePlayer()->getNr());
+	message->pushInt16 (client.getActivePlayer().getNr());
 	client.sendNetMessage (message);
 }
 
 void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrades)
 {
-	const cPlayer* player = client.getActivePlayer();
+	const cPlayer& player = client.getActivePlayer();
 	cNetMessage* msg = NULL;
 	int iCount = 0;
 
@@ -187,8 +187,8 @@ void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& 
 		}
 
 		const sUnitData* currentVersion;
-		if (i < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[i];
-		else currentVersion = &player->BuildingData[i - UnitsData.getNrVehicles()];
+		if (i < UnitsData.getNrVehicles()) currentVersion = &player.VehicleData[i];
+		else currentVersion = &player.BuildingData[i - UnitsData.getNrVehicles()];
 
 		if (i < UnitsData.getNrVehicles()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
@@ -208,7 +208,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& 
 		if (msg->iLength + 38 > PACKAGE_LENGTH)
 		{
 			msg->pushInt16 (iCount);
-			msg->pushInt16 (player->getNr());
+			msg->pushInt16 (player.getNr());
 			client.sendNetMessage (msg);
 			msg = NULL;
 		}
@@ -217,7 +217,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& 
 	if (msg != NULL)
 	{
 		msg->pushInt16 (iCount);
-		msg->pushInt16 (player->getNr());
+		msg->pushInt16 (player.getNr());
 		client.sendNetMessage (msg);
 	}
 }
@@ -228,7 +228,7 @@ void sendLandingCoords (const cClient& client, const sClientLandData& c)
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_COORDS);
 	message->pushInt16 (c.iLandY);
 	message->pushInt16 (c.iLandX);
-	message->pushChar (client.getActivePlayer()->getNr());
+	message->pushChar (client.getActivePlayer().getNr());
 
 	client.sendNetMessage (message);
 }

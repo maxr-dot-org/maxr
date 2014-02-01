@@ -126,9 +126,9 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 	}
 	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false))
 	{
-		const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
+		const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
-		if (!data.canBuild.empty() && !BuildList.empty() && owner == activePlayer)
+		if (!data.canBuild.empty() && !BuildList.empty() && owner == &activePlayer)
 		{
 			const sBuildList& buildListItem = BuildList[0];
 			const string& unitName = buildListItem.type.getUnitDataOriginalVersion()->name;
@@ -169,7 +169,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		}
 
 		// Research Center
-		if (data.canResearch && owner == activePlayer)
+		if (data.canResearch && owner == &activePlayer)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -194,7 +194,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		}
 
 		// Goldraffinerie:
-		if (data.convertsGold && owner == activePlayer)
+		if (data.convertsGold && owner == &activePlayer)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
@@ -279,12 +279,12 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 {
 	float factor = (float) gameGUI.getTileSize() / 64.0f;
-	cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
+	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 	// draw the damage effects
 	if (gameGUI.timer100ms && data.hasDamageEffect &&
 		data.hitpointsCur < data.hitpointsMax &&
 		cSettings::getInstance().isDamageEffects() &&
-		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
+		(owner == &activePlayer || activePlayer.canSeeAnyAreaUnder (*this)))
 	{
 		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir()));
@@ -374,7 +374,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw the mark, when a build order is finished
-	if (((!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
+	if (((!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == &gameGUI.getClient()->getActivePlayer())
 	{
 		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
 		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
@@ -1524,7 +1524,7 @@ void cBuilding::Select (cGameGUI& gameGUI)
 
 	// some sounds for special moments
 	// (disabled as long as you are not the owner)
-	if (gameGUI.getClient()->getActivePlayer() == owner)
+	if (&gameGUI.getClient()->getActivePlayer() == owner)
 	{
 		// running out of ammo
 		if (data.canAttack)

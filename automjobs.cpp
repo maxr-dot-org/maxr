@@ -109,7 +109,7 @@ void cAutoMJob::DoAutoMove (const std::vector<cAutoMJob*>& jobs, int iNumber)
 {
 	if (vehicle->isBeeingAttacked) return;
 	if (client->isFreezed()) return;
-	if (vehicle->owner != client->getActivePlayer()) return;
+	if (vehicle->owner != &client->getActivePlayer()) return;
 
 	if (vehicle->ClientMoveJob == NULL || vehicle->ClientMoveJob->bFinished)
 	{
@@ -299,7 +299,7 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 	if (minValue == 0)
 	{
 		const string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
-		const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
 		client->getGameGUI().addCoords (report);
 		finished = true;
 	}
@@ -313,7 +313,7 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 		else
 		{
 			const string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
-			const sSavedReportMessage& report = client->getActivePlayer()->addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+			const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
 			client->getGameGUI().addCoords (report);
 			finished = true;
 		}

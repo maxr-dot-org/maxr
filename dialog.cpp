@@ -866,7 +866,7 @@ void drawContextItem (const string& sText, bool bPressed, int x, int y, SDL_Surf
 
 cDialogResearch::cDialogResearch (cClient& client_) :
 	cMenu (LoadPCX (GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA),
-	client (&client_), owner (client_.getActivePlayer()),
+	client (&client_), owner (&client_.getActivePlayer()),
 	titleLabel (position.x + position.w / 2, position.y + 19, lngPack.i18n ("Text~Title~Labs")),
 	centersLabel (position.x + 58, position.y + 52, lngPack.i18n ("Text~Comp~Labs")),
 	themeLabel (position.x + 200, position.y + 52, lngPack.i18n ("Text~Comp~Themes")),
