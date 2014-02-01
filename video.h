@@ -21,9 +21,9 @@
 #define videoH
 
 #include "autosurface.h"
-class SDL_Texture;
-class SDL_Renderer;
-class SDL_Window;
+struct SDL_Texture;
+struct SDL_Renderer;
+struct SDL_Window;
 struct SDL_Surface;
 
 /**
