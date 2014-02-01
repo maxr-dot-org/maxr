@@ -24,25 +24,25 @@
 #endif
 
 #ifndef MAXR_NO_OVERRIDE_FUNCTION
-#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7)) && (__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 7)) || !(__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
 #       define MAXR_NO_OVERRIDE_FUNCTION   1
 #   endif
 #endif
 
 #ifndef MAXR_NO_DELETE_FUNCTION
-#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 4)) && (__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 4)) || !(__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
 #       define MAXR_NO_DELETE_FUNCTION     1
 #   endif
 #endif
 
 #ifndef MAXR_NO_NOEXCEPT
-#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6)) && (__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6)) || !(__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
 #       define MAXR_NO_NOEXCEPT            1
 #   endif
 #endif
 
 #ifndef MAXR_NO_NOEXCEPT_FUNCTION
-#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6)) && (__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#   if (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6)) || !(__cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__))
 #       define MAXR_NO_NOEXCEPT_FUNCTION   1
 #   endif
 #endif
