@@ -78,10 +78,9 @@ cDedicatedServer::cDedicatedServer()
 //------------------------------------------------------------------------
 cDedicatedServer::~cDedicatedServer()
 {
-	delete network;
-
 	for (size_t i = 0; i < games.size(); i++)
 		delete games[i];
+	delete network;
 
 	delete configuration;
 }
