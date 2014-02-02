@@ -739,12 +739,12 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	cEventHandling eventHandling;
 	cClient client (&server, network, eventHandling);
 	cStaticMap* map = NULL;
-	std::vector<cPlayer*> players;
-	cPlayer clientPlayer (splayer);
+	std::vector<sPlayer*> players;
+	sPlayer clientPlayer (splayer);
 
 	server.addPlayer (new cPlayer (splayer));
 	players.push_back (&clientPlayer);
-	client.setPlayers (&players, &clientPlayer);
+	client.setPlayers (players, clientPlayer);
 
 	int lastDir = 1;
 	int step = 0;
@@ -825,18 +825,26 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 	const int player = 0;
 
 	// Following may be simplified according to serverGame::loadGame
-	std::vector<cPlayer*> clientPlayerList;
+	std::vector<sPlayer*> clientPlayerList;
 
 	// copy players for client
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
+		const cPlayer& p = *serverPlayerList[i];
+		clientPlayerList.push_back (new sPlayer (p.getName(), p.getColor(), p.getNr(), p.getSocketNum()));
 	}
 	// init client and his player
 	cEventHandling eventHandler;
 	cClient client (&server, network, eventHandler);
 	client.setMap (*server.Map->staticMap);
-	client.setPlayers (&clientPlayerList, clientPlayerList[player]);
+	client.setPlayers (clientPlayerList, *clientPlayerList[player]);
+
+	for (size_t i = 0; i != clientPlayerList.size(); ++i)
+	{
+		delete clientPlayerList[i];
+	}
+	clientPlayerList.clear();
+
 
 	// in singleplayer only the first player is important
 	serverPlayerList[player]->setLocal();
@@ -857,12 +865,6 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 	// start game
 	server.serverState = SERVER_STATE_INGAME;
 	client.getGameGUI().show (&client);
-
-	for (size_t i = 0; i != clientPlayerList.size(); ++i)
-	{
-		delete clientPlayerList[i];
-	}
-	clientPlayerList.clear();
 
 	server.stop();
 
@@ -2930,15 +2932,12 @@ void cNetworkHostMenu::okReleased (void* parent)
 	{
 		cServer server (menu->network);
 
-		std::vector<cPlayer*> clientPlayers;
 		for (size_t i = 0; i != menu->players.size(); ++i)
 		{
 			server.addPlayer (new cPlayer (*menu->players[i]));
-			clientPlayers.push_back (new cPlayer (*menu->players[i]));
 		}
-		cPlayer& localPlayer = *clientPlayers[0];
 		cClient client (&server, NULL, *menu->eventHandler);
-		client.setPlayers (&clientPlayers, &localPlayer);
+		client.setPlayers (menu->players, *menu->players[0]);
 
 		server.setMap (*menu->map);
 		server.setGameSettings (*menu->settings);
@@ -3271,6 +3270,11 @@ bool cNetworkHostMenu::runSavedGame()
 		}
 	}
 
+	// init client and his player
+	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
+	client->setMap (*server.Map->staticMap);
+	client->setPlayers (players, *actPlayer);
+
 	// send the correct player numbers to client
 	for (size_t i = 0; i != players.size(); ++i)
 		sendRequestIdentification (*network, *players[i]);
@@ -3281,24 +3285,6 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// send client that the game has to be started
 	sendGo (server);
-
-	std::vector<cPlayer*> clientPlayerList;
-
-	// copy players for client
-	cPlayer* localPlayer = NULL;
-	for (size_t i = 0; i != serverPlayerList.size(); ++i)
-	{
-		cPlayer* addedPlayer = new cPlayer (*serverPlayerList[i]);
-		clientPlayerList.push_back (addedPlayer);
-		if (serverPlayerList[i]->isLocal()) localPlayer = clientPlayerList[i];
-		// reinit unit values
-		clientPlayerList[i]->VehicleData = UnitsData.getUnitData_Vehicles (addedPlayer->getClan());
-		clientPlayerList[i]->BuildingData = UnitsData.getUnitData_Buildings (addedPlayer->getClan());
-	}
-	// init client and his player
-	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
-	client->setMap (*server.Map->staticMap);
-	client->setPlayers (&clientPlayerList, localPlayer);
 
 	// send data to all players
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
@@ -3537,16 +3523,8 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	saveOptions();
 
 	cServer* const server = NULL;
-	std::vector<cPlayer*> clientPlayers;
-	cPlayer* localPlayer = NULL;
-	for (size_t i = 0; i != players.size(); ++i)
-	{
-		cPlayer* player = new cPlayer (*players[i]);
-		clientPlayers.push_back (player);
-		if (players[i] == actPlayer) localPlayer = player;
-	}
 	cClient client (server, network, *eventHandler);
-	client.setPlayers (&clientPlayers, localPlayer);
+	client.setPlayers (players, *actPlayer);
 
 	client.setMap (*map);
 	client.setGameSetting (*settings);
@@ -3560,12 +3538,6 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 		runGamePreparation (client, *map, true);
 	}
 	client.getGameGUI().show (&client);
-
-	for (size_t i = 0; i != clientPlayers.size(); ++i)
-	{
-		delete clientPlayers[i];
-	}
-	clientPlayers.clear();
 
 	end = true;
 }
@@ -3587,14 +3559,6 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage* 
 	draw();
 }
 //------------------------------------------------------------------------------
-class LessByNr
-{
-public:
-	bool operator() (const cPlayer* lhs, const cPlayer* rhs) const
-	{
-		return lhs->getNr() < rhs->getNr();
-	}
-};
 
 void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage* message)
 {
@@ -3609,8 +3573,8 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 		int playerCount = message->popInt16();
 
-		std::vector<cPlayer*> clientPlayers;
-		cPlayer* localPlayer = new cPlayer (*actPlayer);
+		std::vector<sPlayer*> clientPlayers;
+		sPlayer* localPlayer = new sPlayer (*actPlayer);
 
 		clientPlayers.push_back (localPlayer);
 		while (playerCount > 1)
@@ -3618,15 +3582,18 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 			std::string playername = message->popString();
 			int playercolor = message->popInt16();
 			int playernr = message->popInt16();
-			sPlayer splayer (playername, playercolor, playernr);
-			clientPlayers.push_back (new cPlayer (splayer));
+			clientPlayers.push_back (new sPlayer (playername, playercolor, playernr));
 			playerCount--;
 		}
-		std::sort (clientPlayers.begin(), clientPlayers.end(), LessByNr());
 
 		cServer* const server = NULL;
 		cClient client (server, network, *eventHandler);
-		client.setPlayers (&clientPlayers, localPlayer);
+		client.setPlayers (clientPlayers, *localPlayer);
+		for (size_t i = 0; i != clientPlayers.size(); ++i)
+		{
+			delete clientPlayers[i];
+		}
+		clientPlayers.clear();
 
 		client.setMap (*map);
 		//client.setGameSetting (*settings);
@@ -3635,11 +3602,6 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 		client.getGameGUI().show (&client);
 
-		for (size_t i = 0; i != clientPlayers.size(); ++i)
-		{
-			delete clientPlayers[i];
-		}
-		clientPlayers.clear();
 
 		end = true;
 	}

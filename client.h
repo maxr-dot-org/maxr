@@ -43,6 +43,7 @@ class cPlayer;
 class cServer;
 class cStaticMap;
 class cTCP;
+struct sPlayer;
 struct sSettings;
 struct sSubBase;
 
@@ -61,7 +62,7 @@ public:
 	~cClient();
 
 	void setMap (cStaticMap& staticMap);
-	void setPlayers (std::vector<cPlayer*>* PlayerList, cPlayer* Player);
+	void setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& splayer);
 
 	// Return local server if any.
 	// TODO: should be const cServer*
@@ -178,8 +179,8 @@ public:
 	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
 	const cMap* getMap() const { return Map; }
 	cMap* getMap() { return Map; }
-	const std::vector<cPlayer*>& getPlayerList() const { return *PlayerList; }
-	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
+	const std::vector<cPlayer*>& getPlayerList() const { return PlayerList; }
+	std::vector<cPlayer*>& getPlayerList() { return PlayerList; }
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
 	const cGameGUI& getGameGUI() const { return *gameGUI; }
@@ -293,7 +294,7 @@ private:
 	/** the map */
 	AutoPtr<cMap> Map;
 	/** List with all players */
-	std::vector<cPlayer*>* PlayerList;
+	std::vector<cPlayer*> PlayerList;
 	/** the active Player */
 	cPlayer* ActivePlayer;
 

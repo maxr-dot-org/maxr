@@ -69,7 +69,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	server (server_),
 	network (network_),
 	eventHandling (&eventHandling_),
-	PlayerList (NULL),
+	ActivePlayer (NULL),
 	casualtiesTracker (new cCasualtiesTracker()),
 	gameGUI (new cGameGUI()),
 	gameTimer(),
@@ -102,6 +102,10 @@ cClient::~cClient()
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
+	for (size_t i = 0; i != PlayerList.size(); ++i)
+	{
+		delete PlayerList[i];
+	}
 }
 
 void cClient::setMap (cStaticMap& staticMap)
@@ -115,28 +119,42 @@ void cClient::setGameSetting (const sSettings& gameSetting_)
 	gameSetting = new sSettings (gameSetting_);
 }
 
-void cClient::setPlayers (std::vector<cPlayer*>* playerList, cPlayer* Player)
+class LessByNr
 {
-	PlayerList = playerList;
-	ActivePlayer = Player;
+public:
+	bool operator() (const cPlayer* lhs, const cPlayer* rhs) const
+	{
+		return lhs->getNr() < rhs->getNr();
+	}
+};
+
+void cClient::setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& splayer)
+{
+	for (size_t i = 0, size = splayers.size(); i != size; ++i)
+	{
+		PlayerList.push_back(new cPlayer(*splayers[i]));
+	}
+	std::vector<sPlayer*>::const_iterator it = std::find(splayers.begin(), splayers.end(), &splayer);
+	ActivePlayer = PlayerList[it - splayers.begin()];
+	std::sort(PlayerList.begin(), PlayerList.end(), LessByNr());
 
 	initPlayersWithMap();
 }
 
 void cClient::initPlayersWithMap()
 {
-	if (PlayerList == 0 || Map == 0) return;
+	if (PlayerList.empty() || Map == 0) return;
 
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		(*PlayerList) [i]->initMaps (*Map);
+		PlayerList[i]->initMaps (*Map);
 	}
 
 	// generate subbase for enemy players
-	for (size_t i = 0; i != PlayerList->size(); ++i)
+	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		if ((*PlayerList) [i] == ActivePlayer) continue;
-		(*PlayerList) [i]->base.SubBases.push_back (new sSubBase ((*PlayerList) [i]));
+		if (PlayerList[i] == ActivePlayer) continue;
+		PlayerList[i]->base.SubBases.push_back (new sSubBase (PlayerList[i]));
 	}
 	gameGUI->setClient (this);
 }
@@ -1907,11 +1925,10 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	}
 
 	// try to find plyer by name
-	for (unsigned int i = 0; i < PlayerList->size(); i++)
+	for (unsigned int i = 0; i < PlayerList.size(); i++)
 	{
-		if ((*PlayerList) [i]->getName() == playerID) return (*PlayerList) [i];
+		if (PlayerList[i]->getName() == playerID) return PlayerList[i];
 	}
-
 	return NULL;
 }
 

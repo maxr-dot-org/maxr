@@ -116,14 +116,14 @@ void cDebugOutput::draw()
 
 	if (debugPlayers)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->PlayerList->size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->getPlayerList().size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
 		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
 		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
-		const std::vector<cPlayer*>& playerList = *client->PlayerList;
+		const std::vector<cPlayer*>& playerList = client->getPlayerList();
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
 			// HACK SHOWFINISHEDPLAYERS
