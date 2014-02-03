@@ -700,6 +700,9 @@ class cHotSeatMenu : public cMenu
 public:
 	explicit cHotSeatMenu (const sSettings& setting);
 
+	ePlayerType getPlayerType(int playerIndex) const { return playerTypes[playerIndex]; }
+	int getClan (int playerIndex) const { return clans[playerIndex]; }
+
 private:
 	void setClan (int player, int clan);
 	void choosePlayerType (int player, ePlayerType playerType);

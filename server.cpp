@@ -168,6 +168,11 @@ void cServer::cancelStateInitGame()
 	assert (serverState == SERVER_STATE_INITGAME);
 
 	serverState = SERVER_STATE_ROOM;
+	for (size_t i = 0, size = PlayerList.size(); i != size; ++i)
+	{
+		delete PlayerList[i];
+	}
+	PlayerList.clear();
 }
 
 //------------------------------------------------------------------------------

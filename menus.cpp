@@ -663,7 +663,8 @@ int planetSelection (cStaticMap*& map)
 
 int clanSelection (cClient& client, bool noReturn)
 {
-	if (client.getGameSetting()->clans != SETTING_CLANS_ON) return 0;
+	if (client.getGameSetting()->clans != SETTING_CLANS_ON
+		|| client.getGameSetting()->hotseat) return 0;
 
 	cPlayer& player = client.getActivePlayer();
 	cClanSelectionMenu clanMenu (player.getClan(), noReturn);
@@ -742,7 +743,6 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	std::vector<sPlayer*> players;
 	sPlayer clientPlayer (splayer);
 
-	server.addPlayer (new cPlayer (splayer));
 	players.push_back (&clientPlayer);
 	client.setPlayers (players, clientPlayer);
 
@@ -762,6 +762,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 				{
 					server.setMap (*map);
 					server.setGameSettings (settings);
+					server.addPlayer (new cPlayer (splayer));
 					server.changeStateToInitGame();
 					client.setMap (*map);
 					client.setGameSetting (settings);
@@ -934,6 +935,28 @@ void cMultiPlayersMenu::tcpClientReleased (void* parent)
 }
 
 //------------------------------------------------------------------------------
+
+static std::vector<sPlayer*> buildPlayerList (const cHotSeatMenu& hotSeatMenu, std::vector<int>& clans)
+{
+	std::vector<sPlayer*> res;
+	const char* const playerNames[] = {
+		"Player 1", "Player 2", "Player 3", "Player 4",
+		"Player 5", "Player 6", "Player 7", "Player 8"
+	};
+
+	int nr = 0;
+	for (int i = 0; i != 4; ++i)
+	{
+		if (hotSeatMenu.getPlayerType (i) == PLAYERTYPE_NONE) continue;
+		res.push_back (new sPlayer (lngPack.i18n (playerNames[i]), i, nr++));
+		res.back()->setLocal();
+		clans.push_back (hotSeatMenu.getClan (i));
+		// TODO return PlayerType for AI
+	}
+	return res;
+}
+
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::newHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
@@ -944,20 +967,12 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 
 	sSettings settings;
 	cStaticMap* map = NULL;
-	settings.hotseat = true;
-
-#if 0
 	cTCP* const network = NULL;
 	cServer server (network);
-
-	sPlayer splayer1 (cSettings::getInstance().getPlayerName(), cl_red, 0);
-	splayer1.setLocal();
 	cEventHandling eventHandling;
-	cClient client (&server, network, eventHandling);
-	std::vector<cPlayer*> players;
-	cPlayer clientPlayer (splayer);
 	std::vector<cClient*> clients;
-#endif
+
+	settings.hotseat = true;
 
 	int lastDir = 1;
 	int step = 0;
@@ -977,25 +992,47 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 
 				if (dir == 1)
 				{
-					//server.setMap (*map);
-					//server.setGameSettings (settings);
-					// TODO
+					server.setMap (*map);
+					server.setGameSettings (settings);
+					std::vector<int> clans;
+					std::vector<sPlayer*> splayers = buildPlayerList (hotSeatMenu, clans);
+					for (size_t i = 0, size = splayers.size(); i != size; ++i)
+					{
+						server.addPlayer (new cPlayer (*splayers[i]));
+					}
 					// Create clients.
-					// client.setMap (*map);
-					// client.setGameSetting (settings);
-					//server.changeStateToInitGame();
+					for (size_t i = 0, size = splayers.size(); i != size; ++i)
+					{
+						cClient* client = new cClient (&server, network, eventHandling);
+						clients.push_back (client);
+						client->setPlayers(splayers, *splayers[i]);
+						client->getActivePlayer().setClan (clans[i]);
+						client->setMap (*map);
+						client->setGameSetting (settings);
+					}
+					for (size_t i = 0, size = splayers.size(); i != size; ++i)
+						delete splayers[i];
+					server.changeStateToInitGame();
 				}
 				break;
 			}
-#if 0
+#if 1
 			case 3:
 			{
-				// For each client
-				dir = runGamePreparation (client, *map, false);
-
+				for (size_t i = 0, size = clients.size(); i != size; ++i)
+				{
+					dir = runGamePreparation (*clients[i], *map, false);
+					if (dir == -1) break;
+				}
 				if (dir == -1)
 				{
 					// Cancel Server, clients
+					server.cancelStateInitGame();
+					for (size_t i = 0, size = clients.size(); i != size; ++i)
+					{
+						delete clients[i];
+					}
+					clients.clear();
 				}
 				break;
 			}
@@ -1003,10 +1040,14 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 			{
 				// while game is not finished
 				{
-					// For each client
-					client.getGameGUI().show (&client);
+					for (size_t i = 0, size = clients.size(); i != size; ++i)
+						clients[i]->getGameGUI().show (clients[i]);
 				}
 				server.stop();
+				for (size_t i = 0, size = clients.size(); i != size; ++i)
+				{
+					delete clients[i];
+				}
 				menu->draw();
 				return;
 			}
@@ -1112,13 +1153,16 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	iCurrentLine += iLineHeight;
 
 	// Game type field
-	gameTypeLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Game_Type") + ":");
-	menuItems.push_back (gameTypeLabel);
+	if (!settings_.hotseat)
+	{
+		gameTypeLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Game_Type") + ":");
+		menuItems.push_back (gameTypeLabel);
 
-	gameTypeGroup = new cMenuRadioGroup();
-	gameTypeGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Type_Turns"), settings.gameType == SETTINGS_GAMETYPE_TURNS, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	gameTypeGroup->addButton (new cMenuCheckButton (position.x + 240 + 173, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Type_Simu"), settings.gameType == SETTINGS_GAMETYPE_SIMU, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.push_back (gameTypeGroup);
+		gameTypeGroup = new cMenuRadioGroup();
+		gameTypeGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Type_Turns"), settings.gameType == SETTINGS_GAMETYPE_TURNS, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+		gameTypeGroup->addButton (new cMenuCheckButton (position.x + 240 + 173, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Type_Simu"), settings.gameType == SETTINGS_GAMETYPE_SIMU, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+		menuItems.push_back (gameTypeGroup);
+	}
 	iCurrentLine += iLineHeight * 3;
 
 	// Other options (AlienTechs and Clans):
@@ -1263,7 +1307,8 @@ void cSettingsMenu::updateSettings()
 	if (clansGroup->buttonIsChecked (0)) settings.clans = SETTING_CLANS_ON;
 	else settings.clans = SETTING_CLANS_OFF;
 
-	if (gameTypeGroup->buttonIsChecked (0)) settings.gameType = SETTINGS_GAMETYPE_TURNS;
+	if (settings.hotseat) settings.gameType = SETTINGS_GAMETYPE_SIMU;
+	else if (gameTypeGroup->buttonIsChecked (0)) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
 
 	if (victoryGroup->buttonIsChecked (6))
@@ -2392,7 +2437,7 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	menuItems.push_back (backButton);
 
 	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Button~OK"));
-	//okButton->setReleasedFunction (&okReleased);
+	okButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (okButton);
 
 	okButton->setLocked (true);
@@ -2476,6 +2521,15 @@ void cHotSeatMenu::choosePlayerType (int player, ePlayerType playerType)
 		case PLAYERTYPE_HUMAN: playerTypeImages[player][0]->unhide(); break;
 		case PLAYERTYPE_NONE: playerTypeImages[player][1]->unhide(); break;
 		case PLAYERTYPE_PC: playerTypeImages[player][2]->unhide(); break;
+	}
+	okButton->setLocked (true);
+	for (int i = 0; i != 4; ++i)
+	{
+		if (playerTypes[i] != ePlayerType::PLAYERTYPE_NONE)
+		{
+			okButton->setLocked (false);
+			return;
+		}
 	}
 }
 
