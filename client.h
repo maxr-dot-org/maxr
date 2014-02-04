@@ -43,7 +43,7 @@ class cPlayer;
 class cServer;
 class cStaticMap;
 class cTCP;
-struct sPlayer;
+class sPlayer;
 struct sSettings;
 struct sSubBase;
 
