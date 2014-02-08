@@ -76,7 +76,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	FxList (new cFxContainer)
 {
 	gameTimer.setClient (this);
-	if (server) server->setLocalClient (*this);
+	if (server) server->addLocalClient (*this);
 	else network->setMessageReceiver (this);
 	neutralBuildings = NULL;
 	bDefeated = false;

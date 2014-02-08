@@ -61,7 +61,6 @@ int CallbackRunServerThread (void* arg)
 //------------------------------------------------------------------------------
 cServer::cServer (cTCP* network_) :
 	network (network_),
-	localClient (NULL),
 	gameTimer(),
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
@@ -239,8 +238,8 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	{
 		if (network)
 			network->send (message->iLength, message->data);
-		if (localClient != NULL)
-			localClient->pushEvent (message);
+		for (size_t i = 0; i != localClients.size(); ++i)
+			localClients[i]->pushEvent (message);
 		return;
 	}
 
@@ -255,8 +254,14 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	}
 	if (Player->isLocal())
 	{
-		if (localClient != NULL)
-			localClient->pushEvent (message);
+		for (size_t i = 0; i != localClients.size(); ++i)
+		{
+			if (localClients[i]->getActivePlayer().getNr() == iPlayerNum)
+			{
+				localClients[i]->pushEvent (message);
+				break;
+			}
+		}
 	}
 	// on all other sockets the netMessage will be send over TCP/IP
 	else

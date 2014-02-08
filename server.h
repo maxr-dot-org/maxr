@@ -109,7 +109,7 @@ public:
 	/** the type of the current game */
 	eGameTypes getGameType() const;
 
-	void setLocalClient (cClient& client) { localClient = &client; }
+	void addLocalClient (cClient& client) { localClients.push_back(&client); }
 
 	const cCasualtiesTracker* getCasualtiesTracker() const { return casualtiesTracker;}
 	cCasualtiesTracker* getCasualtiesTracker() { return casualtiesTracker;}
@@ -466,8 +466,8 @@ private:
 public:
 	cTCP* network;
 private:
-	/** local client if any. */
-	cClient* localClient;
+	/** local clients if any. */
+	std::vector<cClient*> localClients;
 
 	std::vector<sClientLandData> landingPositions;
 	std::vector<std::vector<sLandingUnit> > landingUnits;
