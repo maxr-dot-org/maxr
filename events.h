@@ -20,7 +20,6 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "defines.h"
 #include "network.h"
 #include "ringbuffer.h"
 
