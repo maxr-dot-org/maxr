@@ -105,9 +105,9 @@ private:
 // the Player class //////////////////////////////
 class cPlayer
 {
+	cPlayer (const cPlayer&) DELETE_CPP11;
 public:
 	cPlayer (const sPlayer& splayer);
-	cPlayer (const cPlayer& Player);
 	~cPlayer();
 
 	const std::string& getName() const { return splayer.getName(); }
@@ -124,6 +124,10 @@ public:
 
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& ID);
+
+	void setLandingPos(int x, int y) { landingPosX = x; landingPosY = y; }
+	int getLandingPosX() const { return landingPosX; }
+	int getLandingPosY() const { return landingPosY; }
 
 	void initMaps (cMap& map);
 	void doScan();
@@ -210,6 +214,8 @@ public:
 	cBuilding* BuildingList;  // List of all building of the player.
 	cBase base;               // Die Basis dieses Spielers.
 private:
+	int landingPosX;
+	int landingPosY;
 	int mapSize; // Width (and Height) of the map.
 public:
 	std::vector<char> ScanMap;            // seen Map tile.

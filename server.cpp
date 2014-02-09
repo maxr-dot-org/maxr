@@ -383,6 +383,7 @@ void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
 	sClientLandData& c = landingPositions[playerNr];
+	cPlayer& player = *getPlayerFromNumber(playerNr);
 	// save last coords, so that a player can confirm his position
 	// after a warning about nearby players
 	c.iLastLandX = c.iLandX;
@@ -390,6 +391,7 @@ void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
 	c.iLandX = message.popInt16();
 	c.iLandY = message.popInt16();
 	c.receivedOK = true;
+	player.setLandingPos(c.iLandX, c.iLandY);
 
 	for (size_t player = 0; player != landingPositions.size(); ++player)
 	{

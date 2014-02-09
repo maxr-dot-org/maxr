@@ -115,6 +115,8 @@ void sPlayer::setToPrevColorIndex()
 //------------------------------------------------------------------------------
 cPlayer::cPlayer (const sPlayer& splayer_) :
 	splayer (splayer_),
+	landingPosX (-1),
+	landingPosY (-1),
 	savedHud (new sHudStateContainer),
 	numEcos (0),
 	lastDeletedUnit (0),
@@ -137,44 +139,6 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 	bFinishedTurn = false;
 
 	researchFinished = false;
-}
-
-//------------------------------------------------------------------------------
-cPlayer::cPlayer (const cPlayer& Player) :
-	splayer (Player.splayer),
-	savedHud (new sHudStateContainer (*Player.savedHud))
-{
-	clan = Player.clan;
-	pointsHistory = Player.pointsHistory;
-	numEcos = Player.numEcos;
-	lastDeletedUnit = Player.lastDeletedUnit;
-
-	// copy vehicle and building data
-	VehicleData = Player.VehicleData;
-	BuildingData = Player.BuildingData;
-
-	// Don't copy ScanMap, ResourceMap, DetectLandMap, DetectSeaMap,
-	//  DetectMinesMap, SentriesMapAir, SentriesMapGround
-	// there should be empty.
-
-	VehicleList = NULL;
-	BuildingList = NULL;
-
-	Credits = Player.Credits;
-	workingResearchCenterCount = Player.workingResearchCenterCount;
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-		researchCentersWorkingOnArea[i] = Player.researchCentersWorkingOnArea[i];
-	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-	{
-		researchLevel.setCurResearchLevel (Player.researchLevel.getCurResearchLevel (i), i);
-		researchLevel.setCurResearchPoints (Player.researchLevel.getCurResearchPoints (i), i);
-	}
-	reportResearchAreasFinished = Player.reportResearchAreasFinished;
-
-	isDefeated = false;
-	bFinishedTurn = Player.bFinishedTurn;
-
-	researchFinished = Player.researchFinished;
 }
 
 //------------------------------------------------------------------------------

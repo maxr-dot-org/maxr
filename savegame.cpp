@@ -344,6 +344,10 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 	cPlayer* Player = new cPlayer (sPlayer (name, color, number));
 	Player->initMaps (map);
 
+	const XMLElement* landingPosNode = playerNode->FirstChildElement ("LandingPos");
+	if (landingPosNode)
+		Player->setLandingPos (landingPosNode->IntAttribute ("x"), landingPosNode->IntAttribute ("y"));
+
 	Player->Credits = playerNode->FirstChildElement ("Credits")->IntAttribute ("num");
 
 	if (XMLElement* const e = playerNode->FirstChildElement ("ScoreHistory"))
@@ -1193,6 +1197,9 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	addAttributeElement (playerNode, "Color", "num", iToStr (Player.getColor()));
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player.getNr()));
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player));
+
+	addAttributeElement (playerNode, "LandingPos", "x", iToStr (Player.getLandingPosX()));
+	addAttributeElement (playerNode, "LandingPos", "y", iToStr (Player.getLandingPosY()));
 
 	// player score
 	XMLElement* scoreNode = addMainElement (playerNode, "ScoreHistory");
