@@ -1021,7 +1021,11 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 			{
 				for (size_t i = 0, size = clients.size(); i != size; ++i)
 				{
-					dir = runGamePreparation (*clients[i], *map, false);
+					Video.clearBuffer();
+					const std::string& name = client.getActivePlayer().getName();
+					cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
+					okDialog.show (NULL);
+					dir = runGamePreparation (*clients[i], *map, true);
 					if (dir == -1) break;
 				}
 				if (dir == -1)
@@ -2422,6 +2426,7 @@ void cLandingMenu::hitPosition()
 	infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
 	sendLandingCoords (*client, *landData);
 	draw();
+	if (client->getGameSetting()->hotseat) end = true;
 }
 
 //------------------------------------------------------------------------------
