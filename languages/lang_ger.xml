@@ -80,7 +80,7 @@
 			<Send ENG="Send" localized="Senden"/>
 			<Team ENG="Team" localized="Team"/>
 			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
-			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungs-Menü" />
+			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungsmenü" />
 		</Title>
 		<Button>
 			<Active ENG="Active" localized="Aktiv"/>
@@ -268,7 +268,7 @@
 			<Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
 			<Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
-			<Player_Color_Taken ENG="Playername already in use, please select an other name to be unique" localized="Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."/>
+			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."/>
 			<Player_Turn ENG="%s's turn" localized="%s ist am Zug"/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
