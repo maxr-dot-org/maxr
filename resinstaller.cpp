@@ -2426,7 +2426,86 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "rocket.pcx" )
 
-	// torpedo???
+	// torpedo (for the sup)
+	try
+	{
+		output = getImageFromRes( "TORPEDO", 0);
+		resizeSurface(output, 0, 0, 224, 28);
+		SDL_Rect dst_rect = { 28, 0, 0, 0 };
+		for ( int i = 1; i < 8; i++ )
+		{
+			surface = getImageFromRes("TORPEDO", 2*i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 28;
+		}
+		
+		savePCX( output, path + "torpedo.pcx"); 
+		SDL_FreeSurface( output );
+
+	}
+	END_INSTALL_FILE( path + "torpedo.pcx" )
+
+
+// start iMuzzleTypes for alien units
+	// alien tank plasma ball
+	try
+	{
+		output = getImageFromRes( "ALIEN TANK PLASMA BALL", 0);
+		resizeSurface(output, 0, 0, 224, 28);
+		SDL_Rect dst_rect = { 28, 0, 0, 0 };
+		for ( int i = 1; i < 8; i++ )
+		{
+			surface = getImageFromRes("ALIEN TANK PLASMA BALL", 2*i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 28;
+		}
+		
+		savePCX( output, path + "alien_tank_plasma_ball.pcx"); 
+		SDL_FreeSurface( output );
+
+	}
+	END_INSTALL_FILE( path + "alien_tank_plasma_ball.pcx" )
+	// alien ari plasma ball
+	try
+	{
+		output = getImageFromRes( "ALIEN ARTILLERY PLASMA BALL", 0);
+		resizeSurface(output, 0, 0, 224, 28);
+		SDL_Rect dst_rect = { 28, 0, 0, 0 };
+		for ( int i = 1; i < 8; i++ )
+		{
+			surface = getImageFromRes("ALIEN ARTILLERY PLASMA BALL", 2*i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 28;
+		}
+		
+		savePCX( output, path + "alien_ari_plasma_ball.pcx"); 
+		SDL_FreeSurface( output );
+
+	}
+	END_INSTALL_FILE( path + "alien_ari_plasma_ball.pcx" )
+	// alien missle (for alien attack plane)
+	try
+	{
+		output = getImageFromRes( "ALIEN MISSLE", 0);
+		resizeSurface(output, 0, 0, 224, 28);
+		SDL_Rect dst_rect = { 28, 0, 0, 0 };
+		for ( int i = 1; i < 8; i++ )
+		{
+			surface = getImageFromRes("ALIEN MISSLE", 2*i );
+			SDL_BlitSurface( surface, NULL, output, &dst_rect);
+			SDL_FreeSurface( surface );
+			dst_rect.x += 28;
+		}
+		
+		savePCX( output, path + "alien_missle.pcx"); 
+		SDL_FreeSurface( output );
+
+	}
+	END_INSTALL_FILE( path + "alien_missle.pcx" )
+// end iMuzzleTypes for alien units
 
 	// saveload.flc
 	copyFile( sMAXPath + "SAVELOAD.FLC", path + "saveload.flc" );
