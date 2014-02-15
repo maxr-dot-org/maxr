@@ -908,37 +908,41 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
-	else if (! (data.canCapture || data.canDisable))
-	{
-		if (ClientMoveJob)
-			return lngPack.i18n ("Text~Comp~Moving");
-		else if (manualFireActive)
-			return lngPack.i18n ("Text~Comp~ReactionFireOff");
-		else if (sentryActive)
-			return lngPack.i18n ("Text~Comp~Sentry");
-	}
-	// for infiltrators
-	else if ((data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
-		// TODO should it be original behavior (as it is now) or
-		// don't display CommandRank for enemy (could also be a bug in original...)
-	{
-		string sTmp;
-		if (ClientMoveJob)
-			sTmp = lngPack.i18n ("Text~Comp~Moving") + "\n";
-		else if (manualFireActive)
-			sTmp = lngPack.i18n ("Text~Comp~ReactionFireOff") + "\n";
-		else if (sentryActive)
-			sTmp = lngPack.i18n ("Text~Comp~Sentry") + "\n";
-		else sTmp = lngPack.i18n ("Text~Comp~Waits") + "\n";
 
-		if (CommandoRank < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
-		else if (CommandoRank < 3.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
-		else if (CommandoRank < 6.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
-		else if (CommandoRank < 11.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
-		else if (CommandoRank < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
-		else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
-		if (CommandoRank > 0.f)
-			sTmp += " +" + iToStr ((int) CommandoRank);
+	// generate other infos for normall non-unit-related-events and infiltartors
+	string sTmp;
+	{
+		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
+			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
+		else if (ClientMoveJob)
+			sTmp = lngPack.i18n ("Text~Comp~Moving");
+		else if (attacking)
+			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
+		else if (isBeeingAttacked)
+			sTmp = lngPack.i18n ("Text~Comp~IsBeeingAttacked");
+		else if (manualFireActive)
+			sTmp = lngPack.i18n ("Text~Comp~ReactionFireOff");
+		else if (sentryActive)
+			sTmp = lngPack.i18n ("Text~Comp~Sentry");
+		else sTmp = lngPack.i18n ("Text~Comp~Waits");
+
+		// extra info only for infiltrators
+			// TODO should it be original behavior (as it is now) or
+			// don't display CommandRank for enemy (could also be a bug in original...?)
+		if ((data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/ )
+		{
+			sTmp += "\n";
+			if (CommandoRank < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
+			else if (CommandoRank < 3.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
+			else if (CommandoRank < 6.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
+			else if (CommandoRank < 11.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
+			else if (CommandoRank < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
+			else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
+			if (CommandoRank > 0.f)
+				sTmp += " +" + iToStr ((int) CommandoRank);
+			
+		}
+
 		return sTmp;
 	}
 
