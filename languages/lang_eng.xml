@@ -308,6 +308,7 @@
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by "/>
 			<Attacked ENG="is under attack"/>
 			<AttackingEnemy ENG="%s is attacking the enemy"/>
+			<AttackingStatusStr ENG="attacking"/>
 			<Building_Disabled ENG="Building turned off"/>
 			<CapturedByEnemy ENG="%s has been captured by the enemy"/>
 			<Cheat ENG="used cheat"/>
@@ -340,6 +341,7 @@
 			<GameEndsAt ENG="Game ends at"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed."/>
 			<Gold_Low ENG="More gold needed, refinery turned off."/>
+			<IsBeeingAttacked ENG="Is beeing attacked"/>
 			<Labs ENG="Labs"/>
 			<Landing_Select ENG="Please select starting location."/>
 			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position."/>
@@ -348,6 +350,7 @@
 			<Metal_Insufficient ENG="Cannot start, raw materials needed."/>
 			<Metal_Low ENG="More raw materials needed, factory turned off."/>
 			<Moving ENG="moving"/>
+			<MovingToAttack ENG="moving to attack"/>
 			<NoLimit ENG="Fight to the death!"/>
 			<Path_interrupted ENG="Pathbuilding order could not be resumed."/>
 			<Point ENG="point"/>

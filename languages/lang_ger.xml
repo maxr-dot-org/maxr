@@ -303,6 +303,7 @@
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Änderungen vorgenommen: Rohstoffproduktion verringert um "/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s greift den Feind an"/>
+			<AttackingStatusStr ENG="attacking" localized="angreifend"/>
 			<Building_Disabled ENG="Building turned off" localized="Gebäude ausgeschaltet"/>
 			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="Feind hat %s erbeutet"/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
@@ -335,6 +336,7 @@
 			<GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nicht genug Gold zum Einschalten vorhanden!"/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
+			<IsBeeingAttacked ENG="Is beeing attacked" localized="Wird angegriffen"/>
 			<Labs ENG="Labs" localized="Labore"/>
 			<Landing_Select ENG="Please select starting location." localized="Bitte Landeplatz wählen." />
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
@@ -343,6 +345,7 @@
 			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Nicht genügend Rohstoff zum Einschalten vorhanden!"/>
 			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Mehr Rohstoff benötigt, Verbraucher wurde abgeschaltet!"/>
 			<Moving ENG="moving" localized="in bewegung"/>
+			<MovingToAttack ENG="moving to attack" localized="in Bewerung für Angriff"/>
 			<NoLimit ENG="Fight to the death!" localized="Auf Leben und Tod!"/>
 			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Pfadbauauftrag konnte nicht fortgesetzt werden."/>
 			<Point ENG="point" localized="Punkt"/>
