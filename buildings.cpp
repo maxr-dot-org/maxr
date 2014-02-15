@@ -206,7 +206,11 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		return lngPack.i18n ("Text~Comp~Working");
 	}
 
-	if (sentryActive)
+	if (attacking)
+		return lngPack.i18n ("Text~Comp~AttackingStatusStr");
+	else if (isBeeingAttacked)
+		return lngPack.i18n ("Text~Comp~IsBeeingAttacked");
+	else if (sentryActive)
 		return lngPack.i18n ("Text~Comp~Sentry");
 	else if (manualFireActive)
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
