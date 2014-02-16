@@ -831,7 +831,7 @@ int cGameGUI::show (cClient* client)
 	int lastMouseX = 0;
 	int lastMouseY = 0;
 
-	while (!end && !terminate)
+	while (!exiting())
 	{
 		cEventHandling::handleInputEvents (*this, client);
 		client->gameTimer.run (this);

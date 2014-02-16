@@ -60,7 +60,7 @@ struct sClientLandData
 	bool receivedOK;
 
 	sClientLandData() :
-		iLandX (0), iLandY (0), iLastLandX (0), iLastLandY (0),
+		iLandX (-1), iLandY (-1), iLastLandX (-1), iLastLandY (-1),
 		landingState (LANDING_STATE_UNKNOWN), receivedOK (false)
 	{}
 
@@ -657,9 +657,9 @@ class cLandingMenu : public cMenu
 public:
 	cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData& clientLandData_);
 
+	virtual void handleNetMessages();
 private:
 	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
-	virtual void handleNetMessages();
 
 	void handleNetMessage (cNetMessage* message);
 	void handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& message);
@@ -668,6 +668,7 @@ protected:
 	void createMap();
 	const sTerrain* getMapTile (int x, int y) const;
 	void hitPosition();
+	void drawLandingPos (int mapX, int mapY);
 
 private:
 	static void mapClicked (void* parent);
@@ -690,6 +691,7 @@ protected:
 	AutoPtr<cMenuButton> backButton;
 
 	sClientLandData* landData;
+	bool canClick;
 };
 
 /**

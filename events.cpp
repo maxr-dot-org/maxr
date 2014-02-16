@@ -163,8 +163,10 @@ void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
 		return;
 	}
 
-	while (eventQueue.size() > 0 && (!client || !client->gameTimer.nextMsgIsNextGameTime))
+	while (eventQueue.size() > 0)
 	{
+		if (client && client->gameTimer.nextMsgIsNextGameTime) break;
+		if (activeMenu && activeMenu->exiting()) break;
 		AutoPtr<cNetMessage> message (eventQueue.read());
 		HandleNetMessage (client, activeMenu, *message);
 	}

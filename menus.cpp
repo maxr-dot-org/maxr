@@ -336,7 +336,7 @@ int cMenu::show (cClient* client)
 	int lastResX = Video.getResolutionX();
 	int lastResY = Video.getResolutionY();
 
-	while (!end && !terminate)
+	while (!exiting())
 	{
 		cEventHandling::handleInputEvents (*this, client);
 		if (client)
@@ -348,7 +348,7 @@ int cMenu::show (cClient* client)
 			handleNetMessages();
 
 		// check whether the resolution has been changed
-		if (!end && !terminate && (lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY()))
+		if (!exiting() && (lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY()))
 		{
 			draw (false, true);
 			lastResX = Video.getResolutionX();
@@ -414,7 +414,7 @@ void cMenu::handleMouseInput (sMouseState mouseState)
 			if (activeItem) activeItem->setActivity (false);
 			activeItem = menuItem;
 			activeItem->setActivity (true);
-			if (!end && !terminate) draw();
+			if (!exiting()) draw();
 		}
 		if (mouseState.leftButtonReleased)
 		{
@@ -701,11 +701,10 @@ int landingPosSelection (cClient& client, cStaticMap& map, sClientLandData& land
 }
 
 //------------------------------------------------------------------------------
-int runGamePreparation (cClient& client, cStaticMap& map, bool noReturn)
+int runGamePreparation (cClient& client, cStaticMap& map, sClientLandData& landingData, bool noReturn)
 {
 	const sSettings& settings = *client.getGameSetting();
 	std::vector<sLandingUnit> landingUnits;
-	sClientLandData landingData;
 	int step = 0;
 	int lastDir = 1;
 	while (true)
@@ -724,6 +723,13 @@ int runGamePreparation (cClient& client, cStaticMap& map, bool noReturn)
 		if (dir == 0) step += lastDir;
 		else lastDir = dir;
 	}
+}
+
+int runGamePreparation (cClient& client, cStaticMap& map, bool noReturn)
+{
+	sClientLandData landingData;
+
+	return runGamePreparation (client, map, landingData, noReturn);
 }
 
 }
@@ -957,6 +963,44 @@ static std::vector<sPlayer*> buildPlayerList (const cHotSeatMenu& hotSeatMenu, s
 }
 
 //------------------------------------------------------------------------------
+static int RunHostGamePreparation (std::vector<cClient*>& clients, cStaticMap& map)
+{
+	std::vector<sClientLandData> landingData (clients.size());
+	for (size_t i = 0, size = clients.size(); i != size; ++i)
+	{
+		Video.clearBuffer();
+		const std::string& name = clients[i]->getActivePlayer().getName();
+		cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
+		okDialog.show (NULL);
+		const int dir = runGamePreparation (*clients[i], map, landingData[i], true);
+		if (dir == -1) return -1;
+	}
+	bool allOk = false;
+	while (!allOk)
+	{
+		allOk = true;
+		for (size_t i = 0, size = clients.size(); i != size; ++i)
+		{
+			cLandingMenu landingMenu (*clients[i], map, landingData[i]);
+
+			landingMenu.handleNetMessages();
+			if (landingData[i].landingState == LANDING_POSITION_OK
+				|| landingData[i].landingState == LANDING_POSITION_CONFIRMED)
+			{
+				continue;
+			}
+			allOk = false;
+			Video.clearBuffer();
+			const std::string& name = clients[i]->getActivePlayer().getName();
+			cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
+			okDialog.show (NULL);
+			if (landingMenu.show (clients[i]) == 1) return -1;
+		}
+	}
+	return 1;
+}
+
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::newHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
@@ -1019,15 +1063,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 #if 1
 			case 3:
 			{
-				for (size_t i = 0, size = clients.size(); i != size; ++i)
-				{
-					Video.clearBuffer();
-					const std::string& name = clients[i]->getActivePlayer().getName();
-					cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
-					okDialog.show (NULL);
-					dir = runGamePreparation (*clients[i], *map, true);
-					if (dir == -1) break;
-				}
+				dir = RunHostGamePreparation (clients, *map);
 				if (dir == -1)
 				{
 					// Cancel Server, clients
@@ -2257,7 +2293,8 @@ cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData&
 	cMenu (NULL),
 	client (&client_),
 	map (&map_),
-	landData (&landData_)
+	landData (&landData_),
+	canClick (true)
 {
 	createMap();
 	mapImage = new cMenuImage (180, 18, mapSurface);
@@ -2266,6 +2303,7 @@ cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData&
 
 	circlesImage = new cMenuImage (180, 18, NULL);
 	menuItems.push_back (circlesImage);
+	drawLandingPos (landData->iLandX, landData->iLandY);
 
 	createHud();
 	hudImage = new cMenuImage (0, 0, hudSurface);
@@ -2323,38 +2361,45 @@ const sTerrain* cLandingMenu::getMapTile (int x, int y) const
 }
 
 //------------------------------------------------------------------------------
+void cLandingMenu::drawLandingPos (int mapX, int mapY)
+{
+	if (mapX == -1 || mapY == -1)
+	{
+		circlesImage->setImage (NULL);
+		return;
+	}
+	// pixel per field in x, y direction
+	const float fakx = (Video.getResolutionX() - 192.0f) / map->getSize();
+	const float faky = (Video.getResolutionY() - 32.0f) / map->getSize();
+
+	AutoSurface circleSurface (SDL_CreateRGBSurface (0, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_FillRect (circleSurface, NULL, 0xFF00FF);
+	SDL_SetColorKey (circleSurface, SDL_TRUE, 0xFF00FF);
+
+	const int posX = (int) (mapX * fakx);
+	const int posY = (int) (mapY * faky);
+	// for non 4:3 screen resolutions, the size of the circles is
+	// only correct in x dimension, because I don't draw an ellipse
+	drawCircle (posX, posY, (int) ((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
+	drawCircle (posX, posY, (int) ((LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
+
+	circlesImage->setImage (circleSurface);
+}
+
+//------------------------------------------------------------------------------
 void cLandingMenu::mapClicked (void* parent)
 {
 	cLandingMenu* menu = reinterpret_cast<cLandingMenu*> (parent);
 
-	if (menu->landData->landingState == LANDING_POSITION_OK) return;
+	if (!menu->canClick) return;
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	//pixel per field in x direction
-	const float fakx = (Video.getResolutionX() - 192.0f) / menu->map->getSize();
-	//pixel per field in y direction
-	const float faky = (Video.getResolutionY() - 32.0f) / menu->map->getSize();
-
 	menu->landData->iLandX = (int) ((mouse->x - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
 	menu->landData->iLandY = (int) ((mouse->y - 18) / (448.0f / menu->map-> getSize()) * (448.0f / (Video.getResolutionY() - 32)));
-	menu->landData->landingState = LANDING_POSITION_OK;
+	menu->canClick = false;
 	menu->backButton->setLocked (true);
-	{
-		AutoSurface circleSurface (SDL_CreateRGBSurface (0, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
-		SDL_FillRect (circleSurface, NULL, 0xFF00FF);
-		SDL_SetColorKey (circleSurface, SDL_TRUE, 0xFF00FF);
-
-		int posX = (int) (menu->landData->iLandX * fakx);
-		int posY = (int) (menu->landData->iLandY * faky);
-		// for non 4:3 screen resolutions, the size of the circles is
-		// only correct in x dimension, because I don't draw an ellipse
-		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
-		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
-
-		menu->circlesImage->setImage (circleSurface);
-	}
-
+	menu->drawLandingPos (menu->landData->iLandX, menu->landData->iLandY);
 	Video.draw();
 	mouse->SetCursor (CHand);
 
@@ -2416,7 +2461,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 	switch (message->iType)
 	{
 		case MU_MSG_RESELECT_LANDING: handleNetMessage_MU_MSG_RESELECT_LANDING (*message); break;
-		case MU_MSG_ALL_LANDED: end = true; break;
+		case MU_MSG_ALL_LANDED: landData->landingState = LANDING_POSITION_OK; end = true; break;
 	}
 }
 
