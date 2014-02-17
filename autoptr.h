@@ -24,7 +24,14 @@ public:
 	}
 
 	T* operator ->() const { return p; }
-	operator T* () const { return p; }
+	T& operator *() const { return *p; }
+
+	bool operator == (const T* rhs) const { return p == rhs; }
+	bool operator != (const T* rhs) const { return p != rhs; }
+
+	bool operator !() const { return p == NULL; }
+
+	T* get() const { return p; }
 
 private:
 	T* p;

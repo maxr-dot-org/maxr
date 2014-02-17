@@ -177,8 +177,8 @@ public:
 	void deletePlayer (cPlayer* player);
 
 	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
-	const cMap* getMap() const { return Map; }
-	cMap* getMap() { return Map; }
+	const cMap* getMap() const { return Map.get(); }
+	cMap* getMap() { return Map.get(); }
 	const std::vector<cPlayer*>& getPlayerList() const { return PlayerList; }
 	std::vector<cPlayer*>& getPlayerList() { return PlayerList; }
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
@@ -186,7 +186,7 @@ public:
 	const cGameGUI& getGameGUI() const { return *gameGUI; }
 	cGameGUI& getGameGUI() { return *gameGUI; }
 	void setGameSetting (const sSettings& gameSetting_);
-	const sSettings* getGameSetting() const { return gameSetting; }
+	const sSettings* getGameSetting() const { return gameSetting.get(); }
 private:
 	void initPlayersWithMap();
 

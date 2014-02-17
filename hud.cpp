@@ -546,7 +546,7 @@ cGameGUI::cGameGUI() :
 
 	zoomSlider.setMoveCallback (&zoomSliderMoved);
 	menuItems.push_back (&zoomSlider);
-	menuItems.push_back (zoomSlider.scroller);
+	menuItems.push_back (zoomSlider.scroller.get());
 
 	endButton.setReleasedFunction (&endReleased);
 	menuItems.push_back (&endButton);

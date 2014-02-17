@@ -111,8 +111,8 @@ public:
 
 	void addLocalClient (cClient& client) { localClients.push_back(&client); }
 
-	const cCasualtiesTracker* getCasualtiesTracker() const { return casualtiesTracker;}
-	cCasualtiesTracker* getCasualtiesTracker() { return casualtiesTracker;}
+	const cCasualtiesTracker* getCasualtiesTracker() const { return casualtiesTracker.get();}
+	cCasualtiesTracker* getCasualtiesTracker() { return casualtiesTracker.get();}
 
 	/**
 	* Handles all incoming netMessages from the clients
@@ -283,7 +283,7 @@ public:
 	void makeAdditionalSaveRequest (int saveNum);
 
 	int getTurn() const;
-	const sSettings* getGameSettings() const { return gameSetting; }
+	const sSettings* getGameSettings() const { return gameSetting.get(); }
 	bool isTurnBasedGame() const;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);

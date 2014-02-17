@@ -278,9 +278,9 @@ void cServer::run()
 	{
 		AutoPtr<cNetMessage> event (pollEvent());
 
-		if (event)
+		if (event != NULL)
 		{
-			handleNetMessage (event);
+			handleNetMessage (event.get());
 			checkPlayerUnits();
 		}
 
@@ -661,7 +661,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	}
 
 	// check if attack is possible
-	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), Map, true) == false)
+	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), Map.get(), true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -1614,7 +1614,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 
 		if (StoringVehicle->canLoad (StoredVehicle))
 		{
-			StoringVehicle->storeVehicle (StoredVehicle, Map);
+			StoringVehicle->storeVehicle (StoredVehicle, Map.get());
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->getNr());
@@ -1627,7 +1627,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 
 		if (StoringBuilding->canLoad (StoredVehicle))
 		{
-			StoringBuilding->storeVehicle (StoredVehicle, Map);
+			StoringBuilding->storeVehicle (StoredVehicle, Map.get());
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->getNr());
@@ -1657,7 +1657,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		if (StoringVehicle->canExitTo (x, y, *Map, StoredVehicle->data))
 		{
-			StoringVehicle->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map);
+			StoringVehicle->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map.get());
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->getNr());
 			if (StoredVehicle->data.canSurvey)
@@ -1691,7 +1691,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		if (StoringBuilding->canExitTo (x, y, *Map, StoredVehicle->data))
 		{
-			StoringBuilding->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map);
+			StoringBuilding->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map.get());
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->getNr());
 			if (StoredVehicle->data.canSurvey)
@@ -1934,10 +1934,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (destUnit == NULL) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map, steal)))) return;
+	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, Map.get(), steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, Map.get(), steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map.get(), steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map.get(), steal)))) return;
 
 	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
@@ -2577,7 +2577,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		return;
 	}
 
-	if (unit->owner && casualtiesTracker && ((unit->isABuilding() && unit->data.buildCosts <= 2) == false))
+	if (unit->owner && casualtiesTracker != NULL && ((unit->isABuilding() && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->getNr());
 
 	if (unit->isABuilding())
@@ -3916,7 +3916,7 @@ bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* ve
 //------------------------------------------------------------------------------
 void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 {
-	if (vehicle->owner && casualtiesTracker)
+	if (vehicle->owner && casualtiesTracker != NULL)
 		casualtiesTracker->logCasualty (vehicle->data.ID, vehicle->owner->getNr());
 
 	// delete vehicle in the list of the old player

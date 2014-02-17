@@ -405,7 +405,7 @@ static int getDir (int x, int y, int nextX, int nextY)
 cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int destX_, int destY_, cVehicle* vehicle) :
 	server (&server_)
 {
-	Map = server->Map;
+	Map = server->Map.get();
 	this->Vehicle = vehicle;
 	SrcX = srcX_;
 	SrcY = srcY_;
@@ -818,7 +818,7 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 
 	if (vehicle_->canLoad (destVehicle) == false) return;
 
-	vehicle_->storeVehicle (destVehicle, server.Map);
+	vehicle_->storeVehicle (destVehicle, server.Map.get());
 	if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
@@ -833,14 +833,14 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 	// execute the loading if possible
 	if (destVehicle && destVehicle->canLoad (vehicle_))
 	{
-		destVehicle->storeVehicle (vehicle_, server.Map);
+		destVehicle->storeVehicle (vehicle_, server.Map.get());
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, destVehicle->owner->getNr());
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
-		destBuilding->storeVehicle (vehicle_, server.Map);
+		destBuilding->storeVehicle (vehicle_, server.Map.get());
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, destBuilding->owner->getNr());

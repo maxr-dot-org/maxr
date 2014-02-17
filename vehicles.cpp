@@ -1280,7 +1280,7 @@ bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, server.Map);
+	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, server.Map.get());
 	if (target != this) return false;
 
 	int iOff = server.Map->getOffset (PosX, PosY);
@@ -1294,7 +1294,7 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 //-----------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, server.Map, true))
+	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, server.Map.get(), true))
 	{
 		if (makeAttackOnThis (server, sentryUnit, "sentry reaction"))
 			return true;
@@ -1346,10 +1346,10 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 
 	if (otherUnitIsCheapBuilding == false
 		&& isInRange (otherUnit.PosX, otherUnit.PosY)
-		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, server.Map, true, false))
+		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, server.Map.get(), true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, server.Map);
+		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, server.Map.get());
 		if (target == &otherUnit)
 			return true;
 	}
@@ -1392,7 +1392,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const
 {
 	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
-		&& opponentUnit->canAttackObjectAt (PosX, PosY, server.Map, true)
+		&& opponentUnit->canAttackObjectAt (PosX, PosY, server.Map.get(), true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
 		&& (opponentUnit->isAVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
