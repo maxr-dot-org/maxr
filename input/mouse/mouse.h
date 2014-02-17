@@ -1,0 +1,170 @@
+/***************************************************************************
+ *      Mechanized Assault and Exploration Reloaded Projectfile            *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+#ifndef input_mouse_mouseH
+#define input_mouse_mouseH
+
+#include <map>
+#include <chrono>
+#include <memory>
+
+#include <SDL.h>
+
+#include "../../maxrconfig.h"
+
+#include "../../utility/signal/signal.h"
+#include "../../utility/signal/signalconnectionmanager.h"
+#include "../../utility/position.h"
+
+#include "mousebuttontype.h"
+#include "mousecursortype.h"
+
+class cEventMouseMotion;
+class cEventMouseButton;
+class cEventMouseWheel;
+
+/**
+ * A class to handle a mouse device.
+ *
+ * The mouse provides signals for button clicks, moving and mouse wheel events.
+ */
+class cMouse
+{
+public:
+	/**
+	 * Creates a new mouse object and connects the mouse to the global
+	 * event manager to get the system events the mouse needs.
+	 *
+	 * Since currently we have a single global mouse instance, I see no reason why
+	 * we should ever create another mouse instance.
+	 */
+	cMouse();
+
+	/**
+	 * Returns the global instance of the mouse.
+	 *
+	 * Note: This may should be removed and everywhere where the mouse needs to be accessed an instance
+	 *       of the a mouse object should be passed to.
+	 *
+	 * @return The one global instance of the mouse.
+	 */
+	static cMouse& getInstance();
+
+	/**
+	 * Signal that will be triggered when a mouse button gets pressed.
+	 */
+	cSignal<void(cMouse&, eMouseButtonType)> pressed;
+
+	/**
+	 * Signal that will be triggered when a mouse button gets released.
+	 */
+	cSignal<void(cMouse&, eMouseButtonType)> released;
+
+	/**
+	 * Signal that will be triggered when the mouse wheel is moved.
+	 */
+	cSignal<void(cMouse&, const cPosition& amount)> wheelMoved;
+
+	/**
+	 * Signal that will be triggered when the mouse is moved.
+	 */
+	cSignal<void(cMouse&)> moved;
+
+	/**
+	 * The current position of the mouse.
+	 * @return The position on the screen (in pixels).
+	 */
+	const cPosition& getPosition() const;
+
+	/**
+	 * Sets the cursor of the mouse.
+	 *
+	 * @param type The type of the new cursor to set.
+	 * @param force Force setting the cursor, even if the mouse internally thinks
+	 *              that the same cursor is currently set.
+	 * @return True if the cursor has been reset.
+	 *         False if the same cursor has been set already and force has been false.
+	 */
+	bool setCursorType(eMouseCursorType type, bool force = false);
+
+	/**
+	 * Returns the current cursor type.
+	 * @return The cursor type.
+	 */
+	eMouseCursorType getCursorType() const;
+
+	/**
+	 * Returns whether a mouse button is currently pressed.
+	 *
+	 * @param button The button to check.
+	 * @return True if the passed button is pressed. Else false.
+	 */
+	bool isButtonPressed(eMouseButtonType button) const;
+
+	/**
+	 * Returns how often a button has been clicked consecutively in a short defined time
+	 * period.
+	 *
+	 * The value returned by this function is only reliable during the execution of
+	 * functions connected to the @ref pressed signal.
+	 *
+	 * @param button The button to check the click count for.
+	 * @return The number of times the button has been clicked consecutively.
+	 */
+	unsigned int getButtonClickCount(eMouseButtonType button) const;
+
+	/**
+	 * Enables showing the mouse cursor on the display.
+	 */
+	void show();
+
+	/**
+	 * Hides the mouse cursor from the display.
+	 */
+	void hide();
+private:
+	cMouse(const cMouse& other) MAXR_DELETE_FUNCTION;
+	cMouse& operator=(const cMouse& other) MAXR_DELETE_FUNCTION;
+
+	typedef std::unique_ptr<SDL_Cursor, void(*)(SDL_Cursor*)> SdlCursorPtrType;
+
+	cSignalConnectionManager signalConnectionManager;
+
+	cPosition position;
+	eMouseCursorType cursorType;
+
+	mutable std::map<eMouseButtonType, bool> buttonPressedState;
+	mutable std::map<eMouseButtonType, unsigned int> buttonClickCount;
+	mutable std::map<eMouseButtonType, std::chrono::steady_clock::time_point> lastClickTime;
+
+	SdlCursorPtrType sdlCursor;
+
+	std::chrono::milliseconds doubleClickTime;
+
+	void handleMouseMotionEvent(const cEventMouseMotion& mouseEvent);
+	void handleMouseButtonEvent(const cEventMouseButton& mouseEvent);
+	void handleMouseWheelEvent(const cEventMouseWheel& mouseEvent);
+
+	SDL_Surface* getCursorSurface(eMouseCursorType type);
+	cPosition getCursorHotPoint(eMouseCursorType type);
+
+	std::chrono::steady_clock::time_point& getLastClickTime(eMouseButtonType button);
+};
+
+#endif // input_mouse_mouseH
