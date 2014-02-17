@@ -2455,15 +2455,15 @@ cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cMenu* parentMenu_, cMen
 		decreaseButtons[i] = new cMenuButton (position.x, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 		decreaseButtons[i]->setLocked (true);
 		decreaseButtons[i]->setReleasedFunction (&buttonReleased);
-		addItem (decreaseButtons[i]);
+		addItem (decreaseButtons[i].get());
 
 		increaseButtons[i] = new cMenuButton (position.x + 18, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 		increaseButtons[i]->setLocked (true);
 		increaseButtons[i]->setReleasedFunction (&buttonReleased);
-		addItem (increaseButtons[i]);
+		addItem (increaseButtons[i].get());
 
 		costsLabel[i] = new cMenuLabel (position.x + 40, position.y + 2 + 19 * i);
-		addItem (costsLabel[i]);
+		addItem (costsLabel[i].get());
 	}
 }
 
@@ -2653,12 +2653,12 @@ cMenuScrollBar::cMenuScrollBar (int x, int y, int h, int pageSteps_, cMenu* pare
 
 	upButton = new cMenuButton (position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	upButton->setReleasedFunction (&upButtonReleased);
-	itemList.push_back (upButton);
+	itemList.push_back (upButton.get());
 	downButton = new cMenuButton (position.x, position.y + position.h - 17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	downButton->setReleasedFunction (&downButtonReleased);
-	itemList.push_back (downButton);
+	itemList.push_back (downButton.get());
 	scroller = new cMenuScroller (position.x, position.y + 17, cMenuScroller::SCROLLER_TYPE_VERT, this);
-	itemList.push_back (upButton);
+	itemList.push_back (upButton.get());
 }
 
 void cMenuScrollBar::createSurface()
@@ -2738,7 +2738,7 @@ cMenuListBox::cMenuListBox (int x, int y, int w, int h, int maxLines_, cMenu* pa
 	maxDrawLines = (position.h - 24) / 14;
 
 	scrollBar = new cMenuScrollBar (position.x + position.w - 17, position.y, position.h, 14, parentMenu, this);
-	itemList.push_back (scrollBar);
+	itemList.push_back (scrollBar.get());
 }
 
 void cMenuListBox::draw()
@@ -3104,7 +3104,7 @@ cMenuPlayersBox::cMenuPlayersBox (int x, int y, int w, int h, cNetworkMenu* pare
 	maxDrawPlayers = (position.h - 24) / 14;
 
 	scrollBar = new cMenuScrollBar (position.x + position.w - 17, position.y, position.h, 14, parentMenu, this);
-	itemList.push_back (scrollBar);
+	itemList.push_back (scrollBar.get());
 
 	for (int i = 0; i < maxDrawPlayers; i++)
 	{
@@ -3235,7 +3235,7 @@ void cMenuSaveSlot::reset (int number, bool selected)
 
 cMenuLineEdit* cMenuSaveSlot::getNameEdit()
 {
-	return saveName;
+	return saveName.get();
 }
 
 cMenuBuildSpeedHandler::cMenuBuildSpeedHandler (int x, int y) : cMenuItemContainer (x, y)
@@ -3252,10 +3252,10 @@ cMenuBuildSpeedHandler::cMenuBuildSpeedHandler (int x, int y) : cMenuItemContain
 		costsLabels[i]->setCentered (true);
 		speedButtons[i] =  new cMenuCheckButton (position.x, position.y + 25 * i, lngPack.i18n ("Text~Button~Build") + " x" + iToStr (factor), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON);
 		speedGroup->addButton (speedButtons[i]);
-		addItem (turnsLabels[i]);
-		addItem (costsLabels[i]);
+		addItem (turnsLabels[i].get());
+		addItem (costsLabels[i].get());
 	}
-	addItem (speedGroup);
+	addItem (speedGroup.get());
 	position.w = 77;
 	position.h = 75;
 }
@@ -3313,23 +3313,23 @@ cMenuUpgradeFilter::cMenuUpgradeFilter (int x, int y, cHangarMenu* parentMenu_) 
 {
 	checkButtonTank = new cMenuCheckButton (position.x, position.y, "", true, false, cMenuCheckButton::CHECKBOX_TYPE_TANK);
 	checkButtonTank->setClickedFunction (&buttonChanged);
-	addItem (checkButtonTank);
+	addItem (checkButtonTank.get());
 
 	checkButtonPlane = new cMenuCheckButton (position.x + 33, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_PLANE);
 	checkButtonPlane->setClickedFunction (&buttonChanged);
-	addItem (checkButtonPlane);
+	addItem (checkButtonPlane.get());
 
 	checkButtonShip = new cMenuCheckButton (position.x + 33 * 2, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_SHIP);
 	checkButtonShip->setClickedFunction (&buttonChanged);
-	addItem (checkButtonShip);
+	addItem (checkButtonShip.get());
 
 	checkButtonBuilding = new cMenuCheckButton (position.x + 33 * 3, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_BUILD);
 	checkButtonBuilding->setClickedFunction (&buttonChanged);
-	addItem (checkButtonBuilding);
+	addItem (checkButtonBuilding.get());
 
 	checkButtonTNT = new cMenuCheckButton (position.x + 33 * 4, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_TNT);
 	checkButtonTNT->setClickedFunction (&buttonChanged);
-	addItem (checkButtonTNT);
+	addItem (checkButtonTNT.get());
 }
 
 void cMenuUpgradeFilter::setTankChecked (bool checked)

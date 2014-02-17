@@ -124,16 +124,16 @@ void cServerGame::run()
 	{
 		AutoPtr<cNetMessage> event (pollEvent());
 
-		if (event)
+		if (event != NULL)
 		{
 			if (server != NULL)
 			{
-				server->handleNetMessage (event);
+				server->handleNetMessage (event.get());
 				server->checkPlayerUnits();
 			}
 			else
 			{
-				handleNetMessage (event);
+				handleNetMessage (event.get());
 			}
 		}
 
@@ -235,8 +235,8 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 
 	sendPlayerList (*network, menuPlayers);
 
-	//sendGameData (*network, map, settings, saveGameString, player);
-	sendGameData (*network, map, &settings, "", player);
+	//sendGameData (*network, map.get(), settings, saveGameString, player);
+	sendGameData (*network, map.get(), &settings, "", player);
 }
 
 //------------------------------------------------------------------------------
@@ -303,7 +303,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				}
 				if (map != NULL && map->loadMap (mapName))
 				{
-					sendGameData (*network, map, &settings, "");
+					sendGameData (*network, map.get(), &settings, "");
 					string reply = senderPlayer->getName();
 					reply += " changed the map.";
 					sendMenuChatMessage (*network, reply);
@@ -332,7 +332,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					else
 					{
 						settings.credits = credits;
-						sendGameData (*network, map, &settings, "");
+						sendGameData (*network, map.get(), &settings, "");
 						string reply = senderPlayer->getName();
 						reply += " changed the starting credits.";
 						sendMenuChatMessage (*network, reply);
@@ -384,7 +384,7 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 		if (density != -1)
 		{
 			settings.resFrequency = (eSettingResFrequency) density;
-			sendGameData (*network, map, &settings, "");
+			sendGameData (*network, map.get(), &settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
@@ -406,7 +406,7 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 			if (tokens[0].compare ("oil") == 0) settings.oil = (eSettingResourceValue) amount;
 			else if (tokens[0].compare ("metal") == 0) settings.metal = (eSettingResourceValue) amount;
 			else if (tokens[0].compare ("gold") == 0) settings.gold = (eSettingResourceValue) amount;
-			sendGameData (*network, map, &settings, "");
+			sendGameData (*network, map.get(), &settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";
 			reply += tokens[0];

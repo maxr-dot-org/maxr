@@ -301,7 +301,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 					SAMPLESIZE16 = 1;
 
 				/* initialize the audio mode */
-				if (SDL_OpenAudio (desired, NULL) < 0)
+				if (SDL_OpenAudio (desired.get(), NULL) < 0)
 				{
 					return COULD_NOT_OPEN_AUDIO;
 				}

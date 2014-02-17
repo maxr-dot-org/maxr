@@ -327,17 +327,17 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 	musicSlider.setValue ((float) cSettings::getInstance().getMusicVol());
 	musicSlider.setMoveCallback (&musicVolumeChanged);
 	menuItems.push_back (&musicSlider);
-	menuItems.push_back (musicSlider.scroller);
+	menuItems.push_back (musicSlider.scroller.get());
 
 	effectsSlider.setValue ((float) cSettings::getInstance().getSoundVol());
 	effectsSlider.setMoveCallback (&effectsVolumeChanged);
 	menuItems.push_back (&effectsSlider);
-	menuItems.push_back (effectsSlider.scroller);
+	menuItems.push_back (effectsSlider.scroller.get());
 
 	voicesSlider.setValue ((float) cSettings::getInstance().getVoiceVol());
 	voicesSlider.setMoveCallback (&voicesVolumeChanged);
 	menuItems.push_back (&voicesSlider);
-	menuItems.push_back (voicesSlider.scroller);
+	menuItems.push_back (voicesSlider.scroller.get());
 
 	menuItems.push_back (&nameLabel);
 
@@ -354,7 +354,7 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 	menuItems.push_back (&scrollSpeedLabel);
 	scrollSpeedSlider.setValue ((float) cSettings::getInstance().getScrollSpeed());
 	menuItems.push_back (&scrollSpeedSlider);
-	menuItems.push_back (scrollSpeedSlider.scroller);
+	menuItems.push_back (scrollSpeedSlider.scroller.get());
 
 	menuItems.push_back (&autosaveChBox);
 	menuItems.push_back (&introChBox);
@@ -561,32 +561,32 @@ cDialogTransfer::cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit_, cUnit& de
 
 	resBar = new cMenuMaterialBar (position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false),
 	resBar->setClickedFunction (&barClicked);
-	menuItems.push_back (resBar);
+	menuItems.push_back (resBar.get());
 
 	unitNameLabels[0] = new cMenuLabel (position.x + 70, position.y + 105, "", FONT_LATIN_SMALL_WHITE);
 	unitNameLabels[0]->setCentered (true);
-	menuItems.push_back (unitNameLabels[0]);
+	menuItems.push_back (unitNameLabels[0].get());
 
 	unitNameLabels[1] = new cMenuLabel (position.x + 240, position.y + 105, "", FONT_LATIN_SMALL_WHITE);
 	unitNameLabels[1]->setCentered (true);
-	menuItems.push_back (unitNameLabels[1]);
+	menuItems.push_back (unitNameLabels[1].get());
 
 	unitCargoLabels[0] = new cMenuLabel (position.x + 30, position.y + 60, "", FONT_LATIN_SMALL_WHITE);
 	unitCargoLabels[0]->setCentered (true);
-	menuItems.push_back (unitCargoLabels[0]);
+	menuItems.push_back (unitCargoLabels[0].get());
 
 	unitCargoLabels[1] = new cMenuLabel (position.x + 280, position.y + 60, "", FONT_LATIN_SMALL_WHITE);
 	unitCargoLabels[1]->setCentered (true);
-	menuItems.push_back (unitCargoLabels[1]);
+	menuItems.push_back (unitCargoLabels[1].get());
 
 	transferLabel.setCentered (true);
 	menuItems.push_back (&transferLabel);
 
 	unitImages[0] = new cMenuImage (position.x + 39, position.y + 26);
-	menuItems.push_back (unitImages[0]);
+	menuItems.push_back (unitImages[0].get());
 
 	unitImages[1] = new cMenuImage (position.x + 208, position.y + 26);
-	menuItems.push_back (unitImages[1]);
+	menuItems.push_back (unitImages[1].get());
 
 	getNamesNCargoNImages();
 	setCargos();
@@ -945,30 +945,30 @@ cDialogResearch::cDialogResearch (cClient& client_) :
 	{
 		centerCountLabels[i] = new cMenuLabel (position.x + 43, position.y + 71 + 28 * i, "0");
 		centerCountLabels[i]->setCentered (true);
-		menuItems.push_back (centerCountLabels[i]);
+		menuItems.push_back (centerCountLabels[i].get());
 
 		themeNameLabels[i] = new cMenuLabel (position.x + 183, position.y + 71 + 28 * i, themeNames[i]);
-		menuItems.push_back (themeNameLabels[i]);
+		menuItems.push_back (themeNameLabels[i].get());
 
 		percentageLabels[i] = new cMenuLabel (position.x + 258, position.y + 71 + 28 * i, "+" + iToStr (owner->researchLevel.getCurResearchLevel (i)) + "%");
 		percentageLabels[i]->setCentered (true);
-		menuItems.push_back (percentageLabels[i]);
+		menuItems.push_back (percentageLabels[i].get());
 
 		turnsLabels[i] = new cMenuLabel (position.x + 313, position.y + 71 + 28 * i, "");
 		turnsLabels[i]->setCentered (true);
-		menuItems.push_back (turnsLabels[i]);
+		menuItems.push_back (turnsLabels[i].get());
 
 		incButtons[i] = new cMenuButton (position.x + 143, position.y + 70 + 28 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL);
 		incButtons[i]->setReleasedFunction (&incReleased);
-		menuItems.push_back (incButtons[i]);
+		menuItems.push_back (incButtons[i].get());
 
 		decButtons[i] = new cMenuButton (position.x + 71, position.y + 70 + 28 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL);
 		decButtons[i]->setReleasedFunction (&decReleased);
-		menuItems.push_back (decButtons[i]);
+		menuItems.push_back (decButtons[i].get());
 
 		scroller[i] = new cMenuScrollerHandler (position.x + 90, position.y + 70 + 28 * i, 51, owner->workingResearchCenterCount);
 		scroller[i]->setClickedFunction (&sliderClicked);
-		menuItems.push_back (scroller[i]);
+		menuItems.push_back (scroller[i].get());
 	}
 
 	unusedResearch = owner->workingResearchCenterCount;

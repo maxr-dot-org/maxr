@@ -143,7 +143,7 @@ void cClient::setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& 
 
 void cClient::initPlayersWithMap()
 {
-	if (PlayerList.empty() || Map == 0) return;
+	if (PlayerList.empty() || Map == NULL) return;
 
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
