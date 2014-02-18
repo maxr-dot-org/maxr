@@ -940,7 +940,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 			else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
 			if (CommandoRank > 0.f)
 				sTmp += " +" + iToStr ((int) CommandoRank);
-			
+
 		}
 
 		return sTmp;
@@ -1280,7 +1280,7 @@ bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, server.Map.get());
+	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, *server.Map);
 	if (target != this) return false;
 
 	int iOff = server.Map->getOffset (PosX, PosY);
@@ -1294,7 +1294,7 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 //-----------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, server.Map.get(), true))
+	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, *server.Map, true))
 	{
 		if (makeAttackOnThis (server, sentryUnit, "sentry reaction"))
 			return true;
@@ -1346,10 +1346,10 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 
 	if (otherUnitIsCheapBuilding == false
 		&& isInRange (otherUnit.PosX, otherUnit.PosY)
-		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, server.Map.get(), true, false))
+		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, *server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, server.Map.get());
+		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, *server.Map);
 		if (target == &otherUnit)
 			return true;
 	}
@@ -1392,7 +1392,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const
 {
 	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
-		&& opponentUnit->canAttackObjectAt (PosX, PosY, server.Map.get(), true)
+		&& opponentUnit->canAttackObjectAt (PosX, PosY, *server.Map, true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
 		&& (opponentUnit->isAVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
@@ -1462,7 +1462,7 @@ void cVehicle::DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) con
 {
 	const int spx = gameGUI.getScreenPosX (*this);
 	const int spy = gameGUI.getScreenPosY (*this);
-	const cMap* map = gameGUI.getClient()->getMap();
+	const cMap& map = *gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[8] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1),
 						   T_2<int> (-1, 0),                  T_2<int> (1, 0),
@@ -1471,7 +1471,7 @@ void cVehicle::DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) con
 
 	for (int i = 0; i != 8; ++i)
 	{
-		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, *map, unitData))
+		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, map, unitData))
 			gameGUI.drawExitPoint (spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize);
 	}
 }
@@ -1487,11 +1487,11 @@ bool cVehicle::canExitTo (const int x, const int y, const cMap& map, const sUnit
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
+bool cVehicle::canLoad (int x, int y, const cMap& map, bool checkPosition) const
 {
-	if (Map->isValidPos (x, y) == false) return false;
+	if (map.isValidPos (x, y) == false) return false;
 
-	return canLoad (Map->fields[Map->getOffset (x, y)].getVehicle(), checkPosition);
+	return canLoad (map.fields[map.getOffset (x, y)].getVehicle(), checkPosition);
 }
 
 //-----------------------------------------------------------------------------
@@ -1519,19 +1519,19 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
+void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 {
-	Map->deleteVehicle (*Vehicle);
-	if (Vehicle->sentryActive)
+	map.deleteVehicle (vehicle);
+	if (vehicle.sentryActive)
 	{
-		Vehicle->owner->deleteSentry (*Vehicle);
+		vehicle.owner->deleteSentry (vehicle);
 	}
 
-	Vehicle->manualFireActive = false;
+	vehicle.manualFireActive = false;
 
-	Vehicle->Loaded = true;
+	vehicle.Loaded = true;
 
-	storedUnits.push_back (Vehicle);
+	storedUnits.push_back (&vehicle);
 	data.storageUnitsCur++;
 
 	owner->doScan();
@@ -1540,18 +1540,18 @@ void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
 //-----------------------------------------------------------------------------
 /** Exits a vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
+void cVehicle::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
 {
-	Remove (storedUnits, Vehicle);
+	Remove (storedUnits, &vehicle);
 
 	data.storageUnitsCur--;
 
-	Map->addVehicle (*Vehicle, offset);
+	map.addVehicle (vehicle, offset);
 
-	Vehicle->PosX = offset % Map->getSize();
-	Vehicle->PosY = offset / Map->getSize();
-	Vehicle->Loaded = false;
-	//Vehicle->data.shotsCur = 0;
+	vehicle.PosX = offset % map.getSize();
+	vehicle.PosY = offset / map.getSize();
+	vehicle.Loaded = false;
+	//vehicle.data.shotsCur = 0;
 
 	owner->doScan();
 }
@@ -1653,7 +1653,7 @@ bool cVehicle::clearMine (cServer& server)
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbour field and if it can be stolen or disabled */
 //-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) const
+bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) const
 {
 	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
@@ -1661,9 +1661,9 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 	if (isNextTo (x, y) == false || data.shotsCur == 0)
 		return false;
 
-	int off = map->getOffset (x, y);
-	const cUnit* vehicle  = map->fields[off].getVehicle();
-	const cUnit* building = map->fields[off].getBuilding();
+	int off = map.getOffset (x, y);
+	const cUnit* vehicle  = map.fields[off].getVehicle();
+	const cUnit* building = map.fields[off].getBuilding();
 	const cUnit* unit = vehicle ? vehicle : building;
 
 	if (unit == NULL) return false;

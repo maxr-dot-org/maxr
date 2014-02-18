@@ -200,7 +200,7 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //------------------------------------------------------------------------------
-bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange) const
+bool cUnit::canAttackObjectAt (int x, int y, cMap& map, bool forceAttack, bool checkRange) const
 {
 	if (data.canAttack == false) return false;
 	if (data.shotsCur <= 0) return false;
@@ -208,11 +208,11 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (attacking) return false;
 	if (isBeeingAttacked) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
-	if (map->isValidPos (x, y) == false) return false;
+	if (map.isValidPos (x, y) == false) return false;
 	if (checkRange && isInRange (x, y) == false) return false;
-	const int off = map->getOffset (x, y);
+	const int off = map.getOffset (x, y);
 
-	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWaterOrCoast (x, y) == false)
+	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (x, y) == false)
 		return false;
 
 	const cUnit* target = selectTarget (x, y, data.canAttack, map);
@@ -231,7 +231,7 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 
 	// do not fire on e.g. platforms, connectors etc.
 	// see ticket #436 on bug tracker
-	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map->possiblePlace (*static_cast<const cVehicle*> (this), x, y))
+	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map.possiblePlace (*static_cast<const cVehicle*> (this), x, y))
 		return false;
 
 	if (target->owner == owner)

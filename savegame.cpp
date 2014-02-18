@@ -325,11 +325,11 @@ void cSavegame::loadPlayers (cServer& server)
 	if (playersNode == NULL) return;
 
 	int playernum = 0;
-	cMap* map = server.Map.get();
+	cMap& map = *server.Map;
 	XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
 	while (playerNode)
 	{
-		players.push_back (loadPlayer (playerNode, *map));
+		players.push_back (loadPlayer (playerNode, map));
 		playernum++;
 		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
 	}
@@ -702,7 +702,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			if (!StoringVehicle) return;
 
 			StoringVehicle->data.storageUnitsCur--;
-			StoringVehicle->storeVehicle (vehicle, server.Map.get());
+			StoringVehicle->storeVehicle (*vehicle, *server.Map);
 		}
 		else
 		{
@@ -710,7 +710,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			if (!StoringBuilding) return;
 
 			StoringBuilding->data.storageUnitsCur--;
-			StoringBuilding->storeVehicle (vehicle, server.Map.get());
+			StoringBuilding->storeVehicle (*vehicle, *server.Map);
 		}
 	}
 }

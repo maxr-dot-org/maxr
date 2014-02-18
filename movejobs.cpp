@@ -818,7 +818,7 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 
 	if (vehicle_->canLoad (destVehicle) == false) return;
 
-	vehicle_->storeVehicle (destVehicle, server.Map.get());
+	vehicle_->storeVehicle (*destVehicle, *server.Map);
 	if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
@@ -833,14 +833,14 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 	// execute the loading if possible
 	if (destVehicle && destVehicle->canLoad (vehicle_))
 	{
-		destVehicle->storeVehicle (vehicle_, server.Map.get());
+		destVehicle->storeVehicle (*vehicle_, *server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, destVehicle->owner->getNr());
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
-		destBuilding->storeVehicle (vehicle_, server.Map.get());
+		destBuilding->storeVehicle (*vehicle_, *server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, destBuilding->owner->getNr());
@@ -860,7 +860,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	const int offset = map.getOffset (x, y);
 
 	// check, whether the attack is now possible
-	if (!vehicle_->canAttackObjectAt (x, y, &map, true, true)) return;
+	if (!vehicle_->canAttackObjectAt (x, y, map, true, true)) return;
 
 	// is the target in sight?
 	if (!vehicle_->owner->canSeeAnyAreaUnder (*destUnit)) return;

@@ -197,19 +197,19 @@ void cClient::sendNetMessage (cNetMessage* message) const
 	}
 }
 
-int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group)
+int cClient::addMoveJob (cVehicle& vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group)
 {
-	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle->PosX, vehicle->PosY, DestX, DestY, *vehicle, group);
+	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle.PosX, vehicle.PosY, DestX, DestY, vehicle, group);
 	if (path)
 	{
-		sendMoveJob (*this, path, vehicle->iID);
-		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle->iID) + ", SrcX: " + iToStr (vehicle->PosX) + ", SrcY: " + iToStr (vehicle->PosY) + ", DestX: " + iToStr (DestX) + ", DestY: " + iToStr (DestY), cLog::eLOG_TYPE_NET_DEBUG);
+		sendMoveJob (*this, path, vehicle.iID);
+		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle.iID) + ", SrcX: " + iToStr (vehicle.PosX) + ", SrcY: " + iToStr (vehicle.PosY) + ", DestX: " + iToStr (DestX) + ", DestY: " + iToStr (DestY), cLog::eLOG_TYPE_NET_DEBUG);
 		return 1;
 	}
 	else
 	{
 		// automoving surveyors must not tell this
-		if (!vehicle->autoMJob)
+		if (!vehicle.autoMJob)
 		{
 			PlayRandomVoice (VoiceData.VOINoPath);
 		}
@@ -249,11 +249,11 @@ void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDest
 				shortestWayVehNum = i;
 			}
 		}
-		cVehicle* vehicle = group[shortestWayVehNum];
+		cVehicle& vehicle = *group[shortestWayVehNum];
 		// add the movejob to the destination of the unit.
 		// the formation of the vehicle group will stay as destination formation.
-		const int destX = mainDestX + vehicle->PosX - mainPosX;
-		const int destY = mainDestY + vehicle->PosY - mainPosY;
+		const int destX = mainDestX + vehicle.PosX - mainPosX;
+		const int destY = mainDestY + vehicle.PosY - mainPosY;
 		addMoveJob (vehicle, destX, destY, &group_);
 		// delete the unit from the copyed list
 		group.erase (group.begin() + shortestWayVehNum);
@@ -341,7 +341,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	unsigned int ID = message.popInt16();
 	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID, ID);
 
-	addUnit (PosX, PosY, AddedBuilding, Init);
+	addUnit (PosX, PosY, *AddedBuilding, Init);
 
 	Player->base.addBuilding (AddedBuilding, NULL);
 	gameGUI->onAddedBuilding (*AddedBuilding);
@@ -365,7 +365,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	const bool bAddToMap = message.popBool();
 
 	cVehicle* AddedVehicle = Player->addVehicle (PosX, PosY, UnitID, ID);
-	addUnit (PosX, PosY, AddedVehicle, Init, bAddToMap);
+	addUnit (PosX, PosY, *AddedVehicle, Init, bAddToMap);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message, cMenu* activeMenu)
@@ -413,7 +413,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 
 	AddedVehicle->dir = dir;
 	AddedVehicle->data.version = version;
-	addUnit (iPosX, iPosY, AddedVehicle, false);
+	addUnit (iPosX, iPosY, *AddedVehicle, false);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
@@ -434,14 +434,14 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID, ID);
 
 	AddedBuilding->data.version = version;
-	addUnit (iPosX, iPosY, AddedBuilding, false);
+	addUnit (iPosX, iPosY, *AddedBuilding, false);
 
 	if (AddedBuilding->data.connectsToBase)
 	{
 		Player->base.SubBases[0]->buildings.push_back (AddedBuilding);
 		AddedBuilding->SubBase = Player->base.SubBases[0];
 
-		AddedBuilding->updateNeighbours (getMap());
+		AddedBuilding->updateNeighbours (*getMap());
 	}
 }
 
@@ -1382,14 +1382,14 @@ void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 		cVehicle* storingVehicle = getVehicleFromID (message.popInt16());
 		if (!storingVehicle) return;
 		gameGUI->onVehicleStored (*storingVehicle, *storedVehicle);
-		storingVehicle->storeVehicle (storedVehicle, getMap());
+		storingVehicle->storeVehicle (*storedVehicle, *getMap());
 	}
 	else
 	{
 		cBuilding* storingBuilding = getBuildingFromID (message.popInt16());
 		if (!storingBuilding) return;
 		gameGUI->onVehicleStored (*storingBuilding, *storedVehicle);
-		storingBuilding->storeVehicle (storedVehicle, getMap());
+		storingBuilding->storeVehicle (*storedVehicle, *getMap());
 	}
 }
 
@@ -1407,7 +1407,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 
 		const int x = message.popInt16();
 		const int y = message.popInt16();
-		StoringVehicle->exitVehicleTo (StoredVehicle, getMap()->getOffset (x, y), getMap());
+		StoringVehicle->exitVehicleTo (*StoredVehicle, getMap()->getOffset (x, y), *getMap());
 		if (gameGUI->getSelectedUnit() == StoringVehicle && gameGUI->mouseInputMode == activateVehicle)
 		{
 			gameGUI->mouseInputMode = normalInput;
@@ -1420,7 +1420,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 
 		const int x = message.popInt16();
 		const int y = message.popInt16();
-		StoringBuilding->exitVehicleTo (StoredVehicle, getMap()->getOffset (x, y), getMap());
+		StoringBuilding->exitVehicleTo (*StoredVehicle, getMap()->getOffset (x, y), *getMap());
 
 		if (gameGUI->getSelectedUnit() == StoringBuilding && gameGUI->mouseInputMode == activateVehicle)
 		{
@@ -1750,7 +1750,7 @@ void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (message.popInt16());
 	if (!building) return;
 
-	destroyUnit (building);
+	destroyUnit (*building);
 }
 
 void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message)
@@ -1862,44 +1862,44 @@ int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 	return 0;
 }
 
-void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit, bool bAddToMap)
+void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit, bool bAddToMap)
 {
 	// place the vehicle
-	if (bAddToMap) getMap()->addVehicle (*AddedVehicle, iPosX, iPosY);
+	if (bAddToMap) getMap()->addVehicle (addedVehicle, iPosX, iPosY);
 
-	if (!bInit) AddedVehicle->StartUp = 10;
+	if (!bInit) addedVehicle.StartUp = 10;
 
 	gameGUI->updateMouseCursor();
 	gameGUI->callMiniMapDraw();
 
-	if (AddedVehicle->owner != ActivePlayer && AddedVehicle->iID == ActivePlayer->lastDeletedUnit)
+	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
 		//this unit was captured by an infiltrator
 		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
-		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName());
-		const sSavedReportMessage& report = getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
+		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", addedVehicle.getDisplayName());
+		const sSavedReportMessage& report = getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, addedVehicle.PosX, addedVehicle.PosY);
 		gameGUI->addCoords (report);
 	}
-	else if (AddedVehicle->owner != ActivePlayer)
+	else if (addedVehicle.owner != ActivePlayer)
 	{
 		// make report
-		const string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
-		const sSavedReportMessage& report = getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
+		const string message = addedVehicle.getDisplayName() + " (" + addedVehicle.owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
+		const sSavedReportMessage& report = getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, iPosX, iPosY);
 		gameGUI->addCoords (report);
 
-		if (AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack)
+		if (addedVehicle.data.isStealthOn & TERRAIN_SEA && addedVehicle.data.canAttack)
 			PlayVoice (VoiceData.VOISubDetected);
 		else
 			PlayRandomVoice (VoiceData.VOIDetected);
 	}
 }
 
-void cClient::addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit)
+void cClient::addUnit (int iPosX, int iPosY, cBuilding& addedBuilding, bool bInit)
 {
 	// place the building
-	getMap()->addBuilding (*AddedBuilding, iPosX, iPosY);
+	getMap()->addBuilding (addedBuilding, iPosX, iPosY);
 
-	if (!bInit) AddedBuilding->StartUp = 10;
+	if (!bInit) addedBuilding.StartUp = 10;
 
 	gameGUI->updateMouseCursor();
 	gameGUI->callMiniMapDraw();
@@ -2186,44 +2186,44 @@ sSubBase* cClient::getSubBaseFromID (int iID)
 	return NULL;
 }
 
-void cClient::destroyUnit (cVehicle* vehicle)
+void cClient::destroyUnit (cVehicle& vehicle)
 {
 	// play explosion
-	if (vehicle->data.isBig)
+	if (vehicle.data.isBig)
 	{
-		addFx (new cFxExploBig (vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64));
+		addFx (new cFxExploBig (vehicle.PosX * 64 + 64, vehicle.PosY * 64 + 64));
 	}
-	else if (vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0)
+	else if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
 	{
-		addFx (new cFxExploAir (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
+		addFx (new cFxExploAir (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
 	}
-	else if (getMap()->isWaterOrCoast (vehicle->PosX, vehicle->PosY))
+	else if (getMap()->isWaterOrCoast (vehicle.PosX, vehicle.PosY))
 	{
-		addFx (new cFxExploWater (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
+		addFx (new cFxExploWater (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
 	}
 	else
 	{
-		addFx (new cFxExploSmall (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
+		addFx (new cFxExploSmall (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
 	}
 
-	if (vehicle->data.hasCorpse)
+	if (vehicle.data.hasCorpse)
 	{
 		// add corpse
-		addFx (new cFxCorpse (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
+		addFx (new cFxCorpse (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
 	}
 }
 
-void cClient::destroyUnit (cBuilding* building)
+void cClient::destroyUnit (cBuilding& building)
 {
 	// play explosion animation
-	cBuilding* topBuilding = getMap()->fields[getMap()->getOffset (building->PosX, building->PosY)].getBuilding();
+	cBuilding* topBuilding = getMap()->fields[getMap()->getOffset (building.PosX, building.PosY)].getBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
 		addFx (new cFxExploBig (topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64));
 	}
 	else
 	{
-		addFx (new cFxExploSmall (building->PosX * 64 + 32, building->PosY * 64 + 32));
+		addFx (new cFxExploSmall (building.PosX * 64 + 32, building.PosY * 64 + 32));
 	}
 }
 //------------------------------------------------------------------------------

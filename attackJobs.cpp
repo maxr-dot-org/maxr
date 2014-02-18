@@ -38,12 +38,12 @@
 using namespace std;
 
 //--------------------------------------------------------------------------
-cUnit* selectTarget (int x, int y, char attackMode, cMap* map)
+cUnit* selectTarget (int x, int y, char attackMode, cMap& map)
 {
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;
-	const int offset = map->getOffset (x, y);
-	cMapField& mapField = (*map) [offset];
+	const int offset = map.getOffset (x, y);
+	cMapField& mapField = map[offset];
 
 	// planes
 	targetVehicle = mapField.getPlane();
@@ -54,7 +54,7 @@ cUnit* selectTarget (int x, int y, char attackMode, cMap* map)
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y) && ! (attackMode & AREA_SUB)) targetVehicle = NULL;
+		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map.isWater (x, y) && ! (attackMode & AREA_SUB)) targetVehicle = NULL;
 	}
 
 	// buildings
@@ -127,7 +127,7 @@ void cServerAttackJob::lockTarget (int offset)
 	server->checkPlayerUnits();
 
 	cMap& map = *server->Map;
-	cUnit* target = selectTarget (offset % map.getSize(), offset / map.getSize(), attackMode, &map);
+	cUnit* target = selectTarget (offset % map.getSize(), offset / map.getSize(), attackMode, map);
 	if (target)
 		target->isBeeingAttacked = true;
 
@@ -353,7 +353,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	if (map.isValidPos (x, y) == false) return;
 	int offset = map.getOffset (x, y);
 
-	cUnit* target = selectTarget (x, y, attackMode, &map);
+	cUnit* target = selectTarget (x, y, attackMode, map);
 
 	// check, whether the target is already in the target list.
 	// this is needed, to make sure,
@@ -416,9 +416,9 @@ void cServerAttackJob::makeImpact (int x, int y)
 	if (target && target->data.hitpointsCur <= 0)
 	{
 		if (target->isABuilding())
-			server->destroyUnit (static_cast<cBuilding*> (target));
+			server->destroyUnit (*static_cast<cBuilding*> (target));
 		else
-			server->destroyUnit (static_cast<cVehicle*> (target));
+			server->destroyUnit (*static_cast<cVehicle*> (target));
 
 		target = 0;
 	}
@@ -900,7 +900,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 			if (targetVehicle->data.hitpointsCur <= 0)
 			{
-				client.destroyUnit (targetVehicle);
+				client.destroyUnit (*targetVehicle);
 				targetVehicle = NULL;
 				destroyed = true;
 			}
@@ -923,7 +923,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 			if (targetBuilding->data.hitpointsCur <= 0)
 			{
-				client.destroyUnit (targetBuilding);
+				client.destroyUnit (*targetBuilding);
 				targetBuilding = NULL;
 				destroyed = true;
 			}

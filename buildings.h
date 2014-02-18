@@ -176,8 +176,8 @@ public:
 	*/
 	int refreshData();
 	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
-	void updateNeighbours (const cMap* map);
-	void CheckNeighbours (const cMap* Map);
+	void updateNeighbours (const cMap& map);
+	void CheckNeighbours (const cMap& Map);
 	void ServerStartWork (cServer& server);
 	void ClientStartWork (cGameGUI& gameGUI);
 	void ServerStopWork (cServer& server, bool override);
@@ -190,8 +190,8 @@ public:
 	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
 	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
-	void storeVehicle (cVehicle* Vehicle, cMap* Map);
-	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
+	void storeVehicle (cVehicle& vehicle, cMap& map);
+	void exitVehicleTo (cVehicle& vehicle, int offset, cMap& map);
 
 	/**
 	* returns whether this player has detected this unit or not

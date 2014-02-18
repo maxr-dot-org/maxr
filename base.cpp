@@ -1030,7 +1030,7 @@ sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 
 	if (b && b->owner == building.owner && b->SubBase)
 	{
-		b->CheckNeighbours (map);
+		b->CheckNeighbours (*map);
 		return b->SubBase;
 	}
 	return NULL;
@@ -1063,7 +1063,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		if (sSubBase* const SubBase = checkNeighbour (pos + map->getSize(), *building)) NeighbourList.push_back (SubBase);
 		if (sSubBase* const SubBase = checkNeighbour (pos - 1             , *building)) NeighbourList.push_back (SubBase);
 	}
-	building->CheckNeighbours (map);
+	building->CheckNeighbours (*map);
 
 	RemoveDuplicates (NeighbourList);
 

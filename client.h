@@ -103,7 +103,7 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group = NULL);
+	int addMoveJob (cVehicle& vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group = NULL);
 	void startGroupMove (const std::vector<cVehicle*>& group_, int mainDestX, int mainDestY);
 	/**
 	* adds a new movejob
@@ -167,8 +167,8 @@ public:
 	* destroys a unit
 	* play FX, add rubble and delete Unit
 	*/
-	void destroyUnit (cVehicle* vehicle);
-	void destroyUnit (cBuilding* building);
+	void destroyUnit (cVehicle& vehicle);
+	void destroyUnit (cBuilding& building);
 
 	int getTurn() const;
 	unsigned int getRemainingTimeInSecond() const;
@@ -195,13 +195,12 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param iPosX The X were the unit should be added.
 	*@param iPosY The Y were the unit should be added.
-	*@param Vehicle Vehicle which should be added.
-	*@param Building Building which should be added.
-	*@param Player Player whose vehicle should be added.
+	*@param addedVehicle Vehicle which should be added.
+	*@param addedBuilding Building which should be added.
 	*@param bInit true if this is an initialisation call.
 	*/
-	void addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true);
-	void addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false);
+	void addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit = false, bool bAddToMap = true);
+	void addUnit (int iPosX, int iPosY, cBuilding& addedBuilding, bool bInit = false);
 
 	/**
 	* handles the end of a hotseat game
