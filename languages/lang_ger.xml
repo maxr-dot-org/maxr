@@ -49,7 +49,6 @@
 			<Choose_Clan ENG="Choose Clan" localized="Clan-Auswahl"/>
 			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
 			<Choose_Units ENG="Choose Units" localized="Einheitenauswahl"/>
-			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clans"/>
 			<Color ENG="Color:" localized="Farbe:"/>
 			<Computer ENG="Computer" localized="Computer"/>
@@ -82,123 +81,122 @@
 			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
 			<Upgrades_Menu ENG="Upgrades menu" localized="Verbesserungsmenü" />
 		</Title>
-		<Button>
+		<Others>
 			<Active ENG="Active" localized="Aktiv"/>
+			<Active_7 ENG="Activ." localized="Aktiv."/>
 			<Air_Units ENG="Airunits" localized="Lufteinheiten"/>
+			<Ammo ENG="Ammunition" localized="Munition"/>
+			<Ammo_7 ENG="Ammo" localized="Munni"/>
+			<Armor_7 ENG="Armor" localized="Panzer."/>
+			<Attack ENG="Attack" localized="Angriff"/>
+			<Attack_7 ENG="Attack" localized="Angriff"/>
+			<Auto_7 ENG="Auto" localized="Auto"/>
 			<Back ENG="Back" localized="Zurück"/>
-			<Build ENG="Build" localized="Bauen"/>
+			<Build_7 ENG="Build" localized="Bauen"/>
 			<Buy ENG="Buy" localized="Kaufen"/>
 			<Cancel ENG="Cancel" localized="Abbruch"/>
-			<Credits ENG="Credits (*)" localized="Credits (*)"/>
+			<Cargo ENG="Cargo" localized="Ladung"/>
+			<Chat ENG="Chat" localized="Chat"/>
+			<Clear_7 ENG="Clear" localized="Entf."/>
+			<Color ENG="Color" localized="Farben"/>
+			<Costs ENG="Costs" localized="Kosten"/>
 			<Damaged_Units ENG="Damaged units" localized="Beschädigte Einheiten"/>
-			<Delete ENG="Delete" localized="Löschen"/>
-			<Disadvantages ENG="Disadvantages" localized="Schäden"/>
+			<Destroy_7 ENG="Delete" localized="Entf."/>
+			<Disable_7 ENG="Disable" localized="Deakt."/>
+			<Disadvantages_8cut ENG="Disadvantages" localized="Schäden"/>
+			<Distribution_7 ENG="Distr." localized="Verteil."/>
 			<Done ENG="Done" localized="Fertig"/>
+			<Done_7 ENG="Done" localized="Fertig"/>
+			<End ENG="End" localized="Ende"/>
 			<Exit ENG="Exit" localized="Beenden"/>
 			<Fight_Units ENG="Fighting units" localized="Kampfeinheiten"/>
+			<Files ENG="Files" localized="Dateien"/>
+			<Fog ENG="Fog" localized="Nebel"/>
 			<Game_Load ENG="Load Game" localized="Spiel laden"/>
 			<Game_New ENG="New Game" localized="Neues Spiel"/>
 			<Game_Options ENG="Game Options" localized="Spieloptionen"/>
-			<Game_Save ENG="Save Game" localized="Speichern"/>
+			<Grid ENG="Grid" localized="Gitter"/>
 			<Ground_Units ENG="Landunits" localized="Landeinheiten"/>
+			<Hitpoints ENG="Hitpoints" localized="Treffer"/>
+			<Hitpoints_7 ENG="Hits" localized="Treffer"/>
 			<Host_Start ENG="Start Host" localized="Starte Host"/>
 			<Hot ENG="Hot" localized="Scharf"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
 			<Included ENG="Included" localized="Einbezogen"/>
+			<Info_7 ENG="Info" localized="Info"/>
 			<Limited_To ENG="Limited to" localized="Begrenzt auf"/>
 			<Load ENG="Load" localized="Laden"/>
+			<Load_7 ENG="Load" localized="Laden"/>
+			<Log ENG="Log" localized="Log"/>
 			<Mani ENG="Manifestation" localized="Hinweise"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
+			<ManualFireMode_7 ENG="Manual" localized="Manuell"/>
 			<Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
 			<No ENG="No" localized="Nein"/>
 			<OK ENG="OK" localized="OK"/>
 			<Path ENG="Path" localized="Pfad"/>
+			<Power ENG="Energy" localized="Energie"/>
+			<Proceed_4 ENG="Do" localized="Erl."/>
+			<Produce_7 ENG="Produces" localized="Produz."/>
 			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
-			<Reload ENG="Reload" localized="Aufladen"/>
+			<Range ENG="Range" localized="Reichweite"/>
+			<Range_7 ENG="Range" localized="Reichw."/>
+			<Reload_7 ENG="Reload" localized="Aufladen"/>
 			<Repair ENG="Repair" localized="Reparieren"/>
+			<Repair_7 ENG="Repair" localized="Repar."/>
 			<Reports ENG="Reports" localized="Nachrichten"/>
+			<Research ENG="Research" localized="Forschg."/>
 			<Save ENG="Save" localized="Speichern"/>
-			<Score ENG="Score" localized="Spielstand"/>
+			<Scan ENG="Scan" localized="Scan"/>
+			<Scan_7 ENG="Scan" localized="Scan"/>
+			<Score ENG="Score" localized="Punkte"/>
 			<Sea_Units ENG="Seaunits" localized="Seeeinheiten"/>
-			<Single_Player ENG="Singleplayer" localized="Einzelspieler (keine KI)"/>
+			<Seed ENG="Seed" localized="Platz."/>
+			<Seed_7 ENG="Seed" localized="Platz."/>
+			<Sentry ENG="Sentry" localized="Wachp."/>
+			<Settings ENG="Settings" localized="Einstellungen"/>
+			<Shoots ENG="Shoots" localized="Schüsse"/>
+			<Shots_7 ENG="Shots" localized="Schüsse"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Einzelspieler (keine KI)"/>
+			<Speed ENG="Speed" localized="Geschwindigkeit"/>
+			<Speed_7 ENG="Speed" localized="Geschw."/>
+			<Start_7 ENG="Start" localized="Start"/>
 			<Stationary_Units ENG="Stationary Units" localized="Stationäre Einheiten"/>
+			<Status ENG="Status" localized="Status"/>
+			<Steal_7 ENG="Steal" localized="Stehlen"/>
 			<Stealth_Units ENG="Stealth units" localized="Getarnte Einheiten"/>
+			<Stop_7 ENG="Stop" localized="Stopp"/>
+			<Survey ENG="Survey" localized="Studie"/>
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<Teams_7 ENG="Teams" localized="Teams"/>
 			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
-			<Training ENG="Training" localized="Training"/>
-			<Units ENG="Units" localized="Einheiten"/>
-			<Upgrade ENG="Upgrade" localized="Verbessern"/>
-			<Yes ENG="Yes" localized="Ja"/>
-		</Button>
-		<Context>
-			<Active ENG="Activ." localized="Aktiv."/>
-			<Attack ENG="Attack" localized="Angriff"/>
-			<Auto ENG="Auto" localized="Auto"/>
-			<Build ENG="Build" localized="Bauen"/>
-			<Clear ENG="Clear" localized="Entf."/>
-			<Destroy ENG="Delete" localized="Entf."/>
-			<Disable ENG="Disable" localized="Deakt."/>
-			<Dist ENG="Distr." localized="Verteil."/>
-			<Done ENG="Done" localized="Fertig"/>
-			<Info ENG="Info" localized="Info"/>
-			<Load ENG="Load" localized="Laden"/>
-			<Manual ENG="Manual" localized="Manuell"/>
-			<Reload ENG="Reload" localized="Aufladen"/>
-			<Repair ENG="Repair" localized="Repar."/>
-			<Research ENG="Research" localized="Forschg."/>
-			<Seed ENG="Seed" localized="Platz."/>
-			<Sentry ENG="Sentry" localized="Wachp."/>
-			<Start ENG="Start" localized="Start"/>
-			<Steal ENG="Steal" localized="Stehlen"/>
-			<Stop ENG="Stop" localized="Stopp"/>
-			<Transfer ENG="X-fer" localized="Trsfer."/>
-			<UpAll ENG="Upg all" localized="Verb. All."/>
-			<Upgrade ENG="Upgrade" localized="Verb. dies"/>
-			<Upgrades ENG="Buy Upg" localized="Kaufen"/>
-		</Context>
-		<Hud>
-			<Ammo ENG="Ammo" localized="Munition"/>
-			<AmmoShort ENG="Ammo" localized="Munni"/>
-			<Armor ENG="Armor" localized="Panzer."/>
-			<Cargo ENG="Gargo" localized="Ladung"/>
-			<Chat ENG="Chat" localized="Chat"/>
-			<Color ENG="Color" localized="Farben"/>
-			<End ENG="End" localized="Ende"/>
-			<Energy ENG="Energy" localized="Energie"/>
-			<Files ENG="Files" localized="Dateien"/>
-			<Fog ENG="Fog" localized="Nebel"/>
-			<Grid ENG="Grid" localized="Gitter"/>
-			<Hitpoints ENG="Hits" localized="Treffer"/>
-			<Log ENG="Log" localized="Log"/>
-			<Proceed ENG="Do" localized="Erl."/>
-			<Range ENG="Range" localized="Reichw."/>
-			<Scan ENG="Scan" localized="Scan"/>
-			<Score ENG="Score" localized="Punkte"/>
-			<Settings ENG="Settings" localized="Einstellungen"/>
-			<Shots ENG="Shots" localized="Schüsse"/>
-			<Speed ENG="Speed" localized="Geschw."/>
-			<Status ENG="Status" localized="Status"/>
-			<Survey ENG="Survey" localized="Studie"/>
-			<Teams ENG="Teams" localized="Teams"/>
 			<Total ENG="Total" localized="Total"/>
-			<Usage ENG="Usage" localized="Verbr."/>
-		</Hud>
+			<Transfer_7 ENG="X-fer" localized="Trsfer."/>
+			<Units ENG="Units" localized="Einheiten"/>
+			<UpAll_7 ENG="Upg all" localized="Verb. All."/>
+			<Upgrade ENG="Upgrade" localized="Verb. dies"/>
+			<Upgrade_7 ENG="Upgrade" localized="Verbessern"/>
+			<Upgrades_7 ENG="Buy Upg" localized="Kaufen"/>
+			<Usage_7 ENG="Usage" localized="Verbr."/>
+			<Yes ENG="Yes" localized="Ja"/>
+			
+			
+		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Fest (Original)"/>
-			<Low ENG="Limited" localized="begrenzt"/>
-			<Lower ENG="Low" localized="wenig"/>
+			<Dense ENG="Dense" localized="Dicht"/>
+			<High ENG="High" localized="Viel"/>
+			<Limited ENG="Limited" localized="Begrenzt"/>
+			<Low ENG="Low" localized="Wenig"/>
 			<Mobile ENG="Must build" localized="Selbstbauen"/>
-			<More ENG="More" localized="sehr viel"/>
-			<Most ENG="Too Much!" localized="zuviel"/>
-			<Much ENG="High" localized="viel"/>
-			<None ENG="None" localized="keines"/>
-			<Normal ENG="normal" localized="normal"/>
+			<More ENG="More" localized="Sehr viel"/>
+			<None ENG="None" localized="Keines"/>
+			<Normal ENG="Normal" localized="Normal"/>
 			<Off ENG="off" localized="Aus"/>
 			<On ENG="on" localized="Ein"/>
-			<Thick ENG="thick" localized="dicht"/>
-			<Thin ENG="thin" localized="dünn"/>
+			<Sparse ENG="Sparse" localized="Dünn"/>
+			<TooMuch ENG="Too Much!" localized="Zuviel!"/>
 			<Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
 			<Type_Turns ENG="turns" localized="Rundenbasierend"/>
 		</Option>
@@ -265,7 +263,6 @@
 			<Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
 			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
 			<Player_Left ENG="%s has left the game" localized="%s hat das Spiel verlassen"/>
-			<Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
 			<Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
 			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."/>
@@ -283,20 +280,6 @@
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
 			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
 		</Multiplayer>
-		<Vehicles>
-			<Ammo ENG="Ammo" localized="Munition"/>
-			<Armor ENG="Armor" localized="Panzer"/>
-			<Cargo ENG="Cargo" localized="Ladung"/>
-			<Costs ENG="Costs" localized="Kosten"/>
-			<Damage ENG="Damage" localized="Angriff"/>
-			<Hitpoints ENG="Hitpoints" localized="Treffer"/>
-			<Produce ENG="Produces" localized="Produz."/>
-			<Range ENG="Range" localized="Reichweite"/>
-			<Scan ENG="Scan" localized="Scan"/>
-			<Shoots ENG="Shoots" localized="Schüsse"/>
-			<Speed ENG="Speed" localized="Geschw."/>
-			<Usage ENG="Usage" localized="Verbr."/>
-		</Vehicles>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Änderungen vorgenommen: Goldproduktion verringert um "/>

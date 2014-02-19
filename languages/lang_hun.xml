@@ -43,15 +43,18 @@
 		<Title>
 			<Alien_Tech ENG="Alien technology" localized="Idegen technológia"/>
 			<BridgeHead ENG="Starting Base" localized="Kezdeti bázis"/>
-			<Build ENG="Build menu" localized="Építkezés Menü"/>
+			
+			
 			<Cargo ENG="Cargo" localized="Rakomány"/>
+			
 			<Choose_Planet ENG="Choose planet" localized="Bolygóválasztás"/>
-			<Clan ENG="Clan" localized="Klán"/>
+			
 			<Clans ENG="Clans" localized="Klánok"/>
 			<Color ENG="Color:" localized="Szín:"/>
 			<Computer ENG="Computer" localized="Számítógép"/>
 			<Connect ENG="Connect" localized="Csatlakozás"/>
 			<Credits ENG="Credits" localized="Pénz"/>
+			
 			<Game_Type ENG="Game Type" localized="Játéktípus"/>
 			<Gold ENG="Gold" localized="Arany"/>
 			<Human ENG="Human" localized="Ember"/>
@@ -78,122 +81,122 @@
 			<Unitinfo ENG="Unit status screen" localized="Egységstátusz képernyő"/>
 			<Updates ENG="Update menu" localized="Frissítés Menü"/>
 		</Title>
-		<Button>
+		<Others>
+			<Active ENG="Activ." localized="Aktiválás"/>
 			<Active ENG="Active" localized="Aktív"/>
 			<Air_Units ENG="Airunits" localized="Légi egységek"/>
+			<Ammo ENG="Ammunition" localized="Muníció"/>
+			<Ammo_7 ENG="Ammo" localized="Lőszer"/>
+			<Armor_7 ENG="Armor" localized="Páncél"/>
+			<Attack ENG="Attack" localized="Támadás"/>
+			<Attack_7 ENG="Attack" localized="Támadás"/>
+			<Auto_7 ENG="Auto" localized="Auto"/>
 			<Back ENG="Back" localized="Vissza"/>
-			<Build ENG="Build" localized="Építés"/>
+			<Build_7 ENG="Build" localized="Építés"/>
 			<Buy ENG="Buy" localized="Vesz"/>
 			<Cancel ENG="Cancel" localized="Mégse"/>
-			<Credits ENG="Credits (*)" localized="Készítők (*)"/>
+			<Cargo ENG="Cargo" localized="Rakomány"/>
+			<Chat ENG="Chat" localized="Chat"/>
+			<Clear_7 ENG="Clear" localized="Eltakarítás"/>
+			<Color ENG="Color" localized="Szín"/>
+			<Costs ENG="Costs" localized="Költség"/>
 			<Damaged_Units ENG="Damaged units" localized="Sérült egységek"/>
-			<Delete ENG="Delete" localized="Törlés"/>
-			<Disadvantages ENG="Disadvantages" localized="Hátrányok"/>
+			<Destroy_7 ENG="Delete" localized="Törlés"/>
+			<Disable_7 ENG="Disable" localized="Megbénítás"/>
+			<Disadvantages_8cut ENG="Disadvantages" localized="Hátrányok"/>
+			
 			<Done ENG="Done" localized="Kész"/>
+			<Done_7 ENG="Done" localized="Kész"/>
+			<End ENG="End" localized="Vége"/>
 			<Exit ENG="Exit" localized="Kilépés"/>
 			<Fight_Units ENG="Fighting units" localized="Harcoló egységek"/>
+			<Files ENG="Files" localized="Fájlok"/>
+			<Fog ENG="Fog" localized="Köd"/>
 			<Game_Load ENG="Load Game" localized="Játék Betöltése"/>
 			<Game_New ENG="New Game" localized="Új Játék"/>
 			<Game_Options ENG="Game Options" localized="Játékbeállítások"/>
-			<Game_Save ENG="Save Game" localized="Játék Mentése"/>
+			<Grid ENG="Grid" localized="Rács"/>
 			<Ground_Units ENG="Landunits" localized="Földi egységek"/>
+			<Hitpoints ENG="Hitpoints" localized="Élet"/>
+			<Hitpoints_7 ENG="Hits" localized="Élet"/>
 			<Host_Start ENG="Start Host" localized="Host Indítása"/>
 			<Hot ENG="Hot" localized="Hot"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat Betöltése"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Új Hot Seat"/>
 			<Included ENG="Included" localized="Belevesz"/>
+			<Info_7 ENG="Info" localized="Infó"/>
 			<Limited_To ENG="Limited to" localized="Korlátoz"/>
-			<Load ENG="Load" localized="Betöltés"/>
+			<Load ENG="Load" localized="Behívás"/>
+			<Load_7 ENG="Load" localized="Betöltés"/>
+			<Log ENG="Log" localized="Log"/>
 			<Mani ENG="Manifestation" localized="Nyilatkozat"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Térképszerkesztő (*)"/>
+			
 			<Multi_Player ENG="Multiplayer" localized="Többjátékos Mód"/>
 			<No ENG="No" localized="Nem"/>
 			<OK ENG="OK" localized="Ok"/>
 			<Path ENG="Path" localized="Útvonal"/>
+			<Power ENG="Power" localized="Energia"/>
+			<Proceed_4 ENG="Do" localized="Mehet"/>
+			<Produce_7 ENG="Produces" localized="Termel"/>
 			<Produce_Units ENG="Producing units" localized="Termelő egységek"/>
-			<Reload ENG="Reload" localized="Újratöltés"/>
+			<Range ENG="Range" localized="Lőtáv"/>
+			<Range_7 ENG="Range" localized="Lőtáv"/>
+			<Reload_7 ENG="Reload" localized="Újratöltés"/>
 			<Repair ENG="Repair" localized="Javítás"/>
+			<Repair_7 ENG="Repair" localized="Javítás"/>
 			<Reports ENG="Reports" localized="Jelentések"/>
+			<Research ENG="Research" localized="Kutatás"/>
 			<Save ENG="Save" localized="Mentés"/>
+			<Scan ENG="Scan" localized="Radar"/>
+			<Scan_7 ENG="Scan" localized="Radar"/>
 			<Score ENG="Score" localized="Pont"/>
 			<Sea_Units ENG="Seaunits" localized="Vízi egységek"/>
+			<Seed ENG="Seed" localized="Seed"/>
+			<Seed_7 ENG="Seed" localized="Seed"/>
+			<Sentry ENG="Sentry" localized="Örködés"/>
+			<Settings ENG="Settings" localized="Beállítások"/>
+			<Shoots ENG="Shoots" localized="Lövés"/>
+			<Shots_7 ENG="Shots" localized="Lövés"/>
 			<Single_Player ENG="Singleplayer" localized="Egyjátékos Mód"/>
+			<Speed ENG="Speed" localized="Sebess."/>
+			<Speed_7 ENG="Speed" localized="Sebess."/>
+			<Start_7 ENG="Start" localized="Elindítás"/>
 			<Stationary_Units ENG="Stationary Units" localized="Rögzített egységek"/>
+			<Status ENG="Status" localized="Státusz"/>
+			<Steal_7 ENG="Steal" localized="Lopás"/>
 			<Stealth_Units ENG="Stealth units" localized="Lopakodó egységek"/>
+			<Stop_7 ENG="Stop" localized="Állj"/>
+			<Survey ENG="Survey" localized="Vizsgál"/>
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<Teams_7 ENG="Teams" localized="Munkások"/>
 			<Title_Main_Menu ENG="Main Menu" localized="Főmenü"/>
-			<Training ENG="Training" localized="Gyakorlás"/>
-			<Units ENG="Units" localized="Egység"/>
-			<Upgrade ENG="Upgrade" localized="Kutatás"/>
-			<Yes ENG="Yes" localized="Igen"/>
-		</Button>
-		<Context>
-			<Active ENG="Activ." localized="Aktiválás"/>
-			<Attack ENG="Attack" localized="Támadás"/>
-			<Auto ENG="Auto" localized="Auto"/>
-			<Build ENG="Build" localized="Építés"/>
-			<Clear ENG="Clear" localized="Eltakarítás"/>
-			<Destroy ENG="Delete" localized="Törlés"/>
-			<Disable ENG="Disable" localized="Megbénítás"/>
-			<Dist ENG="Distr." localized="Distr."/>
-			<Done ENG="Done" localized="Kész"/>
-			<Info ENG="Info" localized="Infó"/>
-			<Load ENG="Load" localized="Behívás"/>
-			<Reload ENG="Reload" localized="Újratöltés"/>
-			<Repair ENG="Repair" localized="Javítás"/>
-			<Research ENG="Research" localized="Kutatás"/>
-			<Seed ENG="Seed" localized="Seed"/>
-			<Sentry ENG="Sentry" localized="Örködés"/>
-			<Start ENG="Start" localized="Elindítás"/>
-			<Steal ENG="Steal" localized="Lopás"/>
-			<Stop ENG="Stop" localized="Állj"/>
-			<Transfer ENG="X-fer" localized="Átvitel"/>
-			<UpAll ENG="Up. all" localized="Összes fejl."/>
-			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
-			<Upgrades ENG="Upgrades" localized="Fejlesztések"/>
-		</Context>
-		<Hud>
-			<Ammo ENG="Ammunition" localized="Muníció"/>
-			<AmmoShort ENG="Ammo" localized="Lőszer"/>
-			<Armor ENG="Armor" localized="Páncél"/>
-			<Cargo ENG="Cargo" localized="Rakomány"/>
-			<Chat ENG="Chat" localized="Chat"/>
-			<Color ENG="Color" localized="Szín"/>
-			<End ENG="End" localized="Vége"/>
-			<Energy ENG="Power" localized="Energia"/>
-			<Files ENG="Files" localized="Fájlok"/>
-			<Fog ENG="Fog" localized="Köd"/>
-			<Grid ENG="Grid" localized="Rács"/>
-			<Hitpoints ENG="Hits" localized="Élet"/>
-			<Log ENG="Log" localized="Log"/>
-			<Proceed ENG="Do" localized="Mehet"/>
-			<Range ENG="Range" localized="Lőtáv"/>
-			<Scan ENG="Scan" localized="Radar"/>
-			<Score ENG="Score" localized="Pont"/>
-			<Settings ENG="Settings" localized="Beállítások"/>
-			<Shots ENG="Shots" localized="Lövés"/>
-			<Speed ENG="Speed" localized="Sebess."/>
-			<Status ENG="Status" localized="Státusz"/>
-			<Survey ENG="Survey" localized="Vizsgál"/>
-			<Teams ENG="Teams" localized="Munkások"/>
 			<Total ENG="Total" localized="Összes"/>
-			<Usage ENG="Usage" localized="Fogyaszt"/>
-		</Hud>
+			<Transfer_7 ENG="X-fer" localized="Átvitel"/>
+			<Units ENG="Units" localized="Egység"/>
+			<UpAll_7 ENG="Up. all" localized="Összes fejl."/>
+			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
+			<Upgrade_7 ENG="Upgrade" localized="Kutatás"/>
+			<Upgrades_7 ENG="Upgrades" localized="Fejlesztések"/>
+			<Usage_7 ENG="Usage" localized="Fogyaszt"/>
+			<Yes ENG="Yes" localized="Igen"/>
+			
+			
+		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Felépült (eredeti)"/>
-			<Low ENG="Low" localized="Kevés"/>
-			<Lower ENG="Lower" localized="Kevesebb"/>
+			<Dense ENG="Dense" localized="Sűrű"/>
+			<High ENG="High" localized="Sok"/>
+			<Limited ENG="Limited" localized="Kevés"/>
+			<Low ENG="Low" localized="Kevesebb"/>
 			<Mobile ENG="Must build" localized="Fel kell építeni"/>
 			<More ENG="More" localized="Több"/>
-			<Most ENG="Most" localized="Legtöbb"/>
-			<Much ENG="Much" localized="Sok"/>
 			<None ENG="None" localized="Semennyi"/>
 			<Normal ENG="Normal" localized="Normál"/>
 			<Off ENG="off" localized="Ki"/>
 			<On ENG="on" localized="Be"/>
-			<Thick ENG="Dense" localized="Sűrű"/>
-			<Thin ENG="Sparse" localized="Ritka"/>
+			<Sparse ENG="Sparse" localized="Ritka"/>
+			<TooMuch ENG="Too Much!" localized="Legtöbb"/>
 			<Type_Simu ENG="Simultaneous" localized="Egyidejű"/>
 			<Type_Turns ENG="Turn based" localized="Körökre osztott"/>
 		</Option>
@@ -221,7 +224,6 @@
 			<Connection_Terminated ENG="Connection terminated." localized="A kapcsolat lezárult."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Le leszel csatlakoztatva, mert nem szerepelsz a mentett játékban."/>
-			<Frozen ENG="You have been frozen by the server." localized="A szerver lefagyasztotta az állapotodat."/>
 			<Go ENG="Let's go" localized="Indítás"/>
 			<Go_Abort ENG="Go aborted" localized="Indítás megszakítva"/>
 			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
@@ -236,8 +238,10 @@
 			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="%s M.A.X. térkép letöltése a szerverről (licencelt)!"/>
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Nincs telepítve a térkép: letöltés kezdeményezése"/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="A térkép nincs telepítve: Nem engedélyezett az eredeti"/>
+			
 			<MapDL_Percent ENG="Map download: %s%" localized="Térkép letöltés: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="Térkép feltöltése %s gépére..."/>
+			
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
 			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezárult"/>
 			<Network_Connected ENG="Connected" localized="Csatlakozva"/>
@@ -249,48 +253,42 @@
 			<Network_Open ENG="Game open" localized="Játék megnyitva"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="A %s térkép nem tölthető be. Így nem indíthatod a játékot."/>
+			
 			<Not_Ready ENG="is not ready" localized="nem készült el"/>
 			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
+			
 			<Player ENG="Player" localized="Játékos"/>
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
+			
 			<Player_Few ENG="Not enough players!" localized="Nincs elég játékos!"/>
 			<Player_Joined ENG="%s has joined" localized="%s csatlakozott a játékhoz"/>
 			<Player_Left ENG="%s has left the game" localized="%s elhagyta a játékot"/>
-			<Player_Left ENG="%s has left" localized="%s elhagyta a játékot"/>
 			<Player_Many ENG="Too many players!" localized="Túl sok játékos!"/>
 			<Player_MustHost ENG="must be host in turn based game!" localized="Körökre osztott játéknál lennie kell host-nak!"/>
-			<Player_Turn ENG="'s turn" localized=" köre következik"/>
-			<Player_Turn_End ENG=" ended turn" localized=" befejezte a körét"/>
+			
+			<Player_Turn ENG="%s's turn" localized="%s köre következik"/>
+			<Player_Turn_End ENG="%s ended turn" localized="%s befejezte a körét"/>
 			<Player_Twice ENG="Playername exists twice: " localized="Duplán szereplő játékosnév: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Az egyik játékosnak nem megfelelő a neve!"/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/>
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="A szerver nem engedélyezi az újracsatlakozást."/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Csak a kiszolgáló mentheti el a játékot."/>
 			<Server_Not_Running ENG="The server is not running." localized="Nem fut a szerver"/>
+			
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Várakozás egy játékos újracsatlakozására."/>
+			
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
 			<Waiting ENG="Waiting for other players..." localized="Várakozás a többi játékosra..."/>
 		</Multiplayer>
-		<Vehicles>
-			<Ammo ENG="Ammo" localized="Lőszer"/>
-			<Armor ENG="Armor" localized="Páncél"/>
-			<Cargo ENG="Cargo" localized="Rakomány"/>
-			<Costs ENG="Costs" localized="Költség"/>
-			<Damage ENG="Attack" localized="Támadás"/>
-			<Hitpoints ENG="Hits" localized="Élet"/>
-			<Produce ENG="Produces" localized="Termel"/>
-			<Range ENG="Range" localized="Lőtáv"/>
-			<Scan ENG="Scan" localized="Radar"/>
-			<Shoots ENG="Shoots" localized="Lövés"/>
-			<Speed ENG="Speed" localized="Sebess."/>
-			<Usage ENG="Usage" localized="Fogyaszt"/>
-		</Vehicles>
 		<Comp>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Módosítás történt, nőtt az üzemanyag kitermelés: "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Módosítás történt, csökkent az aranykitermelés: "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Módosítás történt, csökkent a nyersanyag kitermelés: "/>
 			<Attacked ENG="is under attack" localized="támadás alatt áll"/>
+			
+			
 			<Building_Disabled ENG="Building disabled" localized="Épület működésképtelen"/>
+			
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
 			<Clearing ENG="Clearing" localized="Takarít"/>
 			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
@@ -298,6 +296,7 @@
 			<CommandoRank_Average ENG="Average" localized="Középszerű"/>
 			<CommandoRank_Elite ENG="Elite" localized="Elit"/>
 			<CommandoRank_Expert ENG="Expert" localized="Szakértő"/>
+			
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Zöldfülű"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veterán"/>
 			<Dated ENG="dated" localized="elavult"/>
@@ -320,19 +319,24 @@
 			<GameEndsAt ENG="Game ends at" localized="A játék véget ér "/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nincs elegendő arany az elindításhoz."/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Nincs elég arany, feldolgozó leállítva!"/>
+			
 			<Labs ENG="Labs" localized="Laborok"/>
+			
 			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="A leszállási pozíció túl közel van egy másik játékoshoz. Kérlek válassz másik pozíciót."/>
 			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="A leszállási pozíció egy másik játékos közelében van. A jelenlegi pozíció megerősítéséhez kattints a piros körön belülre, vagy válassz egy másikat."/>
 			<Laying ENG="placing mines" localized="aknát telepít"/>
 			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Nincs elegendő nyersanyag az elindításhoz."/>
 			<Metal_Low ENG="More raw material needed, building turned off." localized="Nincs elég nyersanyag, épület leállítva!"/>
 			<Moving ENG="moving" localized="mozog"/>
+			
 			<NoLimit ENG="Fight to the death!" localized="Harc a végsőkig!"/>
+			
 			<Point ENG="point" localized="pontnál"/>
 			<Points ENG="points" localized="pontnál"/>
 			<Producing ENG="Building" localized="Épít"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"/>
 			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
+			
 			<Repeat ENG="Again" localized="Újra"/>
 			<Research_Armor ENG="Armor research completed" localized="A Páncélzatnövelő fejlesztés elkészült"/>
 			<Research_Attack ENG="Attack research completed" localized="A Sebzésnövelő fejlesztés elkészült"/>
