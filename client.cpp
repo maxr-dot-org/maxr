@@ -1032,17 +1032,17 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 		// build research finished string
 		const string themeNames[8] =
 		{
-			lngPack.i18n ("Text~Vehicles~Damage"),
-			lngPack.i18n ("Text~Hud~Shots"),
-			lngPack.i18n ("Text~Hud~Range"),
-			lngPack.i18n ("Text~Hud~Armor"),
-			lngPack.i18n ("Text~Hud~Hitpoints"),
-			lngPack.i18n ("Text~Hud~Speed"),
-			lngPack.i18n ("Text~Hud~Scan"),
-			lngPack.i18n ("Text~Vehicles~Costs")
+			lngPack.i18n ("Text~Others~Attack"),
+			lngPack.i18n ("Text~Others~Shots"),
+			lngPack.i18n ("Text~Others~Range"),
+			lngPack.i18n ("Text~Others~Armor"),
+			lngPack.i18n ("Text~Others~Hitpoints"),
+			lngPack.i18n ("Text~Others~Speed"),
+			lngPack.i18n ("Text~Others~Scan"),
+			lngPack.i18n ("Text~Others~Costs")
 		};
 
-		researchMsgString = lngPack.i18n ("Text~Context~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + ": ";
+		researchMsgString = lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + ": ";
 		for (int i = 0; i < nrResearchAreasFinished; i++)
 		{
 			const int area = message.popChar();
@@ -1541,7 +1541,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 		}
 	}
 	ostringstream os;
-	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName) << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")";
+	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
 	string sTmp (os.str());
 	gameGUI->addMessage (sTmp);
 	ActivePlayer->addSavedReport (sTmp, sSavedReportMessage::REPORT_TYPE_COMP);
@@ -1585,7 +1585,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message, 
 		}
 	}
 	ostringstream os;
-	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName) << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")";
+	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
 
 	string printStr (os.str());
 	gameGUI->addMessage (printStr);
