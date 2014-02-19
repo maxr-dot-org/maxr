@@ -275,10 +275,10 @@ void cGameTimerServer::run (cServer& server)
 	for (size_t i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
+		AutoPtr<cNetMessage> message (new cNetMessage (NET_GAME_TIME_SERVER));
 
-		cNetMessage* message = new cNetMessage (NET_GAME_TIME_SERVER);
 		message->pushInt32 (gameTime);
-		uint32_t checkSum = calcServerChecksum (server, player);
+		const uint32_t checkSum = calcServerChecksum (server, player);
 		message->pushInt32 (checkSum);
 		server.sendNetMessage (message, player->getNr());
 	}

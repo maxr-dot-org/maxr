@@ -184,12 +184,11 @@ public:
 	* sends a netMessage to the client
 	* on which the player with 'iPlayerNum' is playing
 	* PlayerNum -1 means all players
-	* message must not be deleted after caling this function
 	*@author alzi alias DoctorDeath
 	*@param message The message to be send.
 	*@param iPlayerNum Number of player who should receive this event.
 	*/
-	void sendNetMessage (cNetMessage* message, int iPlayerNum = -1);
+	void sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum = -1);
 
 	/**
 	* runs the server. Should only be called by the ServerThread!
