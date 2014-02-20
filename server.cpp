@@ -227,7 +227,7 @@ void cServer::pushEvent (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
+void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
 {
 	message->iPlayerNr = iPlayerNum;
 	message->serialize();
@@ -239,7 +239,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 		if (network)
 			network->send (message->iLength, message->data);
 		for (size_t i = 0; i != localClients.size(); ++i)
-			localClients[i]->pushEvent (message);
+			localClients[i]->pushEvent (new cNetMessage (*message));
 		return;
 	}
 
@@ -249,7 +249,6 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	{
 		// player not found
 		Log.write ("Server: Can't send message. Player " + iToStr (iPlayerNum) + " not found.", cLog::eLOG_TYPE_NET_WARNING);
-		delete message;
 		return;
 	}
 	if (Player->isLocal())
@@ -258,7 +257,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 		{
 			if (localClients[i]->getActivePlayer().getNr() == iPlayerNum)
 			{
-				localClients[i]->pushEvent (message);
+				localClients[i]->pushEvent (message.Release());
 				break;
 			}
 		}
@@ -267,7 +266,6 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	else
 	{
 		if (network) network->sendTo (Player->getSocketNum(), message->iLength, message->serialize());
-		delete message;
 	}
 }
 
@@ -1286,7 +1284,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_MARK_LOG);
 
-	cNetMessage* message2 = new cNetMessage (GAME_EV_MARK_LOG);
+	AutoPtr<cNetMessage> message2 (new cNetMessage (GAME_EV_MARK_LOG));
 	message2->pushString (message.popString());
 	sendNetMessage (message2);
 }
@@ -2663,7 +2661,7 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.moving)
 				{
 					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getNr()), cLog::eLOG_TYPE_NET_DEBUG);
-					cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
+					AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_NEXT_MOVE));
 					message->pushChar (MJOB_OK);
 					message->pushInt16 (vehicle.iID);
 					sendNetMessage (message, MapPlayer.getNr());

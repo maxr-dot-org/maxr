@@ -168,7 +168,7 @@ void cServerAttackJob::lockTarget (int offset)
 		// target in sight?
 		if (!player->canSeeAnyAreaUnder (*target)) continue;
 
-		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET);
+		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET));
 		if (target->isAVehicle())
 		{
 			cVehicle* v = static_cast<cVehicle*> (target);
@@ -290,7 +290,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 	if (unit == 0)
 		return;
 
-	cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_FIRE);
+	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_FIRE));
 
 	message->pushBool (sentryFire);
 	message->pushInt16 (unit->data.speedCur);
@@ -490,7 +490,7 @@ void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 		if (player->ScanMap[offset] == 0)
 			continue;
 
-		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_IMPACT);
+		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_IMPACT));
 		message->pushInt32 (offset);
 		message->pushInt16 (remainingHP);
 		message->pushInt16 (id);
