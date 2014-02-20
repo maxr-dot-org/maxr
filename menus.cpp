@@ -2576,7 +2576,7 @@ void cHotSeatMenu::choosePlayerType (int player, ePlayerType playerType)
 	okButton->setLocked (true);
 	for (int i = 0; i != 4; ++i)
 	{
-		if (playerTypes[i] != ePlayerType::PLAYERTYPE_NONE)
+		if (playerTypes[i] != PLAYERTYPE_NONE)
 		{
 			okButton->setLocked (false);
 			return;
