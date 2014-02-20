@@ -76,7 +76,8 @@ public:
 
 	cSignal<void ()> clicked;
 
-	void setLocked (bool locked);
+	void lock ();
+	void unlock ();
 
 protected:
 	virtual void setPressed (bool pressed) MAXR_OVERRIDE_FUNCTION;

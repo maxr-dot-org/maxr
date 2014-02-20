@@ -21,6 +21,7 @@
 #define gui_menu_widgets_labelH
 
 #include <string>
+#include <vector>
 
 #include "../../../maxrconfig.h"
 #include "../../widget.h"
@@ -30,7 +31,7 @@
 class cLabel : public cWidget
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = eAlignmentType::Center);
+	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
 
 	void setText (const std::string& text);
 	void setFont (eUnicodeFontType fontType);
@@ -43,6 +44,13 @@ private:
 	eUnicodeFontType fontType;
 	AlignmentFlags alignment;
 	bool wordWrap;
+
+	std::vector<std::string> drawLines;
+
+	void updateDisplayInformation ();
+
+	// TODO: may move to some other place
+	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
 };
 
 #endif // gui_menu_widgets_labelH

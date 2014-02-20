@@ -97,10 +97,10 @@ string sSettings::getResValString (eSettingResourceValue type) const
 {
 	switch (type)
 	{
-		case SETTING_RESVAL_LOW: return lngPack.i18n ("Text~Option~Low");
+		case SETTING_RESVAL_LIMITED: return lngPack.i18n ("Text~Option~Limited");
 		case SETTING_RESVAL_NORMAL: return lngPack.i18n ("Text~Option~Normal");
-		case SETTING_RESVAL_MUCH: return lngPack.i18n ("Text~Option~Much");
-		case SETTING_RESVAL_MOST: return lngPack.i18n ("Text~Option~Most");
+		case SETTING_RESVAL_HIGH: return lngPack.i18n ("Text~Option~High");
+		case SETTING_RESVAL_TOOMUCH: return lngPack.i18n ("Text~Option~TooMuch");
 	}
 	return "";
 }
@@ -110,10 +110,10 @@ string sSettings::getResFreqString() const
 {
 	switch (resFrequency)
 	{
-		case SETTING_RESFREQ_THIN: return lngPack.i18n ("Text~Option~Thin");
+		case SETTING_RESFREQ_SPARSE: return lngPack.i18n ("Text~Option~Sparse");
 		case SETTING_RESFREQ_NORMAL: return lngPack.i18n ("Text~Option~Normal");
-		case SETTING_RESFREQ_THICK: return lngPack.i18n ("Text~Option~Thick");
-		case SETTING_RESFREQ_MOST: return lngPack.i18n ("Text~Option~Most");
+		case SETTING_RESFREQ_DENCE: return lngPack.i18n ("Text~Option~Dense");
+		case SETTING_RESFREQ_TOOMUCH: return lngPack.i18n ("Text~Option~TooMuch");
 	}
 	return "";
 }
@@ -600,11 +600,11 @@ cStartMenu::cStartMenu()
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	singleButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Button~Single_Player"));
+	singleButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Others~Single_Player"));
 	singleButton->setReleasedFunction (&singlePlayerReleased);
 	menuItems.push_back (singleButton.get());
 
-	multiButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Button~Multi_Player"));
+	multiButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Others~Multi_Player"));
 	multiButton->setReleasedFunction (&multiPlayerReleased);
 	menuItems.push_back (multiButton.get());
 
@@ -612,11 +612,11 @@ cStartMenu::cStartMenu()
 	preferenceButton->setReleasedFunction (&preferencesReleased);
 	menuItems.push_back (preferenceButton.get());
 
-	licenceButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Button~Mani"));
+	licenceButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Others~Mani"));
 	licenceButton->setReleasedFunction (&licenceReleased);
 	menuItems.push_back (licenceButton.get());
 
-	exitButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	exitButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Others~Exit"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	exitButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (exitButton.get());
 
@@ -667,19 +667,19 @@ void cStartMenu::licenceReleased (void* parent)
 //------------------------------------------------------------------------------
 cSinglePlayerMenu::cSinglePlayerMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Button~Single_Player"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Others~Single_Player"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	newGameButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Button~Game_New"));
+	newGameButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Others~Game_New"));
 	newGameButton->setReleasedFunction (&newGameReleased);
 	menuItems.push_back (newGameButton.get());
 
-	loadGameButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Button~Game_Load"));
+	loadGameButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Others~Game_Load"));
 	loadGameButton->setReleasedFunction (&loadGameReleased);
 	menuItems.push_back (loadGameButton.get());
 
-	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
+	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 }
@@ -931,31 +931,31 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 //------------------------------------------------------------------------------
 cMultiPlayersMenu::cMultiPlayersMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Button~Multi_Player"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Others~Multi_Player"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	tcpHostButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Button~TCPIP_Host"));
+	tcpHostButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Others~TCPIP_Host"));
 	tcpHostButton->setReleasedFunction (&tcpHostReleased);
 	menuItems.push_back (tcpHostButton.get());
 
-	tcpClientButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Button~TCPIP_Client"));
+	tcpClientButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Others~TCPIP_Client"));
 	tcpClientButton->setReleasedFunction (&tcpClientReleased);
 	menuItems.push_back (tcpClientButton.get());
 
 #ifndef RELEASE
-	newHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 2, lngPack.i18n ("Text~Button~HotSeat_New"));
+	newHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 2, lngPack.i18n ("Text~Others~HotSeat_New"));
 	newHotseatButton->setReleasedFunction (&newHotseatReleased);
 	//newHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.push_back (newHotseatButton.get());
 
-	loadHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Button~HotSeat_Load"));
+	loadHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Others~HotSeat_Load"));
 	loadHotseatButton->setReleasedFunction (&loadHotseatReleased);
 	//loadHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.push_back (loadHotseatButton.get());
 #endif
 
-	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
+	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 }
@@ -1173,17 +1173,17 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	// calculation for most option fields starts at px 240x. and is 347 width.
 
 	// Title
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 13, lngPack.i18n ("Text~Button~Game_Options"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 13, lngPack.i18n ("Text~Others~Game_Options"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
 	// OK button
-	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
+	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Others~OK"));
 	okButton->setReleasedFunction (&okReleased);
 	menuItems.push_back (okButton.get());
 
 	// Back button
-	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
+	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Others~Back"));
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 
@@ -1191,30 +1191,30 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	metalLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Metal") + ":");
 	menuItems.push_back (metalLabel.get());
 	metalGroup = new cMenuRadioGroup();
-	metalGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low"), settings.metal == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	metalGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Limited"), settings.metal == SETTING_RESVAL_LIMITED, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.metal == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much"), settings.metal == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.metal == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~High"), settings.metal == SETTING_RESVAL_HIGH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~TooMuch"), settings.metal == SETTING_RESVAL_TOOMUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	menuItems.push_back (metalGroup.get());
 	iCurrentLine += iLineHeight;
 
 	oilLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Oil") + ":");
 	menuItems.push_back (oilLabel.get());
 	oilGroup = new cMenuRadioGroup();
-	oilGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low"), settings.oil == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	oilGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Limited"), settings.oil == SETTING_RESVAL_LIMITED, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.oil == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much"), settings.oil == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.oil == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~High"), settings.oil == SETTING_RESVAL_HIGH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~TooMuch"), settings.oil == SETTING_RESVAL_TOOMUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	menuItems.push_back (oilGroup.get());
 	iCurrentLine += iLineHeight;
 
 	goldLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Gold") + ":");
 	menuItems.push_back (goldLabel.get());
 	goldGroup = new cMenuRadioGroup();
-	goldGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low"), settings.gold == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	goldGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Limited"), settings.gold == SETTING_RESVAL_LIMITED, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.gold == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much"), settings.gold == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.gold == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~High"), settings.gold == SETTING_RESVAL_HIGH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~TooMuch"), settings.gold == SETTING_RESVAL_TOOMUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	menuItems.push_back (goldGroup.get());
 	iCurrentLine += iLineHeight;
 
@@ -1223,10 +1223,10 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	menuItems.push_back (resFrequencyLabel.get());
 
 	resFrequencyGroup = new cMenuRadioGroup();
-	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Thin"), settings.resFrequency == SETTING_RESFREQ_THIN, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Sparse"), settings.resFrequency == SETTING_RESFREQ_SPARSE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.resFrequency == SETTING_RESFREQ_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Thick"), settings.resFrequency == SETTING_RESFREQ_THICK, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.resFrequency == SETTING_RESFREQ_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Dense"), settings.resFrequency == SETTING_RESFREQ_DENCE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~TooMuch"), settings.resFrequency == SETTING_RESFREQ_TOOMUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	menuItems.push_back (resFrequencyGroup.get());
 	iCurrentLine += iLineHeight * 3;
 
@@ -1287,11 +1287,11 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 		unsigned int value;
 	} creditData[] =
 	{
-		{"Text~Option~None", SETTING_CREDITS_LOWEST},
-		{"Text~Option~Lower", SETTING_CREDITS_LOWER},
+		{"Text~Option~None", SETTING_CREDITS_NONE},
 		{"Text~Option~Low", SETTING_CREDITS_LOW},
+		{"Text~Option~Limited", SETTING_CREDITS_LIMITED},
 		{"Text~Option~Normal", SETTING_CREDITS_NORMAL},
-		{"Text~Option~Much", SETTING_CREDITS_MUCH},
+		{"Text~Option~High", SETTING_CREDITS_HIGH},
 		{"Text~Option~More", SETTING_CREDITS_MORE}
 	};
 
@@ -1353,31 +1353,31 @@ void cSettingsMenu::okReleased (void* parent)
 //------------------------------------------------------------------------------
 void cSettingsMenu::updateSettings()
 {
-	if (metalGroup->buttonIsChecked (0)) settings.metal = SETTING_RESVAL_LOW;
+	if (metalGroup->buttonIsChecked (0)) settings.metal = SETTING_RESVAL_LIMITED;
 	else if (metalGroup->buttonIsChecked (1)) settings.metal = SETTING_RESVAL_NORMAL;
-	else if (metalGroup->buttonIsChecked (2)) settings.metal = SETTING_RESVAL_MUCH;
-	else settings.metal = SETTING_RESVAL_MOST;
+	else if (metalGroup->buttonIsChecked (2)) settings.metal = SETTING_RESVAL_HIGH;
+	else settings.metal = SETTING_RESVAL_TOOMUCH;
 
-	if (oilGroup->buttonIsChecked (0)) settings.oil = SETTING_RESVAL_LOW;
+	if (oilGroup->buttonIsChecked (0)) settings.oil = SETTING_RESVAL_LIMITED;
 	else if (oilGroup->buttonIsChecked (1)) settings.oil = SETTING_RESVAL_NORMAL;
-	else if (oilGroup->buttonIsChecked (2)) settings.oil = SETTING_RESVAL_MUCH;
-	else settings.oil = SETTING_RESVAL_MOST;
+	else if (oilGroup->buttonIsChecked (2)) settings.oil = SETTING_RESVAL_HIGH;
+	else settings.oil = SETTING_RESVAL_TOOMUCH;
 
-	if (goldGroup->buttonIsChecked (0)) settings.gold = SETTING_RESVAL_LOW;
+	if (goldGroup->buttonIsChecked (0)) settings.gold = SETTING_RESVAL_LIMITED;
 	else if (goldGroup->buttonIsChecked (1)) settings.gold = SETTING_RESVAL_NORMAL;
-	else if (goldGroup->buttonIsChecked (2)) settings.gold = SETTING_RESVAL_MUCH;
-	else settings.gold = SETTING_RESVAL_MOST;
+	else if (goldGroup->buttonIsChecked (2)) settings.gold = SETTING_RESVAL_HIGH;
+	else settings.gold = SETTING_RESVAL_TOOMUCH;
 
-	if (resFrequencyGroup->buttonIsChecked (0)) settings.resFrequency = SETTING_RESFREQ_THIN;
+	if (resFrequencyGroup->buttonIsChecked (0)) settings.resFrequency = SETTING_RESFREQ_SPARSE;
 	else if (resFrequencyGroup->buttonIsChecked (1)) settings.resFrequency = SETTING_RESFREQ_NORMAL;
-	else if (resFrequencyGroup->buttonIsChecked (2)) settings.resFrequency = SETTING_RESFREQ_THICK;
-	else settings.resFrequency = SETTING_RESFREQ_MOST;
+	else if (resFrequencyGroup->buttonIsChecked (2)) settings.resFrequency = SETTING_RESFREQ_DENCE;
+	else settings.resFrequency = SETTING_RESFREQ_TOOMUCH;
 
-	if (creditsGroup->buttonIsChecked (0)) settings.credits = SETTING_CREDITS_LOWEST;
-	else if (creditsGroup->buttonIsChecked (1)) settings.credits = SETTING_CREDITS_LOWER;
-	else if (creditsGroup->buttonIsChecked (2)) settings.credits = SETTING_CREDITS_LOW;
+	if (creditsGroup->buttonIsChecked (0)) settings.credits = SETTING_CREDITS_NONE;
+	else if (creditsGroup->buttonIsChecked (1)) settings.credits = SETTING_CREDITS_LOW;
+	else if (creditsGroup->buttonIsChecked (2)) settings.credits = SETTING_CREDITS_LIMITED;
 	else if (creditsGroup->buttonIsChecked (3)) settings.credits = SETTING_CREDITS_NORMAL;
-	else if (creditsGroup->buttonIsChecked (4)) settings.credits = SETTING_CREDITS_MUCH;
+	else if (creditsGroup->buttonIsChecked (4)) settings.credits = SETTING_CREDITS_HIGH;
 	else if (creditsGroup->buttonIsChecked (5)) settings.credits = SETTING_CREDITS_MORE;
 	else settings.credits = SETTING_CREDITS_NORMAL;
 
@@ -1437,12 +1437,12 @@ cPlanetsSelectionMenu::cPlanetsSelectionMenu() :
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
+	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Others~OK"));
 	okButton->setReleasedFunction (&okReleased);
 	okButton->setLocked (true);
 	menuItems.push_back (okButton.get());
 
-	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
+	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Others~Back"));
 	backButton->setReleasedFunction (&backReleased);
 	menuItems.push_back (backButton.get());
 
@@ -1637,11 +1637,11 @@ cClanSelectionMenu::cClanSelectionMenu (int clan_, bool noReturn) :
 	cMenu (LoadPCX (GFXOD_CLAN_SELECT)),
 	clan (std::max (0, clan_))
 {
-	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
+	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Others~OK"));
 	okButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (okButton.get());
 
-	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
+	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Others~Back"));
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	if (noReturn) backButton->setLocked (true);
 	menuItems.push_back (backButton.get());
@@ -1755,10 +1755,10 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 {
 	selectionChangedFunc = NULL;
 
-	doneButton = new cMenuButton (position.x + 447, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	doneButton = new cMenuButton (position.x + 447, position.y + 452, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	menuItems.push_back (doneButton.get());
 
-	backButton = new cMenuButton (position.x + 349, position.y + 452, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	backButton = new cMenuButton (position.x + 349, position.y + 452, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	menuItems.push_back (backButton.get());
 
 	infoImage = new cMenuImage (position.x + 11, position.y + 13);
@@ -1956,8 +1956,8 @@ cStartupHangarMenu::cStartupHangarMenu (cClient& client_,
 	if (noReturn) backButton->setLocked (true);
 
 	upgradeBuyGroup = new cMenuRadioGroup();
-	upgradeBuyGroup->addButton (new cMenuCheckButton (position.x + 542, position.y + 445, lngPack.i18n ("Text~Button~Buy"), true, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND));
-	upgradeBuyGroup->addButton (new cMenuCheckButton (position.x + 542, position.y + 445 + 17, lngPack.i18n ("Text~Button~Upgrade"), false, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND));
+	upgradeBuyGroup->addButton (new cMenuCheckButton (position.x + 542, position.y + 445, lngPack.i18n ("Text~Others~Buy"), true, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND));
+	upgradeBuyGroup->addButton (new cMenuCheckButton (position.x + 542, position.y + 445 + 17, lngPack.i18n ("Text~Others~Upgrade"), false, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND));
 	upgradeBuyGroup->setClickedFunction (&subButtonsChanged);
 	menuItems.push_back (upgradeBuyGroup.get());
 
@@ -2365,7 +2365,7 @@ cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData&
 	infoLabel->setBox ((Video.getResolutionX() - 200), font->getFontHeight (FONT_LATIN_BIG) * 2);
 	menuItems.push_back (infoLabel.get());
 
-	backButton = new cMenuButton (position.x + 35, position.y + 255, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	backButton = new cMenuButton (position.x + 35, position.y + 255, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 
@@ -2536,11 +2536,11 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	//cMenu (LoadPCX (GFXOD_HOTSEAT))     // 8 players
 	cMenu (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
 {
-	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Button~Back"));
+	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Others~Back"));
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 
-	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Button~OK"));
+	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Others~OK"));
 	okButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (okButton.get());
 
@@ -2701,7 +2701,7 @@ cNetworkMenu::cNetworkMenu() :
 	players.push_back (actPlayer);
 	playersBox->setPlayers (&players);
 
-	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Button~Back"));
+	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Others~Back"));
 	backButton->setReleasedFunction (&backReleased);
 	menuItems.push_back (backButton.get());
 
@@ -2986,11 +2986,11 @@ void cNetworkMenu::setDefaultPort (void* parent)
 //------------------------------------------------------------------------------
 cNetworkHostMenu::cNetworkHostMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Host"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Others~TCPIP_Host"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Button~OK"));
+	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Others~OK"));
 	okButton->setReleasedFunction (&okReleased);
 	menuItems.push_back (okButton.get());
 
@@ -3002,11 +3002,11 @@ cNetworkHostMenu::cNetworkHostMenu()
 	settingsButton->setReleasedFunction (&settingsReleased);
 	menuItems.push_back (settingsButton.get());
 
-	loadButton = new cMenuButton (position.x + 470, position.y + 120, lngPack.i18n ("Text~Button~Game_Load"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
+	loadButton = new cMenuButton (position.x + 470, position.y + 120, lngPack.i18n ("Text~Others~Game_Load"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	loadButton->setReleasedFunction (&loadReleased);
 	menuItems.push_back (loadButton.get());
 
-	startButton = new cMenuButton (position.x + 470, position.y + 200, lngPack.i18n ("Text~Button~Host_Start"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
+	startButton = new cMenuButton (position.x + 470, position.y + 200, lngPack.i18n ("Text~Others~Host_Start"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	startButton->setReleasedFunction (&startReleased);
 	menuItems.push_back (startButton.get());
 
@@ -3481,7 +3481,7 @@ cNetworkClientMenu::cNetworkClientMenu()
 	: mapReceiver (0)
 	, lastRequestedMap ("")
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Client"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Others~TCPIP_Client"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
@@ -3872,11 +3872,11 @@ cLoadMenu::cLoadMenu (eMenuBackgrounds backgroundType_) :
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	backButton = new cMenuButton (position.x + 353, position.y + 438, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	backButton = new cMenuButton (position.x + 353, position.y + 438, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 
-	loadButton = new cMenuButton (position.x + 514, position.y + 438, lngPack.i18n ("Text~Button~Load"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	loadButton = new cMenuButton (position.x + 514, position.y + 438, lngPack.i18n ("Text~Others~Load"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	loadButton->setReleasedFunction (&loadReleased);
 	menuItems.push_back (loadButton.get());
 
@@ -4064,11 +4064,11 @@ cLoadSaveMenu::cLoadSaveMenu (cClient& client_, cServer* server_) :
 	client (&client_),
 	server (server_)
 {
-	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Others~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	exitButton->setReleasedFunction (&exitReleased);
 	menuItems.push_back (exitButton.get());
 
-	saveButton = new cMenuButton (position.x + 132, position.y + 438, lngPack.i18n ("Text~Button~Save"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	saveButton = new cMenuButton (position.x + 132, position.y + 438, lngPack.i18n ("Text~Others~Save"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	saveButton->setReleasedFunction (&saveReleased);
 	menuItems.push_back (saveButton.get());
 
@@ -4169,7 +4169,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 
 	if (vehicle->data.canBuildPath)
 	{
-		pathButton = new cMenuButton (position.x + 338, position.y + 428, lngPack.i18n ("Text~Button~Path"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+		pathButton = new cMenuButton (position.x + 338, position.y + 428, lngPack.i18n ("Text~Others~Path"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 		pathButton->setReleasedFunction (&pathReleased);
 		menuItems.push_back (pathButton.get());
 	}
@@ -4628,7 +4628,7 @@ void cUnitHelpMenu::init (sID unitID)
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	doneButton = new cMenuButton (position.x + 474, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	doneButton = new cMenuButton (position.x + 474, position.y + 452, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton.get());
 
@@ -4696,7 +4696,7 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 		SDL_BlitSurface (surface, NULL, background, NULL);
 	}
 
-	doneButton = new cMenuButton (position.x + 518, position.y + 371, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	doneButton = new cMenuButton (position.x + 518, position.y + 371, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton.get());
 
@@ -4708,19 +4708,19 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 	downButton->setReleasedFunction (&downReleased);
 	menuItems.push_back (downButton.get());
 
-	activateAllButton = new cMenuButton (position.x + 518, position.y + 246, lngPack.i18n ("Text~Button~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	activateAllButton = new cMenuButton (position.x + 518, position.y + 246, lngPack.i18n ("Text~Others~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	activateAllButton->setReleasedFunction (&activateAllReleased);
 	menuItems.push_back (activateAllButton.get());
 
-	reloadAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Reload") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	reloadAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	reloadAllButton->setReleasedFunction (&reloadAllReleased);
 	menuItems.push_back (reloadAllButton.get());
 
-	repairAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 2, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	repairAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 2, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	repairAllButton->setReleasedFunction (&repairAllReleased);
 	menuItems.push_back (repairAllButton.get());
 
-	upgradeAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 3, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	upgradeAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 3, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	upgradeAllButton->setReleasedFunction (&upgradeAllReleased);
 	menuItems.push_back (upgradeAllButton.get());
 
@@ -4746,13 +4746,13 @@ void cStorageMenu::generateItems()
 		for (int y = 0; y < 2; y++)
 		{
 			int index = x + y * maxX;
-			activateButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + y * 236, lngPack.i18n ("Text~Button~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			activateButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + y * 236, lngPack.i18n ("Text~Others~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			activateButtons[index]->setReleasedFunction (&activateReleased);
-			reloadButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Reload") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			reloadButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			reloadButtons[index]->setReleasedFunction (&reloadReleased);
-			repairButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			repairButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			repairButtons[index]->setReleasedFunction (&repairReleased);
-			upgradeButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			upgradeButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			upgradeButtons[index]->setReleasedFunction (&upgradeReleased);
 
 			unitImages[index] = new cMenuImage (position.x + 17 + x * xStepImage, position.y + 9 + y * 236);
@@ -5100,7 +5100,7 @@ cMineManagerMenu::cMineManagerMenu (const cClient& client_, cBuilding* building_
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	doneButton = new cMenuButton (position.x + 514, position.y + 430, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_HUGE);
+	doneButton = new cMenuButton (position.x + 514, position.y + 430, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_HUGE);
 	doneButton->setReleasedFunction (doneReleased);
 	menuItems.push_back (doneButton.get());
 
@@ -5134,7 +5134,7 @@ cMineManagerMenu::cMineManagerMenu (const cClient& client_, cBuilding* building_
 		resourceLabels[i]->setCentered (true);
 		menuItems.push_back (resourceLabels[i].get());
 
-		usageLabels[i] = new cMenuLabel (position.x + 81, position.y + 78 + 37 + 121 * i, lngPack.i18n ("Text~Vehicles~Usage"));
+		usageLabels[i] = new cMenuLabel (position.x + 81, position.y + 78 + 37 + 121 * i, lngPack.i18n ("Text~Others~Usage_7"));
 		usageLabels[i]->setCentered (true);
 		menuItems.push_back (usageLabels[i].get());
 
@@ -5340,53 +5340,53 @@ cReportsMenu::cReportsMenu (cClient& client_)
 	typeButtonGroup = new cMenuRadioGroup();
 	menuItems.push_back (typeButtonGroup.get());
 
-	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71, lngPack.i18n ("Text~Button~Units"), true, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
-	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29, lngPack.i18n ("Text~Button~Disadvantages"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
-	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29 * 2, lngPack.i18n ("Text~Button~Score"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
-	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29 * 3, lngPack.i18n ("Text~Button~Reports"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
+	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71, lngPack.i18n ("Text~Others~Units"), true, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
+	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29, lngPack.i18n ("Text~Others~Disadvantages"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
+	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29 * 2, lngPack.i18n ("Text~Others~Score"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
+	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29 * 3, lngPack.i18n ("Text~Others~Reports"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
 	typeButtonGroup->setClickedFunction (&typeChanged);
 
-	includedLabel = new cMenuLabel (position.x + 497, position.y + 207, lngPack.i18n ("Text~Button~Included") + ":");
+	includedLabel = new cMenuLabel (position.x + 497, position.y + 207, lngPack.i18n ("Text~Others~Included") + ":");
 	menuItems.push_back (includedLabel.get());
 
-	planesCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218, lngPack.i18n ("Text~Button~Air_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	planesCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218, lngPack.i18n ("Text~Others~Air_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	planesCheckBtn->setClickedFunction (&filterClicked);
 	planesCheckBtn->limitTextSize (123);
 	menuItems.push_back (planesCheckBtn.get());
-	groundCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18, lngPack.i18n ("Text~Button~Ground_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	groundCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18, lngPack.i18n ("Text~Others~Ground_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	groundCheckBtn->setClickedFunction (&filterClicked);
 	groundCheckBtn->limitTextSize (123);
 	menuItems.push_back (groundCheckBtn.get());
-	seaCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18 * 2, lngPack.i18n ("Text~Button~Sea_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	seaCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18 * 2, lngPack.i18n ("Text~Others~Sea_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	seaCheckBtn->setClickedFunction (&filterClicked);
 	seaCheckBtn->limitTextSize (123);
 	menuItems.push_back (seaCheckBtn.get());
-	stationaryCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18 * 3, lngPack.i18n ("Text~Button~Stationary_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	stationaryCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18 * 3, lngPack.i18n ("Text~Others~Stationary_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	stationaryCheckBtn->setClickedFunction (&filterClicked);
 	stationaryCheckBtn->limitTextSize (123);
 	menuItems.push_back (stationaryCheckBtn.get());
 
-	borderedLabel = new cMenuLabel (position.x + 497, position.y + 299, lngPack.i18n ("Text~Button~Limited_To") + ":");
+	borderedLabel = new cMenuLabel (position.x + 497, position.y + 299, lngPack.i18n ("Text~Others~Limited_To") + ":");
 	menuItems.push_back (borderedLabel.get());
 
-	buildCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312, lngPack.i18n ("Text~Button~Produce_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	buildCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312, lngPack.i18n ("Text~Others~Produce_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	buildCheckBtn->setClickedFunction (&filterClicked);
 	buildCheckBtn->limitTextSize (123);
 	menuItems.push_back (buildCheckBtn.get());
-	fightCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18, lngPack.i18n ("Text~Button~Fight_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	fightCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18, lngPack.i18n ("Text~Others~Fight_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	fightCheckBtn->setClickedFunction (&filterClicked);
 	fightCheckBtn->limitTextSize (123);
 	menuItems.push_back (fightCheckBtn.get());
-	damagedCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18 * 2, lngPack.i18n ("Text~Button~Damaged_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	damagedCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18 * 2, lngPack.i18n ("Text~Others~Damaged_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	damagedCheckBtn->setClickedFunction (&filterClicked);
 	damagedCheckBtn->limitTextSize (123);
 	menuItems.push_back (damagedCheckBtn.get());
-	stealthCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18 * 3, lngPack.i18n ("Text~Button~Stealth_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
+	stealthCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18 * 3, lngPack.i18n ("Text~Others~Stealth_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	stealthCheckBtn->setClickedFunction (&filterClicked);
 	stealthCheckBtn->limitTextSize (123);
 	menuItems.push_back (stealthCheckBtn.get());
 
-	doneButton = new cMenuButton (position.x + 524, position.y + 398, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	doneButton = new cMenuButton (position.x + 524, position.y + 398, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton.get());
 

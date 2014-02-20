@@ -31,6 +31,30 @@ cSignalConnectionManager::~cSignalConnectionManager ()
 }
 
 //------------------------------------------------------------------------------
+bool cSignalConnectionManager::disconnect (cSignalConnection& connection)
+{
+	bool found = false;
+	for (auto i = connections.begin (); i != connections.end ();)
+	{
+		if (*i == connection)
+		{
+			i = connections.erase (i);
+			found = true;
+		}
+		else
+		{
+			++i;
+		}
+	}
+	if (found)
+	{
+		connection.disconnect ();
+		return true;
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
 void cSignalConnectionManager::disconnectAll ()
 {
 	for (auto& connection : connections)

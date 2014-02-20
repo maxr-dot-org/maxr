@@ -1921,14 +1921,14 @@ void cMenuUnitDetails::draw()
 
 	// Die Hitpoints anzeigen:
 	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data.hitpointsCur, data.hitpointsMax);
-	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE);
+	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE);
 	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data.hitpointsCur, data.hitpointsMax);
 
 	// Den Speed anzeigen:
 	if (data.speedMax > 0)
 	{
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, data.speedCur / 4, data.speedMax / 4);
-		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Speed"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Others~Speed_7"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, data.speedCur / 4, data.speedMax / 4);
 	}
 
@@ -1941,16 +1941,16 @@ void cMenuUnitDetails::draw()
 		const int lim = (gameSetting.victoryType == SETTINGS_VICTORY_POINTS) ? gameSetting.duration : tot;
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Score"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, score, score);
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, tot, lim);
-		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Others~Total"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, tot, lim);
 	}
 	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unitOwner == &activePlayer)
 	{
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Cargo"), FONT_LATIN_SMALL_WHITE);
 
 		if (data.storeResType > 0)
 		{
@@ -1958,7 +1958,7 @@ void cMenuUnitDetails::draw()
 			{
 				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.storageResCur, data.storageResMax);
 
-				font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
+				font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Others~Total"), FONT_LATIN_SMALL_WHITE);
 
 				switch (data.storeResType)
 				{
@@ -2027,31 +2027,31 @@ void cMenuUnitDetails::draw()
 		{
 			// Munition:
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.ammoCur, data.ammoMax);
-			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Ammo_7"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data.ammoCur, data.ammoMax);
 		}
 
 		// shots
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data.shotsCur, data.shotsMax);
-		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Shots"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Others~Shots_7"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data.shotsCur, data.shotsMax);
 	}
 	else if (data.produceEnergy && building)
 	{
 		// EnergieProduktion:
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data.produceEnergy : 0), data.produceEnergy);
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Power"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data.produceEnergy : 0), data.produceEnergy);
 
 		if (unitOwner == &activePlayer)
 		{
 			// Gesammt:
-			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Others~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 28, 70, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 
 			// Verbrauch:
-			font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Others~Usage_7"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 41, 70, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 		}
@@ -2060,18 +2060,18 @@ void cMenuUnitDetails::draw()
 	{
 		// HumanProduktion:
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.produceHumans, data.produceHumans);
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Teams_7"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data.produceHumans, data.produceHumans);
 
 		if (unitOwner == &activePlayer)
 		{
 			// Gesammt:
-			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Others~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanProd, building->SubBase->HumanProd);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, building->SubBase->HumanProd, building->SubBase->HumanProd);
 
 			// Verbrauch:
-			font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Others~Usage_7"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
@@ -2082,20 +2082,20 @@ void cMenuUnitDetails::draw()
 		if (building->IsWorking)
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.needsHumans, data.needsHumans);
-			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Usage_7"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data.needsHumans, data.needsHumans);
 		}
 		else
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, 0, data.needsHumans);
-			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Usage_7"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, 0, data.needsHumans);
 		}
 
 		if (unitOwner == &activePlayer)
 		{
 			// Gesammt:
-			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE);
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Others~Total"), FONT_LATIN_SMALL_WHITE);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
@@ -2136,7 +2136,7 @@ void cMenuUnitDetailsBig::draw()
 		// Damage:
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->damage));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Damage"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Attack"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3, y - 3, upgrade ? upgrade->getCurValue() : data->damage, oriData->damage);
 		DETAIL_DOLINEBREAK
 
@@ -2145,21 +2145,21 @@ void cMenuUnitDetailsBig::draw()
 			// Shots:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->shotsMax));
-			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Shoots"));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Shoots"));
 			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, upgrade ? upgrade->getCurValue() : data->shotsMax, oriData->shotsMax);
 			DETAIL_DOLINEBREAK
 
 			// Range:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->range));
-			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Range"));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Range"));
 			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->range, oriData->range);
 			DETAIL_DOLINEBREAK
 
 			// Ammo:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->ammoMax));
-			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Ammo"));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Attack"));
 			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->ammoMax, oriData->ammoMax);
 			DETAIL_DOLINEBREAK
 		}
@@ -2172,7 +2172,7 @@ void cMenuUnitDetailsBig::draw()
 	if (transport != sUnitData::STORE_RES_NONE)
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->storageResMax));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Cargo"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Cargo"));
 
 		switch (transport)
 		{
@@ -2196,13 +2196,13 @@ void cMenuUnitDetailsBig::draw()
 	{
 		// Eneryproduction:
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->produceEnergy));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Produce"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Produce_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, data->produceEnergy, oriData->produceEnergy);
 		DETAIL_DOLINEBREAK
 
 		// Oil consumption:
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsOil));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Usage_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, data->needsOil, oriData->needsOil);
 		DETAIL_DOLINEBREAK
 	}
@@ -2211,7 +2211,7 @@ void cMenuUnitDetailsBig::draw()
 	{
 		// Humanproduction:
 		font->showText (DETAIL_COLUMN_1, y, iToStr (data->produceHumans));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Produce"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Produce_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, data->produceHumans, oriData->produceHumans);
 		DETAIL_DOLINEBREAK
 	}
@@ -2219,14 +2219,14 @@ void cMenuUnitDetailsBig::draw()
 	// Armor:
 	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR);
 	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->armor));
-	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Armor"));
+	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Armor_7"));
 	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->armor, oriData->armor);
 	DETAIL_DOLINEBREAK
 
 	// Hitpoints:
 	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS);
 	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->hitpointsMax));
-	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Hitpoints"));
+	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Hitpoints_7"));
 	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3, y - 1, upgrade ? upgrade->getCurValue() : data->hitpointsMax, oriData->hitpointsMax);
 	DETAIL_DOLINEBREAK
 
@@ -2235,7 +2235,7 @@ void cMenuUnitDetailsBig::draw()
 	{
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->scan));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Scan"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Scan_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->scan, oriData->scan);
 		DETAIL_DOLINEBREAK
 	}
@@ -2245,7 +2245,7 @@ void cMenuUnitDetailsBig::draw()
 	{
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ((upgrade ? upgrade->getCurValue() : data->speedMax) / 4));     //FIXME: might crash if e.g. speedMax = 3
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Speed"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Speed_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3, y - 2, (upgrade ? upgrade->getCurValue() : data->speedMax) / 4, oriData->speedMax / 4);
 		DETAIL_DOLINEBREAK
 	}
@@ -2254,7 +2254,7 @@ void cMenuUnitDetailsBig::draw()
 	if (data->needsEnergy)
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsEnergy));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Usage_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, data->needsEnergy, oriData->needsEnergy);
 		DETAIL_DOLINEBREAK
 	}
@@ -2263,7 +2263,7 @@ void cMenuUnitDetailsBig::draw()
 	if (data->needsHumans)
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsHumans));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Usage_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, data->needsHumans, oriData->needsHumans);
 		DETAIL_DOLINEBREAK
 	}
@@ -2272,7 +2272,7 @@ void cMenuUnitDetailsBig::draw()
 	if (data->needsMetal)
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsMetal));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Usage_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, data->needsMetal, oriData->needsMetal);
 		DETAIL_DOLINEBREAK
 	}
@@ -2281,7 +2281,7 @@ void cMenuUnitDetailsBig::draw()
 	if (data->convertsGold)
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->convertsGold));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Usage_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, data->convertsGold, oriData->convertsGold);
 		DETAIL_DOLINEBREAK
 	}
@@ -2290,7 +2290,7 @@ void cMenuUnitDetailsBig::draw()
 	// Do not use unit data but currentVersion data
 	// since cost doesn't change unit version
 	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->buildCosts));
-	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Costs"));
+	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Costs"));
 	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, currentVersionData->buildCosts, oriData->buildCosts);
 }
 
@@ -3250,7 +3250,7 @@ cMenuBuildSpeedHandler::cMenuBuildSpeedHandler (int x, int y) : cMenuItemContain
 		costsLabels[i] = new cMenuLabel (position.x + 137, position.y + 25 * i + 5);
 		turnsLabels[i]->setCentered (true);
 		costsLabels[i]->setCentered (true);
-		speedButtons[i] =  new cMenuCheckButton (position.x, position.y + 25 * i, lngPack.i18n ("Text~Button~Build") + " x" + iToStr (factor), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON);
+		speedButtons[i] =  new cMenuCheckButton (position.x, position.y + 25 * i, lngPack.i18n ("Text~Others~Build") + " x" + iToStr (factor), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON);
 		speedGroup->addButton (speedButtons[i]);
 		addItem (turnsLabels[i].get());
 		addItem (costsLabels[i].get());
@@ -3405,13 +3405,13 @@ void cMenuStoredUnitDetails::draw()
 	if (!unitData) return;
 
 	cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12, unitData->hitpointsCur, unitData->hitpointsMax);
-	font->showText (position.x + 30, position.y + 12, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE);
+	font->showText (position.x + 30, position.y + 12, lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE);
 	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, unitData->hitpointsCur, unitData->hitpointsMax);
 
 	if (unitData->canAttack)
 	{
 		cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12 + 15, unitData->ammoCur, unitData->ammoMax);
-		font->showText (position.x + 30, position.y + 27, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 30, position.y + 27, lngPack.i18n ("Text~Others~Ammo_7"), FONT_LATIN_SMALL_WHITE);
 		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, unitData->ammoCur, unitData->ammoMax);
 	}
 }

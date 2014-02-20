@@ -23,8 +23,7 @@
 #include <vector>
 
 #include "../../maxrconfig.h"
-
-class cSignalConnection;
+#include "signalconnection.h"
 
 /**
  * A RAII signal connection manager class that can be used to bind
@@ -51,7 +50,19 @@ public:
      * @param function The callable object to connect to the signal.
      */
     template<typename SignalType, typename FunctionType>
-    void connect (SignalType& signal, FunctionType&& function);
+	cSignalConnection connect (SignalType& signal, FunctionType&& function);
+
+	/**
+	 * Disconnects a single connection and removes it from this manager.
+	 *
+	 * @param connection The connection to disconnect.
+	 *                   Should be a connection that has been returned by the @ref connect
+	 *                   method of this class.
+	 *                   Any other connections will be ignored.
+	 * @return true if the connection could be found in the stored connections and
+	 *         hence has been disconnected.
+	 */
+	bool disconnect (cSignalConnection& connection);
 
     /**
      * Disconnects all the stored connections.
@@ -71,9 +82,10 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename SignalType, typename FunctionType>
-void cSignalConnectionManager::connect (SignalType& signal, FunctionType&& function)
+cSignalConnection cSignalConnectionManager::connect (SignalType& signal, FunctionType&& function)
 {
 	connections.push_back (signal.connect (std::forward<FunctionType> (function)));
+	return connections.back ();
 }
 
 #endif // utility_signal_signalconnectionmanagerH

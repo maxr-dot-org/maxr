@@ -361,6 +361,7 @@ class cUnitUpgrade
 public:
 	void init (const sUnitData& origData, const sUnitData& curData, const cResearch& researchLevel);
 	sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type);
+	const sUnitUpgrade* getUpgrade (sUnitUpgrade::eUpgradeTypes type) const;
 
 	int computedPurchasedCount (const cResearch& researchLevel);
 	bool hasBeenPurchased() const;

@@ -20,9 +20,14 @@
 #ifndef gui_menu_windows_windowclanselection_windowclanselectionH
 #define gui_menu_windows_windowclanselection_windowclanselectionH
 
+#include <array>
+
 #include "../../../window.h"
 #include "../../../../utility/signal/signalconnectionmanager.h"
 #include "../../../../utility/signal/signal.h"
+
+class cImage;
+class cLabel;
 
 class cWindowClanSelection : public cWindow
 {
@@ -31,11 +36,30 @@ public:
 	~cWindowClanSelection ();
 
 	cSignal<void ()> done;
+
+	unsigned int getSelectedClan () const;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	static const size_t clanRows = 2;
+	static const size_t clanColumns = 4;
+	static const size_t clanCount = clanRows * clanColumns;
+
+	std::array<cImage*, clanCount> clanImages;
+	std::array<cLabel*, clanCount> clanTitles;
+
+	cLabel* clanDescription1;
+	cLabel* clanDescription2;
+	cLabel* clanShortDescription;
+
+	unsigned int selectedClan;
+
+	void clanClicked (const cImage* clanImage);
+
 	void okClicked ();
 	void backClicked ();
+
+	void updateClanDescription ();
 };
 
 #endif // gui_menu_windows_windowclanselection_windowclanselectionH

@@ -402,7 +402,7 @@ void sID::generate (const string& text)
 }
 
 //------------------------------------------------------------------------------
-const sUnitData* sID::getUnitDataOriginalVersion (cPlayer* Owner) const
+const sUnitData* sID::getUnitDataOriginalVersion (const cPlayer* Owner) const
 {
 	if (isAVehicle())
 	{

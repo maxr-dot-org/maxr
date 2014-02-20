@@ -43,28 +43,28 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	cRadioGroup* metalRadioGroup;
-	cCheckBox* metalLowCheckBox;
+	cCheckBox* metalLimitedCheckBox;
 	cCheckBox* metalNormalCheckBox;
-	cCheckBox* metalMuchCheckBox;
-	cCheckBox* metalMostCheckBox;
+	cCheckBox* metalHighCheckBox;
+	cCheckBox* metalTooMuchCheckBox;
 
 	cRadioGroup* oilRadioGroup;
-	cCheckBox* oilLowCheckBox;
+	cCheckBox* oilLimitedCheckBox;
 	cCheckBox* oilNormalCheckBox;
-	cCheckBox* oilMuchCheckBox;
-	cCheckBox* oilMostCheckBox;
+	cCheckBox* oilHighCheckBox;
+	cCheckBox* oilTooMuchCheckBox;
 
 	cRadioGroup* goldRadioGroup;
-	cCheckBox* goldLowCheckBox;
+	cCheckBox* goldLimitedCheckBox;
 	cCheckBox* goldNormalCheckBox;
-	cCheckBox* goldMuchCheckBox;
-	cCheckBox* goldMostCheckBox;
+	cCheckBox* goldHighCheckBox;
+	cCheckBox* goldTooMuchCheckBox;
 
 	cRadioGroup* densityRadioGroup;
-	cCheckBox* densityThinCheckBox;
+	cCheckBox* densitySparseCheckBox;
 	cCheckBox* densityNormalCheckBox;
-	cCheckBox* densityThickCheckBox;
-	cCheckBox* densityMostCheckBox;
+	cCheckBox* densityDenseCheckBox;
+	cCheckBox* densityTooMuchCheckBox;
 
 	cRadioGroup* bridgeheadRadioGroup;
 	cCheckBox* bridgeheadMobileCheckBox;
@@ -79,11 +79,11 @@ private:
 	cCheckBox* clansOffCheckBox;
 
 	cRadioGroup* creditsRadioGroup;
-	cCheckBox* creditsLowestCheckBox;
-	cCheckBox* creditsLowerCheckBox;
+	cCheckBox* creditsNoneCheckBox;
 	cCheckBox* creditsLowCheckBox;
+	cCheckBox* creditsLimitedCheckBox;
 	cCheckBox* creditsNormalCheckBox;
-	cCheckBox* creditsMuchCheckBox;
+	cCheckBox* creditsHighCheckBox;
 	cCheckBox* creditsMoreCheckBox;
 
 	cRadioGroup* victoryRadioGroup;

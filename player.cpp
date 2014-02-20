@@ -195,25 +195,30 @@ void cPlayer::setClan (int newClan)
 }
 
 //------------------------------------------------------------------------------
-sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
+sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id)
 {
-	if (ID.isAVehicle())
+	const cPlayer* constMe = this;
+	return const_cast<sUnitData*>(constMe->getUnitDataCurrentVersion (id));
+}
+
+//------------------------------------------------------------------------------
+const sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
+{
+	if (id.isAVehicle ())
 	{
-		for (size_t i = 0; i != VehicleData.size(); ++i)
+		for (size_t i = 0; i != VehicleData.size (); ++i)
 		{
-			if (VehicleData[i].ID == ID)
-				return &VehicleData[i];
+			if (VehicleData[i].ID == id) return &VehicleData[i];
 		}
 	}
-	else if (ID.isABuilding())
+	else if (id.isABuilding ())
 	{
-		for (unsigned int i = 0; i < BuildingData.size(); ++i)
+		for (unsigned int i = 0; i < BuildingData.size (); ++i)
 		{
-			if (BuildingData[i].ID == ID)
-				return &BuildingData[i];
+			if (BuildingData[i].ID == id) return &BuildingData[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------

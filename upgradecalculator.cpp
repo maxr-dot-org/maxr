@@ -1593,6 +1593,16 @@ sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeTypes type)
 }
 
 //--------------------------------------------------
+const sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeTypes type) const
+{
+	for (int i = 0; i < 8; i++)
+	{
+		if (upgrades[i].type == type) return &upgrades[i];
+	}
+	return nullptr;
+}
+
+//--------------------------------------------------
 int cUnitUpgrade::getValueOrDefault (sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue) const
 {
 	for (int i = 0; i != 8; ++i)

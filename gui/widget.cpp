@@ -26,6 +26,7 @@
 cWidget::cWidget () :
 	parent (nullptr),
 	enabled (true),
+	hidden (false),
 	area (cPosition (0, 0), cPosition (0, 0))
 {
 	createFrameSurface ();
@@ -35,6 +36,7 @@ cWidget::cWidget () :
 cWidget::cWidget (const cPosition& position) :
 	parent (nullptr),
 	enabled (true),
+	hidden (false),
 	area (position, position)
 {
 	createFrameSurface ();
@@ -44,6 +46,7 @@ cWidget::cWidget (const cPosition& position) :
 cWidget::cWidget (const cBox<cPosition>& area_) :
 	parent (nullptr),
 	enabled (true),
+	hidden (false),
 	area (area_)
 {
 	createFrameSurface ();
@@ -75,6 +78,24 @@ void cWidget::disable ()
 void cWidget::enable ()
 {
 	enabled = true;
+}
+
+//------------------------------------------------------------------------------
+bool cWidget::isHidden () const
+{
+	return hidden;
+}
+
+//------------------------------------------------------------------------------
+void cWidget::hide ()
+{
+	hidden = true;
+}
+
+//------------------------------------------------------------------------------
+void cWidget::show ()
+{
+	hidden = false;
 }
 
 //------------------------------------------------------------------------------
@@ -145,6 +166,8 @@ cWidget* cWidget::getChildAt (const cPosition& position) const
 	{
 		auto child = i->get();
 
+		if (!child->isEnabled ()) continue;
+
 		if (child->isAt (position))
 		{
 			auto childChild = child->getChildAt (position);
@@ -163,6 +186,8 @@ bool cWidget::isAt (const cPosition& position) const
 //------------------------------------------------------------------------------
 void cWidget::draw ()
 {
+	if (isHidden ()) return;
+
 	if (frameSurface)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
@@ -171,7 +196,11 @@ void cWidget::draw ()
 
 	for (auto i = children.begin (); i != children.end (); ++i)
 	{
-		(*i)->draw ();
+		auto& child = *i->get ();
+
+		if (child.isHidden ()) continue;
+
+		child.draw ();
 	}
 }
 
@@ -253,20 +282,21 @@ void cWidget::handleMoved (const cPosition& offset)
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::unique_ptr<cWidget>>& cWidget::getChildren () const
+bool cWidget::hasChildren () const
 {
-	return children;
+	return !children.empty();
 }
 
 //------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
-	const bool debugDrawFrame = true;
+	const bool debugDrawFrame = false;
 	if (debugDrawFrame)
 	{
 		const auto size = getSize();
 
 		frameSurface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
+		if (!frameSurface) return; // can happen when for some reason the size is invalid (e.g. negative)
 		SDL_SetColorKey (frameSurface, SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (frameSurface, NULL, 0xFF00FF);
 

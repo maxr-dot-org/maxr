@@ -83,7 +83,7 @@ void cCheckBox::draw ()
 	case eCheckBoxType::Tank:
 	case eCheckBoxType::Plane:
 	case eCheckBoxType::Ship:
-	case eCheckBoxType::Build:
+	case eCheckBoxType::Building:
 	case eCheckBoxType::Tnt:
 		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 		break;
@@ -208,7 +208,7 @@ void cCheckBox::renewSurface ()
 		src.x = (checked || isPressed) ? 32 * 4 + size.x () : 32 * 4;
 		src.y = 219;
 		break;
-	case eCheckBoxType::Build:
+	case eCheckBoxType::Building:
 		size = cPosition (32, 31);
 		src.x = (checked || isPressed) ? 32 * 6 + size.x () : 32 * 6;
 		src.y = 219;

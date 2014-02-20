@@ -35,7 +35,7 @@ cRadioGroup::~cRadioGroup ()
 //------------------------------------------------------------------------------
 cCheckBox* cRadioGroup::addButton (std::unique_ptr<cCheckBox> button)
 {
-	const bool hadButtons = !getChildren ().empty ();
+	const bool hadButtons = hasChildren();
 	
 	auto addedbutton = addChild (std::move (button));
 

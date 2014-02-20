@@ -35,11 +35,11 @@ cWindowStart::cWindowStart () :
 
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	auto singlePlayerButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~Single_Player"));
+	auto singlePlayerButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player"));
 	signalConnectionManager.connect (singlePlayerButton->clicked, std::bind (&cWindowStart::singlePlayerClicked, this));
 	addChild (std::move (singlePlayerButton));
 
-	auto multiPlayerButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~Multi_Player"));
+	auto multiPlayerButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player"));
 	signalConnectionManager.connect (multiPlayerButton->clicked, std::bind (&cWindowStart::multiPlayerClicked, this));
 	addChild (std::move (multiPlayerButton));
 
@@ -47,11 +47,11 @@ cWindowStart::cWindowStart () :
 	signalConnectionManager.connect (preferencesButton->clicked, std::bind (&cWindowStart::preferencesClicked, this));
 	addChild (std::move (preferencesButton));
 
-	auto licenceButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~Mani"));
+	auto licenceButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani"));
 	signalConnectionManager.connect (licenceButton->clicked, std::bind (&cWindowStart::licenceClicked, this));
 	addChild (std::move (licenceButton));
 
-	auto exitButton = std::make_unique<cPushButton> (menuPosition + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton, lngPack.i18n ("Text~Button~Exit"));
+	auto exitButton = std::make_unique<cPushButton> (menuPosition + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
 	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
 	addChild (std::move (exitButton));
 

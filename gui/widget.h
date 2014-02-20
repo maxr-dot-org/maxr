@@ -30,6 +30,7 @@
 #include "../utility/box.h"
 #include "../utility/position.h"
 #include "../autosurface.h"
+#include "../maxrconfig.h"
 
 class cMouse;
 class cKeyboard;
@@ -44,11 +45,45 @@ public:
 
 	virtual ~cWidget ();
 
+	/**
+	 * Returns the parent widget of the current one.
+	 *
+	 * @return The parent widget or null if there is no parent.
+	 */
 	cWidget* getParent () const;
 
+	/**
+	 * If a widget is disabled it will not receive any input events
+	 * for the mouse or keyboard anymore.
+	 *
+	 * @return True if the widget is enabled. False if it is disabled.
+	 */
 	bool isEnabled () const;
+	/**
+	 * Disables the widget. See @ref isEnabled() for the effects.
+	 */
 	void disable ();
+	/**
+	 * Enables the widget. See @ref isEnabled() for the effects.
+	 */
 	void enable ();
+
+	/**
+	 * A hidden widget will not be drawn to the screen anymore.
+	 *
+	 * @return True if the widget is hidden. False if not.
+	 */
+	bool isHidden () const;
+	/**
+	 * Hides the widget. See @ref isHidden for the effects.
+	 * You may want to @ref disable the widget as well when
+	 * it is hidden.
+	 */
+	void hide ();
+	/**
+	 * Sets the widget as not hidden. See @ref isHidden for the effects.
+	 */
+	void show ();
 
 	const cPosition& getPosition () const;
 	const cPosition& getEndPosition () const;
@@ -91,14 +126,18 @@ protected:
 	template<typename WidgetType>
 	WidgetType* addChild (std::unique_ptr<WidgetType> child);
 
-	const std::vector<std::unique_ptr<cWidget>>& getChildren () const;
+	bool hasChildren () const;
 
 	// TODO: find some suitable place for this function!
 	static void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, Uint32 color);
 private:
+	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
+	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;
+
 	cWidget* parent;
 
 	bool enabled;
+	bool hidden;
 
 	cBox<cPosition> area;
 

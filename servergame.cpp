@@ -101,7 +101,7 @@ void cServerGame::saveGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::prepareGameData()
 {
-	settings.metal = SETTING_RESVAL_MUCH;
+	settings.metal = SETTING_RESVAL_HIGH;
 	settings.oil = SETTING_RESVAL_NORMAL;
 	settings.gold = SETTING_RESVAL_NORMAL;
 	settings.resFrequency = SETTING_RESFREQ_NORMAL;
@@ -320,11 +320,11 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				if (tokens[0].compare ("credits") == 0)
 				{
 					int credits = atoi (tokens[1].c_str());
-					if (credits != SETTING_CREDITS_LOWEST
-						&& credits != SETTING_CREDITS_LOWER
+					if (credits != SETTING_CREDITS_NONE
 						&& credits != SETTING_CREDITS_LOW
+						&& credits != SETTING_CREDITS_LIMITED
 						&& credits != SETTING_CREDITS_NORMAL
-						&& credits != SETTING_CREDITS_MUCH
+						&& credits != SETTING_CREDITS_HIGH
 						&& credits != SETTING_CREDITS_MORE)
 					{
 						sendMenuChatMessage (*network, "Credits must be one of: 0 50 100 150 200 250", senderPlayer);
@@ -377,10 +377,10 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 	if (tokens[0].compare ("res") == 0)
 	{
 		int density = -1;
-		if (tokens[1].compare ("sparse") == 0) density = SETTING_RESFREQ_THIN;
+		if (tokens[1].compare ("sparse") == 0) density = SETTING_RESFREQ_SPARSE;
 		else if (tokens[1].compare ("normal") == 0) density = SETTING_RESFREQ_NORMAL;
-		else if (tokens[1].compare ("dense") == 0) density = SETTING_RESFREQ_THICK;
-		else if (tokens[1].compare ("most") == 0) density = SETTING_RESFREQ_MOST;
+		else if (tokens[1].compare ("dense") == 0) density = SETTING_RESFREQ_DENCE;
+		else if (tokens[1].compare ("most") == 0) density = SETTING_RESFREQ_TOOMUCH;
 		if (density != -1)
 		{
 			settings.resFrequency = (eSettingResFrequency) density;
@@ -397,10 +397,10 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 	if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0)
 	{
 		int amount = -1;
-		if (tokens[1].compare ("low") == 0) amount = SETTING_RESVAL_LOW;
+		if (tokens[1].compare ("low") == 0) amount = SETTING_RESVAL_LIMITED;
 		else if (tokens[1].compare ("normal") == 0) amount = SETTING_RESVAL_NORMAL;
-		else if (tokens[1].compare ("much") == 0) amount = SETTING_RESVAL_MUCH;
-		else if (tokens[1].compare ("most") == 0) amount = SETTING_RESVAL_MOST;
+		else if (tokens[1].compare ("much") == 0) amount = SETTING_RESVAL_HIGH;
+		else if (tokens[1].compare ("most") == 0) amount = SETTING_RESVAL_TOOMUCH;
 		if (amount != -1)
 		{
 			if (tokens[0].compare ("oil") == 0) settings.oil = (eSettingResourceValue) amount;

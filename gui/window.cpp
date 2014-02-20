@@ -53,13 +53,17 @@ void cWindow::draw ()
 		switch (backgroundType)
 		{
 		case eWindowBackgrounds::Black:
-			// fill the whole screen with black to prevent
-			// old garbage from menus that don't support resolutions > 640x480
 			SDL_FillRect (cVideo::buffer, NULL, 0xFF000000);
 			break;
 		case eWindowBackgrounds::Alpha:
+			// NOTE: this is not fully robust yet! It will not work if an
+			// alpha-background-window will call another alpha-background-window.
+			// Returning to an alpha-background-window from any other window
+			// will not work as expected as well.
 			if (cSettings::getInstance ().isAlphaEffects ())
+			{
 				Video.applyShadow (NULL);
+			}
 			break;
 		case eWindowBackgrounds::Transparent:
 			// do nothing here
@@ -105,8 +109,17 @@ cApplication* cWindow::getActiveApplication () const
 }
 
 //------------------------------------------------------------------------------
+SDL_Surface* cWindow::getSurface ()
+{
+	return surface;
+}
+
+//------------------------------------------------------------------------------
 void cWindow::setSurface (SDL_Surface* surface_)
 {
 	surface = surface_;
-	resize (cPosition (surface->w, surface->h));
+	if (surface != nullptr)
+	{
+		resize (cPosition (surface->w, surface->h));
+	}
 }

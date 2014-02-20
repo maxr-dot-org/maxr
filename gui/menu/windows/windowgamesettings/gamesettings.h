@@ -22,18 +22,18 @@
 
 enum class eGameSettingsResourceAmount
 {
-	Low,
+	Limited,
 	Normal,
-	Much,
-	Most
+	High,
+	TooMuch
 };
 
 enum class eGameSettingsResourceDensity
 {
-	Thin,
+	Sparse,
 	Normal,
-	Thick,
-	Most
+	Dense,
+	TooMuch
 };
 
 enum class eGameSettingsBridgeheadType

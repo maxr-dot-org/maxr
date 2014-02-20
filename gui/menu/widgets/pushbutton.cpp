@@ -83,9 +83,9 @@ void cPushButton::draw ()
 
 	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
 	{
-		if (isPressed) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, FONT_LATIN_SMALL_GREEN);
+		if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, FONT_LATIN_SMALL_GREEN);
 		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset () - 1, text, FONT_LATIN_SMALL_RED);
-		font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset () - 1 + (isPressed ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
+		font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset () - 1 + (isPressed || isLocked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
 	}
 	else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, fontType);
 
@@ -126,9 +126,16 @@ void cPushButton::setPressed (bool pressed)
 }
 
 //------------------------------------------------------------------------------
-void cPushButton::setLocked (bool locked)
+void cPushButton::lock ()
 {
-	isLocked = locked;
+	isLocked = true;
+	renewSurface ();
+}
+
+//------------------------------------------------------------------------------
+void cPushButton::unlock ()
+{
+	isLocked = false;
 	renewSurface ();
 }
 
@@ -142,132 +149,132 @@ void cPushButton::renewSurface ()
 	default:
 	case ePushButtonType::StandardBig:
 		src.x = 0;
-		src.y = isPressed ? 29 : 0;
+		src.y = (isPressed || isLocked) ? 29 : 0;
 		size = cPosition (200, 29);
 		break;
 	case ePushButtonType::StandardSmall:
 		src.x = 0;
-		src.y = isPressed ? 87 : 58;
+		src.y = (isPressed || isLocked) ? 87 : 58;
 		size = cPosition (150, 29);
 		break;
 	case ePushButtonType::Huge:
-		src.x = isPressed ? 109 : 0;
+		src.x = (isPressed || isLocked) ? 109 : 0;
 		src.y = 116;
 		size = cPosition (109, 40);
 		break;
 	case ePushButtonType::ArrowUpBig:
-		src.x = isPressed ? 125 : 97;
+		src.x = (isPressed || isLocked) ? 125 : 97;
 		src.y = 157;
 		size = cPosition (28, 29);
 		break;
 	case ePushButtonType::ArrowDownBig:
-		src.x = isPressed ? 181 : 153;
+		src.x = (isPressed || isLocked) ? 181 : 153;
 		src.y = 157;
 		size = cPosition (28, 29);
 		break;
 	case ePushButtonType::ArrowLeftBig:
-		src.x = isPressed ? 293 : 265;
+		src.x = (isPressed || isLocked) ? 293 : 265;
 		src.y = 157;
 		size = cPosition (28, 29);
 		break;
 	case ePushButtonType::ArrowRightBig:
-		src.x = isPressed ? 237 : 209;
+		src.x = (isPressed || isLocked) ? 237 : 209;
 		src.y = 157;
 		size = cPosition (28, 29);
 		break;
 	case ePushButtonType::ArrowUpSmall:
 		size = cPosition (18, 17);
-		src.x = isPressed ? 151 + size.x () : 151;
+		src.x = (isPressed || isLocked) ? 151 + size.x () : 151;
 		src.y = 59;
 		break;
 	case ePushButtonType::ArrowDownSmall:
 		size = cPosition (18, 17);
-		src.x = isPressed ? 187 + size.x () : 187;
+		src.x = (isPressed || isLocked) ? 187 + size.x () : 187;
 		src.y = 59;
 		break;
 	case ePushButtonType::ArrowLeftSmall:
 		size = cPosition (18, 17);
-		src.x = isPressed ? 151 + size.x () : 151;
+		src.x = (isPressed || isLocked) ? 151 + size.x () : 151;
 		src.y = 76;
 		break;
 	case ePushButtonType::ArrowRightSmall:
 		size = cPosition (18, 17);
-		src.x = isPressed ? 187 + size.x () : 187;
+		src.x = (isPressed || isLocked) ? 187 + size.x () : 187;
 		src.y = 76;
 		break;
 	case ePushButtonType::ArrowUpBar:
 		size = cPosition (17, 17);
-		src.x = isPressed ? 201 + size.x () : 201;
+		src.x = (isPressed || isLocked) ? 201 + size.x () : 201;
 		src.y = 1;
 		break;
 	case ePushButtonType::ArrowDownBar:
 		size = cPosition (17, 17);
-		src.x = isPressed ? 201 + size.x () : 201;
+		src.x = (isPressed || isLocked) ? 201 + size.x () : 201;
 		src.y = 18;
 		break;
 	case ePushButtonType::Angular:
 		size = cPosition (78, 23);
-		src.x = isPressed ? size.x () : 0;
+		src.x = (isPressed || isLocked) ? size.x () : 0;
 		src.y = 196;
 		break;
 	case ePushButtonType::HudHelp:
-		src.x = isPressed ? 366 : 268;
-		src.y = isPressed ? 0 : 151;
+		src.x = (isPressed || isLocked) ? 366 : 268;
+		src.y = (isPressed || isLocked) ? 0 : 151;
 		size = cPosition (26, 24);
 		break;
 	case ePushButtonType::HudCenter:
-		src.x = isPressed ? 0 : 139;
-		src.y = isPressed ? 21 : 149;
+		src.x = (isPressed || isLocked) ? 0 : 139;
+		src.y = (isPressed || isLocked) ? 21 : 149;
 		size = cPosition (21, 22);
 		break;
 	case ePushButtonType::HudReport:
-		src.x = isPressed ? 210 : 245;
-		src.y = isPressed ? 21 : 130;
+		src.x = (isPressed || isLocked) ? 210 : 245;
+		src.y = (isPressed || isLocked) ? 21 : 130;
 		size = cPosition (49, 20);
 		break;
 	case ePushButtonType::HudChat:
-		src.x = isPressed ? 160 : 196;
-		src.y = isPressed ? 21 : 129;
+		src.x = (isPressed || isLocked) ? 160 : 196;
+		src.y = (isPressed || isLocked) ? 21 : 129;
 		size = cPosition (49, 20);
 		break;
 	case ePushButtonType::HudNext:
-		src.x = isPressed ? 288 : 158;
-		src.y = isPressed ? 0 : 172;
+		src.x = (isPressed || isLocked) ? 288 : 158;
+		src.y = (isPressed || isLocked) ? 0 : 172;
 		size = cPosition (39, 23);
 		break;
 	case ePushButtonType::HudPrev:
-		src.x = isPressed ? 327 : 198;
-		src.y = isPressed ? 0 : 172;
+		src.x = (isPressed || isLocked) ? 327 : 198;
+		src.y = (isPressed || isLocked) ? 0 : 172;
 		size = cPosition (38, 23);
 		break;
 	case ePushButtonType::HudDone:
-		src.x = isPressed ? 262 : 132;
-		src.y = isPressed ? 0 : 172;
+		src.x = (isPressed || isLocked) ? 262 : 132;
+		src.y = (isPressed || isLocked) ? 0 : 172;
 		size = cPosition (26, 24);
 		break;
 	case ePushButtonType::HudEnd:
-		src.x = isPressed ? 22 : 0;
-		src.y = isPressed ? 21 : 151;
+		src.x = (isPressed || isLocked) ? 22 : 0;
+		src.y = (isPressed || isLocked) ? 21 : 151;
 		size = cPosition (70, 17);
 		break;
 	case ePushButtonType::HudPreferences:
-		src.x = isPressed ? 195 : 0;
-		src.y = isPressed ? 0 : 169;
+		src.x = (isPressed || isLocked) ? 195 : 0;
+		src.y = (isPressed || isLocked) ? 0 : 169;
 		size = cPosition (67, 20);
 		break;
 	case ePushButtonType::HudFiles:
-		src.x = isPressed ? 93 : 71;
-		src.y = isPressed ? 21 : 151;
+		src.x = (isPressed || isLocked) ? 93 : 71;
+		src.y = (isPressed || isLocked) ? 21 : 151;
 		size = cPosition (67, 20);
 		break;
 	case ePushButtonType::HudPlay:
-		src.x = isPressed ? 157 : 0;
-		src.y = isPressed ? 0 : 132;
+		src.x = (isPressed || isLocked) ? 157 : 0;
+		src.y = (isPressed || isLocked) ? 0 : 132;
 		size = cPosition (19, 18);
 		break;
 	case ePushButtonType::HudStop:
-		src.x = isPressed ? 176 : 19;
-		src.y = isPressed ? 0 : 132;
+		src.x = (isPressed || isLocked) ? 176 : 19;
+		src.y = (isPressed || isLocked) ? 0 : 132;
 		size = cPosition (19, 19);
 		break;
 	}

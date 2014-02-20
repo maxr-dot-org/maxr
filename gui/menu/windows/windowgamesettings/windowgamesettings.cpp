@@ -28,11 +28,11 @@
 
 enum eSettingsStartCredits
 {
-	SETTING_CREDITS_LOWEST = 0,
-	SETTING_CREDITS_LOWER = 50,
-	SETTING_CREDITS_LOW = 100,
+	SETTING_CREDITS_NONE = 0,
+	SETTING_CREDITS_LOW = 50,
+	SETTING_CREDITS_LIMITED = 100,
 	SETTING_CREDITS_NORMAL = 150,
-	SETTING_CREDITS_MUCH = 200,
+	SETTING_CREDITS_HIGH = 200,
 	SETTING_CREDITS_MORE = 250
 };
 
@@ -42,7 +42,7 @@ cWindowGameSettings::cWindowGameSettings () :
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Button~Game_Options"), FONT_LATIN_NORMAL, eAlignmentType::Center));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Others~Game_Options"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	int currentLine = 57;
 	const int lineHeight = 16;
@@ -54,37 +54,37 @@ cWindowGameSettings::cWindowGameSettings () :
 	// Metal
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (64, currentLine), menuPosition + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Metal") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	metalRadioGroup = addChild (std::make_unique<cRadioGroup> ());
-	metalLowCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Low"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	metalLimitedCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	metalNormalCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	metalMuchCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~Much"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	metalMostCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~Most"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	metalHighCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	metalTooMuchCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~TooMuch"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
 
 	// Oil
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (64, currentLine), menuPosition + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Oil") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	oilRadioGroup = addChild (std::make_unique<cRadioGroup> ());
-	oilLowCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Low"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	oilLimitedCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	oilNormalCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	oilMuchCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~Much"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	oilMostCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~Most"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	oilHighCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	oilTooMuchCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~TooMuch"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
 
 	// Gold
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (64, currentLine), menuPosition + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Gold") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	goldRadioGroup = addChild (std::make_unique<cRadioGroup> ());
-	goldLowCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Low"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	goldLimitedCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	goldNormalCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	goldMuchCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~Much"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	goldMostCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~Most"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	goldHighCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	goldTooMuchCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~TooMuch"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
 
 	// Density
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (64, currentLine), menuPosition + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Resource_Density") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	densityRadioGroup = addChild (std::make_unique<cRadioGroup> ());
-	densityThinCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Thin"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	densitySparseCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Sparse"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	densityNormalCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	densityThickCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~Thick"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	densityMostCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~Most"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	densityDenseCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~Dense"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	densityTooMuchCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (240 + 86 * 3, currentLine), lngPack.i18n ("Text~Option~TooMuch"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight * 3;
 
 	//
@@ -133,15 +133,15 @@ cWindowGameSettings::cWindowGameSettings () :
 	currentLine += lineHeight;
 	creditsRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	
-	creditsLowestCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + iToStr (SETTING_CREDITS_LOWEST) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
-	currentLine += lineHeight;
-	creditsLowerCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Lower") + " (" + iToStr (SETTING_CREDITS_LOWER) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	creditsNoneCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + iToStr (SETTING_CREDITS_NONE) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
 	creditsLowCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Low") + " (" + iToStr (SETTING_CREDITS_LOW) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
+	creditsLimitedCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Limited") + " (" + iToStr (SETTING_CREDITS_LIMITED) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	currentLine += lineHeight;
 	creditsNormalCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Normal") + " (" + iToStr (SETTING_CREDITS_NORMAL) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
-	creditsMuchCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Much") + " (" + iToStr (SETTING_CREDITS_MUCH) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	creditsHighCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~High") + " (" + iToStr (SETTING_CREDITS_HIGH) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
 	creditsMoreCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (140, currentLine), lngPack.i18n ("Text~Option~More") + " (" + iToStr (SETTING_CREDITS_MORE) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
@@ -178,10 +178,10 @@ cWindowGameSettings::cWindowGameSettings () :
 	//
 	// Buttons
 	//
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~OK")));
+	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowGameSettings::okClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowGameSettings::backClicked, this));
 }
 
@@ -194,69 +194,69 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 {
 	switch (gameSettings.getMetalAmount ())
 	{
-	case eGameSettingsResourceAmount::Low:
-		metalLowCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::Limited:
+		metalLimitedCheckBox->setChecked (true);
 		break;
 	default:
 	case eGameSettingsResourceAmount::Normal:
 		metalNormalCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceAmount::Much:
-		metalMuchCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::High:
+		metalHighCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceAmount::Most:
-		metalMostCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::TooMuch:
+		metalTooMuchCheckBox->setChecked (true);
 		break;
 	}
 
 	switch (gameSettings.getOilAmount ())
 	{
-	case eGameSettingsResourceAmount::Low:
-		oilLowCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::Limited:
+		oilLimitedCheckBox->setChecked (true);
 		break;
 	default:
 	case eGameSettingsResourceAmount::Normal:
 		oilNormalCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceAmount::Much:
-		oilMuchCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::High:
+		oilHighCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceAmount::Most:
-		oilMostCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::TooMuch:
+		oilTooMuchCheckBox->setChecked (true);
 		break;
 	}
 
 	switch (gameSettings.getGoldAmount ())
 	{
-	case eGameSettingsResourceAmount::Low:
-		goldLowCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::Limited:
+		goldLimitedCheckBox->setChecked (true);
 		break;
 	default:
 	case eGameSettingsResourceAmount::Normal:
 		goldNormalCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceAmount::Much:
-		goldMuchCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::High:
+		goldHighCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceAmount::Most:
-		goldMostCheckBox->setChecked (true);
+	case eGameSettingsResourceAmount::TooMuch:
+		goldTooMuchCheckBox->setChecked (true);
 		break;
 	}
 
 	switch (gameSettings.getResourceDensity ())
 	{
-	case eGameSettingsResourceDensity::Thin:
-		densityThinCheckBox->setChecked (true);
+	case eGameSettingsResourceDensity::Sparse:
+		densitySparseCheckBox->setChecked (true);
 		break;
 	default:
 	case eGameSettingsResourceDensity::Normal:
 		densityNormalCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceDensity::Thick:
-		densityThickCheckBox->setChecked (true);
+	case eGameSettingsResourceDensity::Dense:
+		densityDenseCheckBox->setChecked (true);
 		break;
-	case eGameSettingsResourceDensity::Most:
-		densityMostCheckBox->setChecked (true);
+	case eGameSettingsResourceDensity::TooMuch:
+		densityTooMuchCheckBox->setChecked (true);
 		break;
 	}
 
@@ -285,11 +285,11 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 	if (gameSettings.getClansEnabled ()) clansOnCheckBox->setChecked (true);
 	else clansOffCheckBox->setChecked (true);
 
-	if (gameSettings.getStartCredits () < SETTING_CREDITS_LOWER) creditsLowestCheckBox->setChecked (true);
-	else if (gameSettings.getStartCredits () < SETTING_CREDITS_LOW) creditsLowerCheckBox->setChecked (true);
-	else if (gameSettings.getStartCredits () < SETTING_CREDITS_NORMAL) creditsLowCheckBox->setChecked (true);
-	else if (gameSettings.getStartCredits () < SETTING_CREDITS_MUCH) creditsNormalCheckBox->setChecked (true);
-	else if (gameSettings.getStartCredits () < SETTING_CREDITS_MORE) creditsMuchCheckBox->setChecked (true);
+	if (gameSettings.getStartCredits () < SETTING_CREDITS_LOW) creditsNoneCheckBox->setChecked (true);
+	else if (gameSettings.getStartCredits () < SETTING_CREDITS_LIMITED) creditsLowCheckBox->setChecked (true);
+	else if (gameSettings.getStartCredits () < SETTING_CREDITS_NORMAL) creditsLimitedCheckBox->setChecked (true);
+	else if (gameSettings.getStartCredits () < SETTING_CREDITS_HIGH) creditsNormalCheckBox->setChecked (true);
+	else if (gameSettings.getStartCredits () < SETTING_CREDITS_MORE) creditsHighCheckBox->setChecked (true);
 	else creditsMoreCheckBox->setChecked (true);
 
 	switch (gameSettings.getVictoryCondition ())
@@ -316,24 +316,24 @@ cGameSettings cWindowGameSettings::getGameSettings () const
 {
 	cGameSettings gameSettings;
 
-	if (metalLowCheckBox->isChecked ()) gameSettings.setMetalAmount (eGameSettingsResourceAmount::Low);
-	else if (metalMuchCheckBox->isChecked ()) gameSettings.setMetalAmount (eGameSettingsResourceAmount::Much);
-	else if (metalMostCheckBox->isChecked ()) gameSettings.setMetalAmount (eGameSettingsResourceAmount::Most);
+	if (metalLimitedCheckBox->isChecked ()) gameSettings.setMetalAmount (eGameSettingsResourceAmount::Limited);
+	else if (metalHighCheckBox->isChecked ()) gameSettings.setMetalAmount (eGameSettingsResourceAmount::High);
+	else if (metalTooMuchCheckBox->isChecked ()) gameSettings.setMetalAmount (eGameSettingsResourceAmount::TooMuch);
 	else gameSettings.setMetalAmount (eGameSettingsResourceAmount::Normal);
 
-	if (oilLowCheckBox->isChecked ()) gameSettings.setOilAmount (eGameSettingsResourceAmount::Low);
-	else if (oilMuchCheckBox->isChecked ()) gameSettings.setOilAmount (eGameSettingsResourceAmount::Much);
-	else if (oilMostCheckBox->isChecked ()) gameSettings.setOilAmount (eGameSettingsResourceAmount::Most);
+	if (oilLimitedCheckBox->isChecked ()) gameSettings.setOilAmount (eGameSettingsResourceAmount::Limited);
+	else if (oilHighCheckBox->isChecked ()) gameSettings.setOilAmount (eGameSettingsResourceAmount::High);
+	else if (oilTooMuchCheckBox->isChecked ()) gameSettings.setOilAmount (eGameSettingsResourceAmount::TooMuch);
 	else gameSettings.setOilAmount (eGameSettingsResourceAmount::Normal);
 
-	if (goldLowCheckBox->isChecked ()) gameSettings.setGoldAmount (eGameSettingsResourceAmount::Low);
-	else if (goldMuchCheckBox->isChecked ()) gameSettings.setGoldAmount (eGameSettingsResourceAmount::Much);
-	else if (goldMostCheckBox->isChecked ()) gameSettings.setGoldAmount (eGameSettingsResourceAmount::Most);
+	if (goldLimitedCheckBox->isChecked ()) gameSettings.setGoldAmount (eGameSettingsResourceAmount::Limited);
+	else if (goldHighCheckBox->isChecked ()) gameSettings.setGoldAmount (eGameSettingsResourceAmount::High);
+	else if (goldTooMuchCheckBox->isChecked ()) gameSettings.setGoldAmount (eGameSettingsResourceAmount::TooMuch);
 	else gameSettings.setGoldAmount (eGameSettingsResourceAmount::Normal);
 
-	if (densityThinCheckBox->isChecked ()) gameSettings.setResourceDensity (eGameSettingsResourceDensity::Thin);
-	else if (densityThickCheckBox->isChecked ()) gameSettings.setResourceDensity (eGameSettingsResourceDensity::Thick);
-	else if (densityMostCheckBox->isChecked ()) gameSettings.setResourceDensity (eGameSettingsResourceDensity::Most);
+	if (densitySparseCheckBox->isChecked ()) gameSettings.setResourceDensity (eGameSettingsResourceDensity::Sparse);
+	else if (densityDenseCheckBox->isChecked ()) gameSettings.setResourceDensity (eGameSettingsResourceDensity::Dense);
+	else if (densityTooMuchCheckBox->isChecked ()) gameSettings.setResourceDensity (eGameSettingsResourceDensity::TooMuch);
 	else gameSettings.setResourceDensity (eGameSettingsResourceDensity::Normal);
 
 	if (bridgeheadMobileCheckBox->isChecked ()) gameSettings.setBridgeheadType (eGameSettingsBridgeheadType::Mobile);
@@ -345,10 +345,10 @@ cGameSettings cWindowGameSettings::getGameSettings () const
 
 	gameSettings.setClansEnabled (clansOnCheckBox->isChecked ());
 
-	if (creditsLowestCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_LOWEST);
-	else if (creditsLowerCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_LOWER);
+	if (creditsNoneCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_NONE);
 	else if (creditsLowCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_LOW);
-	else if (creditsMuchCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_MUCH);
+	else if (creditsLimitedCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_LIMITED);
+	else if (creditsHighCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_HIGH);
 	else if (creditsMoreCheckBox->isChecked ()) gameSettings.setStartCredits (SETTING_CREDITS_MORE);
 	else gameSettings.setStartCredits (SETTING_CREDITS_NORMAL);
 

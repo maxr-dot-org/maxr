@@ -121,7 +121,7 @@ void cLineEdit::draw ()
 //------------------------------------------------------------------------------
 bool cLineEdit::handleGetKeyFocus (cApplication& application)
 {
-	if (!isEnabled () || readOnly) return false;
+	if (readOnly) return false;
 
 	hasKeyFocus = true;
 	showCursor = true;
@@ -148,7 +148,7 @@ void cLineEdit::handleLooseKeyFocus (cApplication& application)
 //------------------------------------------------------------------------------
 bool cLineEdit::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!isEnabled () || readOnly) return false;
+	if (readOnly) return false;
 
 	int x = mouse.getPosition ().x () - (getPosition ().x () + getTextDrawOffset ().x());
 	int cursor = startOffset;

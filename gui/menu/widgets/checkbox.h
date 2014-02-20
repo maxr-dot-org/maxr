@@ -38,7 +38,7 @@ enum class eCheckBoxType
 	Tank,
 	Plane,
 	Ship,
-	Build,
+	Building,
 	Tnt,
 
 	HudIndex_00,

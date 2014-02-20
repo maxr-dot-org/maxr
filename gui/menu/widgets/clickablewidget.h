@@ -38,9 +38,12 @@ public:
 
 	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
+	void setConsumeClick (bool consumeClick);
 protected:
 	bool isPressed;
 	bool mouseWasOver;
+
+	bool consumeClick;
 
 	virtual void setPressed (bool pressed);
 

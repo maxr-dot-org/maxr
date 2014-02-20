@@ -33,9 +33,9 @@ cWindowMain::cWindowMain (const std::string& title) :
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 147), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 157)), title, FONT_LATIN_NORMAL, eAlignmentType::Center));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 147), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 157)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 465), menuPosition + cPosition (getArea ().getMaxCorner (). x(), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, FONT_LATIN_NORMAL, eAlignmentType::Center));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 465), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	infoImage = addChild (std::make_unique<cImage> (menuPosition + cPosition (16, 182), getRandomInfoImage (), SoundData.SNDHudButton));
 	signalConnectionManager.connect (infoImage->clicked, std::bind (&cWindowMain::infoImageClicked, this));

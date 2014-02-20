@@ -24,41 +24,138 @@
 #include "../maxrconfig.h"
 #include "../autosurface.h"
 
+/**
+ * Different methods what to do with the background
+ * behind menus that are smalled than the applications
+ * full resolution.
+ */
 enum class eWindowBackgrounds
 {
+	/**
+	 * Will everything with black.
+	 */
 	Black,
+	/**
+	 * Draw an alpha effect above what ever has been displayed before.
+	 */
 	Alpha,
+	/**
+	 * Do nothing with the background, just leave it there.
+	 */
 	Transparent
 };
 
+/**
+ * A basic window.
+ *
+ * This is a special widget that is handled directly by the an @ref cApplication.
+ * In general this is a menu that handles other basic widgets (buttons, labels, ...)
+ * as its items.
+ */
 class cWindow : public cWidget
 {
 public:
+	/**
+	 * Creates a new window.
+	 *
+	 * @param surface The background surface of the window. The window will be resized according to the
+	 *                size of this image. If it is null, the window will have an size of (0,0).
+	 * @param backgroundType Background type to apply when drawing the window.
+	 */
 	explicit cWindow (SDL_Surface* surface, eWindowBackgrounds backgroundType = eWindowBackgrounds::Black);
 
+	/**
+	 * Returns whether the window wants to be closed.
+	 *
+	 * @return True if the window wants to be closed.
+	 */
 	bool isClosing() const;
 
+	/**
+	 * Marks the window as to be closed.
+	 */
 	void close ();
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
+	/**
+	 * Gets called when the window is deactivated.
+	 *
+	 * This means it is no longer on top of the window stack of the
+	 * application. This can be either because the window will be
+	 * closed (as requested from the window through @ref isClosing())
+	 * or because an other window has been but above the current one
+	 * on the window stack.
+	 *
+	 * @param application The application that deactivated this window.
+	 */
 	virtual void handleDeactivated (cApplication& application);
+	/**
+	 * Gets called when the window is activated.
+	 *
+	 * This means it now is on top of the window stack of the application
+	 * and is the window that will be drawn.
+	 *
+	 * @param application The application that activated this window.
+	 */
 	virtual void handleActivated (cApplication& application);
 
 protected:
+	/**
+	 * Gets the application where the current window is the
+	 * active one (on top of the window stack).
+	 *
+	 * @return The application or null if the current window is
+	 *         not the active one in any application.
+	 */
 	cApplication* getActiveApplication () const;
 
-	AutoSurface surface;
+	/**
+	 * Sets a new background surface image.
+	 * The window will be resized to the images size.
+	 *
+	 * @param surface The surface to set as background.
+	 *                This function will grab the ownership of the passed surface.
+	 *                Therefor it mustn't be deleted by the caller afterwards!
+	 */
+	void setSurface (SDL_Surface* surface);
+
+	/**
+	 * The current background image.
+	 *
+	 * @return The background image or null if there is non.
+	 */
+	SDL_Surface* getSurface ();
 private:
+	/**
+	 * Background surface of the window.
+	 */
+	AutoSurface surface;
+
+	/**
+	 * The type of the background behind the background.
+	 * This is only relevant if the resolution of the window is smaller
+	 * then the applications full resolution.
+	 */
 	eWindowBackgrounds backgroundType;
 
+	/**
+	 * The application where this window is currently active.
+	 * Can be null if the window is not active in any application
+	 * at the moment.
+	 */
 	cApplication* activeApplication;
 
+	/**
+	 * True if the window wants to be closed
+	 */
 	bool closing;
 
+	/**
+	 * True if the window has been drawn at least once since it has become active.
+	 */
 	bool hasBeenDrawnOnce;
 
-	void setSurface (SDL_Surface* surface);
 };
 
 #endif // gui_windowH

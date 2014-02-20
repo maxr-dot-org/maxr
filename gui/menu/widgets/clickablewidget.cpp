@@ -24,21 +24,24 @@
 //------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget () :
 	isPressed (false),
-	mouseWasOver (false)
+	mouseWasOver (false),
+	consumeClick (true)
 {}
 
 //------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget (const cPosition& position) :
 	cWidget (position),
 	isPressed (false),
-	mouseWasOver (false)
+	mouseWasOver (false),
+	consumeClick (true)
 {}
 
 //------------------------------------------------------------------------------
 cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
 	cWidget (area),
 	isPressed (false),
-	mouseWasOver (false)
+	mouseWasOver (false),
+	consumeClick (true)
 {}
 
 //------------------------------------------------------------------------------
@@ -71,13 +74,11 @@ bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mous
 //------------------------------------------------------------------------------
 bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!isEnabled ()) return false;
-
 	if (button == eMouseButtonType::Left)
 	{
 		setPressed (true);
 		application.grapMouseFocus (*this);
-		return true;
+		return consumeClick;
 	}
 	return false;
 }
@@ -85,8 +86,6 @@ bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mo
 //------------------------------------------------------------------------------
 bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!isEnabled ()) return false;
-
 	if (button == eMouseButtonType::Left && application.hasMouseFocus(*this))
 	{
 		setPressed (false);
@@ -94,7 +93,7 @@ bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& m
 
 		if (isAt (mouse.getPosition ()))
 		{
-			if (handleClicked (application, mouse, button)) return true;
+			if (handleClicked (application, mouse, button)) return consumeClick;
 		}
 	}
 	return false;
@@ -108,6 +107,12 @@ void cClickableWidget::handleLooseMouseFocus (cApplication& application)
 		setPressed (false);
 	}
 	mouseWasOver = false;
+}
+
+//------------------------------------------------------------------------------
+void cClickableWidget::setConsumeClick (bool consumeClick_)
+{
+	consumeClick = consumeClick_;
 }
 
 //------------------------------------------------------------------------------

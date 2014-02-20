@@ -34,11 +34,11 @@ cDialogNewYesNo::cDialogNewYesNo (const std::string& text) :
 	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (40, 40), menuPosition + cPosition (135, 267)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto yesButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Button~Yes"), FONT_LATIN_NORMAL));
+	auto yesButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (yesButton->clicked, std::bind (&cDialogNewYesNo::yesClicked, this));
 	// FIXME: add hot key RETURN to button
 
-	auto noButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Button~No"), FONT_LATIN_NORMAL));
+	auto noButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (noButton->clicked, std::bind (&cDialogNewYesNo::noClicked, this));
 	// FIXME: add hot key ESCAPE to button
 }

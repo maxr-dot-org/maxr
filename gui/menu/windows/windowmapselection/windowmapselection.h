@@ -20,9 +20,18 @@
 #ifndef gui_menu_windows_windowmapselection_windowmapselectionH
 #define gui_menu_windows_windowmapselection_windowmapselectionH
 
+#include <array>
+#include <vector>
+#include <string>
+
 #include "../../../window.h"
 #include "../../../../utility/signal/signalconnectionmanager.h"
 #include "../../../../utility/signal/signal.h"
+
+class cImage;
+class cLabel;
+class cPushButton;
+class cStaticMap;
 
 class cWindowMapSelection : public cWindow
 {
@@ -31,11 +40,39 @@ public:
 	~cWindowMapSelection ();
 
 	cSignal<void ()> done;
+
+	bool loadSelectedMap (cStaticMap& staticMap);
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	static const size_t mapRows = 2;
+	static const size_t mapColumns = 4;
+	static const size_t mapCount = mapRows * mapColumns;
+
+	std::array<cLabel*, mapCount> mapTitles;
+	std::array<cImage*, mapCount> mapImages;
+
+	cPushButton* upButton;
+	cPushButton* downButton;
+
+	cPushButton* okButton;
+
+	std::vector<std::string> maps;
+	int selectedMapIndex;
+	unsigned int page;
+
+	void mapClicked (const cImage* mapImage);
+
+	void upClicked ();
+	void downClicked ();
+
 	void okClicked ();
 	void backClicked ();
+
+	void updateUpDownLocked ();
+
+	void updateMaps ();
+	void loadMaps ();
 };
 
 #endif // gui_menu_windows_windowmapselection_windowmapselectionH

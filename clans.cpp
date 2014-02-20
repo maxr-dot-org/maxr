@@ -73,13 +73,13 @@ string cClanUnitStat::getClanStatsDescription() const
 		int originalValue;
 	} t[] =
 	{
-		{"Damage", "Text~Vehicles~Damage", data->damage},
-		// here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot
-		{"Range", "Text~Hud~Range", data->range},
-		{"Armor", "Text~Vehicles~Armor", data->armor},
-		{"Hitpoints", "Text~Vehicles~Hitpoints", data->hitpointsMax},
-		{"Scan", "Text~Vehicles~Scan", data->scan},
-		{"Speed", "Text~Vehicles~Speed", data->speedMax / 4},
+		// ToDo / Fixme if #756 fixed, use the non "_7" version of the text files
+		{"Damage", "Text~Others~Attack_7", data->damage},
+		{"Range", "Text~Others~Range", data->range},
+		{"Armor", "Text~Others~Armor_7", data->armor},
+		{"Hitpoints", "Text~Others~Hitpoints_7", data->hitpointsMax},
+		{"Scan", "Text~Others~Scan_7", data->scan},
+		{"Speed", "Text~Others~Speed_7", data->speedMax / 4},
 	};
 
 	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)

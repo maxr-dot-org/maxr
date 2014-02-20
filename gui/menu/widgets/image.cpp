@@ -24,8 +24,7 @@
 //------------------------------------------------------------------------------
 cImage::cImage (const cPosition& position, SDL_Surface* image_, sSOUND* clickSound_) :
 	cClickableWidget (position),
-	clickSound (clickSound_),
-	hidden (false)
+	clickSound (clickSound_)
 {
 	setImage (image_);
 }
@@ -52,28 +51,8 @@ void cImage::setImage (SDL_Surface* image_)
 }
 
 //------------------------------------------------------------------------------
-void cImage::hide ()
-{
-	hidden = true;
-}
-
-//------------------------------------------------------------------------------
-void cImage::show ()
-{
-	hidden = false;
-}
-
-//------------------------------------------------------------------------------
-bool cImage::isHidden ()
-{
-	return hidden;
-}
-
-//------------------------------------------------------------------------------
 void cImage::draw ()
 {
-	if (isHidden()) return;
-
 	if (image)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();

@@ -166,6 +166,18 @@ public:
 									 eUnicodeFontType fonttype);
 
 	void setTargetSurface (SDL_Surface* surface) { this->surface = surface; }
+	
+	/**
+	 * encodes a UTF-8 character to its unicode position
+	 * @author alzi alias DoctorDeath
+	 * @param pch pointer to the character string
+	 * @param increase number which will be changed to the value
+	 *        how much bytes the character has taken in UTF-8
+	 * @return unicode position
+	 */
+	Uint16 encodeUTF8Char (const char* pch, int& increase) const;
+
+	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/;
 private:
 	typedef AutoSurface FontTypeSurfaces[0xFFFF];
 	// character surfaces.
@@ -216,15 +228,6 @@ private:
 	const unsigned short* getIsoPage (eUnicodeFontCharset charset);
 	int drawWithBreakLines (SDL_Rect rDest, const std::string& sText,
 							eUnicodeFontType fonttype);
-	/**
-	 * encodes a UTF-8 character to its unicode position
-	 * @author alzi alias DoctorDeath
-	 * @param pch pointer to the character string
-	 * @param increase number which will be changed to the value
-	 *        how much bytes the character has taken in UTF-8
-	 * @return unicode position
-	 */
-	Uint16 encodeUTF8Char (const unsigned char* pch, int* increase) const;
 };
 
 EX cUnicodeFont* font;

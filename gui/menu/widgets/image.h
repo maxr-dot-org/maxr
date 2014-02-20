@@ -32,9 +32,6 @@ public:
 	cImage (const cPosition& position, SDL_Surface* image = nullptr, sSOUND* clickSound = nullptr);
 
 	void setImage (SDL_Surface* image);
-	void hide ();
-	void show ();
-	bool isHidden ();
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -45,7 +42,6 @@ protected:
 private:
 	AutoSurface image;
 	sSOUND* clickSound;
-	bool hidden;
 };
 
 #endif // gui_menu_widgets_imageH

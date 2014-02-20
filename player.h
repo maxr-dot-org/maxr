@@ -123,7 +123,8 @@ public:
 	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex);}
 
 	/** Get the most modern version of a unit (including all his upgrades). */
-	sUnitData* getUnitDataCurrentVersion (const sID& ID);
+	sUnitData* getUnitDataCurrentVersion (const sID& id);
+	const sUnitData* getUnitDataCurrentVersion (const sID& id) const;
 
 	void setLandingPos(int x, int y) { landingPosX = x; landingPosY = y; }
 	int getLandingPosX() const { return landingPosX; }

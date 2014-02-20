@@ -58,8 +58,8 @@ using namespace std;
 cDialogYesNo::cDialogYesNo (const string& text) :
 	cMenu (LoadPCX (GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel (position.x + 40, position.y + 40, text),
-	yesButton (position.x + 155, position.y + 185, lngPack.i18n ("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
-	noButton (position.x +  67, position.y + 185, lngPack.i18n ("Text~Button~No"),  cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
+	yesButton (position.x + 155, position.y + 185, lngPack.i18n ("Text~Others~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	noButton (position.x +  67, position.y + 185, lngPack.i18n ("Text~Others~No"),  cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
 	textLabel.setBox (232, 142);
 	//textLabel.setBox(position.w - 40, position.h - 150);
@@ -98,7 +98,7 @@ void cDialogYesNo::handleKeyInput (const SDL_KeyboardEvent& key)
 cDialogOK::cDialogOK (const string& text) :
 	cMenu (LoadPCX (GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel (position.x + 40, position.y + 40, text),
-	okButton (position.x + 111, position.y + 185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
+	okButton (position.x + 111, position.y + 185, lngPack.i18n ("Text~Others~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
 	textLabel.setBox (232, 142);
 	menuItems.push_back (&textLabel);
@@ -121,8 +121,8 @@ void cDialogOK::handleKeyInput (const SDL_KeyboardEvent& key)
 
 cDestructMenu::cDestructMenu() :
 	cMenu (LoadPCX (GFXOD_DESTRUCTION), MNU_BG_ALPHA),
-	armButton (position.x + 88, position.y + 14, lngPack.i18n ("Text~Button~Hot"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
-	cancelButton (position.x + 88, position.y + 46, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	armButton (position.x + 88, position.y + 14, lngPack.i18n ("Text~Others~Hot"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	cancelButton (position.x + 88, position.y + 46, lngPack.i18n ("Text~Others~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	destroyButton (position.x + 15, position.y + 13, this)
 {
 	cancelButton.setReleasedFunction (&cMenu::cancelReleased);
@@ -148,7 +148,7 @@ cDialogLicence::cDialogLicence() :
 	maxrLabel (position.x + position.w / 2, position.y +  30, "\"M.A.X.R.\""),
 	headerLabel (position.x + position.w / 2, position.y +  30 + font->getFontHeight(), "(C) 2007 by its authors"),
 	textLabel (position.x +  35, position.y +  30 + 3 * font->getFontHeight()),
-	okButton (position.x + 111, position.y + 185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	okButton (position.x + 111, position.y + 185, lngPack.i18n ("Text~Others~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	upButton (position.x + 241, position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL),
 	downButton (position.x + 261, position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL)
 {
@@ -302,8 +302,8 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 	introChBox (position.x + 25, position.y + 294 + 20, lngPack.i18n ("Text~Settings~Intro"), cSettings::getInstance().shouldShowIntro(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD),
 	windowChBox (position.x + 25, position.y + 294 + 20 * 2, lngPack.i18n ("Text~Settings~Window"), Video.getWindowMode(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD),
 	resoulutionGroup(),
-	okButton (position.x + 208, position.y + 383, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
-	cancelButton (position.x + 118, position.y + 383, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
+	okButton (position.x + 208, position.y + 383, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	cancelButton (position.x + 118, position.y + 383, lngPack.i18n ("Text~Others~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
 	// blit black titlebar behind textfield for playername
 	SDL_Rect src = { 108, 12, 186, 18 };
@@ -536,8 +536,8 @@ cDialogTransfer::cDialogTransfer (cGameGUI& gameGUI_, cUnit& srcUnit_, cUnit& de
 	gameGUI (&gameGUI_),
 	srcUnit (&srcUnit_),
 	destUnit (&destUnit_),
-	doneButton (position.x + 159, position.y + 200, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
-	cancelButton (position.x + 71, position.y + 200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	doneButton (position.x + 159, position.y + 200, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	cancelButton (position.x + 71, position.y + 200, lngPack.i18n ("Text~Others~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	incButton (position.x + 279, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL),
 	decButton (position.x + 17, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL),
 	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG),
@@ -871,8 +871,8 @@ cDialogResearch::cDialogResearch (cClient& client_) :
 	centersLabel (position.x + 58, position.y + 52, lngPack.i18n ("Text~Comp~Labs")),
 	themeLabel (position.x + 200, position.y + 52, lngPack.i18n ("Text~Comp~Themes")),
 	turnsLabel (position.x + 313, position.y + 52, lngPack.i18n ("Text~Comp~Turns")),
-	doneButton (position.x + 193, position.y + 294, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
-	cancelButton (position.x + 91, position.y + 294, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
+	doneButton (position.x + 193, position.y + 294, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	cancelButton (position.x + 91, position.y + 294, lngPack.i18n ("Text~Others~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
 	owner->researchFinished = false;
 
@@ -896,14 +896,14 @@ cDialogResearch::cDialogResearch (cClient& client_) :
 
 	const string themeNames[8] =
 	{
-		lngPack.i18n ("Text~Vehicles~Damage"),
-		lngPack.i18n ("Text~Hud~Shots"),
-		lngPack.i18n ("Text~Hud~Range"),
-		lngPack.i18n ("Text~Hud~Armor"),
-		lngPack.i18n ("Text~Hud~Hitpoints"),
-		lngPack.i18n ("Text~Hud~Speed"),
-		lngPack.i18n ("Text~Hud~Scan"),
-		lngPack.i18n ("Text~Vehicles~Costs")
+		lngPack.i18n ("Text~Others~Attack"),
+		lngPack.i18n ("Text~Others~Shots_7"),
+		lngPack.i18n ("Text~Others~Range"),
+		lngPack.i18n ("Text~Others~Armor_7"),
+		lngPack.i18n ("Text~Others~Hitpoints_7"),
+		lngPack.i18n ("Text~Others~Speed"),
+		lngPack.i18n ("Text~Others~Scan"),
+		lngPack.i18n ("Text~Others~Costs")
 	};
 
 	SDL_Rect attackSymbol = { 27, 109, 10, 14 };

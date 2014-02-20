@@ -20,29 +20,97 @@
 #include "windowclanselection.h"
 #include "../../../../main.h"
 #include "../../../../pcx.h"
+#include "../../../../clans.h"
 #include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
+#include "../../widgets/image.h"
 
 //------------------------------------------------------------------------------
 cWindowClanSelection::cWindowClanSelection () :
-	cWindow (LoadPCX (GFXOD_CLAN_SELECT))
+	cWindow (LoadPCX (GFXOD_CLAN_SELECT)),
+	selectedClan (0)
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Button~Game_Options"), FONT_LATIN_NORMAL, eAlignmentType::Center));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	//
+	// Clan Images
+	//
+	std::array<std::string, clanCount> clanLogoPaths;
+	const auto gfxPath = cSettings::getInstance ().getGfxPath () + PATH_DELIMITER;
+	clanLogoPaths[0] = gfxPath + "clanlogo1.pcx";
+	clanLogoPaths[1] = gfxPath + "clanlogo2.pcx";
+	clanLogoPaths[2] = gfxPath + "clanlogo3.pcx";
+	clanLogoPaths[3] = gfxPath + "clanlogo4.pcx";
+	clanLogoPaths[4] = gfxPath + "clanlogo5.pcx";
+	clanLogoPaths[5] = gfxPath + "clanlogo6.pcx";
+	clanLogoPaths[6] = gfxPath + "clanlogo7.pcx";
+	clanLogoPaths[7] = gfxPath + "clanlogo8.pcx";
+
+	for (size_t row = 0; row < clanRows; ++row)
+	{
+		for (size_t column = 0; column < clanColumns; ++column)
+		{
+			const auto index = row * clanColumns + column;
+
+			auto image = LoadPCX (clanLogoPaths[index].c_str ());
+			SDL_SetColorKey (image, SDL_TRUE, 0xFF00FF);
+			clanImages[index] = addChild (std::make_unique<cImage> (menuPosition + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image, SoundData.SNDHudButton));
+			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
+
+			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (37 + 155 * column, 144 + 150 * row), menuPosition + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), cClanData::instance ().getClan (index)->getName (), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		}
+	}
+	clanTitles[selectedClan]->setText (">" + cClanData::instance ().getClan (selectedClan)->getName () + "<");
+
+	//
+	// Clan Description
+	//
+	clanDescription1 = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (47, 362), menuPosition + cPosition (47 + 550, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	clanDescription2 = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (380, 362), menuPosition + cPosition (380 + 217, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	clanShortDescription = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (47, 349), menuPosition + cPosition (47 + 550, 349 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+
 	//
 	// Buttons
 	//
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~OK")));
+	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowClanSelection::okClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowClanSelection::backClicked, this));
+
+	updateClanDescription ();
 }
 
 //------------------------------------------------------------------------------
 cWindowClanSelection::~cWindowClanSelection ()
 {}
+
+//------------------------------------------------------------------------------
+unsigned int cWindowClanSelection::getSelectedClan () const
+{
+	return selectedClan;
+}
+
+//------------------------------------------------------------------------------
+void cWindowClanSelection::clanClicked (const cImage* clanImage)
+{
+	for (size_t i = 0; i < clanImages.size (); ++i)
+	{
+		if (clanImage == clanImages[i])
+		{
+			if (i != selectedClan)
+			{
+				clanTitles[selectedClan]->setText (cClanData::instance ().getClan (selectedClan)->getName ());
+				selectedClan = i;
+				clanTitles[selectedClan]->setText (">" + cClanData::instance ().getClan (selectedClan)->getName () + "<");
+				updateClanDescription ();
+			}
+			break;
+		}
+	}
+}
 
 //------------------------------------------------------------------------------
 void cWindowClanSelection::okClicked ()
@@ -54,4 +122,37 @@ void cWindowClanSelection::okClicked ()
 void cWindowClanSelection::backClicked ()
 {
 	close ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowClanSelection::updateClanDescription ()
+{
+	auto clanInfo = cClanData::instance ().getClan (selectedClan);
+	if (clanInfo)
+	{
+		auto strings = clanInfo->getClanStatsDescription ();
+
+		std::string desc1;
+		for (size_t i = 0; i < 4 && i < strings.size (); ++i)
+		{
+			desc1.append (strings[i]);
+			desc1.append ("\n");
+		}
+		clanDescription1->setText (desc1);
+
+		std::string desc2;
+		for (size_t i = 4; i < strings.size (); ++i)
+		{
+			desc2.append (strings[i]);
+			desc2.append ("\n");
+		}
+		clanDescription2->setText (desc2);
+
+		clanShortDescription->setText (clanInfo->getDescription ());
+	}
+	else
+	{
+		clanDescription1->setText ("Unknown");
+		clanDescription1->setText ("");
+	}
 }

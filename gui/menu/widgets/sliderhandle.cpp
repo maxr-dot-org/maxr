@@ -113,8 +113,6 @@ bool cSliderHandle::handleMouseMoved (cApplication& application, cMouse& mouse)
 //------------------------------------------------------------------------------
 bool cSliderHandle::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!isEnabled ()) return false;
-
 	if (button == eMouseButtonType::Left)
 	{
 		switch (orientation)
@@ -135,8 +133,6 @@ bool cSliderHandle::handleMousePressed (cApplication& application, cMouse& mouse
 //------------------------------------------------------------------------------
 bool cSliderHandle::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!isEnabled ()) return false;
-
 	if (button == eMouseButtonType::Left && application.hasMouseFocus (*this))
 	{
 		application.releaseMouseFocus (*this);

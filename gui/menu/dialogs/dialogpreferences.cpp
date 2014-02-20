@@ -41,11 +41,11 @@ cDialogNewPreferences::cDialogNewPreferences () :
 	// blit black titlebar behind textfield for playername
 	SDL_Rect src = {108, 12, 186, 18};
 	SDL_Rect dest = {140, 154, 0, 0};
-	SDL_BlitSurface (surface, &src, surface, &dest);
+	SDL_BlitSurface (getSurface (), &src, getSurface (), &dest);
 
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 15), menuPosition + cPosition (getArea ().getMaxCorner ().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), FONT_LATIN_NORMAL, eAlignmentType::Center));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 15), menuPosition + cPosition (getArea ().getMaxCorner ().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 56), menuPosition + cPosition (135, 66)), lngPack.i18n ("Text~Settings~Volume"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	
@@ -84,10 +84,10 @@ cDialogNewPreferences::cDialogNewPreferences () :
 	introCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 294 + 20), lngPack.i18n ("Text~Settings~Intro")));
 	windowCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window")));
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Button~Done"), FONT_LATIN_NORMAL));
+	auto doneButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (doneButton->clicked, std::bind (&cDialogNewPreferences::doneClicked, this));
 
-	auto cancelButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Button~Cancel"), FONT_LATIN_NORMAL));
+	auto cancelButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogNewPreferences::cancelClicked, this));
 
 	loadValues ();

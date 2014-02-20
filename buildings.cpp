@@ -178,14 +178,14 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 				{
 					switch (area)
 					{
-						case cResearch::kAttackResearch: sText += lngPack.i18n ("Text~Vehicles~Damage"); break;
-						case cResearch::kShotsResearch: sText += lngPack.i18n ("Text~Hud~Shots"); break;
-						case cResearch::kRangeResearch: sText += lngPack.i18n ("Text~Hud~Range"); break;
-						case cResearch::kArmorResearch: sText += lngPack.i18n ("Text~Vehicles~Armor"); break;
-						case cResearch::kHitpointsResearch: sText += lngPack.i18n ("Text~Hud~Hitpoints"); break;
-						case cResearch::kSpeedResearch: sText += lngPack.i18n ("Text~Hud~Speed"); break;
-						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Hud~Scan"); break;
-						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Vehicles~Costs"); break;
+						case cResearch::kAttackResearch: sText += lngPack.i18n ("Text~Others~Attack"); break;
+						case cResearch::kShotsResearch: sText += lngPack.i18n ("Text~Others~Shots_7"); break;
+						case cResearch::kRangeResearch: sText += lngPack.i18n ("Text~Others~Range"); break;
+						case cResearch::kArmorResearch: sText += lngPack.i18n ("Text~Others~Armor_7"); break;
+						case cResearch::kHitpointsResearch: sText += lngPack.i18n ("Text~Others~Hitpoints_7"); break;
+						case cResearch::kSpeedResearch: sText += lngPack.i18n ("Text~Others~Speed"); break;
+						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
+						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
 					}
 					sText += ": " + iToStr (owner->researchLevel.getRemainingTurns (area, owner->researchCentersWorkingOnArea[area])) + "\n";
 				}

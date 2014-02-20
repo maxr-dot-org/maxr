@@ -514,33 +514,33 @@ cGameGUI::cGameGUI() :
 	overUnitField (NULL),
 	FxList (new cFxContainer),
 	zoomSlider (20, 274, 1.0f, 1.0f, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
-	endButton (391, 4, lngPack.i18n ("Text~Hud~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL),
-	preferencesButton (86, 4, lngPack.i18n ("Text~Hud~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE),
-	filesButton (17, 3, lngPack.i18n ("Text~Hud~Files"), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE),
+	endButton (391, 4, lngPack.i18n ("Text~Others~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL),
+	preferencesButton (86, 4, lngPack.i18n ("Text~Others~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE),
+	filesButton (17, 3, lngPack.i18n ("Text~Others~Files"), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE),
 	playButton (146, 123, "", cMenuButton::BUTTON_TYPE_HUD_PLAY),
 	stopButton (146, 143, "", cMenuButton::BUTTON_TYPE_HUD_STOP),
 	FLCImage (10, 29, NULL),
 	unitDetails (8, 171, false),
-	surveyButton (2, 296, lngPack.i18n ("Text~Hud~Survey"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	hitsButton (57, 296, lngPack.i18n ("Text~Hud~Hitpoints"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	scanButton (112, 296, lngPack.i18n ("Text~Hud~Scan"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	statusButton (2, 296 + 18, lngPack.i18n ("Text~Hud~Status"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	ammoButton (57, 296 + 18, lngPack.i18n ("Text~Hud~Ammo"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	gridButton (112, 296 + 18, lngPack.i18n ("Text~Hud~Grid"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	colorButton (2, 296 + 18 + 16, lngPack.i18n ("Text~Hud~Color"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	rangeButton (57, 296 + 18 + 16, lngPack.i18n ("Text~Hud~Range"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	fogButton (112, 296 + 18 + 16, lngPack.i18n ("Text~Hud~Fog"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	surveyButton (2, 296, lngPack.i18n ("Text~Others~Survey"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	hitsButton (57, 296, lngPack.i18n ("Text~Others~Hitpoints_7"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	scanButton (112, 296, lngPack.i18n ("Text~Others~Scan"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	statusButton (2, 296 + 18, lngPack.i18n ("Text~Others~Status"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	ammoButton (57, 296 + 18, lngPack.i18n ("Text~Others~Ammo"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	gridButton (112, 296 + 18, lngPack.i18n ("Text~Others~Grid"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	colorButton (2, 296 + 18 + 16, lngPack.i18n ("Text~Others~Color"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	rangeButton (57, 296 + 18 + 16, lngPack.i18n ("Text~Others~Range"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	fogButton (112, 296 + 18 + 16, lngPack.i18n ("Text~Others~Fog"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	lockButton (32, 227, "", false, false, cMenuCheckButton::CHECKBOX_HUD_LOCK, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	TNTButton (136, 413, "", false, false, cMenuCheckButton::CHECKBOX_HUD_TNT, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	twoXButton (136, 387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	playersButton (136, 439, "", false, false, cMenuCheckButton::CHECKBOX_HUD_PLAYERS, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
 	helpButton (20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP),
 	centerButton (4, 227, "", cMenuButton::BUTTON_TYPE_HUD_CENTER),
-	reportsButton (101, 252, lngPack.i18n ("Text~Hud~Log"), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE),
-	chatButton (51, 252, lngPack.i18n ("Text~Hud~Chat"), cMenuButton::BUTTON_TYPE_HUD_CHAT, FONT_LATIN_SMALL_WHITE),
+	reportsButton (101, 252, lngPack.i18n ("Text~Others~Log"), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE),
+	chatButton (51, 252, lngPack.i18n ("Text~Others~Chat"), cMenuButton::BUTTON_TYPE_HUD_CHAT, FONT_LATIN_SMALL_WHITE),
 	nextButton (124, 227, ">>", cMenuButton::BUTTON_TYPE_HUD_NEXT, FONT_LATIN_SMALL_WHITE),
 	prevButton (60, 227, "<<", cMenuButton::BUTTON_TYPE_HUD_PREV, FONT_LATIN_SMALL_WHITE),
-	doneButton (99, 227, lngPack.i18n ("Text~Hud~Proceed"), cMenuButton::BUTTON_TYPE_HUD_DONE, FONT_LATIN_SMALL_WHITE),
+	doneButton (99, 227, lngPack.i18n ("Text~Others~Proceed"), cMenuButton::BUTTON_TYPE_HUD_DONE, FONT_LATIN_SMALL_WHITE),
 	miniMapImage (MINIMAP_POS_X, MINIMAP_POS_Y),
 	coordsLabel (265 + 32, (Video.getResolutionY() - 21) + 3),
 	unitNameLabel (343 + 106, (Video.getResolutionY() - 21) + 3),
@@ -4643,7 +4643,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canAttack && unit.data.shotsCur)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == mouseInputAttackMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Attack_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4652,7 +4652,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canBuild.empty() == false && unit.isUnitBuildingABuilding() == false)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Build_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4661,7 +4661,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canMineMaxRes > 0 && unit.isUnitWorking())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Distribution_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4670,7 +4670,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.storeResType != sUnitData::STORE_RES_NONE && unit.isUnitBuildingABuilding() == false && unit.isUnitClearing() == false)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == transferMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Transfer_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4679,7 +4679,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canWork && unit.buildingCanBeStarted())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Start_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4688,7 +4688,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canSurvey)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isAutoMoveJobActive();
-			drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Auto_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4697,7 +4697,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.canBeStoppedViaUnitMenu())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Stop_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4706,7 +4706,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canClearArea && client->getMap()->fields[client->getMap()->getOffset (unit.PosX, unit.PosY)].getRubble() && unit.isUnitClearing() == false)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Clear_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4715,7 +4715,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if ((unit.manualFireActive || unit.data.canAttack))
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.manualFireActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~ManualFireMode_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4724,7 +4724,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if ((unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.sentryActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Sentry"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4734,13 +4734,13 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		{
 			// Activate:
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Active_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 
 			// Load:
 			isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == loadMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Load_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4749,7 +4749,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canResearch && unit.isUnitWorking())
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Research"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4758,7 +4758,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.convertsGold)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Upgrades_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4768,13 +4768,13 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		{
 			// Update all buildings of this type in this subbase
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~UpAll_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 
 			// update this building
 			isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Upgrade_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4783,7 +4783,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canSelfDestroy)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Destroy_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4792,7 +4792,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canRearm && unit.data.storageResCur >= 1)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == muniActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Reload_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4801,7 +4801,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canRepair && unit.data.storageResCur >= 1)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == repairActive;
-			drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Repair_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4810,7 +4810,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canPlaceMines && unit.data.storageResCur > 0)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isUnitLayingMines();
-			drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Seed"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4819,7 +4819,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canPlaceMines && unit.data.storageResCur < unit.data.storageResMax)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isUnitClearingMines();
-			drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Clear_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4828,7 +4828,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canDisable && unit.data.shotsCur)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == disableMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Disable_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4837,7 +4837,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.canCapture && unit.data.shotsCur)
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == stealMode;
-			drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Steal_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4845,13 +4845,13 @@ void cGameGUI::drawMenu (const cUnit& unit)
 	}
 	// Info:
 	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, cVideo::buffer);
+	drawContextItem (lngPack.i18n ("Text~Others~Info_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 	dest.y += 22;
 	++nr;
 
 	// Done:
 	isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, cVideo::buffer);
+	drawContextItem (lngPack.i18n ("Text~Others~Done_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 }
 
 //------------------------------------------------------------------------------

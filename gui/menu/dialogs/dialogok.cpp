@@ -33,7 +33,7 @@ cDialogOk::cDialogOk (const std::string& text) :
 	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (40, 40), menuPosition + cPosition (135, 267)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Button~OK"), FONT_LATIN_NORMAL));
+	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cDialogOk::okClicked, this));
 	// FIXME: add hot key RETURN to button
 }

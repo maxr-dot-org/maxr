@@ -612,7 +612,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 		else
 		{
 			int increase;
-			Uint16 uni = encodeUTF8Char (reinterpret_cast<const unsigned char*> (p), &increase);
+			Uint16 uni = encodeUTF8Char (p, increase);
 			p += increase;
 			if (chars[uni] != NULL)
 			{
@@ -813,7 +813,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		else
 		{
 			int increase;
-			Uint16 uni = encodeUTF8Char (reinterpret_cast<const unsigned char*> (p), &increase);
+			Uint16 uni = encodeUTF8Char (p, increase);
 			p += increase;
 			if (chars[uni] != NULL)
 			{
@@ -870,11 +870,11 @@ string cUnicodeFont::shortenStringToSize (const string& str, int size, eUnicodeF
 	return res;
 }
 
-Uint16 cUnicodeFont::encodeUTF8Char (const unsigned char* pch, int* increase) const
+Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase) const
 {
 	// encode the UTF-8 character to its unicode position
 	Uint16 uni = 0;
-	unsigned char ch = *pch;
+	unsigned char ch = *reinterpret_cast<const unsigned char* const>(pch);
 	// we do not need encoding 4 byte long characters
 	// because SDL only returns the BMP of the unicode table
 	if ((ch & 0xE0) == 0xE0)
@@ -882,18 +882,49 @@ Uint16 cUnicodeFont::encodeUTF8Char (const unsigned char* pch, int* increase) co
 		uni |= (ch & 0x0F) << 12;
 		uni |= (pch[1] & 0x3F) << 6;
 		uni |= pch[2] & 0x3F;
-		*increase = 3;
+		increase = 3;
 	}
 	else if ((ch & 0xC0) == 0xC0)
 	{
 		uni |= (ch & 0x1F) << 6;
 		uni |= pch[1] & 0x3F;
-		*increase = 2;
+		increase = 2;
 	}
 	else
 	{
 		uni |= (ch & 0x7F);
-		*increase = 1;
+		increase = 1;
 	}
 	return uni;
+}
+
+int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/
+{
+	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
+	SDL_Rect rTmp = {0, 0, 0, 0};
+
+	// make sure only upper characters are read for the small fonts
+	// since we don't support lower chars on the small fonts
+	int space;
+	switch (fonttype)
+	{
+	case FONT_LATIN_SMALL_GREEN:
+	case FONT_LATIN_SMALL_RED:
+	case FONT_LATIN_SMALL_WHITE:
+	case FONT_LATIN_SMALL_YELLOW:
+		space = 1;
+		break;
+	default:
+	case FONT_LATIN_NORMAL:
+	case FONT_LATIN_BIG:
+	case FONT_LATIN_BIG_GOLD:
+		space = 0;
+		break;
+	}
+
+	if (chars[unicodeCharacter] != NULL)
+	{
+		return chars[unicodeCharacter]->w + space;
+	}
+	return 0;
 }

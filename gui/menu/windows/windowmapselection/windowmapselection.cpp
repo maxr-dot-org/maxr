@@ -20,29 +20,102 @@
 #include "windowmapselection.h"
 #include "../../../../main.h"
 #include "../../../../pcx.h"
+#include "../../../../files.h"
+#include "../../../../map.h"
+#include "../../../../autosurface.h"
+#include "../../../../video.h"
 #include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
+#include "../../widgets/image.h"
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::cWindowMapSelection () :
-	cWindow (LoadPCX (GFXOD_PLANET_SELECT))
+	cWindow (LoadPCX (GFXOD_PLANET_SELECT)),
+	selectedMapIndex (-1),
+	page (0)
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Button~Game_Options"), FONT_LATIN_NORMAL, eAlignmentType::Center));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	//
+	// Map Images
+	//
+	for (size_t row = 0; row < mapRows; ++row)
+	{
+		for (size_t column = 0; column < mapColumns; ++column)
+		{
+			const auto index = row * mapColumns + column;
+
+			mapImages[index] = addChild (std::make_unique<cImage> (menuPosition + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, SoundData.SNDHudButton));
+			signalConnectionManager.connect (mapImages[index]->clicked, std::bind (&cWindowMapSelection::mapClicked, this, mapImages[index]));
+
+			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (6 + 158 * column, 48 + 198 * row), menuPosition + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		}
+	}
+	
 	//
 	// Buttons
 	//
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~OK")));
+	upButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (292, 435), ePushButtonType::ArrowUpBig));
+	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowMapSelection::upClicked, this));
+
+	downButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (321, 435), ePushButtonType::ArrowDownBig));
+	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowMapSelection::downClicked, this));
+
+	okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	okButton->lock ();
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowMapSelection::okClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Button~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowMapSelection::backClicked, this));
+
+	loadMaps ();
+	updateMaps ();
+
+	updateUpDownLocked ();
 }
 
 //------------------------------------------------------------------------------
 cWindowMapSelection::~cWindowMapSelection ()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::mapClicked (const cImage* mapImage)
+{
+	for (size_t i = 0; i < mapImages.size (); ++i)
+	{
+		if (mapImage == mapImages[i])
+		{
+			selectedMapIndex = static_cast<int>(page * mapCount + i);
+			break;
+		}
+	}
+	updateMaps ();
+	if (selectedMapIndex != -1) okButton->unlock ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::upClicked ()
+{
+	if (page > 0)
+	{
+		--page;
+		updateMaps ();
+		updateUpDownLocked ();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::downClicked ()
+{
+	if ((page+1) * mapCount < maps.size ())
+	{
+		++page;
+		updateMaps ();
+		updateUpDownLocked ();
+	}
+}
 
 //------------------------------------------------------------------------------
 void cWindowMapSelection::okClicked ()
@@ -54,4 +127,110 @@ void cWindowMapSelection::okClicked ()
 void cWindowMapSelection::backClicked ()
 {
 	close ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::updateUpDownLocked ()
+{
+	if (page == 0) upButton->lock ();
+	else upButton->unlock ();
+
+	if (maps.size () <= (page+1) * mapCount) downButton->lock ();
+	else downButton->unlock ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::updateMaps ()
+{
+	for (size_t i = 0; i < mapCount; ++i)
+	{
+		const auto mapIndex = page * mapCount + i;
+		if (mapIndex < maps.size ())
+		{
+			auto mapName = maps[mapIndex];
+
+			int size;
+			AutoSurface mapSurface (cStaticMap::loadMapPreview (mapName, &size));
+
+			if (mapSurface == NULL) continue;
+
+			const int mapWinSize = 112;
+			const int selectedColor = 0x00C000;
+			const int unselectedColor = 0x000000;
+			AutoSurface imageSurface (SDL_CreateRGBSurface (0, mapWinSize + 8, mapWinSize + 8, Video.getColDepth (), 0, 0, 0, 0));
+
+			if (selectedMapIndex == static_cast<int>(mapIndex))
+			{
+				SDL_FillRect (imageSurface, NULL, selectedColor);
+
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+				{
+					while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+					{
+						mapName.erase (mapName.length () - 1, mapName.length ());
+					}
+					mapName = ">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<";
+				}
+				else mapName = ">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<";
+			}
+			else
+			{
+				SDL_FillRect (imageSurface, NULL, unselectedColor);
+
+				if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+				{
+					while (font->getTextWide (">" + mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
+					{
+						mapName.erase (mapName.length () - 1, mapName.length ());
+					}
+					mapName = mapName + "... (" + iToStr (size) + "x" + iToStr (size) + ")";
+				}
+				else mapName = mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
+			}
+			SDL_Rect dest = {4, 4, mapWinSize, mapWinSize};
+			SDL_BlitSurface (mapSurface, NULL, imageSurface, &dest);
+
+			mapImages[i]->setImage (imageSurface);
+			mapTitles[i]->setText (mapName);
+		}
+		else
+		{
+			mapImages[i]->setImage (NULL);
+			mapTitles[i]->setText ("");
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowMapSelection::loadMaps ()
+{
+	maps = getFilesOfDirectory (cSettings::getInstance ().getMapsPath ());
+	if (!getUserMapsDir ().empty ())
+	{
+		std::vector<std::string> userMaps (getFilesOfDirectory (getUserMapsDir ()));
+		for (size_t i = 0; i != userMaps.size (); ++i)
+		{
+			if (std::find (maps.begin (), maps.end (), userMaps[i]) == maps.end ())
+			{
+				maps.push_back (userMaps[i]);
+			}
+		}
+	}
+	for (size_t i = 0; i != maps.size (); ++i)
+	{
+		const std::string& map = maps[i];
+		if (map.compare (map.length () - 3, 3, "WRL") != 0 && map.compare (map.length () - 3, 3, "wrl") != 0)
+		{
+			maps.erase (maps.begin () + i);
+			i--;
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+bool cWindowMapSelection::loadSelectedMap (cStaticMap& staticMap)
+{
+	if (selectedMapIndex < 0 || selectedMapIndex >= static_cast<int>(maps.size ())) return false;
+
+	return staticMap.loadMap (maps[selectedMapIndex]);
 }
