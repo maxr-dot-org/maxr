@@ -625,39 +625,39 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::updateNeighbours (const cMap* Map)
+void cBuilding::updateNeighbours (const cMap& map)
 {
-	int iPosOff = Map->getOffset (PosX, PosY);
+	int iPosOff = map.getOffset (PosX, PosY);
 	if (!data.isBig)
 	{
-		owner->base.checkNeighbour (iPosOff - Map->getSize(), *this);
+		owner->base.checkNeighbour (iPosOff - map.getSize(), *this);
 		owner->base.checkNeighbour (iPosOff + 1, *this);
-		owner->base.checkNeighbour (iPosOff + Map->getSize(), *this);
+		owner->base.checkNeighbour (iPosOff + map.getSize(), *this);
 		owner->base.checkNeighbour (iPosOff - 1, *this);
 	}
 	else
 	{
-		owner->base.checkNeighbour (iPosOff - Map->getSize(), *this);
-		owner->base.checkNeighbour (iPosOff - Map->getSize() + 1, *this);
+		owner->base.checkNeighbour (iPosOff - map.getSize(), *this);
+		owner->base.checkNeighbour (iPosOff - map.getSize() + 1, *this);
 		owner->base.checkNeighbour (iPosOff + 2, *this);
-		owner->base.checkNeighbour (iPosOff + 2 + Map->getSize(), *this);
-		owner->base.checkNeighbour (iPosOff + Map->getSize() * 2, *this);
-		owner->base.checkNeighbour (iPosOff + Map->getSize() * 2 + 1, *this);
+		owner->base.checkNeighbour (iPosOff + 2 + map.getSize(), *this);
+		owner->base.checkNeighbour (iPosOff + map.getSize() * 2, *this);
+		owner->base.checkNeighbour (iPosOff + map.getSize() * 2 + 1, *this);
 		owner->base.checkNeighbour (iPosOff - 1, *this);
-		owner->base.checkNeighbour (iPosOff - 1 + Map->getSize(), *this);
+		owner->base.checkNeighbour (iPosOff - 1 + map.getSize(), *this);
 	}
-	CheckNeighbours (Map);
+	CheckNeighbours (map);
 }
 
 //--------------------------------------------------------------------------
 /** Checks, if there are neighbours */
 //--------------------------------------------------------------------------
-void cBuilding::CheckNeighbours (const cMap* Map)
+void cBuilding::CheckNeighbours (const cMap& map)
 {
 #define CHECK_NEIGHBOUR(x, y, m) \
-	if (Map->isValidPos (x, y)) \
+	if (map.isValidPos (x, y)) \
 	{ \
-		const cBuilding* b = Map->fields[Map->getOffset (x, y)].getTopBuilding(); \
+		const cBuilding* b = map.fields[map.getOffset (x, y)].getTopBuilding(); \
 		if (b && b->owner == owner && b->data.connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
@@ -1128,7 +1128,7 @@ void cBuilding::DrawExitPoints (const sUnitData& vehicleData, cGameGUI& gameGUI)
 {
 	int const spx = gameGUI.getScreenPosX (*this);
 	int const spy = gameGUI.getScreenPosY (*this);
-	cMap* map = gameGUI.getClient()->getMap();
+	cMap& map = *gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[12] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1), T_2<int> (2, -1),
 							T_2<int> (-1,  0),                                   T_2<int> (2, 0),
@@ -1138,7 +1138,7 @@ void cBuilding::DrawExitPoints (const sUnitData& vehicleData, cGameGUI& gameGUI)
 
 	for (int i = 0; i != 12; ++i)
 	{
-		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, *map, vehicleData))
+		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, map, vehicleData))
 			gameGUI.drawExitPoint (spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize);
 	}
 }
@@ -1189,17 +1189,17 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 //--------------------------------------------------------------------------
 /** loads a vehicle: */
 //--------------------------------------------------------------------------
-void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
+void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 {
-	Map->deleteVehicle (*Vehicle);
-	if (Vehicle->sentryActive)
+	map.deleteVehicle (vehicle);
+	if (vehicle.sentryActive)
 	{
-		Vehicle->owner->deleteSentry (*Vehicle);
+		vehicle.owner->deleteSentry (vehicle);
 	}
 
-	Vehicle->Loaded = true;
+	vehicle.Loaded = true;
 
-	storedUnits.push_back (Vehicle);
+	storedUnits.push_back (&vehicle);
 	data.storageUnitsCur++;
 
 	owner->doScan();
@@ -1207,17 +1207,17 @@ void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 
 //-----------------------------------------------------------------------
 // Unloads a vehicle
-void cBuilding::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
+void cBuilding::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
 {
-	Remove (storedUnits, Vehicle);
+	Remove (storedUnits, &vehicle);
 
 	data.storageUnitsCur--;
 
-	Map->addVehicle (*Vehicle, offset);
+	map.addVehicle (vehicle, offset);
 
-	Vehicle->PosX = offset % Map->getSize();
-	Vehicle->PosY = offset / Map->getSize();
-	Vehicle->Loaded = false;
+	vehicle.PosX = offset % map.getSize();
+	vehicle.PosY = offset / map.getSize();
+	vehicle.Loaded = false;
 
 	owner->doScan();
 }

@@ -661,7 +661,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	}
 
 	// check if attack is possible
-	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), Map.get(), true) == false)
+	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), *Map, true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -1614,7 +1614,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 
 		if (StoringVehicle->canLoad (StoredVehicle))
 		{
-			StoringVehicle->storeVehicle (StoredVehicle, Map.get());
+			StoringVehicle->storeVehicle (*StoredVehicle, *Map);
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->getNr());
@@ -1627,7 +1627,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 
 		if (StoringBuilding->canLoad (StoredVehicle))
 		{
-			StoringBuilding->storeVehicle (StoredVehicle, Map.get());
+			StoringBuilding->storeVehicle (*StoredVehicle, *Map);
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->getNr());
@@ -1657,7 +1657,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		if (StoringVehicle->canExitTo (x, y, *Map, StoredVehicle->data))
 		{
-			StoringVehicle->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map.get());
+			StoringVehicle->exitVehicleTo (*StoredVehicle, Map->getOffset (x, y), *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->getNr());
 			if (StoredVehicle->data.canSurvey)
@@ -1691,7 +1691,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		if (StoringBuilding->canExitTo (x, y, *Map, StoredVehicle->data))
 		{
-			StoringBuilding->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map.get());
+			StoringBuilding->exitVehicleTo (*StoredVehicle, Map->getOffset (x, y), *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->getNr());
 			if (StoredVehicle->data.canSurvey)
@@ -1934,10 +1934,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (destUnit == NULL) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, Map.get(), steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, Map.get(), steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, Map.get(), steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map.get(), steal)))) return;
+	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, *Map, steal)))) return;
 
 	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
@@ -2095,7 +2095,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 	if (!building || building->owner->getNr() != message.iPlayerNr) return;
 
 	sendSelfDestroy (*this, *building);
-	destroyUnit (building);
+	destroyUnit (*building);
 }
 
 //------------------------------------------------------------------------------
@@ -3502,18 +3502,18 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 }
 
 //------------------------------------------------------------------------------
-void cServer::destroyUnit (cVehicle* vehicle)
+void cServer::destroyUnit (cVehicle& vehicle)
 {
-	const int offset = Map->getOffset (vehicle->PosX, vehicle->PosY);
+	const int offset = Map->getOffset (vehicle.PosX, vehicle.PosY);
 	int value = 0;
 	int oldRubbleValue = 0;
 	bool bigRubble = false;
-	int rubblePosX = vehicle->PosX;
-	int rubblePosY = vehicle->PosY;
+	int rubblePosX = vehicle.PosX;
+	int rubblePosY = vehicle.PosY;
 
-	if (vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0)
+	if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
 	{
-		deleteUnit (vehicle);
+		deleteUnit (&vehicle);
 		return;
 	}
 
@@ -3542,7 +3542,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 	}
 
-	if (vehicle->data.isBig)
+	if (vehicle.data.isBig)
 	{
 		bigRubble = true;
 		buildings = & (*Map) [offset + 1].getBuildings();
@@ -3579,18 +3579,18 @@ void cServer::destroyUnit (cVehicle* vehicle)
 		}
 	}
 
-	if (!vehicle->data.hasCorpse)
+	if (!vehicle.data.hasCorpse)
 	{
-		value += vehicle->data.buildCosts;
+		value += vehicle.data.buildCosts;
 		// stored material is always added completely to the rubble
-		if (vehicle->data.storeResType == sUnitData::STORE_RES_METAL)
-			value += vehicle->data.storageResCur * 2;
+		if (vehicle.data.storeResType == sUnitData::STORE_RES_METAL)
+			value += vehicle.data.storageResCur * 2;
 	}
 
 	if (value > 0 || oldRubbleValue > 0)
 		addRubble (rubblePosX, rubblePosY, value / 2 + oldRubbleValue, bigRubble);
 
-	deleteUnit (vehicle);
+	deleteUnit (&vehicle);
 }
 
 //------------------------------------------------------------------------------
@@ -3614,9 +3614,9 @@ int cServer::deleteBuildings (std::vector<cBuilding*>& buildings)
 }
 
 //------------------------------------------------------------------------------
-void cServer::destroyUnit (cBuilding* b)
+void cServer::destroyUnit (cBuilding& b)
 {
-	int offset = Map->getOffset (b->PosX, b->PosY);
+	int offset = Map->getOffset (b.PosX, b.PosY);
 	int rubble = 0;
 	bool big = false;
 
@@ -3636,7 +3636,7 @@ void cServer::destroyUnit (cBuilding* b)
 		rubble += deleteBuildings (*buildings);
 	}
 
-	sUnitData::eSurfacePosition surfacePosition = b->data.surfacePosition;
+	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
 
 	std::vector<cBuilding*>* buildings = &Map->fields[offset].getBuildings();
 	rubble += deleteBuildings (*buildings);

@@ -218,8 +218,8 @@ public:
 	* does not notify the client!
 	* the caller has to take care of the necessary actions on the client
 	*/
-	void destroyUnit (cVehicle* vehicle);
-	void destroyUnit (cBuilding* building);
+	void destroyUnit (cVehicle& vehicle);
+	void destroyUnit (cBuilding& building);
 
 	/**
 	* adds the unit to the map and player.

@@ -1044,7 +1044,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 				// check, if the player wants to attack:
 			if(changeAllowed && mouse.getCursorType() == eMouseCursorType::Attack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
 			{
-				cUnit* target = selectTarget(mouseTilePosition.x(), mouseTilePosition.y(), selectedVehicle->data.canAttack, client->getMap());
+				cUnit* target = selectTarget(mouseTilePosition.x(), mouseTilePosition.y(), selectedVehicle->data.canAttack, *client->getMap());
 
 				if(selectedVehicle->isInRange(mouseTilePosition.x(), mouseTilePosition.y()))
 				{
@@ -1074,7 +1074,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 			{
 				// find target ID
 				int targetId = 0;
-				cUnit* target = selectTarget(mouseTilePosition.x(), mouseTilePosition.y(), selectedBuilding->data.canAttack, client->getMap());
+				cUnit* target = selectTarget(mouseTilePosition.x(), mouseTilePosition.y(), selectedBuilding->data.canAttack, *client->getMap());
 				if(target && target->isAVehicle()) targetId = target->iID;
 				const cMap& map = *client->getMap();
 
@@ -1104,7 +1104,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 				else
 				{
 					if(selectedVehiclesGroup.size() > 1) client->startGroupMove(selectedVehiclesGroup, mouseTilePosition.x(), mouseTilePosition.y());
-					else client->addMoveJob(selectedVehicle, mouseTilePosition.x(), mouseTilePosition.y());
+					else client->addMoveJob(*selectedVehicle, mouseTilePosition.x(), mouseTilePosition.y());
 				}
 			}
 			else if(overUnitField)
@@ -2597,7 +2597,7 @@ void cGameGUI::updateMouseCursor()
 		// disable vs. vehicle/building
 		else if (selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
-			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false)
+			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false)
 				&& (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false)
 				&& (!overUnitField->getBuilding() || overUnitField->getBuilding()->isDisabled() == false)
 			   )
@@ -2615,7 +2615,7 @@ void cGameGUI::updateMouseCursor()
 		// steal vs. vehicle
 		else if (selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
-			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), true))
+			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), true))
 			{
 				if(mouse.setCursorType(eMouseCursorType::Steal))
 				{
@@ -2629,12 +2629,12 @@ void cGameGUI::updateMouseCursor()
 		}
 		// Infiltrators: auto-action
 		// no disable vs. disabled building
-		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && overUnitField->getBuilding() && overUnitField->getBuilding()->isDisabled())
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false) && overUnitField->getBuilding() && overUnitField->getBuilding()->isDisabled())
 		{
 			mouse.setCursorType(eMouseCursorType::No);
 		}
 		// vehicle can be disabled, and if it is ...
-		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false) && (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false))
 		{
 			if(mouse.setCursorType(eMouseCursorType::Disable))
 			{
@@ -2643,7 +2643,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		// ... disabled (the) vehicle can be stolen
 		// (without selecting the 'steal' from menu)
-		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), true))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), true))
 		{
 			if(mouse.setCursorType(eMouseCursorType::Steal))
 			{
@@ -2664,14 +2664,14 @@ void cGameGUI::updateMouseCursor()
 				mouse.setCursorType(eMouseCursorType::No);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && selectedVehicle->canAttackObjectAt (mouseMapX, mouseMapY, client->getMap(), false, false))
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && selectedVehicle->canAttackObjectAt (mouseMapX, mouseMapY, *client->getMap(), false, false))
 		{
 			if(mouse.setCursorType(eMouseCursorType::Attack))
 			{
 				drawAttackCursor (mouseMapX, mouseMapY);
 			}
 		}
-		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && selectedBuilding->canAttackObjectAt (mouseMapX, mouseMapY, client->getMap()))
+		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && selectedBuilding->canAttackObjectAt (mouseMapX, mouseMapY, *client->getMap()))
 		{
 			if(mouse.setCursorType(eMouseCursorType::Attack))
 			{
@@ -2763,7 +2763,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == loadMode)
 		{
-			if (selectedVehicle->canLoad (mouseMapX, mouseMapY, client->getMap(), false))
+			if (selectedVehicle->canLoad (mouseMapX, mouseMapY, *client->getMap(), false))
 			{
 				mouse.setCursorType(eMouseCursorType::Load);
 			}
@@ -3432,7 +3432,7 @@ void cGameGUI::miniMapRightClicked (void* parent)
 	const int destX = gui->miniMapOffX + ((x - MINIMAP_POS_X) * mapSize) / (MINIMAP_SIZE * zoomFactor);
 	const int destY = gui->miniMapOffY + ((y - MINIMAP_POS_Y) * mapSize) / (MINIMAP_SIZE * zoomFactor);
 
-	gui->client->addMoveJob (selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
+	gui->client->addMoveJob (*selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
 }
 
 void cGameGUI::miniMapMovedOver (void* parent)
@@ -3683,7 +3683,7 @@ void cGameGUI::drawAttackCursor (int x, int y) const
 	if (selectedUnit == NULL) return;
 
 	const sUnitData& data = selectedUnit->data;
-	cUnit* target = selectTarget (x, y, data.canAttack, client->getMap());
+	cUnit* target = selectTarget (x, y, data.canAttack, *client->getMap());
 
 	if (!target || (target == selectedUnit))
 	{

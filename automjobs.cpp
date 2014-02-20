@@ -132,7 +132,7 @@ void cAutoMJob::DoAutoMove (const std::vector<cAutoMJob*>& jobs, int iNumber)
 		}
 		if (vehicle->ClientMoveJob->bSuspended && vehicle->data.speedCur)
 		{
-			client->addMoveJob (vehicle, vehicle->ClientMoveJob->DestX, vehicle->ClientMoveJob->DestY);
+			client->addMoveJob (*vehicle, vehicle->ClientMoveJob->DestX, vehicle->ClientMoveJob->DestY);
 			// prevent, that all surveyors try to calc
 			// their next move in the same frame
 			n = iNumber % WAIT_FRAMES;
@@ -179,7 +179,7 @@ void cAutoMJob::PlanNextMove (const std::vector<cAutoMJob*>& jobs)
 	}
 	else
 	{
-		client->addMoveJob (vehicle, bestX, bestY);
+		client->addMoveJob (*vehicle, bestX, bestY);
 		lastDestX = bestX;
 		lastDestY = bestY;
 	}
@@ -305,7 +305,7 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 	}
 	else
 	{
-		if (client->addMoveJob (vehicle, bestX, bestY))
+		if (client->addMoveJob (*vehicle, bestX, bestY))
 		{
 			lastDestX = bestX;
 			lastDestY = bestY;

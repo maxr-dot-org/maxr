@@ -75,7 +75,7 @@ public:
 	 *  ATTENTION: must not be called with forceAttack == false
 	 *             from the server thread!
 	 */
-	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack = false, bool checkRange = true) const;
+	bool canAttackObjectAt (int x, int y, cMap& map, bool forceAttack = false, bool checkRange = true) const;
 
 	/** Upgrades the unit data of this unit to the current,
 	 * upgraded version of the player.

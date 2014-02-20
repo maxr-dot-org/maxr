@@ -190,10 +190,10 @@ public:
 	bool InSentryRange (cServer& server);
 	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const;
 	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
-	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true) const;
+	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
-	void storeVehicle (cVehicle* Vehicle, cMap* Map);
-	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
+	void storeVehicle (cVehicle& vehicle, cMap& map);
+	void exitVehicleTo (cVehicle& vehicle, int offset, cMap& map);
 #define SUPPLY_TYPE_REARM 0
 #define SUPPLY_TYPE_REPAIR 1
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
@@ -217,7 +217,7 @@ public:
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath
 	*/
-	bool canDoCommandoAction (int x, int y, const cMap* map, bool steal) const;
+	bool canDoCommandoAction (int x, int y, const cMap& map, bool steal) const;
 	/**
 	* draws the commando curser for stealing or disabling
 	* with the calculated chance
