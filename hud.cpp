@@ -4698,7 +4698,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.convertsGold)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Others~Upgrades_7"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Upgrademenu_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4706,15 +4706,15 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		// Updates:
 		if (unit.buildingCanBeUpgraded())
 		{
-			// Update all buildings of this type in this subbase
+			// update this building
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Others~UpAll_7"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Upgradethis_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
-
-			// update this building
+			
+			// Update all buildings of this type in this subbase
 			isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Others~Upgrade_7"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~UpgradeAll_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -5006,18 +5006,6 @@ void cGameGUI::menuReleased (cUnit& unit)
 		// Updates:
 		if (unit.buildingCanBeUpgraded())
 		{
-			// Update all buildings of this type in this subbase
-			if (exeNr == nr)
-			{
-				cBuilding* building = static_cast<cBuilding*> (&unit);
-
-				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
-				building->executeUpdateBuildingCommmand (*client, true);
-				return;
-			}
-			++nr;
-
 			// update this building
 			if (exeNr == nr)
 			{
@@ -5026,6 +5014,18 @@ void cGameGUI::menuReleased (cUnit& unit)
 				unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
 				building->executeUpdateBuildingCommmand (*client, false);
+				return;
+			}
+			++nr;
+			
+			// Update all buildings of this type in this subbase
+			if (exeNr == nr)
+			{
+				cBuilding* building = static_cast<cBuilding*> (&unit);
+
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				building->executeUpdateBuildingCommmand (*client, true);
 				return;
 			}
 			++nr;

@@ -4649,19 +4649,19 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 	downButton->setReleasedFunction (&downReleased);
 	menuItems.push_back (downButton.get());
 
-	activateAllButton = new cMenuButton (position.x + 518, position.y + 246, lngPack.i18n ("Text~Others~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	activateAllButton = new cMenuButton (position.x + 518, position.y + 246, lngPack.i18n ("Text~Others~ActiveAll_9"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	activateAllButton->setReleasedFunction (&activateAllReleased);
 	menuItems.push_back (activateAllButton.get());
 
-	reloadAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload_7") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	reloadAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~ReloadAll_9") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	reloadAllButton->setReleasedFunction (&reloadAllReleased);
 	menuItems.push_back (reloadAllButton.get());
 
-	repairAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 2, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	repairAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 2, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~RepairAll_9") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	repairAllButton->setReleasedFunction (&repairAllReleased);
 	menuItems.push_back (repairAllButton.get());
 
-	upgradeAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 3, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	upgradeAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 3, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~UpgradeAll_9") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	upgradeAllButton->setReleasedFunction (&upgradeAllReleased);
 	menuItems.push_back (upgradeAllButton.get());
 
@@ -4687,13 +4687,13 @@ void cStorageMenu::generateItems()
 		for (int y = 0; y < 2; y++)
 		{
 			int index = x + y * maxX;
-			activateButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + y * 236, lngPack.i18n ("Text~Others~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			activateButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + y * 236, lngPack.i18n ("Text~Others~Active_7"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			activateButtons[index]->setReleasedFunction (&activateReleased);
 			reloadButtons[index] = new cMenuButton (position.x + startX + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Reload_7") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			reloadButtons[index]->setReleasedFunction (&reloadReleased);
-			repairButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			repairButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Repair_7") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			repairButtons[index]->setReleasedFunction (&repairReleased);
-			upgradeButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+			upgradeButtons[index] = new cMenuButton (position.x + startX + 75 + x * xStep, position.y + 191 + 25 + y * 236, canRepairReloadUpgrade ? lngPack.i18n ("Text~Others~Upgradethis_7") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 			upgradeButtons[index]->setReleasedFunction (&upgradeReleased);
 
 			unitImages[index] = new cMenuImage (position.x + 17 + x * xStepImage, position.y + 9 + y * 236);

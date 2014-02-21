@@ -2132,7 +2132,7 @@ void cMenuUnitDetailsBig::draw()
 		// Damage:
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->damage));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Attack"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Attack_7"));
 		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3, y - 3, upgrade ? upgrade->getCurValue() : data->damage, oriData->damage);
 		DETAIL_DOLINEBREAK
 
@@ -2141,21 +2141,21 @@ void cMenuUnitDetailsBig::draw()
 			// Shots:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->shotsMax));
-			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Shoots"));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Shots_7"));
 			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, upgrade ? upgrade->getCurValue() : data->shotsMax, oriData->shotsMax);
 			DETAIL_DOLINEBREAK
 
 			// Range:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->range));
-			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Range"));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Range_7"));
 			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->range, oriData->range);
 			DETAIL_DOLINEBREAK
 
 			// Ammo:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->getCurValue() : data->ammoMax));
-			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Attack"));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Ammo_7"));
 			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->getCurValue() : data->ammoMax, oriData->ammoMax);
 			DETAIL_DOLINEBREAK
 		}
@@ -3247,7 +3247,7 @@ cMenuBuildSpeedHandler::cMenuBuildSpeedHandler (int x, int y) : cMenuItemContain
 		costsLabels[i] = new cMenuLabel (position.x + 137, position.y + 25 * i + 5);
 		turnsLabels[i]->setCentered (true);
 		costsLabels[i]->setCentered (true);
-		speedButtons[i] =  new cMenuCheckButton (position.x, position.y + 25 * i, lngPack.i18n ("Text~Button~Build") + " x" + iToStr (factor), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON);
+		speedButtons[i] =  new cMenuCheckButton (position.x, position.y + 25 * i, lngPack.i18n ("Text~Others~Build_7") + " x" + iToStr (factor), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON);
 		speedGroup->addButton (speedButtons[i]);
 		addItem (turnsLabels[i].get());
 		addItem (costsLabels[i].get());
