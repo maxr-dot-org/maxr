@@ -67,6 +67,8 @@ bool cInput::IsDoubleClicked()
 
 void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseButtonEvent& button)
 {
+	MouseState.wheelUp = false;
+	MouseState.wheelDown = false;
 	MouseState.x = button.x;
 	MouseState.y = button.y;
 
@@ -113,20 +115,11 @@ void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseButtonEvent& bu
 
 void cInput::inputMouseButton (cMenu& activeMenu, const SDL_MouseWheelEvent& wheel)
 {
-	MouseState.wheelUp = false;
-	MouseState.wheelDown = false;
-	if (wheel.y > 0)
-	{
-		MouseState.wheelUp = true;
-		MouseState.leftButtonReleased = false;
-		MouseState.rightButtonReleased = false;
-	}
-	else if (wheel.y < 0)
-	{
-		MouseState.wheelDown = true;
-		MouseState.leftButtonReleased = false;
-		MouseState.rightButtonReleased = false;
-	}
+	MouseState.leftButtonReleased = false;
+	MouseState.rightButtonReleased = false;
+	MouseState.wheelUp = wheel.y > 0;
+	MouseState.wheelDown = wheel.y < 0;
+
 	// do not send events to a menu, after an event triggered the termination
 	// the user wouldn't expects the menu to execute further events
 	// after clicking the exit button
