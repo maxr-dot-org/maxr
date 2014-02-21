@@ -6,17 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="spa" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="kuan_ji@hotmail.es">
-			<Editor name="Kuan_Ji" time="2009-11-08 17:00:00"/>
-			<Editor name="SOLIGAN - Asociacion de Software LIbre GANdia" time="2009-11-16 16:53:00"/>
-			<Editor name="Kuan_Ji" time="2009-12-28 23:35:00"/>
-			<Editor name="Kuan_Ji" time="2010-03-18 21:45:00"/>
-			<Editor name="Kuan_Ji" time="2010-12-06 19:01:00"/>
-			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
-		</Author>
-		<Game_Version time="2008-04-14 19:17:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedición por DoctorDeath)"/>
@@ -87,12 +76,13 @@
 		<Others>
 			<Active ENG="Active" localized="Activar"/>
 			<Active_7 ENG="Activ." localized="Activar"/>
+			
 			<Air_Units ENG="Airunits" localized="Unidades aéreas"/>
 			<Ammo ENG="Ammunition" localized="Munición"/>
 			<Ammo_7 ENG="Ammo" localized="Munic"/>
 			<Armor_7 ENG="Armor" localized="Escudo"/>
-			<Attack_7 ENG="Attack" localized="Atacar"/>
 			<Attack ENG="Attack" localized="Atacar"/>
+			<Attack_7 ENG="Attack" localized="Atacar"/>
 			<Auto_7 ENG="Auto" localized="Auto"/>
 			<Back ENG="Back" localized="Atras"/>
 			<Build_7 ENG="Build" localized="Construir"/>
@@ -144,9 +134,12 @@
 			<Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
 			<Range ENG="Range" localized="Alcance"/>
 			<Range_7 ENG="Range" localized="Alcance"/>
+			
 			<Reload_7 ENG="Reload" localized="Recargar"/>
+			
 			<Repair ENG="Repair" localized="Reparar"/>
 			<Repair_7 ENG="Repair" localized="Reparar"/>
+			
 			<Reports ENG="Reports" localized="Reportes"/>
 			<Research ENG="Research" localized="Investigar"/>
 			<Save ENG="Save" localized="Guardar"/>
@@ -158,8 +151,8 @@
 			<Seed_7 ENG="Seed" localized="Plantar"/>
 			<Sentry ENG="Sentry" localized="Alerta"/>
 			<Settings ENG="Settings" localized="Opciones"/>
-			<Shoots ENG="Shoots" localized="Tiros"/>
-			<Shots_7 ENG="Shots" localized="Disparos"/>
+			<Shots ENG="Shoots" localized="Disparos"/>
+			<Shots_7 ENG="Shots" localized="Disparo"/>
 			<Single_Player ENG="Singleplayer (No AI)" localized="Un jugador (Sin IA)"/>
 			<Speed ENG="Speed" localized="Velocidad"/>
 			<Speed_7 ENG="Speed" localized="Veloc."/>
@@ -177,14 +170,13 @@
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Transferir"/>
 			<Units ENG="Units" localized="Unidades"/>
-			<UpAll_7 ENG="Upg all" localized="Mej. Todo"/>
 			<Upgrade ENG="Upgrade" localized="Actualizar"/>
-			<Upgrade_7 ENG="Upgrade" localized="Mejorar"/>
-			<Upgrades_7 ENG="Buy Upg" localized="Mejoras"/>
+			<UpgradeAll_7 ENG="Up.all" localized="Mej.Todo"/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="Mej. Todo"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="Mejoras"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Actual."/>
 			<Usage_7 ENG="Usage" localized="Uso"/>
 			<Yes ENG="Yes" localized="Si"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Construido (original)"/>
@@ -341,14 +333,6 @@
 			<Producing_Fin ENG="finished building" localized="edificio terminado"/>
 			
 			<Repeat ENG="Again" localized="De nuevo"/>
-			<Research_Armor ENG="Armor research completed" localized="Investigación de blindaje completada"/>
-			<Research_Attack ENG="Attack research completed" localized="Investigación de ataque completada"/>
-			<Research_Costs ENG="Cost research completed" localized="Investigación de costes completada"/>
-			<Research_Hitpoints ENG="Hits research completed" localized="Investigación de vida completada"/>
-			<Research_Range ENG="Range research completed" localized="Investigación de alcance completada"/>
-			<Research_Scan ENG="Scan research completed" localized="Investigación de radar completada"/>
-			<Research_Shoots ENG="Shots research completed" localized="Investigación de tiros completada"/>
-			<Research_Speed ENG="Speed research completed" localized="Investigación de velocidad completada"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Cuidado: Modo de video no soportado en la configuración"/>
@@ -466,4 +450,16 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="kuan_ji@hotmail.es">
+			<Editor name="Kuan_Ji" time="2009-11-08 17:00:00"/>
+			<Editor name="SOLIGAN - Asociacion de Software LIbre GANdia" time="2009-11-16 16:53:00"/>
+			<Editor name="Kuan_Ji" time="2009-12-28 23:35:00"/>
+			<Editor name="Kuan_Ji" time="2010-03-18 21:45:00"/>
+			<Editor name="Kuan_Ji" time="2010-12-06 19:01:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2008-04-14 19:17:00"/>
+	</Footer>
 </MAX_Language_File>

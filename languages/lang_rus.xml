@@ -6,13 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="jazz">
-			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2012-02-26 17:34"/>
-			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
-		</Author>
-		<Game_Version time="2012-02-26 17:34"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized=""/>
@@ -83,6 +76,7 @@
 		<Others>
 			<Active ENG="Active" localized="Активац."/>
 			<Active_7 ENG="Activ." localized="Актив."/>
+			
 			<Air_Units ENG="Airunits" localized="Воздушные"/>
 			<Ammo ENG="Ammunition" localized="Боезапас"/>
 			<Ammo_7 ENG="Ammo" localized="Боезап."/>
@@ -140,9 +134,12 @@
 			<Produce_Units ENG="Producing units" localized="Производственные"/>
 			<Range ENG="Range" localized="Дальность"/>
 			<Range_7 ENG="Range" localized="Дальн."/>
+			<Reload ENG="Reload" localized="Заряд."/>
 			<Reload_7 ENG="Reload" localized="Заряд."/>
+
 			<Repair ENG="Repair" localized="Ремонт"/>
 			<Repair_7 ENG="Repair" localized="Ремонт"/>
+			
 			<Reports ENG="Reports" localized="Отчёты"/>
 			<Research ENG="Research" localized="Иссл."/>
 			<Save ENG="Save" localized="Сохранить"/>
@@ -154,7 +151,7 @@
 			<Seed_7 ENG="Seed" localized="Мины"/>
 			<Sentry ENG="Sentry" localized="Часовой"/>
 			<Settings ENG="Settings" localized="Настройки"/>
-			<Shoots ENG="Shoots" localized="Выстрел"/>
+			<Shots ENG="Shoots" localized="Выстрел"/>
 			<Shots_7 ENG="Shots" localized="Выстр."/>
 			<Single_Player ENG="Singleplayer (No AI)" localized="Одиночная игра (Без ИИ)"/>
 			<Speed ENG="Speed" localized="Скор."/>
@@ -173,14 +170,13 @@
 			<Total ENG="Total" localized="Всего"/>
 			<Transfer_7 ENG="X-fer" localized="Трансф."/>
 			<Units ENG="Units" localized=""/>
-			<UpAll_7 ENG="Upg all" localized="Ул. все"/>
 			<Upgrade ENG="Upgrade" localized="Улучшить"/>
-			<Upgrade_7 ENG="Upgrade" localized="Улучшить"/>
-			<Upgrades_7 ENG="Buy Upg" localized="Улучш."/>
+			<UpgradeAll_7 ENG="Up.all" localized="Ул. все"/>
+			
+			<Upgrademenu_7 ENG="Up.Menu" localized="Улучш."/>
+			<Upgradethis_7 ENG="Upgrade" localized="Улучшить"/>
 			<Usage_7 ENG="Usage" localized="Исполь."/>
 			<Yes ENG="Yes" localized="Да"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Уже построена"/>
@@ -337,14 +333,6 @@
 			<Producing_Fin ENG="finished building" localized="закончил производство"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
 			<Repeat ENG="Again" localized="Ещё раз"/>
-			<Research_Armor ENG="Armor research completed" localized="Улучшение брони завершено"/>
-			<Research_Attack ENG="Attack research completed" localized="Улучшение атаки завершено"/>
-			<Research_Costs ENG="Cost research completed" localized="Улучшение стоимости производства завершено"/>
-			<Research_Hitpoints ENG="Hits research completed" localized="Улучшение прочности завершено"/>
-			<Research_Range ENG="Range research completed" localized="Улучшение дальнобойности завершено"/>
-			<Research_Scan ENG="Scan research completed" localized="Улучшение радара завершено"/>
-			<Research_Shoots ENG="Shots research completed" localized="Улучшение скорострельности завершено"/>
-			<Research_Speed ENG="Speed research completed" localized="Улучшение скорости завершено"/>
 			<Reserve ENG="Reserve" localized="Резерв"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and eXploration Reloaded' для вступления в силу нового видеорежима"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
@@ -462,4 +450,12 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="jazz">
+			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2012-02-26 17:34"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2012-02-26 17:34"/>
+	</Footer>
 </MAX_Language_File>

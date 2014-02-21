@@ -6,13 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="slv" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="Miha Kocevar neo.guardian@artist-trade.si">
-			<Editor name="NeoGuardian" time="2009-04-16 19:00:00"/>
-			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
-		</Author>
-		<Game_Version time="2007-09-30 13:04:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Priredbo izdelal DoctorDeath)"/>
@@ -84,6 +77,7 @@
 			<Active ENG="Active" localized="Aktiviraj"/>
 			<Active_7 ENG="Activ." localized="Aktiviraj"/>
 			
+			
 			<Ammo ENG="Ammunition" localized="Strelivo"/>
 			<Ammo_7 ENG="Ammo" localized="Strelivo"/>
 			<Armor_7 ENG="Armor" localized="Oklep"/>
@@ -140,9 +134,12 @@
 			
 			<Range ENG="Range" localized="Domet"/>
 			<Range_7 ENG="Range" localized="Domet"/>
+			<Reload ENG="Reload" localized="Obnovi"/>
 			<Reload_7 ENG="Reload" localized="Obnovi"/>
+			
 			<Repair ENG="Repair" localized="Popravi"/>
 			<Repair_7 ENG="Repair" localized="Popravi"/>
+			
 			
 			<Research ENG="Research" localized="Razišči"/>
 			<Save ENG="Save" localized="Shrani"/>
@@ -154,7 +151,7 @@
 			<Seed_7 ENG="Seed" localized="Zasej"/>
 			<Sentry ENG="Sentry" localized="Nadzor"/>
 			<Settings ENG="Settings" localized="Nastavitve"/>
-			<Shoots ENG="Shoots" localized="Streli"/>
+			<Shots ENG="Shoots" localized="Streli"/>
 			<Shots_7 ENG="Shots" localized="Streli"/>
 			<Single_Player ENG="Singleplayer" localized="Enoigralski način"/>
 			<Speed ENG="Speed" localized="Hitrost"/>
@@ -173,14 +170,13 @@
 			<Total ENG="Total" localized="Skupaj"/>
 			<Transfer_7 ENG="X-fer" localized="Prenos"/>
 			
-			<UpAll_7 ENG="Up. all" localized="Nad. vse"/>
 			<Upgrade ENG="Upgrade" localized="Nadgradi"/>
-			<Upgrade_7 ENG="Upgrade" localized="Nadgradi"/>
-			<Upgrades_7 ENG="Upgrades" localized="Nakup"/>
+			<UpgradeAll_7 ENG="Up.All" localized="Nad.vse"/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="Nad. vse"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="Nakup"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Nadgradi"/>
 			<Usage_7 ENG="Usage" localized="Poraba"/>
 			<Yes ENG="Yes" localized="Da"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="Definite" localized="določena"/>
@@ -337,14 +333,6 @@
 			<Producing_Fin ENG="finished producing" localized="proizvodnja zaključena"/>
 			
 			<Repeat ENG="Again" localized="Ponovno"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Raziskava 'Oklep' zaključena"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Raziskava 'Moč' zaključena"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Raziskava 'Cena' zaključena"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Raziskava 'Trdnost' zaključena"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Raziskava 'Domet' zaključena"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Raziskava 'Pregled' zaključena"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Raziskava 'Streli' zaključena"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Raziskava 'Hitrost' zaključena"/>
 			<Reserve ENG="Reserve" localized="Rezerva"/>
 			
 			
@@ -448,6 +436,13 @@
 	</Units>
 	<Clans>
 		<Dummy/>
+		
+		
+		
+		
+		
+		
+		
 	</Clans>
 	<Graphic>
 		<Dummy/>
@@ -455,4 +450,12 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="Miha Kocevar neo.guardian@artist-trade.si">
+			<Editor name="NeoGuardian" time="2009-04-16 19:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2007-09-30 13:04:00"/>
+	</Footer>
 </MAX_Language_File>

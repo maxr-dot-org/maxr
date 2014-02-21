@@ -6,14 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="ger" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="JCK">
-			<Editor name="JCK" time="2007-09-30 13:04:00"/>
-			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
-			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
-		</Author>
-		<Game_Version time="2008-04-14 19:17:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
@@ -84,6 +76,7 @@
 		<Others>
 			<Active ENG="Active" localized="Aktiv"/>
 			<Active_7 ENG="Activ." localized="Aktiv."/>
+			<ActiveAll_9 ENG="Activ All" localized="Alle Aktiv"/>
 			<Air_Units ENG="Airunits" localized="Lufteinheiten"/>
 			<Ammo ENG="Ammunition" localized="Munition"/>
 			<Ammo_7 ENG="Ammo" localized="Munni"/>
@@ -141,9 +134,12 @@
 			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
 			<Range ENG="Range" localized="Reichweite"/>
 			<Range_7 ENG="Range" localized="Reichw."/>
+			<Reload ENG="Reload" localized="Aufladen"/>
 			<Reload_7 ENG="Reload" localized="Aufladen"/>
+			<ReloadAll_9 ENG="Reload All" localized="Alle Aufl"/>
 			<Repair ENG="Repair" localized="Reparieren"/>
 			<Repair_7 ENG="Repair" localized="Repar."/>
+			<RepairAll_9 ENG="Rep. All" localized="Alle Rep."/>
 			<Reports ENG="Reports" localized="Nachrichten"/>
 			<Research ENG="Research" localized="Forschg."/>
 			<Save ENG="Save" localized="Speichern"/>
@@ -155,7 +151,7 @@
 			<Seed_7 ENG="Seed" localized="Platz."/>
 			<Sentry ENG="Sentry" localized="Wachp."/>
 			<Settings ENG="Settings" localized="Einstellungen"/>
-			<Shoots ENG="Shoots" localized="Schüsse"/>
+			<Shots ENG="Shots" localized="Schüsse"/>
 			<Shots_7 ENG="Shots" localized="Schüsse"/>
 			<Single_Player ENG="Singleplayer (No AI)" localized="Einzelspieler (keine KI)"/>
 			<Speed ENG="Speed" localized="Geschwindigkeit"/>
@@ -174,14 +170,13 @@
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Trsfer."/>
 			<Units ENG="Units" localized="Einheiten"/>
-			<UpAll_7 ENG="Upg all" localized="Verb. All."/>
-			<Upgrade ENG="Upgrade" localized="Verb. dies"/>
-			<Upgrade_7 ENG="Upgrade" localized="Verbessern"/>
-			<Upgrades_7 ENG="Buy Upg" localized="Kaufen"/>
+			<Upgrade ENG="Upgrade" localized="Verbessern"/>
+			<UpgradeAll_7 ENG="Up.all" localized="Verb.All."/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="Alle Verb"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="Kaufen"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Verb.dies"/>
 			<Usage_7 ENG="Usage" localized="Verbr."/>
 			<Yes ENG="Yes" localized="Ja"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Fest (Original)"/>
@@ -338,14 +333,6 @@
 			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
 			<ReactionFireOff ENG="Reaction Fire Off" localized="Manuell schießen"/>
 			<Repeat ENG="Again" localized="Wieder"/>
-			<Research_Armor ENG="Armor research completed" localized="Panzerungsforschung abgeschlossen"/>
-			<Research_Attack ENG="Attack research completed" localized="Angriffsforschung abgeschlossen"/>
-			<Research_Costs ENG="Cost research completed" localized="Kostenforschung abgeschlossen"/>
-			<Research_Hitpoints ENG="Hits research completed" localized="Trefferpunkteforschung abgeschlossen"/>
-			<Research_Range ENG="Range research completed" localized="Reichweitenforschung abgeschlossen"/>
-			<Research_Scan ENG="Scan research completed" localized="Scanforschung abgeschlossen"/>
-			<Research_Shoots ENG="Shots research completed" localized="Schüsseforschung abgeschlossen"/>
-			<Research_Speed ENG="Speed research completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
 			<ResolutionChange localized="Bitte starten Sie 'Mechanized Assault and eXploration Reloaded' neu um die Änderung der Bildschirmauflösung wirksam zu machen."/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"/>
@@ -463,4 +450,13 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="JCK">
+			<Editor name="JCK" time="2007-09-30 13:04:00"/>
+			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
+			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2008-04-14 19:17:00"/>
+	</Footer>
 </MAX_Language_File>

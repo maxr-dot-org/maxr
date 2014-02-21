@@ -6,15 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="dut" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="Arnoud Jagerman A.Jagerman@xs4all.nl">
-			<Editor name="Unknown" time="2008-03-08 09:35:00"/>
-			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-02-21 17:00:00"/>
-			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-09-18 16:00:00"/>
-			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
-		</Author>
-		<Game_Version time="2007-09-18 16:04:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"/>
@@ -85,6 +76,7 @@
 		<Others>
 			<Active ENG="Active" localized="Actief"/>
 			<Active_7 ENG="Activ." localized="Actief"/>
+			
 			<Air_Units ENG="Airunits" localized="Lucht-eenheden"/>
 			<Ammo ENG="Ammunition" localized="Munitie"/>
 			<Ammo_7 ENG="Ammo" localized="Munitie"/>
@@ -142,9 +134,12 @@
 			<Produce_Units ENG="Producing units" localized="Producerende eenheden"/>
 			<Range ENG="Range" localized="Bereik"/>
 			<Range_7 ENG="Range" localized="Bereik"/>
+			<Reload ENG="Reload" localized="Herladen"/>
 			<Reload_7 ENG="Reload" localized="Herladen"/>
+			
 			<Repair ENG="Repair" localized="Repareer"/>
 			<Repair_7 ENG="Repair" localized="Repareer"/>
+			
 			<Reports ENG="Reports" localized="Raporten"/>
 			<Research ENG="Research" localized="Onderzoek"/>
 			<Save ENG="Save" localized="Opslaan"/>
@@ -156,8 +151,8 @@
 			<Seed_7 ENG="Seed" localized="Strooi"/>
 			<Sentry ENG="Sentry" localized="Wacht"/>
 			<Settings ENG="Settings" localized="Instellingen"/>
-			<Shoots ENG="Shoots" localized="Schoten"/>
-			<Shots_ ENG="Shots" localized="Schoten"/>
+			<Shots ENG="Shoots" localized="Schoten"/>
+			<Shots_7 ENG="Shots" localized="Schoten"/>
 			<Single_Player ENG="Singleplayer" localized="Enkelspeler"/>
 			<Speed ENG="Speed" localized="Snelheid"/>
 			<Speed_7 ENG="Speed" localized="Snelheid"/>
@@ -175,14 +170,13 @@
 			<Total ENG="Total" localized="Totaal"/>
 			
 			<Units ENG="Units"/>
-			<UpAll_7 ENG="Up. all" localized="Vern. alles"/>
 			<Upgrade ENG="Upgrade" localized="Verbeter"/>
-			<Upgrade_7 ENG="Upgrade" localized="Verbeter"/>
-			<Upgrades_7 ENG="Upgrades" localized="Upgrades"/>
+			<UpgradeAll_7 ENG="Up.all" localized="Ver.all"/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="Vern.Alles"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="Upgrades"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Verbeter"/>
 			<Usage_7 ENG="Usage" localized="Verbr."/>
 			<Yes ENG="Yes" localized="Ja"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="vaste locatie"/>
@@ -339,14 +333,6 @@
 			<Producing_Fin ENG="finished producing" localized="productie gereed"/>
 			
 			<Repeat ENG="Again" localized="Opnieuw"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Onderzoek 'Pantser' gereed"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Onderzoek 'Aanval' gereed"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Onderzoek 'Kosten' gereed"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Onderzoek 'Treffers' gereed"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Onderzoek 'Bereik' gereed"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Onderzoek 'Radar' gereed"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Onderzoek 'Schoten' gereed"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Onderzoek 'Snelheid' gereed"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Herstart aub 'Mechanized Assault and eXploration Reloaded' voor veranderingen in de video instellingen"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Warschuwing: Niet ondersteunde videomodus in de instellingen"/>
@@ -450,6 +436,13 @@
 	</Units>
 	<Clans>
 		<Dummy/>
+		
+		
+		
+		
+		
+		
+		
 	</Clans>
 	<Graphic>
 		<Dummy/>
@@ -457,4 +450,14 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="Arnoud Jagerman A.Jagerman@xs4all.nl">
+			<Editor name="Unknown" time="2008-03-08 09:35:00"/>
+			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-02-21 17:00:00"/>
+			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-09-18 16:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2007-09-18 16:04:00"/>
+	</Footer>
 </MAX_Language_File>

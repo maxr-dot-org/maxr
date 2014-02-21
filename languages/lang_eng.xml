@@ -6,19 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="eng" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="JCK">
-			<Editor name="JCK" time="2007-09-30 13:04:00"/>
-			<Editor name="Someone" time="2007-09-30 13:04:00"/>
-			<Editor name="Shaktazuki" time="2008-08-29 00:49:00"/>
-			<Editor name="Shaktazuki" time="2008-08-30 10:04:00"/>
-			<Editor name="Shaktazuki" time="2008-09-01 09:30:00"/>
-			<Editor name="Shaktazuki" time="2008-10-20 21:25:00"/>
-			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
-			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
-		</Author>
-		<Game_Version time="2008-04-14 19:17:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)"/>
@@ -89,6 +76,7 @@
 		<Others>Button, Context, Hud, Vehicles + change options
 			<Active ENG="Active"/>Button
 			<Active_7 ENG="Activ."/>Context
+			<ActiveAll_9 ENG="Activ All"/>Button
 			<Air_Units ENG="Airunits"/>Button
 			<Ammo ENG="Ammunition"/>Hud
 			<Ammo_7 ENG="Ammo"/>Hud
@@ -146,9 +134,12 @@ may as _7			<Cargo ENG="Cargo"/>Hud
 			<Produce_Units ENG="Producing units"/>Button
 			<Range ENG="Range"/>Hud
 			<Range_7 ENG="Range"/>Hud
+			<Reload ENG="Reload"/>Context
 			<Reload_7 ENG="Reload"/>Context
+			<ReloadAll_9 ENG="Reload All"/>Context
 			<Repair ENG="Repair"/>
 			<Repair_7 ENG="Repair"/>
+			<RepairAll_9 ENG="Rep. All"/>
 			<Reports ENG="Reports"/>Button
 			<Research ENG="Research"/>Context
 			<Save ENG="Save"/>Button
@@ -160,8 +151,8 @@ may as _7			<Cargo ENG="Cargo"/>Hud
 			<Seed_7 ENG="Seed"/> <!-- minelayer -->
 			<Sentry ENG="Sentry"/>Context
 			<Settings ENG="Settings"/>Hud
-			<Shoots ENG="Shoots"/> <!-- verb 3rd person -->
-			<Shots_7 ENG="Shots"/> <!-- noun pl. -->
+			<Shots ENG="Shots"/>
+			<Shots_7 ENG="Shots"/>
 			<Single_Player ENG="Singleplayer (No AI)"/>Button
 			<Speed ENG="Speed"/>Hud
 			<Speed_7 ENG="Speed"/><!-- unused -->
@@ -179,14 +170,13 @@ check			<Title_Main_Menu_asdf_Button ENG="Main Menu"/>unused?!
 			<Total ENG="Total"/>Hud
 			<Transfer_7 ENG="X-fer"/>Context
 			<Units ENG="Units"/>Button
-			<UpAll_7 ENG="Upg all"/>Context
-			<Upgrade ENG="Upgrade"/>Button
-			<Upgrade_7 ENG="Upgrade"/>Context
-			<Upgrades_7 ENG="Buy Upg"/>Context
+			<Upgrade ENG="Upgrade"/>Button no longer used
+			<UpgradeAll_7 ENG="Up.all"/>Context
+			<UpgradeAll_9 ENG="Upgrd.All"/>Button
+			<Upgrademenu_7 ENG="Up.Menu"/>Context
+			<Upgradethis_7 ENG="Upgrade"/>Context
 			<Usage_7 ENG="Usage"/>Hud
 			<Yes ENG="Yes"/>Button
-			<ReloadAll ENG="Reload All"/>Button <!-- add this (and others) -->
-			<RepairAll ENG="Repair All"/>Button <!-- add this (and others) -->
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)"/>
@@ -343,14 +333,6 @@ check			<Title_Main_Menu_asdf_Button ENG="Main Menu"/>unused?!
 			<Producing_Fin ENG="finished building"/>
 			<ReactionFireOff ENG="Reaction Fire Off"/>
 			<Repeat ENG="Again"/>
-			<Research_Armor ENG="Armor research completed"/> REMOVE
-			<Research_Attack ENG="Attack research completed"/> REMOVE
-			<Research_Costs ENG="Cost research completed"/> REMOVE
-			<Research_Hitpoints ENG="Hits research completed"/> REMOVE
-			<Research_Range ENG="Range research completed"/> REMOVE
-			<Research_Scan ENG="Scan research completed"/> REMOVE
-			<Research_Shoots ENG="Shots research completed"/> REMOVE
-			<Research_Speed ENG="Speed research completed"/> REMOVE
 			<Reserve ENG="Reserve"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
@@ -468,4 +450,18 @@ check			<Title_Main_Menu_asdf_Button ENG="Main Menu"/>unused?!
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="JCK">
+			<Editor name="JCK" time="2007-09-30 13:04:00"/>
+			<Editor name="Someone" time="2007-09-30 13:04:00"/>
+			<Editor name="Shaktazuki" time="2008-08-29 00:49:00"/>
+			<Editor name="Shaktazuki" time="2008-08-30 10:04:00"/>
+			<Editor name="Shaktazuki" time="2008-09-01 09:30:00"/>
+			<Editor name="Shaktazuki" time="2008-10-20 21:25:00"/>
+			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
+			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2008-04-14 19:17:00"/>
+	</Footer>
 </MAX_Language_File>

@@ -6,16 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="fra" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="JCK">
-			<Editor name="JCK" time="2009-09-30 13:04:00"/>
-			<Editor name="Mr. Good Heal" time="2009-09-30 13:04:00"/>
-			<Editor name="Mira" time="2009-09-30 14:04:00"/>
-			<Editor name="gabba" time="2010-03-15 07:26:00"/>
-			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
-		</Author>
-		<Game_Version time="2009-09-30 19:17:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake par DoctorDeath)"/>
@@ -86,6 +76,7 @@
 		<Others>
 			<Active ENG="Active" localized="Activer"/>
 			<Active_7 ENG="Activ." localized="Activer"/>
+			
 			<Air_Units ENG="Airunits" localized="Unités aériennes"/>
 			<Ammo ENG="Ammunition" localized="Munitions"/>
 			<Ammo_7 ENG="Ammo" localized="Munit."/>
@@ -143,9 +134,12 @@
 			<Produce_Units ENG="Producing units" localized="Unités production"/>
 			<Range ENG="Range" localized="Portée"/>
 			<Range_7 ENG="Range" localized="Portée"/>
+			
 			<Reload_7 ENG="Reload" localized="Recharger"/>
+			
 			<Repair ENG="Repair" localized="Réparer"/>
 			<Repair_7 ENG="Repair" localized="Réparer"/>
+			
 			<Reports ENG="Reports" localized="Rapports"/>
 			<Research ENG="Research" localized="Recherche"/>
 			<Save ENG="Save" localized="Sauver"/>
@@ -157,7 +151,7 @@
 			<Seed_7 ENG="Seed" localized="Miner"/>
 			<Sentry ENG="Sentry" localized="Faction"/>
 			<Settings ENG="Settings" localized="Paramètres"/>
-			<Shoots ENG="Shoots" localized="Tirs"/>
+			<Shots ENG="Shoots" localized="Tirs"/>
 			<Shots_7 ENG="Shots" localized="Tirs"/>
 			<Single_Player ENG="Singleplayer" localized="Jeu solo (sans IA)"/>
 			<Speed ENG="Speed" localized="Vitesse"/>
@@ -176,14 +170,13 @@
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Échange"/>
 			<Units ENG="Units" localized="Unités"/>
-			<UpAll_7 ENG="Up. all" localized="MàJ tout"/>
 			<Upgrade ENG="Upgrade" localized="MàJ"/>
-			<Upgrade_7 ENG="Upgrade" localized="MàJ"/>
-			<Upgrades_7 ENG="Upgrades" localized="MàJ"/>
+			<UpgradeAll_7 ENG="Up.all" localized="MàJ tout"/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="MàJ tout"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="MàJ"/>
+			<Upgradethis_7 ENG="Upgrade" localized="MàJ"/>
 			<Usage_7 ENG="Usage" localized="Usage"/>
 			<Yes ENG="Yes" localized="Oui"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="definite" localized="fixe"/>
@@ -340,14 +333,6 @@
 			<Producing_Fin ENG="finished producing" localized="Production terminée"/>
 			<ReactionFireOff ENG="Tir de réaction désactivé"/>
 			<Repeat ENG="Again" localized="Répéter"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Recherche 'Armure' terminée"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Recherche 'Attaque' terminée"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Recherche 'Coût' terminée"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Recherche 'Points de vie' terminée"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Recherche 'Portée' terminée"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Recherche 'Radar' terminée"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Recherche 'Tirs' terminée"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Recherche 'Vitesse' terminée"/>
 			<Reserve ENG="Reserve" localized="Réserve"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Veuillez redémarrer 'Mechanized Assault and eXploration Reloaded' pour appliquer le changement de mode vidéo."/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Attention : la config définit un mode vidéo non supporté"/>
@@ -465,4 +450,15 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="JCK">
+			<Editor name="JCK" time="2009-09-30 13:04:00"/>
+			<Editor name="Mr. Good Heal" time="2009-09-30 13:04:00"/>
+			<Editor name="Mira" time="2009-09-30 14:04:00"/>
+			<Editor name="gabba" time="2010-03-15 07:26:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2009-09-30 19:17:00"/>
+	</Footer>
 </MAX_Language_File>

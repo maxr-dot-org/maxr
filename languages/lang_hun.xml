@@ -6,14 +6,6 @@
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
 <MAX_Language_File lang="hun" encoding="utf8" direction="left-to-right">
-	<Header>
-		<Author name="klei">
-			<Editor name="klei" time="2009-06-12 21:31:00"/>
-			<Editor name="klei" time="2010-03-20 09:00:00"/>
-			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
-		</Author>
-		<Game_Version time="2008-04-14 19:17:00"/>
-	</Header>
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönch's M.A.X. (Remake DoctorDeath-től)"/>
@@ -82,8 +74,9 @@
 			<Updates ENG="Update menu" localized="Frissítés Menü"/>
 		</Title>
 		<Others>
-			<Active ENG="Activ." localized="Aktiválás"/>
-			<Active ENG="Active" localized="Aktív"/>
+			<Active ENG="Active" localized="Aktiválás"/>
+			<Active_7 ENG="Activ." localized="Aktív"/>
+			
 			<Air_Units ENG="Airunits" localized="Légi egységek"/>
 			<Ammo ENG="Ammunition" localized="Muníció"/>
 			<Ammo_7 ENG="Ammo" localized="Lőszer"/>
@@ -141,9 +134,12 @@
 			<Produce_Units ENG="Producing units" localized="Termelő egységek"/>
 			<Range ENG="Range" localized="Lőtáv"/>
 			<Range_7 ENG="Range" localized="Lőtáv"/>
+			
 			<Reload_7 ENG="Reload" localized="Újratöltés"/>
+			
 			<Repair ENG="Repair" localized="Javítás"/>
 			<Repair_7 ENG="Repair" localized="Javítás"/>
+			
 			<Reports ENG="Reports" localized="Jelentések"/>
 			<Research ENG="Research" localized="Kutatás"/>
 			<Save ENG="Save" localized="Mentés"/>
@@ -155,7 +151,7 @@
 			<Seed_7 ENG="Seed" localized="Seed"/>
 			<Sentry ENG="Sentry" localized="Örködés"/>
 			<Settings ENG="Settings" localized="Beállítások"/>
-			<Shoots ENG="Shoots" localized="Lövés"/>
+			<Shots ENG="Shoots" localized="Lövés"/>
 			<Shots_7 ENG="Shots" localized="Lövés"/>
 			<Single_Player ENG="Singleplayer" localized="Egyjátékos Mód"/>
 			<Speed ENG="Speed" localized="Sebess."/>
@@ -174,14 +170,13 @@
 			<Total ENG="Total" localized="Összes"/>
 			<Transfer_7 ENG="X-fer" localized="Átvitel"/>
 			<Units ENG="Units" localized="Egység"/>
-			<UpAll_7 ENG="Up. all" localized="Összes fejl."/>
 			<Upgrade ENG="Upgrade" localized="Fejlesztés"/>
-			<Upgrade_7 ENG="Upgrade" localized="Kutatás"/>
-			<Upgrades_7 ENG="Upgrades" localized="Fejlesztések"/>
+			<UpgradeAll_7 ENG="Up.all" localized="Összes fejl."/>
+			
+			<Upgrademenu_7 ENG="Up.Menu" localized="Fejlesztések"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Kutatás"/>
 			<Usage_7 ENG="Usage" localized="Fogyaszt"/>
 			<Yes ENG="Yes" localized="Igen"/>
-			
-			
 		</Others>
 		<Option>
 			<Definite ENG="Built (original)" localized="Felépült (eredeti)"/>
@@ -338,14 +333,6 @@
 			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
 			
 			<Repeat ENG="Again" localized="Újra"/>
-			<Research_Armor ENG="Armor research completed" localized="A Páncélzatnövelő fejlesztés elkészült"/>
-			<Research_Attack ENG="Attack research completed" localized="A Sebzésnövelő fejlesztés elkészült"/>
-			<Research_Costs ENG="Cost research completed" localized="A Költséghatékonyságot javító fejlesztés elkészült"/>
-			<Research_Hitpoints ENG="Hits research completed" localized="Az Életnövelő fejlesztés elkészült"/>
-			<Research_Range ENG="Range research completed" localized="A Lőtávnövelő fejlesztés elkészült"/>
-			<Research_Scan ENG="Scan research completed" localized="A Radar hatótávnövelő fejlesztése elkészült"/>
-			<Research_Shoots ENG="Shots research completed" localized="A Lövésszám növelő fejlesztés elkészült"/>
-			<Research_Speed ENG="Speed research completed" localized="A Sebességnövelő fejlesztés elkészült"/>
 			<Reserve ENG="Reserve" localized="Tartalék"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Kérlek indítsd újra a 'Mechanized Assault and eXploration Reloaded'-et, hogy a videó mód változásait érvényesítsd"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
@@ -463,4 +450,13 @@
 	<Speech>
 		<Dummy/>
 	</Speech>
+	<Footer>
+		<Author name="klei">
+			<Editor name="klei" time="2009-06-12 21:31:00"/>
+			<Editor name="klei" time="2010-03-20 09:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2008-04-14 19:17:00"/>
+	</Footer>
 </MAX_Language_File>
