@@ -1905,7 +1905,7 @@ SDL_Surface* cGameGUI::generateSurface()
 void cGameGUI::generateMiniMapSurface_landscape (SDL_Surface* minimapSurface, int zoomFactor)
 {
 	Uint32* minimap = static_cast<Uint32*> (minimapSurface->pixels);
-	const cStaticMap* staticMap = client->getMap()->staticMap;
+	const cStaticMap& staticMap = *client->getMap()->staticMap;
 	const int mapSize = client->getMap()->getSize();
 	for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; ++miniMapX)
 	{
@@ -1923,7 +1923,7 @@ void cGameGUI::generateMiniMapSurface_landscape (SDL_Surface* minimapSurface, in
 			terrainy = std::min (terrainy, mapSize - 1);
 			const int offsety = ((miniMapY * mapSize) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
-			const sTerrain& terrain = staticMap->getTerrain (terrainx, terrainy);
+			const sTerrain& terrain = staticMap.getTerrain (terrainx, terrainy);
 			const Uint8* terrainPixels = reinterpret_cast<const Uint8*> (terrain.sf_org->pixels);
 			const Uint8 index = terrainPixels[offsetx + offsety * 64];
 			const SDL_Color sdlcolor = terrain.sf_org->format->palette->colors[index];
@@ -1938,7 +1938,7 @@ void cGameGUI::generateMiniMapSurface_fog (SDL_Surface* minimapSurface, int zoom
 {
 	Uint32* minimap = static_cast<Uint32*> (minimapSurface->pixels);
 	const cPlayer& player = client->getActivePlayer();
-	const cStaticMap* staticMap = client->getMap()->staticMap;
+	const cStaticMap& staticMap = *client->getMap()->staticMap;
 	const int mapSize = client->getMap()->getSize();
 
 	for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; ++miniMapX)
@@ -1948,7 +1948,7 @@ void cGameGUI::generateMiniMapSurface_fog (SDL_Surface* minimapSurface, int zoom
 		{
 			int terrainy = (miniMapY * mapSize) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 
-			if (player.ScanMap[staticMap->getOffset (terrainx, terrainy)]) continue;
+			if (player.ScanMap[staticMap.getOffset (terrainx, terrainy)]) continue;
 
 			Uint8* color = reinterpret_cast<Uint8*> (&minimap[miniMapX + miniMapY * MINIMAP_SIZE]);
 			color[0] = static_cast<Uint8> (color[0] * 0.6f);
@@ -4758,7 +4758,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		if (unit.data.convertsGold)
 		{
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Others~Upgrades_7"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Upgrademenu_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -4766,15 +4766,15 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		// Updates:
 		if (unit.buildingCanBeUpgraded())
 		{
-			// Update all buildings of this type in this subbase
+			// update this building
 			bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Others~UpAll_7"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~Upgradethis_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
-
-			// update this building
+			
+			// Update all buildings of this type in this subbase
 			isMarked = markerPossible && selectedMenuButtonIndex == nr;
-			drawContextItem (lngPack.i18n ("Text~Others~Upgrade_7"), isMarked, dest.x, dest.y, cVideo::buffer);
+			drawContextItem (lngPack.i18n ("Text~Others~UpgradeAll_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
@@ -5066,18 +5066,6 @@ void cGameGUI::menuReleased (cUnit& unit)
 		// Updates:
 		if (unit.buildingCanBeUpgraded())
 		{
-			// Update all buildings of this type in this subbase
-			if (exeNr == nr)
-			{
-				cBuilding* building = static_cast<cBuilding*> (&unit);
-
-				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
-				building->executeUpdateBuildingCommmand (*client, true);
-				return;
-			}
-			++nr;
-
 			// update this building
 			if (exeNr == nr)
 			{
@@ -5086,6 +5074,18 @@ void cGameGUI::menuReleased (cUnit& unit)
 				unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
 				building->executeUpdateBuildingCommmand (*client, false);
+				return;
+			}
+			++nr;
+			
+			// Update all buildings of this type in this subbase
+			if (exeNr == nr)
+			{
+				cBuilding* building = static_cast<cBuilding*> (&unit);
+
+				unitMenuActive = false;
+				PlayFX (SoundData.SNDObjectMenu);
+				building->executeUpdateBuildingCommmand (*client, true);
 				return;
 			}
 			++nr;

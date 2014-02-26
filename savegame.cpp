@@ -303,15 +303,14 @@ bool cSavegame::loadMap (cServer& server)
 	XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode == NULL) return false;
 
-	cStaticMap* staticMap = new cStaticMap;
+	auto staticMap = std::make_shared<cStaticMap>();
 	string name = mapNode->FirstChildElement ("Name")->Attribute ("string");
 	string resourcestr = mapNode->FirstChildElement ("Resources")->Attribute ("data");
 	if (!staticMap->loadMap (name))
 	{
-		delete staticMap;
 		return false;
 	}
-	server.Map = new cMap (*staticMap);
+	server.Map = new cMap (staticMap);
 	server.Map->setResourcesFromString (resourcestr);
 	return true;
 }

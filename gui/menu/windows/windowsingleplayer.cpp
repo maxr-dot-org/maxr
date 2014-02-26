@@ -25,8 +25,11 @@
 #include "windowmapselection/windowmapselection.h"
 #include "windowclanselection/windowclanselection.h"
 #include "windowlandingunitselection/windowlandingunitselection.h"
+#include "windowlandingpositionselection/windowlandingpositionselection.h"
 #include "../widgets/pushbutton.h"
 #include "../../application.h"
+#include "../../game/gamegui.h"
+#include "../../../game/localgame.h"
 
 #include "../../../main.h"
 #include "../../../network.h"
@@ -34,6 +37,9 @@
 #include "../../../settings.h"
 #include "../../../client.h"
 #include "../../../server.h"
+#include "../../../menus.h"
+
+#include "../../../clientevents.h"
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer () :
@@ -58,7 +64,7 @@ cWindowSinglePlayer::~cWindowSinglePlayer ()
 {}
 
 //------------------------------------------------------------------------------
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList (const cPlayer& player, const cGameSettings& gameSettings)
+std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings)
 {
 	std::vector<std::pair<sID, int>> initialLandingUnits;
 
@@ -72,7 +78,7 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (const cPlayer& p
 	initialLandingUnits.push_back (std::make_pair (engineerID, 20));
 	initialLandingUnits.push_back (std::make_pair (surveyorID, 0));
 
-	if (player.getClan () == 7)
+	if (clan == 7)
 	{
 		const int startCredits = gameSettings.getStartCredits ();
 
@@ -117,6 +123,25 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (const cPlayer& p
 	return initialLandingUnits;
 }
 
+#include "../../../events.h"
+
+//------------------------------------------------------------------------------
+void startGame (cApplication& application, std::shared_ptr<cStaticMap> staticMap, const cPosition& landingPosition,
+				const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
+{
+	cTCP* network = nullptr;
+	cServer server (network);
+	cEventHandling eventHandling;
+	cClient client (&server, network, eventHandling);
+
+	client.setMap (staticMap);
+	server.setMap (staticMap);
+
+	auto gameGui = std::make_shared<cNewGameGUI> (staticMap);
+
+	application.show (gameGui);
+}
+
 //------------------------------------------------------------------------------
 void cWindowSinglePlayer::newGameClicked ()
 {
@@ -140,8 +165,6 @@ void cWindowSinglePlayer::newGameClicked ()
 				return;
 			}
 
-			auto player = std::make_shared<cPlayer> (sPlayer (cSettings::getInstance ().getPlayerName (), 0, 0));
-
 			auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings ());
 
 			if (gameSettings->getClansEnabled ())
@@ -150,50 +173,57 @@ void cWindowSinglePlayer::newGameClicked ()
 
 				windowClanSelection->done.connect ([=]()
 				{
-					player->setClan (windowClanSelection->getSelectedClan ());
+					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan (), *gameSettings);
 
-					auto initialLandingUnits = createInitialLandingUnitsList (*player, *gameSettings);
-
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (*player, initialLandingUnits, gameSettings->getStartCredits ()));
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
 
 					windowLandingUnitSelection->done.connect ([=]()
 					{
-						auto landingUnits = windowLandingUnitSelection->getLandingUnits ();
-						auto unitUpgrades = windowLandingUnitSelection->getUnitUpgrades ();
+						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
 
-						staticMap->clear ();
+						windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
+						{
+							auto game = std::make_shared<cLocalGame> ();
 
-						// Get data from all windows and start the game
+							game->setGameSettings (gameSettings);
+							game->setStaticMap (staticMap);
+							game->setPlayerClan (windowClanSelection->getSelectedClan ());
 
-						// ...
+							game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits ());
 
-						windowLandingUnitSelection->close ();
-						windowClanSelection->close ();
-						windowMapSelection->close ();
-						windowGameSettings->close ();
+							windowLandingPositionSelection->close ();
+							windowLandingUnitSelection->close ();
+							windowClanSelection->close ();
+							windowMapSelection->close ();
+							windowGameSettings->close ();
+						});
 					});
 				});
 			}
 			else
 			{
-				auto initialLandingUnits = createInitialLandingUnitsList (*player, *gameSettings);
+				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings);
 
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (*player, initialLandingUnits, gameSettings->getStartCredits ()));
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, -1, initialLandingUnits, gameSettings->getStartCredits ()));
 
 				windowLandingUnitSelection->done.connect ([=]()
 				{
-					auto landingUnits = windowLandingUnitSelection->getLandingUnits ();
-					auto unitUpgrades = windowLandingUnitSelection->getUnitUpgrades ();
+					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
 
-					staticMap->clear ();
+					windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
+					{
+						auto game = std::make_shared<cLocalGame> ();
 
-					// Get data from all windows and start the game
+						game->setGameSettings (gameSettings);
+						game->setStaticMap (staticMap);
 
-					// ...
+						game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits ());
 
-					windowLandingUnitSelection->close ();
-					windowMapSelection->close ();
-					windowGameSettings->close ();
+						windowLandingPositionSelection->close ();
+						windowLandingUnitSelection->close ();
+						windowMapSelection->close ();
+						windowGameSettings->close ();
+					});
 				});
 			}
 		});

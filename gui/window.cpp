@@ -77,8 +77,6 @@ void cWindow::draw ()
 	hasBeenDrawnOnce = true;
 
 	cWidget::draw (); // draws all children
-
-	Video.draw ();
 }
 
 //------------------------------------------------------------------------------

@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_dependentfalseH
-#define utility_dependentfalseH
+#ifndef utility_derefH
+#define utility_derefH
 
 template <typename T>
 inline T& deref(T& x) { return x; }
@@ -39,4 +39,4 @@ const T& conditionalDeref(const T& t, std::false_type) { return t; }
 template<typename T>
 const T& conditionalDeref(const T* t, std::true_type) { return *t; }
 
-#endif // utility_dependentfalseH
+#endif // utility_derefH

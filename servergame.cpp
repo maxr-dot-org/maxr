@@ -112,7 +112,7 @@ void cServerGame::prepareGameData()
 	settings.gameType = SETTINGS_GAMETYPE_SIMU;
 	settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
 	settings.duration = SETTINGS_DUR_LONG;
-	map = new cStaticMap();
+	map = std::make_shared<cStaticMap> ();
 	const std::string mapName = "Mushroom.wrl";
 	map->loadMap (mapName);
 }
@@ -282,7 +282,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 						server->addPlayer (new cPlayer (*menuPlayers[i]));
 					}
 
-					server->setMap (*map);
+					server->setMap (map);
 					server->setGameSettings (settings);
 					server->changeStateToInitGame();
 					sendGo (*server);

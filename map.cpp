@@ -27,6 +27,7 @@
 #include "settings.h"
 #include "vehicles.h"
 #include "video.h"
+#include "utility/position.h"
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
@@ -42,13 +43,13 @@ sTerrain::sTerrain() :
 	blocked (false)
 {}
 
-cVehicle* cMapField::getVehicle()
+cVehicle* cMapField::getVehicle() const
 {
 	if (vehicles.empty()) return NULL;
 	return vehicles[0];
 }
 
-cVehicle* cMapField::getPlane()
+cVehicle* cMapField::getPlane() const
 {
 	if (planes.empty()) return NULL;
 	return planes[0];
@@ -59,18 +60,28 @@ std::vector<cVehicle*>& cMapField::getPlanes()
 	return planes;
 }
 
+const std::vector<cVehicle*>& cMapField::getPlanes() const
+{
+	return planes;
+}
+
 std::vector<cBuilding*>& cMapField::getBuildings()
 {
 	return buildings;
 }
 
-cBuilding* cMapField::getBuilding()
+const std::vector<cBuilding*>& cMapField::getBuildings() const
+{
+	return buildings;
+}
+
+cBuilding* cMapField::getBuilding() const
 {
 	if (buildings.empty()) return NULL;
 	return buildings[0];
 }
 
-cBuilding* cMapField::getTopBuilding()
+cBuilding* cMapField::getTopBuilding() const
 {
 	if (buildings.empty()) return NULL;
 	cBuilding* building = *buildings.begin();
@@ -82,7 +93,7 @@ cBuilding* cMapField::getTopBuilding()
 	return NULL;
 }
 
-cBuilding* cMapField::getBaseBuilding()
+cBuilding* cMapField::getBaseBuilding() const
 {
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
@@ -97,7 +108,7 @@ cBuilding* cMapField::getBaseBuilding()
 	return NULL;
 }
 
-cBuilding* cMapField::getRubble()
+cBuilding* cMapField::getRubble() const
 {
 	for (size_t i = 0; i != buildings.size(); ++i)
 		if (!buildings[i]->owner)
@@ -105,7 +116,7 @@ cBuilding* cMapField::getRubble()
 	return NULL;
 }
 
-cBuilding* cMapField::getMine()
+cBuilding* cMapField::getMine() const
 {
 	for (size_t i = 0; i != buildings.size(); ++i)
 		if (buildings[i]->data.explodesOnContact)
@@ -132,6 +143,11 @@ const sTerrain& cStaticMap::getTerrain (int offset) const
 const sTerrain& cStaticMap::getTerrain (int x, int y) const
 {
 	return getTerrain (getOffset (x, y));
+}
+
+const sTerrain& cStaticMap::getTerrain (const cPosition& position) const
+{
+	return getTerrain (getOffset (position.x (), position.y ()));
 }
 
 bool cStaticMap::isBlocked (int offset) const
@@ -488,8 +504,8 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
-cMap::cMap (cStaticMap& staticMap_) :
-	staticMap (&staticMap_)
+cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
+	staticMap (std::move(staticMap_))
 {
 	const int size = staticMap->getSize();
 	fields = new cMapField[size * size];
@@ -509,6 +525,16 @@ cMap::~cMap()
 cMapField& cMap::operator[] (unsigned int offset) const
 {
 	return fields[offset];
+}
+
+cMapField& cMap::getField (const cPosition& position)
+{
+	return fields[getOffset (position.x (), position.y ())];
+}
+
+const cMapField& cMap::getField (const cPosition& position) const
+{
+	return fields[getOffset (position.x (), position.y ())];
 }
 
 bool cMap::isWaterOrCoast (int x, int y) const

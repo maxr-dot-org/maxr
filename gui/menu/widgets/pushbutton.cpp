@@ -28,6 +28,18 @@
 #include "../../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
+cPushButton::cPushButton (const cBox<cPosition>& area) :
+	cClickableWidget (area),
+	buttonType (ePushButtonType::Invisible),
+	fontType (FONT_LATIN_BIG),
+	text (""),
+	clickSound (SoundData.SNDHudButton),
+	isLocked (false)
+{
+	renewSurface ();
+}
+
+//------------------------------------------------------------------------------
 cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_) :
 	cClickableWidget (position),
 	buttonType (buttonType_),
@@ -81,13 +93,16 @@ void cPushButton::draw ()
 	SDL_Rect position = getArea ().toSdlRect ();
 	if (surface) SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
 
-	if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+	if (!text.empty ())
 	{
-		if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, FONT_LATIN_SMALL_GREEN);
-		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset () - 1, text, FONT_LATIN_SMALL_RED);
-		font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset () - 1 + (isPressed || isLocked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
+		if (buttonType >= ePushButtonType::HudNext && buttonType <= ePushButtonType::HudFiles)
+		{
+			if (isPressed || isLocked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, FONT_LATIN_SMALL_GREEN);
+			else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset () - 1, text, FONT_LATIN_SMALL_RED);
+			font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset () - 1 + (isPressed || isLocked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
+		}
+		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, fontType);
 	}
-	else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, fontType);
 
 	cWidget::draw ();
 }
@@ -142,6 +157,12 @@ void cPushButton::unlock ()
 //------------------------------------------------------------------------------
 void cPushButton::renewSurface ()
 {
+	if (buttonType == ePushButtonType::Invisible)
+	{
+		surface = nullptr;
+		return;
+	}
+
 	cPosition size;
 	SDL_Rect src;
 	switch (buttonType)

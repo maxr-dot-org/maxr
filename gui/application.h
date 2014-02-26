@@ -34,6 +34,7 @@ class cKeyboard;
 class cWidget;
 class cWindow;
 class cPosition;
+class cGame;
 
 class cApplication
 {
@@ -51,6 +52,8 @@ public:
 	void grapMouseFocus (cWidget& widget);
 	void releaseMouseFocus (const cWidget& widget);
 	bool hasMouseFocus (const cWidget& widget) const;
+
+	void setGame (std::shared_ptr<cGame> game);
 private:
 	std::stack<std::shared_ptr<cWindow>> modalWindows;
 
@@ -61,6 +64,8 @@ private:
 	cWidget* keyFocusWidget;
 	cWidget* mouseFocusWidget;
 	//cWidget* underMouseWidget;
+
+	std::shared_ptr<cGame> game;
 
 	void center (cWindow& window);
 

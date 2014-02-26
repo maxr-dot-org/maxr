@@ -98,7 +98,7 @@ public:
 	~cServer();
 
 	void setGameSettings (const sSettings& gameSettings);
-	void setMap (cStaticMap& staticMap);
+	void setMap (std::shared_ptr<cStaticMap> staticMap);
 	void addPlayer (cPlayer* player);
 	void setDeadline (int iDeadline);
 	void stop();

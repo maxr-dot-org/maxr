@@ -33,7 +33,7 @@ public:
 	//       The only reason it is here is because we need to know the
 	//       color of the unit.
 	//       Take note of the FIXME in the constructor implementation as well.
-	cUnitListViewItem (unsigned int width, const sID& unitId, cPlayer& owner);
+	cUnitListViewItem (unsigned int width, const sID& unitId, const cPlayer& owner);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 

@@ -19,6 +19,8 @@
 #ifndef clientH
 #define clientH
 
+#include <memory>
+
 #include "SDL_flic.h"
 #include "defines.h"
 #include "autoptr.h"
@@ -61,7 +63,7 @@ public:
 	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_);
 	~cClient();
 
-	void setMap (cStaticMap& staticMap);
+	void setMap (std::shared_ptr<cStaticMap> staticMap);
 	void setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& splayer);
 
 	// Return local server if any.

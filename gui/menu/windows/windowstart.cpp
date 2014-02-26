@@ -29,7 +29,8 @@
 
 //------------------------------------------------------------------------------
 cWindowStart::cWindowStart () :
-	cWindowMain (lngPack.i18n ("Text~Title~MainMenu"))
+	cWindowMain (lngPack.i18n ("Text~Title~MainMenu")),
+	firstActivate (true)
 {
 	using namespace std::placeholders;
 
@@ -54,13 +55,20 @@ cWindowStart::cWindowStart () :
 	auto exitButton = std::make_unique<cPushButton> (menuPosition + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
 	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
 	addChild (std::move (exitButton));
-
-	PlayMusic ((cSettings::getInstance ().getMusicPath () + PATH_DELIMITER + "main.ogg").c_str ());
 }
 
 //------------------------------------------------------------------------------
 cWindowStart::~cWindowStart ()
 {}
+
+//------------------------------------------------------------------------------
+void cWindowStart::handleActivated (cApplication& application)
+{
+	cWindow::handleActivated (application);
+
+	if(firstActivate) PlayMusic ((cSettings::getInstance ().getMusicPath () + PATH_DELIMITER + "main.ogg").c_str ());
+	firstActivate = false;
+}
 
 //------------------------------------------------------------------------------
 void cWindowStart::singlePlayerClicked ()

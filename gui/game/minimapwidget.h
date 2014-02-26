@@ -17,91 +17,67 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_pushbuttonH
-#define gui_menu_widgets_pushbuttonH
+#ifndef gui_game_minimapwidgetH
+#define gui_game_minimapwidgetH
 
-#include <string>
+#include "../widget.h"
+#include "../../maxrconfig.h"
+#include "../../utility/signal/signal.h"
 
-#include "../../../maxrconfig.h"
-#include "clickablewidget.h"
-#include "../../../autosurface.h"
-#include "../../../utility/signal/signal.h"
-#include "../../../unifonts.h"
-#include "../../../sound.h"
+struct SDL_Surface;
 
-enum class ePushButtonType
-{
-	StandardBig,
-	StandardSmall,
-	Huge,
-	ArrowUpBig,
-	ArrowDownBig,
-	ArrowLeftBig,
-	ArrowRightBig,
-	ArrowUpSmall,
-	ArrowDownSmall,
-	ArrowLeftSmall,
-	ArrowRightSmall,
-	ArrowUpBar,
-	ArrowDownBar,
-	Angular,
+class cStaticMap;
+class cMap;
+class cPlayer;
 
-	HudHelp,
-	HudCenter,
-	HudNext,
-	HudPrev,
-	HudDone,
-	HudReport,
-	HudChat,
-
-	HudPreferences,
-	HudFiles,
-	HudEnd,
-	HudPlay,
-	HudStop,
-
-	Invisible
-};
-
-class cPushButton : public cClickableWidget
+class cMiniMapWidget : public cWidget
 {
 public:
-	explicit cPushButton (const cBox<cPosition>& area);
-	cPushButton (const cPosition& position, ePushButtonType buttonType);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, sSOUND* clickSound);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, sSOUND* clickSound, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
+	cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap);
+
+	void setDynamicMap (const cMap* dynamicMap);
+	void setPlayer (const cPlayer* player);
+
+	void setViewWindow (const cBox<cPosition>& viewWindow);
+
+	void setAttackUnitsUnly (bool attackUnitsOnly);
+
+	void setZoomFactor (int zoomFactor);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
-	cSignal<void ()> clicked;
-
-	void lock ();
-	void unlock ();
-
+	cSignal<void (const cPosition&)> focus;
 protected:
-	virtual void setPressed (bool pressed) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	AutoSurface surface;
-	ePushButtonType buttonType;
+	AutoSurface viewWindowSurface;
 
-	eUnicodeFontType fontType;
-	std::string text;
+	std::shared_ptr<const cStaticMap> staticMap;
+	const cMap* dynamicMap; // may be null
+	const cPlayer* player; // may be null
 
-	sSOUND* clickSound;
+	int zoomFactor; // TODO: may use floating value here
+	cPosition offset;
+	bool attackUnitsOnly;
+	cBox<cPosition> mapViewWindow;
 
-	bool isLocked;
+	bool updateOffset ();
 
 	void renewSurface ();
+	void drawLandscape ();
+	void drawFog ();
+	void drawUnits ();
 
-	int getBordersSize () const;
-	int getTextYOffset () const;
+	void renewViewWindowSurface ();
+
+	cPosition computeMapPosition (const cPosition& screenPosition);
 };
 
-#endif // gui_menu_widgets_pushbuttonH
+
+#endif // gui_game_minimapwidgetH

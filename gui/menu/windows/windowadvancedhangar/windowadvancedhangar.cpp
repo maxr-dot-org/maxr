@@ -25,8 +25,8 @@
 #include "../../widgets/special/unitlistviewitemcargo.h"
 
 //------------------------------------------------------------------------------
-cWindowAdvancedHangar::cWindowAdvancedHangar (SDL_Surface* surface, cPlayer& owner) :
-	cWindowHangar (surface, owner)
+cWindowAdvancedHangar::cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan) :
+	cWindowHangar (surface, playerColor, playerClan)
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 

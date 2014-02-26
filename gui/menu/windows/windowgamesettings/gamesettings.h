@@ -20,6 +20,8 @@
 #ifndef gui_menu_windows_windowgamesettings_gamesettingsH
 #define gui_menu_windows_windowgamesettings_gamesettingsH
 
+struct sSettings;
+
 enum class eGameSettingsResourceAmount
 {
 	Limited,
@@ -44,8 +46,8 @@ enum class eGameSettingsBridgeheadType
 
 enum class eGameSettingsGameType
 {
-	Turns,
 	Simultaneous,
+	Turns,
 	HotSeat
 };
 
@@ -93,6 +95,8 @@ public:
 
 	unsigned int getVictoryPoints () const;
 	void setVictoryPoints (unsigned int value);
+
+	sSettings toOldSettings () const; // TODO: to be removed
 private:
 	eGameSettingsResourceAmount metalAmount;
 	eGameSettingsResourceAmount oilAmount;

@@ -21,6 +21,7 @@
 #include "../../../../main.h"
 #include "../../../../pcx.h"
 #include "../../../../player.h"
+#include "../../../../menus.h" // for sLandingUnit
 #include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/checkbox.h"
@@ -30,8 +31,8 @@
 #include "../../widgets/special/unitlistviewitemcargo.h"
 
 //------------------------------------------------------------------------------
-cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayer& owner, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold) :
-	cWindowAdvancedHangar (LoadPCX (GFXOD_HANGAR), owner),
+cWindowLandingUnitSelection::cWindowLandingUnitSelection (int playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold) :
+	cWindowAdvancedHangar (LoadPCX (GFXOD_HANGAR), playerColor, playerClan),
 	selectedCargoUnit (nullptr)
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
@@ -132,15 +133,18 @@ cWindowLandingUnitSelection::~cWindowLandingUnitSelection ()
 {}
 
 //------------------------------------------------------------------------------
-std::vector<std::pair<sID, int>> cWindowLandingUnitSelection::getLandingUnits () const
+std::vector<sLandingUnit> cWindowLandingUnitSelection::getLandingUnits () const
 {
-	std::vector<std::pair<sID, int>> result;
+	std::vector<sLandingUnit> result;
 
 	for (size_t i = 0; i < getSelectedUnitsCount (); ++i)
 	{
 		const auto& selectedUnitItem = getSelectedUnit (i);
 
-		result.push_back (std::make_pair (selectedUnitItem.getUnitId (), selectedUnitItem.getCargo ()));
+		sLandingUnit landingUnit;
+		landingUnit.unitID = selectedUnitItem.getUnitId ();
+		landingUnit.cargo = selectedUnitItem.getCargo ();
+		result.push_back (std::move (landingUnit));
 	}
 
 	return result;

@@ -24,6 +24,9 @@
 #include "../events/eventmanager.h"
 #include "../settings.h"
 #include "../video.h"
+#include "../main.h"
+#include "../unifonts.h"
+#include "../game/game.h"
 
 #include "widget.h"
 #include "window.h"
@@ -35,13 +38,59 @@ cApplication::cApplication () :
 	//underMouseWidget (nullptr)
 {}
 
+class cFrameCounter
+{
+public:
+	cFrameCounter () :
+		frames (0),
+		lastFrames (0),
+		lastCheckTime (),
+		framesPerSecond (0)
+	{}
+
+	void frameDrawn ()
+	{
+		++frames;
+	}
+
+	unsigned int getFramesPerSecond ()
+	{
+		const auto now = std::chrono::steady_clock::now ();
+
+		const auto timeSinceLastCheck = now - lastCheckTime;
+
+		if (timeSinceLastCheck > std::chrono::seconds (1))
+		{
+			double passedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(timeSinceLastCheck).count ();
+			
+			const auto framesSinceLastCheck = frames - lastFrames;
+
+			framesPerSecond = static_cast<unsigned int>(std::round((double)framesSinceLastCheck / passedSeconds));
+
+			lastFrames = frames;
+			lastCheckTime = now;
+		}
+
+		return framesPerSecond;
+	}
+private:
+	unsigned long long frames;
+	unsigned long long lastFrames;
+
+	unsigned int framesPerSecond;
+
+	std::chrono::steady_clock::time_point lastCheckTime;
+};
+
 //------------------------------------------------------------------------------
 void cApplication::execute ()
 {
+	cFrameCounter frameCounter;
 	cWindow* lastActiveWindow = nullptr;
 	while (!modalWindows.empty())
 	{
 		cEventManager::getInstance ().run ();
+		if (game) game->run ();
 
 		const auto activeWindow = getActiveWindow ();
 
@@ -70,6 +119,13 @@ void cApplication::execute ()
 
 				activeWindow->draw ();
 				lastActiveWindow = activeWindow;
+
+				SDL_Rect dest = {0, 0, 55, 10};
+				SDL_FillRect (cVideo::buffer, &dest, 0);
+				font->showText (0, 0, "FPS: " + iToStr (frameCounter.getFramesPerSecond ()));
+
+				Video.draw ();
+				frameCounter.frameDrawn ();
 			}
 		}
 	}
@@ -112,6 +168,12 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
+void cApplication::setGame (std::shared_ptr<cGame> game_)
+{
+	game = game_;
+}
+
+//------------------------------------------------------------------------------
 cWindow* cApplication::getActiveWindow ()
 {
 	// remove null widgets on the top if there are any
@@ -129,14 +191,14 @@ cWidget* cApplication::getKeyFocusWidget () const
 //------------------------------------------------------------------------------
 cWidget* cApplication::getMouseEventFirstTarget (const cPosition& position)
 {
-	auto widget = getActiveWindow ();
-	if (!widget) return nullptr;
+	auto window = getActiveWindow ();
+	if (!window) return nullptr;
 
-	auto child = widget->getChildAt (position);
+	auto child = window->getChildAt (position);
 
 	if (child) return child;
 
-	if (widget->isAt (position)) return widget;
+	if (window->isAt (position)) return window;
 
 	return nullptr;
 }
@@ -226,7 +288,14 @@ void cApplication::mouseMoved (cMouse& mouse)
 void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
 	auto widget = getKeyFocusWidget ();
-	if (widget) widget->handleKeyPressed (*this, keyboard, key);
+	if (!widget || !widget->handleKeyPressed (*this, keyboard, key))
+	{
+		auto window = getActiveWindow ();
+		if (window)
+		{
+			window->handleKeyPressed (*this, keyboard, key);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -236,7 +305,14 @@ void cApplication::keyReleased (cKeyboard& keyboard, SDL_Keycode key)
 
 	// TODO: catch TAB event and may switch key focus event
 
-	if (widget) widget->handleKeyReleased (*this, keyboard, key);
+	if (!widget || !widget->handleKeyReleased (*this, keyboard, key))
+	{
+		auto window = getActiveWindow ();
+		if (window)
+		{
+			window->handleKeyReleased (*this, keyboard, key);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

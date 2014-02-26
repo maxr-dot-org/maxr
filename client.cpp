@@ -108,7 +108,7 @@ cClient::~cClient()
 	}
 }
 
-void cClient::setMap (cStaticMap& staticMap)
+void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
 	Map = new cMap (staticMap);
 	initPlayersWithMap();

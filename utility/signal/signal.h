@@ -46,7 +46,7 @@
 template<typename F, typename C = sSignalResultCombinerLast<typename sFunctionTraits<F>::result_type>>
 class cSignal
 {
-	static_assert(cDependentFalse<F>::value, "cSignal not allowed with this template arguments!");
+	static_assert(sDependentFalse<F>::value, "cSignal not allowed with this template arguments!");
 };
 
 /**

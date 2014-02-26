@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_pointH
-#define utility_pointH
+#ifndef utility_fixedvectorH
+#define utility_fixedvectorH
 
 #include <cassert>
 #include <type_traits>
@@ -68,15 +68,23 @@ public:
 
 	self_type operator+(const self_type& other) const;
 	self_type operator-(const self_type& other) const;
+	self_type operator*(const self_type& other) const; // element wise
+	self_type operator/(const self_type& other) const; // element wise
 
 	self_type& operator+=(const self_type& other);
 	self_type& operator-=(const self_type& other);
+	self_type& operator*=(const self_type& other); // element wise
+	self_type& operator/=(const self_type& other); // element wise
 
 	bool operator==(const value_type& value) const;
 	bool operator!=(const value_type& value) const;
 
 	bool operator==(const self_type& other) const;
 	bool operator!=(const self_type& other) const;
+
+	value_type dotProduct (const self_type& other) const;
+
+	value_type l2Norm () const;
 
 	/**
 	 * Returns the fixed size of the vector.
@@ -239,6 +247,30 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator-(const self_
 
 //------------------------------------------------------------------------------
 template<typename T, size_t D>
+typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator/(const self_type& other) const
+{
+	cFixedVector<T, D> result;
+	for (size_t d = 0; d < D; ++d)
+	{
+		result[d] = data_[d] / other[d];
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+template<typename T, size_t D>
+typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator*(const self_type& other) const
+{
+	cFixedVector<T, D> result;
+	for (size_t d = 0; d < D; ++d)
+	{
+		result[d] = data_[d] * other[d];
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+template<typename T, size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator+=(const self_type& other)
 {
 	for(size_t d = 0; d < D; ++d)
@@ -255,6 +287,28 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator-=(const sel
 	for(size_t d = 0; d < D; ++d)
 	{
 		data_[d] -= other[d];
+	}
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+template<typename T, size_t D>
+typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator/=(const self_type& other)
+{
+	for (size_t d = 0; d < D; ++d)
+	{
+		data_[d] /= other[d];
+	}
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+template<typename T, size_t D>
+typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator*=(const self_type& other)
+{
+	for (size_t d = 0; d < D; ++d)
+	{
+		data_[d] *= other[d];
 	}
 	return *this;
 }
@@ -295,6 +349,26 @@ bool cFixedVector<T, D>::operator!=(const self_type& other) const
 	return !((*this) == other);
 }
 
+
+//------------------------------------------------------------------------------
+template<typename T, size_t D>
+typename cFixedVector<T, D>::value_type cFixedVector<T, D>::dotProduct (const self_type& other) const
+{
+	value_type result = 0;
+	for (size_t d = 0; d < D; ++d)
+	{
+		result += data_[d] * other[d];
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+template<typename T, size_t D>
+typename cFixedVector<T, D>::value_type cFixedVector<T, D>::l2Norm () const
+{
+	return std::sqrt (dotProduct (*this));
+}
+
 //------------------------------------------------------------------------------
 template<typename T, size_t D>
 size_t cFixedVector<T, D>::size() const
@@ -316,4 +390,4 @@ typename cFixedVector<T, D>::const_point_type cFixedVector<T, D>::data() const
 	return data_;
 }
 
-#endif // utility_pointH
+#endif // utility_fixedvectorH

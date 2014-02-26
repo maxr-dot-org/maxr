@@ -26,7 +26,7 @@
 #include "../../../../player.h"
 
 //------------------------------------------------------------------------------
-cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, cPlayer& owner) :
+cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner) :
 	unitId (unitId_)
 {
 	const int unitImageSize = 32;
@@ -37,16 +37,18 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, cP
 
 	// FIXME: very very bad...
 	//        why do we need to create a full vehicle/building object to draw it?!
+	//        Currently the const_cast is okay here because the player state is not changed during the render
+	//        method of the units.
 	if (unitId.isAVehicle ())
 	{
-		cVehicle vehicle (*unitId.getUnitDataOriginalVersion (), &owner, 0);
+		cVehicle vehicle (*unitId.getUnitDataOriginalVersion (), const_cast<cPlayer*>(&owner), 0);
 		const float zoomFactor = unitImageSize / 64.0f;
 		vehicle.render_simple (surface, dest, zoomFactor);
 		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
 	}
 	else if (unitId.isABuilding ())
 	{
-		cBuilding building (unitId.getUnitDataOriginalVersion (), &owner, 0);
+		cBuilding building (unitId.getUnitDataOriginalVersion (), const_cast<cPlayer*>(&owner), 0);
 		const float zoomFactor = unitImageSize / (building.data.isBig ? 128.0f : 64.0f);
 		building.render_simple (surface, dest, zoomFactor, 0);
 	}

@@ -29,7 +29,7 @@
 #include "../../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_) :
+cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :
 	cClickableWidget (area),
 	surface (nullptr),
 	minValue (minValue_),
@@ -41,11 +41,11 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 
 	createHandle (orientation == eOrientationType::Horizontal ? eSliderHandleType::Horizontal : eSliderHandleType::Vertical);
 
-	createSurface ();
+	createSurface (sliderType);
 }
 
 //------------------------------------------------------------------------------
-cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderHandleType handleType) :
+cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderHandleType handleType, eSliderType sliderType) :
 	cClickableWidget (area),
 	surface (nullptr),
 	minValue (minValue_),
@@ -57,7 +57,7 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 
 	createHandle (handleType);
 
-	createSurface ();
+	createSurface (sliderType);
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +80,31 @@ void cSlider::handleMoved (const cPosition& offset)
 }
 
 //------------------------------------------------------------------------------
-int cSlider::getValue ()
+int cSlider::getMinValue () const
+{
+	return minValue;
+}
+
+////------------------------------------------------------------------------------
+//void cSlider::setMinValue (int minValue)
+//{
+//
+//}
+
+//------------------------------------------------------------------------------
+int cSlider::getMaxValue () const
+{
+	return maxValue;
+}
+
+////------------------------------------------------------------------------------
+//void cSlider::setMaxValue (int maxValue)
+//{
+//
+//}
+
+//------------------------------------------------------------------------------
+int cSlider::getValue () const
 {
 	int minPosition, maxPosition;
 	computeHandleMinMaxPosition (minPosition, maxPosition);
@@ -116,8 +140,22 @@ void cSlider::setValue (int value)
 }
 
 //------------------------------------------------------------------------------
-void cSlider::createSurface ()
+void cSlider::increase (int offset)
 {
+	setValue (getValue () + offset);
+}
+
+//------------------------------------------------------------------------------
+void cSlider::decrease (int offset)
+{
+	setValue (getValue () - offset);
+}
+
+//------------------------------------------------------------------------------
+void cSlider::createSurface (eSliderType sliderType)
+{
+	if (sliderType == eSliderType::Invisible) return;
+
 	assert (handle != nullptr);
 
 	assert (orientation == eOrientationType::Horizontal); // We do not have graphics for vertical scroll bar yet!
@@ -201,7 +239,7 @@ bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseBut
 }
 
 //------------------------------------------------------------------------------
-void cSlider::computeHandleMinMaxPosition (int& minPosition, int& maxPosition)
+void cSlider::computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const
 {
 	minPosition = (orientation == eOrientationType::Horizontal ? getPosition ().x () : getPosition ().y ());
 	maxPosition = (orientation == eOrientationType::Horizontal ? getEndPosition ().x () - handle->getSize ().x () : getEndPosition ().y () - handle->getSize ().y ());

@@ -30,18 +30,33 @@
 
 struct SDL_Surface;
 
+enum class eSliderType
+{
+	Default,
+	Invisible
+};
+
 class cSlider : public cClickableWidget
 {
 public:
-	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation);
-	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderHandleType handleType);
+	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderType sliderType = eSliderType::Default);
+	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderHandleType handleType, eSliderType sliderType = eSliderType::Default);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 
-	int getValue ();
+	int getMinValue () const;
+	//void setMinValue (int minValue);
+
+	int getMaxValue () const;
+	//void setMaxValue (int maxValue);
+
+	int getValue () const;
 	void setValue (int value);
+
+	void increase (int offset);
+	void decrease (int offset);
 
 	cSignal<void ()> valueChanged;
 protected:
@@ -59,12 +74,12 @@ private:
 
 	cSliderHandle* handle;
 
-	void createSurface ();
+	void createSurface (eSliderType sliderType);
 	void createHandle (eSliderHandleType handleType);
 
 	void setHandleMinMaxPosition ();
 
-	void computeHandleMinMaxPosition (int& minPosition, int& maxPosition);
+	void computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const;
 
 	void movedHandle ();
 };

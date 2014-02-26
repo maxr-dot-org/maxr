@@ -17,13 +17,48 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_dependentfalseH
-#define utility_dependentfalseH
+#ifndef game_localgameH
+#define game_localgameH
 
-template<typename T>
-struct sDependentFalse
+#include <memory>
+#include <vector>
+
+#include "game.h"
+#include "../maxrconfig.h"
+
+class cClient;
+class cServer;
+class cStaticMap;
+class cGameSettings;
+class cApplication;
+class cEventHandling;
+class sPlayer;
+class cPosition;
+
+struct sLandingUnit;
+
+class cLocalGame : public cGame
 {
-	static const bool value = (sizeof(T)==0); // sizeof(AnyType) can never be 0!
+public:
+	void start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits);
+
+	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
+	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
+
+	void setPlayerClan (int clan);
+
+	sPlayer createPlayer ();
+
+	virtual void run () MAXR_OVERRIDE_FUNCTION;
+private:
+	std::unique_ptr<cClient> client;
+	std::unique_ptr<cServer> server;
+	std::unique_ptr<cEventHandling> eventHandling;
+
+	std::shared_ptr<cStaticMap> staticMap;
+	std::shared_ptr<cGameSettings> gameSettings;
+
+	int playerClan;
 };
 
-#endif // utility_dependentfalseH
+#endif // game_localgameH

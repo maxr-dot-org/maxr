@@ -62,7 +62,7 @@ public:
 protected:
 	cServer* server;
 	sSettings settings;
-	AutoPtr<cStaticMap> map;
+	std::shared_ptr<cStaticMap> map;
 	cTCP* network;
 	SDL_Thread* thread;
 	bool canceled;

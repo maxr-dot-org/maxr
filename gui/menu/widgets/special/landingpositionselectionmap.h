@@ -17,13 +17,37 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_dependentfalseH
-#define utility_dependentfalseH
+#ifndef gui_menu_widgets_special_landingpositionselectionmapH
+#define gui_menu_widgets_special_landingpositionselectionmapH
 
-template<typename T>
-struct sDependentFalse
+#include "../../../../maxrconfig.h"
+#include "../clickablewidget.h"
+#include "../../../../autosurface.h"
+#include "../../../../utility/signal/signal.h"
+
+class cStaticMap;
+struct sTerrain;
+
+class cLandingPositionSelectionMap : public cClickableWidget
 {
-	static const bool value = (sizeof(T)==0); // sizeof(AnyType) can never be 0!
+public:
+	cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map);
+
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
+
+	cSignal<void (const cPosition&)> clickedTile;
+protected:
+	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+
+private:
+	AutoSurface mapSurface;
+
+	std::shared_ptr<cStaticMap> map;
+
+	const sTerrain* getMapTile (const cPosition& position, cPosition& tilePosition);
+	bool isAllowedTerrain (const sTerrain& terrain);
 };
 
-#endif // utility_dependentfalseH
+#endif // gui_menu_widgets_special_landingpositionselectionmapH

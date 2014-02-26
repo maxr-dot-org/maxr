@@ -36,12 +36,19 @@ public:
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void ()> clicked;
+
+	void disableAtTransparent ();
+	void enableAtTransparent ();
+
+	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	AutoSurface image;
 	sSOUND* clickSound;
+
+	bool disabledAtTransparent;
 };
 
 #endif // gui_menu_widgets_imageH

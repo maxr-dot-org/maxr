@@ -20,15 +20,18 @@
 #define mapH
 
 #include <string>
+#include <memory>
 
 #include "autosurface.h"
 #include "defines.h"
 #include <vector>
 #include "t_2.h"
+#include "utility/position.h"
 
 class cVehicle;
 class cBuilding;
 class cPlayer;
+class cPosition;
 struct sUnitData;
 
 // Resources Struktur ////////////////////////////////////////////////////////
@@ -65,24 +68,27 @@ private:
 public:
 
 	/** returns the top vehicle on this field */
-	cVehicle* getVehicle();
+	cVehicle* getVehicle() const;
+
 	/** returns a Iterator for the planes on this field */
-	cVehicle* getPlane();
+	cVehicle* getPlane() const;
 	/** returns the planes on this field */
-	std::vector<cVehicle*>& getPlanes();
+	std::vector<cVehicle*>& getPlanes ();
+	const std::vector<cVehicle*>& getPlanes () const;
 	/** returns the buildings on this field */
-	std::vector<cBuilding*>& getBuildings();
+	std::vector<cBuilding*>& getBuildings ();
+	const std::vector<cBuilding*>& getBuildings ()const;
 
 	/** returns a pointer for the buildings on this field */
-	cBuilding* getBuilding();
+	cBuilding* getBuilding() const;
 	/** returns a pointer to the top building or NULL if the first building is a base type */
-	cBuilding* getTopBuilding();
+	cBuilding* getTopBuilding() const;
 	/** returns a pointer to the first base building or NULL if there is no base building */
-	cBuilding* getBaseBuilding();
+	cBuilding* getBaseBuilding() const;
 	/** returns a pointer to a rubble object, if there is one. */
-	cBuilding* getRubble();
+	cBuilding* getRubble() const;
 	/** returns a pointer to an expl. mine, if there is one */
-	cBuilding* getMine();
+	cBuilding* getMine() const;
 };
 
 struct sTerrain
@@ -101,6 +107,9 @@ struct sTerrain
 class cStaticMap
 {
 public:
+	static const int tilePixelHeight = 64;
+	static const int tilePixelWidth = 64;
+
 	cStaticMap();
 	~cStaticMap();
 
@@ -109,8 +118,10 @@ public:
 	bool isValid() const;
 
 	const std::string& getName() const { return filename; }
-	int getSize() const { return size; }
+	int getSize () const { return size; }
+	cPosition getSizeNew () const { return cPosition (size, size); }
 	int getOffset (int x, int y) const { return y * size + x; }
+	int getOffset (const cPosition& pos) const { return getOffset (pos.x (), pos.y ()); }
 
 	bool isValidPos (int x, int y) const;
 
@@ -121,6 +132,7 @@ public:
 
 	const sTerrain& getTerrain (int offset) const;
 	const sTerrain& getTerrain (int x, int y) const;
+	const sTerrain& getTerrain (const cPosition& position) const;
 
 	SDL_Surface* createBigSurface (int sizex, int sizey) const;
 	void generateNextAnimationFrame();
@@ -143,16 +155,18 @@ private:
 class cMap
 {
 public:
-	explicit cMap (cStaticMap& staticMap_);
+	explicit cMap (std::shared_ptr<cStaticMap> staticMap_);
 	~cMap();
 
 	const std::string& getName() const { return staticMap->getName(); }
 	int getSize() const { return staticMap->getSize(); }
-	int getOffset (int x, int y) const { return staticMap->getOffset (x, y);}
+	int getOffset (int x, int y) const { return staticMap->getOffset (x, y); }
+	int getOffset (const cPosition& pos) const { return staticMap->getOffset (pos); }
 	bool isValidPos (int x, int y) const { return staticMap->isValidPos (x, y); }
 	bool isValidOffset (int offset) const;
 
 	bool isBlocked (int offset) const { return staticMap->isBlocked (offset); }
+	bool isBlocked (const cPosition& pos) const { return staticMap->isBlocked (getOffset(pos)); }
 	bool isCoast (int offset) const { return staticMap->isCoast (offset); }
 	bool isWater (int offset) const { return staticMap->isWater (offset); }
 	bool isCoast (int x, int y) const { return staticMap->isCoast (getOffset (x, y)); }
@@ -161,6 +175,7 @@ public:
 
 	const sResources& getResource (int offset) const { return Resources[offset]; }
 	const sResources& getResource (int x, int y) const { return Resources[getOffset (x, y)]; }
+	const sResources& getResource (const cPosition& position) const { return getResource (position.x (), position.y ()); }
 	sResources& getResource (int offset) { return Resources[offset]; }
 	void assignRessources (const cMap& rhs);
 
@@ -183,6 +198,9 @@ public:
 	* @return an instance of cMapField, which has several methods to access the objects on the field
 	*/
 	cMapField& operator[] (unsigned int offset) const;
+
+	cMapField& getField (const cPosition& position);
+	const cMapField& getField (const cPosition& position) const;
 
 	void addBuilding (cBuilding& building, unsigned int x, unsigned int y);
 	void addBuilding (cBuilding& building, unsigned int offset);
@@ -229,7 +247,7 @@ public:
 	void reset();
 
 public:
-	cStaticMap* staticMap;
+	std::shared_ptr<cStaticMap> staticMap;
 	/**
 	* the information about the fields
 	*/

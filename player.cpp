@@ -890,6 +890,12 @@ bool cPlayer::mayHaveOffensiveUnit() const
 }
 
 //------------------------------------------------------------------------------
+bool cPlayer::canSeeAt (const cPosition& position) const
+{
+	return ScanMap[getOffset (position.x (), position.y ())] != 0;
+}
+
+//------------------------------------------------------------------------------
 void cPlayer::deleteLock (cUnit& unit)
 {
 	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);

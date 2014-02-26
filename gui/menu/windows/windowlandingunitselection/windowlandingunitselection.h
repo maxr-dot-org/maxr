@@ -31,14 +31,15 @@ class cLabel;
 class cPushButton;
 class cUnitUpgrade;
 struct sID;
+struct sLandingUnit;
 
 class cWindowLandingUnitSelection : public cWindowAdvancedHangar
 {
 public:
-	cWindowLandingUnitSelection (cPlayer& owner, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold);
+	cWindowLandingUnitSelection (int playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold);
 	~cWindowLandingUnitSelection ();
 
-	std::vector<std::pair<sID, int>> getLandingUnits () const;
+	std::vector<sLandingUnit> getLandingUnits () const;
 
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades () const;
 
@@ -49,6 +50,8 @@ protected:
 	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	std::unique_ptr<cPlayer> temporaryPlayer;
 
 	static const int metalBarSteps = 5;
 	static const int singleCreditResourceAmount = 5;

@@ -17,13 +17,45 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_dependentfalseH
-#define utility_dependentfalseH
+#ifndef gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
+#define gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
 
-template<typename T>
-struct sDependentFalse
+#include <memory>
+
+#include "../../../window.h"
+#include "../../../../utility/signal/signalconnectionmanager.h"
+#include "../../../../utility/signal/signal.h"
+
+class cImage;
+class cPosition;
+class cLandingPositionSelectionMap;
+class cStaticMap;
+
+struct sTerrain;
+
+
+class cWindowLandingPositionSelection : public cWindow
 {
-	static const bool value = (sizeof(T)==0); // sizeof(AnyType) can never be 0!
+public:
+	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> map);
+	~cWindowLandingPositionSelection ();
+
+	cSignal<void (const cPosition&)> selectedPosition;
+
+	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	bool firstActivate;
+
+	cLandingPositionSelectionMap* map;
+
+	SDL_Surface* createHudSurface ();
+
+	void backClicked ();
+	void mapClicked (const cPosition& tilePosition);
 };
 
-#endif // utility_dependentfalseH
+#endif // gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH

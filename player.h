@@ -29,6 +29,7 @@
 #include "base.h"
 #include "main.h" // for sID
 #include "upgradecalculator.h"
+#include "utility/position.h"
 
 class cBuilding;
 class cGameGUI;
@@ -36,6 +37,7 @@ class cHud;
 class cMapField;
 class cUnit;
 class cVehicle;
+class cPosition;
 
 struct sHudStateContainer;
 struct sTurnstartReport;
@@ -136,6 +138,7 @@ public:
 	void revealResource();
 	unsigned int getMapSize() const { return mapSize; }
 	unsigned int getOffset (int x, int y) const { return x + y * mapSize; }
+	unsigned int getOffset (const cPosition& pos) const { return getOffset (pos.x (), pos.y ()); }
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 
 	cVehicle* addVehicle (int posx, int posy, const sID& id, unsigned int uid);
@@ -165,6 +168,7 @@ public:
 
 	void exploreResource (int offset) { ResourceMap[offset] = 1; }
 	bool hasResourceExplored (int offset) const { return ResourceMap[offset] != 0; }
+	bool hasResourceExplored (const cPosition& pos) const { return ResourceMap[getOffset (pos)] != 0; }
 	bool hasSentriesAir (int offset) const { return SentriesMapAir[offset] != 0; }
 	bool hasSentriesGround (int offset) const { return SentriesMapGround[offset] != 0; }
 	bool hasLandDetection (int offset) const { return DetectLandMap[offset] != 0; }
@@ -178,6 +182,8 @@ public:
 	void refreshSentryGround();
 
 	bool mayHaveOffensiveUnit() const;
+
+	bool canSeeAt (const cPosition& position) const;
 private:
 	/**
 	* draws a circle on the map for the fog

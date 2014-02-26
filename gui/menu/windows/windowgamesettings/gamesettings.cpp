@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 #include "gamesettings.h"
+#include "../../../../menus.h" // for sSettings
+#include "../../../../utility/tounderlyingtype.h"
 
 //------------------------------------------------------------------------------
 cGameSettings::cGameSettings () :
@@ -164,4 +166,29 @@ unsigned int cGameSettings::getVictoryPoints () const
 void cGameSettings::setVictoryPoints (unsigned int value)
 {
 	vectoryPoints = value;
+}
+
+//------------------------------------------------------------------------------
+sSettings cGameSettings::toOldSettings () const
+{
+	sSettings settings;
+
+	settings.metal = (eSettingResourceValue)toUnderlyingType (getMetalAmount ());
+	settings.oil = (eSettingResourceValue)toUnderlyingType (getOilAmount ());
+	settings.gold = (eSettingResourceValue)toUnderlyingType (getGoldAmount ());
+
+	settings.resFrequency = (eSettingResFrequency)toUnderlyingType (getResourceDensity ());
+
+	settings.credits = getStartCredits ();
+
+	settings.bridgeHead = (eSettingsBridgeHead)toUnderlyingType (getBridgeheadType ());
+	settings.alienTech = eSettingsAlienTech::SETTING_ALIENTECH_OFF;
+	settings.clans = getClansEnabled () ? eSettingsClans::SETTING_CLANS_ON : eSettingsClans::SETTING_CLANS_OFF;
+	settings.gameType = (eSettingsGameType)toUnderlyingType (getGameType ());
+	settings.victoryType = (eSettingsVictoryType)toUnderlyingType (getVictoryCondition ());
+	settings.duration = getVictoryTurns ();
+	settings.iTurnDeadline = 90;
+	settings.hotseat = false;
+
+	return settings;
 }

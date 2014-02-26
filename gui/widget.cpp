@@ -231,12 +231,28 @@ bool cWidget::handleMouseWheelMoved (cApplication& application, cMouse& mouse, c
 //------------------------------------------------------------------------------
 bool cWidget::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
+	for (auto i = children.begin (); i != children.end (); ++i)
+	{
+		auto& child = *i->get ();
+		if (child.handleKeyPressed (application, keyboard, key))
+		{
+			return true;
+		}
+	}
 	return false;
 }
 
 //------------------------------------------------------------------------------
 bool cWidget::handleKeyReleased (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
+	for (auto i = children.begin (); i != children.end (); ++i)
+	{
+		auto& child = *i->get ();
+		if (child.handleKeyReleased (application, keyboard, key))
+		{
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -290,10 +306,12 @@ bool cWidget::hasChildren () const
 //------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
-	const bool debugDrawFrame = false;
+	const bool debugDrawFrame = true;
 	if (debugDrawFrame)
 	{
 		const auto size = getSize();
+
+		if (size.x () == 0 || size.y () == 0) return;
 
 		frameSurface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
 		if (!frameSurface) return; // can happen when for some reason the size is invalid (e.g. negative)

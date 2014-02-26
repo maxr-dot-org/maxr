@@ -27,7 +27,7 @@ struct sUnitData;
 class cUnitListViewItemCargo : public cUnitListViewItem
 {
 public:
-	cUnitListViewItemCargo (unsigned int width, const sID& unitId, cPlayer& owner);
+	cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner);
 
 	int getCargo () const;
 	void setCargo (int cargo);

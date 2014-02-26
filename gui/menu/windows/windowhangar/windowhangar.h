@@ -39,7 +39,7 @@ struct sID;
 class cWindowHangar : public cWindow
 {
 public:
-	explicit cWindowHangar (SDL_Surface* surface, cPlayer& owner);
+	explicit cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan);
 	~cWindowHangar ();
 
 	cSignal<void ()> done;
@@ -48,7 +48,7 @@ protected:
 	void addSelectionUnit (const sID& unitId);
 	void clearSelectionUnits ();
 
-	cPlayer& getPlayer () const;
+	const cPlayer& getPlayer () const;
 
 	void setActiveUpgrades (const cUnitUpgrade& unitUpgrades);
 
@@ -62,7 +62,7 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cPlayer& owner;
+	std::unique_ptr<cPlayer> temporaryPlayer;
 
 	cImage* infoImage;
 	cLabel* infoLabel;

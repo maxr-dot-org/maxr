@@ -17,13 +17,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_dependentfalseH
-#define utility_dependentfalseH
+#ifndef gui_game_gameguiH
+#define gui_game_gameguiH
 
-template<typename T>
-struct sDependentFalse
+#include "../window.h"
+#include "../../utility/signal/signalconnectionmanager.h"
+
+class cHud;
+class cGameMapWidget;
+class cMiniMapWidget;
+class cStaticMap;
+class cMap;
+class cPlayer;
+
+class cNewGameGUI : public cWindow
 {
-	static const bool value = (sizeof(T)==0); // sizeof(AnyType) can never be 0!
+public:
+	cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap);
+
+	void setDynamicMap (const cMap* dynamicMap);
+	void setPlayer (const cPlayer* player);
+
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
+	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+protected:
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cHud* hud;
+	cGameMapWidget* gameMap;
+	cMiniMapWidget* miniMap;
+
+	void resetMiniMapViewWindow ();
+
+	void showFilesMenu ();
+	void showPreferencesDialog ();
 };
 
-#endif // utility_dependentfalseH
+#endif // gui_game_gameguiH

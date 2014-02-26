@@ -17,13 +17,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_dependentfalseH
-#define utility_dependentfalseH
+#ifndef game_gameH
+#define game_gameH
 
-template<typename T>
-struct sDependentFalse
+#include <memory>
+
+class cGame : public std::enable_shared_from_this<cGame>
 {
-	static const bool value = (sizeof(T)==0); // sizeof(AnyType) can never be 0!
+public:
+	virtual ~cGame () {}
+
+	virtual void run () = 0;
 };
 
-#endif // utility_dependentfalseH
+#endif // game_gameH

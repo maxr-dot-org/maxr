@@ -696,14 +696,12 @@ int settingSelection (cMenu& parent, sSettings& settings)
 	return 1;
 }
 
-int planetSelection (cMenu& parent, cStaticMap*& map)
+int planetSelection (cMenu& parent, std::shared_ptr<cStaticMap>& map)
 {
 	cPlanetsSelectionMenu planetSelectionMenu;
-	delete map;
-	map = NULL;
 
 	if(parent.switchTo(planetSelectionMenu) == 1) return -1;
-	map = planetSelectionMenu.getStaticMap().Release();
+	map = planetSelectionMenu.getStaticMap ();
 	return 1;
 }
 
@@ -791,7 +789,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	cServer server (network);
 	cEventHandling eventHandling;
 	cClient client (&server, network, eventHandling);
-	cStaticMap* map = NULL;
+	std::shared_ptr<cStaticMap> map;
 	std::vector<sPlayer*> players;
 	sPlayer clientPlayer (splayer);
 
@@ -812,11 +810,11 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 				dir = planetSelection (*menu, map);
 				if (dir == 1)
 				{
-					server.setMap (*map);
+					server.setMap (map);
 					server.setGameSettings (settings);
 					server.addPlayer (new cPlayer (splayer));
 					server.changeStateToInitGame();
-					client.setMap (*map);
+					client.setMap (map);
 					client.setGameSetting (settings);
 				}
 				break;
@@ -871,7 +869,6 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 	cServer server (network);
 	cSavegame savegame (savegameNum);
 	if (savegame.load (server) == false) return;
-	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
 	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
 
 	if (serverPlayerList.empty()) return;
@@ -889,7 +886,7 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 	// init client and his player
 	cEventHandling eventHandler;
 	cClient client (&server, network, eventHandler);
-	client.setMap (*server.Map->staticMap);
+	client.setMap (server.Map->staticMap);
 	client.setPlayers (clientPlayerList, *clientPlayerList[player]);
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
@@ -1056,7 +1053,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 	menu->switchTo(okDialog);
 
 	sSettings settings;
-	cStaticMap* map = NULL;
+	std::shared_ptr<cStaticMap> map;
 	cTCP* const network = NULL;
 	cServer server (network);
 	cEventHandling eventHandling;
@@ -1071,7 +1068,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 		int dir = 0;
 		switch (step)
 		{
-			case -1: menu->draw(); delete map; return;
+			case -1: menu->draw(); return;
 			case 0: dir = settingSelection (*menu, settings); break;
 			case 1: dir = planetSelection (*menu, map); break;
 			case 2:
@@ -1082,7 +1079,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 
 				if (dir == 1)
 				{
-					server.setMap (*map);
+					server.setMap (map);
 					server.setGameSettings (settings);
 					std::vector<int> clans;
 					std::vector<sPlayer*> splayers = buildPlayerList (hotSeatMenu, clans);
@@ -1097,7 +1094,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 						clients.push_back (client);
 						client->setPlayers(splayers, *splayers[i]);
 						client->getActivePlayer().setClan (clans[i]);
-						client->setMap (*map);
+						client->setMap (map);
 						client->setGameSetting (settings);
 					}
 					for (size_t i = 0, size = splayers.size(); i != size; ++i)
@@ -1580,7 +1577,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	if (static_cast<unsigned int> (menu->selectedMapIndex) >= menu->maps.size()) return;
 
-	menu->staticMap = new cStaticMap();
+	menu->staticMap = std::make_shared<cStaticMap> ();
 	menu->staticMap->loadMap (menu->maps[menu->selectedMapIndex]);
 
 	menu->end = true;
@@ -2629,7 +2626,7 @@ void cHotSeatMenu::choosePlayerType (int player, ePlayerType playerType)
 	okButton->setLocked (true);
 	for (int i = 0; i != 4; ++i)
 	{
-		if (playerTypes[i] != ePlayerType::PLAYERTYPE_NONE)
+		if (playerTypes[i] != PLAYERTYPE_NONE)
 		{
 			okButton->setLocked (false);
 			return;
@@ -3101,10 +3098,10 @@ void cNetworkHostMenu::okReleased (void* parent)
 		cClient client (&server, NULL, *menu->eventHandler);
 		client.setPlayers (menu->players, *menu->players[0]);
 
-		server.setMap (*menu->map);
+		server.setMap (menu->map);
 		server.setGameSettings (*menu->settings);
 		server.changeStateToInitGame();
-		client.setMap (*menu->map);
+		client.setMap (menu->map);
 		client.setGameSetting (*menu->settings);
 
 		sendGo (server);
@@ -3128,7 +3125,7 @@ void cNetworkHostMenu::mapReleased (void* parent)
 		menu->draw();
 		return;
 	}
-	menu->map = planetsSelectionMenu.getStaticMap().Release();
+	menu->map = planetsSelectionMenu.getStaticMap();
 	menu->showSettingsText();
 	menu->showMap();
 	sendGameData (*menu->network, menu->map.get(), menu->settings.get(), menu->saveGameString);
@@ -3172,7 +3169,7 @@ void cNetworkHostMenu::loadReleased (void* parent)
 		savegame.loadHeader (&menu->saveGameString, NULL, NULL);
 		menu->saveGameString += "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n" + savegame.getPlayerNames();
 
-		menu->map = new cStaticMap;
+		menu->map = std::make_shared<cStaticMap> ();
 		menu->map->loadMap (savegame.getMapName());
 
 		sendGameData (*menu->network, menu->map.get(), menu->settings.get(), menu->saveGameString);
@@ -3372,7 +3369,6 @@ bool cNetworkHostMenu::runSavedGame()
 	cServer server (network);
 	cSavegame savegame (savegameNum);
 	if (savegame.load (server) == false) return false;
-	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
 	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
 	// first we check whether all necessary players are connected
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
@@ -3434,7 +3430,7 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// init client and his player
 	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
-	client->setMap (*server.Map->staticMap);
+	client->setMap (server.Map->staticMap);
 	client->setPlayers (players, *actPlayer);
 
 	// send the correct player numbers to client
@@ -3618,7 +3614,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 		if (!map || map->getName() != mapName)
 		{
 			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
-			map = new cStaticMap;
+			map = std::make_shared<cStaticMap>();
 			if (mapCheckSumsEqual && map->loadMap (mapName))
 			{
 				triedLoadMap = "";
@@ -3688,7 +3684,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	cClient client (server, network, *eventHandler);
 	client.setPlayers (players, *actPlayer);
 
-	client.setMap (*map);
+	client.setMap (map);
 	client.setGameSetting (*settings);
 
 	if (settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
@@ -3730,7 +3726,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 	{
 		actPlayer->setNr (message->popInt16());
 		actPlayer->setColorIndex (message->popInt16());
-		map = new cStaticMap;
+		map = std::make_shared<cStaticMap>();
 		if (!map->loadMap (message->popString())) return;
 
 		int playerCount = message->popInt16();
@@ -3757,7 +3753,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 		}
 		clientPlayers.clear();
 
-		client.setMap (*map);
+		client.setMap (map);
 		//client.setGameSetting (*settings);
 
 		sendReconnectionSuccess (client);
@@ -3848,7 +3844,7 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 
 	mapReceiver->finished();
 
-	map = new cStaticMap;
+	map = std::make_shared<cStaticMap>();
 	if (!map->loadMap (mapReceiver->getMapName())) map = NULL;
 
 	showSettingsText();

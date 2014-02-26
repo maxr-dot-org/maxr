@@ -21,6 +21,7 @@
 #include "../../../../main.h"
 #include "../../../../vehicles.h"
 #include "../../../../buildings.h"
+#include "../../../../player.h"
 #include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/image.h"
@@ -30,11 +31,13 @@
 #include "../../widgets/special/unitdetails.h"
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (SDL_Surface* surface, cPlayer& owner_) :
+cWindowHangar::cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan) :
 	cWindow (surface),
-	owner (owner_)
+	temporaryPlayer (new cPlayer(sPlayer("unnamed", playerColor, 0)))
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
+
+	if (playerClan != -1) temporaryPlayer->setClan (playerClan);
 
 	infoImage = addChild (std::make_unique<cImage> (menuPosition + cPosition (11, 13)));
 
@@ -109,7 +112,7 @@ void cWindowHangar::setActiveUnit (const sID& unitId)
 
 	infoLabel->setText (unitId.getUnitDataOriginalVersion ()->description);
 
-	unitDetails->setUnit (unitId, owner);
+	unitDetails->setUnit (unitId, getPlayer());
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +135,7 @@ void cWindowHangar::handleSelectionChanged ()
 //------------------------------------------------------------------------------
 void cWindowHangar::addSelectionUnit (const sID& unitId)
 {
-	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize ().x () - 9, unitId, owner));
+	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize ().x () - 9, unitId, getPlayer()));
 }
 
 //------------------------------------------------------------------------------
@@ -142,9 +145,9 @@ void cWindowHangar::clearSelectionUnits ()
 }
 
 //------------------------------------------------------------------------------
-cPlayer& cWindowHangar::getPlayer () const
+const cPlayer& cWindowHangar::getPlayer () const
 {
-	return owner;
+	return *temporaryPlayer;
 }
 
 //------------------------------------------------------------------------------

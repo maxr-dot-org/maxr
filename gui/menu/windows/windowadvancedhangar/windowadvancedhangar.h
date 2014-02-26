@@ -27,7 +27,7 @@ class cUnitListViewItemCargo;
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	explicit cWindowAdvancedHangar (SDL_Surface* surface, cPlayer& owner);
+	explicit cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan);
 	~cWindowAdvancedHangar ();
 
 protected:

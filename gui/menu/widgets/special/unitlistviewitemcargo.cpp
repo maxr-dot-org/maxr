@@ -24,7 +24,7 @@
 #include "../../../../player.h"
 
 //------------------------------------------------------------------------------
-cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, cPlayer& owner) :
+cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner) :
 	cUnitListViewItem (width, unitId, owner),
 	cargo (0)
 {

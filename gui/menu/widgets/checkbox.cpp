@@ -169,7 +169,7 @@ bool cCheckBox::handleClicked (cApplication& application, cMouse& mouse, eMouseB
 void cCheckBox::renewSurface ()
 {
 	cPosition size;
-	SDL_Rect src;
+	SDL_Rect src = {0, 0, 0, 0};
 
 	if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudIndex_22)
 	{

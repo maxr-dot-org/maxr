@@ -124,7 +124,7 @@ cServer::~cServer()
 }
 
 //------------------------------------------------------------------------------
-void cServer::setMap (cStaticMap& staticMap)
+void cServer::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
 	Map = new cMap (staticMap);
 }

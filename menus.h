@@ -19,6 +19,8 @@
 #ifndef menusH
 #define menusH
 
+#include <memory>
+
 #include "autosurface.h"
 #include "autoptr.h"
 #include "defines.h"
@@ -434,7 +436,7 @@ private:
 class cPlanetsSelectionMenu : public cMenu
 {
 protected:
-	AutoPtr<cStaticMap> staticMap;
+	std::shared_ptr<cStaticMap> staticMap;
 
 	AutoPtr<cMenuLabel> titleLabel;
 
@@ -453,7 +455,7 @@ protected:
 
 public:
 	cPlanetsSelectionMenu();
-	AutoPtr<cStaticMap>& getStaticMap() { return staticMap; }
+	std::shared_ptr<cStaticMap> getStaticMap () { return staticMap; }
 
 private:
 	void loadMaps();
@@ -768,7 +770,7 @@ protected:
 	AutoPtr<cMenuPlayersBox> playersBox;
 
 	AutoPtr<cEventHandling> eventHandler;
-	AutoPtr<cStaticMap> map;
+	std::shared_ptr<cStaticMap> map;
 	AutoPtr<sSettings> settings;
 	int savegameNum;
 	std::string savegame;
