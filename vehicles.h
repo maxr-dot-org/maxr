@@ -30,6 +30,7 @@ class cBuilding;
 class cClientMoveJob;
 class cGameGUI;
 class cMap;
+class cStaticMap;
 class cMapField;
 class cPlayer;
 class cServer;
@@ -263,7 +264,7 @@ public:
 	void clearDetectedInThisTurnPlayerList();
 	bool wasDetectedInThisTurnByPlayer (const cPlayer* player) const;
 
-	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
+	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1) const;
 
 	void executeAutoMoveJobCommand (cClient& client);
 	void executeLayMinesCommand (const cClient& client);
@@ -280,14 +281,14 @@ public:
 	/**
 	* draws the main image of the vehicle onto the passed surface
 	*/
-	void render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
-	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254);
+	void render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254) const;
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
-	void drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
-	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254);
+	void drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
+	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
 
 	bool isUnitLoaded() const { return Loaded; }
 	/**
@@ -299,9 +300,9 @@ public:
 private:
 	void drawPath_BuildPath (cGameGUI& gameGUI);
 
-	void render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
-	void render_smallClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
-	void render_shadow (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
+	void render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render_shadow (const cStaticMap& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
 	//---- sentry and reaction fire helpers ------------------------------------
 	/**

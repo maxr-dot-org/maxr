@@ -647,7 +647,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	{
 		cBuilding* srcBuilding = static_cast<cBuilding*> (srcUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (srcBuilding->data.isBig ? 128.0f : 64.0f);
-		srcBuilding->render (gameGUI, unitImage1, dest, zoomFactor, false, false);
+		srcBuilding->render (gameGUI->getAnimationSpeed(), unitImage1, dest, zoomFactor, false, false);
 
 		unitNameLabels[0]->setText (srcBuilding->data.name);
 		if (destUnit->isAVehicle())
@@ -682,8 +682,8 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 		cVehicle* srcVehicle = static_cast<cVehicle*> (srcUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
-		srcVehicle->render (gameGUI->getClient(), unitImage1, dest, zoomFactor, false);
-		srcVehicle->drawOverlayAnimation (gameGUI->getClient(), unitImage1, dest, zoomFactor);
+		srcVehicle->render (gameGUI->getClient ()->getMap (), gameGUI->getAnimationSpeed (), &gameGUI->getClient ()->getActivePlayer (), unitImage1, dest, zoomFactor, false);
+		srcVehicle->drawOverlayAnimation (gameGUI->getAnimationSpeed(), unitImage1, dest, zoomFactor);
 
 		unitNameLabels[0]->setText (srcVehicle->data.name);
 		maxSrcCargo = srcVehicle->data.storageResMax;
@@ -694,7 +694,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	{
 		cBuilding* destBuilding = static_cast<cBuilding*> (destUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (destBuilding->data.isBig ? 128.0f : 64.0f);
-		destBuilding->render (gameGUI, unitImage2, dest, zoomFactor, false, false);
+		destBuilding->render (gameGUI->getAnimationSpeed(), unitImage2, dest, zoomFactor, false, false);
 
 		unitNameLabels[1]->setText (destBuilding->data.name);
 		if (srcUnit->isAVehicle())
@@ -729,8 +729,8 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 		cVehicle* destVehicle = static_cast<cVehicle*> (destUnit);
 		float zoomFactor = UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
-		destVehicle->render (gameGUI->getClient(), unitImage2, dest, zoomFactor, false);
-		destVehicle->drawOverlayAnimation (gameGUI->getClient(), unitImage2, dest, zoomFactor);
+		destVehicle->render (gameGUI->getClient ()->getMap (), gameGUI->getAnimationSpeed (), &gameGUI->getClient ()->getActivePlayer (), unitImage2, dest, zoomFactor, false);
+		destVehicle->drawOverlayAnimation (gameGUI->getAnimationSpeed(), unitImage2, dest, zoomFactor);
 
 		unitNameLabels[1]->setText (destVehicle->data.name);
 		maxDestCargo = destVehicle->data.storageResMax;

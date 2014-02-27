@@ -37,12 +37,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	pixelOffset (0, 0),
 	internalZoomFactor (1.),
 	shouldDrawSurvey (false),
-	shouldDrawHits (false),
 	shouldDrawScan (false),
-	shouldDrawStatus (false),
-	shouldDrawAmmo (false),
 	shouldDrawGrid (false),
-	shouldDrawColor (false),
 	shouldDrawRange (false),
 	shouldDrawFog (false)
 {
@@ -64,6 +60,8 @@ void cGameMapWidget::setPlayer (const cPlayer* player_)
 //------------------------------------------------------------------------------
 void cGameMapWidget::draw ()
 {
+	unitDrawingEngine.handleNewFrame ();
+
 	drawTerrain();
 
 	if (shouldDrawGrid) drawGrid ();
@@ -128,9 +126,9 @@ void cGameMapWidget::setDrawSurvey (bool shouldDrawSurvey_)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setDrawHits (bool shouldDrawHits_)
+void cGameMapWidget::setDrawHits (bool shouldDrawHits)
 {
-	shouldDrawHits = shouldDrawHits_;
+	unitDrawingEngine.setDrawHits (shouldDrawHits);
 }
 
 //------------------------------------------------------------------------------
@@ -140,15 +138,15 @@ void cGameMapWidget::setDrawScan (bool shouldDrawScan_)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setDrawStatus (bool shouldDrawStatus_)
+void cGameMapWidget::setDrawStatus (bool shouldDrawStatus)
 {
-	shouldDrawStatus = shouldDrawStatus_;
+	unitDrawingEngine.setDrawStatus (shouldDrawStatus);
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setDrawAmmo (bool shouldDrawAmmo_)
+void cGameMapWidget::setDrawAmmo (bool shouldDrawAmmo)
 {
-	shouldDrawAmmo = shouldDrawAmmo_;
+	unitDrawingEngine.setDrawAmmo (shouldDrawAmmo);
 }
 
 //------------------------------------------------------------------------------
@@ -158,9 +156,9 @@ void cGameMapWidget::setDrawGrid (bool shouldDrawGrid_)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setDrawColor (bool shouldDrawColor_)
+void cGameMapWidget::setDrawColor (bool shouldDrawColor)
 {
-	shouldDrawColor = shouldDrawColor_;
+	unitDrawingEngine.setDrawColor (shouldDrawColor);
 }
 
 //------------------------------------------------------------------------------
@@ -369,17 +367,21 @@ void cGameMapWidget::drawBaseUnits ()
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 		for (auto it = buildings.rbegin (); it != buildings.rend (); ++it)
 		{
-			if ((*it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
-				(*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				(*it)->owner) break;
+			if (*it == nullptr) continue; // should never happen
 
-			if (!player || player->canSeeAnyAreaUnder (**it))
+			const auto& building = *(*it);
+
+			if (building.data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
+				building.data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+				building.owner) break;
+
+			if (!player || player->canSeeAnyAreaUnder (building))
 			{
 				// Draw big unit only once
 				// TODO: bug when (x,y) is outside of the drawing screen.
-				if ((*it)->PosX == i->x() && (*it)->PosY == i->y())
+				if (building.PosX == i->x() && building.PosY == i->y())
 				{
-					//(*it)->draw (&drawDestination, *this);
+					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), player);
 				}
 			}
 		}
@@ -407,7 +409,8 @@ void cGameMapWidget::drawTopBuildings ()
 		if (building->PosX != i->x() || building->PosY != i->y()) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-		//building->draw (&drawDestination, *this);
+		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), player);
+
 		//if (debugOutput.debugBaseClient && building->SubBase)
 		//	drawTopBuildings_DebugBaseClient (*building, drawDestination);
 		//if (debugOutput.debugBaseServer && building->SubBase)
@@ -432,7 +435,7 @@ void cGameMapWidget::drawShips ()
 		if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			//vehicle->draw (drawDestination, *this);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, player);
 		}
 	}
 }
@@ -455,16 +458,18 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 		const auto& buildings = mapField.getBuildings ();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			const auto& building = *(*it);
+			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
-				//(*it)->draw (&drawDestination, *this);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), player);
 			}
 		}
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
+			const auto& building = *(*it);
 			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
-				//(*it)->draw (&drawDestination, *this);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), player);
 			}
 		}
 
@@ -475,7 +480,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			// TODO: BUG: when PosX,PosY is outside of drawing screen
 			if (vehicle->PosX == i->x() && vehicle->PosY == i->y())
 			{
-				//vehicle->draw (drawDestination, *this);
+				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, player);
 			}
 		}
 	}
@@ -498,7 +503,7 @@ void cGameMapWidget::drawVehicles ()
 		if (vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			//vehicle->draw (drawDestination, *this);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, player);
 		}
 	}
 }
@@ -520,7 +525,7 @@ void cGameMapWidget::drawConnectors ()
 		if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			//building->draw (&drawDestination, *this);
+			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), player);
 		}
 	}
 }
@@ -543,7 +548,7 @@ void cGameMapWidget::drawPlanes ()
 		for (auto it = planes.rbegin (); it != planes.rend (); ++it)
 		{
 			auto& plane = **it;
-			//plane.draw (drawDestination, *this);
+			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, player);
 		}
 	}
 }

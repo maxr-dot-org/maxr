@@ -240,12 +240,12 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (*this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache ()->getCachedImage (*this, (float)gameGUI.getTileSize () / 64.0f, *gameGUI.getClient ()->getMap ());
 	if (drawingSurface == NULL)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = gameGUI.getDCache()->createNewEntry (*this);
+		drawingSurface = gameGUI.getDCache ()->createNewEntry (*this, (float)gameGUI.getTileSize () / 64.0f, *gameGUI.getClient ()->getMap ());
 	}
 
 	if (drawingSurface == NULL)
@@ -257,7 +257,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	if (bDraw)
 	{
-		render (gameGUI.getClient(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows());
+		render (gameGUI.getClient()->getMap(), gameGUI.getAnimationSpeed(), &gameGUI.getClient()->getActivePlayer(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows());
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -268,7 +268,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// draw overlay if necessary:
-	drawOverlayAnimation (gameGUI.getClient(), cVideo::buffer, screenPosition, gameGUI.getZoom());
+	drawOverlayAnimation (gameGUI.getAnimationSpeed(), cVideo::buffer, screenPosition, gameGUI.getZoom());
 
 	// remove the dithering for the following operations
 	if (FlightHigh > 0)
@@ -348,7 +348,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 }
 
-void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha)
+void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
 {
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
@@ -364,14 +364,14 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	blitWithPreScale (uiData->overlay_org, uiData->overlay, &src, surface, &tmp, zoomFactor);
 }
 
-void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
 	int frameNr = 0;
-	if (client && isDisabled() == false)
+	if (isDisabled() == false)
 	{
-		frameNr = client->getGameGUI().getAnimationSpeed() % (uiData->overlay_org->w / uiData->overlay_org->h);
+		frameNr = animationTime % (uiData->overlay_org->w / uiData->overlay_org->h);
 	}
 
 	int alpha = 254;
@@ -380,12 +380,11 @@ void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface
 	drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alpha);
 }
 
-void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	assert ((IsBuilding || (IsClearing && data.isBig)) && job == NULL);
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
-	const cMap& map = *client.getMap();
 	if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
 	{
 		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, BigBetonAlpha);
@@ -401,7 +400,7 @@ void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface*
 	SDL_Rect src;
 	src.y = 0;
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
-	src.x = (client.getGameGUI().getAnimationSpeed() % 4) * src.w;
+	src.x = (animationTime % 4) * src.w;
 	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 	blitWithPreScale (uiData->build_org, uiData->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
@@ -413,7 +412,7 @@ void cVehicle::render_BuildingOrBigClearing (const cClient& client, SDL_Surface*
 	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
-void cVehicle::render_smallClearing (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	assert (IsClearing && !data.isBig && job == NULL);
 
@@ -426,7 +425,7 @@ void cVehicle::render_smallClearing (const cClient& client, SDL_Surface* surface
 	SDL_Rect src;
 	src.y = 0;
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
-	src.x = (client.getGameGUI().getAnimationSpeed() % 4) * src.w;
+	src.x = (animationTime % 4) * src.w;
 	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 	blitWithPreScale (uiData->clear_small_org, uiData->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
@@ -438,9 +437,9 @@ void cVehicle::render_smallClearing (const cClient& client, SDL_Surface* surface
 	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
-void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
-	if (client.getMap()->isWater (PosX, PosY) && (data.isStealthOn & TERRAIN_SEA)) return;
+	if (map.isWater (PosX, PosY) && (data.isStealthOn & TERRAIN_SEA)) return;
 
 	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetSurfaceAlphaMod (uiData->shw[dir], StartUp / 5);
 	else SDL_SetSurfaceAlphaMod (uiData->shw[dir], 50);
@@ -449,11 +448,12 @@ void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const
 	// draw shadow
 	if (FlightHigh > 0)
 	{
-		int high = ((int) ((int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
-		tmp.x += high;
-		tmp.y += high;
+		// TODO: implement
+		//int high = ((int) ((int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
+		//tmp.x += high;
+		//tmp.y += high;
 
-		blitWithPreScale (uiData->shw_org[dir], uiData->shw[dir], NULL, surface, &tmp, zoomFactor);
+		//blitWithPreScale (uiData->shw_org[dir], uiData->shw[dir], NULL, surface, &tmp, zoomFactor);
 	}
 	else if (data.animationMovement)
 	{
@@ -465,7 +465,7 @@ void cVehicle::render_shadow (const cClient& client, SDL_Surface* surface, const
 		blitWithPreScale (uiData->shw_org[dir], uiData->shw[dir], NULL, surface, &tmp, zoomFactor);
 }
 
-void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha)
+void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
 {
 	// draw player color
 	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
@@ -495,22 +495,22 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 	blittAlphaSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
 }
 
-void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+void cVehicle::render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	// Note: when changing something in this function,
 	// make sure to update the caching rules!
 
 	// draw working engineers and bulldozers:
-	if (client && job == NULL)
+	if (map && job == NULL)
 	{
 		if (IsBuilding || (IsClearing && data.isBig))
 		{
-			render_BuildingOrBigClearing (*client, surface, dest, zoomFactor, drawShadow);
+			render_BuildingOrBigClearing (*map, animationTime, surface, dest, zoomFactor, drawShadow);
 			return;
 		}
 		if (IsClearing && !data.isBig)
 		{
-			render_smallClearing (*client, surface, dest, zoomFactor, drawShadow);
+			render_smallClearing (animationTime, surface, dest, zoomFactor, drawShadow);
 			return;
 		}
 	}
@@ -518,13 +518,13 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 	// draw all other vehicles:
 
 	// draw shadow
-	if (drawShadow && client)
+	if (drawShadow && map)
 	{
-		render_shadow (*client, surface, dest, zoomFactor);
+		render_shadow (*map->staticMap, surface, dest, zoomFactor);
 	}
 
 	int alpha = 254;
-	if (client)
+	if (map)
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
 		{
@@ -532,15 +532,14 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		}
 		else
 		{
-			const cMap& map = *client->getMap();
-			bool water = map.isWater (PosX, PosY);
+			bool water = map->isWater (PosX, PosY);
 			// if the vehicle can also drive on land, we have to check,
 			// whether there is a brige, platform, etc.
 			// because the vehicle will drive on the bridge
-			cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
+			cBuilding* building = map->fields[map->getOffset (PosX, PosY)].getBaseBuilding ();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == &client->getActivePlayer()) alpha = 100;
+			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == activePlayer) alpha = 100;
 		}
 	}
 	render_simple (surface, dest, zoomFactor, alpha);
@@ -1990,7 +1989,7 @@ void sVehicleUIData::scaleSurfaces (float factor)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames)
+void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames) const
 {
 	if (!cSettings::getInstance().shouldDoPrescale())
 	{

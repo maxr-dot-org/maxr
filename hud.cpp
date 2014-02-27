@@ -553,9 +553,10 @@ cGameGUI::cGameGUI() :
 	selUnitNamePrefixStr (12, 30, "", FONT_LATIN_SMALL_GREEN),
 	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT),
 	playersInfo (Video.getResolutionY() >= 768 ? 3 : 161, Video.getResolutionY() >= 768 ? 482 : 480 - 82, Video.getResolutionY() >= 768),
-	iTimerTime (0)
+	iTimerTime (0),
+	dCache (nullptr)
 {
-	dCache.setGameGUI (*this);
+	//dCache.setGameGUI (*this);
 	unitMenuActive = false;
 	selectedMenuButtonIndex = -1;
 	vehicleToActivate = 0;

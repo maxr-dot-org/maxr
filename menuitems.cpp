@@ -4132,13 +4132,13 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	if (unit->isABuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		building->render (&client->getGameGUI(), surface, dest, zoomFactor, false, false);
+		building->render (client->getGameGUI().getAnimationSpeed(), surface, dest, zoomFactor, false, false);
 	}
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		vehicle->render (client, surface, dest, zoomFactor, false);
-		vehicle->drawOverlayAnimation (client, surface, dest, zoomFactor);
+		vehicle->render (client->getMap (), client->getGameGUI().getAnimationSpeed (), &client->getActivePlayer (), surface, dest, zoomFactor, false);
+		vehicle->drawOverlayAnimation (client->getGameGUI().getAnimationSpeed(), surface, dest, zoomFactor);
 	}
 
 	return surface;

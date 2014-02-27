@@ -219,8 +219,8 @@ public:
 	/**
 	* draws the main image of the building onto the given surface
 	*/
-	void render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete);
-	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254);
+	void render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const;
+	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
 	void executeSelfDestroyCommand (cGameGUI& gameGUI);
@@ -229,10 +229,10 @@ private:
 	/**
 	* draws the connectors onto the given surface
 	*/
-	void drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow);
+	void drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow) const;
 
-	void render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
-	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
+	void render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
+	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
 	//-----------------------------------------------------------------------------
 protected:

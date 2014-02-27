@@ -20,6 +20,8 @@
 #ifndef drawingcacheH
 #define drawingcacheH
 
+#include <memory>
+
 #include "autosurface.h"
 #include "main.h" // for sID
 
@@ -27,6 +29,8 @@ class cPlayer;
 class cVehicle;
 class cGameGUI;
 class cBuilding;
+class cAnimationTimer;
+class cMap;
 
 /**
 * Stores all properties, which determine the look of the unit.
@@ -58,40 +62,39 @@ struct sDrawingCacheEntry
 	sID id;
 	cPlayer* owner;
 	int dir;
-	float zoom;
+	double zoom;
 
-	int lastUsed;
 	AutoSurface surface;
 
 	/**
 	* sets all properties and initialises the surface.
 	*/
-	void init (const cGameGUI& gameGUI, const cVehicle& vehicle);
-	void init (const cGameGUI& gameGUI, const cBuilding& building);
+	void init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom);
+	void init (const cBuilding& building, double zoom);
 };
 
 class cDrawingCache
 {
 public:
-	cDrawingCache();
+	cDrawingCache (std::shared_ptr<cAnimationTimer> animationTimer);
 	~cDrawingCache();
 
-	void setGameGUI (const cGameGUI& gameGUI);
+	void setPlayer (const cPlayer* player);
 
 	/**
 	* This method looks for a cached image, that matches the properties of the passed building.
 	* @return a pointer to a surface, which contains the already rendered image of the building or NULL when no matching cache entry exists.
 	*/
-	SDL_Surface* getCachedImage (const cBuilding& building);
-	SDL_Surface* getCachedImage (const cVehicle& vehicle);
+	SDL_Surface* getCachedImage (const cBuilding& building, double zoom);
+	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map);
 	/**
 	* This method creates a new chace entry, when there is space in the cache.
 	* When there is no free space, an old entry is reused.
 	* When there is no free space and no old entries, NULL is returned.
 	* @return a surface to which the building has to be drawn, after calling this function. Returns NULL when the cache is full.
 	*/
-	SDL_Surface* createNewEntry (const cBuilding& building);
-	SDL_Surface* createNewEntry (const cVehicle& vehicle);
+	SDL_Surface* createNewEntry (const cBuilding& building, double zoom);
+	SDL_Surface* createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map);
 	/**
 	* Deletes all cache entries.
 	*/
@@ -104,9 +107,10 @@ public:
 	int getCacheHits() const;
 	int getCacheMisses() const;
 	int getNotCached() const;
-
 private:
-	const cGameGUI* gameGUI;
+	std::shared_ptr<cAnimationTimer> animationTimer;
+	const cPlayer* player;
+
 	unsigned int maxCacheSize;
 	unsigned int cacheSize;
 	sDrawingCacheEntry* cachedImages;

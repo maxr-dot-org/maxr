@@ -302,12 +302,12 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	SDL_Rect dest = {0, 0, 0, 0};
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (*this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache ()->getCachedImage (*this, factor);
 	if (drawingSurface == NULL)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = gameGUI.getDCache()->createNewEntry (*this);
+		drawingSurface = gameGUI.getDCache ()->createNewEntry (*this, factor);
 	}
 
 	if (drawingSurface == NULL)
@@ -319,7 +319,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	if (bDraw)
 	{
-		render (&gameGUI, drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
+		render (gameGUI.getAnimationSpeed(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -438,7 +438,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 }
 
-void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	assert (!owner);
 
@@ -489,7 +489,7 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 }
 
-void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
 	SDL_Rect tmp = dest;
 	if (data.isBig)
@@ -516,7 +516,7 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	}
 }
 
-void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha)
+void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
 {
 	// read the size:
 	SDL_Rect src;
@@ -575,7 +575,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 }
 
 
-void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
+void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete) const
 {
 	// Note: when changing something in this function,
 	// make sure to update the caching rules!
@@ -614,9 +614,9 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 
 	int frameNr = dir;
 	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
-		isDisabled() == false && gameGUI)
+		isDisabled() == false)
 	{
-		frameNr = (gameGUI->getAnimationSpeed() % data.hasFrames);
+		frameNr = (animationTime % data.hasFrames);
 	}
 
 	int alpha = 254;
@@ -685,7 +685,7 @@ void cBuilding::CheckNeighbours (const cMap& map)
 //--------------------------------------------------------------------------
 /** Draws the connectors at the building: */
 //--------------------------------------------------------------------------
-void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow)
+void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow) const
 {
 	SDL_Rect src, temp;
 

@@ -23,6 +23,7 @@
 #include "../widget.h"
 #include "../../maxrconfig.h"
 #include "../../utility/signal/signal.h"
+#include "temp/unitdrawingengine.h"
 
 struct SDL_Surface;
 
@@ -81,6 +82,8 @@ private:
 	const cMap* dynamicMap; // may be null
 	const cPlayer* player; // may be null
 
+	cUnitDrawingEngine unitDrawingEngine;
+
 	//
 	// drawing information data
 	//
@@ -88,12 +91,8 @@ private:
 	double internalZoomFactor; // should not be used directly! use getZoomFactor() instead!
 
 	bool shouldDrawSurvey;
-	bool shouldDrawHits;
 	bool shouldDrawScan;
-	bool shouldDrawStatus;
-	bool shouldDrawAmmo;
 	bool shouldDrawGrid;
-	bool shouldDrawColor;
 	bool shouldDrawRange;
 	bool shouldDrawFog;
 
