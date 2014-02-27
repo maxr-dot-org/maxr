@@ -54,12 +54,18 @@ public:
 	bool hasMouseFocus (const cWidget& widget) const;
 
 	void setGame (std::shared_ptr<cGame> game);
+
+	cMouse* getActiveMouse ();
+	cKeyboard* getActiveKeyboard ();
 private:
 	std::stack<std::shared_ptr<cWindow>> modalWindows;
 
 	bool terminate;
 
 	cSignalConnectionManager signalConnectionManager;
+
+	cMouse* activeMouse;
+	cKeyboard* activeKeyboard;
 
 	cWidget* keyFocusWidget;
 	cWidget* mouseFocusWidget;

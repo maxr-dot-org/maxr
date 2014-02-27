@@ -29,6 +29,8 @@
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
 	cWidget (area),
+	surfaceOutdated (true),
+	viewWindowSurfaeOutdated (true),
 	staticMap (std::move (staticMap)),
 	dynamicMap (nullptr),
 	player (nullptr),
@@ -39,9 +41,6 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 {
 	surface = SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0);
 	viewWindowSurface = SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0);
-
-	renewSurface ();
-	renewViewWindowSurface ();
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +60,7 @@ void cMiniMapWidget::setViewWindow (const cBox<cPosition>& mapViewWindow_)
 {
 	mapViewWindow = mapViewWindow_;
 
-	renewViewWindowSurface ();
+	viewWindowSurfaeOutdated = true;
 
 	updateOffset ();
 }
@@ -71,7 +70,7 @@ void cMiniMapWidget::setAttackUnitsUnly (bool attackUnitsOnly_)
 {
 	attackUnitsOnly = attackUnitsOnly_;
 
-	renewSurface ();
+	surfaceOutdated = true;
 }
 
 //------------------------------------------------------------------------------
@@ -81,9 +80,9 @@ void cMiniMapWidget::setZoomFactor (int zoomFactor_)
 
 	if (!updateOffset ())
 	{
-		renewSurface ();
+		surfaceOutdated = true;
 	}
-	renewViewWindowSurface ();
+	viewWindowSurfaeOutdated = true;
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +107,7 @@ bool cMiniMapWidget::updateOffset ()
 
 	if (oldOffset != offset)
 	{
-		renewSurface ();
+		surfaceOutdated = true;
 		return true;
 	}
 	return false;
@@ -134,6 +133,9 @@ cPosition cMiniMapWidget::computeMapPosition (const cPosition& screenPosition)
 //------------------------------------------------------------------------------
 void cMiniMapWidget::draw ()
 {
+	if(surfaceOutdated) renewSurface ();
+	if(viewWindowSurfaeOutdated) renewViewWindowSurface ();
+
 	if (surface)
 	{
 		auto position = getArea ().toSdlRect ();
@@ -187,6 +189,8 @@ void cMiniMapWidget::renewSurface ()
 	drawLandscape ();
 	drawFog ();
 	drawUnits ();
+
+	surfaceOutdated = false;
 }
 
 //------------------------------------------------------------------------------
@@ -343,4 +347,5 @@ void cMiniMapWidget::renewViewWindowSurface ()
 			minimap[end.y () * getSize ().x () + x] = MINIMAP_COLOR;
 		}
 	}
+	viewWindowSurfaeOutdated = false;
 }

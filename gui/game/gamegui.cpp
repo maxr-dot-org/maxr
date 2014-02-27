@@ -17,6 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <sstream>
+#include <iomanip>
+
 #include "gamegui.h"
 #include "hud.h"
 #include "gamemapwidget.h"
@@ -26,10 +29,17 @@
 #include "../menu/dialogs/dialogpreferences.h"
 
 #include "../../keys.h"
+#include "../../player.h"
+#include "../../map.h"
+#include "../../vehicles.h"
+#include "../../buildings.h"
+#include "../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap) :
-	cWindow (nullptr)
+cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
+	cWindow (nullptr),
+	staticMap (std::move (staticMap_)),
+	dynamicMap (nullptr)
 {
 	auto hudOwning = std::make_unique<cHud> ();
 
@@ -44,7 +54,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap) :
 	signalConnectionManager.connect (hud->preferencesClicked, std::bind (&cNewGameGUI::showPreferencesDialog, this));
 	signalConnectionManager.connect (hud->filesClicked, std::bind (&cNewGameGUI::showFilesMenu, this));
 
-	signalConnectionManager.connect (hud->zoomChanged, [&](){ gameMap->setZoomFactor (hud->getZoomFactor ()); });
+	signalConnectionManager.connect (hud->zoomChanged, [&](){ gameMap->setZoomFactor (hud->getZoomFactor (), true); });
 
 	signalConnectionManager.connect (hud->surveyToggled, [&](){ gameMap->setDrawSurvey (hud->getSurveyActive ()); });
 	signalConnectionManager.connect (hud->hitsToggled, [&](){ gameMap->setDrawHits (hud->getHitsActive ()); });
@@ -58,22 +68,66 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap) :
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 
+	using namespace std::placeholders;
+
 	signalConnectionManager.connect (gameMap->scrolled, std::bind(&cNewGameGUI::resetMiniMapViewWindow, this));
 	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cNewGameGUI::resetMiniMapViewWindow, this));
+	signalConnectionManager.connect (gameMap->tileClicked, std::bind (&cNewGameGUI::handleTileClicked, this, _1));
+	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudCoordinates, this, _1));
+	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudUnitName, this, _1));
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt(position); });
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::setDynamicMap (const cMap* dynamicMap)
+void cNewGameGUI::updateHudCoordinates (const cPosition& tilePosition)
 {
+	std::stringstream coordsString;
+	coordsString << std::setw (3) << std::setfill ('0') << tilePosition.x () << "-" << std::setw (3) << std::setfill ('0') << tilePosition.y ();
+	hud->setCoordinatesText (coordsString.str ());
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::updateHudUnitName (const cPosition& tilePosition)
+{
+	std::string unitNameString;
+	if (dynamicMap && (!player || player->canSeeAt (tilePosition)))
+	{
+		const auto field = dynamicMap->getField (tilePosition);
+
+		cUnit* unit = nullptr;
+		if (field.getVehicle () != nullptr) unit = field.getVehicle ();
+		else if (field.getPlane () != nullptr) unit = field.getPlane ();
+		else if (field.getTopBuilding () != nullptr) unit = field.getTopBuilding ();
+		else if (field.getBaseBuilding () != nullptr && field.getBaseBuilding ()->owner) unit = field.getBaseBuilding ();
+
+		if (unit != nullptr)
+		{
+			// FIXME: string may be to long.
+			unitNameString = unit->getDisplayName () + " (" + unit->owner->getName () + ")";
+		}
+	}
+	hud->setUnitNameText (unitNameString);
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::handleTileClicked (const cPosition& tilePosition)
+{
+
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::setDynamicMap (const cMap* dynamicMap_)
+{
+	dynamicMap = dynamicMap_;
 	gameMap->setDynamicMap (dynamicMap);
 	miniMap->setDynamicMap (dynamicMap);
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::setPlayer (const cPlayer* player)
+void cNewGameGUI::setPlayer (const cPlayer* player_)
 {
+	player = player_;
 	gameMap->setPlayer (player);
 	miniMap->setPlayer (player);
 }
@@ -81,23 +135,43 @@ void cNewGameGUI::setPlayer (const cPlayer* player)
 //------------------------------------------------------------------------------
 bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse)
 {
-	return false;
+	return cWindow::handleMouseMoved (application, mouse);
 }
 
 //------------------------------------------------------------------------------
 bool cNewGameGUI::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
 {
+	const auto oldZoomFactor = gameMap->getZoomFactor ();
+	bool consumed = false;
 	if (amount.y () > 0)
 	{
 		hud->decreaseZoomFactor (0.05);
-		return true;
+		consumed = true;
 	}
 	else if (amount.y () < 0)
 	{
 		hud->increaseZoomFactor (0.05);
-		return true;
+		consumed = true;
 	}
-	return false;
+
+	// scroll so that the zoom has been performed to center the mouse
+	const auto newZoomFactor = gameMap->getZoomFactor ();
+	if (newZoomFactor != oldZoomFactor)
+	{
+		cPosition scrollOffset;
+
+		const auto oldScreenPixelX = gameMap->getSize ().x () / oldZoomFactor;
+		const auto newScreenPixelX = gameMap->getSize ().x () / newZoomFactor;
+		scrollOffset.x () = (int)((oldScreenPixelX - newScreenPixelX) * (mouse.getPosition ().x () - gameMap->getPosition ().x ()) / gameMap->getSize ().x () - (oldScreenPixelX - newScreenPixelX) / 2);
+
+		const auto oldScreenPixelY = gameMap->getSize ().y () / oldZoomFactor;
+		const auto newScreenPixelY = gameMap->getSize ().y () / newZoomFactor;
+		scrollOffset.y () = (int)((oldScreenPixelY - newScreenPixelY) * (mouse.getPosition ().y () - gameMap->getPosition ().y ()) / gameMap->getSize ().y () - (oldScreenPixelY - newScreenPixelY) / 2);
+
+		gameMap->scroll (scrollOffset);
+	}
+
+	return consumed;
 }
 
 //------------------------------------------------------------------------------

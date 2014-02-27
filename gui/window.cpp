@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "window.h"
+#include "application.h"
 
 #include "../settings.h"
 #include "../video.h"
@@ -104,6 +105,18 @@ void cWindow::handleDeactivated (cApplication& application)
 cApplication* cWindow::getActiveApplication () const
 {
 	return activeApplication;
+}
+
+//------------------------------------------------------------------------------
+cMouse* cWindow::getActiveMouse ()
+{
+	return activeApplication ? activeApplication->getActiveMouse () : nullptr;
+}
+
+//------------------------------------------------------------------------------
+cKeyboard* cWindow::getActiveKeyboard ()
+{
+	return activeApplication ? activeApplication->getActiveKeyboard () : nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -20,7 +20,7 @@
 #ifndef gui_game_gamemapwidgetH
 #define gui_game_gamemapwidgetH
 
-#include "../widget.h"
+#include "../menu/widgets/clickablewidget.h"
 #include "../../maxrconfig.h"
 #include "../../utility/signal/signal.h"
 #include "temp/unitdrawingengine.h"
@@ -31,7 +31,7 @@ class cStaticMap;
 class cMap;
 class cPlayer;
 
-class cGameMapWidget : public cWidget
+class cGameMapWidget : public cClickableWidget
 {
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap);
@@ -39,7 +39,7 @@ public:
 	void setDynamicMap (const cMap* dynamicMap);
 	void setPlayer (const cPlayer* player);
 
-	void setZoomFactor (double zoomFactor);
+	void setZoomFactor (double zoomFactor, bool center);
 	double getZoomFactor () const;
 
 	/**
@@ -71,8 +71,14 @@ public:
 	cSignal<void ()> scrolled;
 	cSignal<void ()> zoomFactorChanged;
 
+	cSignal<void (const cPosition&)> tileClicked;
+	cSignal<void (const cPosition&)> tileUnderMouseChanged;
+
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
 protected:
+	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	//
@@ -89,6 +95,8 @@ private:
 	//
 	cPosition pixelOffset;
 	double internalZoomFactor; // should not be used directly! use getZoomFactor() instead!
+
+	cPosition lastMouseOverTilePosition;
 
 	bool shouldDrawSurvey;
 	bool shouldDrawScan;
@@ -113,6 +121,8 @@ private:
 
 	void drawResources ();
 
+	void drawUnitCircles ();
+
 	//
 	// position handling methods
 	//
@@ -128,6 +138,8 @@ private:
 	std::pair<cPosition, cPosition> computeTileDrawingRange () const;
 
 	SDL_Rect computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex);
+
+	cPosition getMapTilePosition (const cPosition& pixelPosition);
 };
 
 

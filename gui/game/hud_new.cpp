@@ -90,10 +90,10 @@ cHud::cHud ()
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed")));
 
-	auto coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition ().y () - 18), cPosition (265 + 64, getEndPosition ().y () - 18 + 10)), "Test1", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	auto unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition ().y () - 18), cPosition (343 + 212, getEndPosition ().y () - 18 + 10)), "Test2", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	auto turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "Test3", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	auto timeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10)), "Test4", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition ().y () - 18), cPosition (265 + 64, getEndPosition ().y () - 18 + 10)), "Test1", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition ().y () - 18), cPosition (343 + 212, getEndPosition ().y () - 18 + 10)), "Test2", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "Test3", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	timeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10)), "Test4", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (20, 275), cPosition (20 + 130, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));
 	signalConnectionManager.connect (zoomSlider->valueChanged, [&](){ zoomChanged (); });
@@ -303,6 +303,18 @@ bool cHud::getFogActive () const
 bool cHud::getMiniMapZoomFactorActive () const
 {
 	return miniMapZoomFactorButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setCoordinatesText (const std::string& text)
+{
+	coordsLabel->setText (text);
+}
+
+//------------------------------------------------------------------------------
+void cHud::setUnitNameText (const std::string& text)
+{
+	unitNameLabel->setText (text);
 }
 
 //------------------------------------------------------------------------------

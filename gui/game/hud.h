@@ -28,6 +28,7 @@
 class cPushButton;
 class cCheckBox;
 class cSlider;
+class cLabel;
 
 class cHud : public cWidget
 {
@@ -62,6 +63,9 @@ public:
 	bool getFogActive () const;
 
 	bool getMiniMapZoomFactorActive () const;
+
+	void setCoordinatesText (const std::string& text);
+	void setUnitNameText (const std::string& text);
 
 	cSignal<void ()> zoomChanged;
 
@@ -99,6 +103,11 @@ private:
 	cCheckBox* fogButton;
 
 	cCheckBox* miniMapZoomFactorButton;
+
+	cLabel* coordsLabel;
+	cLabel* unitNameLabel;
+	cLabel* turnLabel;
+	cLabel* timeLabel;
 
 	void handleZoomPlusClicked ();
 	void handleZoomMinusClicked ();

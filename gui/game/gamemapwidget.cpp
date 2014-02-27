@@ -27,15 +27,17 @@
 #include "../../vehicles.h"
 #include "../../buildings.h"
 #include "../../utility/indexiterator.h"
+#include "../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_) :
-	cWidget (area),
+	cClickableWidget (area),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	player (nullptr),
 	pixelOffset (0, 0),
 	internalZoomFactor (1.),
+	lastMouseOverTilePosition (-1, -1),
 	shouldDrawSurvey (false),
 	shouldDrawScan (false),
 	shouldDrawGrid (false),
@@ -95,7 +97,7 @@ void cGameMapWidget::draw ()
 
 	//SDL_SetClipRect (cVideo::buffer, nullptr);
 
-	//drawUnitCircles ();
+	drawUnitCircles ();
 
 	//if (selectedUnit && unitMenuActive) drawMenu (*selectedUnit);
 
@@ -107,16 +109,37 @@ void cGameMapWidget::draw ()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setZoomFactor (double zoomFactor_)
+void cGameMapWidget::setZoomFactor (double zoomFactor_, bool center)
 {
+	const auto oldZoom = getZoomFactor();
+
 	internalZoomFactor = zoomFactor_;
 
 	internalZoomFactor = std::max (internalZoomFactor, computeMinimalZoomFactor ());
 	internalZoomFactor = std::min (1., internalZoomFactor);
 
-	zoomFactorChanged ();
+	const auto newZoom = getZoomFactor ();
 
-	scroll (cPosition (0, 0)); // revalidates current offset
+	if (oldZoom != newZoom)
+	{
+		zoomFactorChanged ();
+
+		cPosition scrollOffset (0, 0);
+		if (center)
+		{
+			const auto oldScreenPixelX = getSize ().x () / oldZoom;
+			const auto newScreenPixelX = getSize ().x () / newZoom;
+			scrollOffset.x () = (int)((oldScreenPixelX - newScreenPixelX) / 2);
+
+			const auto oldScreenPixelY = getSize ().y () / oldZoom;
+			const auto newScreenPixelY = getSize ().y () / newZoom;
+			scrollOffset.y () = (int)((oldScreenPixelY - newScreenPixelY) / 2);
+		}
+
+		// calling scroll here even if scrollOffset = (0,0) is important
+		// because this will re validate the offset.
+		scroll (scrollOffset);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -190,6 +213,14 @@ double cGameMapWidget::getZoomFactor () const
 //------------------------------------------------------------------------------
 void cGameMapWidget::scroll (const cPosition& offset)
 {
+	const auto activeMouse = getActiveMouse ();
+
+	cPosition oldTileUnderMouse(-1, -1);
+	if (activeMouse && getArea().withinOrTouches(activeMouse->getPosition()))
+	{
+		oldTileUnderMouse = getMapTilePosition (activeMouse->getPosition ());
+	}
+
 	auto oldPixelOffset = pixelOffset;
 
 	pixelOffset += offset;
@@ -202,7 +233,17 @@ void cGameMapWidget::scroll (const cPosition& offset)
 	pixelOffset.x () = std::min (maximalPixelOffset.x (), pixelOffset.x ());
 	pixelOffset.y () = std::min (maximalPixelOffset.y (), pixelOffset.y ());
 
-	if (oldPixelOffset != pixelOffset) scrolled ();
+	if (oldPixelOffset != pixelOffset)
+	{
+		cPosition newTileUnderMouse (-1, -1);
+		if (activeMouse && getArea ().withinOrTouches (activeMouse->getPosition ()))
+		{
+			newTileUnderMouse = getMapTilePosition (activeMouse->getPosition ());
+		}
+
+		if (newTileUnderMouse != oldTileUnderMouse) tileUnderMouseChanged (newTileUnderMouse);
+		scrolled ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -602,6 +643,159 @@ void cGameMapWidget::drawResources ()
 }
 
 //------------------------------------------------------------------------------
+void cGameMapWidget::drawUnitCircles ()
+{
+	//SDL_Rect clipRect = {HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX () - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY () - HUD_TOTAL_HIGHT)};
+	//SDL_SetClipRect (cVideo::buffer, &clipRect);
+
+	//cVehicle* selectedVehicle = getSelectedVehicle ();
+	//cBuilding* selectedBuilding = getSelectedBuilding ();
+	//const cPlayer& player = client->getActivePlayer ();
+
+	//if (selectedVehicle && selectedUnit->isDisabled () == false)
+	//{
+	//	cVehicle& v = *selectedVehicle;
+	//	const bool movementOffset = !v.IsBuilding && !v.IsClearing;
+	//	const int spx = getScreenPosX (v, movementOffset);
+	//	const int spy = getScreenPosY (v, movementOffset);
+	//	if (scanChecked ())
+	//	{
+	//		if (v.data.isBig)
+	//		{
+	//			drawCircle (spx + getTileSize (), spy + getTileSize (), v.data.scan * getTileSize (), SCAN_COLOR, cVideo::buffer);
+	//		}
+	//		else
+	//		{
+	//			drawCircle (spx + getTileSize () / 2, spy + getTileSize () / 2, v.data.scan * getTileSize (), SCAN_COLOR, cVideo::buffer);
+	//		}
+	//	}
+	//	if (rangeChecked ())
+	//	{
+	//		if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize () / 2, spy + getTileSize () / 2, v.data.range * getTileSize () + 2, RANGE_AIR_COLOR, cVideo::buffer);
+	//		else drawCircle (spx + getTileSize () / 2, spy + getTileSize () / 2, v.data.range * getTileSize () + 1, RANGE_GROUND_COLOR, cVideo::buffer);
+	//	}
+	//	if (v.owner == &player &&
+	//		(
+	//		(v.IsBuilding && v.BuildRounds == 0) ||
+	//		(v.IsClearing && v.ClearingRounds == 0)
+	//		) && !v.BuildPath)
+	//	{
+	//		const cMap& map = *client->getMap ();
+
+	//		if (v.data.isBig)
+	//		{
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize (), spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX, v.PosY - 1)) drawExitPoint (spx, spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize (), spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX + 2, v.PosY - 1)) drawExitPoint (spx + getTileSize () * 2, spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize (), spy);
+	//			if (map.possiblePlace (v, v.PosX + 2, v.PosY)) drawExitPoint (spx + getTileSize () * 2, spy);
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize (), spy + getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX + 2, v.PosY + 1)) drawExitPoint (spx + getTileSize () * 2, spy + getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY + 2)) drawExitPoint (spx - getTileSize (), spy + getTileSize () * 2);
+	//			if (map.possiblePlace (v, v.PosX, v.PosY + 2)) drawExitPoint (spx, spy + getTileSize () * 2);
+	//			if (map.possiblePlace (v, v.PosX + 1, v.PosY + 2)) drawExitPoint (spx + getTileSize (), spy + getTileSize () * 2);
+	//			if (map.possiblePlace (v, v.PosX + 2, v.PosY + 2)) drawExitPoint (spx + getTileSize () * 2, spy + getTileSize () * 2);
+	//		}
+	//		else
+	//		{
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize (), spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX, v.PosY - 1)) drawExitPoint (spx, spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize (), spy - getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize (), spy);
+	//			if (map.possiblePlace (v, v.PosX + 1, v.PosY)) drawExitPoint (spx + getTileSize (), spy);
+	//			if (map.possiblePlace (v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize (), spy + getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX, v.PosY + 1)) drawExitPoint (spx, spy + getTileSize ());
+	//			if (map.possiblePlace (v, v.PosX + 1, v.PosY + 1)) drawExitPoint (spx + getTileSize (), spy + getTileSize ());
+	//		}
+	//	}
+	//	if (mouseInputMode == placeBand)
+	//	{
+	//		if (v.BuildingTyp.getUnitDataOriginalVersion ()->isBig)
+	//		{
+	//			SDL_Rect dest;
+	//			dest.x = HUD_LEFT_WIDTH - (int)(offX * getZoom ()) + getTileSize () * v.BandX;
+	//			dest.y = HUD_TOP_HIGHT - (int)(offY * getZoom ()) + getTileSize () * v.BandY;
+	//			CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getTileSize () / 64.0f);
+	//			SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
+	//		}
+	//		else
+	//		{
+	//			const auto mouseTilePosition = getTilePosition (cMouse::getInstance ().getPosition ());
+	//			const int x = mouseTilePosition.x ();
+	//			const int y = mouseTilePosition.y ();
+	//			if (x == v.PosX || y == v.PosY)
+	//			{
+	//				SDL_Rect dest;
+	//				dest.x = HUD_LEFT_WIDTH - (int)(offX * getZoom ()) + getTileSize () * x;
+	//				dest.y = HUD_TOP_HIGHT - (int)(offY * getZoom ()) + getTileSize () * y;
+	//				CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getTileSize () / 64.0f);
+	//				SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
+	//				v.BandX = x;
+	//				v.BandY = y;
+	//			}
+	//			else
+	//			{
+	//				v.BandX = v.PosX;
+	//				v.BandY = v.PosY;
+	//			}
+	//		}
+	//	}
+	//	if (mouseInputMode == activateVehicle && v.owner == &player)
+	//	{
+	//		v.DrawExitPoints (v.storedUnits[vehicleToActivate]->data, *this);
+	//	}
+	//}
+	//else if (selectedBuilding && selectedUnit->isDisabled () == false)
+	//{
+	//	const int spx = getScreenPosX (*selectedBuilding);
+	//	const int spy = getScreenPosY (*selectedBuilding);
+	//	if (scanChecked ())
+	//	{
+	//		if (selectedBuilding->data.isBig)
+	//		{
+	//			drawCircle (spx + getTileSize (),
+	//						spy + getTileSize (),
+	//						selectedBuilding->data.scan * getTileSize (), SCAN_COLOR, cVideo::buffer);
+	//		}
+	//		else
+	//		{
+	//			drawCircle (spx + getTileSize () / 2,
+	//						spy + getTileSize () / 2,
+	//						selectedBuilding->data.scan * getTileSize (), SCAN_COLOR, cVideo::buffer);
+	//		}
+	//	}
+	//	if (rangeChecked () && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
+	//	{
+	//		drawCircle (spx + getTileSize () / 2,
+	//					spy + getTileSize () / 2,
+	//					selectedBuilding->data.range * getTileSize () + 2, RANGE_GROUND_COLOR, cVideo::buffer);
+	//	}
+	//	if (rangeChecked () && (selectedBuilding->data.canAttack & TERRAIN_AIR))
+	//	{
+	//		drawCircle (spx + getTileSize () / 2,
+	//					spy + getTileSize () / 2,
+	//					selectedBuilding->data.range * getTileSize () + 2, RANGE_AIR_COLOR, cVideo::buffer);
+	//	}
+
+	//	if (selectedBuilding->BuildList.empty () == false &&
+	//		!selectedBuilding->IsWorking &&
+	//		selectedBuilding->BuildList[0].metall_remaining <= 0 &&
+	//		selectedBuilding->owner == &player)
+	//	{
+	//		selectedBuilding->DrawExitPoints (*selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion (), *this);
+	//	}
+	//	if (mouseInputMode == activateVehicle && selectedBuilding->owner == &player)
+	//	{
+	//		selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->data, *this);
+	//	}
+	//}
+	//drawLockList (client->getActivePlayer ());
+
+	//SDL_SetClipRect (cVideo::buffer, NULL);
+}
+
+//------------------------------------------------------------------------------
 SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex)
 {
 	const cPosition startDrawPosition = getPosition () + (tileIndex - tileStartIndex) * zoomedTileSize - zoomedStartTilePixelOffset;
@@ -609,4 +803,45 @@ SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize
 	SDL_Rect dest = {startDrawPosition.x (), startDrawPosition.y (), zoomedTileSize.x (), zoomedTileSize.y ()};
 
 	return dest;
+}
+
+//------------------------------------------------------------------------------
+cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition)
+{
+	assert (getArea ().withinOrTouches (pixelPosition));
+
+	const auto zoomedTileSize = getZoomedTileSize ();
+
+	const auto x = (int)((pixelPosition.x () - getPosition ().x () + pixelOffset.x () * getZoomFactor ()) / zoomedTileSize.x ());
+	const auto y = (int)((pixelPosition.y () - getPosition ().y () + pixelOffset.y () * getZoomFactor ()) / zoomedTileSize.y ());
+
+	const cPosition tilePosition (std::min (x, staticMap->getSizeNew ().x ()), std::min(y, staticMap->getSizeNew ().y ()));
+
+	return tilePosition;
+}
+
+//------------------------------------------------------------------------------
+bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse)
+{
+	auto consumed = cClickableWidget::handleMouseMoved (application, mouse);
+
+	if (getArea ().withinOrTouches (mouse.getPosition ()))
+	{
+		const auto tilePosition = getMapTilePosition (mouse.getPosition ());
+		if (tilePosition != lastMouseOverTilePosition)
+		{
+			tileUnderMouseChanged (tilePosition);
+			lastMouseOverTilePosition = tilePosition;
+		}
+	}
+
+	return consumed;
+}
+
+//------------------------------------------------------------------------------
+bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+{
+	const auto tilePosition = getMapTilePosition (mouse.getPosition());
+	tileClicked (tilePosition);
+	return true;
 }

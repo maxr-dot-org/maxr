@@ -110,6 +110,9 @@ protected:
 	 */
 	cApplication* getActiveApplication () const;
 
+	virtual cMouse* getActiveMouse () MAXR_OVERRIDE_FUNCTION;
+	virtual cKeyboard* getActiveKeyboard () MAXR_OVERRIDE_FUNCTION;
+
 	/**
 	 * Sets a new background surface image.
 	 * The window will be resized to the images size.
@@ -126,6 +129,7 @@ protected:
 	 * @return The background image or null if there is non.
 	 */
 	SDL_Surface* getSurface ();
+
 private:
 	/**
 	 * Background surface of the window.

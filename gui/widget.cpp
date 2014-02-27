@@ -304,6 +304,18 @@ bool cWidget::hasChildren () const
 }
 
 //------------------------------------------------------------------------------
+cMouse* cWidget::getActiveMouse ()
+{
+	return parent ? parent->getActiveMouse () : nullptr;
+}
+
+//------------------------------------------------------------------------------
+cKeyboard* cWidget::getActiveKeyboard ()
+{
+	return parent ? parent->getActiveKeyboard () : nullptr;
+}
+
+//------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
 	const bool debugDrawFrame = true;

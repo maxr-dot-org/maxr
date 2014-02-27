@@ -130,6 +130,9 @@ protected:
 
 	// TODO: find some suitable place for this function!
 	static void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, Uint32 color);
+
+	virtual cMouse* getActiveMouse ();
+	virtual cKeyboard* getActiveKeyboard ();
 private:
 	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
 	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;

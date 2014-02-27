@@ -56,7 +56,9 @@ protected:
 
 private:
 	AutoSurface surface;
+	bool surfaceOutdated;
 	AutoSurface viewWindowSurface;
+	bool viewWindowSurfaeOutdated;
 
 	std::shared_ptr<const cStaticMap> staticMap;
 	const cMap* dynamicMap; // may be null

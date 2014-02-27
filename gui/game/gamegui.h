@@ -49,6 +49,10 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	std::shared_ptr<const cStaticMap> staticMap;
+	const cMap* dynamicMap;
+	const cPlayer* player;
+
 	cHud* hud;
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
@@ -57,6 +61,10 @@ private:
 
 	void showFilesMenu ();
 	void showPreferencesDialog ();
+
+	void updateHudCoordinates (const cPosition& tilePosition);
+	void updateHudUnitName (const cPosition& tilePosition);
+	void handleTileClicked (const cPosition& tilePosition);
 };
 
 #endif // gui_game_gameguiH

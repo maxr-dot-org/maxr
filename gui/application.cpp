@@ -34,7 +34,9 @@
 //------------------------------------------------------------------------------
 cApplication::cApplication () :
 	keyFocusWidget (nullptr),
-	mouseFocusWidget (nullptr)
+	mouseFocusWidget (nullptr),
+	activeMouse (nullptr),
+	activeKeyboard (nullptr)
 	//underMouseWidget (nullptr)
 {}
 
@@ -168,6 +170,18 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
+cMouse* cApplication::getActiveMouse ()
+{
+	return activeMouse;
+}
+
+//------------------------------------------------------------------------------
+cKeyboard* cApplication::getActiveKeyboard ()
+{
+	return activeKeyboard;
+}
+
+//------------------------------------------------------------------------------
 void cApplication::setGame (std::shared_ptr<cGame> game_)
 {
 	game = game_;
@@ -212,6 +226,8 @@ void cApplication::registerMouse (cMouse& mouse)
 	signalConnectionManager.connect (mouse.released, std::bind (&cApplication::mouseReleased, this, _1, _2));
 	signalConnectionManager.connect (mouse.wheelMoved, std::bind (&cApplication::mouseWheelMoved, this, _1, _2));
 	signalConnectionManager.connect (mouse.moved, std::bind (&cApplication::mouseMoved, this, _1));
+
+	if (activeMouse == nullptr) activeMouse = &mouse;
 }
 
 //------------------------------------------------------------------------------
@@ -222,6 +238,8 @@ void cApplication::registerKeyboard (cKeyboard& keyboard)
 	signalConnectionManager.connect (keyboard.keyPressed, std::bind (&cApplication::keyPressed, this, _1, _2));
 	signalConnectionManager.connect (keyboard.keyReleased, std::bind (&cApplication::keyReleased, this, _1, _2));
 	signalConnectionManager.connect (keyboard.textEntered, std::bind (&cApplication::textEntered, this, _1, _2));
+
+	if (activeKeyboard == nullptr) activeKeyboard = &keyboard;
 }
 
 //------------------------------------------------------------------------------

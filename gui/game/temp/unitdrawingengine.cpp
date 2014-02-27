@@ -219,7 +219,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		DrawRectangle (cVideo::buffer, d, color, 3);
 	}
 
-#if 1
+#if 0
 	// disabled color-frame for buildings
 	//   => now it's original game behavior - see ticket #542 (GER) = FIXED
 	// but maybe as setting interresting
