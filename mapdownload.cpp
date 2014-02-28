@@ -360,5 +360,5 @@ void cMapSender::sendMsg (cNetMessage& msg)
 	msg.iPlayerNr = -1;
 	network->sendTo (toSocket, msg.iLength, msg.serialize());
 
-	Log.write ("MapSender: <-- " + msg.getTypeAsString() + ", Hexdump: " + msg.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("MapSender: --> " + msg.getTypeAsString() + ", Hexdump: " + msg.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 }

@@ -452,7 +452,7 @@ void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sPlayer* pla
 	if (player == NULL) network.send (message->iLength, message->serialize());
 	else network.sendTo (player->getSocketIndex(), message->iLength, message->serialize());
 
-	Log.write ("Menu: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	delete message;
 }
 
@@ -3295,7 +3295,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessag
 //------------------------------------------------------------------------------
 void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 {
-	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Menu: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
 	{
@@ -3722,7 +3722,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 //------------------------------------------------------------------------------
 void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 {
-	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Menu: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
 	{

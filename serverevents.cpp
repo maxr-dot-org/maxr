@@ -689,7 +689,7 @@ void sendRequestIdentification (cTCP& network, int iSocket)
 {
 	cNetMessage message (GAME_EV_REQ_RECON_IDENT);
 	message.pushInt16 (iSocket);
-	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Server: --> " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	network.sendTo (iSocket, message.iLength, message.serialize());
 }
 
@@ -699,7 +699,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber)
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
 	message.pushBool (false);
 
-	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Server: --> " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	server.network->sendTo (socketNumber, message.iLength, message.serialize());
 }
 
@@ -724,7 +724,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 
 	message.pushBool (true);
 
-	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Server: --> " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	server.network->sendTo (socketNumber, message.iLength, message.serialize());
 }
 

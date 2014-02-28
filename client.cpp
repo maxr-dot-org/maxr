@@ -180,7 +180,12 @@ void cClient::sendNetMessage (cNetMessage* message) const
 	message->iPlayerNr = ActivePlayer->getNr();
 
 	if (message->iType != NET_GAME_TIME_CLIENT)
-		Log.write ("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	{
+		Log.write ("Client: " + getActivePlayer().getName() + " --> "
+			+ message->getTypeAsString()
+			+ ", gameTime:" + iToStr (this->gameTimer.gameTime)
+			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 	if (server)
 	{
@@ -1781,7 +1786,12 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 {
 	if (message->iType != NET_GAME_TIME_SERVER)
-		Log.write ("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	{
+		Log.write ("Client: " + getActivePlayer().getName() + " <-- "
+			+ message->getTypeAsString()
+			+ ", gameTime:" + iToStr (this->gameTimer.gameTime)
+			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 	switch (message->iType)
 	{

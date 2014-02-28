@@ -232,8 +232,12 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
 	message->iPlayerNr = iPlayerNum;
 	message->serialize();
 	if (message->iType != NET_GAME_TIME_SERVER)
-		Log.write ("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-
+	{
+		Log.write ("Server: --> Player " + iToStr (iPlayerNum) + " "
+			+ message->getTypeAsString()
+			+ ", gameTime:" + iToStr (this->gameTimer.gameTime)
+			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 	if (iPlayerNum == -1)
 	{
 		if (network)
@@ -2129,7 +2133,12 @@ void cServer::handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 int cServer::handleNetMessage (cNetMessage* message)
 {
 	if (message->iType != NET_GAME_TIME_CLIENT)
-		Log.write ("Server: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	{
+		Log.write ("Server: <-- Player " + iToStr (message->iPlayerNr) + " "
+			+ message->getTypeAsString()
+			+ ", gameTime:" + iToStr (this->gameTimer.gameTime)
+			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 	switch (message->iType)
 	{
