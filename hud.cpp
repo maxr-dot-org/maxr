@@ -2378,11 +2378,11 @@ void cGameGUI::updateUnderMouseObject(const cMouse& mouse)
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	if(mouse.getCursorType() == eMouseCursorType::Steal && selectedVehicle)
 	{
-		selectedVehicle->drawCommandoCursor (*this, x, y, true);
+		//selectedVehicle->drawCommandoCursor (*this, x, y, true);
 	}
 	else if(mouse.getCursorType() == eMouseCursorType::Disable && selectedVehicle)
 	{
-		selectedVehicle->drawCommandoCursor (*this, x, y, false);
+		//selectedVehicle->drawCommandoCursor (*this, x, y, false);
 	}
 	if (overUnitField->getVehicle() != NULL)
 	{
@@ -2557,14 +2557,14 @@ void cGameGUI::updateMouseCursor()
 	}
 	else if ((selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == &client->getActivePlayer()))
 	{
-		if (overUnitField && selectedUnit->CanTransferTo (mouseMapX, mouseMapY, overUnitField))
-		{
-			mouse.setCursorType(eMouseCursorType::Transfer);
-		}
-		else
-		{
-			mouse.setCursorType(eMouseCursorType::No);
-		}
+		//if (overUnitField && selectedUnit->CanTransferTo (mouseMapX, mouseMapY, overUnitField))
+		//{
+		//	mouse.setCursorType(eMouseCursorType::Transfer);
+		//}
+		//else
+		//{
+		//	mouse.setCursorType(eMouseCursorType::No);
+		//}
 	}
 	else if (!helpActive)
 	{
@@ -2606,7 +2606,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if(mouse.setCursorType(eMouseCursorType::Disable))
 				{
-					selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
+					//selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 				}
 			}
 			else
@@ -2621,7 +2621,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if(mouse.setCursorType(eMouseCursorType::Steal))
 				{
-					selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
+					//selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
 				}
 			}
 			else
@@ -2640,7 +2640,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			if(mouse.setCursorType(eMouseCursorType::Disable))
 			{
-				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
+				//selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 			}
 		}
 		// ... disabled (the) vehicle can be stolen
@@ -2649,7 +2649,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			if(mouse.setCursorType(eMouseCursorType::Steal))
 			{
-				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
+				//selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
 			}
 		}
 		else if (selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
@@ -2682,25 +2682,25 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == muniActive)
 		{
-			if (selectedVehicle->canSupply (*client, mouseMapX, mouseMapY, SUPPLY_TYPE_REARM))
-			{
-				mouse.setCursorType(eMouseCursorType::Muni);
-			}
-			else
-			{
-				mouse.setCursorType(eMouseCursorType::No);
-			}
+			//if (selectedVehicle->canSupply (*client, mouseMapX, mouseMapY, SUPPLY_TYPE_REARM))
+			//{
+			//	mouse.setCursorType(eMouseCursorType::Muni);
+			//}
+			//else
+			//{
+			//	mouse.setCursorType(eMouseCursorType::No);
+			//}
 		}
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == repairActive)
 		{
-			if (selectedVehicle->canSupply (*client, mouseMapX, mouseMapY, SUPPLY_TYPE_REPAIR))
-			{
-				mouse.setCursorType(eMouseCursorType::Repair);
-			}
-			else
-			{
-				mouse.setCursorType(eMouseCursorType::No);
-			}
+			//if (selectedVehicle->canSupply (*client, mouseMapX, mouseMapY, SUPPLY_TYPE_REPAIR))
+			//{
+			//	mouse.setCursorType(eMouseCursorType::Repair);
+			//}
+			//else
+			//{
+			//	mouse.setCursorType(eMouseCursorType::No);
+			//}
 		}
 		else if (overUnitField &&
 				 (

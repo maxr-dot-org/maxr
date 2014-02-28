@@ -60,6 +60,8 @@ enum class ePushButtonType
 	HudPlay,
 	HudStop,
 
+	UnitContextMenu,
+
 	Invisible
 };
 

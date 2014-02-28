@@ -17,44 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_unitselectionH
-#define gui_game_unitselectionH
+#ifndef gui_game_mouseinputmodeH
+#define gui_game_mouseinputmodeH
 
-#include <vector>
-
-#include "../../utility/signal/signal.h"
-
-class cPosition;
-class cMapField;
-class cUnit;
-class cVehicle;
-class cBuilding;
-
-class cUnitSelection
+enum class eNewMouseInputMode
 {
-public:
-	bool selectUnitAt (const cMapField& field, bool base);
-
-	bool selectUnit (cUnit& unit, bool add = false);
-	void deselectUnits ();
-
-	cUnit* getSelectedUnit () const;
-	cVehicle* getSelectedVehicle () const;
-	cBuilding* getSelectedBuilding () const;
-
-	const std::vector<cUnit*>& getSelectedUnits () const;
-	std::vector<cVehicle*> getSelectedVehicles () const;
-	std::vector<cBuilding*> getSelectedBuildings () const;
-
-	size_t getSelectedUnitsCount () const;
-	size_t getSelectedVehiclesCount () const;
-	size_t getSelectedBuildingsCount () const;
-
-	bool isSelected (const cUnit& unit) const;
-
-	cSignal<void ()> selectionChanged;
-private:
-	std::vector<cUnit*> selectedUnits;
+	Default,
+	Attack,
+	PlaceBand,
+	Transfer,
+	Load,
+	SupplyAmmo,
+	Repair,
+	Activate,
+	Disable,
+	Steal,
+	Help
 };
 
-#endif // gui_game_unitselectionH
+#endif // gui_game_mouseinputmodeH

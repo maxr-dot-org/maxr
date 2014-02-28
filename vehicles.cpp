@@ -1225,14 +1225,14 @@ void cVehicle::makeReport ()
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transferred to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
+bool cVehicle::canTransferTo (const cPosition position, const cMapField& overUnitField) const
 {
-	if (isNextTo (x, y) == false)
+	if (isNextTo (position) == false)
 		return false;
 
-	if (OverUnitField->getVehicle())
+	if (overUnitField.getVehicle ())
 	{
-		const cVehicle* v = OverUnitField->getVehicle();
+		const cVehicle* v = overUnitField.getVehicle ();
 
 		if (v == this)
 			return false;
@@ -1248,9 +1248,9 @@ bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 
 		return true;
 	}
-	else if (OverUnitField->getTopBuilding())
+	else if (overUnitField.getTopBuilding ())
 	{
-		const cBuilding* b = OverUnitField->getTopBuilding();
+		const cBuilding* b = overUnitField.getTopBuilding ();
 
 		if (b->owner != this->owner)
 			return false;
@@ -1554,10 +1554,8 @@ void cVehicle::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (const cClient& client, int x, int y, int supplyType) const
+bool cVehicle::canSupply (const cMap& map, int x, int y, int supplyType) const
 {
-	const cMap& map = *client.getMap();
-
 	if (map.isValidPos (x, y) == false) return false;
 
 	cMapField& field = map.fields[map.getOffset (x, y)];
@@ -1671,42 +1669,6 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) c
 	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
 	return true;
-}
-
-//-----------------------------------------------------------------------------
-/** draws the commando-cursors: */
-//-----------------------------------------------------------------------------
-void cVehicle::drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) const
-{
-	cMap& map = *gameGUI.getClient()->getMap();
-	cMapField& field = map.fields[map.getOffset (x, y)];
-	SDL_Surface* sf;
-	const cUnit* unit = 0;
-
-	if (steal)
-	{
-		unit = field.getVehicle();
-		sf = GraphicsData.gfx_Csteal;
-	}
-	else
-	{
-		unit = field.getVehicle();
-		if (unit == 0)
-			unit = field.getTopBuilding();
-		sf = GraphicsData.gfx_Cdisable;
-	}
-
-	SDL_Rect r = {1, 28, 35, 3};
-
-	if (unit == 0)
-	{
-		SDL_FillRect (sf, &r, 0);
-		return;
-	}
-
-	SDL_FillRect (sf, &r, 0x00FF0000);
-	r.w = 35 * calcCommandoChance (unit, steal) / 100;
-	SDL_FillRect (sf, &r, 0x0000FF00);
 }
 
 //-----------------------------------------------------------------------------

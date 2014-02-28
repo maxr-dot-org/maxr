@@ -108,13 +108,13 @@ cApplication* cWindow::getActiveApplication () const
 }
 
 //------------------------------------------------------------------------------
-cMouse* cWindow::getActiveMouse ()
+cMouse* cWindow::getActiveMouse () const
 {
 	return activeApplication ? activeApplication->getActiveMouse () : nullptr;
 }
 
 //------------------------------------------------------------------------------
-cKeyboard* cWindow::getActiveKeyboard ()
+cKeyboard* cWindow::getActiveKeyboard () const
 {
 	return activeApplication ? activeApplication->getActiveKeyboard () : nullptr;
 }

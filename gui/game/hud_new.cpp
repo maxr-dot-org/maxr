@@ -81,7 +81,9 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 	auto playersButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 439), eCheckBoxType::HudPlayers, false, SoundData.SNDHudSwitch));
 
 	auto helpButton = addChild (std::make_unique<cPushButton> (cPosition (20, 250), ePushButtonType::HudHelp));
+	signalConnectionManager.connect (helpButton->clicked, [&](){ helpClicked (); });
 	auto centerButton = addChild (std::make_unique<cPushButton> (cPosition (4, 227), ePushButtonType::HudCenter));
+	signalConnectionManager.connect (centerButton->clicked, [&](){ centerClicked (); });
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
 	auto chatButton = addChild (std::make_unique<cPushButton> (cPosition (51, 252), ePushButtonType::HudChat, lngPack.i18n ("Text~Others~Chat")));

@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "gamemapwidget.h"
+#include "unitcontextmenuwidget.h"
 #include "hud.h"
 #include "../../map.h"
 #include "../../settings.h"
@@ -26,6 +27,9 @@
 #include "../../player.h"
 #include "../../vehicles.h"
 #include "../../buildings.h"
+#include "../../keys.h"
+#include "../../clist.h"
+#include "../../attackJobs.h"
 #include "../../utility/indexiterator.h"
 #include "../../input/mouse/mouse.h"
 
@@ -42,9 +46,55 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	shouldDrawScan (false),
 	shouldDrawGrid (false),
 	shouldDrawRange (false),
-	shouldDrawFog (false)
+	shouldDrawFog (false),
+	mouseInputMode (eNewMouseInputMode::Default)
 {
 	assert (staticMap != nullptr);
+
+	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget> ());
+	unitMenu->disable ();
+	unitMenu->hide ();
+
+	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
+
+	scrolled.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
+	scrolled.connect (std::bind (&cGameMapWidget::updateUnitMenuPosition, this));
+
+	unitSelection.selectionChanged.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitSelection.selectionChanged.connect (std::bind (&cGameMapWidget::setMouseInputMode, this, eNewMouseInputMode::Default));
+
+	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Attack));
+	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Transfer));
+	unitMenu->loadToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Load));
+	unitMenu->supplyAmmoToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::SupplyAmmo));
+	unitMenu->repairToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Repair));
+	unitMenu->sabotageToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Disable));
+	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Steal));
+
+	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->buildClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->distributeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->autoToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->stopClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->removeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->manualFireToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->sentryToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->activateClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->loadToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->researchClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->buyUpgradesClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->upgradeThisClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->upgradeAllClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->selfDestroyClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->supplyAmmoToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->repairToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->layMinesToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->collectMinesToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->sabotageToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->infoClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->doneClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 }
 
 //------------------------------------------------------------------------------
@@ -57,12 +107,6 @@ void cGameMapWidget::setDynamicMap (const cMap* dynamicMap_)
 void cGameMapWidget::setPlayer (const cPlayer* player_)
 {
 	player = player_;
-}
-
-//------------------------------------------------------------------------------
-void cGameMapWidget::setUnitSelection (const cUnitSelection* unitSelection_)
-{
-	unitSelection = unitSelection_;
 }
 
 //------------------------------------------------------------------------------
@@ -84,8 +128,8 @@ void cGameMapWidget::draw ()
 	drawConnectors ();
 	drawPlanes ();
 
-	//cVehicle* selectedVehicle = getSelectedVehicle ();
-	if (shouldDrawSurvey/* || (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer () && selectedVehicle->data.canSurvey)*/)
+	auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->data.canSurvey))
 	{
 		drawResources ();
 	}
@@ -99,11 +143,9 @@ void cGameMapWidget::draw ()
 
 	//drawSelectionBox (zoomOffX, zoomOffY);
 
-	//SDL_SetClipRect (cVideo::buffer, nullptr);
+	SDL_SetClipRect (cVideo::buffer, nullptr);
 
 	drawUnitCircles ();
-
-	//if (selectedUnit && unitMenuActive) drawMenu (*selectedUnit);
 
 	drawEffects (false);
 
@@ -140,8 +182,8 @@ void cGameMapWidget::setZoomFactor (double zoomFactor_, bool center)
 			scrollOffset.y () = (int)((oldScreenPixelY - newScreenPixelY) / 2);
 		}
 
-		// calling scroll here even if scrollOffset = (0,0) is important
-		// because this will re validate the offset.
+		// calling scroll here - even if scrollOffset = (0,0) - is important
+		// because this will re-validate the offset.
 		scroll (scrollOffset);
 	}
 }
@@ -201,6 +243,12 @@ void cGameMapWidget::setDrawFog (bool drawFog_)
 }
 
 //------------------------------------------------------------------------------
+void cGameMapWidget::toggleHelpMode ()
+{
+	toggleMouseInputMode (eNewMouseInputMode::Help);
+}
+
+//------------------------------------------------------------------------------
 cBox<cPosition> cGameMapWidget::getDisplayedMapArea () const
 {
 	auto tileDrawingRange = computeTileDrawingRange ();
@@ -212,6 +260,57 @@ cBox<cPosition> cGameMapWidget::getDisplayedMapArea () const
 double cGameMapWidget::getZoomFactor () const
 {
 	return (double)getZoomedTileSize ().x () / cStaticMap::tilePixelWidth; // should make no difference if we use y instead
+}
+
+//------------------------------------------------------------------------------
+cUnitSelection& cGameMapWidget::getUnitSelection ()
+{
+	return unitSelection;
+}
+
+//------------------------------------------------------------------------------
+const cUnitSelection& cGameMapWidget::getUnitSelection () const
+{
+	return unitSelection;
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
+{
+	if (unitMenu->isEnabled () || unit == nullptr)
+	{
+		unitMenu->disable ();
+		unitMenu->hide ();
+	}
+	else
+	{
+		unitMenu->setUnit (unit, mouseInputMode, player, dynamicMap);
+		unitMenu->enable ();
+		unitMenu->show ();
+		updateUnitMenuPosition ();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::setMouseInputMode (eNewMouseInputMode mouseInputMode_)
+{
+	const auto oldMode = mouseInputMode;
+	mouseInputMode = mouseInputMode_;
+
+	if (mouseInputMode != oldMode) mouseInputModeChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::toggleMouseInputMode (eNewMouseInputMode mouseInputMode_)
+{
+	if (mouseInputMode == mouseInputMode_)
+	{
+		setMouseInputMode (eNewMouseInputMode::Default);
+	}
+	else
+	{
+		setMouseInputMode (mouseInputMode_);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -246,6 +345,7 @@ void cGameMapWidget::scroll (const cPosition& offset)
 		}
 
 		if (newTileUnderMouse != oldTileUnderMouse) tileUnderMouseChanged (newTileUnderMouse);
+
 		scrolled ();
 	}
 }
@@ -426,7 +526,7 @@ void cGameMapWidget::drawBaseUnits ()
 				// TODO: bug when (x,y) is outside of the drawing screen.
 				if (building.PosX == i->x() && building.PosY == i->y())
 				{
-					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), unitSelection, player);
+					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player);
 				}
 			}
 		}
@@ -454,7 +554,7 @@ void cGameMapWidget::drawTopBuildings ()
 		if (building->PosX != i->x() || building->PosY != i->y()) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), unitSelection, player);
+		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player);
 
 		//if (debugOutput.debugBaseClient && building->SubBase)
 		//	drawTopBuildings_DebugBaseClient (*building, drawDestination);
@@ -480,7 +580,7 @@ void cGameMapWidget::drawShips ()
 		if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
 		}
 	}
 }
@@ -506,7 +606,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), unitSelection, player);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player);
 			}
 		}
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
@@ -514,7 +614,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), unitSelection, player);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player);
 			}
 		}
 
@@ -525,7 +625,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			// TODO: BUG: when PosX,PosY is outside of drawing screen
 			if (vehicle->PosX == i->x() && vehicle->PosY == i->y())
 			{
-				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
+				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
 			}
 		}
 	}
@@ -548,7 +648,7 @@ void cGameMapWidget::drawVehicles ()
 		if (vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
 		}
 	}
 }
@@ -570,7 +670,7 @@ void cGameMapWidget::drawConnectors ()
 		if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), unitSelection, player);
+			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player);
 		}
 	}
 }
@@ -593,7 +693,7 @@ void cGameMapWidget::drawPlanes ()
 		for (auto it = planes.rbegin (); it != planes.rend (); ++it)
 		{
 			auto& plane = **it;
-			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
+			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
 		}
 	}
 }
@@ -810,7 +910,7 @@ SDL_Rect cGameMapWidget::computeTileDrawingArea (const cPosition& zoomedTileSize
 }
 
 //------------------------------------------------------------------------------
-cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition)
+cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition) const
 {
 	assert (getArea ().withinOrTouches (pixelPosition));
 
@@ -847,15 +947,754 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse,
 		{
 			tileUnderMouseChanged (tilePosition);
 		}
+		updateMouseCursor (mouse);
 	}
 
 	return consumed;
 }
 
 //------------------------------------------------------------------------------
+bool cGameMapWidget::acceptButton (eMouseButtonType button) const
+{
+	return button == eMouseButtonType::Left || button == eMouseButtonType::Right;
+}
+
+//------------------------------------------------------------------------------
 bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	const auto tilePosition = getMapTilePosition (mouse.getPosition());
-	tileClicked (tilePosition);
+	if (!getArea ().withinOrTouches (mouse.getPosition ())) return false;
+
+	if (!dynamicMap) return false;
+
+	const auto tilePosition = getMapTilePosition (mouse.getPosition ());
+
+	const auto& field = dynamicMap->getField (tilePosition);
+
+	bool changeAllowed = true;
+
+	// Some useful aliases
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+
+	const auto overVehicle = field.getVehicle ();
+	const auto overPlane = field.getPlane ();
+	const auto overBuilding = field.getBuilding ();
+	const auto overBaseBuilding = field.getBaseBuilding ();
+
+	if (button == eMouseButtonType::Right)
+	{
+		if (MouseStyle == OldSchool && !mouse.isButtonPressed (eMouseButtonType::Left))
+		{
+			if (selectedUnit && (overVehicle == selectedUnit ||
+								 overPlane == selectedUnit ||
+								 overBuilding == selectedUnit ||
+								 overBaseBuilding == selectedUnit))
+			{
+				triggeredUnitHelp (*selectedUnit);
+			}
+			else
+			{
+				if (unitSelection.selectUnitAt (field, true))
+				{
+					auto vehicle = unitSelection.getSelectedVehicle ();
+					if (vehicle) vehicle->makeReport ();
+				}
+			}
+		}
+		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall ()*/) ||
+				 (MouseStyle == OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
+		{
+			if (mouseInputMode == eNewMouseInputMode::Help)
+			{
+				toggleMouseInputMode (eNewMouseInputMode::Help);
+			}
+			else
+			{
+				if (selectedUnit && selectedUnit->isAbove (tilePosition))
+				{
+					const auto& planes = field.getPlanes ();
+					cUnit* next = NULL;
+
+					if (selectedVehicle)
+					{
+						auto it = std::find (planes.begin (), planes.end (), selectedVehicle);
+
+						if (it == planes.end ())
+						{
+							if (overBuilding) next = overBuilding;
+							else if (overBaseBuilding) next = overBaseBuilding;
+							else if (overPlane) next = overPlane;
+						}
+						else
+						{
+							++it;
+
+							if (it != planes.end ()) next = *it;
+							else if (overVehicle) next = overVehicle;
+							else if (overBuilding) next = overBuilding;
+							else if (overBaseBuilding) next = overBaseBuilding;
+							else if (planes.size () > 1)
+							{
+								next = planes[0];
+							}
+						}
+					}
+					else if (selectedBuilding)
+					{
+						if (overBuilding == selectedBuilding)
+						{
+							if (overBaseBuilding) next = overBaseBuilding;
+							else if (overPlane) next = overPlane;
+							else if (overVehicle) next = overVehicle;
+						}
+						else
+						{
+							if (overPlane) next = overPlane;
+							else if (overVehicle) next = overVehicle;
+							else if (overBuilding) next = overBuilding;
+						}
+					}
+
+					if (next)
+					{
+						unitSelection.selectUnit (*next);
+					}
+					else
+					{
+						unitSelection.deselectUnits ();
+					}
+				}
+				else
+				{
+					unitSelection.deselectUnits ();
+				}
+			}
+		}
+	}
+	else if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right))
+	{
+		const auto mouseClickAction = getMouseClickAction (mouse);
+
+		if (changeAllowed && mouseClickAction == eMouseClickAction::Transfer && selectedUnit)
+		{
+			if (overVehicle)
+			{
+				triggeredTransfer (*selectedUnit, *overVehicle);
+			}
+			else if (overBuilding)
+			{
+				triggeredTransfer (*selectedUnit, *overBuilding);
+			}
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::PlaceBand && selectedVehicle && mouseInputMode == eNewMouseInputMode::PlaceBand) // Band
+		{
+			setMouseInputMode (eNewMouseInputMode::Default);
+
+			//if (selectedVehicle->BuildingTyp.getUnitDataOriginalVersion ()->isBig)
+			//{
+			//	sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY), false, 0);
+			//}
+			//else
+			//{
+			//	sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY), true, map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY));
+			//}
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedUnit && mouseInputMode == eNewMouseInputMode::Activate)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedBuilding && selectedBuilding->BuildList.size ())
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Load && selectedBuilding && mouseInputMode == eNewMouseInputMode::Load)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Load && selectedVehicle && mouseInputMode == eNewMouseInputMode::Load)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::SupplyAmmo && selectedVehicle && mouseInputMode == eNewMouseInputMode::SupplyAmmo)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Repair && selectedVehicle && mouseInputMode == eNewMouseInputMode::Repair)
+		{
+
+		}
+		else if (mouseInputMode == eNewMouseInputMode::Help)
+		{
+			if (overPlane)
+			{
+				triggeredUnitHelp (*overPlane);
+			}
+			else if (overVehicle)
+			{
+				triggeredUnitHelp (*overVehicle);
+			}
+			else if (overBuilding)
+			{
+				triggeredUnitHelp (*overBuilding);
+			}
+			else if (overBaseBuilding)
+			{
+				triggeredUnitHelp (*overBaseBuilding);
+			}
+			toggleMouseInputMode (eNewMouseInputMode::Help);
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedBuilding && !selectedBuilding->attacking)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Steal && selectedVehicle)
+		{
+
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Disable && selectedVehicle)
+		{
+
+		}
+		else if (MouseStyle == OldSchool && mouseClickAction == eMouseClickAction::Select && unitSelection.selectUnitAt (field, false))
+		{
+			auto vehicle = unitSelection.getSelectedVehicle ();
+			if (vehicle) vehicle->makeReport ();
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking)
+		{
+			if (selectedVehicle->IsBuilding)
+			{
+				//sendWantEndBuilding (*client, *selectedVehicle, mouseTilePosition.x (), mouseTilePosition.y ());
+			}
+			else
+			{
+				if (unitSelection.getSelectedVehiclesCount () > 1) triggeredMoveGroup (unitSelection.getSelectedVehicles (), tilePosition);
+				else triggeredMoveSingle (*unitSelection.getSelectedVehicle (), tilePosition);
+			}
+		}
+		else if (changeAllowed && selectedVehicle && (Contains (field.getPlanes (), selectedVehicle) || selectedVehicle == overVehicle))
+		{
+			if (!selectedVehicle->moving)
+			{
+				toggleUnitContextMenu (selectedVehicle);
+			}
+		}
+		else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
+		{
+			toggleUnitContextMenu (selectedBuilding);
+		}
+		else if (MouseStyle == Modern && mouseClickAction == eMouseClickAction::Select && unitSelection.selectUnitAt (field, true))
+		{
+			auto vehicle = unitSelection.getSelectedVehicle ();
+			if (vehicle) vehicle->makeReport ();
+		}
+	}
 	return true;
+}
+
+//------------------------------------------------------------------------------
+cPosition cGameMapWidget::getScreenPosition (const cUnit& unit, bool movementOffset) const
+{
+	cPosition position;
+
+	const int offsetX = movementOffset ? unit.getMovementOffsetX () : 0;
+	position.x() = getPosition ().x () - ((int)((pixelOffset.x () - offsetX) * getZoomFactor ())) + getZoomedTileSize ().x () * unit.PosX;
+
+	const int offsetY = movementOffset ? unit.getMovementOffsetY () : 0;
+	position.y() = getPosition ().y () - ((int)((pixelOffset.y () - offsetY) * getZoomFactor ())) + getZoomedTileSize ().y () * unit.PosY;
+
+	return position;
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::updateUnitMenuPosition ()
+{
+	if (!unitMenu->getUnit ()) return;
+	if (unitMenu->isHidden ()) return;
+
+	const auto& unit = *unitMenu->getUnit ();
+
+	const auto menuSize = unitMenu->getSize ();
+
+	auto position = getScreenPosition (unit);
+
+	auto unitSize = getZoomedTileSize ();
+	if (unit.data.isBig) unitSize *= 2;
+
+	if (position.x () + unitSize.x () + menuSize.x () >= getEndPosition ().x ())
+	{
+		position.x () -= menuSize.x ();
+	}
+	else
+	{
+		position.x () += unitSize.x ();
+	}
+
+	if (position.y () - (menuSize.y() - unitSize.y ()) / 2 <= getPosition().y())
+	{
+		position.y () -= (menuSize.y () - unitSize.y ()) / 2;
+		position.y () += -(position.y () - getPosition ().y ());
+	}
+	else if (position.y () - (menuSize.y () - unitSize.y ()) / 2 + menuSize.y () >= getEndPosition ().y ())
+	{
+		position.y () -= (menuSize.y () - unitSize.y ()) / 2;
+		position.y () -= (position.y () + menuSize.y ()) - getEndPosition ().y ();
+	}
+	else
+	{
+		position.y () -= (menuSize.y () - unitSize.y ()) / 2;
+	}
+
+	unitMenu->moveTo (position);
+
+	updateMouseCursor ();
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::updateMouseCursor ()
+{
+	auto activeMouse = getActiveMouse ();
+	if (activeMouse)
+	{
+		updateMouseCursor (*activeMouse);
+	}
+}
+
+//------------------------------------------------------------------------------
+eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
+{
+	if (!isAt (mouse.getPosition()) || !dynamicMap)
+	{
+		return eMouseClickAction::Unknown;
+	}
+
+	if (unitMenu->isEnabled () && !unitMenu->isHidden () && unitMenu->isAt (mouse.getPosition ()))
+	{
+		return eMouseClickAction::Unknown;
+	}
+	
+	auto mapTilePosition = getMapTilePosition (mouse.getPosition ());
+	
+	const auto& field = dynamicMap->getField (mapTilePosition);
+
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+
+	if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::PlaceBand)
+	{
+		return eMouseClickAction::PlaceBand;
+	}
+	else if (selectedUnit && selectedUnit->owner == player && mouseInputMode == eNewMouseInputMode::Transfer)
+	{
+		if (selectedUnit->canTransferTo (mapTilePosition, field))
+		{
+			return eMouseClickAction::Transfer;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	else if (mouseInputMode == eNewMouseInputMode::Help)
+	{
+		return eMouseClickAction::Help;
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::Attack)
+	{
+		if (selectedVehicle->data.muzzleType != sUnitData::MUZZLE_TYPE_TORPEDO || dynamicMap->isWaterOrCoast (mapTilePosition.x (), mapTilePosition.y ()))
+		{
+			return eMouseClickAction::Attack;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	// Infiltrators: manual action from unit-menu
+	// disable vs. vehicle/building
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::Disable)
+	{
+		if (selectedVehicle->canDoCommandoAction (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, false)
+			&& (!field.getVehicle () || field.getVehicle ()->isDisabled () == false)
+			&& (!field.getBuilding () || field.getBuilding ()->isDisabled () == false)
+			)
+		{
+			return eMouseClickAction::Disable;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	// steal vs. vehicle
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::Steal)
+	{
+		if (selectedVehicle->canDoCommandoAction (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, true))
+		{
+			return eMouseClickAction::Steal;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	// Infiltrators: auto-action
+	// no disable vs. disabled building
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, false) && field.getBuilding () && field.getBuilding ()->isDisabled ())
+	{
+		return eMouseClickAction::None;
+	}
+	// vehicle can be disabled, and if it is ...
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, false) && (!field.getVehicle () || !field.getVehicle ()->isDisabled ()))
+	{
+		return eMouseClickAction::Disable;
+	}
+	// ... disabled (the) vehicle can be stolen
+	// (without selecting the 'steal' from menu)
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, true))
+	{
+		return eMouseClickAction::Steal;
+	}
+	else if (selectedBuilding && selectedBuilding->owner == player && mouseInputMode == eNewMouseInputMode::Attack)
+	{
+		if (selectedBuilding->isInRange (mapTilePosition.x (), mapTilePosition.y ()))
+		{
+			return eMouseClickAction::Attack;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canAttackObjectAt (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, false, false))
+	{
+		return eMouseClickAction::Attack;
+	}
+	else if (selectedBuilding && selectedBuilding->owner == player && selectedBuilding->canAttackObjectAt (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap))
+	{
+		return eMouseClickAction::Attack;
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::SupplyAmmo)
+	{
+		if (selectedVehicle->canSupply (*dynamicMap, mapTilePosition.x (), mapTilePosition.y (), SUPPLY_TYPE_REARM))
+		{
+			return eMouseClickAction::SupplyAmmo;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::Repair)
+	{
+		if (selectedVehicle->canSupply (*dynamicMap, mapTilePosition.x (), mapTilePosition.y (), SUPPLY_TYPE_REPAIR))
+		{
+			return eMouseClickAction::Repair;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	else if ((
+				field.getVehicle() ||
+				field.getPlane() ||
+				(
+					field.getBuilding() &&
+					field.getBuilding()->owner
+				)
+			) &&
+			(
+				!selectedVehicle ||
+				selectedVehicle->owner != player ||
+				(
+					(
+						selectedVehicle->data.factorAir > 0 ||
+						field.getVehicle() ||
+						(
+							field.getTopBuilding() &&
+							field.getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
+						) ||
+						(
+							MouseStyle == OldSchool &&
+							field.getPlane()
+						)
+					) &&
+					(
+						selectedVehicle->data.factorAir == 0 ||
+						field.getPlane() ||
+						(
+							MouseStyle == OldSchool &&
+							(
+								field.getVehicle() ||
+								(
+									field.getTopBuilding() &&
+									field.getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
+									!field.getTopBuilding()->data.canBeLandedOn
+								)
+							)
+						)
+					) &&
+					mouseInputMode != eNewMouseInputMode::Load &&
+					mouseInputMode != eNewMouseInputMode::Activate
+				)
+			) &&
+			(
+				!selectedBuilding ||
+				selectedBuilding->owner != player ||
+				(
+					(
+						selectedBuilding->BuildList.empty() ||
+						selectedBuilding->IsWorking ||
+						selectedBuilding->BuildList[0].metall_remaining > 0
+					) &&
+					mouseInputMode != eNewMouseInputMode::Load &&
+					mouseInputMode != eNewMouseInputMode::Activate
+				)
+			)
+		)
+	{
+		return eMouseClickAction::Select;
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::Load)
+	{
+		if (selectedVehicle->canLoad (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, false))
+		{
+			return eMouseClickAction::Load;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::Activate)
+	{
+		//if (selectedVehicle->canExitTo (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, selectedVehicle->storedUnits[vehicleToActivate]->data) && selectedUnit->isDisabled () == false)
+		//{
+		//	return eMouseClickAction::Activate;
+		//}
+		//else
+		//{
+		//	return eMouseClickAction::None;
+		//}
+	}
+	else if (selectedVehicle && selectedVehicle->owner == player)
+	{
+		if (!selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != eNewMouseInputMode::Load && mouseInputMode != eNewMouseInputMode::Activate)
+		{
+			if (selectedVehicle->MoveJobActive)
+			{
+				return eMouseClickAction::None;
+			}
+			else if (dynamicMap->possiblePlace (*selectedVehicle, mapTilePosition.x (), mapTilePosition.y (), true))
+			{
+				return eMouseClickAction::Move;
+			}
+			else
+			{
+				return eMouseClickAction::None;
+			}
+		}
+		else if (selectedVehicle->IsBuilding || selectedVehicle->IsClearing)
+		{
+			if (((selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
+				(selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)) &&
+				dynamicMap->possiblePlace (*selectedVehicle, mapTilePosition.x (), mapTilePosition.y ()) && selectedVehicle->isNextTo (mapTilePosition.x (), mapTilePosition.y ()))
+			{
+				return eMouseClickAction::Move;
+			}
+			else
+			{
+				return eMouseClickAction::None;
+			}
+		}
+	}
+	else if (
+		selectedBuilding &&
+		selectedBuilding->owner == player &&
+		!selectedBuilding->BuildList.empty () &&
+		!selectedBuilding->IsWorking &&
+		selectedBuilding->BuildList[0].metall_remaining <= 0)
+	{
+		if (selectedBuilding->canExitTo (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
+		{
+			return eMouseClickAction::Activate;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	else if (selectedBuilding && selectedBuilding->owner == player && mouseInputMode == eNewMouseInputMode::Activate && selectedUnit->isDisabled () == false)
+	{
+		//if (selectedBuilding->canExitTo (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, selectedBuilding->storedUnits[vehicleToActivate]->data))
+		//{
+		//	return eMouseClickAction::Activate;
+		//}
+		//else
+		//{
+		//	return eMouseClickAction::None;
+		//}
+	}
+	else if (selectedBuilding && selectedBuilding->owner == player && mouseInputMode == eNewMouseInputMode::Load)
+	{
+		if (selectedBuilding->canLoad (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, false))
+		{
+			return eMouseClickAction::Load;
+		}
+		else
+		{
+			return eMouseClickAction::None;
+		}
+	}
+	
+	return eMouseClickAction::Unknown;
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::updateMouseCursor (cMouse& mouse)
+{
+	if (!isAt (mouse.getPosition ())) return;
+
+	const auto mouseClickAction = getMouseClickAction (mouse);
+
+	auto mapTilePosition = getMapTilePosition (mouse.getPosition ());
+
+	auto selectedVehicle = unitSelection.getSelectedVehicle ();
+
+	switch (mouseClickAction)
+	{
+	case eMouseClickAction::PlaceBand:
+		mouse.setCursorType (eMouseCursorType::Band);
+		break;
+	case eMouseClickAction::Transfer:
+		mouse.setCursorType (eMouseCursorType::Transfer);
+		break;
+	case eMouseClickAction::Help:
+		mouse.setCursorType (eMouseCursorType::Help);
+		break;
+	case eMouseClickAction::Attack:
+		if (mouse.setCursorType (eMouseCursorType::Attack))
+		{
+			drawAttackCursor (mapTilePosition);
+		}
+		break;
+	case eMouseClickAction::Disable:
+		if (mouse.setCursorType (eMouseCursorType::Disable))
+		{
+			if (selectedVehicle) drawCommandoCursor (mapTilePosition, *selectedVehicle, false);
+		}
+		break;
+	case eMouseClickAction::Steal:
+		if (mouse.setCursorType (eMouseCursorType::Steal))
+		{
+			if (selectedVehicle) drawCommandoCursor (mapTilePosition, *selectedVehicle, true);
+		}
+		break;
+	case eMouseClickAction::SupplyAmmo:
+		mouse.setCursorType (eMouseCursorType::Muni);
+		break;
+	case eMouseClickAction::Repair:
+		mouse.setCursorType (eMouseCursorType::Repair);
+		break;
+	case eMouseClickAction::Select:
+		mouse.setCursorType (eMouseCursorType::Select);
+		break;
+	case eMouseClickAction::Load:
+		mouse.setCursorType (eMouseCursorType::Load);
+		break;
+	case eMouseClickAction::Activate:
+		mouse.setCursorType (eMouseCursorType::Activate);
+		break;
+	case eMouseClickAction::Move:
+		mouse.setCursorType (eMouseCursorType::Move);
+		break;
+	case eMouseClickAction::None:
+		mouse.setCursorType (eMouseCursorType::No);
+		break;
+	default:
+	case eMouseClickAction::Unknown:
+		mouse.setCursorType (eMouseCursorType::Hand);
+		break;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::drawAttackCursor (const cPosition& position) const
+{
+	auto selectedUnit = unitSelection.getSelectedUnit ();
+	if (selectedUnit == NULL) return;
+
+	const sUnitData& data = selectedUnit->data;
+	cUnit* target = selectTarget (position.x (), position.y (), data.canAttack, *dynamicMap);
+
+	if (!target || (target == selectedUnit))
+	{
+		SDL_Rect r = {1, 29, 35, 3};
+		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+		return;
+	}
+
+	int t = target->data.hitpointsCur;
+	int wc = (int)((float)t / target->data.hitpointsMax * 35);
+
+	t = target->calcHealth (data.damage);
+
+	int wp = 0;
+	if (t)
+	{
+		wp = (int)((float)t / target->data.hitpointsMax * 35);
+	}
+	SDL_Rect r = {1, 29, Uint16 (wp), 3};
+
+	if (r.w) SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0x00FF00);
+
+	r.x += r.w;
+	r.w = wc - wp;
+
+	if (r.w) SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0xFF0000);
+
+	r.x += r.w;
+	r.w = 35 - wc;
+
+	if (r.w) SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::drawCommandoCursor (const cPosition& position, const cVehicle& vehicle, bool steal) const
+{
+	const auto& field = dynamicMap->getField(position);
+	SDL_Surface* sf;
+	const cUnit* unit = 0;
+
+	if (steal)
+	{
+		unit = field.getVehicle ();
+		sf = GraphicsData.gfx_Csteal;
+	}
+	else
+	{
+		unit = field.getVehicle ();
+		if (unit == 0)
+			unit = field.getTopBuilding ();
+		sf = GraphicsData.gfx_Cdisable;
+	}
+
+	SDL_Rect r = {1, 28, 35, 3};
+
+	if (unit == 0)
+	{
+		SDL_FillRect (sf, &r, 0);
+		return;
+	}
+
+	SDL_FillRect (sf, &r, 0x00FF0000);
+	r.w = 35 * vehicle.calcCommandoChance (unit, steal) / 100;
+	SDL_FillRect (sf, &r, 0x0000FF00);
 }

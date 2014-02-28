@@ -55,7 +55,9 @@ enum class eCheckBoxType
 
 	HudTnt,
 	Hud2x,
-	HudPlayers
+	HudPlayers,
+
+	UnitContextMenu,
 };
 
 enum eCheckBoxTextAnchor

@@ -74,8 +74,9 @@ bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mous
 //------------------------------------------------------------------------------
 bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (button == eMouseButtonType::Left)
+	if (isAt (mouse.getPosition ()) && acceptButton(button))
 	{
+		getStartedClickWithin (button) = true;
 		setPressed (true);
 		application.grapMouseFocus (*this);
 		return consumeClick;
@@ -86,8 +87,9 @@ bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mo
 //------------------------------------------------------------------------------
 bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (button == eMouseButtonType::Left && application.hasMouseFocus(*this))
+	if (getStartedClickWithin (button))
 	{
+		getStartedClickWithin (button) = false;
 		setPressed (false);
 		application.releaseMouseFocus (*this);
 
@@ -107,6 +109,11 @@ void cClickableWidget::handleLooseMouseFocus (cApplication& application)
 		setPressed (false);
 	}
 	mouseWasOver = false;
+
+	for (auto i = startedClickWithin.begin (); i != startedClickWithin.end (); ++i)
+	{
+		i->second = false;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -119,4 +126,21 @@ void cClickableWidget::setConsumeClick (bool consumeClick_)
 void cClickableWidget::setPressed (bool pressed)
 {
 	isPressed = pressed;
+}
+
+//------------------------------------------------------------------------------
+bool cClickableWidget::acceptButton (eMouseButtonType button) const
+{
+	return button == eMouseButtonType::Left;
+}
+
+//------------------------------------------------------------------------------
+bool& cClickableWidget::getStartedClickWithin (eMouseButtonType button)
+{
+	auto iter = startedClickWithin.find (button);
+	if (iter == startedClickWithin.end ())
+	{
+		return startedClickWithin[button] = false;
+	}
+	else return iter->second;
 }

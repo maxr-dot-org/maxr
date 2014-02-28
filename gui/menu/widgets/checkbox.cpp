@@ -122,6 +122,10 @@ void cCheckBox::draw ()
 		else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, FONT_LATIN_SMALL_RED);
 		font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
 		break;
+	case eCheckBoxType::UnitContextMenu:
+		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		font->showTextCentered (position.x + position.w / 2, position.y + (position.h / 2 - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2) + 1, text, FONT_LATIN_SMALL_WHITE);
+		break;
 	}
 
 	cClickableWidget::draw ();
@@ -270,6 +274,11 @@ void cCheckBox::renewSurface ()
 		src.x = (checked || isPressed) ? (317 + 27) : 317;
 		src.y = 479;
 		break;
+	case eCheckBoxType::UnitContextMenu:
+		size = cPosition (42, 21);
+		src.x = 0;
+		src.y = (checked || isPressed) ? 21 : 0;
+		break;
 	}
 	resize (size);
 	src.w = size.x ();
@@ -278,8 +287,18 @@ void cCheckBox::renewSurface ()
 	if (src.w > 0)
 	{
 		surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0);
-		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
-		else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
+		SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (surface, NULL, 0xFF00FF);
+
+		SDL_Surface* srcSurface = nullptr;
+
+		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers) srcSurface = GraphicsData.gfx_hud_stuff;
+		else if (type == eCheckBoxType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu;
+		else srcSurface = GraphicsData.gfx_menu_stuff;
+
+		assert (srcSurface != nullptr);
+
+		SDL_BlitSurface (srcSurface, &src, surface, NULL);
 	}
 
 	if (textLimitWidth != -1) text = font->shortenStringToSize (text, textLimitWidth, fontType);

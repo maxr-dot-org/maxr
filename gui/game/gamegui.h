@@ -35,6 +35,7 @@ class cUnit;
 class cVehicle;
 class cBuilding;
 class cAnimationTimer;
+class cClient;
 
 class cNewGameGUI : public cWindow
 {
@@ -43,6 +44,8 @@ public:
 
 	void setDynamicMap (const cMap* dynamicMap);
 	void setPlayer (const cPlayer* player);
+
+	void connectToClient (cClient& client);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -67,8 +70,6 @@ private:
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 
-	cUnitSelection unitSelection;
-
 	int selectedUnitSoundStream;
 
 	void resetMiniMapViewWindow ();
@@ -78,12 +79,12 @@ private:
 
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);
-	void handleTileClicked (const cPosition& tilePosition);
 
 	void updateSelectedUnitSound ();
 
 	void startSelectedUnitSound (sSOUND* sound);
 	void stopSelectedUnitSound ();
+
 };
 
 #endif // gui_game_gameguiH

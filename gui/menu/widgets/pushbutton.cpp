@@ -298,15 +298,30 @@ void cPushButton::renewSurface ()
 		src.y = (isPressed || isLocked) ? 0 : 132;
 		size = cPosition (19, 19);
 		break;
+	case ePushButtonType::UnitContextMenu:
+		src.x = 0;
+		src.y = (isPressed || isLocked) ? 21 : 0;
+		size = cPosition (42, 21);
+		break;
 	}
 	resize (size);
+
 	src.w = size.x ();
 	src.h = size.y ();
+
 	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0);
 	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
-	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
-	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
+
+	SDL_Surface* srcSurface = nullptr;
+
+	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop) srcSurface = GraphicsData.gfx_hud_stuff;
+	else if (buttonType == ePushButtonType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu;
+	else srcSurface = GraphicsData.gfx_menu_stuff;
+
+	assert (srcSurface != nullptr);
+
+	SDL_BlitSurface (srcSurface, &src, surface, NULL);
 
 	text = font->shortenStringToSize (text, size.x() - getBordersSize (), fontType);
 }
@@ -348,6 +363,8 @@ int cPushButton::getTextYOffset () const
 	case ePushButtonType::HudPreferences:
 	case ePushButtonType::HudFiles:
 		return 6;
+	case ePushButtonType::UnitContextMenu:
+		return 7;
 	}
 }
 
@@ -356,6 +373,7 @@ int cPushButton::getBordersSize () const
 {
 	switch (buttonType)
 	{
+	case ePushButtonType::UnitContextMenu:
 	case ePushButtonType::HudDone:
 		return 0;
 	default:

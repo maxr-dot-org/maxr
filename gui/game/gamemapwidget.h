@@ -20,10 +20,12 @@
 #ifndef gui_game_gamemapwidgetH
 #define gui_game_gamemapwidgetH
 
+#include "unitselection.h"
+#include "mouseinputmode.h"
+#include "temp/unitdrawingengine.h"
 #include "../menu/widgets/clickablewidget.h"
 #include "../../maxrconfig.h"
 #include "../../utility/signal/signal.h"
-#include "temp/unitdrawingengine.h"
 
 struct SDL_Surface;
 
@@ -31,6 +33,25 @@ class cStaticMap;
 class cMap;
 class cPlayer;
 class cUnitSelection;
+class cUnitContextMenuWidget;
+
+enum class eMouseClickAction
+{
+	PlaceBand,
+	Transfer,
+	Help,
+	Attack,
+	Disable,
+	Steal,
+	SupplyAmmo,
+	Repair,
+	Select,
+	Load,
+	Activate,
+	Move,
+	None,
+	Unknown
+};
 
 class cGameMapWidget : public cClickableWidget
 {
@@ -43,6 +64,9 @@ public:
 
 	void setZoomFactor (double zoomFactor, bool center);
 	double getZoomFactor () const;
+
+	cUnitSelection& getUnitSelection ();
+	const cUnitSelection& getUnitSelection () const;
 
 	/**
 	 * Scrolls the map by a given offset.
@@ -68,6 +92,8 @@ public:
 	void setDrawRange (bool drawRange);
 	void setDrawFog (bool drawFog);
 
+	void toggleHelpMode ();
+
 	cBox<cPosition> getDisplayedMapArea () const;
 
 	cSignal<void ()> scrolled;
@@ -76,12 +102,23 @@ public:
 	cSignal<void (const cPosition&)> tileClicked;
 	cSignal<void (const cPosition&)> tileUnderMouseChanged;
 
+	cSignal<void ()> mouseInputModeChanged;
+
+	//
+	// Game commands
+	//
+	cSignal<void (const cUnit&)> triggeredUnitHelp;
+	cSignal<void (const cUnit&, const cUnit&)> triggeredTransfer;
+	cSignal<void (cVehicle&, const cPosition&)> triggeredMoveSingle;
+	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
+
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
+	virtual bool acceptButton (eMouseButtonType button) const MAXR_OVERRIDE_FUNCTION;
 private:
 	//
 	// data
@@ -92,7 +129,11 @@ private:
 
 	cUnitDrawingEngine unitDrawingEngine;
 
-	const cUnitSelection* unitSelection;
+	cUnitSelection unitSelection;
+
+	cUnitContextMenuWidget* unitMenu;
+
+	eNewMouseInputMode mouseInputMode;
 
 	//
 	// drawing information data
@@ -125,6 +166,9 @@ private:
 
 	void drawUnitCircles ();
 
+	void drawAttackCursor (const cPosition& position) const;
+	void drawCommandoCursor (const cPosition& position, const cVehicle& vehicle, bool steal) const;
+
 	//
 	// position handling methods
 	//
@@ -141,7 +185,20 @@ private:
 
 	SDL_Rect computeTileDrawingArea (const cPosition& zoomedTileSize, const cPosition& zoomedStartTilePixelOffset, const cPosition& tileStartIndex, const cPosition& tileIndex);
 
-	cPosition getMapTilePosition (const cPosition& pixelPosition);
+	cPosition getMapTilePosition (const cPosition& pixelPosition) const;
+	cPosition getScreenPosition (const cUnit& unit, bool movementOffset = true) const;
+
+	void updateUnitMenuPosition ();
+
+	void toggleUnitContextMenu (const cUnit* unit);
+
+	void setMouseInputMode (eNewMouseInputMode mouseInputMode);
+	void toggleMouseInputMode (eNewMouseInputMode mouseInputMode);
+
+	void updateMouseCursor ();
+	void updateMouseCursor (cMouse& mouse);
+
+	eMouseClickAction getMouseClickAction (const cMouse& mouse);
 };
 
 

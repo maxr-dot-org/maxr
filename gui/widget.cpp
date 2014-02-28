@@ -298,19 +298,25 @@ void cWidget::handleMoved (const cPosition& offset)
 }
 
 //------------------------------------------------------------------------------
+void cWidget::removeChildren ()
+{
+	children.clear ();
+}
+
+//------------------------------------------------------------------------------
 bool cWidget::hasChildren () const
 {
 	return !children.empty();
 }
 
 //------------------------------------------------------------------------------
-cMouse* cWidget::getActiveMouse ()
+cMouse* cWidget::getActiveMouse () const
 {
 	return parent ? parent->getActiveMouse () : nullptr;
 }
 
 //------------------------------------------------------------------------------
-cKeyboard* cWidget::getActiveKeyboard ()
+cKeyboard* cWidget::getActiveKeyboard () const
 {
 	return parent ? parent->getActiveKeyboard () : nullptr;
 }

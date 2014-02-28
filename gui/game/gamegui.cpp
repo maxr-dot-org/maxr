@@ -24,6 +24,7 @@
 #include "hud.h"
 #include "gamemapwidget.h"
 #include "minimapwidget.h"
+#include "unitcontextmenuwidget.h"
 
 #include "temp/animationtimer.h"
 
@@ -36,6 +37,7 @@
 #include "../../vehicles.h"
 #include "../../buildings.h"
 #include "../../sound.h"
+#include "../../client.h"
 #include "../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
@@ -51,7 +53,6 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	resize (hudOwning->getSize ());
 
 	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer));
-	gameMap->setUnitSelection (&unitSelection);
 
 	hud = addChild (std::move (hudOwning));
 
@@ -73,19 +74,25 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (hud->colorToggled, [&](){ gameMap->setDrawColor (hud->getColorActive ()); });
 	signalConnectionManager.connect (hud->rangeToggled, [&](){ gameMap->setDrawRange (hud->getRangeActive ()); });
 	signalConnectionManager.connect (hud->fogToggled, [&](){ gameMap->setDrawFog (hud->getFogActive ()); });
+	
+	signalConnectionManager.connect (hud->helpClicked, [&](){ gameMap->toggleHelpMode (); });
+	signalConnectionManager.connect (hud->centerClicked, [&]()
+	{
+		const auto selectedUnit = gameMap->getUnitSelection ().getSelectedUnit ();
+		if (selectedUnit) gameMap->centerAt (cPosition (selectedUnit->PosX, selectedUnit->PosY));
+	});
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 
 	signalConnectionManager.connect (gameMap->scrolled, std::bind(&cNewGameGUI::resetMiniMapViewWindow, this));
 	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cNewGameGUI::resetMiniMapViewWindow, this));
-	signalConnectionManager.connect (gameMap->tileClicked, std::bind (&cNewGameGUI::handleTileClicked, this, _1));
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudCoordinates, this, _1));
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudUnitName, this, _1));
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt(position); });
 
-	signalConnectionManager.connect (unitSelection.selectionChanged, [&](){ hud->setActiveUnit (unitSelection.getSelectedUnit ()); });
-	signalConnectionManager.connect (unitSelection.selectionChanged, std::bind(&cNewGameGUI::updateSelectedUnitSound, this));
+	signalConnectionManager.connect (gameMap->getUnitSelection ().selectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
+	signalConnectionManager.connect (gameMap->getUnitSelection ().selectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitSound, this));
 }
 
 //------------------------------------------------------------------------------
@@ -120,20 +127,6 @@ void cNewGameGUI::updateHudUnitName (const cPosition& tilePosition)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::handleTileClicked (const cPosition& tilePosition)
-{
-	if (dynamicMap)
-	{
-		bool selectionChanged = unitSelection.selectUnitAt (tilePosition, *dynamicMap, true);
-		if (selectionChanged)
-		{
-			auto vehicle = unitSelection.getSelectedVehicle ();
-			if (vehicle) vehicle->makeReport ();
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
 void cNewGameGUI::setDynamicMap (const cMap* dynamicMap_)
 {
 	dynamicMap = dynamicMap_;
@@ -150,6 +143,15 @@ void cNewGameGUI::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
+void cNewGameGUI::connectToClient (cClient& client)
+{
+	gameMap->triggeredMoveSingle.connect ([&](cVehicle& vehicle, const cPosition& destination)
+	{
+		client.addMoveJob (vehicle, destination.x (), destination.y ());
+	});
+}
+
+//------------------------------------------------------------------------------
 void cNewGameGUI::draw ()
 {
 	animationTimer->updateAnimationFlags (); // TODO: remove this
@@ -163,6 +165,7 @@ bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse, co
 	const auto mouseLastPosition = mouse.getPosition () - offset;
 	if (!gameMap->isAt (mouse.getPosition ()) && gameMap->isAt (mouseLastPosition))
 	{
+		mouse.setCursorType (eMouseCursorType::Hand);
 		hud->setCoordinatesText ("");
 		hud->setUnitNameText ("");
 	}
@@ -282,7 +285,7 @@ void cNewGameGUI::showPreferencesDialog ()
 //------------------------------------------------------------------------------
 void cNewGameGUI::updateSelectedUnitSound ()
 {
-	auto selectedUnit = unitSelection.getSelectedUnit ();
+	auto selectedUnit = gameMap->getUnitSelection().getSelectedUnit ();
 	if (selectedUnit == nullptr)
 	{
 		stopSelectedUnitSound ();

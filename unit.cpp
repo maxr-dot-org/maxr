@@ -106,6 +106,12 @@ bool cUnit::isNextTo (int x, int y) const
 }
 
 //------------------------------------------------------------------------------
+bool cUnit::isNextTo (const cPosition& position) const
+{
+	return isNextTo (position.x (), position.y ());
+}
+
+//------------------------------------------------------------------------------
 bool cUnit::isAbove(const cPosition& position) const
 {
 	return getArea().withinOrTouches(position);
@@ -215,7 +221,7 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //------------------------------------------------------------------------------
-bool cUnit::canAttackObjectAt (int x, int y, cMap& map, bool forceAttack, bool checkRange) const
+bool cUnit::canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack, bool checkRange) const
 {
 	if (data.canAttack == false) return false;
 	if (data.shotsCur <= 0) return false;

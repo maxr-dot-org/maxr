@@ -45,10 +45,6 @@ public:
 
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
-	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
-
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-
 	static SDL_Surface* generateSurface ();
 
 	float getZoomFactor () const;
@@ -82,12 +78,19 @@ public:
 	cSignal<void ()> rangeToggled;
 	cSignal<void ()> fogToggled;
 
+	cSignal<void ()> centerClicked;
+	cSignal<void ()> helpClicked;
+
 	cSignal<void ()> miniMapZoomFactorToggled;
 
 	cSignal<void ()> filesClicked;
 	cSignal<void ()> preferencesClicked;
 
 	void setActiveUnit (const cUnit* unit);
+
+	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 protected:
 
 private:

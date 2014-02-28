@@ -1078,11 +1078,11 @@ void cBuilding::clientStopWork ()
 }
 
 //------------------------------------------------------------
-bool cBuilding::CanTransferTo (int x, int y, cMapField* OverUnitField) const
+bool cBuilding::canTransferTo (const cPosition position, const cMapField& overUnitField) const
 {
-	if (OverUnitField->getVehicle())
+	if (overUnitField.getVehicle ())
 	{
-		const cVehicle* v = OverUnitField->getVehicle();
+		const cVehicle* v = overUnitField.getVehicle ();
 
 		if (v->owner != this->owner)
 			return false;
@@ -1097,14 +1097,14 @@ bool cBuilding::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 		{
 			const cBuilding* b = SubBase->buildings[i];
 
-			if (b->isNextTo (x, y)) return true;
+			if (b->isNextTo (position)) return true;
 		}
 
 		return false;
 	}
-	else if (OverUnitField->getTopBuilding())
+	else if (overUnitField.getTopBuilding ())
 	{
-		const cBuilding* b = OverUnitField->getTopBuilding();
+		const cBuilding* b = overUnitField.getTopBuilding ();
 
 		if (b == this)
 			return false;

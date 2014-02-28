@@ -26,10 +26,8 @@
 #include "../../buildings.h"
 
 //------------------------------------------------------------------------------
-bool cUnitSelection::selectUnitAt (const cPosition& tilePosition, const cMap& map, bool base)
+bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 {
-	const auto& field = map.getField (tilePosition);
-
 	cVehicle* plane = field.getPlane ();
 	if (plane && !plane->moving)
 	{
@@ -98,6 +96,68 @@ cBuilding* cUnitSelection::getSelectedBuilding () const
 {
 	auto selectedUnit = getSelectedUnit ();
 	return static_cast<cBuilding*>(selectedUnit && selectedUnit->isABuilding () ? selectedUnit : nullptr);
+}
+
+//------------------------------------------------------------------------------
+const std::vector<cUnit*>& cUnitSelection::getSelectedUnits () const
+{
+	return selectedUnits;
+}
+
+//------------------------------------------------------------------------------
+std::vector<cVehicle*> cUnitSelection::getSelectedVehicles () const
+{
+	std::vector<cVehicle*> result;
+	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	{
+		if ((*i)->data.ID.isAVehicle ())
+		{
+			result.push_back (static_cast<cVehicle*>(*i));
+		}
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+std::vector<cBuilding*> cUnitSelection::getSelectedBuildings () const
+{
+	std::vector<cBuilding*> result;
+	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	{
+		if ((*i)->data.ID.isABuilding ())
+		{
+			result.push_back (static_cast<cBuilding*>(*i));
+		}
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+size_t cUnitSelection::getSelectedUnitsCount () const
+{
+	return selectedUnits.size ();
+}
+
+//------------------------------------------------------------------------------
+size_t cUnitSelection::getSelectedVehiclesCount () const
+{
+	size_t result = 0;
+	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	{
+		if ((*i)->data.ID.isAVehicle ()) ++result;
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
+size_t cUnitSelection::getSelectedBuildingsCount () const
+{
+	size_t result = 0;
+	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	{
+		if ((*i)->data.ID.isABuilding ()) ++result;
+	}
+	return result;
 }
 
 //------------------------------------------------------------------------------

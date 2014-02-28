@@ -38,7 +38,7 @@
 using namespace std;
 
 //--------------------------------------------------------------------------
-cUnit* selectTarget (int x, int y, char attackMode, cMap& map)
+cUnit* selectTarget (int x, int y, char attackMode, const cMap& map)
 {
 	cVehicle* targetVehicle = NULL;
 	cBuilding* targetBuilding = NULL;

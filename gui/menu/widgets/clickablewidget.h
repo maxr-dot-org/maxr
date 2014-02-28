@@ -20,12 +20,13 @@
 #ifndef gui_menu_widgets_clickablewidgetH
 #define gui_menu_widgets_clickablewidgetH
 
+#include <map>
+
 #include "../../../maxrconfig.h"
 #include "../../widget.h"
 
 class cClickableWidget : public cWidget
 {
-	// TODO: implement for all mouse buttons and not only for the left one
 public:
 	cClickableWidget ();
 	explicit cClickableWidget (const cPosition& position);
@@ -48,6 +49,12 @@ protected:
 	virtual void setPressed (bool pressed);
 
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) = 0;
+
+	virtual bool acceptButton (eMouseButtonType button) const;
+private:
+	std::map<eMouseButtonType, bool> startedClickWithin;
+
+	bool& getStartedClickWithin (eMouseButtonType button);
 };
 
 #endif // gui_menu_widgets_clickablewidgetH

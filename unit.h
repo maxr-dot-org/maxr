@@ -44,7 +44,7 @@ public:
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
 
-	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const = 0;
+	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const = 0;
 	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
 
 	virtual int getMovementOffsetX() const {return 0;}
@@ -56,6 +56,7 @@ public:
 	bool isInRange (int x, int y) const;
 	/// checks whether the coordinates are next to the unit
 	bool isNextTo (int x, int y) const;
+	bool isNextTo (const cPosition& position) const;
 	bool isDisabled() const { return turnsDisabled > 0; }
 	bool isAbove(const cPosition& position) const;
 
@@ -75,7 +76,7 @@ public:
 	 *  ATTENTION: must not be called with forceAttack == false
 	 *             from the server thread!
 	 */
-	bool canAttackObjectAt (int x, int y, cMap& map, bool forceAttack = false, bool checkRange = true) const;
+	bool canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack = false, bool checkRange = true) const;
 
 	/** Upgrades the unit data of this unit to the current,
 	 * upgraded version of the player.

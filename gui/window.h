@@ -110,8 +110,8 @@ protected:
 	 */
 	cApplication* getActiveApplication () const;
 
-	virtual cMouse* getActiveMouse () MAXR_OVERRIDE_FUNCTION;
-	virtual cKeyboard* getActiveKeyboard () MAXR_OVERRIDE_FUNCTION;
+	virtual cMouse* getActiveMouse () const MAXR_OVERRIDE_FUNCTION;
+	virtual cKeyboard* getActiveKeyboard () const MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	 * Sets a new background surface image.

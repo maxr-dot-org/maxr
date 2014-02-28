@@ -67,6 +67,8 @@ void cLocalGame::start (cApplication& application, const cPosition& landingPosit
 	gameGui->setDynamicMap (client->getMap ());
 	gameGui->setPlayer (&client->getActivePlayer ());
 
+	gameGui->connectToClient (*client);
+
 	application.show (gameGui);
 
 	application.setGame (shared_from_this ());

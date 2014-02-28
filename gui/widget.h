@@ -123,16 +123,37 @@ public:
 	virtual void handleMoved (const cPosition& offset);
 
 protected:
+	/**
+	 * Adds a new child
+	 *
+	 * This method is potentially very dangerous!
+	 * Modifying the children while they are accessed will result in undefined behavior.
+	 * Hence make sure this method is only called when it is absolutely sure
+	 * that the children are not currently worked on.
+	 * This especially means during the drawing of the children (or any of their children)
+	 * or during the event handling (e.g. clicked event) of the children or any of their children).
+	 *
+	 * @tparam WidgetType The type of the widget to add. Has to inherit from @ref cWidget.
+	 * @param child The child to add.
+	 * @return A non owning pointer to the added child.
+	 */
 	template<typename WidgetType>
 	WidgetType* addChild (std::unique_ptr<WidgetType> child);
+
+	/**
+	 * Removes all children.
+	 *
+	 * See @ref addChild for restrictions on when this method is allowed to be used!
+	 */
+	void removeChildren ();
 
 	bool hasChildren () const;
 
 	// TODO: find some suitable place for this function!
 	static void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, Uint32 color);
 
-	virtual cMouse* getActiveMouse ();
-	virtual cKeyboard* getActiveKeyboard ();
+	virtual cMouse* getActiveMouse () const;
+	virtual cKeyboard* getActiveKeyboard () const;
 private:
 	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
 	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;

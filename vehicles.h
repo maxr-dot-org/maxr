@@ -19,6 +19,7 @@
 #ifndef vehiclesH
 #define vehiclesH
 #include "defines.h"
+#include "maxrconfig.h"
 #include <SDL.h>
 #include <vector>
 
@@ -187,7 +188,7 @@ public:
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
 	void makeReport ();
-	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
+	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
 	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const;
 	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
@@ -198,7 +199,7 @@ public:
 #define SUPPLY_TYPE_REARM 0
 #define SUPPLY_TYPE_REPAIR 1
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (const cClient& client, int x, int y, int supplyType) const;
+	bool canSupply (const cMap& map, int x, int y, int supplyType) const;
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	bool canSupply (const cUnit* unit, int supplyType) const;
 	void calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCosts) [3], int iBuild_Costs);
@@ -219,12 +220,6 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	bool canDoCommandoAction (int x, int y, const cMap& map, bool steal) const;
-	/**
-	* draws the commando curser for stealing or disabling
-	* with the calculated chance
-	*@author alzi alias DoctorDeath
-	*/
-	void drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) const;
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath

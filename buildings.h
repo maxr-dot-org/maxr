@@ -20,6 +20,7 @@
 #define buildingsH
 #include <SDL.h>
 #include "defines.h"
+#include "maxrconfig.h"
 #include "main.h" // for sUnitData, sID
 #include "unit.h"
 #include <vector>
@@ -183,7 +184,7 @@ public:
 	void ServerStopWork (cServer& server, bool override);
 	void clientStopWork ();
 	/** check whether a transfer to a unit on the field is possible */
-	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
+	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	void CheckRessourceProd (const cServer& server);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI);

@@ -17,44 +17,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_unitselectionH
-#define gui_game_unitselectionH
+#ifndef gui_game_unitcontextmenuwidgetH
+#define gui_game_unitcontextmenuwidgetH
 
-#include <vector>
-
+#include "mouseinputmode.h"
+#include "../widget.h"
 #include "../../utility/signal/signal.h"
 
-class cPosition;
-class cMapField;
 class cUnit;
-class cVehicle;
-class cBuilding;
+class cPlayer;
+class cMap;
 
-class cUnitSelection
+class cUnitContextMenuWidget : public cWidget
 {
 public:
-	bool selectUnitAt (const cMapField& field, bool base);
+	cUnitContextMenuWidget ();
 
-	bool selectUnit (cUnit& unit, bool add = false);
-	void deselectUnits ();
+	void setUnit (const cUnit* unit, eNewMouseInputMode mouseInputMode, const cPlayer* player, const cMap* dynamicMap);
+	const cUnit* getUnit ();
 
-	cUnit* getSelectedUnit () const;
-	cVehicle* getSelectedVehicle () const;
-	cBuilding* getSelectedBuilding () const;
-
-	const std::vector<cUnit*>& getSelectedUnits () const;
-	std::vector<cVehicle*> getSelectedVehicles () const;
-	std::vector<cBuilding*> getSelectedBuildings () const;
-
-	size_t getSelectedUnitsCount () const;
-	size_t getSelectedVehiclesCount () const;
-	size_t getSelectedBuildingsCount () const;
-
-	bool isSelected (const cUnit& unit) const;
-
-	cSignal<void ()> selectionChanged;
+	cSignal<void ()> attackToggled;
+	cSignal<void ()> buildClicked;
+	cSignal<void ()> distributeClicked;
+	cSignal<void ()> transferToggled;
+	cSignal<void ()> startClicked;
+	cSignal<void ()> autoToggled;
+	cSignal<void ()> stopClicked;
+	cSignal<void ()> removeClicked;
+	cSignal<void ()> manualFireToggled;
+	cSignal<void ()> sentryToggled;
+	cSignal<void ()> activateClicked;
+	cSignal<void ()> loadToggled;
+	cSignal<void ()> researchClicked;
+	cSignal<void ()> buyUpgradesClicked;
+	cSignal<void ()> upgradeThisClicked;
+	cSignal<void ()> upgradeAllClicked;
+	cSignal<void ()> selfDestroyClicked;
+	cSignal<void ()> supplyAmmoToggled;
+	cSignal<void ()> repairToggled;
+	cSignal<void ()> layMinesToggled;
+	cSignal<void ()> collectMinesToggled;
+	cSignal<void ()> sabotageToggled;
+	cSignal<void ()> stealToggled;
+	cSignal<void ()> infoClicked;
+	cSignal<void ()> doneClicked;
 private:
-	std::vector<cUnit*> selectedUnits;
+	const cUnit* unit;
 };
 
-#endif // gui_game_unitselectionH
+#endif // gui_game_unitcontextmenuwidgetH
