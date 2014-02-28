@@ -19,6 +19,8 @@
 
 #include "hud.h"
 
+#include "unitvideowidget.h"
+
 #include "../menu/widgets/pushbutton.h"
 #include "../menu/widgets/checkbox.h"
 #include "../menu/widgets/label.h"
@@ -33,7 +35,7 @@
 
 
 //------------------------------------------------------------------------------
-cHud::cHud ()
+cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 {
 	surface = generateSurface ();
 	resize (cPosition (surface->w, surface->h));
@@ -44,9 +46,6 @@ cHud::cHud ()
 	signalConnectionManager.connect (preferencesButton->clicked, [&](){ preferencesClicked (); });
 	auto filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), FONT_LATIN_SMALL_WHITE));
 	signalConnectionManager.connect (filesButton->clicked, [&](){ filesClicked (); });
-
-	auto playButton = addChild (std::make_unique<cPushButton> (cPosition (146, 123), ePushButtonType::HudPlay));
-	auto stopButton = addChild (std::make_unique<cPushButton> (cPosition (146, 143), ePushButtonType::HudStop));
 
 	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, SoundData.SNDHudSwitch));
 	signalConnectionManager.connect (surveyButton->toggled, [&](){ surveyToggled (); });
@@ -102,11 +101,13 @@ cHud::cHud ()
 	auto zoomMinusButton = addChild (std::make_unique<cPushButton> (cBox<cPosition> (cPosition (152, 275), cPosition (152 + 15, 275 + 15))));
 	signalConnectionManager.connect (zoomMinusButton->clicked, std::bind (&cHud::handleZoomMinusClicked, this));
 
-	// flc image
+	unitVideo = addChild (std::make_unique<cUnitVideoWidget> (cBox<cPosition> (cPosition (10, 29), cPosition (10 + 125, 29 + 125)), animationTimer));
+	auto playButton = addChild (std::make_unique<cPushButton> (cPosition (146, 123), ePushButtonType::HudPlay));
+	signalConnectionManager.connect (playButton->clicked, std::bind (&cUnitVideoWidget::start, unitVideo));
+	auto stopButton = addChild (std::make_unique<cPushButton> (cPosition (146, 143), ePushButtonType::HudStop));
+	signalConnectionManager.connect (stopButton->clicked, std::bind (&cUnitVideoWidget::stop, unitVideo));
 
 	// unit details
-
-	// minimap
 
 	// chat box
 
@@ -126,7 +127,7 @@ bool cHud::isAt (const cPosition& position) const
 {
 	cBox<cPosition> hole (cPosition (panelLeftWidth, panelTopHeight), getEndPosition() - cPosition (panelRightWidth, panelBottomHeight));
 
-	if (hole.within (position))
+	if (hole.withinOrTouches (position))
 	{
 		// TODO: check for widgets that reach into the hole (end button, ...)
 		return false;
@@ -327,4 +328,10 @@ void cHud::handleZoomPlusClicked ()
 void cHud::handleZoomMinusClicked ()
 {
 	zoomSlider->increase ((zoomSlider->getMaxValue () - zoomSlider->getMinValue ()) / 6);
+}
+
+//------------------------------------------------------------------------------
+void cHud::setActiveUnit (const cUnit* unit)
+{
+	unitVideo->setUnit (unit);
 }

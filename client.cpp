@@ -71,7 +71,6 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	eventHandling (&eventHandling_),
 	ActivePlayer (NULL),
 	casualtiesTracker (new cCasualtiesTracker()),
-	gameGUI (new cGameGUI()),
 	gameTimer(),
 	FxList (new cFxContainer)
 {
@@ -156,7 +155,6 @@ void cClient::initPlayersWithMap()
 		if (PlayerList[i] == ActivePlayer) continue;
 		PlayerList[i]->base.SubBases.push_back (new sSubBase (PlayerList[i]));
 	}
-	gameGUI->setClient (this);
 }
 
 /*virtual*/ void cClient::pushEvent (cNetMessage* message)
@@ -268,7 +266,8 @@ void cClient::runFx()
 void cClient::addFx (cFx* fx)
 {
 	FxList->push_back (fx);
-	fx->playSound (*gameGUI);
+	//FIXME: gameGUI
+	//fx->playSound (*gameGUI);
 }
 
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
@@ -276,7 +275,8 @@ void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
 	assert (message.iType == TCP_CLOSE);
 
 	network->close (message.popInt16());
-	gameGUI->onLostConnection();
+	//FIXME: gameGUI
+	//gameGUI->onLostConnection();
 }
 
 void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
@@ -288,13 +288,15 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 		case USER_MESSAGE:
 		{
 			const string msg = message.popString();
-			gameGUI->onChat_userMessage (msg);
+			//FIXME: gameGUI
+			//gameGUI->onChat_userMessage (msg);
 			break;
 		}
 		case SERVER_ERROR_MESSAGE:
 		{
 			const string msg = lngPack.i18n (message.popString());
-			gameGUI->onChat_errorMessage (msg);
+			//FIXME: gameGUI
+			//gameGUI->onChat_errorMessage (msg);
 			break;
 		}
 		case SERVER_INFO_MESSAGE:
@@ -304,7 +306,8 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 			string msgString;
 			if (inserttext.empty()) msgString = lngPack.i18n (translationpath);
 			else msgString = lngPack.i18n (translationpath, inserttext);
-			gameGUI->onChat_infoMessage (msgString);
+			//FIXME: gameGUI
+			//gameGUI->onChat_infoMessage (msgString);
 			break;
 		}
 	}
@@ -344,7 +347,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	addUnit (PosX, PosY, *AddedBuilding, Init);
 
 	Player->base.addBuilding (AddedBuilding, NULL);
-	gameGUI->onAddedBuilding (*AddedBuilding);
+	//FIXME: gameGUI
+	//gameGUI->onAddedBuilding (*AddedBuilding);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
@@ -454,7 +458,8 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 	if (nextPlayerNum != ActivePlayer->getNr())
 	{
 		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
-		gameGUI->setEndButtonLock (true);
+		//FIXME: gameGUI
+		//gameGUI->setEndButtonLock (true);
 	}
 }
 
@@ -471,10 +476,11 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	{
 		iStartTurnTime = gameTimer.gameTime;
 		iTurn++;
-		gameGUI->updateTurn (iTurn);
-		if (!bWaitForNextPlayer) gameGUI->setEndButtonLock (false);
+		//FIXME: gameGUI
+		//gameGUI->updateTurn (iTurn);
+		//if (!bWaitForNextPlayer) gameGUI->setEndButtonLock (false);
 		bWantToEnd = false;
-		gameGUI->updateTurnTime (-1);
+		//gameGUI->updateTurnTime (-1);
 		ActivePlayer->clearDone();
 		Log.write ("######### Round " + iToStr (iTurn) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 		for (unsigned int i = 0; i < getPlayerList().size(); i++)
@@ -492,7 +498,8 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 		else
 		{
 			disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-			gameGUI->setEndButtonLock (false);
+			//FIXME: gameGUI
+			//gameGUI->setEndButtonLock (false);
 		}
 	}
 	else if (iNextPlayerNum != -1)
@@ -522,7 +529,8 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 		if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 		{
 			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay / 100));
-			gameGUI->addMessage (msgString);
+			//FIXME: gameGUI
+			//gameGUI->addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 		}
 		iEndTurnTime = gameTimer.gameTime + iTimeDelay;
@@ -530,7 +538,8 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	else if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 	{
 		string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName());
-		gameGUI->addMessage (msgString);
+		//FIXME: gameGUI
+		//gameGUI->addMessage (msgString);
 		ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 	}
 }
@@ -602,7 +611,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			{
 				const std::string msg = Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
-				gameGUI->addCoords (report);
+				//FIXME: gameGUI
+				//gameGUI->addCoords (report);
 				PlayVoice (VoiceData.VOIUnitDisabled);
 			}
 			Vehicle->owner->doScan();
@@ -635,7 +645,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			{
 				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
-				gameGUI->addCoords (report);
+				//FIXME: gameGUI
+				//gameGUI->addCoords (report);
 				PlayVoice (VoiceData.VOIUnitDisabled);
 			}
 			Building->owner->doScan();
@@ -670,7 +681,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
-		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI->getSelectedUnit()) gameGUI->stopFXLoop();
+		//FIXME: gameGUI
+		//if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI->getSelectedUnit()) gameGUI->stopFXLoop();
 
 		Vehicle->FlightHigh = message.popInt16();
 	}
@@ -702,7 +714,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
 		// TODO: Request sync of building
 		return;
 	}
-	building->ClientStartWork (*gameGUI);
+	building->clientStartWork ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
@@ -717,7 +729,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
 		// TODO: Request sync of building
 		return;
 	}
-	building->ClientStopWork (*gameGUI);
+	building->clientStopWork ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
@@ -829,14 +841,16 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 			if (!Vehicle->BuildPath)
 			{
 				const string msgString = lngPack.i18n ("Text~Comp~Producing_Err");
-				gameGUI->addMessage (msgString);
+				//FIXME: gameGUI
+				//gameGUI->addMessage (msgString);
 				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			}
 			else if (Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY)
 			{
 				const string msgString = lngPack.i18n ("Text~Comp~Path_interrupted");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
-				gameGUI->addCoords (report);
+				//FIXME: gameGUI
+				//gameGUI->addCoords (report);
 			}
 		}
 		Vehicle->BuildRounds = 0;
@@ -879,11 +893,12 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	Vehicle->IsBuilding = true;
 	addJob (new cStartBuildJob (*Vehicle, oldPosX, oldPosY, buildBig));
 
-	if (Vehicle == gameGUI->getSelectedUnit())
-	{
-		gameGUI->stopFXLoop();
-		gameGUI->playStream (*Vehicle);
-	}
+	//FIXME: gameGUI
+	//if (Vehicle == gameGUI->getSelectedUnit())
+	//{
+	//	gameGUI->stopFXLoop();
+	//	gameGUI->playStream (*Vehicle);
+	//}
 
 	if (Vehicle->ClientMoveJob) Vehicle->ClientMoveJob->release();
 }
@@ -913,11 +928,12 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	Vehicle->IsBuilding = false;
 	Vehicle->BuildPath = false;
 
-	if (gameGUI->getSelectedUnit() == Vehicle)
-	{
-		gameGUI->stopFXLoop();
-		gameGUI->playStream (*Vehicle);
-	}
+	//FIXME: gameGUI
+	//if (gameGUI->getSelectedUnit() == Vehicle)
+	//{
+	//	gameGUI->stopFXLoop();
+	//	gameGUI->playStream (*Vehicle);
+	//}
 }
 
 void cClient::HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message)
@@ -1021,8 +1037,9 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
 		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartMore);
 	}
-	gameGUI->addMessage (lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn));
-	if (sReportMsg.length() > 0) gameGUI->addMessage (sReportMsg);
+	//FIXME: gameGUI
+	//gameGUI->addMessage (lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn));
+	//if (sReportMsg.length() > 0) gameGUI->addMessage (sReportMsg);
 	string researchMsgString = "";
 	if (bFinishedResearch)
 	{
@@ -1053,7 +1070,8 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 					researchMsgString += ", ";
 			}
 		}
-		gameGUI->addMessage (researchMsgString);
+		//FIXME: gameGUI
+		//gameGUI->addMessage (researchMsgString);
 	}
 
 	// Save the report
@@ -1211,11 +1229,12 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			Vehicle->IsClearing = true;
 			addJob (new cStartBuildJob (*Vehicle, orgX, orgY, (bigoffset > 0)));
 
-			if (gameGUI->getSelectedUnit() == Vehicle)
-			{
-				gameGUI->stopFXLoop();
-				gameGUI->playStream (*Vehicle);
-			}
+			//FIXME: gameGUI
+			//if (gameGUI->getSelectedUnit() == Vehicle)
+			//{
+			//	gameGUI->stopFXLoop();
+			//	gameGUI->playStream (*Vehicle);
+			//}
 		}
 		break;
 		case 1:
@@ -1251,11 +1270,12 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	Vehicle->IsClearing = false;
 	Vehicle->ClearingRounds = 0;
 
-	if (gameGUI->getSelectedUnit() == Vehicle)
-	{
-		gameGUI->stopFXLoop();
-		gameGUI->playStream (*Vehicle);
-	}
+	//FIXME: gameGUI
+	//if (gameGUI->getSelectedUnit() == Vehicle)
+	//{
+	//	gameGUI->stopFXLoop();
+	//	gameGUI->playStream (*Vehicle);
+	//}
 }
 
 void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
@@ -1278,7 +1298,8 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 	}
 	Player->isDefeated = true;
 	string msgString = lngPack.i18n ("Text~Multiplayer~Player") + " " + Player->getName() + " " + lngPack.i18n ("Text~Comp~Defeated");
-	gameGUI->addMessage (msgString);
+	//FIXME: gameGUI
+	//gameGUI->addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 #if 0
 	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
@@ -1324,7 +1345,8 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
 	}
 	const string msgString = lngPack.i18n ("Text~Multiplayer~Player_Left", Player->getName());
-	gameGUI->addMessage (msgString);
+	//FIXME: gameGUI
+	//gameGUI->addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 
 	deletePlayer (Player);
@@ -1337,37 +1359,39 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 	iTurn = message.popInt16();
 	iStartTurnTime = message.popInt32();
 	iEndTurnTime = iStartTurnTime;
-	gameGUI->updateTurn (iTurn);
+	//FIXME: gameGUI
+	//gameGUI->updateTurn (iTurn);
 }
 
 void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
 {
-	assert (message.iType == GAME_EV_HUD_SETTINGS);
+	//FIXME: gameGUI
+	//assert (message.iType == GAME_EV_HUD_SETTINGS);
 
-	const int unitID = message.popInt16();
-	cUnit* unit = getVehicleFromID (unitID);
-	if (!unit) unit = getBuildingFromID (unitID);
+	//const int unitID = message.popInt16();
+	//cUnit* unit = getVehicleFromID (unitID);
+	//if (!unit) unit = getBuildingFromID (unitID);
 
-	if (unit) gameGUI->selectUnit (*unit);
+	//if (unit) gameGUI->selectUnit (*unit);
 
-	const int x = message.popInt16();
-	const int y = message.popInt16();
-	gameGUI->setOffsetPosition (x, y);
-	gameGUI->setZoom (message.popFloat(), true, false);
-	gameGUI->setColor (message.popBool());
-	gameGUI->setGrid (message.popBool());
-	gameGUI->setAmmo (message.popBool());
-	gameGUI->setFog (message.popBool());
-	gameGUI->setTwoX (message.popBool());
-	gameGUI->setRange (message.popBool());
-	gameGUI->setScan (message.popBool());
-	gameGUI->setStatus (message.popBool());
-	gameGUI->setSurvey (message.popBool());
-	gameGUI->setLock (message.popBool());
-	gameGUI->setHits (message.popBool());
-	gameGUI->setTNT (message.popBool());
+	//const int x = message.popInt16();
+	//const int y = message.popInt16();
+	//gameGUI->setOffsetPosition (x, y);
+	//gameGUI->setZoom (message.popFloat(), true, false);
+	//gameGUI->setColor (message.popBool());
+	//gameGUI->setGrid (message.popBool());
+	//gameGUI->setAmmo (message.popBool());
+	//gameGUI->setFog (message.popBool());
+	//gameGUI->setTwoX (message.popBool());
+	//gameGUI->setRange (message.popBool());
+	//gameGUI->setScan (message.popBool());
+	//gameGUI->setStatus (message.popBool());
+	//gameGUI->setSurvey (message.popBool());
+	//gameGUI->setLock (message.popBool());
+	//gameGUI->setHits (message.popBool());
+	//gameGUI->setTNT (message.popBool());
 
-	gameGUI->setStartup (false);
+	//gameGUI->setStartup (false);
 }
 
 void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
@@ -1381,14 +1405,16 @@ void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 	{
 		cVehicle* storingVehicle = getVehicleFromID (message.popInt16());
 		if (!storingVehicle) return;
-		gameGUI->onVehicleStored (*storingVehicle, *storedVehicle);
+		//FIXME: gameGUI
+		//gameGUI->onVehicleStored (*storingVehicle, *storedVehicle);
 		storingVehicle->storeVehicle (*storedVehicle, *getMap());
 	}
 	else
 	{
 		cBuilding* storingBuilding = getBuildingFromID (message.popInt16());
 		if (!storingBuilding) return;
-		gameGUI->onVehicleStored (*storingBuilding, *storedVehicle);
+		//FIXME: gameGUI
+		//gameGUI->onVehicleStored (*storingBuilding, *storedVehicle);
 		storingBuilding->storeVehicle (*storedVehicle, *getMap());
 	}
 }
@@ -1408,10 +1434,11 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		const int x = message.popInt16();
 		const int y = message.popInt16();
 		StoringVehicle->exitVehicleTo (*StoredVehicle, getMap()->getOffset (x, y), *getMap());
-		if (gameGUI->getSelectedUnit() == StoringVehicle && gameGUI->mouseInputMode == activateVehicle)
-		{
-			gameGUI->mouseInputMode = normalInput;
-		}
+		//FIXME: gameGUI
+		//if (gameGUI->getSelectedUnit() == StoringVehicle && gameGUI->mouseInputMode == activateVehicle)
+		//{
+		//	gameGUI->mouseInputMode = normalInput;
+		//}
 	}
 	else
 	{
@@ -1422,13 +1449,15 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		const int y = message.popInt16();
 		StoringBuilding->exitVehicleTo (*StoredVehicle, getMap()->getOffset (x, y), *getMap());
 
-		if (gameGUI->getSelectedUnit() == StoringBuilding && gameGUI->mouseInputMode == activateVehicle)
-		{
-			gameGUI->mouseInputMode = normalInput;
-		}
+		//FIXME: gameGUI
+		//if (gameGUI->getSelectedUnit() == StoringBuilding && gameGUI->mouseInputMode == activateVehicle)
+		//{
+		//	gameGUI->mouseInputMode = normalInput;
+		//}
 	}
 	PlayFX (SoundData.SNDActivate);
-	gameGUI->updateMouseCursor();
+	//FIXME: gameGUI
+	//gameGUI->updateMouseCursor();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message, cMenu* activeMenu)
@@ -1543,7 +1572,8 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	ostringstream os;
 	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
 	string sTmp (os.str());
-	gameGUI->addMessage (sTmp);
+	//FIXME: gameGUI
+	//gameGUI->addMessage (sTmp);
 	ActivePlayer->addSavedReport (sTmp, sSavedReportMessage::REPORT_TYPE_COMP);
 	if (scanNecessary)
 		ActivePlayer->doScan();
@@ -1588,7 +1618,8 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message, 
 	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
 
 	string printStr (os.str());
-	gameGUI->addMessage (printStr);
+	//FIXME: gameGUI
+	//gameGUI->addMessage (printStr);
 	ActivePlayer->addSavedReport (printStr, sSavedReportMessage::REPORT_TYPE_COMP);
 }
 
@@ -1664,7 +1695,8 @@ void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
 	/* Ignore vehicle ID. */
 	message.popInt16();
 
-	gameGUI->checkMouseInputMode();
+	//FIXME: gameGUI
+	//gameGUI->checkMouseInputMode();
 }
 
 void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
@@ -1672,8 +1704,9 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
 
 	const int saveingID = message.popInt16();
-	if (gameGUI->getSelectedUnit()) sendSaveHudInfo (*this, gameGUI->getSelectedUnit()->iID, ActivePlayer->getNr(), saveingID);
-	else sendSaveHudInfo (*this, -1, ActivePlayer->getNr(), saveingID);
+	//FIXME: gameGUI
+	//if (gameGUI->getSelectedUnit()) sendSaveHudInfo (*this, gameGUI->getSelectedUnit()->iID, ActivePlayer->getNr(), saveingID);
+	//else sendSaveHudInfo (*this, -1, ActivePlayer->getNr(), saveingID);
 
 	const std::vector<sSavedReportMessage>& savedReports = ActivePlayer->savedReportsList;
 	for (size_t i = std::max<int> (0, savedReports.size() - 50); i != savedReports.size(); ++i)
@@ -1869,8 +1902,9 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit,
 
 	if (!bInit) addedVehicle.StartUp = 10;
 
-	gameGUI->updateMouseCursor();
-	gameGUI->callMiniMapDraw();
+	//FIXME: gameGUI
+	//gameGUI->updateMouseCursor();
+	//gameGUI->callMiniMapDraw();
 
 	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
@@ -1878,14 +1912,16 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit,
 		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
 		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", addedVehicle.getDisplayName());
 		const sSavedReportMessage& report = getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, addedVehicle.PosX, addedVehicle.PosY);
-		gameGUI->addCoords (report);
+		//FIXME: gameGUI
+		//gameGUI->addCoords (report);
 	}
 	else if (addedVehicle.owner != ActivePlayer)
 	{
 		// make report
 		const string message = addedVehicle.getDisplayName() + " (" + addedVehicle.owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
 		const sSavedReportMessage& report = getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, iPosX, iPosY);
-		gameGUI->addCoords (report);
+		//FIXME: gameGUI
+		//gameGUI->addCoords (report);
 
 		if (addedVehicle.data.isStealthOn & TERRAIN_SEA && addedVehicle.data.canAttack)
 			PlayVoice (VoiceData.VOISubDetected);
@@ -1901,8 +1937,9 @@ void cClient::addUnit (int iPosX, int iPosY, cBuilding& addedBuilding, bool bIni
 
 	if (!bInit) addedBuilding.StartUp = 10;
 
-	gameGUI->updateMouseCursor();
-	gameGUI->callMiniMapDraw();
+	//FIXME: gameGUI
+	//gameGUI->updateMouseCursor();
+	//gameGUI->callMiniMapDraw();
 }
 
 cPlayer* cClient::getPlayerFromNumber (int iNum)
@@ -1935,7 +1972,8 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 {
 	if (!Building) return;
-	gameGUI->onRemoveUnit (*Building);
+	//FIXME: gameGUI
+	//gameGUI->onRemoveUnit (*Building);
 
 	if (activeMenu) activeMenu->handleDestroyUnit (*Building);
 	getMap()->deleteBuilding (*Building);
@@ -1975,7 +2013,8 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 	}
 	helperJobs.onRemoveUnit (Vehicle);
 
-	gameGUI->onRemoveUnit (*Vehicle);
+	//FIXME: gameGUI
+	//gameGUI->onRemoveUnit (*Vehicle);
 
 	cPlayer* owner = Vehicle->owner;
 	remove_from_intrusivelist (Vehicle->owner->VehicleList, *Vehicle);
@@ -2022,14 +2061,16 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 	Hud.OffY = iY;
 #endif
 	// reset the screen
-	gameGUI->deselectUnit();
+	//FIXME: gameGUI
+	//gameGUI->deselectUnit();
 	SDL_Surface* sf = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), 32, 0, 0, 0, 0);
 	SDL_Rect scr = { 15, 356, 112u, 112u};
 	SDL_BlitSurface (sf, NULL, cVideo::buffer, NULL);
 	SDL_BlitSurface (sf, &scr, cVideo::buffer, &scr);
 
-	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->getName()));
-	gameGUI->switchTo(okDialog, this);
+	//FIXME: gameGUI
+	//cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->getName()));
+	//gameGUI->switchTo(okDialog, this);
 }
 
 unsigned int cClient::getRemainingTimeInSecond() const
@@ -2048,11 +2089,13 @@ void cClient::handleTurnTime()
 {
 	if (iEndTurnTime > iStartTurnTime)
 	{
-		gameGUI->updateTurnTime (getRemainingTimeInSecond());
+		//FIXME: gameGUI
+		//gameGUI->updateTurnTime (getRemainingTimeInSecond());
 	}
 	else
 	{
-		gameGUI->updateTurnTime (getElapsedTimeInSecond());
+		//FIXME: gameGUI
+		//gameGUI->updateTurnTime (getElapsedTimeInSecond());
 	}
 }
 
@@ -2091,7 +2134,8 @@ void cClient::handleMoveJobs()
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			delete MoveJob;
-			if (Vehicle == gameGUI->getSelectedUnit()) gameGUI->updateMouseCursor();
+			//FIXME: gameGUI
+			//if (Vehicle == gameGUI->getSelectedUnit()) gameGUI->updateMouseCursor();
 			continue;
 		}
 		if (MoveJob->bEndForNow)
@@ -2103,7 +2147,8 @@ void cClient::handleMoveJobs()
 				Vehicle->moving = false;
 			}
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
-			if (Vehicle == gameGUI->getSelectedUnit()) gameGUI->updateMouseCursor();
+			//FIXME: gameGUI
+			//if (Vehicle == gameGUI->getSelectedUnit()) gameGUI->updateMouseCursor();
 			continue;
 		}
 
@@ -2268,13 +2313,15 @@ void cClient::runJobs()
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
 	freezeModes.enable (mode, playerNumber);
-	gameGUI->updateInfoTexts();
+	//FIXME: gameGUI
+	//gameGUI->updateInfoTexts();
 }
 
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
 	freezeModes.disable (mode);
-	gameGUI->updateInfoTexts();
+	//FIXME: gameGUI
+	//gameGUI->updateInfoTexts();
 }
 
 bool cClient::isFreezed() const

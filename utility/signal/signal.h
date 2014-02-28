@@ -60,6 +60,26 @@ public:
 	virtual void disconnect (const cSignalConnection& connection) = 0;
 };
 
+class cSignalReference
+{
+public:
+	cSignalReference (cSignalBase& signal_) :
+		signal (signal_)
+	{}
+
+	cSignalBase& getSignal ()
+	{
+		return signal;
+	}
+
+	bool operator==(const cSignalReference& other) const
+	{
+		return &signal == &other.signal;
+	}
+private:
+	cSignalBase& signal;
+};
+
 #if MAXR_NO_VARIADIC_TEMPLATES
 
 #include "signal_novariadic/signal_0.h"
@@ -161,6 +181,8 @@ private:
 	bool isInvoking;
 
 	void cleanUpConnections ();
+
+	std::shared_ptr<cSignalReference> thisReference;
 };
 
 //------------------------------------------------------------------------------
@@ -168,14 +190,16 @@ template<typename R, typename... Args, typename ResultCombinerType>
 cSignal<R (Args...), ResultCombinerType>::cSignal () :
 	nextIdentifer (0),
 	isInvoking (false)
-{}
+{
+	thisReference = std::make_shared<cSignalReference> (*this);
+}
 
 //------------------------------------------------------------------------------
 template<typename R, typename... Args, typename ResultCombinerType>
 template<typename F>
 cSignalConnection cSignal<R (Args...), ResultCombinerType>::connect (F&& f)
 {
-    cSignalConnection connection (nextIdentifer++, *this);
+	cSignalConnection connection (nextIdentifer++, std::weak_ptr<cSignalReference> (thisReference));
 	assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
 
 	auto slotFunction = typename SlotType::function_type (std::forward<F> (f));

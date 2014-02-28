@@ -298,7 +298,7 @@ private:
 
 	cPosition lastMousePosition;
 
-	void mouseMoved(cMouse& mouse);
+	void mouseMoved(cMouse& mouse, const cPosition& offset);
 	void mouseButtonPressed(cMouse& mouse, eMouseButtonType button);
 	void mouseButtonReleased(cMouse& mouse, eMouseButtonType button);
 

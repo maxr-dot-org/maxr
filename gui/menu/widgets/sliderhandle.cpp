@@ -89,7 +89,7 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 }
 
 //------------------------------------------------------------------------------
-bool cSliderHandle::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cSliderHandle::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition&)
 {
 	if (!application.hasMouseFocus (*this)) return false;
 

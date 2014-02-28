@@ -646,10 +646,12 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		const string name = unit->getDisplayName();
 		const sID id = unit->data.ID;
 		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
-		client->getGameGUI().addCoords (report);
+		//FIXME: gameGUI
+		//client->getGameGUI().addCoords (report);
 		PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
-	client->getGameGUI().checkMouseInputMode();
+	//FIXME: gameGUI
+	//client->getGameGUI().checkMouseInputMode();
 }
 
 //--------------------------------------------------------------------------
@@ -932,7 +934,8 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 				playImpact = true;
 			}
 		}
-		client.getGameGUI().updateMouseCursor();
+		//FIXME: gameGUI
+		//client.getGameGUI().updateMouseCursor();
 	}
 
 	const int x = offset % map.getSize();
@@ -959,7 +962,8 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
 		const sSavedReportMessage& report = client.getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
-		client.getGameGUI().addCoords (report);
+		//FIXME: gameGUI
+		//client.getGameGUI().addCoords (report);
 	}
 
 	// clean up

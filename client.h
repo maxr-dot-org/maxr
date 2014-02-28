@@ -36,7 +36,6 @@ class cClientMoveJob;
 class cEventHandling;
 class cFx;
 class cFxContainer;
-class cGameGUI;
 class cJob;
 class cMap;
 class cMenu;
@@ -185,8 +184,6 @@ public:
 	std::vector<cPlayer*>& getPlayerList() { return PlayerList; }
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
-	const cGameGUI& getGameGUI() const { return *gameGUI; }
-	cGameGUI& getGameGUI() { return *gameGUI; }
 	void setGameSetting (const sSettings& gameSetting_);
 	const sSettings* getGameSetting() const { return gameSetting.get(); }
 private:
@@ -317,10 +314,6 @@ private:
 	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 
 	sFreezeModes freezeModes;
-	/** the hud */
-	// TODO: this should be a pointer to the gameGui instance,
-	// so it is possible to have a GUI-less client for ai implementation
-	AutoPtr<cGameGUI> gameGUI;
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */

@@ -35,7 +35,7 @@ public:
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void (const cPosition&)> clickedTile;
 protected:

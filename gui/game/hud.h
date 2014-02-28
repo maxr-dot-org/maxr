@@ -29,6 +29,9 @@ class cPushButton;
 class cCheckBox;
 class cSlider;
 class cLabel;
+class cUnitVideoWidget;
+class cUnit;
+class cAnimationTimer;
 
 class cHud : public cWidget
 {
@@ -40,7 +43,7 @@ public:
 	static const int panelBottomHeight = 14;
 	static const int panelTotalHeight  = panelTopHeight + panelBottomHeight;
 
-	cHud ();
+	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 
@@ -83,6 +86,8 @@ public:
 
 	cSignal<void ()> filesClicked;
 	cSignal<void ()> preferencesClicked;
+
+	void setActiveUnit (const cUnit* unit);
 protected:
 
 private:
@@ -108,6 +113,8 @@ private:
 	cLabel* unitNameLabel;
 	cLabel* turnLabel;
 	cLabel* timeLabel;
+
+	cUnitVideoWidget* unitVideo;
 
 	void handleZoomPlusClicked ();
 	void handleZoomMinusClicked ();

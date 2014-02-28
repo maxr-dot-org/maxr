@@ -61,11 +61,11 @@ void cWindowLandingPositionSelection::handleActivated (cApplication& application
 }
 
 //------------------------------------------------------------------------------
-bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	if (map->isAt (mouse.getPosition ()))
 	{
-		return map->handleMouseMoved (application, mouse);
+		return map->handleMouseMoved (application, mouse, offset);
 	}
 	else
 	{

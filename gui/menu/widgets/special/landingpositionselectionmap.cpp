@@ -59,9 +59,9 @@ bool cLandingPositionSelectionMap::handleClicked (cApplication& application, cMo
 }
 
 //------------------------------------------------------------------------------
-bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	cClickableWidget::handleMouseMoved (application, mouse);
+	cClickableWidget::handleMouseMoved (application, mouse, offset);
 
 	cPosition tilePosition;
 	auto mapTile = getMapTile (mouse.getPosition (), tilePosition);

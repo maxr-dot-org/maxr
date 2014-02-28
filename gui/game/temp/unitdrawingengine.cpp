@@ -21,6 +21,7 @@
 
 #include "unitdrawingengine.h"
 #include "animationtimer.h"
+#include "../unitselection.h"
 #include "../../../video.h"
 #include "../../../buildings.h"
 #include "../../../vehicles.h"
@@ -69,19 +70,16 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 }
 
 //--------------------------------------------------------------------------
-cUnitDrawingEngine::cUnitDrawingEngine () :
-	animationTimer (std::make_shared<cAnimationTimer>()),
+cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_) :
+	animationTimer (std::move (animationTimer_)),
 	drawingCache (animationTimer),
 	shouldDrawHits (false),
 	shouldDrawStatus (false),
 	shouldDrawAmmo (false),
-	shouldDrawColor (false)
-{}
-
-//--------------------------------------------------------------------------
-void cUnitDrawingEngine::handleNewFrame ()
+	shouldDrawColor (false),
+	blinkColor (0x00FFFFFF)
 {
-	animationTimer->updateAnimationFlags ();
+	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitDrawingEngine::rotateBlinkColor, this));
 }
 
 //--------------------------------------------------------------------------
@@ -109,7 +107,7 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, double zoomFactor, const cPlayer* player)
+void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, double zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 
@@ -235,7 +233,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 #endif
 	// draw the seleted-unit-flash-frame for bulidings
-	if (/*gameGUI.getSelectedUnit () == this*/false)
+	if (unitSelection && unitSelection->isSelected (building))
 	{
 		Uint16 maxX = building.data.isBig ? destination.w  * 2 : destination.w;
 		Uint16 maxY = building.data.isBig ? destination.h  * 2 : destination.h;
@@ -243,7 +241,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		maxX -= 3;
 		maxY -= 3;
 		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), maxX, maxY};
-		//DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor ());
+		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | blinkColor);
 	}
 
 	// draw health bar
@@ -278,7 +276,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, double zoomFactor, const cMap& map, const cPlayer* player)
+void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, double zoomFactor, const cMap& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 
@@ -442,7 +440,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		DrawRectangle (cVideo::buffer, d, color, 1);
 	}
 	// draw the seleted-unit-flash-frame for vehicles
-	if (/*gameGUI.getSelectedUnit () == this*/ false)
+	if (unitSelection && unitSelection->isSelected (vehicle))
 	{
 		Uint16 maxX = vehicle.data.isBig ? destination.w * 2 : destination.w;
 		Uint16 maxY = vehicle.data.isBig ? destination.h * 2 : destination.h;
@@ -450,7 +448,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		maxX -= 3;
 		maxY -= 3;
 		SDL_Rect d = {Sint16 (destination.x + 2), Sint16 (destination.y + 2), maxX, maxY};
-		//DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor ());
+		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | blinkColor);
 	}
 
 	// draw health bar
@@ -592,5 +590,20 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 				dest.x += destination.w / 4;
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, cVideo::buffer, &dest);
 		}
+	}
+}
+
+void cUnitDrawingEngine::rotateBlinkColor ()
+{
+	static bool dec = true;
+	if (dec)
+	{
+		blinkColor -= 0x000A0A0A;
+		if (blinkColor <= 0x00A0A0A0) dec = false;
+	}
+	else
+	{
+		blinkColor += 0x000A0A0A;
+		if (blinkColor >= 0x00FFFFFF) dec = true;
 	}
 }

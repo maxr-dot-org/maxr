@@ -20,7 +20,9 @@
 #ifndef utility_signal_signalconnectionH
 #define utility_signal_signalconnectionH
 
-class cSignalBase;
+#include <memory>
+
+class cSignalReference;
 
 /**
  * A signal connection that can be used to disconnect an
@@ -42,10 +44,10 @@ public:
 	 */
 	void disconnect ();
 private:
-	cSignalConnection (int identifier_, cSignalBase& signal_);
+	cSignalConnection (int identifier_, std::weak_ptr<cSignalReference>& signalReference);
 
 	unsigned int identifier;
-	cSignalBase* signal;
+	std::weak_ptr<cSignalReference> signalReference;
 };
 
 

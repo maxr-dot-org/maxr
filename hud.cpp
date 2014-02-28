@@ -139,233 +139,234 @@ void cDebugOutput::setServer (cServer* server_)
 
 void cDebugOutput::draw()
 {
-	const int DEBUGOUT_X_POS (Video.getResolutionX() - 200);
-	const cGameGUI& gui = client->getGameGUI();
-	const cPlayer& player = client->getActivePlayer();
-
-	int debugOff = 30;
-
-	if (debugPlayers)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->getPlayerList().size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
-		SDL_Rect rSrc = { 0, 0, 20, 10 };
-		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
-		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
-		const std::vector<cPlayer*>& playerList = client->getPlayerList();
-		for (size_t i = 0; i != playerList.size(); ++i)
-		{
-			// HACK SHOWFINISHEDPLAYERS
-			SDL_Rect rDot = { 10, 0, 10, 10 }; // for green dot
-
-			if (playerList[i]->bFinishedTurn /* && playerList[i] != &player*/)
-			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
-			}
-#if 0
-			else if (playerList[i] == &player && client->bWantToEnd)
-			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
-			}
-#endif
-			else
-			{
-				rDot.x = 0; // for red dot
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
-			}
-
-			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, cVideo::buffer, &rDest);
-			if (playerList[i] == &player)
-			{
-				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
-				// black out background for better recognizing
-				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
-				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
-			}
-			else
-			{
-				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
-				// black out background for better recognizing
-				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
-				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
-			}
-			// use 10 for pixel high of dots instead of text high
-			debugOff += 10;
-			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
-		}
-	}
-
-	if (debugAjobs)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ((int) client->attackJobs.size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		if (server)
-		{
-			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ((int) server->AJobs.size()), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		}
-	}
-
-	if (debugBaseClient)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) player.base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-
-	if (debugBaseServer)
-	{
-		cPlayer* serverPlayer = server->getPlayerFromNumber (player.getNr());
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-
-	if (debugFX)
-	{
-#if 0
-		font->showText (DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr ((int) FXList.size() + (int) FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ((int) (fWindDir * 57.29577f)), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-#endif
-	}
-	if (debugTraceServer || debugTraceClient)
-	{
-		trace();
-	}
-	if (debugCache)
-	{
-		const cDrawingCache& dCache = gui.dCache;
-		font->showText (DEBUGOUT_X_POS, debugOff, "Max cache size: " + iToStr (dCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "cache size: " + iToStr (dCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "cache hits: " + iToStr (dCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "cache misses: " + iToStr (dCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "not cached: " + iToStr (dCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-
-	if (showFPS)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Frame: " + iToStr (gui.frame), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "FPS: " + iToStr (Round (gui.framesPerSecond)), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "Cycles/s: " + iToStr (Round (gui.cyclesPerSecond)), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "Load: " + iToStr (gui.loadValue / 10) + "." + iToStr (gui.loadValue % 10) + "%", FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-	if (debugSync)
-	{
-		font->showText (DEBUGOUT_X_POS - 20, debugOff, "Sync debug:", FONT_LATIN_SMALL_YELLOW);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		if (server)
-		{
-			font->showText (DEBUGOUT_X_POS - 10, debugOff, "-Server:", FONT_LATIN_SMALL_YELLOW);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS, debugOff, "Server Time: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-			font->showText (DEBUGOUT_X_POS, debugOff, "Net MSG Queue: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-			font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-			font->showText (DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-			for (size_t i = 0; i != server->PlayerList.size(); ++i)
-			{
-				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
-				if (server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer.gameTime)
-					fontType = FONT_LATIN_SMALL_RED;
-				font->showText (DEBUGOUT_X_POS + 10, debugOff, "Client " + iToStr (i) + ": ", fontType);
-				font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.gameTime - server->gameTimer.getReceivedTime (i)), fontType);
-				debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-			}
-		}
-
-		font->showText (DEBUGOUT_X_POS - 10, debugOff, "-Client:", FONT_LATIN_SMALL_YELLOW);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		eUnicodeFontType fontType = FONT_LATIN_SMALL_GREEN;
-		if (client->gameTimer.debugRemoteChecksum != client->gameTimer.localChecksum)
-			fontType = FONT_LATIN_SMALL_RED;
-		font->showText (DEBUGOUT_X_POS, debugOff, "Server Checksum: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client->gameTimer.debugRemoteChecksum), fontType);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "Client Checksum: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client->gameTimer.localChecksum), fontType);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "Client Time: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->getEventHandling().eventQueue.size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.getReceivedTime() - client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "Ticks per Frame ", FONT_LATIN_SMALL_WHITE);
-		static unsigned int lastGameTime = 0;
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTime - lastGameTime), FONT_LATIN_SMALL_WHITE);
-		lastGameTime = client->gameTimer.gameTime;
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "Time Adjustment: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTimeAdjustment), FONT_LATIN_SMALL_WHITE);
-		static int totalAdjust = 0;
-		totalAdjust += client->gameTimer.gameTimeAdjustment;
-		client->gameTimer.gameTimeAdjustment = 0;
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		font->showText (DEBUGOUT_X_POS, debugOff, "TotalAdj.: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (totalAdjust), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
+	//FIXME: gameGUI
+	//const int DEBUGOUT_X_POS (Video.getResolutionX() - 200);
+//	const cGameGUI& gui = client->getGameGUI();
+//	const cPlayer& player = client->getActivePlayer();
+//
+//	int debugOff = 30;
+//
+//	if (debugPlayers)
+//	{
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->getPlayerList().size()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
+//		SDL_Rect rSrc = { 0, 0, 20, 10 };
+//		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
+//		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
+//		const std::vector<cPlayer*>& playerList = client->getPlayerList();
+//		for (size_t i = 0; i != playerList.size(); ++i)
+//		{
+//			// HACK SHOWFINISHEDPLAYERS
+//			SDL_Rect rDot = { 10, 0, 10, 10 }; // for green dot
+//
+//			if (playerList[i]->bFinishedTurn /* && playerList[i] != &player*/)
+//			{
+//				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
+//			}
+//#if 0
+//			else if (playerList[i] == &player && client->bWantToEnd)
+//			{
+//				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
+//			}
+//#endif
+//			else
+//			{
+//				rDot.x = 0; // for red dot
+//				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
+//			}
+//
+//			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, cVideo::buffer, &rDest);
+//			if (playerList[i] == &player)
+//			{
+//				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
+//				// black out background for better recognizing
+//				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
+//				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
+//				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
+//			}
+//			else
+//			{
+//				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
+//				// black out background for better recognizing
+//				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
+//				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
+//				font->showText (rBlackOut.x, debugOff + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
+//			}
+//			// use 10 for pixel high of dots instead of text high
+//			debugOff += 10;
+//			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
+//		}
+//	}
+//
+//	if (debugAjobs)
+//	{
+//		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ((int) client->attackJobs.size()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		if (server)
+//		{
+//			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ((int) server->AJobs.size()), FONT_LATIN_SMALL_WHITE);
+//			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		}
+//	}
+//
+//	if (debugBaseClient)
+//	{
+//		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) player.base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//	}
+//
+//	if (debugBaseServer)
+//	{
+//		cPlayer* serverPlayer = server->getPlayerFromNumber (player.getNr());
+//		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ((int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//	}
+//
+//	if (debugFX)
+//	{
+//#if 0
+//		font->showText (DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr ((int) FXList.size() + (int) FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ((int) (fWindDir * 57.29577f)), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//#endif
+//	}
+//	if (debugTraceServer || debugTraceClient)
+//	{
+//		trace();
+//	}
+//	if (debugCache)
+//	{
+//		const cDrawingCache& dCache = gui.dCache;
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Max cache size: " + iToStr (dCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "cache size: " + iToStr (dCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "cache hits: " + iToStr (dCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "cache misses: " + iToStr (dCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "not cached: " + iToStr (dCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//	}
+//
+//	if (showFPS)
+//	{
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Frame: " + iToStr (gui.frame), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "FPS: " + iToStr (Round (gui.framesPerSecond)), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Cycles/s: " + iToStr (Round (gui.cyclesPerSecond)), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Load: " + iToStr (gui.loadValue / 10) + "." + iToStr (gui.loadValue % 10) + "%", FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//	}
+//	if (debugSync)
+//	{
+//		font->showText (DEBUGOUT_X_POS - 20, debugOff, "Sync debug:", FONT_LATIN_SMALL_YELLOW);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		if (server)
+//		{
+//			font->showText (DEBUGOUT_X_POS - 10, debugOff, "-Server:", FONT_LATIN_SMALL_YELLOW);
+//			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//			font->showText (DEBUGOUT_X_POS, debugOff, "Server Time: ", FONT_LATIN_SMALL_WHITE);
+//			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+//			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//			font->showText (DEBUGOUT_X_POS, debugOff, "Net MSG Queue: ", FONT_LATIN_SMALL_WHITE);
+//			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
+//			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//			font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
+//			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
+//			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//			font->showText (DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
+//			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//			for (size_t i = 0; i != server->PlayerList.size(); ++i)
+//			{
+//				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
+//				if (server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer.gameTime)
+//					fontType = FONT_LATIN_SMALL_RED;
+//				font->showText (DEBUGOUT_X_POS + 10, debugOff, "Client " + iToStr (i) + ": ", fontType);
+//				font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.gameTime - server->gameTimer.getReceivedTime (i)), fontType);
+//				debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//			}
+//		}
+//
+//		font->showText (DEBUGOUT_X_POS - 10, debugOff, "-Client:", FONT_LATIN_SMALL_YELLOW);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//		eUnicodeFontType fontType = FONT_LATIN_SMALL_GREEN;
+//		if (client->gameTimer.debugRemoteChecksum != client->gameTimer.localChecksum)
+//			fontType = FONT_LATIN_SMALL_RED;
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Server Checksum: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client->gameTimer.debugRemoteChecksum), fontType);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Client Checksum: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client->gameTimer.localChecksum), fontType);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Client Time: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->getEventHandling().eventQueue.size()), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.getReceivedTime() - client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Ticks per Frame ", FONT_LATIN_SMALL_WHITE);
+//		static unsigned int lastGameTime = 0;
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTime - lastGameTime), FONT_LATIN_SMALL_WHITE);
+//		lastGameTime = client->gameTimer.gameTime;
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "Time Adjustment: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTimeAdjustment), FONT_LATIN_SMALL_WHITE);
+//		static int totalAdjust = 0;
+//		totalAdjust += client->gameTimer.gameTimeAdjustment;
+//		client->gameTimer.gameTimeAdjustment = 0;
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//
+//		font->showText (DEBUGOUT_X_POS, debugOff, "TotalAdj.: ", FONT_LATIN_SMALL_WHITE);
+//		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (totalAdjust), FONT_LATIN_SMALL_WHITE);
+//		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+//	}
 }
 
 void cDebugOutput::trace()
 {
-	const auto mouseTilePosition = client->getGameGUI().getTilePosition(cMouse::getInstance().getPosition());
-	int x = mouseTilePosition.x();
-	int y = mouseTilePosition.y();
-	if (x < 0 || y < 0) return;
+	//const auto mouseTilePosition = client->getGameGUI().getTilePosition(cMouse::getInstance().getPosition());
+	//int x = mouseTilePosition.x();
+	//int y = mouseTilePosition.y();
+	//if (x < 0 || y < 0) return;
 
-	cMapField* field;
+	//cMapField* field;
 
-	if (debugTraceServer) field = &server->Map->fields[server->Map->getOffset (x, y)];
-	else field = &client->Map->fields[client->Map->getOffset (x, y)];
+	//if (debugTraceServer) field = &server->Map->fields[server->Map->getOffset (x, y)];
+	//else field = &client->Map->fields[client->Map->getOffset (x, y)];
 
-	y = 18 + 5 + 8;
-	x = 180 + 5;
+	//y = 18 + 5 + 8;
+	//x = 180 + 5;
 
-	if (field->getVehicle()) { traceVehicle (*field->getVehicle(), &y, x); y += 20; }
-	if (field->getPlane()) { traceVehicle (*field->getPlane(), &y, x); y += 20; }
-	const std::vector<cBuilding*>& buildings = field->getBuildings();
-	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
-	{
-		traceBuilding (**it, &y, x); y += 20;
-	}
+	//if (field->getVehicle()) { traceVehicle (*field->getVehicle(), &y, x); y += 20; }
+	//if (field->getPlane()) { traceVehicle (*field->getPlane(), &y, x); y += 20; }
+	//const std::vector<cBuilding*>& buildings = field->getBuildings();
+	//for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
+	//{
+	//	traceBuilding (**it, &y, x); y += 20;
+	//}
 }
 
 void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
@@ -684,7 +685,7 @@ void cGameGUI::activate()
 
 	using namespace std::placeholders;
 
-	signalConnectionManagerActive.connect(cMouse::getInstance().moved, std::bind(&cGameGUI::mouseMoved, this, _1));
+	signalConnectionManagerActive.connect(cMouse::getInstance().moved, std::bind(&cGameGUI::mouseMoved, this, _1, _2));
 	signalConnectionManagerActive.connect(cMouse::getInstance().pressed, std::bind(&cGameGUI::mouseButtonPressed, this, _1, _2));
 	signalConnectionManagerActive.connect(cMouse::getInstance().released, std::bind(&cGameGUI::mouseButtonReleased, this, _1, _2));
 	signalConnectionManagerActive.connect(cMouse::getInstance().wheelMoved, std::bind(&cGameGUI::mouseWheelMoved, this, _1, _2));
@@ -700,7 +701,7 @@ void cGameGUI::deactivate()
 	signalConnectionManagerActive.disconnectAll();
 }
 
-void cGameGUI::mouseMoved(cMouse& mouse)
+void cGameGUI::mouseMoved(cMouse& mouse, const cPosition& offset)
 {
 	if(checkScroll(mouse)) return;
 

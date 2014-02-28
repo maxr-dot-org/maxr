@@ -225,7 +225,7 @@ void cApplication::registerMouse (cMouse& mouse)
 	signalConnectionManager.connect (mouse.pressed, std::bind (&cApplication::mousePressed, this, _1, _2));
 	signalConnectionManager.connect (mouse.released, std::bind (&cApplication::mouseReleased, this, _1, _2));
 	signalConnectionManager.connect (mouse.wheelMoved, std::bind (&cApplication::mouseWheelMoved, this, _1, _2));
-	signalConnectionManager.connect (mouse.moved, std::bind (&cApplication::mouseMoved, this, _1));
+	signalConnectionManager.connect (mouse.moved, std::bind (&cApplication::mouseMoved, this, _1, _2));
 
 	if (activeMouse == nullptr) activeMouse = &mouse;
 }
@@ -283,11 +283,11 @@ void cApplication::mouseWheelMoved (cMouse& mouse, const cPosition& amount)
 }
 
 //------------------------------------------------------------------------------
-void cApplication::mouseMoved (cMouse& mouse)
+void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 {
 	auto target = getMouseEventFirstTarget (mouse.getPosition ());
 
-	if (mouseFocusWidget && mouseFocusWidget->handleMouseMoved (*this, mouse)) return;
+	if (mouseFocusWidget && mouseFocusWidget->handleMouseMoved (*this, mouse, offset)) return;
 
 	//if (underMouseWidget != target)
 	//{
@@ -296,7 +296,7 @@ void cApplication::mouseMoved (cMouse& mouse)
 	//	underMouseWidget = target;
 	//}
 
-	while (target && !target->handleMouseMoved (*this, mouse))
+	while (target && !target->handleMouseMoved (*this, mouse, offset))
 	{
 		target = target->getParent ();
 	}

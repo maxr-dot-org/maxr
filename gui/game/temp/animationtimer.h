@@ -22,7 +22,10 @@
 
 #include <SDL_timer.h>
 
-// TODO: may remove this class! replace it by something a lot more generic and clean
+#include "../../../utility/signal/signal.h"
+
+// TODO: may remove this classes!
+//       replace it by something a lot more generic and clean
 
 class cAnimationTimeFlags
 {
@@ -55,6 +58,10 @@ public:
 
 	void updateAnimationFlags ();
 	const cAnimationTimeFlags& getAnimationFlags () const;
+
+	cSignal<void ()> triggered50ms;
+	cSignal<void ()> triggered100ms;
+	cSignal<void ()> triggered400ms;
 private:
 	SDL_TimerID timerId;
 	unsigned long long timerTime;

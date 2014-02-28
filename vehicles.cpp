@@ -563,7 +563,7 @@ void cVehicle::Select (cGameGUI& gameGUI)
 		gameGUI.setVideoSurface (uiData->storage);
 	}
 
-	MakeReport (gameGUI);
+	if (owner == &gameGUI.getClient ()->getActivePlayer ()) makeReport ();
 	gameGUI.setUnitDetailsData (this);
 }
 
@@ -1145,11 +1145,8 @@ void cVehicle::doSurvey (const cServer& server)
 //-----------------------------------------------------------------------------
 /** Makes the report */
 //-----------------------------------------------------------------------------
-void cVehicle::MakeReport (cGameGUI& gameGUI)
+void cVehicle::makeReport ()
 {
-	if (owner != &gameGUI.getClient()->getActivePlayer())
-		return;
-
 	if (isDisabled())
 	{
 		// Disabled:

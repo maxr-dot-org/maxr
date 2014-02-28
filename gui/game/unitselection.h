@@ -17,45 +17,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
-#define gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
+#ifndef gui_game_unitselectionH
+#define gui_game_unitselectionH
 
-#include <memory>
+#include <vector>
 
-#include "../../../window.h"
-#include "../../../../utility/signal/signalconnectionmanager.h"
-#include "../../../../utility/signal/signal.h"
+#include "../../utility/signal/signal.h"
 
-class cImage;
 class cPosition;
-class cLandingPositionSelectionMap;
-class cStaticMap;
+class cMap;
+class cUnit;
+class cVehicle;
+class cBuilding;
 
-struct sTerrain;
-
-
-class cWindowLandingPositionSelection : public cWindow
+class cUnitSelection
 {
 public:
-	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> map);
-	~cWindowLandingPositionSelection ();
+	bool selectUnitAt (const cPosition& tilePosition, const cMap& map, bool base);
 
-	cSignal<void (const cPosition&)> selectedPosition;
+	bool selectUnit (cUnit& unit, bool add = false);
+	void deselectUnits ();
 
-	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	cUnit* getSelectedUnit () const;
+	cVehicle* getSelectedVehicle () const;
+	cBuilding* getSelectedBuilding () const;
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	bool isSelected (const cUnit& unit) const;
+
+	cSignal<void ()> selectionChanged;
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	bool firstActivate;
-
-	cLandingPositionSelectionMap* map;
-
-	SDL_Surface* createHudSurface ();
-
-	void backClicked ();
-	void mapClicked (const cPosition& tilePosition);
+	std::vector<cUnit*> selectedUnits;
 };
 
-#endif // gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
+#endif // gui_game_unitselectionH

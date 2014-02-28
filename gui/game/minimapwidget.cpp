@@ -150,7 +150,7 @@ void cMiniMapWidget::draw ()
 }
 
 //------------------------------------------------------------------------------
-bool cMiniMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cMiniMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	if (application.hasMouseFocus (*this) && isAt (mouse.getPosition ()))
 	{

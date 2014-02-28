@@ -17,60 +17,81 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mouseevents.h"
+#include "unitvideowidget.h"
+
+#include "temp/animationtimer.h"
+
+#include "../menu/widgets/image.h"
+
+#include "../../vehicles.h"
+#include "../../buildings.h"
+#include "../../files.h"
 
 //------------------------------------------------------------------------------
-cEventMouseMotion::cEventMouseMotion(const SDL_MouseMotionEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
-{}
-
-//------------------------------------------------------------------------------
-cPosition cEventMouseMotion::getNewPosition() const
+cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer) :
+	cWidget (area),
+	fliAnimation (nullptr, FLI_Close),
+	playing (true)
 {
-	return cPosition(sdlEvent.x, sdlEvent.y);
+	currentFrameImage = addChild (std::make_unique<cImage> (getPosition ()));
+
+	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitVideoWidget::nextFrame, this));
 }
 
 //------------------------------------------------------------------------------
-cPosition cEventMouseMotion::getOffset () const
+void cUnitVideoWidget::start ()
 {
-	return cPosition (sdlEvent.xrel, sdlEvent.yrel);
+	playing = true;
 }
 
 //------------------------------------------------------------------------------
-cEventMouseButton::cEventMouseButton(const SDL_MouseButtonEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
-{}
+void cUnitVideoWidget::stop ()
+{
+	playing = false;
+}
 
 //------------------------------------------------------------------------------
-eMouseButtonType cEventMouseButton::getButton() const
+void cUnitVideoWidget::setUnit (const cUnit* unit)
 {
-	if(sdlEvent.button == SDL_BUTTON_RIGHT)
+	if (!unit)
 	{
-		return eMouseButtonType::Right;
-	}
-	else if(sdlEvent.button == SDL_BUTTON_MIDDLE)
-	{
-		return eMouseButtonType::Middle;
+		fliAnimation = nullptr;
+		currentFrameImage->setImage (nullptr);
 	}
 	else
 	{
-		return eMouseButtonType::Left;
+		if (unit->data.ID.isAVehicle ())
+		{
+			const auto& vehicle = *static_cast<const cVehicle*>(unit);
+			if (FileExists (vehicle.uiData->FLCFile))
+			{
+				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (vehicle.uiData->FLCFile, "rb"), NULL), FLI_Close);
+				FLI_Rewind (fliAnimation.get());
+				FLI_NextFrame (fliAnimation.get ());
+				currentFrameImage->setImage (fliAnimation->surface);
+			}
+			else
+			{
+				fliAnimation = nullptr;
+				currentFrameImage->setImage (vehicle.uiData->storage);
+			}
+		}
+		else if (unit->data.ID.isABuilding ())
+		{
+			const auto& building = *static_cast<const cBuilding*>(unit);
+
+			fliAnimation = nullptr;
+			currentFrameImage->setImage (building.uiData->video);
+		}
 	}
 }
 
 //------------------------------------------------------------------------------
-cEventMouseButton::eType cEventMouseButton::getType() const
+void cUnitVideoWidget::nextFrame ()
 {
-	return sdlEvent.type == SDL_MOUSEBUTTONUP ? Up : Down;
-}
+	if (!playing) return;
+	if (!fliAnimation) return;
 
-//------------------------------------------------------------------------------
-cEventMouseWheel::cEventMouseWheel(const SDL_MouseWheelEvent& sdlEvent_) :
-	sdlEvent(sdlEvent_)
-{}
-
-//------------------------------------------------------------------------------
-cPosition cEventMouseWheel::getAmount() const
-{
-	return cPosition(sdlEvent.x, sdlEvent.y);
+	FLI_NextFrame (fliAnimation.get());
+	currentFrameImage->setImage (fliAnimation->surface);
 }

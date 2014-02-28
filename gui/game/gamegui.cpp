@@ -25,6 +25,8 @@
 #include "gamemapwidget.h"
 #include "minimapwidget.h"
 
+#include "temp/animationtimer.h"
+
 #include "../application.h"
 #include "../menu/dialogs/dialogpreferences.h"
 
@@ -33,23 +35,29 @@
 #include "../../map.h"
 #include "../../vehicles.h"
 #include "../../buildings.h"
+#include "../../sound.h"
 #include "../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
 cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	cWindow (nullptr),
+	animationTimer (std::make_shared<cAnimationTimer>()),
 	staticMap (std::move (staticMap_)),
-	dynamicMap (nullptr)
+	dynamicMap (nullptr),
+	selectedUnitSoundStream (-1)
 {
-	auto hudOwning = std::make_unique<cHud> ();
+	auto hudOwning = std::make_unique<cHud> (animationTimer);
 
 	resize (hudOwning->getSize ());
 
-	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap));
+	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer));
+	gameMap->setUnitSelection (&unitSelection);
 
 	hud = addChild (std::move (hudOwning));
 
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
+
+	using namespace std::placeholders;
 
 	signalConnectionManager.connect (hud->preferencesClicked, std::bind (&cNewGameGUI::showPreferencesDialog, this));
 	signalConnectionManager.connect (hud->filesClicked, std::bind (&cNewGameGUI::showFilesMenu, this));
@@ -68,8 +76,6 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 
-	using namespace std::placeholders;
-
 	signalConnectionManager.connect (gameMap->scrolled, std::bind(&cNewGameGUI::resetMiniMapViewWindow, this));
 	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cNewGameGUI::resetMiniMapViewWindow, this));
 	signalConnectionManager.connect (gameMap->tileClicked, std::bind (&cNewGameGUI::handleTileClicked, this, _1));
@@ -77,6 +83,9 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudUnitName, this, _1));
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt(position); });
+
+	signalConnectionManager.connect (unitSelection.selectionChanged, [&](){ hud->setActiveUnit (unitSelection.getSelectedUnit ()); });
+	signalConnectionManager.connect (unitSelection.selectionChanged, std::bind(&cNewGameGUI::updateSelectedUnitSound, this));
 }
 
 //------------------------------------------------------------------------------
@@ -113,7 +122,15 @@ void cNewGameGUI::updateHudUnitName (const cPosition& tilePosition)
 //------------------------------------------------------------------------------
 void cNewGameGUI::handleTileClicked (const cPosition& tilePosition)
 {
-
+	if (dynamicMap)
+	{
+		bool selectionChanged = unitSelection.selectUnitAt (tilePosition, *dynamicMap, true);
+		if (selectionChanged)
+		{
+			auto vehicle = unitSelection.getSelectedVehicle ();
+			if (vehicle) vehicle->makeReport ();
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -133,9 +150,23 @@ void cNewGameGUI::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse)
+void cNewGameGUI::draw ()
 {
-	return cWindow::handleMouseMoved (application, mouse);
+	animationTimer->updateAnimationFlags (); // TODO: remove this
+
+	cWindow::draw ();
+}
+
+//------------------------------------------------------------------------------
+bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
+{
+	const auto mouseLastPosition = mouse.getPosition () - offset;
+	if (!gameMap->isAt (mouse.getPosition ()) && gameMap->isAt (mouseLastPosition))
+	{
+		hud->setCoordinatesText ("");
+		hud->setUnitNameText ("");
+	}
+	return cWindow::handleMouseMoved (application, mouse, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -246,4 +277,65 @@ void cNewGameGUI::showPreferencesDialog ()
 
 	auto preferencesDialog = std::make_shared<cDialogNewPreferences> ();
 	application->show (preferencesDialog);
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::updateSelectedUnitSound ()
+{
+	auto selectedUnit = unitSelection.getSelectedUnit ();
+	if (selectedUnit == nullptr)
+	{
+		stopSelectedUnitSound ();
+	}
+	else if (selectedUnit->data.ID.isABuilding ())
+	{
+		const auto& building = static_cast<const cBuilding&>(*selectedUnit);
+		if (building.IsWorking)
+		{
+			startSelectedUnitSound (building.uiData->Running);
+		}
+		else
+		{
+			startSelectedUnitSound (building.uiData->Wait);
+		}
+	}
+	else if (selectedUnit->data.ID.isAVehicle ())
+	{
+		const auto& vehicle = static_cast<const cVehicle&>(*selectedUnit);
+
+		const cBuilding* building = dynamicMap ? dynamicMap->getField (cPosition (vehicle.PosX, vehicle.PosY)).getBaseBuilding () : nullptr;
+		bool water = staticMap->isWater (vehicle.PosX, vehicle.PosY);
+		if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+
+		if (vehicle.IsBuilding && (vehicle.BuildRounds || player != vehicle.owner))
+		{
+			startSelectedUnitSound (SoundData.SNDBuilding);
+		}
+		else if (vehicle.IsClearing)
+		{
+			startSelectedUnitSound (SoundData.SNDClearing);
+		}
+		else if (water && vehicle.data.factorSea > 0)
+		{
+			startSelectedUnitSound (vehicle.uiData->WaitWater);
+		}
+		else
+		{
+			startSelectedUnitSound (vehicle.uiData->Wait);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::startSelectedUnitSound (sSOUND* sound)
+{
+	stopSelectedUnitSound ();
+	selectedUnitSoundStream = PlayFXLoop (sound);
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::stopSelectedUnitSound ()
+{
+	if (selectedUnitSoundStream != -1) StopFXLoop (selectedUnitSoundStream);
+	selectedUnitSoundStream = -1;
 }

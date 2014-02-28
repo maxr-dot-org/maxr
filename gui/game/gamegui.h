@@ -22,6 +22,8 @@
 
 #include "../window.h"
 #include "../../utility/signal/signalconnectionmanager.h"
+#include "../../sound.h"
+#include "unitselection.h"
 
 class cHud;
 class cGameMapWidget;
@@ -29,6 +31,10 @@ class cMiniMapWidget;
 class cStaticMap;
 class cMap;
 class cPlayer;
+class cUnit;
+class cVehicle;
+class cBuilding;
+class cAnimationTimer;
 
 class cNewGameGUI : public cWindow
 {
@@ -38,7 +44,9 @@ public:
 	void setDynamicMap (const cMap* dynamicMap);
 	void setPlayer (const cPlayer* player);
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
@@ -49,6 +57,8 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	std::shared_ptr<cAnimationTimer> animationTimer;
+
 	std::shared_ptr<const cStaticMap> staticMap;
 	const cMap* dynamicMap;
 	const cPlayer* player;
@@ -56,6 +66,10 @@ private:
 	cHud* hud;
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
+
+	cUnitSelection unitSelection;
+
+	int selectedUnitSoundStream;
 
 	void resetMiniMapViewWindow ();
 
@@ -65,6 +79,11 @@ private:
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);
 	void handleTileClicked (const cPosition& tilePosition);
+
+	void updateSelectedUnitSound ();
+
+	void startSelectedUnitSound (sSOUND* sound);
+	void stopSelectedUnitSound ();
 };
 
 #endif // gui_game_gameguiH

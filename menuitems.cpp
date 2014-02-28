@@ -4014,7 +4014,8 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 			unitDetails[count - minCount]->setSelection (*client, nextVehicle);
 
 			font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextVehicle->PosX) + "," + iToStr (nextVehicle->PosY));
-			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->getGameGUI()));
+			//FIXME: gameGUI
+			//font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->getGameGUI()));
 			dest.y += 55; nameDest.y += 55;
 		}
 		if (unit && count == selected) (*unit) = nextVehicle;
@@ -4046,7 +4047,8 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 				unitDetails[count - minCount]->setSelection (*client, nextBuilding);
 
 				font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextBuilding->PosX) + "," + iToStr (nextBuilding->PosY));
-				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->getGameGUI()));
+				//FIXME: gameGUI
+				//font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->getGameGUI()));
 
 				dest.y += 55; nameDest.y += 55;
 			}
@@ -4132,13 +4134,15 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	if (unit->isABuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		building->render (client->getGameGUI().getAnimationSpeed(), surface, dest, zoomFactor, false, false);
+		//FIXME: gameGUI
+		//building->render (client->getGameGUI().getAnimationSpeed(), surface, dest, zoomFactor, false, false);
 	}
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		vehicle->render (client->getMap (), client->getGameGUI().getAnimationSpeed (), &client->getActivePlayer (), surface, dest, zoomFactor, false);
-		vehicle->drawOverlayAnimation (client->getGameGUI().getAnimationSpeed(), surface, dest, zoomFactor);
+		//FIXME: gameGUI
+		//vehicle->render (client->getMap (), client->getGameGUI().getAnimationSpeed (), &client->getActivePlayer (), surface, dest, zoomFactor, false);
+		//vehicle->drawOverlayAnimation (client->getGameGUI().getAnimationSpeed(), surface, dest, zoomFactor);
 	}
 
 	return surface;
@@ -4235,16 +4239,17 @@ void cMenuReportsScreen::released (void* parent)
 
 			const sSavedReportMessage& savedReport = activePlayer.savedReportsList[clickedIndex];
 			parentMenu->close();
-			cGameGUI& gameGUI = client->getGameGUI();
+			//FIXME: gameGUI
+			//cGameGUI& gameGUI = client->getGameGUI();
 
-			gameGUI.addMessage (savedReport.message);
-			if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
-			{
-				int offX = savedReport.xPos * 64 - ((int) (((float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
-				int offY = savedReport.yPos * 64 - ((int) (((float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
-				gameGUI.setOffsetPosition (offX, offY);
-			}
-			return;
+			//gameGUI.addMessage (savedReport.message);
+			//if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
+			//{
+			//	int offX = savedReport.xPos * 64 - ((int) (((float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+			//	int offY = savedReport.yPos * 64 - ((int) (((float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+			//	gameGUI.setOffsetPosition (offX, offY);
+			//}
+			//return;
 		}
 	}
 

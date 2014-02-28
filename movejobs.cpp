@@ -979,7 +979,8 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			{
 				startMoveSound();
 				client->addActiveMoveJob (this);
-				if (client->getGameGUI().getSelectedUnit() == Vehicle) client->getGameGUI().unitMenuActive = false;
+				//FIXME: gameGUI
+				//if (client->getGameGUI().getSelectedUnit() == Vehicle) client->getGameGUI().unitMenuActive = false;
 			}
 			if (bEndForNow)
 			{
@@ -1038,10 +1039,11 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			{
 				bFinished = true;
 
-				if (Vehicle == client->getGameGUI().getSelectedUnit())
-				{
-					PlayRandomVoice (VoiceData.VOINoPath);
-				}
+				//FIXME: gameGUI
+				//if (Vehicle == client->getGameGUI().getSelectedUnit())
+				//{
+				//	PlayRandomVoice (VoiceData.VOINoPath);
+				//}
 			}
 		}
 		break;
@@ -1078,16 +1080,17 @@ void cClientMoveJob::moveVehicle()
 		Vehicle->moving = true;
 
 		//restart movesound, when drinving into or out of water
-		if (Vehicle == client->getGameGUI().getSelectedUnit())
-		{
-			bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y);
-			bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y);
+		//FIXME: gameGUI
+		//if (Vehicle == client->getGameGUI().getSelectedUnit())
+		//{
+		//	bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y);
+		//	bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y);
 
-			if (wasWater != water)
-			{
-				client->getGameGUI().startMoveSound (*Vehicle);
-			}
-		}
+		//	if (wasWater != water)
+		//	{
+		//		client->getGameGUI().startMoveSound (*Vehicle);
+		//	}
+		//}
 	}
 
 	int iSpeed;
@@ -1191,8 +1194,9 @@ void cClientMoveJob::doEndMoveVehicle()
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 
-	client->getGameGUI().callMiniMapDraw();
-	client->getGameGUI().updateMouseCursor();
+	//FIXME: gameGUI
+	//client->getGameGUI().callMiniMapDraw();
+	//client->getGameGUI().updateMouseCursor();
 	Vehicle->owner->doScan();
 
 	calcNextDir();
@@ -1219,39 +1223,42 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (iIndex == -1) return;
 
-	if (bSpezial)
-	{
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
-	}
-	else
-	{
-		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
-	}
+	//FIXME: gameGUI
+	//if (bSpezial)
+	//{
+	//	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
+	//}
+	//else
+	//{
+	//	SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
+	//}
 }
 
 void cClientMoveJob::startMoveSound()
 {
-	cGameGUI& gameGUI = client->getGameGUI();
-	if (Vehicle == gameGUI.getSelectedUnit()) gameGUI.startMoveSound (*Vehicle);
-	bSoundRunning = true;
+	//FIXME: gameGUI
+	//cGameGUI& gameGUI = client->getGameGUI();
+	//if (Vehicle == gameGUI.getSelectedUnit()) gameGUI.startMoveSound (*Vehicle);
+	//bSoundRunning = true;
 }
 
 void cClientMoveJob::stopMoveSound()
 {
-	if (!bSoundRunning) return;
+	//FIXME: gameGUI
+	//if (!bSoundRunning) return;
 
-	bSoundRunning = false;
-	cGameGUI& gameGUI = client->getGameGUI();
+	//bSoundRunning = false;
+	//cGameGUI& gameGUI = client->getGameGUI();
 
-	if (Vehicle != gameGUI.getSelectedUnit()) return;
+	//if (Vehicle != gameGUI.getSelectedUnit()) return;
 
-	cBuilding* building = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getBaseBuilding();
-	bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY);
-	if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
+	//cBuilding* building = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getBaseBuilding();
+	//bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY);
+	//if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-	gameGUI.stopFXLoop();
-	if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->uiData->StopWater);
-	else PlayFX (Vehicle->uiData->Stop);
+	//gameGUI.stopFXLoop();
+	//if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->uiData->StopWater);
+	//else PlayFX (Vehicle->uiData->Stop);
 
-	gameGUI.playStream (*Vehicle);
+	//gameGUI.playStream (*Vehicle);
 }

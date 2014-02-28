@@ -84,7 +84,7 @@ private:
 	void mousePressed (cMouse& mouse, eMouseButtonType button);
 	void mouseReleased (cMouse& mouse, eMouseButtonType button);
 	void mouseWheelMoved (cMouse& mouse, const cPosition& amount);
-	void mouseMoved (cMouse& mouse);
+	void mouseMoved (cMouse& mouse, const cPosition& offset);
 
 	void keyPressed (cKeyboard& keyboard, SDL_Keycode key);
 	void keyReleased (cKeyboard& keyboard, SDL_Keycode key);

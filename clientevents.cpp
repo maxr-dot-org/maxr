@@ -535,26 +535,27 @@ void sendWantResearchChange (const cClient& client, int (&newResearchSettings) [
 void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_HUD_INFO);
-	const cGameGUI& gameGUI = client.getGameGUI();
-	message->pushBool (gameGUI.tntChecked());
-	message->pushBool (gameGUI.hitsChecked());
-	message->pushBool (gameGUI.lockChecked());
-	message->pushBool (gameGUI.surveyChecked());
-	message->pushBool (gameGUI.statusChecked());
-	message->pushBool (gameGUI.scanChecked());
-	message->pushBool (gameGUI.rangeChecked());
-	message->pushBool (gameGUI.twoXChecked());
-	message->pushBool (gameGUI.fogChecked());
-	message->pushBool (gameGUI.ammoChecked());
-	message->pushBool (gameGUI.gridChecked());
-	message->pushBool (gameGUI.colorChecked());
-	message->pushFloat (gameGUI.getZoom());
-	message->pushInt16 (gameGUI.getOffsetY());
-	message->pushInt16 (gameGUI.getOffsetX());
-	message->pushInt16 (selectedUnitID);
-	message->pushInt16 (ownerNr);
-	message->pushInt16 (savingID);
-	client.sendNetMessage (message);
+	//FIXME: gameGUI
+	//const cGameGUI& gameGUI = client.getGameGUI();
+	//message->pushBool (gameGUI.tntChecked());
+	//message->pushBool (gameGUI.hitsChecked());
+	//message->pushBool (gameGUI.lockChecked());
+	//message->pushBool (gameGUI.surveyChecked());
+	//message->pushBool (gameGUI.statusChecked());
+	//message->pushBool (gameGUI.scanChecked());
+	//message->pushBool (gameGUI.rangeChecked());
+	//message->pushBool (gameGUI.twoXChecked());
+	//message->pushBool (gameGUI.fogChecked());
+	//message->pushBool (gameGUI.ammoChecked());
+	//message->pushBool (gameGUI.gridChecked());
+	//message->pushBool (gameGUI.colorChecked());
+	//message->pushFloat (gameGUI.getZoom());
+	//message->pushInt16 (gameGUI.getOffsetY());
+	//message->pushInt16 (gameGUI.getOffsetX());
+	//message->pushInt16 (selectedUnitID);
+	//message->pushInt16 (ownerNr);
+	//message->pushInt16 (savingID);
+	//client.sendNetMessage (message);
 }
 
 void sendSaveReportInfo (const cClient& client, const sSavedReportMessage& savedReport, int ownerNr, int savingID)

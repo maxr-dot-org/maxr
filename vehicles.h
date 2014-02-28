@@ -186,7 +186,7 @@ public:
 	void DecSpeed (int value);
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
-	void MakeReport (cGameGUI& gameGUI);
+	void makeReport ();
 	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
 	bool InSentryRange (cServer& server);
 	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const;

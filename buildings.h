@@ -179,9 +179,9 @@ public:
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);
 	void ServerStartWork (cServer& server);
-	void ClientStartWork (cGameGUI& gameGUI);
+	void clientStartWork ();
 	void ServerStopWork (cServer& server, bool override);
-	void ClientStopWork (cGameGUI& gameGUI);
+	void clientStopWork ();
 	/** check whether a transfer to a unit on the field is possible */
 	virtual bool CanTransferTo (int x, int y, cMapField* OverUnitField) const;
 	void CheckRessourceProd (const cServer& server);

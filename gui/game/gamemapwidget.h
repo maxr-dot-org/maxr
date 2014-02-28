@@ -30,14 +30,16 @@ struct SDL_Surface;
 class cStaticMap;
 class cMap;
 class cPlayer;
+class cUnitSelection;
 
 class cGameMapWidget : public cClickableWidget
 {
 public:
-	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap);
+	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer);
 
 	void setDynamicMap (const cMap* dynamicMap);
 	void setPlayer (const cPlayer* player);
+	void setUnitSelection (const cUnitSelection* unitSelection);
 
 	void setZoomFactor (double zoomFactor, bool center);
 	double getZoomFactor () const;
@@ -76,7 +78,7 @@ public:
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse) MAXR_OVERRIDE_FUNCTION;
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
@@ -90,13 +92,13 @@ private:
 
 	cUnitDrawingEngine unitDrawingEngine;
 
+	const cUnitSelection* unitSelection;
+
 	//
 	// drawing information data
 	//
 	cPosition pixelOffset;
 	double internalZoomFactor; // should not be used directly! use getZoomFactor() instead!
-
-	cPosition lastMouseOverTilePosition;
 
 	bool shouldDrawSurvey;
 	bool shouldDrawScan;

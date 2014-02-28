@@ -109,9 +109,14 @@ void cAnimationTimer::updateAnimationFlags ()
 	if (lastUpdateTimerTime == timerTime) return;
 
 	lastUpdateTimerTime = timerTime;
+
 	animationFlags.set50ms (true);
 	if (timerTime & 0x1) animationFlags.set100ms (true);
 	if ((timerTime & 0x3) == 3) animationFlags.set400ms (true);
+
+	triggered50ms ();
+	if (timerTime & 0x1) triggered100ms ();
+	if ((timerTime & 0x3) == 3) triggered400ms ();
 }
 
 //--------------------------------------------------------------------------

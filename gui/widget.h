@@ -102,7 +102,7 @@ public:
 
 	virtual void draw ();
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse);
+	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset);
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button);
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button);
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount);

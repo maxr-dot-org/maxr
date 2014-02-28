@@ -30,14 +30,14 @@
 #include "../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_) :
+cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer) :
 	cClickableWidget (area),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	player (nullptr),
+	unitDrawingEngine (std::move(animationTimer)),
 	pixelOffset (0, 0),
 	internalZoomFactor (1.),
-	lastMouseOverTilePosition (-1, -1),
 	shouldDrawSurvey (false),
 	shouldDrawScan (false),
 	shouldDrawGrid (false),
@@ -60,10 +60,14 @@ void cGameMapWidget::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
+void cGameMapWidget::setUnitSelection (const cUnitSelection* unitSelection_)
+{
+	unitSelection = unitSelection_;
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::draw ()
 {
-	unitDrawingEngine.handleNewFrame ();
-
 	drawTerrain();
 
 	if (shouldDrawGrid) drawGrid ();
@@ -422,7 +426,7 @@ void cGameMapWidget::drawBaseUnits ()
 				// TODO: bug when (x,y) is outside of the drawing screen.
 				if (building.PosX == i->x() && building.PosY == i->y())
 				{
-					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), player);
+					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), unitSelection, player);
 				}
 			}
 		}
@@ -450,7 +454,7 @@ void cGameMapWidget::drawTopBuildings ()
 		if (building->PosX != i->x() || building->PosY != i->y()) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), player);
+		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), unitSelection, player);
 
 		//if (debugOutput.debugBaseClient && building->SubBase)
 		//	drawTopBuildings_DebugBaseClient (*building, drawDestination);
@@ -476,7 +480,7 @@ void cGameMapWidget::drawShips ()
 		if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, player);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
 		}
 	}
 }
@@ -502,7 +506,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), player);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), unitSelection, player);
 			}
 		}
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
@@ -510,7 +514,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), player);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), unitSelection, player);
 			}
 		}
 
@@ -521,7 +525,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			// TODO: BUG: when PosX,PosY is outside of drawing screen
 			if (vehicle->PosX == i->x() && vehicle->PosY == i->y())
 			{
-				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, player);
+				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
 			}
 		}
 	}
@@ -544,7 +548,7 @@ void cGameMapWidget::drawVehicles ()
 		if (vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, player);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
 		}
 	}
 }
@@ -566,7 +570,7 @@ void cGameMapWidget::drawConnectors ()
 		if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), player);
+			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), unitSelection, player);
 		}
 	}
 }
@@ -589,7 +593,7 @@ void cGameMapWidget::drawPlanes ()
 		for (auto it = planes.rbegin (); it != planes.rend (); ++it)
 		{
 			auto& plane = **it;
-			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, player);
+			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, unitSelection, player);
 		}
 	}
 }
@@ -821,9 +825,20 @@ cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition)
 }
 
 //------------------------------------------------------------------------------
-bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	auto consumed = cClickableWidget::handleMouseMoved (application, mouse);
+	auto consumed = cClickableWidget::handleMouseMoved (application, mouse, offset);
+
+	cPosition lastMouseOverTilePosition;
+	const auto lastMousePosition = mouse.getPosition () - offset;
+	if (getArea ().withinOrTouches (lastMousePosition))
+	{
+		lastMouseOverTilePosition = getMapTilePosition (lastMousePosition);
+	}
+	else
+	{
+		lastMouseOverTilePosition = cPosition (-1, -1);
+	}
 
 	if (getArea ().withinOrTouches (mouse.getPosition ()))
 	{
@@ -831,7 +846,6 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse)
 		if (tilePosition != lastMouseOverTilePosition)
 		{
 			tileUnderMouseChanged (tilePosition);
-			lastMouseOverTilePosition = tilePosition;
 		}
 	}
 

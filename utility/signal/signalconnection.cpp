@@ -23,17 +23,22 @@
 //------------------------------------------------------------------------------
 bool cSignalConnection::operator==(const cSignalConnection& other) const
 {
-	return signal == other.signal && identifier == other.identifier;
+	if (signalReference.expired () || other.signalReference.expired ()) return false;
+	return *signalReference.lock() == *other.signalReference.lock() && identifier == other.identifier;
 }
 
 //------------------------------------------------------------------------------
 void cSignalConnection::disconnect ()
 {
-	signal->disconnect (*this);
+	auto signalReferenceOwned = signalReference.lock ();
+	if (signalReferenceOwned)
+	{
+		signalReferenceOwned->getSignal().disconnect (*this);
+	}
 }
 
 //------------------------------------------------------------------------------
-cSignalConnection::cSignalConnection (int identifier_, cSignalBase& signal_) :
+cSignalConnection::cSignalConnection (int identifier_, std::weak_ptr<cSignalReference>& signalReference_) :
 	identifier (identifier_),
-	signal (&signal_)
+	signalReference (signalReference_)
 {}

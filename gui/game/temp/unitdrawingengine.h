@@ -23,6 +23,7 @@
 #include <memory>
 
 #include "../../../drawingcache.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
 
 class cBuilding;
 class cVehicle;
@@ -30,18 +31,18 @@ class cUnit;
 class cPlayer;
 class cAnimationTimer;
 //class cDrawingCache;
+class cUnitSelection;
 struct SDL_Rect;
+
+// TODO: remove this temporary class!
 
 class cUnitDrawingEngine
 {
 public:
-	cUnitDrawingEngine ();
+	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer);
 
-	// TODO: remove this function!
-	void handleNewFrame ();
-
-	void drawUnit (const cBuilding& building, SDL_Rect destination, double zoomFactor, const cPlayer* player = nullptr);
-	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, double zoomFactor, const cMap& map, const cPlayer* player = nullptr);
+	void drawUnit (const cBuilding& building, SDL_Rect destination, double zoomFactor, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
+	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, double zoomFactor, const cMap& map, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
 
 	void setDrawHits (bool drawHits);
 	void setDrawStatus (bool drawStatus);
@@ -51,6 +52,10 @@ public:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	cDrawingCache drawingCache;
 
+	cSignalConnectionManager signalConnectionManager;
+
+	unsigned int blinkColor;
+
 	bool shouldDrawHits;
 	bool shouldDrawStatus;
 	bool shouldDrawAmmo;
@@ -59,6 +64,8 @@ public:
 	void drawHealthBar (const cUnit& unit, SDL_Rect destination);
 	void drawMunBar (const cUnit& unit, SDL_Rect destination);
 	void drawStatus (const cUnit& unit, SDL_Rect destination);
+
+	void rotateBlinkColor ();
 };
 
 #endif // gui_game_temp_unitdrawingengineH

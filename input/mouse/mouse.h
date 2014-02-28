@@ -84,7 +84,7 @@ public:
 	/**
 	 * Signal that will be triggered when the mouse is moved.
 	 */
-	cSignal<void(cMouse&)> moved;
+	cSignal<void(cMouse&, const cPosition& offset)> moved;
 
 	/**
 	 * The current position of the mouse.

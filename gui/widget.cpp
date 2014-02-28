@@ -205,7 +205,7 @@ void cWidget::draw ()
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	return false;
 }

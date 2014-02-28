@@ -249,7 +249,7 @@ cMenu::cMenu (SDL_Surface* background_, eMenuBackgrounds backgroundType_) :
 }
 
 //------------------------------------------------------------------------------
-void cMenu::mouseMoved(cMouse& mouse)
+void cMenu::mouseMoved(cMouse& mouse, const cPosition& offset)
 {
 	const auto& currentMousePos = mouse.getPosition();
 
@@ -401,7 +401,7 @@ void cMenu::activate()
 {
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect(cMouse::getInstance().moved, std::bind(&cMenu::mouseMoved, this, _1));
+	signalConnectionManager.connect(cMouse::getInstance().moved, std::bind(&cMenu::mouseMoved, this, _1, _2));
 	signalConnectionManager.connect(cMouse::getInstance().pressed, std::bind(&cMenu::mouseButtonPressed, this, _1, _2));
 	signalConnectionManager.connect(cMouse::getInstance().released, std::bind(&cMenu::mouseButtonReleased, this, _1, _2));
 
@@ -433,7 +433,8 @@ int cMenu::show (cClient* client)
 		if (client)
 		{
 			client->gameTimer.run (this);
-			client->getGameGUI().handleTimer();
+			//FIXME: gameGUI
+			//client->getGameGUI().handleTimer();
 		}
 		else
 			handleNetMessages();
@@ -830,9 +831,10 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 			}
 			case 3:
 			{
-				menu->switchTo(client.getGameGUI(), &client);
-				server.stop();
-				menu->draw();
+				//FIXME: gameGUI
+				//menu->switchTo(client.getGameGUI(), &client);
+				//server.stop();
+				//menu->draw();
 				return;
 			}
 			default: break;
@@ -914,7 +916,8 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 
 	// start game
 	server.serverState = SERVER_STATE_INGAME;
-	switchTo(client.getGameGUI(), &client);
+	//FIXME: gameGUI
+	//switchTo(client.getGameGUI(), &client);
 
 	server.stop();
 
@@ -1125,7 +1128,8 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 				{
 					for(size_t i = 0, size = clients.size(); i != size; ++i)
 					{
-						menu->switchTo(clients[i]->getGameGUI(), clients[i]);
+						//FIXME: gameGUI
+						//menu->switchTo(clients[i]->getGameGUI(), clients[i]);
 					}
 				}
 				server.stop();
@@ -3108,7 +3112,8 @@ void cNetworkHostMenu::okReleased (void* parent)
 
 		runGamePreparation (*menu, client, *menu->map, true);
 
-		menu->switchTo(client.getGameGUI(), &client);
+		//FIXME: gameGUI
+		//menu->switchTo(client.getGameGUI(), &client);
 		server.stop();
 	}
 	menu->end = true;
@@ -3459,7 +3464,8 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// exit menu and start game
 	server.serverState = SERVER_STATE_INGAME;
-	switchTo(client->getGameGUI(), client.get());
+	//FIXME: gameGUI
+	//switchTo(client->getGameGUI(), client.get());
 
 	server.stop();
 
@@ -3695,7 +3701,8 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	{
 		runGamePreparation (*this, client, *map, true);
 	}
-	switchTo(client.getGameGUI(), &client);
+	//FIXME: gameGUI
+	//switchTo(client.getGameGUI(), &client);
 
 	end = true;
 }
@@ -3758,7 +3765,8 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 		sendReconnectionSuccess (client);
 
-		switchTo(client.getGameGUI(), &client);
+		//FIXME: gameGUI
+		//switchTo(client.getGameGUI(), &client);
 
 
 		end = true;
@@ -4213,14 +4221,16 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 	}
 	else
 	{
-		menu->client->getGameGUI().mouseInputMode = placeBand;
+		//FIXME: gameGUI
+		//menu->client->getGameGUI().mouseInputMode = placeBand;
 		menu->vehicle->BuildBigSavedPos = menu->client->getMap()->getOffset (menu->vehicle->PosX, menu->vehicle->PosY);
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 		menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-		menu->vehicle->FindNextband (menu->client->getGameGUI());
+		//FIXME: gameGUI
+		//menu->vehicle->FindNextband (menu->client->getGameGUI());
 	}
 	menu->end = true;
 }
@@ -4233,7 +4243,8 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-	menu->client->getGameGUI().mouseInputMode = placeBand;
+	//FIXME: gameGUI
+	//menu->client->getGameGUI().mouseInputMode = placeBand;
 	menu->end = true;
 }
 
@@ -4898,17 +4909,18 @@ void cStorageMenu::activateReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->activateButtons);
 	if (index == -1) return;
 
-	if (menu->ownerVehicle)
-	{
-		menu->client->getGameGUI().vehicleToActivate = index;
-		if (menu->unitData.factorAir > 0) sendWantActivate (*menu->client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
-		else menu->client->getGameGUI().mouseInputMode = activateVehicle;
-	}
-	else if (menu->ownerBuilding)
-	{
-		menu->client->getGameGUI().vehicleToActivate = index;
-		menu->client->getGameGUI().mouseInputMode = activateVehicle;
-	}
+	//FIXME: gameGUI
+	//if (menu->ownerVehicle)
+	//{
+	//	menu->client->getGameGUI().vehicleToActivate = index;
+	//	if (menu->unitData.factorAir > 0) sendWantActivate (*menu->client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
+	//	else menu->client->getGameGUI().mouseInputMode = activateVehicle;
+	//}
+	//else if (menu->ownerBuilding)
+	//{
+	//	menu->client->getGameGUI().vehicleToActivate = index;
+	//	menu->client->getGameGUI().mouseInputMode = activateVehicle;
+	//}
 	menu->end = true;
 }
 
@@ -5456,6 +5468,7 @@ void cReportsMenu::doubleClicked (cUnit* unit)
 		doubleClicked (storingUnit);
 		return;
 	}
-	client->getGameGUI().selectUnit (*unit);
-	client->getGameGUI().center (*unit);
+	//FIXME: gameGUI
+	//client->getGameGUI().selectUnit (*unit);
+	//client->getGameGUI().center (*unit);
 }

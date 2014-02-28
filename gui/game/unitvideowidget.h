@@ -17,45 +17,44 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
-#define gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
+#ifndef gui_game_unitvideowidgetH
+#define gui_game_unitvideowidgetH
 
 #include <memory>
 
-#include "../../../window.h"
-#include "../../../../utility/signal/signalconnectionmanager.h"
-#include "../../../../utility/signal/signal.h"
+#include "../widget.h"
+#include "../../SDL_flic.h"
 
-class cImage;
+#include "../../utility/signal/signalconnectionmanager.h"
+
 class cPosition;
-class cLandingPositionSelectionMap;
-class cStaticMap;
 
-struct sTerrain;
+template<typename T>
+class cBox;
 
+class cUnit;
+class cImage;
+class cAnimationTimer;
 
-class cWindowLandingPositionSelection : public cWindow
+class cUnitVideoWidget : public cWidget
 {
+	typedef std::unique_ptr<FLI_Animation, void (*)(FLI_Animation*)> FliAnimationPointerType;
 public:
-	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> map);
-	~cWindowLandingPositionSelection ();
+	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer);
 
-	cSignal<void (const cPosition&)> selectedPosition;
+	void start ();
+	void stop ();
 
-	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+	void setUnit (const cUnit* unit);
 private:
+	cImage* currentFrameImage;
+	FliAnimationPointerType fliAnimation;
+
 	cSignalConnectionManager signalConnectionManager;
 
-	bool firstActivate;
+	bool playing;
 
-	cLandingPositionSelectionMap* map;
-
-	SDL_Surface* createHudSurface ();
-
-	void backClicked ();
-	void mapClicked (const cPosition& tilePosition);
+	void nextFrame ();
 };
 
-#endif // gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH
+#endif // gui_game_unitvideowidgetH

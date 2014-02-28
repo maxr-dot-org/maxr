@@ -45,7 +45,7 @@ cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
 {}
 
 //------------------------------------------------------------------------------
-bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mouse)
+bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	if (!application.hasMouseFocus (*this)) return false;
 

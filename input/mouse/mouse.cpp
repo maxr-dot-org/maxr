@@ -50,7 +50,7 @@ cMouse& cMouse::getInstance()
 void cMouse::handleMouseMotionEvent(const cEventMouseMotion& event)
 {
 	position = event.getNewPosition();
-	moved(*this);
+	moved(*this, event.getOffset());
 }
 
 //------------------------------------------------------------------------------

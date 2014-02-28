@@ -968,18 +968,19 @@ void cBuilding::ServerStartWork (cServer& server)
 //------------------------------------------------------------
 /** starts the building in the client thread */
 //------------------------------------------------------------
-void cBuilding::ClientStartWork (cGameGUI& gameGUI)
+void cBuilding::clientStartWork ()
 {
 	if (IsWorking)
 		return;
 	IsWorking = true;
 	EffectAlpha = 0;
-	if (gameGUI.getSelectedUnit() == this)
-	{
-		gameGUI.stopFXLoop();
-		PlayFX (uiData->Start);
-		gameGUI.playStream (*this);
-	}
+	// FIXME: gameGUI
+	//if (gameGUI.getSelectedUnit() == this)
+	//{
+	//	gameGUI.stopFXLoop();
+	//	PlayFX (uiData->Start);
+	//	gameGUI.playStream (*this);
+	//}
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
 }
@@ -1060,17 +1061,18 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 //------------------------------------------------------------
 /** stops the building in the client thread */
 //------------------------------------------------------------
-void cBuilding::ClientStopWork (cGameGUI& gameGUI)
+void cBuilding::clientStopWork ()
 {
 	if (!IsWorking)
 		return;
 	IsWorking = false;
-	if (gameGUI.getSelectedUnit() == this)
-	{
-		gameGUI.stopFXLoop();
-		PlayFX (uiData->Stop);
-		gameGUI.playStream (*this);
-	}
+	// FIXME: gameGUI
+	//if (gameGUI.getSelectedUnit() == this)
+	//{
+	//	gameGUI.stopFXLoop();
+	//	PlayFX (uiData->Stop);
+	//	gameGUI.playStream (*this);
+	//}
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
 }

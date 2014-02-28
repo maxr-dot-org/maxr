@@ -33,7 +33,8 @@ class cEventMouseMotion
 public:
 	cEventMouseMotion(const SDL_MouseMotionEvent& sdlEvent);
 
-	cPosition getNewPosition() const;
+	cPosition getNewPosition () const;
+	cPosition getOffset () const;
 private:
 	SDL_MouseMotionEvent sdlEvent;
 };
