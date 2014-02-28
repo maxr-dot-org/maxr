@@ -1013,7 +1013,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 	cStaticMap* map = NULL;
 	cTCP* const network = NULL;
 	cServer server (network);
-	cEventHandling eventHandling;
+	std::vector<cEventHandling> eventHandlings;
 	std::vector<cClient*> clients;
 
 	settings.hotseat = true;
@@ -1045,9 +1045,10 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 						server.addPlayer (new cPlayer (*splayers[i]));
 					}
 					// Create clients.
+					eventHandlings.resize (splayers.size());
 					for (size_t i = 0, size = splayers.size(); i != size; ++i)
 					{
-						cClient* client = new cClient (&server, network, eventHandling);
+						cClient* client = new cClient (&server, network, eventHandlings[i]);
 						clients.push_back (client);
 						client->setPlayers(splayers, *splayers[i]);
 						client->getActivePlayer().setClan (clans[i]);
