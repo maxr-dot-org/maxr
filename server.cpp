@@ -184,7 +184,7 @@ bool cServer::isTurnBasedGame() const
 eGameTypes cServer::getGameType() const
 {
 	if (network) return GAME_TYPE_TCPIP;
-	if (PlayerList.size() > 1 && isTurnBasedGame()) return GAME_TYPE_HOTSEAT;
+	if (gameSetting->hotseat) return GAME_TYPE_HOTSEAT;
 	return GAME_TYPE_SINGLE;
 }
 

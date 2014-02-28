@@ -963,15 +963,22 @@ static std::vector<sPlayer*> buildPlayerList (const cHotSeatMenu& hotSeatMenu, s
 }
 
 //------------------------------------------------------------------------------
+
+static void HotSeatWaitForClient (const cClient& client)
+{
+	Video.clearBuffer();
+	const std::string& name = client.getActivePlayer().getName();
+	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
+	okDialog.show (NULL);
+}
+
+//------------------------------------------------------------------------------
 static int RunHostGamePreparation (std::vector<cClient*>& clients, cStaticMap& map)
 {
 	std::vector<sClientLandData> landingData (clients.size());
 	for (size_t i = 0, size = clients.size(); i != size; ++i)
 	{
-		Video.clearBuffer();
-		const std::string& name = clients[i]->getActivePlayer().getName();
-		cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
-		okDialog.show (NULL);
+		HotSeatWaitForClient (*clients[i]);
 		const int dir = runGamePreparation (*clients[i], map, landingData[i], true);
 		if (dir == -1) return -1;
 	}
@@ -1055,13 +1062,16 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 						client->setMap (*map);
 						client->setGameSetting (settings);
 					}
+					for (size_t i = 0, size = clients.size(); i != size; ++i)
+					{
+						clients[i]->getGameGUI().setHotSeatClients (clients);
+					}
 					for (size_t i = 0, size = splayers.size(); i != size; ++i)
 						delete splayers[i];
 					server.changeStateToInitGame();
 				}
 				break;
 			}
-#if 1
 			case 3:
 			{
 				dir = RunHostGamePreparation (clients, *map);
@@ -1079,10 +1089,15 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 			}
 			case 4:
 			{
-				// while game is not finished
+				// TODO while game is not finished
+				while (true)
 				{
 					for (size_t i = 0, size = clients.size(); i != size; ++i)
+					{
+						// TODO Check if client is still alive
+						HotSeatWaitForClient (*clients[i]);
 						clients[i]->getGameGUI().show (clients[i]);
+					}
 				}
 				server.stop();
 				for (size_t i = 0, size = clients.size(); i != size; ++i)
@@ -1092,7 +1107,6 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 				menu->draw();
 				return;
 			}
-#endif
 			default: break;
 		}
 		step += dir;

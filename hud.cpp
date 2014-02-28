@@ -660,6 +660,12 @@ void cGameGUI::setClient (cClient* client)
 	playersInfo.setClient (*client);
 }
 
+void cGameGUI::setHotSeatClients(const std::vector<cClient*>& hotSeatClients)
+{
+	this->hotSeatClients = hotSeatClients;
+	this->hotSeatClients.erase (std::find(this->hotSeatClients.begin(), this->hotSeatClients.end(), client));
+}
+
 float cGameGUI::calcMinZoom() const
 {
 	const int mapSize = client->getMap()->getSize();
@@ -823,6 +829,9 @@ void cGameGUI::addCoords (const sSavedReportMessage& msg)
 
 int cGameGUI::show (cClient* client)
 {
+	end = false;
+	terminate = false;
+
 	// do startup actions
 	openPanel();
 	startup = true;
@@ -835,6 +844,10 @@ int cGameGUI::show (cClient* client)
 	{
 		cEventHandling::handleInputEvents (*this, client);
 		client->gameTimer.run (this);
+		for (std::size_t i = 0; i != hotSeatClients.size(); ++i)
+		{
+			hotSeatClients[i]->gameTimer.run (NULL);
+		}
 
 		mouse->updatePos();
 		if (mouse->moved())
@@ -4711,7 +4724,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 			drawContextItem (lngPack.i18n ("Text~Others~Upgradethis_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
-			
+
 			// Update all buildings of this type in this subbase
 			isMarked = markerPossible && selectedMenuButtonIndex == nr;
 			drawContextItem (lngPack.i18n ("Text~Others~UpgradeAll_7"), isMarked, dest.x, dest.y, cVideo::buffer);
@@ -5017,7 +5030,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 				return;
 			}
 			++nr;
-			
+
 			// Update all buildings of this type in this subbase
 			if (exeNr == nr)
 			{

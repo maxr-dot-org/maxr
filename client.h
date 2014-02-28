@@ -203,12 +203,6 @@ private:
 	void addUnit (int iPosX, int iPosY, cBuilding& addedBuilding, bool bInit = false);
 
 	/**
-	* handles the end of a hotseat game
-	*@author alzi alias DoctorDeath
-	*@param iNextPlayerNum Number of Player who has ended his turn
-	*/
-	void makeHotSeatEnd (int iNextPlayerNum);
-	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
