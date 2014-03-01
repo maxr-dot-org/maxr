@@ -37,7 +37,7 @@ public:
 	~cMouse();
 
 	// Set a new cursor.
-	bool SetCursor (eCursor);
+	bool SetCursor (eCursor, int value_ = -1, int max_value = -1);
 
 	void updatePos();
 	void getCursorOffset (int& x, int& y) const;
@@ -57,6 +57,7 @@ public:
 	SDL_Surface* cur; // Current Cursor.
 private:
 	SDL_Cursor* sdlCursor;
+	int value, max_value;
 public:
 	int x, y; /** the pixel position of the cursor on the map */
 	bool isDoubleClick;

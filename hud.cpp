@@ -1570,8 +1570,7 @@ void cGameGUI::updateUnderMouseObject()
 		overUnitField = NULL;
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
-			SDL_Rect r = {1, 29, 35, 3};
-			SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+			mouse->SetCursor (CAttack);
 		}
 		return;
 	}
@@ -1632,8 +1631,7 @@ void cGameGUI::updateUnderMouseObject()
 		unitNameLabel.setText ("");
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
-			SDL_Rect r = {1, 29, 35u, 3u};
-			SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+			mouse->SetCursor (CAttack);
 		}
 		overUnitField = NULL;
 	}
@@ -1783,10 +1781,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			if (! (selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !client->getMap()->isWaterOrCoast (mouseMapX, mouseMapY)))
 			{
-				if (mouse->SetCursor (CAttack))
-				{
-					drawAttackCursor (mouseMapX, mouseMapY);
-				}
+				drawAttackCursor (mouseMapX, mouseMapY);
 			}
 			else
 			{
@@ -1802,10 +1797,7 @@ void cGameGUI::updateMouseCursor()
 				&& (!overUnitField->getBuilding() || overUnitField->getBuilding()->isDisabled() == false)
 			   )
 			{
-				if (mouse->SetCursor (CDisable))
-				{
-					selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
-				}
+				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 			}
 			else
 			{
@@ -1817,10 +1809,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), true))
 			{
-				if (mouse->SetCursor (CSteal))
-				{
-					selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
-				}
+				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
 			}
 			else
 			{
@@ -1836,28 +1825,19 @@ void cGameGUI::updateMouseCursor()
 		// vehicle can be disabled, and if it is ...
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false) && (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false))
 		{
-			if (mouse->SetCursor (CDisable))
-			{
-				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
-			}
+			selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 		}
 		// ... disabled (the) vehicle can be stolen
 		// (without selecting the 'steal' from menu)
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), true))
 		{
-			if (mouse->SetCursor (CSteal))
-			{
-				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
-			}
+			selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);
 		}
 		else if (selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
 			if (selectedBuilding->isInRange (mouseMapX, mouseMapY))
 			{
-				if (mouse->SetCursor (CAttack))
-				{
-					drawAttackCursor (mouseMapX, mouseMapY);
-				}
+				drawAttackCursor (mouseMapX, mouseMapY);
 			}
 			else
 			{
@@ -1866,17 +1846,11 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && selectedVehicle->canAttackObjectAt (mouseMapX, mouseMapY, *client->getMap(), false, false))
 		{
-			if (mouse->SetCursor (CAttack))
-			{
-				drawAttackCursor (mouseMapX, mouseMapY);
-			}
+			drawAttackCursor (mouseMapX, mouseMapY);
 		}
 		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && selectedBuilding->canAttackObjectAt (mouseMapX, mouseMapY, *client->getMap()))
 		{
-			if (mouse->SetCursor (CAttack))
-			{
-				drawAttackCursor (mouseMapX, mouseMapY);
-			}
+			drawAttackCursor (mouseMapX, mouseMapY);
 		}
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && mouseInputMode == muniActive)
 		{
@@ -3632,46 +3606,25 @@ SDL_Rect cGameGUI::calcScreenPos (int x, int y) const
 
 void cGameGUI::drawAttackCursor (int x, int y) const
 {
-	assert (mouse->cur == GraphicsData.gfx_Cattack);
-
-	if (selectedUnit == NULL) return;
-
+	if (selectedUnit == NULL)
+	{
+		mouse->SetCursor (CAttack);
+		return;
+	}
 	const sUnitData& data = selectedUnit->data;
-	cUnit* target = selectTarget (x, y, data.canAttack, *client->getMap());
+	const cUnit* target = selectTarget (x, y, data.canAttack, *client->getMap());
 
 	if (!target || (target == selectedUnit))
 	{
-		SDL_Rect r = {1, 29, 35, 3};
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+		mouse->SetCursor (CAttack);
 		return;
 	}
+	const int cursor_bar_width = 35;
+	const int wc = cursor_bar_width * target->data.hitpointsCur / target->data.hitpointsMax;
+	const int t = target->calcHealth (data.damage);
+	const int wp = t ? cursor_bar_width * t / target->data.hitpointsMax : 0;
 
-	int t = target->data.hitpointsCur;
-	int wc = (int) ((float) t / target->data.hitpointsMax * 35);
-
-	t = target->calcHealth (data.damage);
-
-	int wp = 0;
-	if (t)
-	{
-		wp = (int) ((float) t / target->data.hitpointsMax * 35);
-	}
-	SDL_Rect r = {1, 29, Uint16 (wp), 3};
-
-	if (r.w)
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0x00FF00);
-
-	r.x += r.w;
-	r.w = wc - wp;
-
-	if (r.w)
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0xFF0000);
-
-	r.x += r.w;
-	r.w = 35 - wc;
-
-	if (r.w)
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+	mouse->SetCursor (CAttack, wp, wc);
 }
 
 void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)

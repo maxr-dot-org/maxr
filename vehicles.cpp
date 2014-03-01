@@ -1685,33 +1685,14 @@ void cVehicle::drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) 
 {
 	cMap& map = *gameGUI.getClient()->getMap();
 	cMapField& field = map.fields[map.getOffset (x, y)];
-	SDL_Surface* sf;
-	const cUnit* unit = 0;
+	const cUnit* unit = field.getVehicle();
 
-	if (steal)
+	if (!steal && unit == 0)
 	{
-		unit = field.getVehicle();
-		sf = GraphicsData.gfx_Csteal;
+		unit = field.getTopBuilding();
 	}
-	else
-	{
-		unit = field.getVehicle();
-		if (unit == 0)
-			unit = field.getTopBuilding();
-		sf = GraphicsData.gfx_Cdisable;
-	}
-
-	SDL_Rect r = {1, 28, 35, 3};
-
-	if (unit == 0)
-	{
-		SDL_FillRect (sf, &r, 0);
-		return;
-	}
-
-	SDL_FillRect (sf, &r, 0x00FF0000);
-	r.w = 35 * calcCommandoChance (unit, steal) / 100;
-	SDL_FillRect (sf, &r, 0x0000FF00);
+	mouse->SetCursor (steal ? CSteal : CDisable,
+					  unit ? calcCommandoChance (unit, steal) : 0);
 }
 
 //-----------------------------------------------------------------------------

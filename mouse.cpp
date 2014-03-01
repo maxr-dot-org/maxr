@@ -42,10 +42,18 @@ cMouse::~cMouse()
 	if (sdlCursor) SDL_FreeCursor (sdlCursor);
 }
 
-bool cMouse::SetCursor (eCursor const typ)
+bool cMouse::SetCursor (eCursor const typ, int value_, int max_value_)
 {
-	const SDL_Surface* const lastCur = cur;
+	assert (value_ <= max_value_);
+	assert (max_value_ == -1 || typ == CAttack);
+	assert (value_ == -1 || typ == CAttack || typ == CDisable || typ == CSteal);
 
+	const SDL_Surface* const lastCur = cur;
+	const int last_value = value;
+	const int lastmax_value = max_value;
+
+	value = value_;
+	max_value = max_value_;
 	switch (typ)
 	{
 		default:
@@ -63,18 +71,66 @@ bool cMouse::SetCursor (eCursor const typ)
 		case CPfeil8:    cur = GraphicsData.gfx_Cpfeil8;     break;
 		case CPfeil9:    cur = GraphicsData.gfx_Cpfeil9;     break;
 		case CHelp:      cur = GraphicsData.gfx_Chelp;       break;
-		case CAttack:    cur = GraphicsData.gfx_Cattack;     break;
+		case CAttack:
+		{
+			cur = GraphicsData.gfx_Cattack;
+			SDL_Rect r = {1, 29, 35, 3};
+			if (max_value == -1)
+			{
+				assert (value == -1);
+				SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+			}
+			else
+			{
+				assert (0 <= value && value <= 35);
+				assert (0 <= max_value && max_value <= 35);
+				SDL_Rect r = {1, 29, Uint16 (value), 3};
+
+				if (r.w)
+					SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0x00FF00);
+
+				r.x += r.w;
+				r.w = max_value - value;
+
+				if (r.w)
+					SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0xFF0000);
+
+				r.x += r.w;
+				r.w = 35 - max_value;
+
+				if (r.w)
+					SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+			}
+			break;
+		}
 		case CAttackOOR: cur = GraphicsData.gfx_Cattackoor;  break;
 		case CBand:      cur = GraphicsData.gfx_Cband;       break;
 		case CTransf:    cur = GraphicsData.gfx_Ctransf;     break;
 		case CLoad:      cur = GraphicsData.gfx_Cload;       break;
 		case CMuni:      cur = GraphicsData.gfx_Cmuni;       break;
 		case CRepair:    cur = GraphicsData.gfx_Crepair;     break;
-		case CSteal:     cur = GraphicsData.gfx_Csteal;      break;
-		case CDisable:   cur = GraphicsData.gfx_Cdisable;    break;
+		case CSteal: // follow
+		case CDisable:
+		{
+			assert (0 <= value && value <= 100);
+			cur = typ == CSteal ? GraphicsData.gfx_Csteal : GraphicsData.gfx_Cdisable;
+			SDL_Rect r = {1, 28, 35, 3};
+
+			if (value == 0)
+			{
+				SDL_FillRect (cur, &r, 0);
+			}
+			else
+			{
+				SDL_FillRect (cur, &r, 0x00FF0000);
+				r.w = 35 * value / 100;
+				SDL_FillRect (cur, &r, 0x0000FF00);
+			}
+			break;
+		}
 		case CActivate:  cur = GraphicsData.gfx_Cactivate;   break;
 	}
-	if (lastCur == cur)
+	if (lastCur == cur && value == last_value && max_value == lastmax_value)
 	{
 		return false;
 	}
@@ -87,7 +143,7 @@ bool cMouse::SetCursor (eCursor const typ)
 	return true;
 }
 
-//updates the internal mouse position
+// updates the internal mouse position
 void cMouse::updatePos()
 {
 	SDL_GetMouseState (&x, &y);
