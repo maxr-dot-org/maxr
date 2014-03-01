@@ -940,7 +940,9 @@ void cGameGUI::updateInfoTexts()
 
 	if (client->getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", player->getName()), "");
+		// TODO: Fix message
+		const std::string& name = player ? player->getName() : "other players";
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", name), "");
 	}
 	else if (client->getFreezeMode (FREEZE_PAUSE))
 	{
