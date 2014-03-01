@@ -336,9 +336,9 @@ protected:
 	virtual bool canBeStoppedViaUnitMenu() const;
 
 	// methods needed for execution of unit menu commands
-	virtual void executeBuildCommand (cGameGUI& gameGUI);
-	virtual void executeStopCommand (const cClient& client);
-	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI);
+	virtual void executeBuildCommand (cGameGUI& gameGUI) const;
+	virtual void executeStopCommand (const cClient& client) const;
+	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const;
 };
 
 #endif

@@ -47,6 +47,15 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 void cMiniMapWidget::setDynamicMap (const cMap* dynamicMap_)
 {
 	dynamicMap = dynamicMap_;
+
+	dynamicMapSignalConnectionManager.disconnectAll ();
+
+	if (dynamicMap != nullptr)
+	{
+		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit&){ surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit&){ surfaceOutdated = true; });
+		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ surfaceOutdated = true; });
+	}
 }
 
 //------------------------------------------------------------------------------

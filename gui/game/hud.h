@@ -29,6 +29,7 @@ class cPushButton;
 class cCheckBox;
 class cSlider;
 class cLabel;
+class cLineEdit;
 class cUnitVideoWidget;
 class cUnit;
 class cAnimationTimer;
@@ -116,6 +117,10 @@ private:
 	cLabel* unitNameLabel;
 	cLabel* turnLabel;
 	cLabel* timeLabel;
+
+	cLabel* selectedUnitStatusLabel;
+	cLabel* selectedUnitNamePrefixLabel;
+	cLineEdit* selectedUnitNameEdit;
 
 	cUnitVideoWidget* unitVideo;
 

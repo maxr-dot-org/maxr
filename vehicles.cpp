@@ -1997,16 +1997,16 @@ bool cVehicle::canBeStoppedViaUnitMenu() const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeBuildCommand (cGameGUI& gameGUI)
+void cVehicle::executeBuildCommand (cGameGUI& gameGUI) const
 {
 	if (ClientMoveJob)
 		sendWantStopMove (*gameGUI.getClient(), iID);
-	cBuildingsBuildMenu buildMenu(*gameGUI.getClient(), owner, this);
-	gameGUI.switchTo(buildMenu, gameGUI.getClient());
+	//cBuildingsBuildMenu buildMenu(*gameGUI.getClient(), owner, this);
+	//gameGUI.switchTo(buildMenu, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeStopCommand (const cClient& client)
+void cVehicle::executeStopCommand (const cClient& client) const
 {
 	if (ClientMoveJob != 0)
 		sendWantStopMove (client, iID);
@@ -2033,10 +2033,10 @@ void cVehicle::executeAutoMoveJobCommand (cClient& client)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI)
+void cVehicle::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const
 {
-	cStorageMenu storageMenu (*gameGUI.getClient(), storedUnits, *this);
-	gameGUI.switchTo(storageMenu, gameGUI.getClient());
+	//cStorageMenu storageMenu (*gameGUI.getClient(), storedUnits, *this);
+	//gameGUI.switchTo(storageMenu, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------

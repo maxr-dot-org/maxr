@@ -55,19 +55,9 @@ cVehicle* cMapField::getPlane() const
 	return planes[0];
 }
 
-std::vector<cVehicle*>& cMapField::getPlanes()
-{
-	return planes;
-}
-
 const std::vector<cVehicle*>& cMapField::getPlanes() const
 {
 	return planes;
-}
-
-std::vector<cBuilding*>& cMapField::getBuildings()
-{
-	return buildings;
 }
 
 const std::vector<cBuilding*>& cMapField::getBuildings() const
@@ -805,6 +795,7 @@ void cMap::addBuilding (cBuilding& building, unsigned int offset)
 		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
 	}
+	addedUnit (building);
 }
 
 void cMap::addVehicle (cVehicle& vehicle, unsigned int x, unsigned int y)
@@ -822,6 +813,7 @@ void cMap::addVehicle (cVehicle& vehicle, unsigned int offset)
 	{
 		fields[offset].vehicles.insert (fields[offset].vehicles.begin(), &vehicle);
 	}
+	addedUnit (vehicle);
 }
 
 void cMap::deleteBuilding (const cBuilding& building)
@@ -845,6 +837,7 @@ void cMap::deleteBuilding (const cBuilding& building)
 		buildings = &fields[offset].buildings;
 		Remove (*buildings, &building);
 	}
+	removedUnit (building);
 }
 
 void cMap::deleteVehicle (const cVehicle& vehicle)
@@ -876,6 +869,7 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 			Remove (*vehicles, &vehicle);
 		}
 	}
+	removedUnit (vehicle);
 }
 
 void cMap::moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int height)
@@ -913,6 +907,7 @@ void cMap::moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int h
 
 		fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 	}
+	movedVehicle (vehicle);
 }
 
 void cMap::moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y)
@@ -942,6 +937,8 @@ void cMap::moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y)
 	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 
 	vehicle.data.isBig = true;
+
+	movedVehicle (vehicle);
 }
 
 bool cMap::possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlayer) const

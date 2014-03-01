@@ -1031,9 +1031,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 
 		int iOff = Map->getOffset (iX, iY);
 
-		std::vector<cBuilding*>& buildings = Map->fields[iOff].getBuildings();
-		std::vector<cBuilding*>::iterator b_it = buildings.begin();
-		std::vector<cBuilding*>::iterator b_end = buildings.end();
+		const auto& buildings = Map->fields[iOff].getBuildings();
+		auto b_it = buildings.begin();
+		auto b_end = buildings.end ();
 		while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
 		if (!Map->isWaterOrCoast (iX, iY) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
@@ -2497,7 +2497,7 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 	{
 		if (AddedBuilding->data.isBig)
 		{
-			std::vector<cBuilding*>* buildings = &Map->fields[iOff].getBuildings();
+			auto buildings = &Map->fields[iOff].getBuildings ();
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
@@ -2542,7 +2542,7 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 		{
 			deleteUnit (buildingToBeDeleted);
 
-			std::vector<cBuilding*>& buildings = Map->fields[iOff].getBuildings();
+			const auto& buildings = Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
 				if (buildings[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
@@ -3516,8 +3516,8 @@ void cServer::destroyUnit (cVehicle& vehicle)
 	}
 
 	//delete all buildings on the field, except connectors
-	std::vector<cBuilding*>* buildings = & (*Map) [offset].getBuildings();
-	std::vector<cBuilding*>::iterator b_it = buildings->begin();
+	auto buildings = & (*Map) [offset].getBuildings();
+	auto b_it = buildings->begin();
 	if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 
 	while (b_it != buildings->end())
@@ -3592,7 +3592,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-int cServer::deleteBuildings (std::vector<cBuilding*>& buildings)
+int cServer::deleteBuildings (const std::vector<cBuilding*>& buildings)
 {
 	int rubble = 0;
 	while (buildings.empty() == false)
@@ -3624,7 +3624,7 @@ void cServer::destroyUnit (cBuilding& b)
 		big = true;
 		offset = Map->getOffset (topBuilding->PosX, topBuilding->PosY);
 
-		std::vector<cBuilding*>* buildings = &Map->fields[offset + 1].getBuildings();
+		auto buildings = &Map->fields[offset + 1].getBuildings();
 		rubble += deleteBuildings (*buildings);
 
 		buildings = &Map->fields[offset + Map->getSize()].getBuildings();
@@ -3636,7 +3636,7 @@ void cServer::destroyUnit (cBuilding& b)
 
 	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
 
-	std::vector<cBuilding*>* buildings = &Map->fields[offset].getBuildings();
+	auto buildings = &Map->fields[offset].getBuildings();
 	rubble += deleteBuildings (*buildings);
 
 	if (surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2)

@@ -4346,9 +4346,9 @@ void cVehiclesBuildMenu::generateSelectionList()
 			if (map.isValidPos (x, y) == false) continue;
 
 			int off = map.getOffset (x, y);
-			std::vector<cBuilding*>& buildings = map.fields[off].getBuildings();
-			std::vector<cBuilding*>::iterator b_it = buildings.begin();
-			std::vector<cBuilding*>::iterator b_end = buildings.end();
+			const auto& buildings = map.fields[off].getBuildings();
+			auto b_it = buildings.begin();
+			auto b_end = buildings.end();
 
 			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 

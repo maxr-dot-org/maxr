@@ -34,6 +34,8 @@ public:
 	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
 
 	void setText (const std::string& text);
+	const std::string& getText () const;
+
 	void setFont (eUnicodeFontType fontType);
 	void setAlignment (AlignmentFlags alignment);
 	void setWordWrap (bool wordWrap);

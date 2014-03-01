@@ -98,9 +98,9 @@ public:
 	virtual bool buildingCanBeUpgraded() const { return false; }
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
-	virtual void executeBuildCommand (cGameGUI&) = 0;
-	virtual void executeStopCommand (const cClient& client) = 0;
-	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) = 0;
+	virtual void executeBuildCommand (cGameGUI&) const = 0;
+	virtual void executeStopCommand (const cClient& client) const = 0;
+	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const = 0;
 
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit

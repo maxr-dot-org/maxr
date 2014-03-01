@@ -974,13 +974,6 @@ void cBuilding::clientStartWork ()
 		return;
 	IsWorking = true;
 	EffectAlpha = 0;
-	// FIXME: gameGUI
-	//if (gameGUI.getSelectedUnit() == this)
-	//{
-	//	gameGUI.stopFXLoop();
-	//	PlayFX (uiData->Start);
-	//	gameGUI.playStream (*this);
-	//}
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
 }
@@ -1066,13 +1059,6 @@ void cBuilding::clientStopWork ()
 	if (!IsWorking)
 		return;
 	IsWorking = false;
-	// FIXME: gameGUI
-	//if (gameGUI.getSelectedUnit() == this)
-	//{
-	//	gameGUI.stopFXLoop();
-	//	PlayFX (uiData->Stop);
-	//	gameGUI.playStream (*this);
-	//}
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
 }
@@ -1636,40 +1622,40 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeBuildCommand (cGameGUI& gameGUI)
+void cBuilding::executeBuildCommand (cGameGUI& gameGUI) const
 {
-	cVehiclesBuildMenu buildMenu (gameGUI, owner, this);
-	gameGUI.switchTo(buildMenu, gameGUI.getClient());
+	//cVehiclesBuildMenu buildMenu (gameGUI, owner, this);
+	//gameGUI.switchTo(buildMenu, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeMineManagerCommand (cGameGUI& gameGUI)
+void cBuilding::executeMineManagerCommand (cGameGUI& gameGUI) const
 {
-	cMineManagerMenu mineManager(*gameGUI.getClient(), this);
-	gameGUI.switchTo(mineManager, gameGUI.getClient());
+	//cMineManagerMenu mineManager(*gameGUI.getClient(), this);
+	//gameGUI.switchTo(mineManager, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeStopCommand (const cClient& client)
+void cBuilding::executeStopCommand (const cClient& client) const
 {
 	sendWantStopWork (client, *this);
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI)
+void cBuilding::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const
 {
-	cStorageMenu storageMenu(*gameGUI.getClient(), storedUnits, *this);
-	gameGUI.switchTo(storageMenu, gameGUI.getClient());
+	//cStorageMenu storageMenu(*gameGUI.getClient(), storedUnits, *this);
+	//gameGUI.switchTo(storageMenu, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType)
+void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const
 {
 	sendUpgradeBuilding (client, *this, updateAllOfSameType);
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeSelfDestroyCommand (cGameGUI& gameGUI)
+void cBuilding::executeSelfDestroyCommand (cGameGUI& gameGUI) const
 {
 	cDestructMenu destructMenu;
 	if(gameGUI.switchTo(destructMenu, gameGUI.getClient()) == 0)

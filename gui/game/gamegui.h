@@ -46,6 +46,7 @@ public:
 	void setPlayer (const cPlayer* player);
 
 	void connectToClient (cClient& client);
+	void disconnectCurrentClient ();
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -59,6 +60,9 @@ protected:
 
 private:
 	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager clientSignalConnectionManager;
+	cSignalConnectionManager dynamicMapSignalConnectionManager;
+	cSignalConnectionManager moveJobSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
@@ -80,11 +84,13 @@ private:
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);
 
-	void updateSelectedUnitSound ();
+	void updateSelectedUnitIdleSound ();
+	void updateSelectedUnitMoveSound ();
 
 	void startSelectedUnitSound (sSOUND* sound);
 	void stopSelectedUnitSound ();
 
+	void connectMoveJob (const cVehicle& vehicle);
 };
 
 #endif // gui_game_gameguiH

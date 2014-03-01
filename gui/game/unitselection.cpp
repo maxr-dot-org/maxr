@@ -71,6 +71,14 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 }
 
 //------------------------------------------------------------------------------
+void cUnitSelection::deselectUnit (const cUnit& unit)
+{
+	auto iter = std::find (selectedUnits.begin (), selectedUnits.end (), &unit);
+	if (iter == selectedUnits.end ()) return;
+	selectedUnits.erase (iter);
+}
+
+//------------------------------------------------------------------------------
 void cUnitSelection::deselectUnits ()
 {
 	selectedUnits.clear ();

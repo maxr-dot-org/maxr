@@ -27,7 +27,9 @@
 #include <vector>
 #include "t_2.h"
 #include "utility/position.h"
+#include "utility/signal/signal.h"
 
+class cUnit;
 class cVehicle;
 class cBuilding;
 class cPlayer;
@@ -73,10 +75,8 @@ public:
 	/** returns a Iterator for the planes on this field */
 	cVehicle* getPlane() const;
 	/** returns the planes on this field */
-	std::vector<cVehicle*>& getPlanes ();
 	const std::vector<cVehicle*>& getPlanes () const;
 	/** returns the buildings on this field */
-	std::vector<cBuilding*>& getBuildings ();
 	const std::vector<cBuilding*>& getBuildings ()const;
 
 	/** returns a pointer for the buildings on this field */
@@ -246,6 +246,9 @@ public:
 	*/
 	void reset();
 
+	mutable cSignal<void (const cUnit&)> addedUnit;
+	mutable cSignal<void (const cUnit&)> removedUnit;
+	mutable cSignal<void (const cVehicle&)> movedVehicle;
 public:
 	std::shared_ptr<cStaticMap> staticMap;
 	/**

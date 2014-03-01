@@ -831,14 +831,14 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 				deselectGroup();
 				if(overUnitField && mouseOverSelectedUnit)
 				{
-					std::vector<cVehicle*>& planes = overUnitField->getPlanes();
+					const auto& planes = overUnitField->getPlanes();
 					cUnit* next = NULL;
 
 					const cVehicle* selectedVehicle = getSelectedVehicle();
 					const cBuilding* selectedBuilding = getSelectedBuilding();
 					if(selectedVehicle)
 					{
-						std::vector<cVehicle*>::iterator it = std::find(planes.begin(), planes.end(), selectedVehicle);
+						auto it = std::find(planes.begin(), planes.end(), selectedVehicle);
 
 						if(it == planes.end())
 						{
@@ -3737,8 +3737,8 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 		int pos = map.getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
-			std::vector<cBuilding*>& buildings = map.fields[pos].getBuildings();
-			for (std::vector<cBuilding*>::reverse_iterator it = buildings.rbegin(); it != buildings.rend(); ++it)
+			const auto& buildings = map.fields[pos].getBuildings();
+			for (auto it = buildings.rbegin(); it != buildings.rend(); ++it)
 			{
 				if ((*it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
 					(*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
@@ -3874,16 +3874,16 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 		int pos = map.getOffset (startX, y);
 		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			std::vector<cBuilding*>& buildings = map.fields[pos].getBuildings();
+			const auto& buildings = map.fields[pos].getBuildings();
 
-			for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+			for (auto it = buildings.begin(); it != buildings.end(); ++it)
 			{
 				if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 				{
 					(*it)->draw (&dest, *this);
 				}
 			}
-			for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+			for (auto it = buildings.begin(); it != buildings.end(); ++it)
 			{
 				if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 				{
@@ -3962,10 +3962,8 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 		int pos = map.getOffset (startX, y);
 		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			std::vector<cVehicle*>& planes = map.fields[pos].getPlanes();
-			for (std::vector<cVehicle*>::reverse_iterator it = planes.rbegin();
-				 it != planes.rend();
-				 ++it)
+			const auto& planes = map.fields[pos].getPlanes();
+			for (auto it = planes.rbegin(); it != planes.rend(); ++it)
 			{
 				cVehicle& plane = **it;
 				plane.draw (dest, *this);

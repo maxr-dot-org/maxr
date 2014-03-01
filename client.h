@@ -28,6 +28,7 @@
 #include "gametimer.h"
 #include "main.h"
 #include "network.h"
+#include "utility/signal/signal.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -186,6 +187,39 @@ public:
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
 	void setGameSetting (const sSettings& gameSetting_);
 	const sSettings* getGameSetting() const { return gameSetting.get(); }
+
+	mutable cSignal<void ()> turnChanged;
+	mutable cSignal<void ()> startTurnEnd;
+	mutable cSignal<void ()> finishTurnEnd;
+
+	mutable cSignal<void (const cUnit&)> unitStartedWorking;
+	mutable cSignal<void (const cUnit&)> unitStoppedWorking;
+
+	mutable cSignal<void (const cUnit&)> unitStartedBuilding;
+	mutable cSignal<void (const cUnit&)> unitStoppedBuilding;
+
+	mutable cSignal<void (const cUnit&)> unitStartedClearing;
+	mutable cSignal<void (const cUnit&)> unitStoppedClearing;
+
+	mutable cSignal<void (const cUnit&, const cUnit&)> unitStored; // storing, stored
+	mutable cSignal<void (const cUnit&, const cUnit&)> unitActivated; // storing, stored
+
+	mutable cSignal<void (const cUnit&)> unitHasStolenSuccessfully;
+	mutable cSignal<void (const cUnit&)> unitHasDisabledSuccessfully;
+	mutable cSignal<void (const cUnit&)> unitStealDisableFailed;
+
+	mutable cSignal<void (const cVehicle&)> unitFinishedMoveJob;
+	mutable cSignal<void (const cVehicle&)> unitPausedMoveJob;
+
+	mutable cSignal<void (const cUnit&)> unitSuppliedWithAmmo;
+	mutable cSignal<void (const cUnit&)> unitRepaired;
+
+	mutable cSignal<void (const cUnit&)> unitDisabled;
+	mutable cSignal<void (const cUnit&)> unitStolen;
+
+	mutable cSignal<void (const cUnit&)> unitDetected;
+
+	mutable cSignal<void (const cVehicle&)> moveJobCreated;
 private:
 	void initPlayersWithMap();
 

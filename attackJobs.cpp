@@ -146,8 +146,8 @@ void cServerAttackJob::lockTarget (int offset)
 
 	if (!isAir)
 	{
-		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
-		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+		const auto& buildings = map[offset].getBuildings();
+		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
 			(*it)->isBeeingAttacked = true;
 		}
@@ -429,9 +429,11 @@ void cServerAttackJob::makeImpact (int x, int y)
 
 	if (isAir == false)
 	{
-		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
-		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+		const auto& buildings = map[offset].getBuildings();
+		for (auto it = buildings.begin (); it != buildings.end (); ++it)
+		{
 			(*it)->isBeeingAttacked = false;
+		}
 	}
 	if (unit)
 		unit->attacking = false;
@@ -537,9 +539,11 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 	}
 	if (!bIsAir)
 	{
-		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
-		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+		const auto& buildings = map[offset].getBuildings();
+		for (auto it = buildings.begin (); it != buildings.end (); ++it)
+		{
 			(*it)->isBeeingAttacked = true;
+		}
 	}
 }
 
@@ -971,8 +975,10 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 	if (!isAir)
 	{
-		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
-		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+		const auto& buildings = map[offset].getBuildings();
+		for (auto it = buildings.begin (); it != buildings.end (); ++it)
+		{
 			(*it)->isBeeingAttacked = false;
+		}
 	}
 }

@@ -453,7 +453,7 @@ private:
 	 * and returns the generated rubble value.
 	 * @author Paul Grathwohl
 	 */
-	int deleteBuildings (std::vector<cBuilding*>& buildings);
+	int deleteBuildings (const std::vector<cBuilding*>& buildings);
 
 	void runJobs();
 

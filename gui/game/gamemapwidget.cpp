@@ -30,6 +30,8 @@
 #include "../../keys.h"
 #include "../../clist.h"
 #include "../../attackJobs.h"
+#include "../../sound.h"
+#include "../../movejobs.h"
 #include "../../utility/indexiterator.h"
 #include "../../input/mouse/mouse.h"
 
@@ -71,10 +73,29 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->sabotageToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Disable));
 	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eNewMouseInputMode::Steal));
 
+	unitMenu->buildClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredBuild (*unitMenu->getUnit ()); });
+	unitMenu->distributeClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredResourceDistribution (*unitMenu->getUnit ()); });
+	unitMenu->startClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredStartWork (*unitMenu->getUnit ()); });
+	unitMenu->stopClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredStopWork (*unitMenu->getUnit ()); });
+	unitMenu->autoToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredAutoMoveJob (*unitMenu->getUnit ()); });
+	unitMenu->removeClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredStartClear (*unitMenu->getUnit ()); });
+	unitMenu->manualFireToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredManualFire (*unitMenu->getUnit ()); });
+	unitMenu->sentryToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredSentry (*unitMenu->getUnit ()); });
+	unitMenu->activateClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredActivate (*unitMenu->getUnit ()); });
+	unitMenu->researchClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredResearchMenu (*unitMenu->getUnit ()); });
+	unitMenu->buyUpgradesClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUpgradesMenu (*unitMenu->getUnit ()); });
+	unitMenu->upgradeThisClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUpgradeThis (*unitMenu->getUnit ()); });
+	unitMenu->upgradeAllClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUpgradeAll (*unitMenu->getUnit ()); });
+	unitMenu->selfDestroyClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredSelfDestruction (*unitMenu->getUnit ()); });
+	unitMenu->layMinesToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredLayMines (*unitMenu->getUnit ()); });
+	unitMenu->collectMinesToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredCollectMines (*unitMenu->getUnit ()); });
+	unitMenu->doneClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUnitDone (*unitMenu->getUnit ()); });
+
 	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->buildClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->distributeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+	unitMenu->startClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->autoToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->stopClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->removeClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
@@ -101,6 +122,22 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 void cGameMapWidget::setDynamicMap (const cMap* dynamicMap_)
 {
 	dynamicMap = dynamicMap_;
+
+	dynamicMapSignalConnectionManager.disconnectAll ();
+
+	if (dynamicMap != nullptr)
+	{
+		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit&){ updateMouseCursor (); });
+		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit& unit)
+		{
+			updateMouseCursor ();
+			if (unitSelection.isSelected (unit))
+			{
+				unitSelection.deselectUnit (unit);
+			}
+		});
+		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ updateMouseCursor (); });
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -134,10 +171,10 @@ void cGameMapWidget::draw ()
 		drawResources ();
 	}
 
-	//if (selectedVehicle && ((selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
-	//{
-	//	selectedVehicle->DrawPath (*this);
-	//}
+	if (selectedVehicle && ((selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
+	{
+		//selectedVehicle->DrawPath (*this);
+	}
 
 	//debugOutput.draw ();
 
@@ -1182,11 +1219,13 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			if (!selectedVehicle->moving)
 			{
 				toggleUnitContextMenu (selectedVehicle);
+				PlayFX (SoundData.SNDHudButton);
 			}
 		}
 		else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 		{
 			toggleUnitContextMenu (selectedBuilding);
+			PlayFX (SoundData.SNDHudButton);
 		}
 		else if (MouseStyle == Modern && mouseClickAction == eMouseClickAction::Select && unitSelection.selectUnitAt (field, true))
 		{

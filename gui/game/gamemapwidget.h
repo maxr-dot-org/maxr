@@ -112,6 +112,24 @@ public:
 	cSignal<void (cVehicle&, const cPosition&)> triggeredMoveSingle;
 	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
 
+	cSignal<void (const cUnit&)> triggeredBuild;
+	cSignal<void (const cUnit&)> triggeredResourceDistribution;
+	cSignal<void (const cUnit&)> triggeredStartWork;
+	cSignal<void (const cUnit&)> triggeredStopWork;
+	cSignal<void (const cUnit&)> triggeredAutoMoveJob;
+	cSignal<void (const cUnit&)> triggeredStartClear;
+	cSignal<void (const cUnit&)> triggeredManualFire;
+	cSignal<void (const cUnit&)> triggeredSentry;
+	cSignal<void (const cUnit&)> triggeredActivate;
+	cSignal<void (const cUnit&)> triggeredResearchMenu;
+	cSignal<void (const cUnit&)> triggeredUpgradesMenu;
+	cSignal<void (const cUnit&)> triggeredUpgradeThis;
+	cSignal<void (const cUnit&)> triggeredUpgradeAll;
+	cSignal<void (const cUnit&)> triggeredSelfDestruction;
+	cSignal<void (const cUnit&)> triggeredLayMines;
+	cSignal<void (const cUnit&)> triggeredCollectMines;
+	cSignal<void (const cUnit&)> triggeredUnitDone;
+
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
@@ -123,6 +141,8 @@ private:
 	//
 	// data
 	//
+	cSignalConnectionManager dynamicMapSignalConnectionManager;
+
 	std::shared_ptr<const cStaticMap> staticMap;
 	const cMap* dynamicMap; // may be null
 	const cPlayer* player; // may be null

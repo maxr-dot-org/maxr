@@ -36,6 +36,8 @@ public:
 	bool selectUnitAt (const cMapField& field, bool base);
 
 	bool selectUnit (cUnit& unit, bool add = false);
+
+	void deselectUnit (const cUnit& unit);
 	void deselectUnits ();
 
 	cUnit* getSelectedUnit () const;

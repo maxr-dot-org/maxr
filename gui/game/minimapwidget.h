@@ -23,6 +23,7 @@
 #include "../widget.h"
 #include "../../maxrconfig.h"
 #include "../../utility/signal/signal.h"
+#include "../../utility/signal/signalconnectionmanager.h"
 
 struct SDL_Surface;
 
@@ -55,6 +56,8 @@ public:
 protected:
 
 private:
+	cSignalConnectionManager dynamicMapSignalConnectionManager;
+
 	AutoSurface surface;
 	bool surfaceOutdated;
 	AutoSurface viewWindowSurface;

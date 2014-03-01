@@ -38,6 +38,12 @@ void cLabel::setText (const std::string& text_)
 }
 
 //------------------------------------------------------------------------------
+const std::string& cLabel::getText () const
+{
+	return text;
+}
+
+//------------------------------------------------------------------------------
 void cLabel::setFont (eUnicodeFontType fontType_)
 {
 	fontType = fontType_;

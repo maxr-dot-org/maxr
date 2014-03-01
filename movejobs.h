@@ -22,6 +22,8 @@
 #include <SDL.h>
 #include <vector>
 
+#include "utility/signal/signal.h"
+
 class cClient;
 class cMap;
 class cNetMessage;
@@ -252,8 +254,12 @@ public:
 	void doEndMoveVehicle();
 	void calcNextDir();
 	void drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial);
-	void startMoveSound();
-	void stopMoveSound();
+
+	// TODO: check when this signal get triggered
+	mutable cSignal<void (const cVehicle&)> activated;
+	mutable cSignal<void (const cVehicle&)> stopped;
+	mutable cSignal<void (const cVehicle&)> moved;
+	mutable cSignal<void (const cVehicle&)> blocked;
 };
 
 #endif // movejobsH
