@@ -184,6 +184,7 @@ class cGameGUI : public cMenu
 	friend class cDebugOutput;
 
 	cClient* client;
+	std::vector<cClient*> hotSeatClients;
 	AutoSurface panelTopGraphic;
 	AutoSurface panelBottomGraphic;
 
@@ -492,6 +493,8 @@ public:
 	void addCoords (const sSavedReportMessage& msg);
 
 	void setClient (cClient* client);
+	void setHotSeatClients (const std::vector<cClient*>& hotSeatClients);
+
 	virtual int show (cClient* client);
 
 	void updateInfoTexts();

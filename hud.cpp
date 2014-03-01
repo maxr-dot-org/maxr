@@ -1484,6 +1484,12 @@ void cGameGUI::setClient (cClient* client)
 	playersInfo.setClient (*client);
 }
 
+void cGameGUI::setHotSeatClients (const std::vector<cClient*>& hotSeatClients)
+{
+	this->hotSeatClients = hotSeatClients;
+	this->hotSeatClients.erase (std::find (this->hotSeatClients.begin (), this->hotSeatClients.end (), client));
+}
+
 float cGameGUI::calcMinZoom() const
 {
 	const int mapSize = client->getMap()->getSize();
@@ -1647,6 +1653,9 @@ void cGameGUI::addCoords (const sSavedReportMessage& msg)
 
 int cGameGUI::show (cClient* client)
 {
+	end = false;
+	terminate = false;
+
 	activate();
 	auto deactivator = makeScopedOperation(std::bind(&cGameGUI::deactivate, this));
 
@@ -1662,6 +1671,10 @@ int cGameGUI::show (cClient* client)
 	{
 		cEventManager::getInstance().run();
 		client->gameTimer.run (this);
+		for (std::size_t i = 0; i != hotSeatClients.size (); ++i)
+		{
+			hotSeatClients[i]->gameTimer.run (NULL);
+		}
 
 		if (!cSettings::getInstance().shouldUseFastMode()) SDL_Delay (1);
 
@@ -1736,7 +1749,9 @@ void cGameGUI::updateInfoTexts()
 
 	if (client->getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", player->getName()), "");
+		// TODO: Fix message
+		const std::string& name = player ? player->getName () : "other players";
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", name), "");
 	}
 	else if (client->getFreezeMode (FREEZE_PAUSE))
 	{

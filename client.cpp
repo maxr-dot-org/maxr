@@ -178,7 +178,12 @@ void cClient::sendNetMessage (cNetMessage* message) const
 	message->iPlayerNr = ActivePlayer->getNr();
 
 	if (message->iType != NET_GAME_TIME_CLIENT)
-		Log.write ("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	{
+		Log.write ("Client: " + getActivePlayer ().getName () + " --> "
+				   + message->getTypeAsString ()
+				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 	if (server)
 	{
@@ -496,7 +501,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	}
 	else if (iNextPlayerNum != -1)
 	{
-		makeHotSeatEnd (iNextPlayerNum);
+		//makeHotSeatEnd (iNextPlayerNum);
 	}
 }
 
@@ -1767,7 +1772,12 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 {
 	if (message->iType != NET_GAME_TIME_SERVER)
-		Log.write ("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	{
+		Log.write ("Client: " + getActivePlayer ().getName () + " <-- "
+				   + message->getTypeAsString ()
+				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 	switch (message->iType)
 	{
@@ -1957,46 +1967,6 @@ void cClient::handleEnd()
 	if (isFreezed()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn (*this);
-}
-
-void cClient::makeHotSeatEnd (int iNextPlayerNum)
-{
-#if 0
-	// clear the messages
-	for (size_t i = 0; i != messages.size(); ++i)
-	{
-		delete messages[i];
-	}
-	messages.Clear();
-#endif
-#if 0
-	// save information and set next player
-	//ActivePlayer->HotHud = Hud;
-	const int iZoom = Hud.LastZoom;
-	// TODO: maybe here must be done more than just set the next player!
-	ActivePlayer = getPlayerFromNumber (iNextPlayerNum);
-	//Hud = ActivePlayer->HotHud;
-	const int iX = Hud.OffX;
-	const int iY = Hud.OffY;
-	if (Hud.LastZoom != iZoom)
-	{
-		Hud.LastZoom = -1;
-		Hud.ScaleSurfaces();
-	}
-	Hud.OffX = iX;
-	Hud.OffY = iY;
-#endif
-	// reset the screen
-	//FIXME: gameGUI
-	//gameGUI->deselectUnit();
-	SDL_Surface* sf = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(), 32, 0, 0, 0, 0);
-	SDL_Rect scr = { 15, 356, 112u, 112u};
-	SDL_BlitSurface (sf, NULL, cVideo::buffer, NULL);
-	SDL_BlitSurface (sf, &scr, cVideo::buffer, &scr);
-
-	//FIXME: gameGUI
-	//cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->getName()));
-	//gameGUI->switchTo(okDialog, this);
 }
 
 unsigned int cClient::getRemainingTimeInSecond() const

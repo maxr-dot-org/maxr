@@ -499,7 +499,7 @@ void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sPlayer* pla
 	if (player == NULL) network.send (message->iLength, message->serialize());
 	else network.sendTo (player->getSocketIndex(), message->iLength, message->serialize());
 
-	Log.write ("Menu: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	delete message;
 }
 
@@ -1009,15 +1009,21 @@ static std::vector<sPlayer*> buildPlayerList (const cHotSeatMenu& hotSeatMenu, s
 }
 
 //------------------------------------------------------------------------------
+static void HotSeatWaitForClient (const cClient& client)
+{
+	Video.clearBuffer ();
+	const std::string& name = client.getActivePlayer ().getName ();
+	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
+	okDialog.show (NULL);
+}
+
+//------------------------------------------------------------------------------
 static int RunHostGamePreparation (cMenu& parent, std::vector<cClient*>& clients, cStaticMap& map)
 {
 	std::vector<sClientLandData> landingData (clients.size());
 	for (size_t i = 0, size = clients.size(); i != size; ++i)
 	{
-		Video.clearBuffer();
-		const std::string& name = clients[i]->getActivePlayer().getName();
-		cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
-		okDialog.show (NULL);
+		HotSeatWaitForClient (*clients[i]);
 		const int dir = runGamePreparation (parent, *clients[i], map, landingData[i], true);
 		if (dir == -1) return -1;
 	}
@@ -1059,7 +1065,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 	std::shared_ptr<cStaticMap> map;
 	cTCP* const network = NULL;
 	cServer server (network);
-	cEventHandling eventHandling;
+	std::vector<cEventHandling> eventHandlings;
 	std::vector<cClient*> clients;
 
 	settings.hotseat = true;
@@ -1091,14 +1097,20 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 						server.addPlayer (new cPlayer (*splayers[i]));
 					}
 					// Create clients.
+					eventHandlings.resize (splayers.size ());
 					for (size_t i = 0, size = splayers.size(); i != size; ++i)
 					{
-						cClient* client = new cClient (&server, network, eventHandling);
+						cClient* client = new cClient (&server, network, eventHandlings[i]);
 						clients.push_back (client);
 						client->setPlayers(splayers, *splayers[i]);
 						client->getActivePlayer().setClan (clans[i]);
 						client->setMap (map);
 						client->setGameSetting (settings);
+					}
+					for (size_t i = 0, size = clients.size (); i != size; ++i)
+					{
+						// FIXME: gameGUI
+						//clients[i]->getGameGUI ().setHotSeatClients (clients);
 					}
 					for (size_t i = 0, size = splayers.size(); i != size; ++i)
 						delete splayers[i];
@@ -1106,7 +1118,6 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 				}
 				break;
 			}
-#if 1
 			case 3:
 			{
 				dir = RunHostGamePreparation (*menu, clients, *map);
@@ -1124,10 +1135,13 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 			}
 			case 4:
 			{
-				// while game is not finished
+				// TODO while game is not finished
+				while (true)
 				{
 					for(size_t i = 0, size = clients.size(); i != size; ++i)
 					{
+						// TODO Check if client is still alive
+						HotSeatWaitForClient (*clients[i]);
 						//FIXME: gameGUI
 						//menu->switchTo(clients[i]->getGameGUI(), clients[i]);
 					}
@@ -1140,7 +1154,6 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 				menu->draw();
 				return;
 			}
-#endif
 			default: break;
 		}
 		step += dir;

@@ -955,7 +955,7 @@ void cClientMoveJob::release()
 	bFinished = true;
 	Log.write (" Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG);
 	client->addActiveMoveJob (this);
-	Log.write (" Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Added released movejob to active ones", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
