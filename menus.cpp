@@ -1090,13 +1090,15 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 			case 4:
 			{
 				// TODO while game is not finished
-				while (true)
+				int res = 0;
+				while (res == 0)
 				{
 					for (size_t i = 0, size = clients.size(); i != size; ++i)
 					{
-						// TODO Check if client is still alive
+						if (clients[i]->getActivePlayer().isDefeated) continue;
 						HotSeatWaitForClient (*clients[i]);
-						clients[i]->getGameGUI().show (clients[i]);
+						res = clients[i]->getGameGUI().show (clients[i]);
+						if (res != 0) break;
 					}
 				}
 				server.stop();
@@ -1362,7 +1364,7 @@ void cSettingsMenu::updateSettings()
 	if (clansGroup->buttonIsChecked (0)) settings.clans = SETTING_CLANS_ON;
 	else settings.clans = SETTING_CLANS_OFF;
 
-	if (settings.hotseat) settings.gameType = SETTINGS_GAMETYPE_SIMU;
+	if (settings.hotseat) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else if (gameTypeGroup->buttonIsChecked (0)) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
 
@@ -2777,7 +2779,7 @@ void cNetworkMenu::showSettingsText()
 			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + (settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ("Text~Option~Definite") : lngPack.i18n ("Text~Option~Mobile")) + "\n";
 			//text += lngPack.i18n ("Text~Title~Alien_Tech") + ": " + (settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += string ("Clans") + ": " + (settings->clans == SETTING_CLANS_ON ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
-			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
+			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + (settings->isTurnBasedGame() ? lngPack.i18n ("Text~Option~Type_Turns") : lngPack.i18n ("Text~Option~Type_Simu")) + "\n";
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
@@ -3649,7 +3651,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	client.setMap (*map);
 	client.setGameSetting (*settings);
 
-	if (settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+	if (settings->isTurnBasedGame() && actPlayer->getNr() != 0) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 
 	//if (reconnect) sendReconnectionSuccess (client);
 

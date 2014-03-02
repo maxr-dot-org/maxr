@@ -174,6 +174,8 @@ struct sSettings
 	std::string getResValString (eSettingResourceValue type) const;
 	std::string getResFreqString() const;
 	std::string getVictoryConditionString() const;
+
+	bool isTurnBasedGame() const { return gameType == SETTINGS_GAMETYPE_TURNS; }
 };
 
 enum eMenuBackgrounds

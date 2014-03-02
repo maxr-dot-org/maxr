@@ -472,6 +472,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	const bool bEndTurn = message.popBool();
 
 	iEndTurnTime = gameTimer.gameTime;
+	if (gameSetting->isTurnBasedGame()) iStartTurnTime = gameTimer.gameTime;
 	if (bEndTurn)
 	{
 		iStartTurnTime = gameTimer.gameTime;
@@ -490,19 +491,20 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 
 	if (bWaitForNextPlayer)
 	{
-		if (iNextPlayerNum != ActivePlayer->getNr())
-		{
-			enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, iNextPlayerNum);
-		}
-		else
+		if (iNextPlayerNum == ActivePlayer->getNr())
 		{
 			disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 			gameGUI->setEndButtonLock (false);
 		}
+		else
+		{
+			enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, iNextPlayerNum);
+		}
 	}
-	else if (iNextPlayerNum != -1)
+	if (!bEndTurn && gameSetting->hotseat && gameGUI != NULL
+		&& iNextPlayerNum != ActivePlayer->getNr())
 	{
-		//makeHotSeatEnd (iNextPlayerNum);
+		gameGUI->close();
 	}
 }
 

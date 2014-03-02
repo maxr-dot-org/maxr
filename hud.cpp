@@ -3398,7 +3398,7 @@ void cGameGUI::filesReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	cLoadSaveMenu loadSaveMenu (*gui->getClient(), gui->getClient()->getServer());
-	if (loadSaveMenu.show (gui->getClient()) != 1) gui->end = true;
+	if (loadSaveMenu.show (gui->getClient()) != 1) gui->terminate = true;
 }
 
 void cGameGUI::playReleased (void* parent)

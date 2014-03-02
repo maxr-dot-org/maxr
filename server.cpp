@@ -177,7 +177,7 @@ void cServer::cancelStateInitGame()
 //------------------------------------------------------------------------------
 bool cServer::isTurnBasedGame() const
 {
-	return gameSetting->gameType == SETTINGS_GAMETYPE_TURNS;
+	return gameSetting->isTurnBasedGame();
 }
 
 //------------------------------------------------------------------------------
@@ -2849,60 +2849,44 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 //------------------------------------------------------------------------------
 void cServer::handleEnd (int iPlayerNum)
 {
+	// defeated player are ignored when they hit the end button
+	if (getPlayerFromNumber (iPlayerNum)->isDefeated) return;
+
 	const eGameTypes gameType = getGameType();
 
 	if (gameType == GAME_TYPE_SINGLE)
 	{
-		sendTurnFinished (*this, iPlayerNum, -1);
 		if (checkEndActions (iPlayerNum))
 		{
 			iWantPlayerEndNum = iPlayerNum;
 			return;
 		}
+		sendTurnFinished (*this, iPlayerNum, -1);
 		iTurn++;
 		makeTurnEnd();
 	}
-	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
+	else if (isTurnBasedGame())
 	{
-		const bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && isTurnBasedGame());
+		if (iPlayerNum != iActiveTurnPlayerNr) return;
+
 		if (checkEndActions (iPlayerNum))
 		{
 			iWantPlayerEndNum = iPlayerNum;
 			return;
 		}
-		iActiveTurnPlayerNr++;
-		if (iActiveTurnPlayerNr >= (int) PlayerList.size())
-		{
-			iActiveTurnPlayerNr = 0;
-			makeTurnEnd();
-			iTurn++;
+		iActiveTurnPlayerNr = (iActiveTurnPlayerNr + 1) % PlayerList.size();
 
-			if (gameType == GAME_TYPE_HOTSEAT)
-			{
-				sendMakeTurnEnd (*this, true, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), iPlayerNum);
-			}
-			else
-			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
-				{
-					sendMakeTurnEnd (*this, true, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), PlayerList[i]->getNr());
-				}
-			}
-		}
-		else
+		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
-			if (gameType == GAME_TYPE_HOTSEAT)
+			sendMakeTurnEnd (*this, false, true, PlayerList[iActiveTurnPlayerNr]->getNr(), PlayerList[i]->getNr());
+		}
+		if (iActiveTurnPlayerNr == 0)
+		{
+			iTurn++;
+			makeTurnEnd();
+			for (size_t i = 0; i != PlayerList.size(); ++i)
 			{
-				sendMakeTurnEnd (*this, false, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), iPlayerNum);
-				// TODO: in hotseat:
-				// maybe send information to client about the next player
-			}
-			else
-			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
-				{
-					sendMakeTurnEnd (*this, false, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), i);
-				}
+				sendMakeTurnEnd (*this, true, true, PlayerList[iActiveTurnPlayerNr]->getNr(), PlayerList[i]->getNr());
 			}
 		}
 		// send report to next player
@@ -2910,9 +2894,6 @@ void cServer::handleEnd (int iPlayerNum)
 	}
 	else // it's a simultaneous TCP/IP multiplayer game
 	{
-		// defeated player are ignored when they hit the end button
-		if (getPlayerFromNumber (iPlayerNum)->isDefeated) return;
-
 		// check whether this player has already finished his turn
 		for (size_t i = 0; i != PlayerEndList.size(); ++i)
 		{
@@ -2983,14 +2964,16 @@ void cServer::handleWantEnd()
 				return;
 		}
 
-		// send reports to all players
-		for (size_t i = 0; i != PlayerList.size(); ++i)
-		{
-			sendMakeTurnEnd (*this, true, false, -1, i);
-		}
-		for (size_t i = 0; i != PlayerList.size(); ++i)
-		{
-			sendTurnReport (*this, *PlayerList[i]);
+		if (!isTurnBasedGame()) {
+			// send reports to all players
+			for (size_t i = 0; i != PlayerList.size(); ++i)
+			{
+				sendMakeTurnEnd (*this, true, false, -1, i);
+			}
+			for (size_t i = 0; i != PlayerList.size(); ++i)
+			{
+				sendTurnReport (*this, *PlayerList[i]);
+			}
 		}
 
 		// begin the new turn
