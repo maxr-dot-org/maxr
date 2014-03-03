@@ -17,13 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_minimapwidgetH
-#define gui_game_minimapwidgetH
+#ifndef gui_game_widgets_minimapwidgetH
+#define gui_game_widgets_minimapwidgetH
 
-#include "../widget.h"
-#include "../../maxrconfig.h"
-#include "../../utility/signal/signal.h"
-#include "../../utility/signal/signalconnectionmanager.h"
+#include "../../widget.h"
+#include "../../../maxrconfig.h"
+#include "../../../utility/signal/signal.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
 
 struct SDL_Surface;
 
@@ -85,4 +85,4 @@ private:
 };
 
 
-#endif // gui_game_minimapwidgetH
+#endif // gui_game_widgets_minimapwidgetH

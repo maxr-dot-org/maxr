@@ -156,6 +156,7 @@ public:
 	void toggleLock (cMapField& OverUnitField);
 	void countEcoSpheres();
 	int getScore (int turn) const;
+	int getScore () const;
 	void setScore (int score, int turn);
 	void clearDone();
 

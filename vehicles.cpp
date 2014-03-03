@@ -159,193 +159,193 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 //-----------------------------------------------------------------------------
 void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 {
-	// make damage effect
-	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax &&
-		cSettings::getInstance().isDamageEffects() &&
-		(owner == &activePlayer || activePlayer.canSeeAnyAreaUnder (*this)))
-	{
-		int intense = (int) (100 - 100 * ((float) data.hitpointsCur / data.hitpointsMax));
-		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir()));
-	}
+	//// make damage effect
+	//const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
+	//if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax &&
+	//	cSettings::getInstance().isDamageEffects() &&
+	//	(owner == &activePlayer || activePlayer.canSeeAnyAreaUnder (*this)))
+	//{
+	//	int intense = (int) (100 - 100 * ((float) data.hitpointsCur / data.hitpointsMax));
+	//	gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir()));
+	//}
 
-	// make landing and take off of planes
-	if (data.factorAir > 0 && gameGUI.timer50ms)
-	{
-		if (canLand (*gameGUI.getClient()->getMap()))
-		{
-			FlightHigh -= 8;
-			FlightHigh = std::max (FlightHigh, 0);
-		}
-		else
-		{
-			FlightHigh += 8;
-			FlightHigh = std::min (64, FlightHigh);
-		}
-	}
+	//// make landing and take off of planes
+	//if (data.factorAir > 0 && gameGUI.timer50ms)
+	//{
+	//	if (canLand (*gameGUI.getClient()->getMap()))
+	//	{
+	//		FlightHigh -= 8;
+	//		FlightHigh = std::max (FlightHigh, 0);
+	//	}
+	//	else
+	//	{
+	//		FlightHigh += 8;
+	//		FlightHigh = std::min (64, FlightHigh);
+	//	}
+	//}
 
-	// make the dithering
-	if (gameGUI.timer100ms)
-	{
-		if (FlightHigh > 0 && !moving && gameGUI.getAnimationSpeed() % 10 != 0)
-		{
-			ditherX = random (2) - 1;
-			ditherY = random (2) - 1;
-		}
-		else
-		{
-			ditherX = 0;
-			ditherY = 0;
-		}
-	}
+	//// make the dithering
+	//if (gameGUI.timer100ms)
+	//{
+	//	if (FlightHigh > 0 && !moving && gameGUI.getAnimationSpeed() % 10 != 0)
+	//	{
+	//		ditherX = random (2) - 1;
+	//		ditherY = random (2) - 1;
+	//	}
+	//	else
+	//	{
+	//		ditherX = 0;
+	//		ditherY = 0;
+	//	}
+	//}
 
-	// run start up effect
-	if (StartUp)
-	{
-		if (gameGUI.timer50ms)
-			StartUp += 25;
+	//// run start up effect
+	//if (StartUp)
+	//{
+	//	if (gameGUI.timer50ms)
+	//		StartUp += 25;
 
-		if (StartUp >= 255)
-			StartUp = 0;
+	//	if (StartUp >= 255)
+	//		StartUp = 0;
 
-		// max StartUp value for undetected stealth units is 100,
-		// because they stay half visible
-		if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == &gameGUI.getClient()->getActivePlayer())
-		{
-			if (StartUp > 100) StartUp = 0;
-		}
-	}
+	//	// max StartUp value for undetected stealth units is 100,
+	//	// because they stay half visible
+	//	if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.empty() && owner == &gameGUI.getClient()->getActivePlayer())
+	//	{
+	//		if (StartUp > 100) StartUp = 0;
+	//	}
+	//}
 
-	if (IsBuilding && !job && BigBetonAlpha < 254u)
-	{
-		if (gameGUI.timer50ms)
-			BigBetonAlpha += 25;
+	//if (IsBuilding && !job && BigBetonAlpha < 254u)
+	//{
+	//	if (gameGUI.timer50ms)
+	//		BigBetonAlpha += 25;
 
-		BigBetonAlpha = std::min (254u, BigBetonAlpha);
-	}
+	//	BigBetonAlpha = std::min (254u, BigBetonAlpha);
+	//}
 
-	// calculate screen position
-	int ox = (int) (OffX * gameGUI.getZoom());
-	int oy = (int) (OffY * gameGUI.getZoom());
+	//// calculate screen position
+	//int ox = (int) (OffX * gameGUI.getZoom());
+	//int oy = (int) (OffY * gameGUI.getZoom());
 
-	screenPosition.x += ox;
-	screenPosition.y += oy;
+	//screenPosition.x += ox;
+	//screenPosition.y += oy;
 
-	if (FlightHigh > 0)
-	{
-		screenPosition.x += ditherX;
-		screenPosition.y += ditherY;
-	}
+	//if (FlightHigh > 0)
+	//{
+	//	screenPosition.x += ditherX;
+	//	screenPosition.y += ditherY;
+	//}
 
-	SDL_Rect dest;
-	dest.x = dest.y = 0;
-	bool bDraw = false;
-	SDL_Surface* drawingSurface = gameGUI.getDCache ()->getCachedImage (*this, (float)gameGUI.getTileSize () / 64.0f, *gameGUI.getClient ()->getMap ());
-	if (drawingSurface == NULL)
-	{
-		// no cached image found. building needs to be redrawn.
-		bDraw = true;
-		drawingSurface = gameGUI.getDCache ()->createNewEntry (*this, (float)gameGUI.getTileSize () / 64.0f, *gameGUI.getClient ()->getMap ());
-	}
+	//SDL_Rect dest;
+	//dest.x = dest.y = 0;
+	//bool bDraw = false;
+	//SDL_Surface* drawingSurface = gameGUI.getDCache ()->getCachedImage (*this, (float)gameGUI.getTileSize () / 64.0f, *gameGUI.getClient ()->getMap ());
+	//if (drawingSurface == NULL)
+	//{
+	//	// no cached image found. building needs to be redrawn.
+	//	bDraw = true;
+	//	drawingSurface = gameGUI.getDCache ()->createNewEntry (*this, (float)gameGUI.getTileSize () / 64.0f, *gameGUI.getClient ()->getMap ());
+	//}
 
-	if (drawingSurface == NULL)
-	{
-		// image will not be cached. So blitt directly to the screen buffer.
-		dest = screenPosition;
-		drawingSurface = cVideo::buffer;
-	}
+	//if (drawingSurface == NULL)
+	//{
+	//	// image will not be cached. So blitt directly to the screen buffer.
+	//	dest = screenPosition;
+	//	drawingSurface = cVideo::buffer;
+	//}
 
-	if (bDraw)
-	{
-		render (gameGUI.getClient()->getMap(), gameGUI.getAnimationSpeed(), &gameGUI.getClient()->getActivePlayer(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows());
-	}
+	//if (bDraw)
+	//{
+	//	render (gameGUI.getClient()->getMap(), gameGUI.getAnimationSpeed(), &gameGUI.getClient()->getActivePlayer(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows());
+	//}
 
-	// now check, whether the image has to be blitted to screen buffer
-	if (drawingSurface != cVideo::buffer)
-	{
-		dest = screenPosition;
-		SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
-	}
+	//// now check, whether the image has to be blitted to screen buffer
+	//if (drawingSurface != cVideo::buffer)
+	//{
+	//	dest = screenPosition;
+	//	SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
+	//}
 
-	// draw overlay if necessary:
-	drawOverlayAnimation (gameGUI.getAnimationSpeed(), cVideo::buffer, screenPosition, gameGUI.getZoom());
+	//// draw overlay if necessary:
+	//drawOverlayAnimation (gameGUI.getAnimationSpeed(), cVideo::buffer, screenPosition, gameGUI.getZoom());
 
-	// remove the dithering for the following operations
-	if (FlightHigh > 0)
-	{
-		screenPosition.x -= ditherX;
-		screenPosition.y -= ditherY;
-	}
+	//// remove the dithering for the following operations
+	//if (FlightHigh > 0)
+	//{
+	//	screenPosition.x -= ditherX;
+	//	screenPosition.y -= ditherY;
+	//}
 
-	// remove movement offset for working units
-	if (IsBuilding || IsClearing)
-	{
-		screenPosition.x -= ox;
-		screenPosition.y -= oy;
-	}
+	//// remove movement offset for working units
+	//if (IsBuilding || IsClearing)
+	//{
+	//	screenPosition.x -= ox;
+	//	screenPosition.y -= oy;
+	//}
 
-	// draw indication, when building is complete
-	if (IsBuilding && BuildRounds == 0 && owner == &gameGUI.getClient()->getActivePlayer() && !BuildPath)
-	{
-		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
-		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
-		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
+	//// draw indication, when building is complete
+	//if (IsBuilding && BuildRounds == 0 && owner == &gameGUI.getClient()->getActivePlayer() && !BuildPath)
+	//{
+	//	const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
+	//	const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
+	//	SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
 
-		DrawRectangle (cVideo::buffer, d, color, 3);
-	}
+	//	DrawRectangle (cVideo::buffer, d, color, 3);
+	//}
 
-	// Draw the colored frame if necessary
-	if (gameGUI.colorChecked())
-	{
-		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (owner->getColorSurface()->pixels);
-		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
+	//// Draw the colored frame if necessary
+	//if (gameGUI.colorChecked())
+	//{
+	//	const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (owner->getColorSurface()->pixels);
+	//	const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
 
-		SDL_Rect d = {Sint16 (screenPosition.x + 1), Sint16 (screenPosition.y + 1), max, max};
-		DrawRectangle (cVideo::buffer, d, color, 1);
-	}
+	//	SDL_Rect d = {Sint16 (screenPosition.x + 1), Sint16 (screenPosition.y + 1), max, max};
+	//	DrawRectangle (cVideo::buffer, d, color, 1);
+	//}
 
-	// draw the group selected frame if necessary
-	if (groupSelected)
-	{
-		const Uint32 color = 0xFFFFFF00;
-		const Uint16 tilesize = gameGUI.getTileSize() - 3;
-		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), tilesize, tilesize};
+	//// draw the group selected frame if necessary
+	//if (groupSelected)
+	//{
+	//	const Uint32 color = 0xFFFFFF00;
+	//	const Uint16 tilesize = gameGUI.getTileSize() - 3;
+	//	SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), tilesize, tilesize};
 
-		DrawRectangle (cVideo::buffer, d, color, 1);
-	}
-	// draw the seleted-unit-flash-frame for vehicles
-	if (gameGUI.getSelectedUnit() == this)
-	{
-		Uint16 max = data.isBig ? gameGUI.getTileSize() * 2 : gameGUI.getTileSize();
-		const int len = max / 4;
-		max -= 3;
-		SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
-		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
-	}
+	//	DrawRectangle (cVideo::buffer, d, color, 1);
+	//}
+	//// draw the seleted-unit-flash-frame for vehicles
+	//if (gameGUI.getSelectedUnit() == this)
+	//{
+	//	Uint16 max = data.isBig ? gameGUI.getTileSize() * 2 : gameGUI.getTileSize();
+	//	const int len = max / 4;
+	//	max -= 3;
+	//	SDL_Rect d = {Sint16 (screenPosition.x + 2), Sint16 (screenPosition.y + 2), max, max};
+	//	DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
+	//}
 
-	// draw health bar
-	if (gameGUI.hitsChecked())
-		gameGUI.drawHealthBar (*this, screenPosition);
+	//// draw health bar
+	//if (gameGUI.hitsChecked())
+	//	gameGUI.drawHealthBar (*this, screenPosition);
 
-	// draw ammo bar
-	if (gameGUI.ammoChecked() && data.canAttack)
-		gameGUI.drawMunBar (*this, screenPosition);
+	//// draw ammo bar
+	//if (gameGUI.ammoChecked() && data.canAttack)
+	//	gameGUI.drawMunBar (*this, screenPosition);
 
-	// draw status info
-	if (gameGUI.statusChecked())
-		gameGUI.drawStatus (*this, screenPosition);
+	//// draw status info
+	//if (gameGUI.statusChecked())
+	//	gameGUI.drawStatus (*this, screenPosition);
 
-	// attack job debug output
-	if (gameGUI.getAJobDebugStatus())
-	{
-		cServer* server = gameGUI.getClient()->getServer();
-		cVehicle* serverVehicle = NULL;
-		if (server) serverVehicle = server->Map->fields[server->Map->getOffset (PosX, PosY)].getVehicle();
-		if (isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
-		if (serverVehicle && serverVehicle->isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
-		if (attacking) font->showText (screenPosition.x + 1, screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
-		if (serverVehicle && serverVehicle->attacking) font->showText (screenPosition.x + 1, screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW);
-	}
+	//// attack job debug output
+	//if (gameGUI.getAJobDebugStatus())
+	//{
+	//	cServer* server = gameGUI.getClient()->getServer();
+	//	cVehicle* serverVehicle = NULL;
+	//	if (server) serverVehicle = server->Map->fields[server->Map->getOffset (PosX, PosY)].getVehicle();
+	//	if (isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
+	//	if (serverVehicle && serverVehicle->isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
+	//	if (attacking) font->showText (screenPosition.x + 1, screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
+	//	if (serverVehicle && serverVehicle->attacking) font->showText (screenPosition.x + 1, screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW);
+	//}
 }
 
 void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const

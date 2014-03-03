@@ -324,7 +324,7 @@ cKeyboard* cWidget::getActiveKeyboard () const
 //------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
-	const bool debugDrawFrame = true;
+	const bool debugDrawFrame = false;
 	if (debugDrawFrame)
 	{
 		const auto size = getSize();

@@ -19,7 +19,8 @@
 
 #include "hud.h"
 
-#include "unitvideowidget.h"
+#include "widgets/unitvideowidget.h"
+#include "widgets/unitdetailshud.h"
 
 #include "../menu/widgets/pushbutton.h"
 #include "../menu/widgets/checkbox.h"
@@ -36,12 +37,14 @@
 
 
 //------------------------------------------------------------------------------
-cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
+cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
+	player (nullptr)
 {
 	surface = generateSurface ();
 	resize (cPosition (surface->w, surface->h));
 
-	auto endButton = addChild (std::make_unique<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Text~Others~End"), FONT_LATIN_NORMAL));
+	endButton = addChild (std::make_unique<cPushButton> (cPosition (391, 4), ePushButtonType::HudEnd, lngPack.i18n ("Text~Others~End"), FONT_LATIN_NORMAL));
+	signalConnectionManager.connect (endButton->clicked, [&](){ endClicked (); });
 
 	auto preferencesButton = addChild (std::make_unique<cPushButton> (cPosition (86, 4), ePushButtonType::HudPreferences, lngPack.i18n ("Text~Others~Settings"), FONT_LATIN_SMALL_WHITE));
 	signalConnectionManager.connect (preferencesButton->clicked, [&](){ preferencesClicked (); });
@@ -76,9 +79,12 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 	signalConnectionManager.connect (fogButton->toggled, [&](){ fogToggled (); });
 
 	auto lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, SoundData.SNDHudSwitch));
-	auto TntButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 413), eCheckBoxType::HudTnt, false, SoundData.SNDHudSwitch));
+
+	miniMapAttackUnitsOnlyButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 413), eCheckBoxType::HudTnt, false, SoundData.SNDHudSwitch));
+	signalConnectionManager.connect (miniMapAttackUnitsOnlyButton->toggled, [&](){ miniMapAttackUnitsOnlyToggled (); });
 	miniMapZoomFactorButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 387), eCheckBoxType::Hud2x, false, SoundData.SNDHudSwitch));
 	signalConnectionManager.connect (miniMapZoomFactorButton->toggled, [&](){ miniMapZoomFactorToggled (); });
+
 	auto playersButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 439), eCheckBoxType::HudPlayers, false, SoundData.SNDHudSwitch));
 
 	auto helpButton = addChild (std::make_unique<cPushButton> (cPosition (20, 250), ePushButtonType::HudHelp));
@@ -88,6 +94,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
 	auto chatButton = addChild (std::make_unique<cPushButton> (cPosition (51, 252), ePushButtonType::HudChat, lngPack.i18n ("Text~Others~Chat")));
+
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed")));
@@ -110,7 +117,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 	auto stopButton = addChild (std::make_unique<cPushButton> (cPosition (146, 143), ePushButtonType::HudStop));
 	signalConnectionManager.connect (stopButton->clicked, std::bind (&cUnitVideoWidget::stop, unitVideo));
 
-	// unit details
+	unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (8, 171), cPosition (8 + 155, 171 + 48))));
 
 	// chat box
 
@@ -126,6 +133,12 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer)
 }
 
 //------------------------------------------------------------------------------
+void cHud::setPlayer (const cPlayer* player_)
+{
+	player = player_;
+}
+
+//------------------------------------------------------------------------------
 bool cHud::isAt (const cPosition& position) const
 {
 	cBox<cPosition> hole (cPosition (panelLeftWidth, panelTopHeight), getEndPosition() - cPosition (panelRightWidth, panelBottomHeight));
@@ -133,7 +146,7 @@ bool cHud::isAt (const cPosition& position) const
 	if (hole.withinOrTouches (position))
 	{
 		// TODO: check for widgets that reach into the hole (end button, ...)
-		return false;
+		return endButton->isAt (position);
 	}
 	return true;
 }
@@ -250,6 +263,18 @@ void cHud::decreaseZoomFactor (double percent)
 }
 
 //------------------------------------------------------------------------------
+void cHud::lockEndButton ()
+{
+	endButton->lock ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::unlockEndButton ()
+{
+	endButton->unlock ();
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getSurveyActive () const
 {
 	return surveyButton->isChecked ();
@@ -310,6 +335,24 @@ bool cHud::getMiniMapZoomFactorActive () const
 }
 
 //------------------------------------------------------------------------------
+bool cHud::getMiniMapAttackUnitsOnly () const
+{
+	return miniMapAttackUnitsOnlyButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setTurnNumberText (const std::string& text)
+{
+	turnLabel->setText (text);
+}
+
+//------------------------------------------------------------------------------
+void cHud::setTurnTimeText (const std::string& text)
+{
+	timeLabel->setText (text);
+}
+
+//------------------------------------------------------------------------------
 void cHud::setCoordinatesText (const std::string& text)
 {
 	coordsLabel->setText (text);
@@ -337,6 +380,7 @@ void cHud::handleZoomMinusClicked ()
 void cHud::setActiveUnit (const cUnit* unit)
 {
 	unitVideo->setUnit (unit);
+	unitDetails->setUnit (unit, player);
 
 	if (unit)
 	{

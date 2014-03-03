@@ -17,15 +17,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_gamemapwidgetH
-#define gui_game_gamemapwidgetH
+#ifndef gui_game_widgets_gamemapwidgetH
+#define gui_game_widgets_gamemapwidgetH
 
-#include "unitselection.h"
-#include "mouseinputmode.h"
-#include "temp/unitdrawingengine.h"
-#include "../menu/widgets/clickablewidget.h"
-#include "../../maxrconfig.h"
-#include "../../utility/signal/signal.h"
+#include "../unitselection.h"
+#include "../mouseinputmode.h"
+#include "../temp/unitdrawingengine.h"
+#include "../../menu/widgets/clickablewidget.h"
+#include "../../../maxrconfig.h"
+#include "../../../utility/signal/signal.h"
+#include "../../../fxeffects.h"
 
 struct SDL_Surface;
 
@@ -34,6 +35,7 @@ class cMap;
 class cPlayer;
 class cUnitSelection;
 class cUnitContextMenuWidget;
+class cFx;
 
 enum class eMouseClickAction
 {
@@ -82,6 +84,8 @@ public:
 
 	void centerAt (const cPosition& position);
 
+	void addEffect (std::shared_ptr<cFx> effect);
+
 	void setDrawSurvey (bool drawSurvey);
 	void setDrawHits (bool drawHits);
 	void setDrawScan (bool drawScan);
@@ -111,6 +115,15 @@ public:
 	cSignal<void (const cUnit&, const cUnit&)> triggeredTransfer;
 	cSignal<void (cVehicle&, const cPosition&)> triggeredMoveSingle;
 	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
+	cSignal<void (const cVehicle&)> placedBand;
+	cSignal<void (const cUnit&, const cPosition&)> triggeredActivateAt;
+	cSignal<void (const cBuilding&, const cPosition&)> triggeredExitFinishedUnit;
+	cSignal<void (const cUnit&, const cPosition&)> triggeredLoadAt;
+	cSignal<void (const cUnit&, const cUnit&)> triggeredSupplyAmmo;
+	cSignal<void (const cUnit&, const cUnit&)> triggeredRepair;
+	cSignal<void (const cUnit&, const cPosition&)> triggeredAttack;
+	cSignal<void (const cUnit&, const cUnit&)> triggeredSteal;
+	cSignal<void (const cUnit&, const cUnit&)> triggeredDisable;
 
 	cSignal<void (const cUnit&)> triggeredBuild;
 	cSignal<void (const cUnit&)> triggeredResourceDistribution;
@@ -155,6 +168,8 @@ private:
 
 	eNewMouseInputMode mouseInputMode;
 
+	std::vector<std::shared_ptr<cFx>> effects;
+
 	//
 	// drawing information data
 	//
@@ -189,6 +204,7 @@ private:
 	void drawAttackCursor (const cPosition& position) const;
 	void drawCommandoCursor (const cPosition& position, const cVehicle& vehicle, bool steal) const;
 
+	void addEffect ();
 	//
 	// position handling methods
 	//
@@ -222,4 +238,4 @@ private:
 };
 
 
-#endif // gui_game_gamemapwidgetH
+#endif // gui_game_widgets_gamemapwidgetH

@@ -19,13 +19,13 @@
 
 #include "unitvideowidget.h"
 
-#include "temp/animationtimer.h"
+#include "../temp/animationtimer.h"
 
-#include "../menu/widgets/image.h"
+#include "../../menu/widgets/image.h"
 
-#include "../../vehicles.h"
-#include "../../buildings.h"
-#include "../../files.h"
+#include "../../../vehicles.h"
+#include "../../../buildings.h"
+#include "../../../files.h"
 
 //------------------------------------------------------------------------------
 cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer) :

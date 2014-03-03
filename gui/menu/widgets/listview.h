@@ -35,7 +35,7 @@ class cListView : public cClickableWidget
 {
 	static_assert(std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
 public:
-	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false);
+	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, sSOUND* clickSound = SoundData.SNDObjectMenu);
 
 	ItemType* addItem (std::unique_ptr<ItemType> item);
 
@@ -80,6 +80,8 @@ private:
 	const cPosition endMargin;
 	const cPosition itemDistance;
 
+	sSOUND* clickSound;
+
 	bool removeTookPlace;
 
 	std::vector<std::unique_ptr<ItemType>> items;
@@ -94,13 +96,14 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection) :
+cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection, sSOUND* clickSound_) :
 	cClickableWidget (area),
-	beginDisplayItem (0),
-	endDisplayItem (0),
 	beginMargin (3, 4),
 	endMargin (2, 2),
-	itemDistance (0, 3)
+	clickSound (clickSound_),
+	itemDistance (0, 3),
+	beginDisplayItem (0),
+	endDisplayItem (0)
 {
 	assert (!allowMultiSelection); // multi selection not yet implemented
 }
@@ -252,6 +255,7 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 			{
 				removeTookPlace = false;
 				itemClicked (item);
+				PlayFX (clickSound);
 				if (removeTookPlace) break;
 
 				if (selectedItems.size () != 1 || selectedItems[0] != &item)
@@ -263,6 +267,7 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 
 					selectionChanged ();
 				}
+				break;
 			}
 		}
 		return true;

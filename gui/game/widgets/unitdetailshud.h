@@ -17,55 +17,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_special_unitdetailsH
-#define gui_menu_widgets_special_unitdetailsH
+#ifndef gui_game_widgets_unitdetailshudH
+#define gui_game_widgets_unitdetailshudH
 
 #include <array>
 
-#include "unitdatasymboltype.h"
+#include "../../widget.h"
 
-#include "../../../../maxrconfig.h"
-#include "../../../widget.h"
-#include "../../../../main.h"
+#include "../../menu/widgets/special/unitdatasymboltype.h"
 
 class cLabel;
-class cUnitUpgrade;
-struct sUnitData;
-struct sID;
+class cUnit;
+class cPlayer;
 
-class cUnitDetails : public cWidget
+class cUnitDetailsHud : public cWidget
 {
 public:
-	explicit cUnitDetails (const cPosition& position);
+	explicit cUnitDetailsHud (const cBox<cPosition>& area);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-	const sID* getCurrentUnitId ();
-
-	void setUnit (const sID& unitId, const cPlayer& owner, const sUnitData* unitObjectCurrentData = nullptr, const cUnitUpgrade* upgrades = nullptr);
-	void setUpgrades (const cUnitUpgrade* upgrades);
+	void setUnit (const cUnit* unit, const cPlayer* player = nullptr);
 private:
 	AutoSurface surface;
 
 	void reset ();
 
-	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2);
+	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, int maximalAmount, const std::string& name);
 
-	void drawBigSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
+	void drawSmallSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
 
-	cBox<cPosition> getBigSymbolPosition (eUnitDataSymbolType symbolType);
+	cBox<cPosition> getSmallSymbolPosition (eUnitDataSymbolType symbolType);
 
-	static const size_t maxRows = 9;
-	static const int rowHeight = 19;
+	static const size_t maxRows = 4;
+	static const int rowHeight = 12;
 
 	std::array<cLabel*, maxRows> amountLabels;
 	std::array<cLabel*, maxRows> nameLabels;
 
-	sID unitId;
-	const sUnitData* playerOriginalData;
-	const sUnitData* playerCurrentData;
-	const sUnitData* unitObjectCurrentData;
-	const cUnitUpgrade* upgrades;
+	const cUnit* unit;
+	const cPlayer* player;
 };
 
-#endif // gui_menu_widgets_special_unitdetailsH
+#endif // gui_game_widgets_unitdetailshudH

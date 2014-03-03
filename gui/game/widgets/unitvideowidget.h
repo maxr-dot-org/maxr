@@ -17,55 +17,44 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_special_unitdetailsH
-#define gui_menu_widgets_special_unitdetailsH
+#ifndef gui_game_widgets_unitvideowidgetH
+#define gui_game_widgets_unitvideowidgetH
 
-#include <array>
+#include <memory>
 
-#include "unitdatasymboltype.h"
+#include "../../widget.h"
+#include "../../../SDL_flic.h"
 
-#include "../../../../maxrconfig.h"
-#include "../../../widget.h"
-#include "../../../../main.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
 
-class cLabel;
-class cUnitUpgrade;
-struct sUnitData;
-struct sID;
+class cPosition;
 
-class cUnitDetails : public cWidget
+template<typename T>
+class cBox;
+
+class cUnit;
+class cImage;
+class cAnimationTimer;
+
+class cUnitVideoWidget : public cWidget
 {
+	typedef std::unique_ptr<FLI_Animation, void (*)(FLI_Animation*)> FliAnimationPointerType;
 public:
-	explicit cUnitDetails (const cPosition& position);
+	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	void start ();
+	void stop ();
 
-	const sID* getCurrentUnitId ();
-
-	void setUnit (const sID& unitId, const cPlayer& owner, const sUnitData* unitObjectCurrentData = nullptr, const cUnitUpgrade* upgrades = nullptr);
-	void setUpgrades (const cUnitUpgrade* upgrades);
+	void setUnit (const cUnit* unit);
 private:
-	AutoSurface surface;
+	cImage* currentFrameImage;
+	FliAnimationPointerType fliAnimation;
 
-	void reset ();
+	cSignalConnectionManager signalConnectionManager;
 
-	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2);
+	bool playing;
 
-	void drawBigSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
-
-	cBox<cPosition> getBigSymbolPosition (eUnitDataSymbolType symbolType);
-
-	static const size_t maxRows = 9;
-	static const int rowHeight = 19;
-
-	std::array<cLabel*, maxRows> amountLabels;
-	std::array<cLabel*, maxRows> nameLabels;
-
-	sID unitId;
-	const sUnitData* playerOriginalData;
-	const sUnitData* playerCurrentData;
-	const sUnitData* unitObjectCurrentData;
-	const cUnitUpgrade* upgrades;
+	void nextFrame ();
 };
 
-#endif // gui_menu_widgets_special_unitdetailsH
+#endif // gui_game_widgets_unitvideowidgetH

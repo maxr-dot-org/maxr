@@ -72,7 +72,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	ActivePlayer (NULL),
 	casualtiesTracker (new cCasualtiesTracker()),
 	gameTimer(),
-	FxList (new cFxContainer)
+	effectsList (new cFxContainer)
 {
 	gameTimer.setClient (this);
 	if (server) server->addLocalClient (*this);
@@ -265,14 +265,13 @@ void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDest
 
 void cClient::runFx()
 {
-	FxList->run();
+	effectsList->run ();
 }
 
-void cClient::addFx (cFx* fx)
+void cClient::addFx (std::shared_ptr<cFx> fx)
 {
-	FxList->push_back (fx);
-	//FIXME: gameGUI
-	//fx->playSound (*gameGUI);
+	effectsList->push_back (fx);
+	addedEffect (fx);
 }
 
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
@@ -483,7 +482,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 			getPlayerList() [i]->bFinishedTurn = false;
 		}
 		turnChanged ();
-		finishTurnEnd ();
+		finishedTurnEndProcess ();
 	}
 
 	if (bWaitForNextPlayer)
@@ -1967,6 +1966,7 @@ void cClient::handleEnd()
 	if (isFreezed()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn (*this);
+	startedTurnEndProcess ();
 }
 
 unsigned int cClient::getRemainingTimeInSecond() const
@@ -2130,25 +2130,25 @@ void cClient::destroyUnit (cVehicle& vehicle)
 	// play explosion
 	if (vehicle.data.isBig)
 	{
-		addFx (new cFxExploBig (vehicle.PosX * 64 + 64, vehicle.PosY * 64 + 64));
+		addFx (std::make_shared<cFxExploBig> (cPosition (vehicle.PosX * 64 + 64, vehicle.PosY * 64 + 64), getMap ()->isWaterOrCoast (vehicle.PosX, vehicle.PosY)));
 	}
 	else if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
 	{
-		addFx (new cFxExploAir (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
+		addFx (std::make_shared<cFxExploAir> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
 	}
 	else if (getMap()->isWaterOrCoast (vehicle.PosX, vehicle.PosY))
 	{
-		addFx (new cFxExploWater (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
+		addFx (std::make_shared<cFxExploWater> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
 	}
 	else
 	{
-		addFx (new cFxExploSmall (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
+		addFx (std::make_shared<cFxExploSmall> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
 	}
 
 	if (vehicle.data.hasCorpse)
 	{
 		// add corpse
-		addFx (new cFxCorpse (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32));
+		addFx (std::make_shared<cFxCorpse> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
 	}
 }
 
@@ -2158,11 +2158,11 @@ void cClient::destroyUnit (cBuilding& building)
 	cBuilding* topBuilding = getMap()->fields[getMap()->getOffset (building.PosX, building.PosY)].getBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
-		addFx (new cFxExploBig (topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64));
+		addFx (std::make_shared<cFxExploBig> (cPosition (topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64), getMap ()->isWaterOrCoast (topBuilding->PosX, topBuilding->PosY)));
 	}
 	else
 	{
-		addFx (new cFxExploSmall (building.PosX * 64 + 32, building.PosY * 64 + 32));
+		addFx (std::make_shared<cFxExploSmall> (cPosition (building.PosX * 64 + 32, building.PosY * 64 + 32)));
 	}
 }
 //------------------------------------------------------------------------------

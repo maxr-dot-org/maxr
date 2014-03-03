@@ -684,11 +684,11 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 		PlayFX (building->uiData->Attack);
 		if (map.isWaterOrCoast (unit->PosX, unit->PosY))
 		{
-			client.addFx (new cFxExploWater (unit->PosX * 64 + 32, unit->PosY * 64 + 32));
+			client.addFx (std::make_shared<cFxExploWater> (cPosition (unit->PosX * 64 + 32, unit->PosY * 64 + 32)));
 		}
 		else
 		{
-			client.addFx (new cFxExploSmall (unit->PosX * 64 + 32, unit->PosY * 64 + 32));
+			client.addFx (std::make_shared<cFxExploSmall> (cPosition (unit->PosX * 64 + 32, unit->PosY * 64 + 32)));
 		}
 		client.deleteUnit (building, activeMenu);
 		return;
@@ -735,7 +735,7 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 			}
 			if (unit)
 			{
-				client.addFx (new cFxMuzzleBig (unit->PosX * 64 + offx, unit->PosY * 64 + offy, iFireDir));
+				client.addFx (std::make_shared<cFxMuzzleBig> (cPosition (unit->PosX * 64 + offx, unit->PosY * 64 + offy), iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_SMALL:
@@ -746,7 +746,7 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 			}
 			if (unit)
 			{
-				client.addFx (new cFxMuzzleSmall (unit->PosX * 64, unit->PosY * 64, iFireDir));
+				client.addFx (std::make_shared<cFxMuzzleSmall> (cPosition (unit->PosX * 64, unit->PosY * 64), iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_ROCKET:
@@ -763,9 +763,9 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 			int PosY = iAgressorOffset / map.getSize();
 			int endX = iTargetOffset % map.getSize();
 			int endY = iTargetOffset / map.getSize();
-			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, false);
+			auto rocket = std::make_shared<cFxRocket> (cPosition (PosX * 64 + 32, PosY * 64 + 32), cPosition (endX * 64 + 32, endY * 64 + 32), iFireDir, false);
 			length = rocket->getLength() / 5;
-			client.addFx (rocket);
+			client.addFx (std::move(rocket));
 			break;
 
 		}
@@ -811,14 +811,14 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 			{
 				if (unit)
 				{
-					client.addFx (new cFxMuzzleMed (unit->PosX * 64 + offx, unit->PosY * 64 + offy, iFireDir));
+					client.addFx (std::make_shared<cFxMuzzleMed> (cPosition (unit->PosX * 64 + offx, unit->PosY * 64 + offy), iFireDir));
 				}
 			}
 			else
 			{
 				if (unit)
 				{
-					client.addFx (new cFxMuzzleMedLong (unit->PosX * 64 + offx, unit->PosY * 64 + offy, iFireDir));
+					client.addFx (std::make_shared<cFxMuzzleMedLong> (cPosition (unit->PosX * 64 + offx, unit->PosY * 64 + offy), iFireDir));
 				}
 			}
 			break;
@@ -835,9 +835,9 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 			int PosY = iAgressorOffset / map.getSize();
 			int endX = iTargetOffset % map.getSize();
 			int endY = iTargetOffset / map.getSize();
-			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, true);
+			auto rocket = std::make_shared<cFxRocket> (cPosition (PosX * 64 + 32, PosY * 64 + 32), cPosition (endX * 64 + 32, endY * 64 + 32), iFireDir, true);
 			length = rocket->getLength() / 5;
-			client.addFx (rocket);
+			client.addFx (std::move(rocket));
 
 			break;
 		}
@@ -948,7 +948,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
 		// TODO:  PlayFX (SoundData.hit);
-		client.addFx (new cFxHit (x * 64 + offX + 32, y * 64 + offY + 32));
+		client.addFx (std::make_shared<cFxHit> (cPosition (x * 64 + offX + 32, y * 64 + offY + 32)));
 	}
 
 	if (ownUnit)

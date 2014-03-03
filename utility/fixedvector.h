@@ -84,7 +84,7 @@ public:
 
 	value_type dotProduct (const self_type& other) const;
 
-	value_type l2Norm () const;
+	double l2Norm () const;
 
 	/**
 	 * Returns the fixed size of the vector.
@@ -364,7 +364,7 @@ typename cFixedVector<T, D>::value_type cFixedVector<T, D>::dotProduct (const se
 
 //------------------------------------------------------------------------------
 template<typename T, size_t D>
-typename cFixedVector<T, D>::value_type cFixedVector<T, D>::l2Norm () const
+double cFixedVector<T, D>::l2Norm () const
 {
 	return std::sqrt (dotProduct (*this));
 }

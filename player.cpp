@@ -756,6 +756,11 @@ int cPlayer::getScore (int turn) const
 	return pointsHistory[t - 1];
 }
 
+int cPlayer::getScore () const
+{
+	return pointsHistory.back ();
+}
+
 //------------------------------------------------------------------------------
 void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas)
 {

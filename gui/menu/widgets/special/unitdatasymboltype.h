@@ -17,44 +17,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_unitvideowidgetH
-#define gui_game_unitvideowidgetH
+#ifndef gui_menu_widgets_special_unitdatasymboltypeH
+#define gui_menu_widgets_special_unitdatasymboltypeH
 
-#include <memory>
-
-#include "../widget.h"
-#include "../../SDL_flic.h"
-
-#include "../../utility/signal/signalconnectionmanager.h"
-
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cUnit;
-class cImage;
-class cAnimationTimer;
-
-class cUnitVideoWidget : public cWidget
+enum class eUnitDataSymbolType
 {
-	typedef std::unique_ptr<FLI_Animation, void (*)(FLI_Animation*)> FliAnimationPointerType;
-public:
-	cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer);
-
-	void start ();
-	void stop ();
-
-	void setUnit (const cUnit* unit);
-private:
-	cImage* currentFrameImage;
-	FliAnimationPointerType fliAnimation;
-
-	cSignalConnectionManager signalConnectionManager;
-
-	bool playing;
-
-	void nextFrame ();
+	Speed,
+	Hits,
+	Ammo,
+	Attack,
+	Shots,
+	Range,
+	Armor,
+	Scan,
+	Metal,
+	MetalEmpty,
+	Oil,
+	Gold,
+	Energy,
+	Human,
+	TransportTank,
+	TransportAir
 };
 
-#endif // gui_game_unitvideowidgetH
+#endif // gui_menu_widgets_special_unitdatasymboltypeH

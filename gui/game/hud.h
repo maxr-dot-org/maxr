@@ -31,8 +31,10 @@ class cSlider;
 class cLabel;
 class cLineEdit;
 class cUnitVideoWidget;
+class cUnitDetailsHud;
 class cUnit;
 class cAnimationTimer;
+class cPlayer;
 
 class cHud : public cWidget
 {
@@ -46,11 +48,16 @@ public:
 
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
+	void setPlayer (const cPlayer* player);
+
 	static SDL_Surface* generateSurface ();
 
 	float getZoomFactor () const;
 	void increaseZoomFactor (double percent);
 	void decreaseZoomFactor (double percent);
+
+	void lockEndButton ();
+	void unlockEndButton ();
 
 	bool getSurveyActive () const;
 	bool getHitsActive () const;
@@ -63,7 +70,10 @@ public:
 	bool getFogActive () const;
 
 	bool getMiniMapZoomFactorActive () const;
+	bool getMiniMapAttackUnitsOnly () const;
 
+	void setTurnNumberText (const std::string& text);
+	void setTurnTimeText (const std::string& text);
 	void setCoordinatesText (const std::string& text);
 	void setUnitNameText (const std::string& text);
 
@@ -83,6 +93,9 @@ public:
 	cSignal<void ()> helpClicked;
 
 	cSignal<void ()> miniMapZoomFactorToggled;
+	cSignal<void ()> miniMapAttackUnitsOnlyToggled;
+
+	cSignal<void ()> endClicked;
 
 	cSignal<void ()> filesClicked;
 	cSignal<void ()> preferencesClicked;
@@ -97,7 +110,11 @@ protected:
 private:
 	AutoSurface surface;
 
+	const cPlayer* player;
+
 	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* endButton;
 
 	cSlider* zoomSlider;
 
@@ -112,6 +129,7 @@ private:
 	cCheckBox* fogButton;
 
 	cCheckBox* miniMapZoomFactorButton;
+	cCheckBox* miniMapAttackUnitsOnlyButton;
 
 	cLabel* coordsLabel;
 	cLabel* unitNameLabel;
@@ -123,6 +141,8 @@ private:
 	cLineEdit* selectedUnitNameEdit;
 
 	cUnitVideoWidget* unitVideo;
+
+	cUnitDetailsHud* unitDetails;
 
 	void handleZoomPlusClicked ();
 	void handleZoomMinusClicked ();

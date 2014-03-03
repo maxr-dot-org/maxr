@@ -19,21 +19,21 @@
 
 #include "gamemapwidget.h"
 #include "unitcontextmenuwidget.h"
-#include "hud.h"
-#include "../../map.h"
-#include "../../settings.h"
-#include "../../video.h"
-#include "../../main.h"
-#include "../../player.h"
-#include "../../vehicles.h"
-#include "../../buildings.h"
-#include "../../keys.h"
-#include "../../clist.h"
-#include "../../attackJobs.h"
-#include "../../sound.h"
-#include "../../movejobs.h"
-#include "../../utility/indexiterator.h"
-#include "../../input/mouse/mouse.h"
+#include "../hud.h"
+#include "../../../map.h"
+#include "../../../settings.h"
+#include "../../../video.h"
+#include "../../../main.h"
+#include "../../../player.h"
+#include "../../../vehicles.h"
+#include "../../../buildings.h"
+#include "../../../keys.h"
+#include "../../../clist.h"
+#include "../../../attackJobs.h"
+#include "../../../sound.h"
+#include "../../../movejobs.h"
+#include "../../../utility/indexiterator.h"
+#include "../../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer) :
@@ -400,6 +400,16 @@ void cGameMapWidget::centerAt (const cPosition& position)
 }
 
 //------------------------------------------------------------------------------
+void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect)
+{
+	if (effect != nullptr)
+	{
+		effect->playSound ();
+		effects.push_back (std::move (effect));
+	}
+}
+
+//------------------------------------------------------------------------------
 double cGameMapWidget::computeMinimalZoomFactor () const
 {
 	// inequality to be fulfilled:
@@ -523,14 +533,34 @@ void cGameMapWidget::drawGrid ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawEffects (bool bottom)
 {
-	//SDL_Rect clipRect = {cHud::panelLeftWidth, cHud::panelTopHeight, Uint16 (Video.getResolutionX () - cHud::panelTotalWidth), Uint16 (Video.getResolutionY () - cHud::panelTotalHeight)};
-	//SDL_SetClipRect (cVideo::buffer, &clipRect);
-	//SDL_SetClipRect (cVideo::buffer, &clipRect);
+	SDL_Rect clipRect = getArea ().toSdlRect ();
+	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
-	//client->FxList->draw (*this, bottom);
-	//FxList->draw (*this, bottom);
+	const cPosition originalTileSize (cStaticMap::tilePixelWidth, cStaticMap::tilePixelHeight);
 
-	//SDL_SetClipRect (cVideo::buffer, nullptr);
+	for (auto it = effects.begin (); it != effects.end ();) // ATTENTION: erase in loop. do not use continue;
+	{
+		auto& effect = *it;
+
+		if (effect->isFinished() || it->use_count() == 1)
+		{
+			it = effects.erase (it);
+		}
+		else
+		{
+			if (effect->bottom == bottom &&
+				(!player || player->canSeeAt (effect->getPosition () / originalTileSize)))
+			{
+				cPosition screenDestination;
+				screenDestination.x () = getPosition ().x () + (effect->getPosition ().x () - pixelOffset.x ()) * getZoomFactor ();
+				screenDestination.y () = getPosition ().y () + (effect->getPosition ().y () - pixelOffset.y ()) * getZoomFactor ();
+				effect->draw (getZoomFactor (), screenDestination);
+			}
+
+			++it;
+		}
+	}
+	SDL_SetClipRect (cVideo::buffer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -560,7 +590,7 @@ void cGameMapWidget::drawBaseUnits ()
 			if (!player || player->canSeeAnyAreaUnder (building))
 			{
 				// Draw big unit only once
-				// TODO: bug when (x,y) is outside of the drawing screen.
+				// FIXME: bug when (x,y) is outside of the drawing screen.
 				if (building.PosX == i->x() && building.PosY == i->y())
 				{
 					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player);
@@ -587,7 +617,7 @@ void cGameMapWidget::drawTopBuildings ()
 		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND) continue;
 		if (!player || !player->canSeeAnyAreaUnder (*building)) continue;
 		// make sure a big building is drawn only once
-		// TODO: BUG: when PosX,PosY is outside of drawing screen
+		// FIXME: BUG: when PosX,PosY is outside of drawing screen
 		if (building->PosX != i->x() || building->PosY != i->y()) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
@@ -659,7 +689,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 		if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player && player->canSeeAnyAreaUnder (*vehicle)))
 		{
 			// make sure a big vehicle is drawn only once
-			// TODO: BUG: when PosX,PosY is outside of drawing screen
+			// FIXME: BUG: when PosX,PosY is outside of drawing screen
 			if (vehicle->PosX == i->x() && vehicle->PosY == i->y())
 			{
 				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
@@ -956,7 +986,7 @@ cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition) co
 	const auto x = (int)((pixelPosition.x () - getPosition ().x () + pixelOffset.x () * getZoomFactor ()) / zoomedTileSize.x ());
 	const auto y = (int)((pixelPosition.y () - getPosition ().y () + pixelOffset.y () * getZoomFactor ()) / zoomedTileSize.y ());
 
-	const cPosition tilePosition (std::min (x, staticMap->getSizeNew ().x ()), std::min(y, staticMap->getSizeNew ().y ()));
+	const cPosition tilePosition (std::min (x, staticMap->getSizeNew ().x ()-1), std::min(y, staticMap->getSizeNew ().y ()-1));
 
 	return tilePosition;
 }
@@ -1124,42 +1154,34 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				triggeredTransfer (*selectedUnit, *overBuilding);
 			}
 		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::PlaceBand && selectedVehicle && mouseInputMode == eNewMouseInputMode::PlaceBand) // Band
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::PlaceBand && selectedVehicle && mouseInputMode == eNewMouseInputMode::PlaceBand)
 		{
-			setMouseInputMode (eNewMouseInputMode::Default);
-
-			//if (selectedVehicle->BuildingTyp.getUnitDataOriginalVersion ()->isBig)
-			//{
-			//	sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY), false, 0);
-			//}
-			//else
-			//{
-			//	sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY), true, map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY));
-			//}
+			placedBand (*selectedVehicle);
+			toggleMouseInputMode (eNewMouseInputMode::PlaceBand);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedUnit && mouseInputMode == eNewMouseInputMode::Activate)
 		{
-
+			triggeredActivateAt (*selectedUnit, tilePosition);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedBuilding && selectedBuilding->BuildList.size ())
 		{
-
+			triggeredExitFinishedUnit (*selectedBuilding, tilePosition);
 		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Load && selectedBuilding && mouseInputMode == eNewMouseInputMode::Load)
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Load && selectedUnit && mouseInputMode == eNewMouseInputMode::Load)
 		{
-
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Load && selectedVehicle && mouseInputMode == eNewMouseInputMode::Load)
-		{
-
+			triggeredLoadAt (*selectedUnit, tilePosition);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::SupplyAmmo && selectedVehicle && mouseInputMode == eNewMouseInputMode::SupplyAmmo)
 		{
-
+			if (overVehicle) triggeredSupplyAmmo (*selectedVehicle, *overVehicle);
+			else if (overPlane && overPlane->FlightHigh == 0) triggeredSupplyAmmo (*selectedVehicle, *overPlane);
+			else if (overBuilding) triggeredSupplyAmmo (*selectedVehicle, *overBuilding);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Repair && selectedVehicle && mouseInputMode == eNewMouseInputMode::Repair)
 		{
-
+			if (overVehicle) triggeredRepair (*selectedVehicle, *overVehicle);
+			else if (overPlane && overPlane->FlightHigh == 0) triggeredRepair (*selectedVehicle, *overPlane);
+			else if (overBuilding) triggeredRepair (*selectedVehicle, *overBuilding);
 		}
 		else if (mouseInputMode == eNewMouseInputMode::Help)
 		{
@@ -1183,19 +1205,22 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
 		{
-
+			triggeredAttack (*selectedVehicle, tilePosition);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedBuilding && !selectedBuilding->attacking)
 		{
-
+			triggeredAttack (*selectedBuilding, tilePosition);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Steal && selectedVehicle)
 		{
-
+			if (overVehicle) triggeredSteal (*selectedVehicle, *overVehicle);
+			else if (overPlane && overPlane->FlightHigh == 0) triggeredSteal (*selectedVehicle, *overPlane);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Disable && selectedVehicle)
 		{
-
+			if (overVehicle) triggeredDisable (*selectedVehicle, *overVehicle);
+			else if (overPlane && overPlane->FlightHigh == 0) triggeredDisable (*selectedVehicle, *overPlane);
+			else if (overBuilding) triggeredDisable (*selectedVehicle, *overBuilding);
 		}
 		else if (MouseStyle == OldSchool && mouseClickAction == eMouseClickAction::Select && unitSelection.selectUnitAt (field, false))
 		{

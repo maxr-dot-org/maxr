@@ -33,8 +33,8 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 {
 	for (size_t i = 0; i < maxRows; ++i)
 	{
-		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (position + cPosition (5, 3 + columnHeight * i), position + cPosition (5 + 21, 3 + columnHeight * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Right));
-		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (position + cPosition (30, 3 + columnHeight * i), position + cPosition (30 + 55, 3 + columnHeight * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+		amountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (position + cPosition (5, 3 + rowHeight * i), position + cPosition (5 + 21, 3 + rowHeight * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Right));
+		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (position + cPosition (30, 3 + rowHeight * i), position + cPosition (30 + 55, 3 + rowHeight * i + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	}
 
 	const cPosition size (250, 170);
@@ -97,13 +97,13 @@ void cUnitDetails::setUpgrades (const cUnitUpgrade* upgrades_)
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::drawColumn (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2)
+void cUnitDetails::drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, const std::string& name, int value1, int value2)
 {
 	if (index >= maxRows) return;
 
 	if (index != 0)
 	{
-		SDL_Rect dest = {0, columnHeight * index - 3, surface->w, 1};
+		SDL_Rect dest = {0, rowHeight * index - 3, surface->w, 1};
 		SDL_FillRect (surface, &dest, 0xFFFC0000);
 	}
 
@@ -112,7 +112,7 @@ void cUnitDetails::drawColumn (size_t index, eUnitDataSymbolType symbolType, int
 
 	amountLabels[index]->setText (iToStr(amount));
 	nameLabels[index]->setText (name);
-	drawBigSymbols (symbolType, cPosition (95, columnHeight * index), value1, value2);
+	drawBigSymbols (symbolType, cPosition (95, rowHeight * index), value1, value2);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void cUnitDetails::reset ()
 
 	const sUnitUpgrade* upgrade = nullptr;
 
-	size_t columnIndex = 0;
+	size_t rowIndex = 0;
 
 	SDL_FillRect (surface, NULL, 0xFF00FF);
 	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
@@ -131,21 +131,21 @@ void cUnitDetails::reset ()
 	{
 		// Damage:
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE) : nullptr;
-		drawColumn (columnIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->damage, lngPack.i18n ("Text~Others~Attack"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->damage, playerOriginalData->damage);
+		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->damage, lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->damage, playerOriginalData->damage);
 
 		if (!unitObjectCurrentData->explodesOnContact)
 		{
 			// Shots:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS) : nullptr;
-			drawColumn (columnIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->shotsMax, lngPack.i18n ("Text~Others~Shoots"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->shotsMax, playerOriginalData->shotsMax);
+			drawRow (rowIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->shotsMax, lngPack.i18n ("Text~Others~Shots_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->shotsMax, playerOriginalData->shotsMax);
 
 			// Range:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE) : nullptr;
-			drawColumn (columnIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->range, lngPack.i18n ("Text~Others~Range"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->range, playerOriginalData->range);
+			drawRow (rowIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->range, lngPack.i18n ("Text~Others~Range_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->range, playerOriginalData->range);
 
 			// Ammo:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO) : nullptr;
-			drawColumn (columnIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->ammoMax, lngPack.i18n ("Text~Others~Attack"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->ammoMax, playerOriginalData->ammoMax);
+			drawRow (rowIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->ammoMax, lngPack.i18n ("Text~Others~Ammo_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->ammoMax, playerOriginalData->ammoMax);
 		}
 	}
 
@@ -168,80 +168,80 @@ void cUnitDetails::reset ()
 			symbolType = eUnitDataSymbolType::Gold;
 			break;
 		}
-		drawColumn (columnIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
+		drawRow (rowIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
 	}
 
 	if (unitObjectCurrentData->produceEnergy)
 	{
 		// Energy production:
-		drawColumn (columnIndex++, eUnitDataSymbolType::Energy, unitObjectCurrentData->produceEnergy, lngPack.i18n ("Text~Others~Produce_7"), unitObjectCurrentData->produceEnergy, playerOriginalData->produceEnergy);
+		drawRow (rowIndex++, eUnitDataSymbolType::Energy, unitObjectCurrentData->produceEnergy, lngPack.i18n ("Text~Others~Produce_7"), unitObjectCurrentData->produceEnergy, playerOriginalData->produceEnergy);
 
 		// Oil consumption:
-		drawColumn (columnIndex++, eUnitDataSymbolType::Oil, unitObjectCurrentData->needsOil, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsOil, playerOriginalData->needsOil);
+		drawRow (rowIndex++, eUnitDataSymbolType::Oil, unitObjectCurrentData->needsOil, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsOil, playerOriginalData->needsOil);
 	}
 
 	if (unitObjectCurrentData->produceHumans)
 	{
 		// Human production:
-		drawColumn (columnIndex++, eUnitDataSymbolType::Human, unitObjectCurrentData->produceHumans, lngPack.i18n ("Text~Others~Produce_7"), unitObjectCurrentData->produceHumans, playerOriginalData->produceHumans);
+		drawRow (rowIndex++, eUnitDataSymbolType::Human, unitObjectCurrentData->produceHumans, lngPack.i18n ("Text~Others~Produce_7"), unitObjectCurrentData->produceHumans, playerOriginalData->produceHumans);
 	}
 
 	// Armor:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR) : nullptr;
-	drawColumn (columnIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->armor, lngPack.i18n ("Text~Others~Armor_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->armor, playerOriginalData->armor);
+	drawRow (rowIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->armor, lngPack.i18n ("Text~Others~Armor_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->armor, playerOriginalData->armor);
 
 	// Hit points:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS) : nullptr;
-	drawColumn (columnIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, playerOriginalData->hitpointsMax);
+	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, playerOriginalData->hitpointsMax);
 
 	// Scan:
 	if (unitObjectCurrentData->scan)
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN) : nullptr;
-		drawColumn (columnIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->scan, lngPack.i18n ("Text~Others~Scan_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->scan, playerOriginalData->scan);
+		drawRow (rowIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->scan, lngPack.i18n ("Text~Others~Scan_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->scan, playerOriginalData->scan);
 	}
 
 	// Speed:
 	if (unitObjectCurrentData->speedMax)
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED) : nullptr;
-		drawColumn (columnIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->speedMax) / 4, lngPack.i18n ("Text~Others~Speed_7"), (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->speedMax) / 4, playerOriginalData->speedMax / 4);
+		drawRow (rowIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->speedMax) / 4, lngPack.i18n ("Text~Others~Speed_7"), (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->speedMax) / 4, playerOriginalData->speedMax / 4);
 	}
 
 	// energy consumption:
 	if (unitObjectCurrentData->needsEnergy)
 	{
-		drawColumn (columnIndex++, eUnitDataSymbolType::Energy, unitObjectCurrentData->needsEnergy, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsEnergy, playerOriginalData->needsEnergy);
+		drawRow (rowIndex++, eUnitDataSymbolType::Energy, unitObjectCurrentData->needsEnergy, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsEnergy, playerOriginalData->needsEnergy);
 	}
 
 	// humans needed:
 	if (unitObjectCurrentData->needsHumans)
 	{
-		drawColumn (columnIndex++, eUnitDataSymbolType::Human, unitObjectCurrentData->needsHumans, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsHumans, playerOriginalData->needsHumans);
+		drawRow (rowIndex++, eUnitDataSymbolType::Human, unitObjectCurrentData->needsHumans, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsHumans, playerOriginalData->needsHumans);
 	}
 
 	// raw material consumption:
 	if (unitObjectCurrentData->needsMetal)
 	{
-		drawColumn (columnIndex++, eUnitDataSymbolType::Metal, unitObjectCurrentData->needsMetal, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsMetal, playerOriginalData->needsMetal);
+		drawRow (rowIndex++, eUnitDataSymbolType::Metal, unitObjectCurrentData->needsMetal, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->needsMetal, playerOriginalData->needsMetal);
 	}
 
 	// gold consumption:
 	if (unitObjectCurrentData->convertsGold)
 	{
-		drawColumn (columnIndex++, eUnitDataSymbolType::Gold, unitObjectCurrentData->convertsGold, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->convertsGold, playerOriginalData->convertsGold);
+		drawRow (rowIndex++, eUnitDataSymbolType::Gold, unitObjectCurrentData->convertsGold, lngPack.i18n ("Text~Others~Usage_7"), unitObjectCurrentData->convertsGold, playerOriginalData->convertsGold);
 	}
 
 	// Costs:
 	// Do not use unit data but currentVersion data
 	// since cost doesn't change unit version
-	drawColumn (columnIndex++, eUnitDataSymbolType::Metal, playerCurrentData->buildCosts, lngPack.i18n ("Text~Others~Costs"), playerCurrentData->buildCosts, playerOriginalData->buildCosts);
+	drawRow (rowIndex++, eUnitDataSymbolType::Metal, playerCurrentData->buildCosts, lngPack.i18n ("Text~Others~Costs"), playerCurrentData->buildCosts, playerOriginalData->buildCosts);
 
-	while (columnIndex < maxRows)
+	while (rowIndex < maxRows)
 	{
-		amountLabels[columnIndex]->hide ();
-		nameLabels[columnIndex]->hide ();
-		++columnIndex;
+		amountLabels[rowIndex]->hide ();
+		nameLabels[rowIndex]->hide ();
+		++rowIndex;
 	}
 }
 
@@ -266,7 +266,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 			offX = srcSize.x ();
 		}
 	}
-	SDL_Rect dest = {Sint16 (position.x ()), Sint16 (position.y ()) + (columnHeight-4 - srcSize.y ()) / 2, 0, 0};
+	SDL_Rect dest = {position.x (), position.y () + (rowHeight-4 - srcSize.y ()) / 2, 0, 0};
 
 	for (int i = 0; i != value1; ++i)
 	{

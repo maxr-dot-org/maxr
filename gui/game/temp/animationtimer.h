@@ -32,15 +32,18 @@ class cAnimationTimeFlags
 public:
 	cAnimationTimeFlags ();
 
+	bool is10ms () const;
 	bool is50ms () const;
 	bool is100ms () const;
 	bool is400ms () const;
 
+	void set10ms (bool flag);
 	void set50ms (bool flag);
 	void set100ms (bool flag);
 	void set400ms (bool flag);
 
 private:
+	bool is10msFlag;
 	bool is50msFlag;
 	bool is100msFlag;
 	bool is400msFlag;
@@ -59,6 +62,7 @@ public:
 	void updateAnimationFlags ();
 	const cAnimationTimeFlags& getAnimationFlags () const;
 
+	cSignal<void ()> triggered10ms;
 	cSignal<void ()> triggered50ms;
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;

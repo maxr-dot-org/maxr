@@ -3663,8 +3663,8 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 
 void cGameGUI::addFx (cFx* fx)
 {
-	FxList->push_front (fx);
-	fx->playSound (*this);
+//	FxList->push_front (fx);
+	//fx->playSound (*this);
 }
 
 void cGameGUI::drawFx (bool bottom) const
@@ -3673,8 +3673,8 @@ void cGameGUI::drawFx (bool bottom) const
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 	SDL_SetClipRect (cVideo::buffer, &clipRect);
 
-	client->FxList->draw (*this, bottom);
-	FxList->draw (*this, bottom);
+	//client->FxList->draw (*this, bottom);
+	//FxList->draw (*this, bottom);
 
 	SDL_SetClipRect (cVideo::buffer, NULL);
 }

@@ -74,6 +74,8 @@ private:
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 
+	cPosition mouseScrollDirection;
+
 	int selectedUnitSoundStream;
 
 	void resetMiniMapViewWindow ();

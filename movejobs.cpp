@@ -1105,24 +1105,24 @@ void cClientMoveJob::moveVehicle()
 			switch (Vehicle->dir)
 			{
 				case 0:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 - 10 + Vehicle->OffY, 0));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 - 10 + Vehicle->OffY), 0));
 					break;
 				case 4:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + 10 + Vehicle->OffY, 0));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + 10 + Vehicle->OffY), 0));
 					break;
 				case 2:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY), 2));
 					break;
 				case 6:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 - 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 - 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY), 2));
 					break;
 				case 1:
 				case 5:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 1));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY), 1));
 					break;
 				case 3:
 				case 7:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 3));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY), 3));
 					break;
 			}
 		}
@@ -1131,16 +1131,16 @@ void cClientMoveJob::moveVehicle()
 			switch (Vehicle->dir)
 			{
 				case 1:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 1));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY), 1));
 					break;
 				case 5:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 1));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY), 1));
 					break;
 				case 3:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 3));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY), 3));
 					break;
 				case 7:
-					client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 3));
+					client->addFx (std::make_shared<cFxTracks> (cPosition (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY), 3));
 					break;
 			}
 		}

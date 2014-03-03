@@ -163,7 +163,7 @@ public:
 	*/
 	int HandleNetMessage (cNetMessage* message, cMenu* activeMenu);
 
-	void addFx (cFx* fx);
+	void addFx (std::shared_ptr<cFx> fx);
 
 	/**
 	* destroys a unit
@@ -189,8 +189,8 @@ public:
 	const sSettings* getGameSetting() const { return gameSetting.get(); }
 
 	mutable cSignal<void ()> turnChanged;
-	mutable cSignal<void ()> startTurnEnd;
-	mutable cSignal<void ()> finishTurnEnd;
+	mutable cSignal<void ()> startedTurnEndProcess;
+	mutable cSignal<void ()> finishedTurnEndProcess;
 
 	mutable cSignal<void (const cUnit&)> unitStartedWorking;
 	mutable cSignal<void (const cUnit&)> unitStoppedWorking;
@@ -220,6 +220,8 @@ public:
 	mutable cSignal<void (const cUnit&)> unitDetected;
 
 	mutable cSignal<void (const cVehicle&)> moveJobCreated;
+
+	mutable cSignal<void (const std::shared_ptr<cFx>&)> addedEffect;
 private:
 	void initPlayersWithMap();
 
@@ -342,10 +344,11 @@ private:
 	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 
 	sFreezeModes freezeModes;
+
+	/** lists with all FX-Animation */
+	AutoPtr<cFxContainer> effectsList;
 public:
 	cGameTimerClient gameTimer;
-	/** lists with all FX-Animation */
-	AutoPtr<cFxContainer> FxList;
 	/** list with the running clientAttackJobs */
 	std::vector<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */

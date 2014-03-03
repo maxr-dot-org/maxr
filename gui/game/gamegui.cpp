@@ -22,9 +22,9 @@
 
 #include "gamegui.h"
 #include "hud.h"
-#include "gamemapwidget.h"
-#include "minimapwidget.h"
-#include "unitcontextmenuwidget.h"
+#include "widgets/gamemapwidget.h"
+#include "widgets/minimapwidget.h"
+#include "widgets/unitcontextmenuwidget.h"
 
 #include "temp/animationtimer.h"
 
@@ -39,6 +39,8 @@
 #include "../../sound.h"
 #include "../../client.h"
 #include "../../clientevents.h"
+#include "../../attackjobs.h"
+#include "../../log.h"
 #include "../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
@@ -47,6 +49,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	animationTimer (std::make_shared<cAnimationTimer>()),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
+	mouseScrollDirection (0, 0),
 	selectedUnitSoundStream (-1)
 {
 	auto hudOwning = std::make_unique<cHud> (animationTimer);
@@ -84,6 +87,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	});
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
+	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [&](){ miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly ()); });
 
 	signalConnectionManager.connect (gameMap->scrolled, std::bind(&cNewGameGUI::resetMiniMapViewWindow, this));
 	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cNewGameGUI::resetMiniMapViewWindow, this));
@@ -93,6 +97,25 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->getUnitSelection ().selectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
 	signalConnectionManager.connect (gameMap->getUnitSelection ().selectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
 
+
+	clientSignalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit&)
+	{
+		//cUnitHelpMenu helpMenu (&overVehicle->data, overVehicle->owner);
+		//switchTo (helpMenu, client);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredTransfer, [&](const cUnit&, const cUnit&)
+	{
+		//if (overVehicle)
+		//{
+		//	cDialogTransfer transferDialog (*this, *selectedUnit, *overVehicle);
+		//	switchTo (transferDialog, client);
+		//}
+		//else if (overBuilding)
+		//{
+		//	cDialogTransfer transferDialog (*this, *selectedUnit, *overBuilding);
+		//	switchTo (transferDialog, client);
+		//}
+	});
 	signalConnectionManager.connect (gameMap->triggeredBuild, [&](const cUnit& unit)
 	{
 		//unit.executeBuildCommand (*this);
@@ -121,6 +144,14 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
+
+	signalConnectionManager.connect (animationTimer->triggered10ms, [&]()
+	{
+		if (mouseScrollDirection != cPosition (0, 0))
+		{
+			gameMap->scroll (mouseScrollDirection);
+		}
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -175,7 +206,7 @@ void cNewGameGUI::setDynamicMap (const cMap* dynamicMap_)
 			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMineClear);
 			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMineClear);
 		});
-		//dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ surfaceOutdated = true; });
+		//dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ });
 	}
 }
 
@@ -185,14 +216,21 @@ void cNewGameGUI::setPlayer (const cPlayer* player_)
 	player = player_;
 	gameMap->setPlayer (player);
 	miniMap->setPlayer (player);
+	hud->setPlayer (player);
 }
 
 //------------------------------------------------------------------------------
 void cNewGameGUI::connectToClient (cClient& client)
 {
+	hud->setTurnNumberText (iToStr (client.getTurn ()));
+
 	//
 	// GUI to client (action)
 	//
+	signalConnectionManager.connect (hud->endClicked, [&]()
+	{
+		client.handleEnd ();
+	});
 	signalConnectionManager.connect (gameMap->triggeredStartWork, [&](const cUnit& unit)
 	{
 		sendWantStartWork (client, unit);
@@ -203,7 +241,12 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	signalConnectionManager.connect (gameMap->triggeredAutoMoveJob, [&](const cUnit& unit)
 	{
-		//if (unit.data.ID.isAVehicle ()) static_cast<const cVehicle&>(unit).executeAutoMoveJobCommand (client);
+		if (unit.data.ID.isAVehicle ())
+		{
+			auto vehicle = client.getVehicleFromID (unit.iID);
+			if (!vehicle) return;
+			vehicle->executeAutoMoveJobCommand (client);
+		}
 	});
 	signalConnectionManager.connect (gameMap->triggeredStartClear, [&](const cUnit& unit)
 	{
@@ -227,23 +270,214 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	signalConnectionManager.connect (gameMap->triggeredLayMines, [&](const cUnit& unit)
 	{
-		//if (unit.data.ID.isAVehicle ()) static_cast<const cVehicle&>(unit).executeLayMinesCommand (client);
+		if (unit.data.ID.isAVehicle ())
+		{
+			auto vehicle = client.getVehicleFromID (unit.iID);
+			if (!vehicle) return;
+			vehicle->executeLayMinesCommand (client);
+		}
 	});
 	signalConnectionManager.connect (gameMap->triggeredCollectMines, [&](const cUnit& unit)
 	{
-		//if (unit.data.ID.isAVehicle ()) static_cast<const cVehicle&>(unit).executeClearMinesCommand (client);
+		if (unit.data.ID.isAVehicle ())
+		{
+			auto vehicle = client.getVehicleFromID (unit.iID);
+			if (!vehicle) return;
+			vehicle->executeClearMinesCommand (client);
+		}
 	});
 	signalConnectionManager.connect (gameMap->triggeredUnitDone, [&](const cUnit& unit)
 	{
-		//if (unit.owner == player)
-		//{
-		//	unit.isMarkedAsDone = true;
-		//	sendMoveJobResume (client, unit.iID);
-		//}
+		if (unit.owner == player)
+		{
+			if (unit.data.ID.isAVehicle ())
+			{
+				auto vehicle = client.getVehicleFromID (unit.iID);
+				if (!vehicle) return;
+				vehicle->isMarkedAsDone = true;
+				sendMoveJobResume (client, vehicle->iID);
+			}
+			else if (unit.data.ID.isABuilding ())
+			{
+				auto building = client.getBuildingFromID (unit.iID);
+				if (!building) return;
+				building->isMarkedAsDone = true;
+			}
+		}
 	});
+
 	clientSignalConnectionManager.connect(gameMap->triggeredMoveSingle, [&](cVehicle& vehicle, const cPosition& destination)
 	{
 		client.addMoveJob (vehicle, destination.x (), destination.y ());
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredMoveGroup, [&](const std::vector<cVehicle*>& vehiclea, const cPosition& destination)
+	{
+	});
+	clientSignalConnectionManager.connect (gameMap->placedBand, [&](const cVehicle& vehicle)
+	{
+		if (vehicle.BuildingTyp.getUnitDataOriginalVersion ()->isBig)
+		{
+			sendWantBuild (client, vehicle.iID, vehicle.BuildingTyp, vehicle.BuildRounds, client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY), false, 0);
+		}
+		else
+		{
+			sendWantBuild (client, vehicle.iID, vehicle.BuildingTyp, vehicle.BuildRounds, client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY));
+		}
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, const cPosition& position)
+	{
+		//sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[vehicleToActivate]->iID, position.x (), position.y ());
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredExitFinishedUnit, [&](const cBuilding& building, const cPosition& position)
+	{
+		sendWantExitFinishedVehicle (client, building, position.x (), position.y ());
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredLoadAt, [&](const cUnit& unit, const cPosition& position)
+	{
+		const auto field = client.getMap ()->getField (position);
+		auto overVehicle = field.getVehicle ();
+		auto overPlane = field.getPlane ();
+		if (unit.isAVehicle ())
+		{
+			const auto& vehicle = static_cast<const cVehicle&>(unit);
+			if (vehicle.data.factorAir > 0 && overVehicle)
+			{
+				if (overVehicle->PosX == vehicle.PosX && overVehicle->PosY == vehicle.PosY) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				else
+				{
+					cPathCalculator pc (vehicle.PosX, vehicle.PosY, overVehicle->PosX, overVehicle->PosY, *client.getMap (), vehicle);
+					sWaypoint* path = pc.calcPath ();
+					if (path)
+					{
+						sendMoveJob (client, path, vehicle.iID);
+						sendEndMoveAction (client, vehicle.iID, overVehicle->iID, EMAT_LOAD);
+					}
+					else
+					{
+						PlayRandomVoice (VoiceData.VOINoPath);
+					}
+				}
+			}
+			else if (overVehicle)
+			{
+				if (vehicle.isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				else
+				{
+					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, vehicle, *client.getMap (), *overVehicle, true);
+					sWaypoint* path = pc.calcPath ();
+					if (path)
+					{
+						sendMoveJob (client, path, overVehicle->iID);
+						sendEndMoveAction (client, overVehicle->iID, vehicle.iID, EMAT_GET_IN);
+					}
+					else
+					{
+						PlayRandomVoice (VoiceData.VOINoPath);
+					}
+				}
+			}
+		}
+		else if (unit.isABuilding ())
+		{
+			const auto& building = static_cast<const cBuilding&>(unit);
+			if (overVehicle && building.canLoad (overVehicle, false))
+			{
+				if (building.isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (client, building.iID, false, overVehicle->iID);
+				else
+				{
+					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, building, *client.getMap (), *overVehicle, true);
+					sWaypoint* path = pc.calcPath ();
+					if (path)
+					{
+						sendMoveJob (client, path, overVehicle->iID);
+						sendEndMoveAction (client, overVehicle->iID, building.iID, EMAT_GET_IN);
+					}
+					else
+					{
+						PlayRandomVoice (VoiceData.VOINoPath);
+					}
+				}
+			}
+			else if (overPlane && building.canLoad (overPlane, false))
+			{
+				if (building.isNextTo (overPlane->PosX, overPlane->PosY)) sendWantLoad (client, building.iID, false, overPlane->iID);
+				else
+				{
+					cPathCalculator pc (overPlane->PosX, overPlane->PosY, building, *client.getMap (), *overPlane, true);
+					sWaypoint* path = pc.calcPath ();
+					if (path)
+					{
+						sendMoveJob (client, path, overPlane->iID);
+						sendEndMoveAction (client, overPlane->iID, building.iID, EMAT_GET_IN);
+					}
+					else
+					{
+						PlayRandomVoice (VoiceData.VOINoPath);
+					}
+				}
+			}
+		}
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredSupplyAmmo, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
+	{
+		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, destinationUnit.isAVehicle(), SUPPLY_TYPE_REARM);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredRepair, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
+	{
+		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, destinationUnit.isAVehicle (), SUPPLY_TYPE_REPAIR);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredAttack, [&](const cUnit& unit, const cPosition& position)
+	{
+		if (unit.isAVehicle ())
+		{
+			const auto& vehicle = static_cast<const cVehicle&>(unit);
+
+			cUnit* target = selectTarget (position.x (), position.y (), vehicle.data.canAttack, *client.getMap ());
+
+			if (vehicle.isInRange (position.x (), position.y ()))
+			{
+				// find target ID
+				int targetId = 0;
+				if (target && target->isAVehicle ()) targetId = target->iID;
+
+				Log.write (" Client: want to attack " + iToStr (position.x ()) + ":" + iToStr (position.y ()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
+				sendWantAttack (client, targetId, client.getMap ()->getOffset (position.x (), position.y ()), vehicle.iID, true);
+			}
+			else if (target)
+			{
+				cPathCalculator pc (vehicle.PosX, vehicle.PosY, *client.getMap (), vehicle, position.x (), position.y ());
+				sWaypoint* path = pc.calcPath ();
+				if (path)
+				{
+					sendMoveJob (client, path, vehicle.iID);
+					sendEndMoveAction (client, vehicle.iID, target->iID, EMAT_ATTACK);
+				}
+				else
+				{
+					PlayRandomVoice (VoiceData.VOINoPath);
+				}
+			}
+		}
+		else if (unit.isABuilding ())
+		{
+			const auto& building = static_cast<const cBuilding&>(unit);
+			const cMap& map = *client.getMap ();
+
+			int targetId = 0;
+			cUnit* target = selectTarget (position.x (), position.y (), building.data.canAttack, map);
+			if (target && target->isAVehicle ()) targetId = target->iID;
+
+			const int offset = map.getOffset (building.PosX, building.PosY);
+			sendWantAttack (client, targetId, map.getOffset (position.x (), position.y ()), offset, false);
+		}
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredSteal, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
+	{
+		sendWantComAction (client, sourceUnit.iID, destinationUnit.iID, destinationUnit.isAVehicle(), true);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredDisable, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
+	{
+		sendWantComAction (client, sourceUnit.iID, destinationUnit.iID, destinationUnit.isAVehicle (), false);
 	});
 
 
@@ -252,14 +486,17 @@ void cNewGameGUI::connectToClient (cClient& client)
 	//
 	clientSignalConnectionManager.connect (client.turnChanged, [&]()
 	{
+		hud->setTurnNumberText (iToStr(client.getTurn ()));
 	});
 
-	clientSignalConnectionManager.connect (client.startTurnEnd, [&]()
+	clientSignalConnectionManager.connect (client.startedTurnEndProcess, [&]()
 	{
+		hud->lockEndButton ();
 	});
 
-	clientSignalConnectionManager.connect (client.finishTurnEnd, [&]()
+	clientSignalConnectionManager.connect (client.finishedTurnEndProcess, [&]()
 	{
+		hud->unlockEndButton ();
 	});
 
 	clientSignalConnectionManager.connect (client.unitStartedWorking, [&](const cUnit& unit)
@@ -334,7 +571,6 @@ void cNewGameGUI::connectToClient (cClient& client)
 		//}
 
 		PlayFX (SoundData.SNDActivate);
-		//gameGUI->updateMouseCursor();
 	});
 
 	clientSignalConnectionManager.connect (client.unitHasStolenSuccessfully, [&](const cUnit&)
@@ -374,7 +610,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 		//const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 		//const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
 		//gameGUI->addCoords (report);
-		//PlayVoice (VoiceData.VOIUnitDisabled);
+		PlayVoice (VoiceData.VOIUnitDisabled);
 	});
 
 	clientSignalConnectionManager.connect (client.unitStolen, [&](const cUnit& unit)
@@ -394,9 +630,17 @@ void cNewGameGUI::connectToClient (cClient& client)
 		//gameGUI->addCoords (report);
 
 		if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
+		{
 			PlayVoice (VoiceData.VOISubDetected);
+		}
 		else
+		{
 			PlayRandomVoice (VoiceData.VOIDetected);
+		}
+	});
+	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect)
+	{
+		gameMap->addEffect (effect);
 	});
 
 	clientSignalConnectionManager.connect (client.moveJobCreated, [&](const cVehicle& unit)
@@ -481,13 +725,32 @@ void cNewGameGUI::draw ()
 //------------------------------------------------------------------------------
 bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	const auto mouseLastPosition = mouse.getPosition () - offset;
-	if (!gameMap->isAt (mouse.getPosition ()) && gameMap->isAt (mouseLastPosition))
+	const auto currentMousePosition = mouse.getPosition ();
+	const auto mouseLastPosition = currentMousePosition - offset;
+	if (hud->isAt (currentMousePosition) && !hud->isAt (mouseLastPosition))
 	{
-		mouse.setCursorType (eMouseCursorType::Hand);
 		hud->setCoordinatesText ("");
 		hud->setUnitNameText ("");
 	}
+
+	const int scrollFrameWidth = 5;
+
+	mouseScrollDirection = 0;
+	if (currentMousePosition.x () <= scrollFrameWidth) mouseScrollDirection.x () = -cSettings::getInstance ().getScrollSpeed () / 4;
+	else if (currentMousePosition.x () >= getEndPosition ().x () - scrollFrameWidth) mouseScrollDirection.x () = +cSettings::getInstance ().getScrollSpeed () / 4;
+	if (currentMousePosition.y () <= scrollFrameWidth) mouseScrollDirection.y () = -cSettings::getInstance ().getScrollSpeed () / 4;
+	else if (currentMousePosition.y () >= getEndPosition ().y () - scrollFrameWidth) mouseScrollDirection.y () = +cSettings::getInstance ().getScrollSpeed () / 4;
+
+	if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () == 0) mouse.setCursorType (eMouseCursorType::ArrowRight);
+	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () == 0) mouse.setCursorType (eMouseCursorType::ArrowLeft);
+	else if (mouseScrollDirection.x () == 0 &&  mouseScrollDirection.y () > 0) mouse.setCursorType (eMouseCursorType::ArrowDown);
+	else if (mouseScrollDirection.x () == 0 &&  mouseScrollDirection.y () < 0) mouse.setCursorType (eMouseCursorType::ArrowUp);
+	else if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () > 0) mouse.setCursorType (eMouseCursorType::ArrowRightDown);
+	else if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () < 0) mouse.setCursorType (eMouseCursorType::ArrowRightUp);
+	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () > 0) mouse.setCursorType (eMouseCursorType::ArrowLeftDown);
+	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () < 0) mouse.setCursorType (eMouseCursorType::ArrowLeftUp);
+	else if (hud->isAt (currentMousePosition)) mouse.setCursorType (eMouseCursorType::Hand);
+
 	return cWindow::handleMouseMoved (application, mouse, offset);
 }
 

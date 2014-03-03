@@ -18,11 +18,11 @@
  ***************************************************************************/
 
 #include "unitcontextmenuwidget.h"
-#include "../menu/widgets/pushbutton.h"
-#include "../menu/widgets/radiogroup.h"
-#include "../menu/widgets/checkbox.h"
-#include "../../unit.h"
-#include "../../map.h"
+#include "../../menu/widgets/pushbutton.h"
+#include "../../menu/widgets/radiogroup.h"
+#include "../../menu/widgets/checkbox.h"
+#include "../../../unit.h"
+#include "../../../map.h"
 
 //------------------------------------------------------------------------------
 cUnitContextMenuWidget::cUnitContextMenuWidget () :

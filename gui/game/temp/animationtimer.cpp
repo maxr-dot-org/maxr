@@ -21,10 +21,17 @@
 
 //--------------------------------------------------------------------------
 cAnimationTimeFlags::cAnimationTimeFlags () :
+	is10msFlag (false),
 	is50msFlag (false),
 	is100msFlag (false),
 	is400msFlag (false)
 {}
+
+//--------------------------------------------------------------------------
+bool cAnimationTimeFlags::is10ms () const
+{
+	return is50msFlag;
+}
 
 //--------------------------------------------------------------------------
 bool cAnimationTimeFlags::is50ms () const
@@ -42,6 +49,12 @@ bool cAnimationTimeFlags::is100ms () const
 bool cAnimationTimeFlags::is400ms () const
 {
 	return is400msFlag;
+}
+
+//--------------------------------------------------------------------------
+void  cAnimationTimeFlags::set10ms (bool flag)
+{
+	is50msFlag = flag;
 }
 
 //--------------------------------------------------------------------------
@@ -78,7 +91,7 @@ cAnimationTimer::cAnimationTimer () :
 	timerTime (0),
 	lastUpdateTimerTime (0)
 {
-	timerId = SDL_AddTimer (50, timerCallback, this);
+	timerId = SDL_AddTimer (10, timerCallback, this);
 }
 
 //--------------------------------------------------------------------------
@@ -96,12 +109,13 @@ void cAnimationTimer::increaseTimer ()
 //--------------------------------------------------------------------------
 unsigned long long cAnimationTimer::getAnimationTime () const
 {
-	return timerTime / 2;
+	return timerTime / 10; // in 100ms steps
 }
 
 //--------------------------------------------------------------------------
 void cAnimationTimer::updateAnimationFlags ()
 {
+	animationFlags.set10ms (false);
 	animationFlags.set50ms (false);
 	animationFlags.set100ms (false);
 	animationFlags.set400ms (false);
@@ -110,13 +124,16 @@ void cAnimationTimer::updateAnimationFlags ()
 
 	lastUpdateTimerTime = timerTime;
 
-	animationFlags.set50ms (true);
-	if (timerTime & 0x1) animationFlags.set100ms (true);
-	if ((timerTime & 0x3) == 3) animationFlags.set400ms (true);
+	animationFlags.set10ms (true);
 
-	triggered50ms ();
-	if (timerTime & 0x1) triggered100ms ();
-	if ((timerTime & 0x3) == 3) triggered400ms ();
+	if (timerTime % 5 == 0) animationFlags.set50ms (true);
+	if (timerTime % 10 == 0) animationFlags.set100ms (true);
+	if (timerTime % 40 == 0) animationFlags.set400ms (true);
+
+	triggered10ms ();
+	if (timerTime % 5 == 0) triggered50ms ();
+	if (timerTime % 10 == 0) triggered100ms ();
+	if (timerTime % 40 == 0) triggered400ms ();
 }
 
 //--------------------------------------------------------------------------

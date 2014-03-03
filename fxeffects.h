@@ -3,17 +3,19 @@
 #define _FX_EFFECTS_H
 
 #include <vector>
+#include <memory>
+#include "maxrconfig.h"
 #include "autosurface.h"
+#include "utility/position.h"
 
 class cGameGUI;
 
 class cFx
 {
 protected:
-	cFx (bool bottom_, int x, int y);
+	cFx (bool bottom_, const cPosition& position);
 
-	int posX;
-	int posY;
+	cPosition position;
 	int tick;
 	int length;
 
@@ -22,31 +24,31 @@ public:
 
 	const bool bottom;
 
+	const cPosition& getPosition ();
+
 	virtual bool isFinished() const;
 	int getLength() const;
 
-	virtual void draw (const cGameGUI& gameGUI) const = 0;
-	virtual void playSound (const cGameGUI& gameGUI) const;
+	virtual void draw (float zoom, const cPosition& destination) const = 0;
+	virtual void playSound () const;
 	virtual void run();
 };
 
 class cFxContainer
 {
 public:
-	~cFxContainer();
-	void push_back (cFx* fx);
-	void push_front (cFx* fx);
-	void draw (const cGameGUI& gameGUI, bool bottom) const;
+	void push_back (std::shared_ptr<cFx> fx);
+	void push_front (std::shared_ptr<cFx> fx);
 	void run();
 private:
-	std::vector<cFx*> fxs;
+	std::vector<std::shared_ptr<cFx>> fxs;
 };
 
 class cFxMuzzle : public cFx
 {
 protected:
-	cFxMuzzle (int x, int y, int dir_);
-	void draw (const cGameGUI& gameGUI) const;
+	cFxMuzzle (const cPosition& position, int dir_);
+	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
 
 	AutoSurface (*pImages) [2];
 	int dir;
@@ -55,32 +57,32 @@ protected:
 class cFxMuzzleBig : public cFxMuzzle
 {
 public:
-	cFxMuzzleBig (int x, int y, int dir_);
+	cFxMuzzleBig (const cPosition& position, int dir_);
 };
 
 class cFxMuzzleMed : public cFxMuzzle
 {
 public:
-	cFxMuzzleMed (int x, int y, int dir_);
+	cFxMuzzleMed (const cPosition& position, int dir_);
 };
 
 class cFxMuzzleMedLong : public cFxMuzzle
 {
 public:
-	cFxMuzzleMedLong (int x, int y, int dir_);
+	cFxMuzzleMedLong (const cPosition& position, int dir_);
 };
 
 class cFxMuzzleSmall : public cFxMuzzle
 {
 public:
-	cFxMuzzleSmall (int x, int y, int dir_);
+	cFxMuzzleSmall (const cPosition& position, int dir_);
 };
 
 class cFxExplo : public cFx
 {
 protected:
-	cFxExplo (int x, int y, int frames_);
-	void draw (const cGameGUI& gameGUI) const;
+	cFxExplo (const cPosition& position, int frames_);
+	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
 
 protected:
 	AutoSurface (*pImages) [2];
@@ -93,50 +95,53 @@ protected:
 class cFxExploSmall : public cFxExplo
 {
 public:
-	cFxExploSmall (int x, int y); // x, y is the center of the explosion
-	void playSound (const cGameGUI& gameGUI) const;
+	cFxExploSmall (const cPosition& position); // x, y is the center of the explosion
+	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
-	cFxExploBig (int x, int y);
-	void playSound (const cGameGUI& gameGUI) const;
+	cFxExploBig (const cPosition& position, bool onWater);
+	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+
+private:
+	bool onWater;
 };
 
 class cFxExploAir : public cFxExplo
 {
 public:
-	cFxExploAir (int x, int y);
-	void playSound (const cGameGUI& gameGUI) const;
+	cFxExploAir (const cPosition& position);
+	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
-	cFxExploWater (int x, int y);
-	void playSound (const cGameGUI& gameGUI) const;
+	cFxExploWater (const cPosition& position);
+	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxHit : public cFxExplo
 {
 public:
-	cFxHit (int x, int y);
-	void playSound (const cGameGUI& gameGUI) const;
+	cFxHit (const cPosition& position);
+	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
-	cFxAbsorb (int x, int y);
-	void playSound (const cGameGUI& gameGUI) const;
+	cFxAbsorb (const cPosition& position);
+	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxFade : public cFx
 {
 protected:
-	cFxFade (int x, int y, bool bottom, int start, int end);
-	void draw (const cGameGUI& gameGUI) const;
+	cFxFade (const cPosition& position, bool bottom, int start, int end);
+	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
 
 	AutoSurface (*pImages) [2];
 	const int alphaStart;
@@ -146,13 +151,13 @@ protected:
 class cFxSmoke : public cFxFade
 {
 public:
-	cFxSmoke (int x, int y, bool bottom); // x, y is the center of the effect
+	cFxSmoke (const cPosition& position, bool bottom); // x, y is the center of the effect
 };
 
 class cFxCorpse : public cFxFade
 {
 public:
-	cFxCorpse (int x, int y);
+	cFxCorpse (const cPosition& position);
 };
 
 class cFxTracks : public cFx
@@ -163,8 +168,8 @@ private:
 	const int alphaEnd;
 	const int dir;
 public:
-	cFxTracks (int x, int y, int dir_);
-	void draw (const cGameGUI& gameGUI) const;
+	cFxTracks (const cPosition& position, int dir_);
+	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
 };
 
 
@@ -176,19 +181,17 @@ private:
 	AutoSurface (*pImages) [2];
 	int dir;
 	int distance;
-	const int startX;
-	const int startY;
-	const int endX;
-	const int endY;
+	const cPosition startPosition;
+	const cPosition endPosition;
 public:
-	cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom);
+	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom);
 	~cFxRocket();
-	void draw (const cGameGUI& gameGUI) const;
+	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
 	void run();
 	// return true, when the last smoke effect is finished.
 	// getLength() returns only the time until
 	// the rocket has reached the destination
-	bool isFinished() const;
+	virtual bool isFinished () const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxDarkSmoke : public cFx
@@ -201,8 +204,8 @@ private:
 	const int frames;
 	AutoSurface (*pImages) [2];
 public:
-	cFxDarkSmoke (int x, int y, int alpha, float windDir);
-	void draw (const cGameGUI& gameGUI) const;
+	cFxDarkSmoke (const cPosition& position, int alpha, float windDir);
+	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif

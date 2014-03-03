@@ -27,9 +27,8 @@
 #include "player.h"
 #include "video.h"
 
-cFx::cFx (bool bottom_, int x, int y) :
-	posX (x),
-	posY (y),
+cFx::cFx (bool bottom_, const cPosition& position_) :
+	position (position_),
 	tick (0),
 	length (-1),
 	bottom (bottom_)
@@ -43,12 +42,17 @@ int cFx::getLength() const
 	return length;
 }
 
+const cPosition& cFx::getPosition ()
+{
+	return position;
+}
+
 bool cFx::isFinished() const
 {
 	return tick >= length;
 }
 
-void cFx::playSound (const cGameGUI& gameGUI) const
+void cFx::playSound () const
 {}
 
 void cFx::run()
@@ -57,46 +61,25 @@ void cFx::run()
 }
 
 //------------------------------------------------------------------------------
-
-cFxContainer::~cFxContainer()
+void cFxContainer::push_back (std::shared_ptr<cFx> fx)
 {
-	for (size_t i = 0, size = fxs.size(); i != size; ++i)
-	{
-		delete fxs[i];
-	}
+	fxs.push_back (std::move(fx));
 }
 
-void cFxContainer::push_back (cFx* fx)
+void cFxContainer::push_front (std::shared_ptr<cFx> fx)
 {
-	fxs.push_back (fx);
-}
-
-void cFxContainer::push_front (cFx* fx)
-{
-	fxs.insert (fxs.begin(), fx);
-}
-
-void cFxContainer::draw (const cGameGUI& gameGUI, bool bottom) const
-{
-	for (size_t i = 0, size = fxs.size(); i != size; ++i)
-	{
-		if (fxs[i]->bottom == bottom)
-		{
-			fxs[i]->draw (gameGUI);
-		}
-	}
+	fxs.insert (fxs.begin (), std::move (fx));
 }
 
 void cFxContainer::run()
 {
-	for (std::vector<cFx*>::iterator it = fxs.begin(); it != fxs.end();)
+	for (auto it = fxs.begin(); it != fxs.end();)
 	{
-		cFx* fx = *it;
+		auto& fx = *(*it);
 
-		fx->run();
-		if (fx->isFinished())
+		fx.run();
+		if (fx.isFinished())
 		{
-			delete fx;
 			it = fxs.erase (it);
 		}
 		else ++it;
@@ -104,117 +87,111 @@ void cFxContainer::run()
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
-	cFx (false, x, y),
+cFxMuzzle::cFxMuzzle (const cPosition& position_, int dir_) :
+	cFx (false, position_),
 	pImages (NULL),
 	dir (dir_)
 {}
 
-void cFxMuzzle::draw (const cGameGUI& gameGUI) const
+void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 {
-	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (pImages == NULL) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
+	CHECK_SCALING (images[1], images[0], zoom);
 
 	SDL_Rect src;
-	src.x = (int) (images[0]->w * gameGUI.getZoom() * dir / 8);
+	src.x = (int) (images[0]->w * zoom * dir / 8);
 	src.y = 0;
 	src.w = images[1]->w / 8;
 	src.h = images[1]->h;
-	SDL_Rect dest = gameGUI.calcScreenPos (posX, posY);
+	SDL_Rect dest = {destination.x(), destination.y(), 0, 0};
 
 	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleBig::cFxMuzzleBig (int x, int y, int dir_) :
-	cFxMuzzle (x, y, dir_)
+cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, int dir_) :
+	cFxMuzzle (position_, dir_)
 {
 	pImages = &EffectsData.fx_muzzle_big;
 	length = 6;
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleMed::cFxMuzzleMed (int x, int y, int dir_) :
-	cFxMuzzle (x, y, dir_)
+cFxMuzzleMed::cFxMuzzleMed (const cPosition& position_, int dir_) :
+	cFxMuzzle (position_, dir_)
 {
 	pImages = &EffectsData.fx_muzzle_med;
 	length = 6;
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleMedLong::cFxMuzzleMedLong (int x, int y, int dir_) :
-	cFxMuzzle (x, y, dir_)
+cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, int dir_) :
+	cFxMuzzle (position_, dir_)
 {
 	length = 16;
 	pImages = &EffectsData.fx_muzzle_med;
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleSmall::cFxMuzzleSmall (int x, int y, int dir_) :
-	cFxMuzzle (x, y, dir_)
+cFxMuzzleSmall::cFxMuzzleSmall (const cPosition& position_, int dir_) :
+	cFxMuzzle (position_, dir_)
 {
 	length = 6;
 	pImages = &EffectsData.fx_muzzle_small;
 }
 
 //------------------------------------------------------------------------------
-cFxExplo::cFxExplo (int x, int y, int frames_) :
-	cFx (false, x, y),
+cFxExplo::cFxExplo (const cPosition& position_, int frames_) :
+	cFx (false, position_),
 	pImages (NULL),
 	frames (frames_)
 {}
 
-void cFxExplo::draw (const cGameGUI& gameGUI) const
+void cFxExplo::draw (float zoom, const cPosition& destination) const
 {
-	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
+	CHECK_SCALING (images[1], images[0], zoom);
 
 	const int frame = tick * frames / length;
 
-	SDL_Rect src, dest;
-	src.x = (int) (images[0]->w * gameGUI.getZoom() * frame / frames);
+	SDL_Rect src;
+	src.x = (int) (images[0]->w * zoom * frame / frames);
 	src.y = 0;
 	src.w = images[1]->w / frames;
 	src.h = images[1]->h;
-	dest = gameGUI.calcScreenPos (posX - images[0]->w / (frames * 2), posY - images[0]->h / 2);
+	SDL_Rect dest = {destination.x () - (images[0]->w / (frames * 2)) * zoom, destination.y () - (images[0]->h / 2) * zoom, 0, 0};
 
 	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
-cFxExploSmall::cFxExploSmall (int x, int y) :
-	cFxExplo (x, y, 14)
+cFxExploSmall::cFxExploSmall (const cPosition& position_) :
+	cFxExplo (position_, 14)
 {
 	length = 140;
 	pImages = &EffectsData.fx_explo_small;
 }
 
-void cFxExploSmall::playSound (const cGameGUI& gameGUI) const
+void cFxExploSmall::playSound () const
 {
 	PlayRandomFX (SoundData.EXPSmall);
 }
 
 //------------------------------------------------------------------------------
-cFxExploBig::cFxExploBig (int x, int y) :
-	cFxExplo (x, y, 28)
+cFxExploBig::cFxExploBig (const cPosition& position_, bool onWater_) :
+	cFxExplo (position_, 28),
+	onWater (onWater_)
 {
 	length = 280;
 	pImages = &EffectsData.fx_explo_big;
 }
 
 
-void cFxExploBig::playSound (const cGameGUI& gameGUI) const
+void cFxExploBig::playSound () const
 {
-	const cMap& map = *gameGUI.getClient()->getMap();
-	if (map.isWaterOrCoast (posX / 64, posY / 64))
+	if (onWater)
 	{
 		PlayRandomFX (SoundData.EXPBigWet);
 	}
@@ -225,101 +202,97 @@ void cFxExploBig::playSound (const cGameGUI& gameGUI) const
 }
 
 //------------------------------------------------------------------------------
-cFxExploAir::cFxExploAir (int x, int y) :
-	cFxExplo (x, y, 14)
+cFxExploAir::cFxExploAir (const cPosition& position_) :
+	cFxExplo (position_, 14)
 {
 	length = 140;
 	pImages = &EffectsData.fx_explo_air;
 }
 
-void cFxExploAir::playSound (const cGameGUI& gameGUI) const
+void cFxExploAir::playSound () const
 {
 	PlayRandomFX (SoundData.EXPSmall);
 }
 
 //------------------------------------------------------------------------------
-cFxExploWater::cFxExploWater (int x, int y) :
-	cFxExplo (x, y, 14)
+cFxExploWater::cFxExploWater (const cPosition& position_) :
+	cFxExplo (position_, 14)
 {
 	length = 140;
 	pImages = &EffectsData.fx_explo_water;
 }
 
-void cFxExploWater::playSound (const cGameGUI& gameGUI) const
+void cFxExploWater::playSound () const
 {
 	PlayRandomFX (SoundData.EXPSmallWet);
 }
 
 //------------------------------------------------------------------------------
-cFxHit::cFxHit (int x, int y) :
-	cFxExplo (x, y, 5)
+cFxHit::cFxHit (const cPosition& position_) :
+	cFxExplo (position_, 5)
 {
 	length = 50;
 	pImages = &EffectsData.fx_hit;
 }
 
-void cFxHit::playSound (const cGameGUI& gameGUI) const
+void cFxHit::playSound () const
 {
 	//TODO
 }
 
 //------------------------------------------------------------------------------
-cFxAbsorb::cFxAbsorb (int x, int y) :
-	cFxExplo (x, y, 10)
+cFxAbsorb::cFxAbsorb (const cPosition& position_) :
+	cFxExplo (position_, 10)
 {
 	length = 100;
 	pImages = &EffectsData.fx_absorb;
 }
 
-void cFxAbsorb::playSound (const cGameGUI& gameGUI) const
+void cFxAbsorb::playSound () const
 {
 	PlayFX (SoundData.SNDAbsorb);
 }
 
 //------------------------------------------------------------------------------
-cFxFade::cFxFade (int x, int y, bool bottom, int start, int end) :
-	cFx (bottom, x, y),
+cFxFade::cFxFade (const cPosition& position_, bool bottom, int start, int end) :
+	cFx (bottom, position_),
 	pImages (NULL),
 	alphaStart (start),
 	alphaEnd (end)
 {}
 
-void cFxFade::draw (const cGameGUI& gameGUI) const
+void cFxFade::draw (float zoom, const cPosition& destination) const
 {
-	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
+	CHECK_SCALING (images[1], images[0], zoom);
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetSurfaceAlphaMod (images[1], alpha);
 
-	SDL_Rect dest;
-	dest = gameGUI.calcScreenPos (posX - images[0]->w / 2, posY - images[0]->h / 2);
+	SDL_Rect dest = {destination.x () - (images[0]->w / 2) * zoom, destination.y () - (images[0]->h / 2) * zoom, 0, 0};
 	SDL_BlitSurface (images[1], NULL, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
-cFxSmoke::cFxSmoke (int x, int y, bool bottom) :
-	cFxFade (x, y, bottom, 100, 0)
+cFxSmoke::cFxSmoke (const cPosition& position_, bool bottom) :
+	cFxFade (position_, bottom, 100, 0)
 {
 	length = 50;
 	pImages = &EffectsData.fx_smoke;
 }
 
 //------------------------------------------------------------------------------
-cFxCorpse::cFxCorpse (int x, int y) :
-	cFxFade (x, y, true, 255, 0)
+cFxCorpse::cFxCorpse (const cPosition& position_) :
+	cFxFade (position_, true, 255, 0)
 {
 	length = 1024;
 	pImages = &EffectsData.fx_corpse;
 }
 
 //------------------------------------------------------------------------------
-cFxTracks::cFxTracks (int x, int y, int dir_) :
-	cFx (true, x, y),
+cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
+	cFx (true, position_),
 	pImages (NULL),
 	alphaStart (100),
 	alphaEnd (0),
@@ -329,41 +302,36 @@ cFxTracks::cFxTracks (int x, int y, int dir_) :
 	pImages = &EffectsData.fx_tracks;
 }
 
-void cFxTracks::draw (const cGameGUI& gameGUI) const
+void cFxTracks::draw (float zoom, const cPosition& destination) const
 {
-	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return; //ja, nein, vielleicht?
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
+	CHECK_SCALING (images[1], images[0], zoom);
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetSurfaceAlphaMod (images[1], alpha);
 
-	SDL_Rect src, dest;
+	SDL_Rect src;
 	src.y = 0;
 	src.x = images[1]->w * dir / 4;
 	src.w = images[1]->w / 4;
 	src.h = images[1]->h;
-	dest = gameGUI.calcScreenPos (posX, posY);
+	SDL_Rect dest = {destination.x (), destination.y (), 0, 0};
 
 	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
-cFxRocket::cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom) :
-	cFx (bottom, startX_, startY_),
+cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, int dir_, bool bottom) :
+	cFx (bottom, startPosition_),
 	speed (8),
 	pImages (&EffectsData.fx_rocket),
 	dir (dir_),
 	distance (0),
-	startX (startX_),
-	startY (startY_),
-	endX (endX_),
-	endY (endY_)
+	startPosition (startPosition_),
+	endPosition (endPosition_)
 {
-	distance = (int) sqrtf (float (Square (endX - startX) + Square (endY - startY)));
+	distance = static_cast<int>((endPosition - startPosition).l2Norm ());
 	length = distance / speed;
 }
 
@@ -373,29 +341,27 @@ cFxRocket::~cFxRocket()
 		delete subEffects[i];
 }
 
-void cFxRocket::draw (const cGameGUI& gameGUI) const
+void cFxRocket::draw (float zoom, const cPosition& destination) const
 {
 	//draw smoke effect
 	for (unsigned i = 0; i < subEffects.size(); i++)
 	{
-		subEffects[i]->draw (gameGUI);
+		const cPosition offset = (subEffects[i]->getPosition() - position);
+		subEffects[i]->draw (zoom, destination + cPosition (offset.x () * zoom, offset.y() * zoom));
 	}
 
 	//draw rocket
-	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!pImages) return;
 	if (tick >= length) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
+	CHECK_SCALING (images[1], images[0], zoom);
 
-	SDL_Rect src, dest;
+	SDL_Rect src;
 	src.x = dir * images[1]->w / 8;
 	src.y = 0;
 	src.h = images[1]->h;
 	src.w = images[1]->w / 8;
-	dest = gameGUI.calcScreenPos (posX - images[0]->w / 16, posY - images[0]->h / 2);
+	SDL_Rect dest = {destination.x () - (images[0]->w / 16) * zoom, destination.y () - (images[0]->h / 2) * zoom, 0, 0};
 
 	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
@@ -418,13 +384,12 @@ void cFxRocket::run()
 	if (tick >= length) return;
 	if (cSettings::getInstance().isAlphaEffects())
 	{
-		subEffects.push_back (new cFxSmoke (posX, posY, bottom));
+		subEffects.push_back (new cFxSmoke (position, bottom));
 	}
 
 	//update rocket position
 	tick++;
-	posX = startX + speed * (endX - startX) * tick / distance;
-	posY = startY + speed * (endY - startY) * tick / distance;
+	position = startPosition + (endPosition - startPosition) * speed * tick / distance;
 }
 
 bool cFxRocket::isFinished() const
@@ -432,8 +397,8 @@ bool cFxRocket::isFinished() const
 	return tick >= length && subEffects.empty();
 }
 
-cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
-	cFx (false, x, y),
+cFxDarkSmoke::cFxDarkSmoke (const cPosition& position_, int alpha, float windDir) :
+	cFx (false, position_),
 	dx (0),
 	dy (0),
 	alphaStart (alpha),
@@ -457,21 +422,21 @@ cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 	}
 }
 
-void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
+void cFxDarkSmoke::draw (float zoom, const cPosition& destination) const
 {
 	//if (!client.getActivePlayer().ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], gameGUI.getZoom());
+	CHECK_SCALING (images[1], images[0], zoom);
 
 	const int frame = tick * frames / length;
 
-	SDL_Rect src, dest;
-	src.x = (int) (images[0]->w * gameGUI.getZoom() * frame / frames);
+	SDL_Rect src;
+	src.x = (int) (images[0]->w * zoom * frame / frames);
 	src.y = 0;
 	src.w = images[1]->w / frames;
 	src.h = images[1]->h;
-	dest = gameGUI.calcScreenPos ((int) (posX + tick * dx), (int) (posY + tick * dy));
+	SDL_Rect dest = {destination.x () + (tick * dx) * zoom, destination.y () + (tick * dy) * zoom, 0, 0};
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetSurfaceAlphaMod (images[1], alpha);

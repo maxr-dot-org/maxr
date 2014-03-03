@@ -17,12 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_unitcontextmenuwidgetH
-#define gui_game_unitcontextmenuwidgetH
+#ifndef gui_game_widgets_unitcontextmenuwidgetH
+#define gui_game_widgets_unitcontextmenuwidgetH
 
-#include "mouseinputmode.h"
-#include "../widget.h"
-#include "../../utility/signal/signal.h"
+#include "../mouseinputmode.h"
+#include "../../widget.h"
+#include "../../../utility/signal/signal.h"
 
 class cUnit;
 class cPlayer;
@@ -65,4 +65,4 @@ private:
 	const cUnit* unit;
 };
 
-#endif // gui_game_unitcontextmenuwidgetH
+#endif // gui_game_widgets_unitcontextmenuwidgetH
