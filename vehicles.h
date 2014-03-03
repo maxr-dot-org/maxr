@@ -135,7 +135,6 @@ public:
 	virtual int getMovementOffsetY() const {return OffY;}
 
 	const sVehicleUIData* uiData;
-	bool groupSelected;
 	cServerMoveJob* ServerMoveJob;
 	cClientMoveJob* ClientMoveJob;
 	cAutoMJob* autoMJob; //the auto move AI of the vehicle

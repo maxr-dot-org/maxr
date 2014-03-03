@@ -220,6 +220,7 @@ public:
 	mutable cSignal<void (const cUnit&)> unitDetected;
 
 	mutable cSignal<void (const cVehicle&)> moveJobCreated;
+	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&)> addedEffect;
 private:

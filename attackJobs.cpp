@@ -652,7 +652,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
 		//FIXME: gameGUI
 		//client->getGameGUI().addCoords (report);
-		PlayRandomVoice (VoiceData.VOIAttackingEnemy);
+		//PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
 	//FIXME: gameGUI
 	//client->getGameGUI().checkMouseInputMode();

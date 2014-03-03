@@ -24,6 +24,7 @@
 #include "../../map.h"
 #include "../../vehicles.h"
 #include "../../buildings.h"
+#include "../../utility/box.h"
 
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
@@ -53,6 +54,39 @@ bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 }
 
 //------------------------------------------------------------------------------
+bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player)
+{
+	auto oldSelectedUnit = getSelectedUnit ();
+
+	selectedUnits.clear ();
+
+	for (int x = box.getMinCorner ().x (); x <= box.getMaxCorner ().x (); ++x)
+	{
+		for (int y = box.getMinCorner ().y (); y <= box.getMaxCorner ().y (); ++y)
+		{
+			const int offset = map.getOffset (x, y);
+
+			cVehicle* vehicle = map[offset].getVehicle ();
+			if (!vehicle ||vehicle->owner != &player) vehicle = map[offset].getPlane ();
+
+			if (vehicle && vehicle->owner == &player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
+			{
+				if (vehicle == oldSelectedUnit)
+				{
+					selectedUnits.insert (selectedUnits.begin (), vehicle);
+				}
+				else selectedUnits.push_back (vehicle);
+			}
+		}
+	}
+
+	if (oldSelectedUnit != getSelectedUnit ()) mainSelectionChanged ();
+	groupSelectionChanged (); // FIXME: call only when the group has really changed!
+	selectionChanged ();
+	return false;
+}
+
+//------------------------------------------------------------------------------
 bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 {
 	if (selectedUnits.size () == 1 && selectedUnits[0] == &unit) return false;
@@ -63,6 +97,8 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 	{
 		selectedUnits.push_back (&unit);
 
+		if (selectedUnits.size () == 1) mainSelectionChanged ();
+		else groupSelectionChanged ();
 		selectionChanged ();
 
 		return true;
@@ -81,8 +117,12 @@ void cUnitSelection::deselectUnit (const cUnit& unit)
 //------------------------------------------------------------------------------
 void cUnitSelection::deselectUnits ()
 {
+	const auto oldSelectedUnits = selectedUnits.size ();
+
 	selectedUnits.clear ();
 
+	if (oldSelectedUnits > 0) mainSelectionChanged ();
+	if (oldSelectedUnits > 1) groupSelectionChanged ();
 	selectionChanged ();
 }
 

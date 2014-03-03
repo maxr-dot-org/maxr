@@ -211,11 +211,7 @@ int cClient::addMoveJob (cVehicle& vehicle, int DestX, int DestY, const std::vec
 	}
 	else
 	{
-		// automoving surveyors must not tell this
-		if (!vehicle.autoMJob)
-		{
-			PlayRandomVoice (VoiceData.VOINoPath);
-		}
+		moveJobBlocked (vehicle);
 		return 0;
 	}
 }
@@ -669,10 +665,12 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
-		//FIXME: gameGUI
-		//if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI->getSelectedUnit()) gameGUI->stopFXLoop();
+		Vehicle->FlightHigh = message.popInt16 ();
 
-		Vehicle->FlightHigh = message.popInt16();
+		if (bWasBuilding && !Vehicle->IsBuilding)
+		{
+			unitStoppedBuilding (*Vehicle);
+		}
 	}
 }
 

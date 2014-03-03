@@ -22,6 +22,8 @@
 
 #include <algorithm>
 
+#include <SDL.h>
+
 /**
  * An axis aligned bounding box (AABB).
  *

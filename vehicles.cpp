@@ -71,7 +71,6 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	BuildRoundsStart = 0;
 	ClearingRounds = 0;
 	BuildBigSavedPos = 0;
-	groupSelected = false;
 	data.hitpointsCur = data.hitpointsMax;
 	data.ammoCur = data.ammoMax;
 	ClientMoveJob = NULL;

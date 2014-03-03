@@ -233,7 +233,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 #endif
 	// draw the seleted-unit-flash-frame for bulidings
-	if (unitSelection && unitSelection->isSelected (building))
+	if (unitSelection && &building == unitSelection->getSelectedBuilding())
 	{
 		Uint16 maxX = building.data.isBig ? destination.w  * 2 : destination.w;
 		Uint16 maxY = building.data.isBig ? destination.h  * 2 : destination.h;
@@ -432,7 +432,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw the group selected frame if necessary
-	if (vehicle.groupSelected)
+	if (unitSelection && unitSelection->getSelectedUnitsCount() > 1 && unitSelection->isSelected (vehicle))
 	{
 		const Uint32 color = 0xFFFFFF00;
 		SDL_Rect d = {Sint16 (destination.x + 2), Sint16 (destination.y + 2), destination.w - 3, destination.h - 3};
@@ -440,7 +440,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		DrawRectangle (cVideo::buffer, d, color, 1);
 	}
 	// draw the seleted-unit-flash-frame for vehicles
-	if (unitSelection && unitSelection->isSelected (vehicle))
+	if (unitSelection && &vehicle == unitSelection->getSelectedVehicle())
 	{
 		Uint16 maxX = vehicle.data.isBig ? destination.w * 2 : destination.w;
 		Uint16 maxY = vehicle.data.isBig ? destination.h * 2 : destination.h;
@@ -593,6 +593,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 	}
 }
 
+//--------------------------------------------------------------------------
 void cUnitDrawingEngine::rotateBlinkColor ()
 {
 	static bool dec = true;

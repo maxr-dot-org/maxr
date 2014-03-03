@@ -1205,13 +1205,12 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (iIndex == -1) return;
 
-	//FIXME: gameGUI
-	//if (bSpezial)
-	//{
-	//	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
-	//}
-	//else
-	//{
-	//	SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->getGameGUI().getTileSize()], NULL, cVideo::buffer, &Dest);
-	//}
+	if (bSpezial)
+	{
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - Dest.w], NULL, cVideo::buffer, &Dest);
+	}
+	else
+	{
+		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - Dest.w], NULL, cVideo::buffer, &Dest);
+	}
 }

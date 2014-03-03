@@ -2510,7 +2510,7 @@ void cGameGUI::deselectUnit()
 		cVehicle* selectedVehicle = getSelectedVehicle();
 		if (selectedVehicle)
 		{
-			selectedVehicle->groupSelected = false;
+			//selectedVehicle->groupSelected = false;
 			if (mouseInputMode == placeBand) selectedVehicle->BuildPath = false;
 		}
 		stopFXLoop();
@@ -3223,7 +3223,7 @@ void cGameGUI::selectBoxVehicles(const cBox<cPosition>& box)
 					selectedVehiclesGroup.insert (selectedVehiclesGroup.begin(), vehicle);
 				}
 				else selectedVehiclesGroup.push_back (vehicle);
-				vehicle->groupSelected = true;
+				//vehicle->groupSelected = true;
 			}
 		}
 	}
@@ -3233,7 +3233,7 @@ void cGameGUI::selectBoxVehicles(const cBox<cPosition>& box)
 	}
 	if (selectedVehiclesGroup.size() == 1)
 	{
-		selectedVehiclesGroup[0]->groupSelected = false;
+		//selectedVehiclesGroup[0]->groupSelected = false;
 		selectedVehiclesGroup.erase (selectedVehiclesGroup.begin());
 	}
 }
@@ -3248,7 +3248,7 @@ void cGameGUI::deselectGroup()
 {
 	for (size_t i = 0; i != selectedVehiclesGroup.size(); ++i)
 	{
-		selectedVehiclesGroup[i]->groupSelected = false;
+		//selectedVehiclesGroup[i]->groupSelected = false;
 	}
 	selectedVehiclesGroup.clear();
 }

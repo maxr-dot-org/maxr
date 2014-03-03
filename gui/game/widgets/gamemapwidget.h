@@ -21,6 +21,7 @@
 #define gui_game_widgets_gamemapwidgetH
 
 #include "../unitselection.h"
+#include "../unitselectionbox.h"
 #include "../mouseinputmode.h"
 #include "../temp/unitdrawingengine.h"
 #include "../../menu/widgets/clickablewidget.h"
@@ -125,6 +126,8 @@ public:
 	cSignal<void (const cUnit&, const cUnit&)> triggeredSteal;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredDisable;
 
+	cSignal<void (const cPosition&)> triggeredToggleUnitLock;
+
 	cSignal<void (const cUnit&)> triggeredBuild;
 	cSignal<void (const cUnit&)> triggeredResourceDistribution;
 	cSignal<void (const cUnit&)> triggeredStartWork;
@@ -146,6 +149,9 @@ public:
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
@@ -163,6 +169,7 @@ private:
 	cUnitDrawingEngine unitDrawingEngine;
 
 	cUnitSelection unitSelection;
+	cUnitSelectionBox unitSelectionBox;
 
 	cUnitContextMenuWidget* unitMenu;
 
@@ -182,6 +189,8 @@ private:
 	bool shouldDrawRange;
 	bool shouldDrawFog;
 
+	bool lockActive;
+
 	//
 	// draw methods
 	//
@@ -199,7 +208,16 @@ private:
 
 	void drawResources ();
 
+	void drawPath (const cVehicle& vehicle);
+	void drawBuildPath (const cVehicle& vehicle);
+
+	void drawSelectionBox ();
+
 	void drawUnitCircles ();
+	void drawLockList (const cPlayer& player);
+
+	void drawExitPoints ();
+	void drawBuildBand ();
 
 	void drawAttackCursor (const cPosition& position) const;
 	void drawCommandoCursor (const cPosition& position, const cVehicle& vehicle, bool steal) const;

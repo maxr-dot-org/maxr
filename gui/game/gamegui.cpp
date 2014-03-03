@@ -19,6 +19,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 #include "gamegui.h"
 #include "hud.h"
@@ -94,8 +95,8 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudCoordinates, this, _1));
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudUnitName, this, _1));
 
-	signalConnectionManager.connect (gameMap->getUnitSelection ().selectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
-	signalConnectionManager.connect (gameMap->getUnitSelection ().selectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
+	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
+	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
 
 
 	clientSignalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit&)
@@ -310,8 +311,9 @@ void cNewGameGUI::connectToClient (cClient& client)
 	{
 		client.addMoveJob (vehicle, destination.x (), destination.y ());
 	});
-	clientSignalConnectionManager.connect (gameMap->triggeredMoveGroup, [&](const std::vector<cVehicle*>& vehiclea, const cPosition& destination)
+	clientSignalConnectionManager.connect (gameMap->triggeredMoveGroup, [&](const std::vector<cVehicle*>& vehicles, const cPosition& destination)
 	{
+		client.startGroupMove (vehicles, destination.x (), destination.y ());
 	});
 	clientSignalConnectionManager.connect (gameMap->placedBand, [&](const cVehicle& vehicle)
 	{
@@ -643,9 +645,19 @@ void cNewGameGUI::connectToClient (cClient& client)
 		gameMap->addEffect (effect);
 	});
 
-	clientSignalConnectionManager.connect (client.moveJobCreated, [&](const cVehicle& unit)
+	clientSignalConnectionManager.connect (client.moveJobCreated, [&](const cVehicle& vehicle)
 	{
-		connectMoveJob (unit);
+		if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle ())
+		{
+			connectMoveJob (vehicle);
+		}
+	});
+	clientSignalConnectionManager.connect (client.moveJobBlocked, [&](const cVehicle& vehicle)
+	{
+		if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && !vehicle.autoMJob)
+		{
+			PlayRandomVoice (VoiceData.VOINoPath);
+		}
 	});
 }
 

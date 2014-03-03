@@ -17,53 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_unitselectionH
-#define gui_game_unitselectionH
+#ifndef gui_game_unitselectionboxH
+#define gui_game_unitselectionboxH
 
-#include <vector>
+#include "../../utility/box.h"
+#include "../../utility/fixedvector.h"
+#include "../../utility/position.h"
 
-#include "../../utility/signal/signal.h"
-
-class cPosition;
-class cMap;
-class cPlayer;
-class cMapField;
-class cUnit;
-class cVehicle;
-class cBuilding;
-template<typename T> class cBox;
-
-class cUnitSelection
+class cUnitSelectionBox
 {
 public:
-	bool selectUnitAt (const cMapField& field, bool base);
+	cUnitSelectionBox ();
+	bool isTooSmall () const;
 
-	bool selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player);
+	bool isValid () const;
 
-	bool selectUnit (cUnit& unit, bool add = false);
+	bool isValidStart () const;
+	bool isValidEnd () const;
 
-	void deselectUnit (const cUnit& unit);
-	void deselectUnits ();
+	void invalidate ();
 
-	cUnit* getSelectedUnit () const;
-	cVehicle* getSelectedVehicle () const;
-	cBuilding* getSelectedBuilding () const;
+	cBox<cFixedVector<double, 2>>& getBox ();
+	const cBox<cFixedVector<double, 2>>& getBox () const;
 
-	const std::vector<cUnit*>& getSelectedUnits () const;
-	std::vector<cVehicle*> getSelectedVehicles () const;
-	std::vector<cBuilding*> getSelectedBuildings () const;
-
-	size_t getSelectedUnitsCount () const;
-	size_t getSelectedVehiclesCount () const;
-	size_t getSelectedBuildingsCount () const;
-
-	bool isSelected (const cUnit& unit) const;
-
-	cSignal<void ()> selectionChanged;
-	cSignal<void ()> mainSelectionChanged;
-	cSignal<void ()> groupSelectionChanged;
+	cBox<cPosition> getCorrectedMapBox () const;
 private:
-	std::vector<cUnit*> selectedUnits;
+	cBox<cFixedVector<double, 2>> box;
 };
 
-#endif // gui_game_unitselectionH
+#endif // gui_game_unitselectionboxH
