@@ -463,7 +463,7 @@ public:
 	void addCoords (const sSavedReportMessage& msg);
 
 	void setClient (cClient* client);
-	void setHotSeatClients(const std::vector<cClient*>& hotSeatClients);
+	void setHotSeatClients (const std::vector<cClient*>& hotSeatClients);
 
 	virtual int show (cClient* client);
 

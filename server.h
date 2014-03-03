@@ -109,7 +109,7 @@ public:
 	/** the type of the current game */
 	eGameTypes getGameType() const;
 
-	void addLocalClient (cClient& client) { localClients.push_back(&client); }
+	void addLocalClient (cClient& client) { localClients.push_back (&client); }
 
 	const cCasualtiesTracker* getCasualtiesTracker() const { return casualtiesTracker.get();}
 	cCasualtiesTracker* getCasualtiesTracker() { return casualtiesTracker.get();}

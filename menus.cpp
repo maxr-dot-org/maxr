@@ -945,7 +945,8 @@ void cMultiPlayersMenu::tcpClientReleased (void* parent)
 static std::vector<sPlayer*> buildPlayerList (const cHotSeatMenu& hotSeatMenu, std::vector<int>& clans)
 {
 	std::vector<sPlayer*> res;
-	const char* const playerNames[] = {
+	const char* const playerNames[] =
+	{
 		"Player 1", "Player 2", "Player 3", "Player 4",
 		"Player 5", "Player 6", "Player 7", "Player 8"
 	};
@@ -1053,12 +1054,12 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 					}
 					// Create clients.
 					//eventHandlings.resize (splayers.size());
-					assert(splayers.size() <= 4);
+					assert (splayers.size() <= 4);
 					for (size_t i = 0, size = splayers.size(); i != size; ++i)
 					{
 						cClient* client = new cClient (&server, network, eventHandlings[i]);
 						clients.push_back (client);
-						client->setPlayers(splayers, *splayers[i]);
+						client->setPlayers (splayers, *splayers[i]);
 						client->getActivePlayer().setClan (clans[i]);
 						client->setMap (*map);
 						client->setGameSetting (settings);

@@ -125,7 +125,7 @@ public:
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& ID);
 
-	void setLandingPos(int x, int y) { landingPosX = x; landingPosY = y; }
+	void setLandingPos (int x, int y) { landingPosX = x; landingPosY = y; }
 	int getLandingPosX() const { return landingPosX; }
 	int getLandingPosY() const { return landingPosY; }
 

@@ -660,10 +660,10 @@ void cGameGUI::setClient (cClient* client)
 	playersInfo.setClient (*client);
 }
 
-void cGameGUI::setHotSeatClients(const std::vector<cClient*>& hotSeatClients)
+void cGameGUI::setHotSeatClients (const std::vector<cClient*>& hotSeatClients)
 {
 	this->hotSeatClients = hotSeatClients;
-	this->hotSeatClients.erase (std::find(this->hotSeatClients.begin(), this->hotSeatClients.end(), client));
+	this->hotSeatClients.erase (std::find (this->hotSeatClients.begin(), this->hotSeatClients.end(), client));
 }
 
 float cGameGUI::calcMinZoom() const

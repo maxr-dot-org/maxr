@@ -927,9 +927,9 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		else sTmp = lngPack.i18n ("Text~Comp~Waits");
 
 		// extra info only for infiltrators
-			// TODO should it be original behavior (as it is now) or
-			// don't display CommandRank for enemy (could also be a bug in original...?)
-		if ((data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/ )
+		// TODO should it be original behavior (as it is now) or
+		// don't display CommandRank for enemy (could also be a bug in original...?)
+		if ((data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/)
 		{
 			sTmp += "\n";
 			if (CommandoRank < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");

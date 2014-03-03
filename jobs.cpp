@@ -154,7 +154,7 @@ cPlaneTakeoffJob::cPlaneTakeoffJob (cVehicle& vehicle_, bool takeoff_) :
 
 void cPlaneTakeoffJob::run (const cGameTimer& gameTimer)
 {
-// TODO add sound #708
+	// TODO add sound #708
 	cVehicle* plane = vehicle;
 	if (takeoff)
 	{

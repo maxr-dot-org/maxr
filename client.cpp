@@ -132,11 +132,11 @@ void cClient::setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& 
 {
 	for (size_t i = 0, size = splayers.size(); i != size; ++i)
 	{
-		PlayerList.push_back(new cPlayer(*splayers[i]));
+		PlayerList.push_back (new cPlayer (*splayers[i]));
 	}
-	std::vector<sPlayer*>::const_iterator it = std::find(splayers.begin(), splayers.end(), &splayer);
+	std::vector<sPlayer*>::const_iterator it = std::find (splayers.begin(), splayers.end(), &splayer);
 	ActivePlayer = PlayerList[it - splayers.begin()];
-	std::sort(PlayerList.begin(), PlayerList.end(), LessByNr());
+	std::sort (PlayerList.begin(), PlayerList.end(), LessByNr());
 
 	initPlayersWithMap();
 }
@@ -182,9 +182,9 @@ void cClient::sendNetMessage (cNetMessage* message) const
 	if (message->iType != NET_GAME_TIME_CLIENT)
 	{
 		Log.write ("Client: " + getActivePlayer().getName() + " --> "
-			+ message->getTypeAsString()
-			+ ", gameTime:" + iToStr (this->gameTimer.gameTime)
-			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+				   + message->getTypeAsString()
+				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	if (server)
@@ -1790,9 +1790,9 @@ int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 	if (message->iType != NET_GAME_TIME_SERVER)
 	{
 		Log.write ("Client: " + getActivePlayer().getName() + " <-- "
-			+ message->getTypeAsString()
-			+ ", gameTime:" + iToStr (this->gameTimer.gameTime)
-			+ ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+				   + message->getTypeAsString()
+				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	switch (message->iType)

@@ -29,23 +29,24 @@
 #include <utility>
 #include <memory>
 
-namespace std{
+namespace std
+{
 
 template<class T, class... Args>
-inline typename enable_if<!is_array<T>::value, unique_ptr<T>>::type make_unique(Args&&... args)
+inline typename enable_if < !is_array<T>::value, unique_ptr<T >>::type make_unique (Args&& ... args)
 {
-    return (unique_ptr<T>(new T(forward<Args>(args)...)));
+	return (unique_ptr<T> (new T (forward<Args> (args)...)));
 }
 
 template<class T>
-inline typename enable_if<is_array<T>::value&& extent<T>::value == 0, unique_ptr<T>>::type make_unique(size_t size)
+inline typename enable_if < is_array<T>::value&& extent<T>::value == 0, unique_ptr<T >>::type make_unique (size_t size)
 {
-    typedef typename remove_extent<T>::type E;
-    return (unique_ptr<T>(new E[size]()));
+	typedef typename remove_extent<T>::type E;
+	return (unique_ptr<T> (new E[size]()));
 }
 
 template<class T, class... Args>
-typename enable_if<extent<T>::value != 0, void>::type make_unique(Args&&...) MAXR_DELETE_FUNCTION;
+typename enable_if < extent<T>::value != 0, void >::type make_unique (Args&& ...) MAXR_DELETE_FUNCTION;
 
 }
 
