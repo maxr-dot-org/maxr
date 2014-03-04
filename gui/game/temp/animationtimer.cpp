@@ -129,21 +129,25 @@ void cAnimationTimer::updateAnimationFlags ()
 	{
 		animationFlags.set10ms (true);
 		nextTrigger10msTime += 10 / sdlTimerInterval;
+		if (nextTrigger10msTime <= timerTime) nextTrigger10msTime = timerTime + 10 / sdlTimerInterval;
 	}
 	if (timerTime >= nextTrigger50msTime)
 	{
 		animationFlags.set50ms (true);
 		nextTrigger50msTime += 50 / sdlTimerInterval;
+		if (nextTrigger50msTime <= timerTime) nextTrigger50msTime = timerTime + 50 / sdlTimerInterval;
 	}
 	if (timerTime >= nextTrigger100msTime)
 	{
 		animationFlags.set100ms (true);
 		nextTrigger100msTime += 100 / sdlTimerInterval;
+		if (nextTrigger100msTime <= timerTime) nextTrigger100msTime = timerTime + 100 / sdlTimerInterval;
 	}
 	if (timerTime >= nextTrigger400msTime)
 	{
 		animationFlags.set400ms (true);
 		nextTrigger400msTime += 400 / sdlTimerInterval;
+		if (nextTrigger400msTime <= timerTime) nextTrigger400msTime = timerTime + 400 / sdlTimerInterval;
 	}
 
 	if (animationFlags.is10ms ()) triggered10ms ();

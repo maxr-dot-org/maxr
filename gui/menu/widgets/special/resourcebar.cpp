@@ -33,6 +33,10 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 	minValue (minValue_),
 	maxValue (maxValue_),
 	currentValue (maxValue_),
+	fixedMinEnabled (false),
+	fixedMinValue (minValue_),
+	fixedMaxEnabled (false),
+	fixedMaxValue (maxValue_),
 	stepSize (1)
 {
 	assert (minValue <= maxValue);
@@ -114,6 +118,34 @@ void cResourceBar::setMaxValue (int maxValue_)
 }
 
 //------------------------------------------------------------------------------
+int cResourceBar::getFixedMinValue () const
+{
+	return fixedMinEnabled ? fixedMinValue : minValue;
+}
+
+//------------------------------------------------------------------------------
+void cResourceBar::setFixedMinValue (int fixedMinValue_)
+{
+	fixedMinValue = std::max (fixedMinValue_, minValue);
+	fixedMinEnabled = true;
+	setValue (getValue ());
+}
+
+//------------------------------------------------------------------------------
+int cResourceBar::getFixedMaxValue () const
+{
+	return fixedMaxEnabled ? fixedMaxValue : maxValue;
+}
+
+//------------------------------------------------------------------------------
+void cResourceBar::setFixedMaxValue (int fixedMaxValue_)
+{
+	fixedMaxValue = std::min (fixedMaxValue_, maxValue);
+	fixedMaxEnabled = true;
+	setValue (getValue ());
+}
+
+//------------------------------------------------------------------------------
 int cResourceBar::getValue () const
 {
 	return currentValue;
@@ -129,6 +161,9 @@ void cResourceBar::setValue (int value)
 	{
 		value = Round ((float)value / stepSize) * stepSize;
 	}
+
+	value = std::max (getFixedMinValue (), value);
+	value = std::min (getFixedMaxValue (), value);
 
 	if (value != currentValue)
 	{

@@ -32,6 +32,7 @@
 
 #include "../application.h"
 #include "../menu/dialogs/dialogpreferences.h"
+#include "../menu/dialogs/dialogtransfer.h"
 
 #include "../../keys.h"
 #include "../../player.h"
@@ -102,23 +103,22 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
 
 
-	clientSignalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit&)
+	signalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit&)
 	{
 		//cUnitHelpMenu helpMenu (&overVehicle->data, overVehicle->owner);
 		//switchTo (helpMenu, client);
 	});
-	clientSignalConnectionManager.connect (gameMap->triggeredTransfer, [&](const cUnit&, const cUnit&)
+	signalConnectionManager.connect (gameMap->triggeredTransfer, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
 	{
-		//if (overVehicle)
-		//{
-		//	cDialogTransfer transferDialog (*this, *selectedUnit, *overVehicle);
-		//	switchTo (transferDialog, client);
-		//}
-		//else if (overBuilding)
-		//{
-		//	cDialogTransfer transferDialog (*this, *selectedUnit, *overBuilding);
-		//	switchTo (transferDialog, client);
-		//}
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		auto transferDialog = application->show (std::make_shared<cNewDialogTransfer> (sourceUnit, destinationUnit));
+		transferDialog->done.connect ([&,transferDialog]()
+		{
+			transferTriggered (sourceUnit, destinationUnit, transferDialog->getTransferValue (), transferDialog->getResourceType ());
+			transferDialog->close ();
+		});
 	});
 	signalConnectionManager.connect (gameMap->triggeredBuild, [&](const cUnit& unit)
 	{
@@ -255,6 +255,13 @@ void cNewGameGUI::connectToClient (cClient& client)
 	//
 	// GUI to client (action)
 	//
+	clientSignalConnectionManager.connect (transferTriggered, [&](const cUnit& sourceUnit, const cUnit& destinationUnit, int transferValue, int resourceType)
+	{
+		if (transferValue != 0)
+		{
+			sendWantTransfer (client, sourceUnit.isAVehicle (), sourceUnit.iID, destinationUnit.isAVehicle (), destinationUnit.iID, transferValue, resourceType);
+		}
+	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
@@ -635,33 +642,16 @@ void cNewGameGUI::connectToClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.unitDisabled, [&](const cUnit& unit)
 	{
-		//const std::string msg = Vehicle->getDisplayName () + " " + lngPack.i18n ("Text~Comp~Disabled");
-		//const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
-		//gameGUI->addCoords (report);
-		//PlayVoice (VoiceData.VOIUnitDisabled);
-
-		//const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
-		//const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
-		//gameGUI->addCoords (report);
 		PlayVoice (VoiceData.VOIUnitDisabled);
 	});
 
 	clientSignalConnectionManager.connect (client.unitStolen, [&](const cUnit& unit)
 	{
-		//const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", unit.getDisplayName ());
-		//const sSavedReportMessage& report = getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, unit.data.ID, unit.PosX, unit.PosY);
-		//gameGUI->addCoords (report);
-
 		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
 	});
 
 	clientSignalConnectionManager.connect (client.unitDetected, [&](const cUnit& unit)
 	{
-		// make report
-		//const string message = addedVehicle.getDisplayName () + " (" + addedVehicle.owner->getName () + ") " + lngPack.i18n ("Text~Comp~Detected");
-		//const sSavedReportMessage& report = getActivePlayer ().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, iPosX, iPosY);
-		//gameGUI->addCoords (report);
-
 		if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
 		{
 			PlayVoice (VoiceData.VOISubDetected);
@@ -886,6 +876,25 @@ void cNewGameGUI::handleLooseMouseFocus (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
+void cNewGameGUI::handleActivated (cApplication& application)
+{
+	cWindow::handleActivated (application);
+
+	auto mouse = getActiveMouse ();
+	if (mouse)
+	{
+		if (hud->isAt (mouse->getPosition ())) mouse->setCursorType (eMouseCursorType::Hand);
+		else gameMap->updateMouseCursor (*mouse);
+	}
+}
+
+//------------------------------------------------------------------------------
+std::pair<bool, eMouseCursorType> cNewGameGUI::getDefaultCursor () const
+{
+	return std::make_pair (false, eMouseCursorType::Hand);
+}
+
+//------------------------------------------------------------------------------
 void cNewGameGUI::resetMiniMapViewWindow ()
 {
 	miniMap->setViewWindow (gameMap->getDisplayedMapArea ());
@@ -903,8 +912,7 @@ void cNewGameGUI::showPreferencesDialog ()
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto preferencesDialog = std::make_shared<cDialogNewPreferences> ();
-	application->show (preferencesDialog);
+	application->show (std::make_shared<cDialogNewPreferences> ());
 }
 
 //------------------------------------------------------------------------------

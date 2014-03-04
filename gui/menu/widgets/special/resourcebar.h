@@ -52,6 +52,12 @@ public:
 	int getMaxValue () const;
 	void setMaxValue (int maxValue);
 
+	int getFixedMinValue () const;
+	void setFixedMinValue (int minValue);
+
+	int getFixedMaxValue () const;
+	void setFixedMaxValue (int maxValue);
+
 	int getValue () const;
 	void setValue (int value);
 
@@ -77,6 +83,11 @@ private:
 	int maxValue;
 
 	int currentValue;
+
+	bool fixedMinEnabled;
+	int fixedMinValue;
+	bool fixedMaxEnabled;
+	int fixedMaxValue;
 
 	int stepSize;
 

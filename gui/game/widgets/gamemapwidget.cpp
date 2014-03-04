@@ -1443,6 +1443,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			{
 				triggeredTransfer (*selectedUnit, *overBuilding);
 			}
+			if (mouseInputMode == eNewMouseInputMode::Transfer) setMouseInputMode (eNewMouseInputMode::Default);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::PlaceBand && selectedVehicle && mouseInputMode == eNewMouseInputMode::PlaceBand)
 		{

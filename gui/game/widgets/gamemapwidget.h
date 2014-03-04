@@ -101,6 +101,9 @@ public:
 
 	cBox<cPosition> getDisplayedMapArea () const;
 
+	void updateMouseCursor ();
+	void updateMouseCursor (cMouse& mouse);
+
 	cSignal<void ()> scrolled;
 	cSignal<void ()> zoomFactorChanged;
 
@@ -249,9 +252,6 @@ private:
 
 	void setMouseInputMode (eNewMouseInputMode mouseInputMode);
 	void toggleMouseInputMode (eNewMouseInputMode mouseInputMode);
-
-	void updateMouseCursor ();
-	void updateMouseCursor (cMouse& mouse);
 
 	eMouseClickAction getMouseClickAction (const cMouse& mouse);
 };

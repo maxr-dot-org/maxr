@@ -20,6 +20,7 @@
 #include "window.h"
 #include "application.h"
 
+#include "../input/mouse/mouse.h"
 #include "../settings.h"
 #include "../video.h"
 
@@ -89,6 +90,19 @@ void cWindow::handleActivated (cApplication& application)
 
 	hasBeenDrawnOnce = false;
 	activeApplication = &application;
+
+	bool hasDefaultCursor;
+	eMouseCursorType defaultCursor;
+	std::tie (hasDefaultCursor, defaultCursor) = getDefaultCursor ();
+
+	if (hasDefaultCursor)
+	{
+		auto mouse = activeApplication->getActiveMouse ();
+		if (mouse)
+		{
+			mouse->setCursorType (defaultCursor);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -105,6 +119,12 @@ void cWindow::handleDeactivated (cApplication& application)
 cApplication* cWindow::getActiveApplication () const
 {
 	return activeApplication;
+}
+
+//------------------------------------------------------------------------------
+std::pair<bool, eMouseCursorType> cWindow::getDefaultCursor () const
+{
+	return std::make_pair (true, eMouseCursorType::Hand);
 }
 
 //------------------------------------------------------------------------------

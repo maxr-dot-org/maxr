@@ -598,6 +598,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		{
 			if (Vehicle->isDisabled())
 			{
+				const std::string msg = Vehicle->getDisplayName () + " " + lngPack.i18n ("Text~Comp~Disabled");
+				ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
 				unitDisabled (*Vehicle);
 			}
 			Vehicle->owner->doScan();
@@ -628,6 +630,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		{
 			if (Building->isDisabled())
 			{
+				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
+				ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
 				unitDisabled (*Building);
 			}
 			Building->owner->doScan();
@@ -1843,10 +1847,14 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit,
 
 	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
+		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", addedVehicle.getDisplayName ());
+		getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, addedVehicle.PosX, addedVehicle.PosY);
 		unitStolen (addedVehicle);
 	}
 	else if (addedVehicle.owner != ActivePlayer)
 	{
+		const string message = addedVehicle.getDisplayName () + " (" + addedVehicle.owner->getName () + ") " + lngPack.i18n ("Text~Comp~Detected");
+		getActivePlayer ().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, iPosX, iPosY);
 		unitDetected (addedVehicle);
 	}
 }

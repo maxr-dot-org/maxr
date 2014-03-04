@@ -21,6 +21,7 @@
 #define gui_game_gameguiH
 
 #include "../window.h"
+#include "../../utility/signal/signal.h"
 #include "../../utility/signal/signalconnectionmanager.h"
 #include "../../sound.h"
 #include "unitselection.h"
@@ -57,8 +58,11 @@ public:
 	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 protected:
 
+	virtual std::pair<bool, eMouseCursorType> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager clientSignalConnectionManager;
@@ -96,6 +100,8 @@ private:
 	void stopSelectedUnitSound ();
 
 	void connectMoveJob (const cVehicle& vehicle);
+
+	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 };
 
 #endif // gui_game_gameguiH
