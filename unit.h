@@ -90,7 +90,7 @@ public:
 	void setSentryActive (bool value);
 	void setManualFireActive (bool value);
 	void setAttacking (bool value);
-	void setIsBeeinAttack (bool value);
+	void setIsBeeinAttacked (bool value);
 	void setMarkedAsDone (bool value);
 	void setHasBeenAttacked (bool value);
 

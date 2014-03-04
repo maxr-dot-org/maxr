@@ -582,7 +582,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Vehicle->changeName (message.popString());
 
-		Vehicle->setIsBeeinAttack(message.popBool());
+		Vehicle->setIsBeeinAttacked(message.popBool());
 		const bool bWasDisabled = Vehicle->isDisabled();
 		Vehicle->setDisabledTurns(message.popInt16 ());
 		Vehicle->CommandoRank = message.popInt16();

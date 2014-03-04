@@ -339,7 +339,7 @@ void cUnit::setAttacking (bool value)
 }
 
 //------------------------------------------------------------------------------
-void cUnit::setIsBeeinAttack (bool value)
+void cUnit::setIsBeeinAttacked (bool value)
 {
 	std::swap (beeingAttacked, value);
 	if (value != beeingAttacked) beeingAttackedChanged ();

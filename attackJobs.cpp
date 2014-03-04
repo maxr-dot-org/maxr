@@ -129,7 +129,7 @@ void cServerAttackJob::lockTarget (int offset)
 	cMap& map = *server->Map;
 	cUnit* target = selectTarget (offset % map.getSize(), offset / map.getSize(), attackMode, map);
 	if (target)
-		target->setIsBeeinAttack(true);
+		target->setIsBeeinAttacked(true);
 
 	const bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
@@ -149,7 +149,7 @@ void cServerAttackJob::lockTarget (int offset)
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
-			(*it)->setIsBeeinAttack(true);
+			(*it)->setIsBeeinAttacked(true);
 		}
 	}
 
@@ -425,14 +425,14 @@ void cServerAttackJob::makeImpact (int x, int y)
 
 	// attack finished. reset attacking and isBeeingAttacked flags
 	if (target)
-		target->setIsBeeinAttack(false);
+		target->setIsBeeinAttacked(false);
 
 	if (isAir == false)
 	{
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			(*it)->setIsBeeinAttack(false);
+			(*it)->setIsBeeinAttacked(false);
 		}
 	}
 	if (unit)
@@ -524,7 +524,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 			return;
 		}
 
-		vehicle->setIsBeeinAttack(true);
+		vehicle->setIsBeeinAttacked(true);
 
 		// synchonize position
 		if (vehicle->PosX != x || vehicle->PosY != y)
@@ -542,7 +542,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			(*it)->setIsBeeinAttack(true);
+			(*it)->setIsBeeinAttacked(true);
 		}
 	}
 }
@@ -963,14 +963,14 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 	}
 
 	// clean up
-	if (targetVehicle) targetVehicle->setIsBeeinAttack(false);
+	if (targetVehicle) targetVehicle->setIsBeeinAttacked(false);
 
 	if (!isAir)
 	{
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			(*it)->setIsBeeinAttack(false);
+			(*it)->setIsBeeinAttacked(false);
 		}
 	}
 }
