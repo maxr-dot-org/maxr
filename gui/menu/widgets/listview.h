@@ -24,6 +24,7 @@
 #include "clickablewidget.h"
 #include "../../../settings.h"
 #include "../../../video.h"
+#include "../../../sound.h"
 #include "../../../input/mouse/mouse.h"
 
 #include "../../application.h"
@@ -36,6 +37,14 @@ class cListView : public cClickableWidget
 	static_assert(std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
 public:
 	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, sSOUND* clickSound = SoundData.SNDObjectMenu);
+
+	void setBeginMargin (const cPosition& margin);
+	void setEndMargin (const cPosition& margin);
+	void setItemDistance (const cPosition& distance);
+
+	const cPosition& getBeginMargin ();
+	const cPosition& getEndMargin ();
+	const cPosition& getItemDistance ();
 
 	ItemType* addItem (std::unique_ptr<ItemType> item);
 
@@ -71,14 +80,13 @@ public:
 	virtual void handleMoved (const cPosition& offset);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-
 protected:
 
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 private:
-	const cPosition beginMargin;
-	const cPosition endMargin;
-	const cPosition itemDistance;
+	cPosition beginMargin;
+	cPosition endMargin;
+	cPosition itemDistance;
 
 	sSOUND* clickSound;
 
@@ -107,6 +115,49 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSele
 {
 	assert (!allowMultiSelection); // multi selection not yet implemented
 }
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::setBeginMargin (const cPosition& margin)
+{
+	beginMargin = margin;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::setEndMargin (const cPosition& margin)
+{
+	endMargin = margin;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::setItemDistance (const cPosition& distance)
+{
+	itemDistance = distance;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+const cPosition& cListView<ItemType>::getBeginMargin ()
+{
+	return beginMargin;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+const cPosition& cListView<ItemType>::getEndMargin ()
+{
+	return endMargin;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+const cPosition& cListView<ItemType>::getItemDistance ()
+{
+	return itemDistance;
+}
+
 
 //------------------------------------------------------------------------------
 template<typename ItemType>

@@ -17,44 +17,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_labelH
-#define gui_menu_widgets_labelH
+#ifndef gui_widgets_tools_validatorstateH
+#define gui_widgets_tools_validatorstateH
 
-#include <string>
-#include <vector>
-
-#include "../../../maxrconfig.h"
-#include "../../widget.h"
-#include "../../alignment.h"
-#include "../../../unifonts.h"
-
-class cLabel : public cWidget
+enum class eValidatorState
 {
-public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
-
-	void setText (const std::string& text);
-	const std::string& getText () const;
-
-	void setFont (eUnicodeFontType fontType);
-	void setAlignment (AlignmentFlags alignment);
-	void setWordWrap (bool wordWrap);
-
-	void resizeToTextHeight ();
-
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-private:
-	std::string text;
-	eUnicodeFontType fontType;
-	AlignmentFlags alignment;
-	bool wordWrap;
-
-	std::vector<std::string> drawLines;
-
-	void updateDisplayInformation ();
-
-	// TODO: may move to some other place
-	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
+	Invalid,
+	Intermediate,
+	Valid
 };
 
-#endif // gui_menu_widgets_labelH
+#endif // gui_widgets_tools_validatorstateH

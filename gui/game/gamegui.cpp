@@ -26,6 +26,7 @@
 #include "widgets/gamemapwidget.h"
 #include "widgets/minimapwidget.h"
 #include "widgets/unitcontextmenuwidget.h"
+#include "widgets/gamemessagelistview.h"
 
 #include "temp/animationtimer.h"
 
@@ -58,6 +59,8 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	resize (hudOwning->getSize ());
 
 	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer));
+
+	messageList = addChild (std::make_unique<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 2, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 2, cHud::panelTopHeight + 200))));
 
 	hud = addChild (std::move (hudOwning));
 
@@ -153,6 +156,10 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 			gameMap->scroll (mouseScrollDirection);
 		}
 	});
+	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
+	{
+		messageList->removeOldMessages ();
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -218,6 +225,26 @@ void cNewGameGUI::setPlayer (const cPlayer* player_)
 	gameMap->setPlayer (player);
 	miniMap->setPlayer (player);
 	hud->setPlayer (player);
+
+	playerSignalConnectionManager.disconnectAll ();
+
+	if (player != nullptr)
+	{
+		playerSignalConnectionManager.connect (player->reportAdded, [&](const sSavedReportMessage& report)
+		{
+			if (report.xPos == -1 || report.yPos == -1)
+			{
+				messageList->addMessage (report.getFullMessage ());
+			}
+			else
+			{
+				messageList->addMessage (report.getFullMessage () + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")");
+				// TODO: save position for jump!
+			}
+
+			if (cSettings::getInstance ().isDebug ()) Log.write (report.getFullMessage (), cLog::eLOG_TYPE_DEBUG);
+		});
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -228,19 +255,23 @@ void cNewGameGUI::connectToClient (cClient& client)
 	//
 	// GUI to client (action)
 	//
-	signalConnectionManager.connect (hud->endClicked, [&]()
+	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
 	});
-	signalConnectionManager.connect (gameMap->triggeredStartWork, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (hud->triggeredRenameUnit, [&](const cUnit& unit, const std::string& name)
+	{
+		sendWantChangeUnitName (client, name, unit.iID);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredStartWork, [&](const cUnit& unit)
 	{
 		sendWantStartWork (client, unit);
 	});
-	signalConnectionManager.connect (gameMap->triggeredStopWork, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredStopWork, [&](const cUnit& unit)
 	{
 		unit.executeStopCommand (client);
 	});
-	signalConnectionManager.connect (gameMap->triggeredAutoMoveJob, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredAutoMoveJob, [&](const cUnit& unit)
 	{
 		if (unit.data.ID.isAVehicle ())
 		{
@@ -249,27 +280,27 @@ void cNewGameGUI::connectToClient (cClient& client)
 			vehicle->executeAutoMoveJobCommand (client);
 		}
 	});
-	signalConnectionManager.connect (gameMap->triggeredStartClear, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredStartClear, [&](const cUnit& unit)
 	{
 		if (unit.data.ID.isAVehicle ()) sendWantStartClear (client, static_cast<const cVehicle&> (unit));
 	});
-	signalConnectionManager.connect (gameMap->triggeredManualFire, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredManualFire, [&](const cUnit& unit)
 	{
 		sendChangeManualFireStatus (client, unit.iID, unit.isAVehicle ());
 	});
-	signalConnectionManager.connect (gameMap->triggeredSentry, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredSentry, [&](const cUnit& unit)
 	{
 		sendChangeSentry (client, unit.iID, unit.isAVehicle ());
 	});
-	signalConnectionManager.connect (gameMap->triggeredUpgradeThis, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredUpgradeThis, [&](const cUnit& unit)
 	{
 		if (unit.data.ID.isABuilding ()) static_cast<const cBuilding&>(unit).executeUpdateBuildingCommmand (client, false);
 	});
-	signalConnectionManager.connect (gameMap->triggeredUpgradeAll, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredUpgradeAll, [&](const cUnit& unit)
 	{
 		if (unit.data.ID.isABuilding ()) static_cast<const cBuilding&>(unit).executeUpdateBuildingCommmand (client, true);
 	});
-	signalConnectionManager.connect (gameMap->triggeredLayMines, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredLayMines, [&](const cUnit& unit)
 	{
 		if (unit.data.ID.isAVehicle ())
 		{
@@ -278,7 +309,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 			vehicle->executeLayMinesCommand (client);
 		}
 	});
-	signalConnectionManager.connect (gameMap->triggeredCollectMines, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredCollectMines, [&](const cUnit& unit)
 	{
 		if (unit.data.ID.isAVehicle ())
 		{
@@ -287,7 +318,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 			vehicle->executeClearMinesCommand (client);
 		}
 	});
-	signalConnectionManager.connect (gameMap->triggeredUnitDone, [&](const cUnit& unit)
+	clientSignalConnectionManager.connect (gameMap->triggeredUnitDone, [&](const cUnit& unit)
 	{
 		if (unit.owner == player)
 		{

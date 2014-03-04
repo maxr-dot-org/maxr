@@ -17,44 +17,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_labelH
-#define gui_menu_widgets_labelH
+#include "gamemessagelistviewitem.h"
+#include "../../menu/widgets/label.h"
+#include "../../../main.h"
 
-#include <string>
-#include <vector>
-
-#include "../../../maxrconfig.h"
-#include "../../widget.h"
-#include "../../alignment.h"
-#include "../../../unifonts.h"
-
-class cLabel : public cWidget
+//------------------------------------------------------------------------------
+cGameMessageListViewItem::cGameMessageListViewItem (int width, const std::string& message)
 {
-public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
+	const cPosition beginMargin (2, 2);
+	const cPosition endMargin (2, 2);
 
-	void setText (const std::string& text);
-	const std::string& getText () const;
+	const cBox<cPosition> labelArea (getPosition () + beginMargin, getPosition () + beginMargin + cPosition (width, 50) - endMargin);
+	messageLabel = addChild (std::make_unique<cLabel> (labelArea, message));
+	messageLabel->setWordWrap (true);
+	messageLabel->resizeToTextHeight ();
 
-	void setFont (eUnicodeFontType fontType);
-	void setAlignment (AlignmentFlags alignment);
-	void setWordWrap (bool wordWrap);
+	resize (cPosition (width, messageLabel->getSize ().y () + beginMargin.y () + endMargin.y ()));
 
-	void resizeToTextHeight ();
+	creationTime = std::chrono::system_clock::now ();
+}
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-private:
-	std::string text;
-	eUnicodeFontType fontType;
-	AlignmentFlags alignment;
-	bool wordWrap;
+//------------------------------------------------------------------------------
+std::chrono::system_clock::time_point cGameMessageListViewItem::getCreationTime () const
+{
+	return creationTime;
+}
 
-	std::vector<std::string> drawLines;
+//------------------------------------------------------------------------------
+void cGameMessageListViewItem::draw ()
+{
+	if (cSettings::getInstance ().isAlphaEffects ())
+	{
+		SDL_Rect rect = getArea ().toSdlRect ();
+		Video.applyShadow (&rect);
+	}
 
-	void updateDisplayInformation ();
-
-	// TODO: may move to some other place
-	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
-};
-
-#endif // gui_menu_widgets_labelH
+	cWidget::draw ();
+}

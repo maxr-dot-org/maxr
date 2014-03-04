@@ -922,6 +922,8 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 		break;
 	}
 
+	if (unicodeCharacter == ' ') unicodeCharacter = 'a'; // we use the length of 'a' for the length of a space
+
 	if (chars[unicodeCharacter] != NULL)
 	{
 		return chars[unicodeCharacter]->w + space;

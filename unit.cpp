@@ -178,6 +178,7 @@ void cUnit::changeName (const string& newName)
 {
 	name = newName;
 	isOriginalName = false;
+	renamed ();
 }
 
 //------------------------------------------------------------------------------

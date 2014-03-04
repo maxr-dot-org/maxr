@@ -1812,7 +1812,6 @@ void cGameGUI::onChat_errorMessage (const std::string& msg)
 {
 	PlayFX (SoundData.SNDQuitsch);
 	addMessage (msg);
-	client->getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
 }
 
 void cGameGUI::onChat_infoMessage (const std::string& msg)
@@ -3240,8 +3239,8 @@ void cGameGUI::selectBoxVehicles(const cBox<cPosition>& box)
 
 void cGameGUI::updateStatusText()
 {
-	if (selectedUnit) selUnitStatusStr.setText (selectedUnit->getStatusStr (*this));
-	else selUnitStatusStr.setText ("");
+	//if (selectedUnit) selUnitStatusStr.setText (selectedUnit->getStatusStr (*this));
+	//else selUnitStatusStr.setText ("");
 }
 
 void cGameGUI::deselectGroup()

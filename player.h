@@ -30,6 +30,7 @@
 #include "main.h" // for sID
 #include "upgradecalculator.h"
 #include "utility/position.h"
+#include "utility/signal/signal.h"
 
 class cBuilding;
 class cGameGUI;
@@ -185,6 +186,8 @@ public:
 	bool mayHaveOffensiveUnit() const;
 
 	bool canSeeAt (const cPosition& position) const;
+
+	mutable cSignal<void (const sSavedReportMessage&)> reportAdded;
 private:
 	/**
 	* draws a circle on the map for the fog

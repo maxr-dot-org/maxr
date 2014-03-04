@@ -26,8 +26,10 @@
 
 #include "../../../maxrconfig.h"
 #include "clickablewidget.h"
+#include "tools/validatorstate.h"
 #include "../../../unifonts.h"
 #include "../../../autosurface.h"
+#include "../../../utility/signal/signal.h"
 
 class cValidator;
 
@@ -49,6 +51,8 @@ public:
 	void setReadOnly (bool readOnly);
 	void setValidator (std::unique_ptr<cValidator> validator);
 
+	void finishEditing ();
+
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
@@ -56,6 +60,10 @@ public:
 
 	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key);
 	virtual bool handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text);
+
+	cSignal<void ()> escapePressed;
+	cSignal<void ()> returnPressed;
+	cSignal<void (eValidatorState)> editingFinished;
 protected:
 
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
@@ -93,6 +101,8 @@ private:
 	void scrollRight ();
 	void deleteLeft ();
 	void deleteRight ();
+
+	void finishEditingInternal ();
 };
 
 #endif // gui_menu_widgets_lineeditH

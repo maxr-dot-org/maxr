@@ -169,7 +169,7 @@ public:
 	void Select (cGameGUI& gameGUI);
 
 	int playStream();
-	std::string getStatusStr (const cGameGUI& gameGUI) const;
+	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	/**
 	* refreshes the shotsCur of this building
 	*@author alzi alias DoctorDeath

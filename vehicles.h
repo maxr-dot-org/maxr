@@ -182,7 +182,7 @@ public:
 	bool refreshData_Clear (cServer& server);
 
 	void DrawPath (cGameGUI& gameGUI);
-	virtual std::string getStatusStr (const cGameGUI& gameGUI) const;
+	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);

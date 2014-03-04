@@ -22,12 +22,7 @@
 
 #include <string>
 
-enum class eValidatorState
-{
-	Invalid,
-	Intermediate,
-	Valid
-};
+#include "validatorstate.h"
 
 class cValidator
 {

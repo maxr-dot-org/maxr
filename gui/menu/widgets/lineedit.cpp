@@ -21,7 +21,8 @@
 
 #include "lineedit.h"
 #include "tools/validator.h"
-
+#include "../../application.h"
+#include "../../window.h"
 #include "../../../settings.h"
 #include "../../../video.h"
 #include "../../../input/mouse/mouse.h"
@@ -82,6 +83,40 @@ void cLineEdit::setValidator (std::unique_ptr<cValidator> validator_)
 }
 
 //------------------------------------------------------------------------------
+void cLineEdit::finishEditing ()
+{
+	auto application = getActiveApplication ();
+	if (application)
+	{
+		application->releaseKeyFocus (*this);
+	}
+	else
+	{
+		finishEditingInternal ();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cLineEdit::finishEditingInternal ()
+{
+	SDL_StopTextInput ();
+
+	if (validator)
+	{
+		const auto state = validator->validate (text);
+		if (state != eValidatorState::Valid)
+		{
+			validator->fixup (text);
+			resetTextPosition ();
+		}
+		editingFinished (state);
+	}
+	else
+	{
+		editingFinished (eValidatorState::Valid);
+	}
+}
+//------------------------------------------------------------------------------
 void cLineEdit::draw ()
 {
 	if (surface)
@@ -126,6 +161,8 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 	hasKeyFocus = true;
 	showCursor = true;
 
+	SDL_StartTextInput ();
+
 	return true;
 }
 
@@ -134,15 +171,7 @@ void cLineEdit::handleLooseKeyFocus (cApplication& application)
 {
 	hasKeyFocus = false;
 
-	if (validator)
-	{
-		const auto state = validator->validate (text);
-		if (state != eValidatorState::Valid)
-		{
-			validator->fixup (text);
-			resetTextPosition ();
-		}
-	}
+	finishEditingInternal ();
 }
 
 //------------------------------------------------------------------------------
@@ -310,13 +339,13 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 
 	switch (key)
 	{
+	case SDLK_ESCAPE:
+		escapePressed ();
+		application.releaseKeyFocus (*this);
+		break;
 	case SDLK_RETURN:
-		//if (returnPressed)
-		//{
-		//	PlayFX (SoundData.SNDHudButton);
-		//	returnPressed (parent);
-		//	SDL_StopTextInput ();
-		//}
+		returnPressed ();
+		application.releaseKeyFocus (*this);
 		break;
 	case SDLK_LEFT:
 		scrollLeft ();
@@ -345,12 +374,6 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 //------------------------------------------------------------------------------
 bool cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* inputText)
 {
-	//if (std::isdigit (inputText[0]))
-	//{
-	//	if (!takeNumerics) return;
-	//}
-	//else if (!takeChars) return;
-
 	text.insert (cursorPos, inputText);
 
 	if (validator)

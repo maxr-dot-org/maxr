@@ -101,6 +101,9 @@ public:
 	virtual void handleActivated (cApplication& application);
 
 protected:
+	virtual cMouse* getActiveMouse () const MAXR_OVERRIDE_FUNCTION;
+	virtual cKeyboard* getActiveKeyboard () const MAXR_OVERRIDE_FUNCTION;
+	
 	/**
 	 * Gets the application where the current window is the
 	 * active one (on top of the window stack).
@@ -108,10 +111,7 @@ protected:
 	 * @return The application or null if the current window is
 	 *         not the active one in any application.
 	 */
-	cApplication* getActiveApplication () const;
-
-	virtual cMouse* getActiveMouse () const MAXR_OVERRIDE_FUNCTION;
-	virtual cKeyboard* getActiveKeyboard () const MAXR_OVERRIDE_FUNCTION;
+	virtual cApplication* getActiveApplication () const MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	 * Sets a new background surface image.

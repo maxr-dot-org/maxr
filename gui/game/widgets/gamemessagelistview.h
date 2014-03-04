@@ -17,44 +17,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_labelH
-#define gui_menu_widgets_labelH
+#ifndef gui_game_widgets_gamemessagelistviewH
+#define gui_game_widgets_gamemessagelistviewH
 
-#include <string>
-#include <vector>
-
-#include "../../../maxrconfig.h"
 #include "../../widget.h"
-#include "../../alignment.h"
-#include "../../../unifonts.h"
+#include "gamemessagelistviewitem.h"
 
-class cLabel : public cWidget
+template<typename>
+class cListView;
+
+class cGameMessageListView : public cWidget
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
+	explicit cGameMessageListView (const cBox<cPosition>& area);
 
-	void setText (const std::string& text);
-	const std::string& getText () const;
+	void addMessage (const std::string& message);
 
-	void setFont (eUnicodeFontType fontType);
-	void setAlignment (AlignmentFlags alignment);
-	void setWordWrap (bool wordWrap);
+	void removeOldMessages ();
 
-	void resizeToTextHeight ();
-
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 private:
-	std::string text;
-	eUnicodeFontType fontType;
-	AlignmentFlags alignment;
-	bool wordWrap;
+	cListView<cGameMessageListViewItem>* listView;
 
-	std::vector<std::string> drawLines;
-
-	void updateDisplayInformation ();
-
-	// TODO: may move to some other place
-	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
+	const std::chrono::seconds maximalDisplayTime;
 };
 
-#endif // gui_menu_widgets_labelH
+#endif // gui_game_widgets_gamemessagelistviewH

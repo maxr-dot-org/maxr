@@ -322,6 +322,12 @@ cKeyboard* cWidget::getActiveKeyboard () const
 }
 
 //------------------------------------------------------------------------------
+cApplication* cWidget::getActiveApplication () const
+{
+	return parent ? parent->getActiveApplication () : nullptr;
+}
+
+//------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
 	const bool debugDrawFrame = false;

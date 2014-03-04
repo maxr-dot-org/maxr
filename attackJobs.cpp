@@ -651,11 +651,8 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		const sID id = unit->data.ID;
 		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (lngPack.i18n ("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
 		//FIXME: gameGUI
-		//client->getGameGUI().addCoords (report);
 		//PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
-	//FIXME: gameGUI
-	//client->getGameGUI().checkMouseInputMode();
 }
 
 //--------------------------------------------------------------------------
@@ -938,8 +935,6 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 				playImpact = true;
 			}
 		}
-		//FIXME: gameGUI
-		//client.getGameGUI().updateMouseCursor();
 	}
 
 	const int x = offset % map.getSize();
@@ -947,7 +942,6 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
-		// TODO:  PlayFX (SoundData.hit);
 		client.addFx (std::make_shared<cFxHit> (cPosition (x * 64 + offX + 32, y * 64 + offY + 32)));
 	}
 
@@ -966,8 +960,6 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
 		const sSavedReportMessage& report = client.getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
-		//FIXME: gameGUI
-		//client.getGameGUI().addCoords (report);
 	}
 
 	// clean up

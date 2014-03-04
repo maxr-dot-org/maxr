@@ -28,6 +28,7 @@
 class cHud;
 class cGameMapWidget;
 class cMiniMapWidget;
+class cGameMessageListView;
 class cStaticMap;
 class cMap;
 class cPlayer;
@@ -61,6 +62,7 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager clientSignalConnectionManager;
+	cSignalConnectionManager playerSignalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager moveJobSignalConnectionManager;
 
@@ -73,6 +75,7 @@ private:
 	cHud* hud;
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
+	cGameMessageListView* messageList;
 
 	cPosition mouseScrollDirection;
 

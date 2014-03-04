@@ -21,6 +21,7 @@
 
 #include <string>
 #include "main.h" /// for sUnitData -> move that to cUnit, too?
+#include "utility/signal/signal.h"
 
 class cClient;
 class cGameGUI;
@@ -45,7 +46,7 @@ public:
 	virtual bool isABuilding() const = 0;
 
 	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const = 0;
-	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
+	virtual std::string getStatusStr (const cPlayer* player) const = 0;
 
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}
@@ -102,6 +103,8 @@ public:
 	virtual void executeStopCommand (const cClient& client) const = 0;
 	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const = 0;
 
+	mutable cSignal<void ()> renamed;
+	mutable cSignal<void ()> statusChanged;
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit
 	const unsigned int iID; ///< the identification number of this unit
@@ -129,10 +132,11 @@ public: // TODO: make protected/private and make getters/setters
 	cPlayer* lockerPlayer; // back pointer to (client) player which lock this unit
 	//-----------------------------------------------------------------------------
 protected:
+	cBox<cPosition> getArea() const;
+
+private:
 	bool isOriginalName; // indicates whether the name has been changed by the player or not
 	std::string name;    // name of the building
-
-	cBox<cPosition> getArea() const;
 };
 
 //

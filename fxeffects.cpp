@@ -161,7 +161,7 @@ void cFxExplo::draw (float zoom, const cPosition& destination) const
 	src.y = 0;
 	src.w = images[1]->w / frames;
 	src.h = images[1]->h;
-	SDL_Rect dest = {destination.x () - (images[0]->w / (frames * 2)) * zoom, destination.y () - (images[0]->h / 2) * zoom, 0, 0};
+	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / (frames * 2)) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
 
 	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
@@ -237,7 +237,7 @@ cFxHit::cFxHit (const cPosition& position_) :
 
 void cFxHit::playSound () const
 {
-	//TODO
+	// TODO:  PlayFX (SoundData.hit);
 }
 
 //------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ void cFxFade::draw (float zoom, const cPosition& destination) const
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetSurfaceAlphaMod (images[1], alpha);
 
-	SDL_Rect dest = {destination.x () - (images[0]->w / 2) * zoom, destination.y () - (images[0]->h / 2) * zoom, 0, 0};
+	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / 2) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
 	SDL_BlitSurface (images[1], NULL, cVideo::buffer, &dest);
 }
 
@@ -347,7 +347,7 @@ void cFxRocket::draw (float zoom, const cPosition& destination) const
 	for (unsigned i = 0; i < subEffects.size(); i++)
 	{
 		const cPosition offset = (subEffects[i]->getPosition() - position);
-		subEffects[i]->draw (zoom, destination + cPosition (offset.x () * zoom, offset.y() * zoom));
+		subEffects[i]->draw (zoom, destination + cPosition (static_cast<int>(offset.x () * zoom), static_cast<int>(offset.y () * zoom)));
 	}
 
 	//draw rocket
@@ -361,7 +361,7 @@ void cFxRocket::draw (float zoom, const cPosition& destination) const
 	src.y = 0;
 	src.h = images[1]->h;
 	src.w = images[1]->w / 8;
-	SDL_Rect dest = {destination.x () - (images[0]->w / 16) * zoom, destination.y () - (images[0]->h / 2) * zoom, 0, 0};
+	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / 16) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
 
 	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
 }
@@ -436,7 +436,7 @@ void cFxDarkSmoke::draw (float zoom, const cPosition& destination) const
 	src.y = 0;
 	src.w = images[1]->w / frames;
 	src.h = images[1]->h;
-	SDL_Rect dest = {destination.x () + (tick * dx) * zoom, destination.y () + (tick * dy) * zoom, 0, 0};
+	SDL_Rect dest = {destination.x () + static_cast<int>((tick * dx) * zoom), destination.y () + static_cast<int>((tick * dy) * zoom), 0, 0};
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetSurfaceAlphaMod (images[1], alpha);

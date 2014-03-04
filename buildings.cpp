@@ -115,7 +115,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 /** Returns a string with the current state */
 //----------------------------------------------------
-string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
+string cBuilding::getStatusStr (const cPlayer* player) const
 {
 	if (isDisabled())
 	{
@@ -126,9 +126,8 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 	}
 	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false))
 	{
-		const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
-		if (!data.canBuild.empty() && !BuildList.empty() && owner == &activePlayer)
+		if (!data.canBuild.empty () && !BuildList.empty () && owner == player)
 		{
 			const sBuildList& buildListItem = BuildList[0];
 			const string& unitName = buildListItem.type.getUnitDataOriginalVersion()->name;
@@ -169,7 +168,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		}
 
 		// Research Center
-		if (data.canResearch && owner == &activePlayer)
+		if (data.canResearch && owner == player)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -194,7 +193,7 @@ string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 		}
 
 		// Goldraffinerie:
-		if (data.convertsGold && owner == &activePlayer)
+		if (data.convertsGold && owner == player)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";

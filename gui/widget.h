@@ -35,6 +35,7 @@
 class cMouse;
 class cKeyboard;
 class cApplication;
+class cWindow;
 
 class cWidget
 {
@@ -154,6 +155,8 @@ protected:
 
 	virtual cMouse* getActiveMouse () const;
 	virtual cKeyboard* getActiveKeyboard () const;
+
+	virtual cApplication* getActiveApplication () const;
 private:
 	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
 	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;

@@ -287,16 +287,18 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 	{
 		case USER_MESSAGE:
 		{
-			const string msg = message.popString();
+			const string msg = message.popString ();
+			getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_CHAT);
 			//FIXME: gameGUI
-			//gameGUI->onChat_userMessage (msg);
+			//PlayFX (SoundData.SNDChat);
 			break;
 		}
 		case SERVER_ERROR_MESSAGE:
 		{
-			const string msg = lngPack.i18n (message.popString());
+			const string msg = lngPack.i18n (message.popString ());
+			getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
 			//FIXME: gameGUI
-			//gameGUI->onChat_errorMessage (msg);
+			//PlayFX (SoundData.SNDQuitsch);
 			break;
 		}
 		case SERVER_INFO_MESSAGE:
@@ -306,8 +308,7 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 			string msgString;
 			if (inserttext.empty()) msgString = lngPack.i18n (translationpath);
 			else msgString = lngPack.i18n (translationpath, inserttext);
-			//FIXME: gameGUI
-			//gameGUI->onChat_infoMessage (msgString);
+			getActivePlayer ().addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			break;
 		}
 	}
@@ -521,8 +522,6 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 		if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 		{
 			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay / 100));
-			//FIXME: gameGUI
-			//gameGUI->addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 		}
 		iEndTurnTime = gameTimer.gameTime + iTimeDelay;
@@ -530,8 +529,6 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	else if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 	{
 		string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName());
-		//FIXME: gameGUI
-		//gameGUI->addMessage (msgString);
 		ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 	}
 }
@@ -833,16 +830,12 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 			if (!Vehicle->BuildPath)
 			{
 				const string msgString = lngPack.i18n ("Text~Comp~Producing_Err");
-				//FIXME: gameGUI
-				//gameGUI->addMessage (msgString);
 				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			}
 			else if (Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY)
 			{
 				const string msgString = lngPack.i18n ("Text~Comp~Path_interrupted");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
-				//FIXME: gameGUI
-				//gameGUI->addCoords (report);
 			}
 		}
 		Vehicle->BuildRounds = 0;
@@ -1019,9 +1012,6 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
 		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartMore);
 	}
-	//FIXME: gameGUI
-	//gameGUI->addMessage (lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn));
-	//if (sReportMsg.length() > 0) gameGUI->addMessage (sReportMsg);
 	string researchMsgString = "";
 	if (bFinishedResearch)
 	{
@@ -1048,18 +1038,15 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 			if (0 <= area && area < 8)
 			{
 				researchMsgString += themeNames[area];
-				if (i + 1 < nrResearchAreasFinished)
-					researchMsgString += ", ";
+				if (i + 1 < nrResearchAreasFinished) researchMsgString += ", ";
 			}
 		}
-		//FIXME: gameGUI
-		//gameGUI->addMessage (researchMsgString);
 	}
 
 	// Save the report
-	string msgString = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn) + "\n";
-	if (sReportMsg.length() > 0) msgString += sReportMsg + "\n";
-	if (bFinishedResearch) msgString += researchMsgString + "\n";
+	string msgString = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn);
+	if (sReportMsg.length () > 0) msgString += "\n" + sReportMsg;
+	if (bFinishedResearch) msgString += "\n" + researchMsgString;
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 }
 
@@ -1272,8 +1259,6 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 	}
 	Player->isDefeated = true;
 	string msgString = lngPack.i18n ("Text~Multiplayer~Player") + " " + Player->getName() + " " + lngPack.i18n ("Text~Comp~Defeated");
-	//FIXME: gameGUI
-	//gameGUI->addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 #if 0
 	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
@@ -1319,8 +1304,6 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
 	}
 	const string msgString = lngPack.i18n ("Text~Multiplayer~Player_Left", Player->getName());
-	//FIXME: gameGUI
-	//gameGUI->addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 
 	deletePlayer (Player);
@@ -1531,8 +1514,6 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	ostringstream os;
 	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
 	string sTmp (os.str());
-	//FIXME: gameGUI
-	//gameGUI->addMessage (sTmp);
 	ActivePlayer->addSavedReport (sTmp, sSavedReportMessage::REPORT_TYPE_COMP);
 	if (scanNecessary)
 		ActivePlayer->doScan();
@@ -1577,8 +1558,6 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message, 
 	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
 
 	string printStr (os.str());
-	//FIXME: gameGUI
-	//gameGUI->addMessage (printStr);
 	ActivePlayer->addSavedReport (printStr, sSavedReportMessage::REPORT_TYPE_COMP);
 }
 

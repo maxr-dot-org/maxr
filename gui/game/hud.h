@@ -29,9 +29,9 @@ class cPushButton;
 class cCheckBox;
 class cSlider;
 class cLabel;
-class cLineEdit;
 class cUnitVideoWidget;
 class cUnitDetailsHud;
+class cUnitRenameWidget;
 class cUnit;
 class cAnimationTimer;
 class cPlayer;
@@ -100,6 +100,8 @@ public:
 	cSignal<void ()> filesClicked;
 	cSignal<void ()> preferencesClicked;
 
+	cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
+
 	void setActiveUnit (const cUnit* unit);
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
@@ -136,9 +138,7 @@ private:
 	cLabel* turnLabel;
 	cLabel* timeLabel;
 
-	cLabel* selectedUnitStatusLabel;
-	cLabel* selectedUnitNamePrefixLabel;
-	cLineEdit* selectedUnitNameEdit;
+	cUnitRenameWidget* unitRenameWidget;
 
 	cUnitVideoWidget* unitVideo;
 

@@ -315,8 +315,6 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 		{
 			const string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
 			const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
-			//FIXME: gameGUI
-			//client->getGameGUI().addCoords (report);
 			finished = true;
 		}
 	}

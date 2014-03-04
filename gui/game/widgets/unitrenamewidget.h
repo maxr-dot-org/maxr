@@ -17,44 +17,50 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_labelH
-#define gui_menu_widgets_labelH
+#ifndef gui_game_widgets_unitrenamewidgetH
+#define gui_game_widgets_unitrenamewidgetH
 
-#include <string>
-#include <vector>
+#include <memory>
 
-#include "../../../maxrconfig.h"
 #include "../../widget.h"
-#include "../../alignment.h"
-#include "../../../unifonts.h"
 
-class cLabel : public cWidget
+#include "../../../utility/signal/signal.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+
+class cPosition;
+
+template<typename>
+class cBox;
+
+class cUnit;
+
+class cLabel;
+class cLineEdit;
+class cPlayer;
+
+class cUnitRenameWidget : public cWidget
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
+	cUnitRenameWidget (const cPosition& position, int width);
 
-	void setText (const std::string& text);
-	const std::string& getText () const;
+	void setUnit (const cUnit* unit);
+	const cUnit* getUnit () const;
 
-	void setFont (eUnicodeFontType fontType);
-	void setAlignment (AlignmentFlags alignment);
-	void setWordWrap (bool wordWrap);
+	void setPlayer (const cPlayer* player);
 
-	void resizeToTextHeight ();
+	const std::string& getUnitName () const;
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	cSignal<void ()> unitRenameTriggered;
 private:
-	std::string text;
-	eUnicodeFontType fontType;
-	AlignmentFlags alignment;
-	bool wordWrap;
+	cLabel* selectedUnitStatusLabel;
+	cLabel* selectedUnitNamePrefixLabel;
+	cLineEdit* selectedUnitNameEdit;
 
-	std::vector<std::string> drawLines;
+	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager unitSignalConnectionManager;
 
-	void updateDisplayInformation ();
-
-	// TODO: may move to some other place
-	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
+	const cUnit* activeUnit;
+	const cPlayer* player;
 };
 
-#endif // gui_menu_widgets_labelH
+#endif // gui_game_widgets_unitvideowidgetH

@@ -1055,5 +1055,8 @@ const sSavedReportMessage& cPlayer::addSavedReport (const string& message, sSave
 	savedReport.colorNr = colorNr;
 
 	savedReportsList.push_back (savedReport);
+
+	reportAdded (savedReport);
+
 	return savedReportsList.back();
 }

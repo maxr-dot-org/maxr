@@ -21,6 +21,7 @@
 
 #include "widgets/unitvideowidget.h"
 #include "widgets/unitdetailshud.h"
+#include "widgets/unitrenamewidget.h"
 
 #include "../menu/widgets/pushbutton.h"
 #include "../menu/widgets/checkbox.h"
@@ -127,9 +128,14 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	// player info
 
-	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (12, 40), cPosition (12 + 123, 40 + 10)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::Left));
-	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (12, 30), cPosition (12 + 123, 30 + 10)), "", FONT_LATIN_SMALL_GREEN, eAlignmentType::Left));
-	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (cPosition (12, 30), cPosition (12 + 123, 30 + 10)), eLineEditFrameType::None, FONT_LATIN_SMALL_GREEN));
+	unitRenameWidget = addChild (std::make_unique<cUnitRenameWidget> (cPosition (12, 30), 123));
+	signalConnectionManager.connect (unitRenameWidget->unitRenameTriggered, [&]()
+	{
+		if (unitRenameWidget->getUnit ())
+		{
+			triggeredRenameUnit (*unitRenameWidget->getUnit (), unitRenameWidget->getUnitName ());
+		}
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -145,7 +151,7 @@ bool cHud::isAt (const cPosition& position) const
 
 	if (hole.withinOrTouches (position))
 	{
-		// TODO: check for widgets that reach into the hole (end button, ...)
+		// end button reaches into the hole
 		return endButton->isAt (position);
 	}
 	return true;
@@ -379,26 +385,7 @@ void cHud::handleZoomMinusClicked ()
 //------------------------------------------------------------------------------
 void cHud::setActiveUnit (const cUnit* unit)
 {
+	unitRenameWidget->setUnit (unit);
 	unitVideo->setUnit (unit);
 	unitDetails->setUnit (unit, player);
-
-	if (unit)
-	{
-		selectedUnitNamePrefixLabel->setText (unit->getNamePrefix ());
-		selectedUnitNameEdit->setText (unit->isNameOriginal () ? unit->data.name : unit->getName ());
-	}
-	else
-	{
-		selectedUnitNamePrefixLabel->setText ("");
-		selectedUnitNameEdit->setText ("");
-		selectedUnitNameEdit->disable();
-		return;
-	}
-
-	selectedUnitNameEdit->enable ();
-
-	const auto xPosition = selectedUnitNamePrefixLabel->getPosition().x() + font->getTextWide (selectedUnitNamePrefixLabel->getText () + " ", FONT_LATIN_SMALL_GREEN);
-	const cPosition moveOffset (xPosition - selectedUnitNameEdit->getPosition().x(), 0);
-	selectedUnitNameEdit->move (moveOffset);
-	selectedUnitNameEdit->resize (selectedUnitNameEdit->getSize () - moveOffset);
 }

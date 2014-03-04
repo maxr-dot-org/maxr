@@ -17,44 +17,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_labelH
-#define gui_menu_widgets_labelH
+#ifndef gui_game_widgets_gamemessagelistviewitemH
+#define gui_game_widgets_gamemessagelistviewitemH
 
-#include <string>
-#include <vector>
+#include <chrono>
 
-#include "../../../maxrconfig.h"
-#include "../../widget.h"
-#include "../../alignment.h"
-#include "../../../unifonts.h"
+#include "../../menu/widgets/abstractlistviewitem.h"
+#include "../../../autosurface.h"
 
-class cLabel : public cWidget
+class cLabel;
+
+class cGameMessageListViewItem : public cAbstractListViewItem
 {
 public:
-	cLabel (const cBox<cPosition>& area, const std::string& text, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, AlignmentFlags alignment = toEnumFlag(eAlignmentType::Left)  | eAlignmentType::Top);
+	cGameMessageListViewItem (int width, const std::string& message);
 
-	void setText (const std::string& text);
-	const std::string& getText () const;
-
-	void setFont (eUnicodeFontType fontType);
-	void setAlignment (AlignmentFlags alignment);
-	void setWordWrap (bool wordWrap);
-
-	void resizeToTextHeight ();
+	std::chrono::system_clock::time_point getCreationTime () const;
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 private:
-	std::string text;
-	eUnicodeFontType fontType;
-	AlignmentFlags alignment;
-	bool wordWrap;
-
-	std::vector<std::string> drawLines;
-
-	void updateDisplayInformation ();
-
-	// TODO: may move to some other place
-	void breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const;
+	cLabel* messageLabel;
+	std::chrono::system_clock::time_point creationTime;
 };
 
-#endif // gui_menu_widgets_labelH
+#endif // gui_game_widgets_gamemessagelistviewitemH

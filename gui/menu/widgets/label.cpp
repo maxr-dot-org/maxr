@@ -65,6 +65,13 @@ void cLabel::setWordWrap (bool wordWrap_)
 }
 
 //------------------------------------------------------------------------------
+void cLabel::resizeToTextHeight ()
+{
+	const auto textHeight = drawLines.size () * font->getFontHeight (fontType);
+	resize (cPosition (getSize ().x (), textHeight));
+}
+
+//------------------------------------------------------------------------------
 void cLabel::breakText (const std::string& text, std::vector<std::string>& lines, int maximalWidth, eUnicodeFontType fontType) const
 {
 	// NOTE: better would be not to copy each line into the vector

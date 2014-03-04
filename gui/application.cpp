@@ -170,6 +170,15 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
+void cApplication::releaseKeyFocus (const cWidget& widget)
+{
+	if (keyFocusWidget == &widget)
+	{
+		assignKeyFocus (nullptr);
+	}
+}
+
+//------------------------------------------------------------------------------
 cMouse* cApplication::getActiveMouse ()
 {
 	return activeMouse;
@@ -321,7 +330,7 @@ void cApplication::keyReleased (cKeyboard& keyboard, SDL_Keycode key)
 {
 	auto widget = getKeyFocusWidget ();
 
-	// TODO: catch TAB event and may switch key focus event
+	// TODO: catch TAB event and may switch key focus widget
 
 	if (!widget || !widget->handleKeyReleased (*this, keyboard, key))
 	{

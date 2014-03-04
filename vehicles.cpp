@@ -838,7 +838,7 @@ void cVehicle::DrawPath (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 /** Returns a string with the current state */
 //-----------------------------------------------------------------------------
-string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
+string cVehicle::getStatusStr (const cPlayer* player) const
 {
 	if (isDisabled())
 	{
@@ -851,7 +851,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 		return lngPack.i18n ("Text~Comp~Surveying");
 	else if (IsBuilding)
 	{
-		if (owner != &gameGUI.getClient()->getActivePlayer())
+		if (owner != player)
 			return lngPack.i18n ("Text~Comp~Producing");
 		else
 		{
