@@ -844,7 +844,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 	{
 		string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
-		sText += iToStr (turnsDisabled) + ")";
+		sText += iToStr (getDisabledTurns()) + ")";
 		return sText;
 	}
 	else if (autoMJob)
@@ -914,13 +914,13 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
 		else if (ClientMoveJob)
 			sTmp = lngPack.i18n ("Text~Comp~Moving");
-		else if (attacking)
+		else if (isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
-		else if (isBeeingAttacked)
+		else if (isBeeingAttacked ())
 			sTmp = lngPack.i18n ("Text~Comp~IsBeeingAttacked");
-		else if (manualFireActive)
+		else if (isManualFireActive())
 			sTmp = lngPack.i18n ("Text~Comp~ReactionFireOff");
-		else if (sentryActive)
+		else if (isSentryActive())
 			sTmp = lngPack.i18n ("Text~Comp~Sentry");
 		else sTmp = lngPack.i18n ("Text~Comp~Waits");
 
@@ -1191,7 +1191,7 @@ void cVehicle::makeReport ()
 			// no ammo left
 			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
 		}
-		else if (sentryActive)
+		else if (isSentryActive())
 		{
 			// on sentry:
 			PlayVoice (VoiceData.VOISentry);
@@ -1288,7 +1288,7 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 //-----------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, *server.Map, true))
+	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (PosX, PosY, *server.Map, true))
 	{
 		if (makeAttackOnThis (server, sentryUnit, "sentry reaction"))
 			return true;
@@ -1385,7 +1385,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 //-----------------------------------------------------------------------------
 bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const
 {
-	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
+	if (opponentUnit->isSentryActive() == false && opponentUnit->isManualFireActive() == false
 		&& opponentUnit->canAttackObjectAt (PosX, PosY, *server.Map, true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
@@ -1503,11 +1503,11 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
-	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->attacking || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
 
 	if (Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing) return false;
 
-	if (Vehicle->isBeeingAttacked) return false;
+	if (Vehicle->isBeeingAttacked ()) return false;
 
 	return true;
 }
@@ -1516,12 +1516,12 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 {
 	map.deleteVehicle (vehicle);
-	if (vehicle.sentryActive)
+	if (vehicle.isSentryActive())
 	{
 		vehicle.owner->deleteSentry (vehicle);
 	}
 
-	vehicle.manualFireActive = false;
+	vehicle.setManualFireActive(false);
 
 	vehicle.Loaded = true;
 
@@ -1585,13 +1585,13 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 		case SUPPLY_TYPE_REARM:
 			if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
 				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
-				|| unit->attacking)
+				|| unit->isAttacking())
 				return false;
 			break;
 		case SUPPLY_TYPE_REPAIR:
 			if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
 				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
-				|| unit->attacking)
+				|| unit->isAttacking())
 				return false;
 			break;
 		default:
@@ -2060,7 +2060,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (data.factorAir == 0) return true;
 
-	if (moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || attacking) return false;     //vehicle busy?
+	if (moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking()) return false;     //vehicle busy?
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map[map.getOffset (PosX, PosY)].getBuildings();

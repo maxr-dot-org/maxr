@@ -614,14 +614,19 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		element->QueryFloatAttribute ("num", &vehicle->CommandoRank);
 	}
 	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, x, y);
-	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &vehicle->turnsDisabled);
+	if (unitNode->FirstChildElement ("Disabled"))
+	{
+		int temp;
+		unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &temp);
+		vehicle->setDisabledTurns (temp);
+	}
 	if (unitNode->FirstChildElement ("LayMines")) vehicle->LayMines = true;
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
 		owner->addSentry (*vehicle);
 	}
-	if (unitNode->FirstChildElement ("ManualFire")) vehicle->manualFireActive = true;
+	if (unitNode->FirstChildElement ("ManualFire")) vehicle->setManualFireActive(true);
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
@@ -734,22 +739,27 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 
 	if (unitNode->FirstChildElement ("IsWorking")) building->IsWorking = true;
 	if (unitNode->FirstChildElement ("wasWorking")) building->wasWorking = true;
-	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &building->turnsDisabled);
+	if (unitNode->FirstChildElement ("Disabled"))
+	{
+		int temp;
+		unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &temp);
+		building->setDisabledTurns (temp);
+	}
 	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->QueryIntAttribute ("area", & (building->researchArea));
 	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building->points));
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
-		if (!building->sentryActive)
+		if (!building->isSentryActive())
 		{
 			owner->addSentry (*building);
 		}
 	}
-	else if (building->sentryActive)
+	else if (building->isSentryActive ())
 	{
 		owner->deleteSentry (*building);
 	}
-	if (unitNode->FirstChildElement ("ManualFire")) building->manualFireActive = true;
-	if (unitNode->FirstChildElement ("HasBeenAttacked")) building->hasBeenAttacked = true;
+	if (unitNode->FirstChildElement ("ManualFire")) building->setManualFireActive(true);
+	if (unitNode->FirstChildElement ("HasBeenAttacked")) building->setHasBeenAttacked(true);
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
@@ -1351,10 +1361,10 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
 	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", fToStr (vehicle.CommandoRank));
 	if (vehicle.data.isBig) addMainElement (unitNode, "IsBig");
-	if (vehicle.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.turnsDisabled));
+	if (vehicle.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.getDisabledTurns()));
 	if (vehicle.LayMines) addMainElement (unitNode, "LayMines");
-	if (vehicle.sentryActive) addMainElement (unitNode, "OnSentry");
-	if (vehicle.manualFireActive) addMainElement (unitNode, "ManualFire");
+	if (vehicle.isSentryActive()) addMainElement (unitNode, "OnSentry");
+	if (vehicle.isManualFireActive()) addMainElement (unitNode, "ManualFire");
 	if (vehicle.hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
 
 	if (vehicle.IsBuilding)
@@ -1428,7 +1438,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write additional stauts information
 	if (building.IsWorking) addMainElement (unitNode, "IsWorking");
 	if (building.wasWorking) addMainElement (unitNode, "wasWorking");
-	if (building.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.turnsDisabled));
+	if (building.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.getDisabledTurns()));
 
 	if (building.data.canResearch)
 	{
@@ -1439,9 +1449,9 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	{
 		addAttributeElement (unitNode, "Score", "num", iToStr (building.points));
 	}
-	if (building.sentryActive) addMainElement (unitNode, "OnSentry");
-	if (building.manualFireActive) addMainElement (unitNode, "ManualFire");
-	if (building.hasBeenAttacked) addMainElement (unitNode, "HasBeenAttacked");
+	if (building.isSentryActive()) addMainElement (unitNode, "OnSentry");
+	if (building.isManualFireActive()) addMainElement (unitNode, "ManualFire");
+	if (building.hasBeenAttacked()) addMainElement (unitNode, "HasBeenAttacked");
 
 	// write the buildlist
 	if (building.BuildList.empty() == false)

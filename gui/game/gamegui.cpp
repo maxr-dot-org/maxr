@@ -326,14 +326,14 @@ void cNewGameGUI::connectToClient (cClient& client)
 			{
 				auto vehicle = client.getVehicleFromID (unit.iID);
 				if (!vehicle) return;
-				vehicle->isMarkedAsDone = true;
+				vehicle->setMarkedAsDone(true);
 				sendMoveJobResume (client, vehicle->iID);
 			}
 			else if (unit.data.ID.isABuilding ())
 			{
 				auto building = client.getBuildingFromID (unit.iID);
 				if (!building) return;
-				building->isMarkedAsDone = true;
+				building->setMarkedAsDone(true);
 			}
 		}
 	});

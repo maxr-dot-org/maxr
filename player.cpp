@@ -154,14 +154,14 @@ cPlayer::~cPlayer()
 	while (VehicleList)
 	{
 		cVehicle* ptr = VehicleList->next;
-		VehicleList->sentryActive = false;
+		VehicleList->setSentryActive(false);
 		delete VehicleList;
 		VehicleList = ptr;
 	}
 	while (BuildingList)
 	{
 		cBuilding* ptr = BuildingList->next;
-		BuildingList->sentryActive = false;
+		BuildingList->setSentryActive (false);
 
 		// Stored Vehicles are already deleted; just clear the list
 		BuildingList->storedUnits.clear();
@@ -335,7 +335,7 @@ cBuilding* cPlayer::addBuilding (int posx, int posy, const sID& id, unsigned int
 //------------------------------------------------------------------------------
 void cPlayer::addSentry (cUnit& u)
 {
-	u.sentryActive = true;
+	u.setSentryActive (true);
 	if (u.data.canAttack & TERRAIN_AIR)
 	{
 		drawSpecialCircle (u.PosX, u.PosY, u.data.range, SentriesMapAir, mapSize);
@@ -349,7 +349,7 @@ void cPlayer::addSentry (cUnit& u)
 //------------------------------------------------------------------------------
 void cPlayer::deleteSentry (cUnit& u)
 {
-	u.sentryActive = false;
+	u.setSentryActive (false);
 	if (u.data.canAttack & TERRAIN_AIR)
 	{
 		refreshSentryAir();
@@ -367,7 +367,7 @@ void cPlayer::refreshSentryAir()
 
 	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
-		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
+		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, mapSize);
 		}
@@ -375,7 +375,7 @@ void cPlayer::refreshSentryAir()
 
 	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
-		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
+		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, mapSize);
 		}
@@ -389,14 +389,14 @@ void cPlayer::refreshSentryGround()
 
 	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
-		if (unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
+		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
 	}
 	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
-		if (unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
+		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
 			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
@@ -490,8 +490,8 @@ cVehicle* cPlayer::getNextVehicle (cVehicle* start)
 	start = (start == NULL) ? VehicleList : start->next;
 	for (cVehicle* it = start; it; it = it->next)
 	{
-		if (!it->isMarkedAsDone && (!it->IsBuilding || it->BuildRounds == 0)
-			&& !it->IsClearing && !it->sentryActive && !it->Loaded
+		if (!it->isMarkedAsDone() && (!it->IsBuilding || it->BuildRounds == 0)
+			&& !it->IsClearing && !it->isSentryActive() && !it->Loaded
 			&& (it->data.speedCur || it->data.shotsCur))
 			return it;
 	}
@@ -503,7 +503,7 @@ cBuilding* cPlayer::getNextBuilding (cBuilding* start)
 	start = (start == NULL) ? BuildingList : start->next;
 	for (cBuilding* it = start; it; it = it->next)
 	{
-		if (!it->isMarkedAsDone && !it->IsWorking && !it->sentryActive
+		if (!it->isMarkedAsDone () && !it->IsWorking && !it->isSentryActive ()
 			&& (!it->data.canBuild.empty() || it->data.shotsCur
 				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
 				|| it->data.canResearch))
@@ -565,8 +565,8 @@ cVehicle* cPlayer::getPrevVehicle (cVehicle* start)
 	start = (start == NULL) ? get_last_of_intrusivelist (VehicleList) : start->prev;
 	for (cVehicle* it = start; it; it = it->prev)
 	{
-		if (!it->isMarkedAsDone && (!it->IsBuilding || it->BuildRounds == 0)
-			&& !it->IsClearing && !it->sentryActive && !it->Loaded
+		if (!it->isMarkedAsDone () && (!it->IsBuilding || it->BuildRounds == 0)
+			&& !it->IsClearing && !it->isSentryActive() && !it->Loaded
 			&& (it->data.speedCur || it->data.shotsCur))
 			return it;
 	}
@@ -578,7 +578,7 @@ cBuilding* cPlayer::getPrevBuilding (cBuilding* start)
 	start = (start == NULL) ? get_last_of_intrusivelist (BuildingList) : start->prev;
 	for (cBuilding* it = start; it; it = it->prev)
 	{
-		if (!it->isMarkedAsDone && !it->IsWorking && !it->sentryActive
+		if (!it->isMarkedAsDone () && !it->IsWorking && !it->isSentryActive ()
 			&& (!it->data.canBuild.empty() || it->data.shotsCur
 				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
 				|| it->data.canResearch))
@@ -734,12 +734,12 @@ void cPlayer::clearDone()
 {
 	for (cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
-		unit->isMarkedAsDone = false;
+		unit->setMarkedAsDone(false);
 	}
 
 	for (cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
-		unit->isMarkedAsDone = false;
+		unit->setMarkedAsDone(false);
 	}
 }
 

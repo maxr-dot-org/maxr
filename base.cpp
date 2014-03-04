@@ -724,7 +724,7 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
 	if (building.data.hitpointsCur >= building.data.hitpointsMax
-		|| Metal <= 0 || building.hasBeenAttacked)
+		|| Metal <= 0 || building.hasBeenAttacked ())
 	{
 		return;
 	}
@@ -804,7 +804,7 @@ void sSubBase::makeTurnend (cServer& server)
 		cBuilding& building = *buildings[i];
 
 		makeTurnend_reparation (server, building);
-		building.hasBeenAttacked = false;
+		building.setHasBeenAttacked(false);
 		makeTurnend_reload (server, building);
 		makeTurnend_build (server, building);
 	}

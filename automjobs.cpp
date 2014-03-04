@@ -107,7 +107,7 @@ cAutoMJob::~cAutoMJob()
 // adds new mjobs to the engine, if necessary
 void cAutoMJob::DoAutoMove (const std::vector<cAutoMJob*>& jobs, int iNumber)
 {
-	if (vehicle->isBeeingAttacked) return;
+	if (vehicle->isBeeingAttacked()) return;
 	if (client->isFreezed()) return;
 	if (vehicle->owner != &client->getActivePlayer()) return;
 

@@ -582,17 +582,17 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Vehicle->changeName (message.popString());
 
-		Vehicle->isBeeingAttacked = message.popBool();
+		Vehicle->setIsBeeinAttack(message.popBool());
 		const bool bWasDisabled = Vehicle->isDisabled();
-		Vehicle->turnsDisabled = message.popInt16();
+		Vehicle->setDisabledTurns(message.popInt16 ());
 		Vehicle->CommandoRank = message.popInt16();
 		Vehicle->IsClearing = message.popBool();
 		bWasBuilding = Vehicle->IsBuilding;
 		Vehicle->IsBuilding = message.popBool();
 		Vehicle->BuildRounds = message.popInt16();
 		Vehicle->ClearingRounds = message.popInt16();
-		Vehicle->sentryActive = message.popBool();
-		Vehicle->manualFireActive = message.popBool();
+		Vehicle->setSentryActive(message.popBool());
+		Vehicle->setManualFireActive(message.popBool());
 
 		if (Vehicle->isDisabled() != bWasDisabled && Vehicle->owner == ActivePlayer)
 		{
@@ -617,11 +617,11 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		if (message.popBool()) Building->changeName (message.popString());
 
 		const bool bWasDisabled = Building->isDisabled();
-		Building->turnsDisabled = message.popInt16();
+		Building->setDisabledTurns (message.popInt16 ());
 		Building->researchArea = message.popInt16();
 		Building->IsWorking = message.popBool();
-		Building->sentryActive = message.popBool();
-		Building->manualFireActive = message.popBool();
+		Building->setSentryActive( message.popBool ());
+		Building->setManualFireActive( message.popBool ());
 		Building->points = message.popInt16();
 
 		if (Building->isDisabled() != bWasDisabled && Building->owner == ActivePlayer)
@@ -1988,7 +1988,7 @@ void cClient::handleMoveJobs()
 		cVehicle* Vehicle = MoveJob->Vehicle;
 
 		// suspend movejobs of attacked vehicles
-		if (Vehicle && Vehicle->isBeeingAttacked) continue;
+		if (Vehicle && Vehicle->isBeeingAttacked ()) continue;
 
 		if (MoveJob->bFinished || MoveJob->bEndForNow)
 		{

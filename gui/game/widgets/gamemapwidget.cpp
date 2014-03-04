@@ -1486,11 +1486,11 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			}
 			toggleMouseInputMode (eNewMouseInputMode::Help);
 		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedVehicle && !selectedVehicle->isAttacking() && !selectedVehicle->MoveJobActive)
 		{
 			triggeredAttack (*selectedVehicle, tilePosition);
 		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedBuilding && !selectedBuilding->attacking)
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedBuilding && !selectedBuilding->isAttacking ())
 		{
 			triggeredAttack (*selectedBuilding, tilePosition);
 		}
@@ -1510,7 +1510,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			auto vehicle = unitSelection.getSelectedVehicle ();
 			if (vehicle) vehicle->makeReport ();
 		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking)
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
 		{
 			if (selectedVehicle->IsBuilding)
 			{

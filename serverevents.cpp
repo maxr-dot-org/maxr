@@ -193,8 +193,8 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	if (unit.isABuilding())
 		message->pushInt16 (static_cast<const cBuilding*> (&unit)->points);
 
-	message->pushBool (unit.manualFireActive);
-	message->pushBool (unit.sentryActive);
+	message->pushBool (unit.isManualFireActive());
+	message->pushBool (unit.isSentryActive());
 
 	if (unit.isAVehicle())
 	{
@@ -212,10 +212,10 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 		message->pushInt16 (building.researchArea);
 	}
 
-	message->pushInt16 (unit.turnsDisabled);
+	message->pushInt16 (unit.getDisabledTurns());
 
 	if (unit.isAVehicle())
-		message->pushBool (unit.isBeeingAttacked);
+		message->pushBool (unit.isBeeingAttacked ());
 
 	if (unit.isNameOriginal() == false)
 	{

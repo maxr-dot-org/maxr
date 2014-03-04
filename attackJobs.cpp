@@ -102,7 +102,7 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOf
 	unit->data.ammoCur--;
 	if (unit->isAVehicle() && unit->data.canDriveAndFire == false)
 		unit->data.speedCur -= (int) (((float) unit->data.speedMax) / unit->data.shotsMax);
-	unit->attacking = true;
+	unit->setAttacking(true);
 
 	sendFireCommand();
 
@@ -117,7 +117,7 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOf
 cServerAttackJob::~cServerAttackJob()
 {
 	if (unit != 0)
-		unit->attacking = false;
+		unit->setAttacking(false);
 }
 
 //--------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void cServerAttackJob::lockTarget (int offset)
 	cMap& map = *server->Map;
 	cUnit* target = selectTarget (offset % map.getSize(), offset / map.getSize(), attackMode, map);
 	if (target)
-		target->isBeeingAttacked = true;
+		target->setIsBeeinAttack(true);
 
 	const bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
@@ -149,7 +149,7 @@ void cServerAttackJob::lockTarget (int offset)
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin(); it != buildings.end(); ++it)
 		{
-			(*it)->isBeeingAttacked = true;
+			(*it)->setIsBeeinAttack(true);
 		}
 	}
 
@@ -372,7 +372,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	// in the time between the first locking and the impact,
 	// it is possible that a vehicle drove onto the target field
 	// so relock the target, to ensure synchronity
-	if (target && target->isBeeingAttacked == false)
+	if (target && target->isBeeingAttacked() == false)
 	{
 		Log.write (" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG);
 		lockTarget (offset);
@@ -400,7 +400,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 		id = target->iID;
 		target->data.hitpointsCur = target->calcHealth (damage);
 		remainingHP = target->data.hitpointsCur;
-		target->hasBeenAttacked = true;
+		target->setHasBeenAttacked(true);
 		owner = target->owner;
 		Log.write (" Server: unit '" + target->getDisplayName() + "' (ID: " + iToStr (target->iID) + ") hit. Remaining HP: " + iToStr (target->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 	}
@@ -425,18 +425,18 @@ void cServerAttackJob::makeImpact (int x, int y)
 
 	// attack finished. reset attacking and isBeeingAttacked flags
 	if (target)
-		target->isBeeingAttacked = false;
+		target->setIsBeeinAttack(false);
 
 	if (isAir == false)
 	{
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			(*it)->isBeeingAttacked = false;
+			(*it)->setIsBeeinAttack(false);
 		}
 	}
 	if (unit)
-		unit->attacking = false;
+		unit->setAttacking(false);
 
 	// check whether a following sentry mode attack is possible
 	if (target && target->isAVehicle())
@@ -524,7 +524,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 			return;
 		}
 
-		vehicle->isBeeingAttacked = true;
+		vehicle->setIsBeeinAttack(true);
 
 		// synchonize position
 		if (vehicle->PosX != x || vehicle->PosY != y)
@@ -542,7 +542,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			(*it)->isBeeingAttacked = true;
+			(*it)->setIsBeeinAttack(true);
 		}
 	}
 }
@@ -558,7 +558,7 @@ void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
 			case FINISHED:
 			{
 				job->sendFinishMessage (client);
-				if (job->unit) job->unit->attacking = false;
+				if (job->unit) job->unit->setAttacking(false);
 				delete job;
 				client.attackJobs.erase (client.attackJobs.begin() + i);
 				--i;
@@ -638,7 +638,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 	{
 		unit->data.shotsCur = message->popInt16();
 		unit->data.ammoCur = message->popInt16();
-		unit->attacking = true;
+		unit->setAttacking(true);
 		if (unit->isAVehicle())
 			unit->data.speedCur = message->popInt16();
 	}
@@ -963,14 +963,14 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 	}
 
 	// clean up
-	if (targetVehicle) targetVehicle->isBeeingAttacked = false;
+	if (targetVehicle) targetVehicle->setIsBeeinAttack(false);
 
 	if (!isAir)
 	{
 		const auto& buildings = map[offset].getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
-			(*it)->isBeeingAttacked = false;
+			(*it)->setIsBeeinAttack(false);
 		}
 	}
 }

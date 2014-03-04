@@ -419,7 +419,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int dest
 	endAction = NULL;
 
 	// unset sentry status when moving vehicle
-	if (Vehicle->sentryActive)
+	if (Vehicle->isSentryActive())
 	{
 		Vehicle->owner->deleteSentry (*Vehicle);
 	}
@@ -514,12 +514,12 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 	}
 
 	// TODO: is this check really needed?
-	if (vehicle->isBeeingAttacked)
+	if (vehicle->isBeeingAttacked ())
 	{
 		Log.write (" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
 		return NULL;
 	}
-	if (vehicle->attacking)
+	if (vehicle->isAttacking())
 	{
 		Log.write (" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
 		return NULL;

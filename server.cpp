@@ -611,7 +611,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 			Log.write (" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		if (attackingUnit->isBeeingAttacked) return;
+		if (attackingUnit->isBeeingAttacked ()) return;
 	}
 	else
 	{
@@ -632,7 +632,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 			Log.write (" Server: Message was not send by building owner!", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		if (attackingUnit->isBeeingAttacked) return;
+		if (attackingUnit->isBeeingAttacked ()) return;
 	}
 
 	// find target offset
@@ -1208,8 +1208,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 		cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 		if (Vehicle == 0)
 			return;
-		Vehicle->manualFireActive = !Vehicle->manualFireActive;
-		if (Vehicle->manualFireActive && Vehicle->sentryActive)
+		Vehicle->setManualFireActive(!Vehicle->isManualFireActive());
+		if (Vehicle->isManualFireActive() && Vehicle->isSentryActive())
 		{
 			Vehicle->owner->deleteSentry (*Vehicle);
 		}
@@ -1223,8 +1223,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 		cBuilding* Building = getBuildingFromID (message.popInt16());
 		if (Building == 0)
 			return;
-		Building->manualFireActive = !Building->manualFireActive;
-		if (Building->manualFireActive && Building->sentryActive)
+		Building->setManualFireActive (!Building->isManualFireActive ());
+		if (Building->isManualFireActive () && Building->isSentryActive ())
 		{
 			Building->owner->deleteSentry (*Building);
 		}
@@ -1245,14 +1245,14 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 		cVehicle* vehicle = getVehicleFromID (message.popInt16());
 		if (vehicle == NULL) return;
 
-		if (vehicle->sentryActive)
+		if (vehicle->isSentryActive())
 		{
 			vehicle->owner->deleteSentry (*vehicle);
 		}
 		else
 		{
 			vehicle->owner->addSentry (*vehicle);
-			vehicle->manualFireActive = false;
+			vehicle->setManualFireActive(false);
 		}
 
 		sendUnitData (*this, *vehicle, vehicle->owner->getNr());
@@ -1266,14 +1266,14 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 		cBuilding* building = getBuildingFromID (message.popInt16());
 		if (building == NULL) return;
 
-		if (building->sentryActive)
+		if (building->isSentryActive())
 		{
 			building->owner->deleteSentry (*building);
 		}
 		else
 		{
 			building->owner->addSentry (*building);
-			building->manualFireActive = false;
+			building->setManualFireActive (false);
 		}
 
 		sendUnitData (*this, *building, building->owner->getNr());
@@ -1832,7 +1832,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 			// Scan range was upgraded. So trigger a scan.
 			if (!scanNecessary && upgradedBuildings[i]->data.scan < upgradedVersion.scan)
 				scanNecessary = true;
-			if (upgradedBuildings[i]->sentryActive && upgradedBuildings[i]->data.range < upgradedVersion.range)
+			if (upgradedBuildings[i]->isSentryActive() && upgradedBuildings[i]->data.range < upgradedVersion.range)
 				refreshSentry = true;
 
 			upgradedBuildings[i]->upgradeToCurrentVersion();
@@ -1967,7 +1967,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 
 			const int strength = srcVehicle->calcCommandoTurns (destUnit);
 			// stop the unit and make it disabled
-			destUnit->turnsDisabled = strength;
+			destUnit->setDisabledTurns(strength);
 			if (destVehicle)
 			{
 				// save speed and number of shots before disabling
@@ -2489,7 +2489,7 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 	// generate the building:
 	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, id, uid ? uid : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
-	if (AddedBuilding->sentryActive) Player->addSentry (*AddedBuilding);
+	if (AddedBuilding->isSentryActive()) Player->addSentry (*AddedBuilding);
 
 	iNextUnitID++;
 
@@ -2600,7 +2600,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	}
 
 	// detach from attack job
-	if (unit->attacking)
+	if (unit->isAttacking ())
 	{
 		for (size_t i = 0; i != AJobs.size(); ++i)
 		{
@@ -3082,7 +3082,7 @@ void cServer::makeTurnEnd()
 			bool forceSendUnitData = false;
 			if (Building->isDisabled())
 			{
-				Building->turnsDisabled--;
+				Building->setDisabledTurns (Building->getDisabledTurns () - 1);
 				if (Building->isDisabled() == false && Building->wasWorking)
 				{
 					Building->ServerStartWork (*this);
@@ -3112,7 +3112,7 @@ void cServer::makeTurnEnd()
 			bool isModified = false;
 			if (Vehicle->isDisabled())
 			{
-				Vehicle->turnsDisabled--;
+				Vehicle->setDisabledTurns (Vehicle->getDisabledTurns () - 1);
 				isModified = true;
 			}
 			isModified |= Vehicle->refreshData();
@@ -3376,7 +3376,7 @@ void cServer::handleMoveJobs()
 		cVehicle* Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
-		if (Vehicle && Vehicle->isBeeingAttacked)
+		if (Vehicle && Vehicle->isBeeingAttacked ())
 			continue;
 
 		// stop the job
@@ -3941,7 +3941,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 		vehicle->data.speedCur = vehicle->lastSpeed;
 		vehicle->data.shotsCur = vehicle->lastShots;
 	}
-	vehicle->turnsDisabled = 0;
+	vehicle->setDisabledTurns (0);
 
 	// delete the unit on the clients and add it with new owner again
 	sendDeleteUnit (*this, *vehicle, oldOwner->getNr());

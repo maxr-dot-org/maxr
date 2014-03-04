@@ -381,7 +381,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " attacking: " + iToStr (vehicle.attacking) + " on sentry: +" + iToStr (vehicle.sentryActive) + " ditherx: " + iToStr (vehicle.ditherX) + " dithery: " + iToStr (vehicle.ditherY);
+	//tmpString = " attacking: " + iToStr (vehicle.attacking) + " on sentry: +" + iToStr (vehicle.sentryActive) + " ditherx: " + iToStr (vehicle.ditherX) + " dithery: " + iToStr (vehicle.ditherY);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -397,7 +397,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "commando_rank: " + fToStr (Round (vehicle.CommandoRank, 2)) + " disabled: " + iToStr (vehicle.turnsDisabled);
+	//tmpString = "commando_rank: " + fToStr (Round (vehicle.CommandoRank, 2)) + " disabled: " + iToStr (vehicle.turnsDisabled);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -440,11 +440,11 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.sentryActive) + " sub_base: " + pToStr (building.SubBase);
+	tmpString = "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.isSentryActive()) + " sub_base: " + pToStr (building.SubBase);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "attacking: " + iToStr (building.attacking) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.data.isBig) + " is_working: " + iToStr (building.IsWorking);
+	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.data.isBig) + " is_working: " + iToStr (building.IsWorking);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -455,7 +455,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	*y += 8;
 
 	tmpString = "is_locked: " + iToStr (building.isLocked()) +
-				" disabled: " + iToStr (building.turnsDisabled);
+				" disabled: " + iToStr (building.getDisabledTurns());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -1044,7 +1044,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 			}
 			else
 				// check, if the player wants to attack:
-			if(changeAllowed && mouse.getCursorType() == eMouseCursorType::Attack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
+			if(changeAllowed && mouse.getCursorType() == eMouseCursorType::Attack && selectedVehicle && !selectedVehicle->isAttacking() && !selectedVehicle->MoveJobActive)
 			{
 				cUnit* target = selectTarget(mouseTilePosition.x(), mouseTilePosition.y(), selectedVehicle->data.canAttack, *client->getMap());
 
@@ -1072,7 +1072,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 					}
 				}
 			}
-			else if(changeAllowed && mouse.getCursorType() == eMouseCursorType::Attack && selectedBuilding && !selectedBuilding->attacking)
+			else if (changeAllowed && mouse.getCursorType () == eMouseCursorType::Attack && selectedBuilding && !selectedBuilding->isAttacking ())
 			{
 				// find target ID
 				int targetId = 0;
@@ -1097,7 +1097,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 			else if(MouseStyle == OldSchool && overUnitField && selectUnit(overUnitField, false))
 			{
 			}
-			else if(changeAllowed && mouse.getCursorType() == eMouseCursorType::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking)
+			else if (changeAllowed && mouse.getCursorType () == eMouseCursorType::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
 			{
 				if(selectedVehicle->IsBuilding)
 				{
@@ -1350,30 +1350,30 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 		{
 			for(size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
-				if(selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive)
+				if(selectedVehicle->isSentryActive () == selectedVehiclesGroup[i]->isSentryActive ())
 				{
 					sendChangeSentry(*client, selectedVehiclesGroup[i]->iID, true);
 				}
 			}
 			sendChangeSentry(*client, selectedVehicle->iID, true);
 		}
-		else if(key == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->sentryActive || selectedBuilding->data.canAttack))
+		else if(key == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->isSentryActive () || selectedBuilding->data.canAttack))
 		{
 			sendChangeSentry(*client, selectedBuilding->iID, false);
 		}
-		else if(key == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack))
+		else if (key == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->isManualFireActive () || selectedVehicle->data.canAttack))
 		{
 			for(size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
-				if((selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
-				   && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
+				if ((selectedVehiclesGroup[i]->isManualFireActive () || selectedVehiclesGroup[i]->data.canAttack)
+				   && selectedVehicle->isManualFireActive () == selectedVehiclesGroup[i]->isManualFireActive ())
 				{
 					sendChangeManualFireStatus(*client, selectedVehiclesGroup[i]->iID, true);
 				}
 			}
 			sendChangeManualFireStatus(*client, selectedVehicle->iID, true);
 		}
-		else if(key == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->manualFireActive || selectedBuilding->data.canAttack))
+		else if (key == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->isManualFireActive () || selectedBuilding->data.canAttack))
 		{
 			sendChangeManualFireStatus(*client, selectedBuilding->iID, false);
 		}
@@ -3354,7 +3354,7 @@ void cGameGUI::doneReleased (void* parent)
 	if (unit && unit->owner == &gui->client->getActivePlayer())
 	{
 		gui->center (*unit);
-		unit->isMarkedAsDone = true;
+		unit->setMarkedAsDone(true);
 		sendMoveJobResume (*gui->client, unit->iID);
 	}
 }
@@ -4576,11 +4576,11 @@ int cGameGUI::getNumberOfMenuEntries (const cUnit& unit) const
 		++result;
 
 	// Manual Fire
-	if (unit.manualFireActive || unit.data.canAttack)
+	if (unit.isManualFireActive () || unit.data.canAttack)
 		++result;
 
 	// Sentry
-	if (unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu()))
+	if (unit.isSentryActive () || unit.data.canAttack || (!unit.isABuilding () && !unit.canBeStoppedViaUnitMenu ()))
 		++result;
 
 	// Activate / Load
@@ -4633,7 +4633,7 @@ int cGameGUI::getNumberOfMenuEntries (const cUnit& unit) const
 //------------------------------------------------------------------------------
 void cGameGUI::drawMenu (const cUnit& unit)
 {
-	if (unit.isBeeingAttacked)
+	if (unit.isBeeingAttacked ())
 		return;
 	if (unit.isUnitMoving())
 		return;
@@ -4726,18 +4726,18 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		}
 
 		// Manual fire
-		if ((unit.manualFireActive || unit.data.canAttack))
+		if ((unit.isManualFireActive() || unit.data.canAttack))
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.manualFireActive;
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isManualFireActive();
 			drawContextItem (lngPack.i18n ("Text~Others~ManualFireMode_7"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
 		}
 
 		// Sentry status:
-		if ((unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
+		if ((unit.isSentryActive() || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu())))
 		{
-			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.sentryActive;
+			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || unit.isSentryActive();
 			drawContextItem (lngPack.i18n ("Text~Others~Sentry"), isMarked, dest.x, dest.y, cVideo::buffer);
 			dest.y += 22;
 			++nr;
@@ -4881,7 +4881,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 		selectedMenuButtonIndex = -1;
 		return;
 	}
-	if (unit.isUnitMoving() || unit.isBeeingAttacked)
+	if (unit.isUnitMoving () || unit.isBeeingAttacked ())
 		return;
 
 	if (unit.factoryHasJustFinishedBuilding())
@@ -5000,7 +5000,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 		}
 
 		// manual Fire:
-		if (unit.manualFireActive || unit.data.canAttack)
+		if (unit.isManualFireActive () || unit.data.canAttack)
 		{
 			if (exeNr == nr)
 			{
@@ -5013,7 +5013,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 		}
 
 		// sentry:
-		if (unit.sentryActive || unit.data.canAttack || (!unit.isABuilding() && !unit.canBeStoppedViaUnitMenu()))
+		if (unit.isSentryActive () || unit.data.canAttack || (!unit.isABuilding () && !unit.canBeStoppedViaUnitMenu ()))
 		{
 			if (exeNr == nr)
 			{
@@ -5218,7 +5218,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 		PlayFX (SoundData.SNDObjectMenu);
 		if (unit.owner == &client->getActivePlayer())
 		{
-			unit.isMarkedAsDone = true;
+			unit.setMarkedAsDone(true);
 			sendMoveJobResume (*client, unit.iID);
 		}
 		return;

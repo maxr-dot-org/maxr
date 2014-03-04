@@ -78,7 +78,7 @@ void cUnitRenameWidget::setUnit (const cUnit* unit)
 		{
 			if (activeUnit)
 			{
-				selectedUnitStatusLabel->setText (unit->getStatusStr (player));
+				selectedUnitStatusLabel->setText (activeUnit->getStatusStr (player));
 			}
 		});
 	}

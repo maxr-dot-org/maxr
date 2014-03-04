@@ -86,6 +86,22 @@ public:
 
 	void deleteStoredUnits();
 
+	void setDisabledTurns (int turns);
+	void setSentryActive (bool value);
+	void setManualFireActive (bool value);
+	void setAttacking (bool value);
+	void setIsBeeinAttack (bool value);
+	void setMarkedAsDone (bool value);
+	void setHasBeenAttacked (bool value);
+
+	int getDisabledTurns () const;
+	bool isSentryActive () const;
+	bool isManualFireActive () const;
+	bool isAttacking () const;
+	bool isBeeingAttacked () const;
+	bool isMarkedAsDone () const;
+	bool hasBeenAttacked () const;
+
 	//protected:
 	virtual bool isUnitMoving() const { return false; }
 	virtual bool isAutoMoveJobActive() const { return false; }
@@ -105,19 +121,21 @@ public:
 
 	mutable cSignal<void ()> renamed;
 	mutable cSignal<void ()> statusChanged;
+
+	mutable cSignal<void ()> disabledChanged;
+	mutable cSignal<void ()> sentryChanged;
+	mutable cSignal<void ()> manualFireChanged;
+	mutable cSignal<void ()> attackingChanged;
+	mutable cSignal<void ()> beeingAttackedChanged;
+	mutable cSignal<void ()> markedAsDoneChanged;
+	mutable cSignal<void ()> beenAttackedChanged;
+
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit
 	const unsigned int iID; ///< the identification number of this unit
 	int PosX;
 	int PosY;
 	int dir; // ?Frame of the unit/current direction the unit is facing?
-	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
-	bool sentryActive; ///< is the unit on sentry?
-	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
-	bool attacking;  ///< is the unit currently attacking?
-	bool isBeeingAttacked; ///< true when an attack on this unit is running
-	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
-	bool hasBeenAttacked; //the unit was attacked in this turn
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 
@@ -137,6 +155,14 @@ protected:
 private:
 	bool isOriginalName; // indicates whether the name has been changed by the player or not
 	std::string name;    // name of the building
+
+	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
+	bool sentryActive; ///< is the unit on sentry?
+	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
+	bool attacking;  ///< is the unit currently attacking?
+	bool beeingAttacked; ///< true when an attack on this unit is running
+	bool markedAsDone; ///< the player has pressed the done button for this unit
+	bool beenAttacked; //the unit was attacked in this turn
 };
 
 //

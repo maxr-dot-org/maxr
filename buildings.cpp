@@ -54,7 +54,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	prev (0),
 	BuildList (0)
 {
-	sentryActive = data.canAttack != TERRAIN_NONE;
+	setSentryActive(data.canAttack != TERRAIN_NONE);
 
 	RubbleTyp = 0;
 	RubbleValue = 0;
@@ -81,7 +81,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	BaseW = false;
 	BaseBW = false;
 	RepeatBuild = false;
-	hasBeenAttacked = false;
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -121,7 +120,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 	{
 		string sText;
 		sText = lngPack.i18n ("Text~Comp~Disabled") + " (";
-		sText += iToStr (turnsDisabled) + ")";
+		sText += iToStr (getDisabledTurns()) + ")";
 		return sText;
 	}
 	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false))
@@ -205,13 +204,13 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		return lngPack.i18n ("Text~Comp~Working");
 	}
 
-	if (attacking)
+	if (isAttacking())
 		return lngPack.i18n ("Text~Comp~AttackingStatusStr");
-	else if (isBeeingAttacked)
+	else if (isBeeingAttacked())
 		return lngPack.i18n ("Text~Comp~IsBeeingAttacked");
-	else if (sentryActive)
+	else if (isSentryActive())
 		return lngPack.i18n ("Text~Comp~Sentry");
-	else if (manualFireActive)
+	else if (isManualFireActive())
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
 
 	return lngPack.i18n ("Text~Comp~Waits");
@@ -1164,11 +1163,11 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
-	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->attacking || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
 
 	if (Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing) return false;
 
-	if (Vehicle->isBeeingAttacked) return false;
+	if (Vehicle->isBeeingAttacked ()) return false;
 
 	return true;
 }
@@ -1179,7 +1178,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 {
 	map.deleteVehicle (vehicle);
-	if (vehicle.sentryActive)
+	if (vehicle.isSentryActive())
 	{
 		vehicle.owner->deleteSentry (vehicle);
 	}

@@ -45,9 +45,9 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	, sentryActive (false)
 	, manualFireActive (false)
 	, attacking (false)
-	, isBeeingAttacked (false)
-	, isMarkedAsDone (false)
-	, hasBeenAttacked (false)
+	, beeingAttacked (false)
+	, markedAsDone (false)
+	, beenAttacked (false)
 	, owner (owner)
 	, job (NULL)
 	, lockerPlayer (NULL)
@@ -55,6 +55,12 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 {
 	if (unitData != 0)
 		data = *unitData;
+
+	disabledChanged.connect ([&](){statusChanged (); });
+	sentryChanged.connect ([&](){statusChanged (); });
+	manualFireChanged.connect ([&](){statusChanged (); });
+	attackingChanged.connect ([&](){statusChanged (); });
+	beeingAttackedChanged.connect ([&](){statusChanged (); });
 }
 
 //------------------------------------------------------------------------------
@@ -228,7 +234,7 @@ bool cUnit::canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack, 
 	if (data.shotsCur <= 0) return false;
 	if (data.ammoCur <= 0) return false;
 	if (attacking) return false;
-	if (isBeeingAttacked) return false;
+	if (isBeeingAttacked ()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
 	if (map.isValidPos (x, y) == false) return false;
 	if (checkRange && isInRange (x, y) == false) return false;
@@ -302,4 +308,95 @@ void cUnit::deleteStoredUnits()
 		delete vehicle;
 	}
 	storedUnits.clear();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setDisabledTurns (int turns)
+{
+	std::swap (turnsDisabled, turns);
+	if (turns != turnsDisabled) disabledChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setSentryActive (bool value)
+{
+	std::swap (sentryActive, value);
+	if (value != sentryActive) sentryChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setManualFireActive (bool value)
+{
+	std::swap (manualFireActive, value);
+	if (value != manualFireActive) manualFireChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setAttacking (bool value)
+{
+	std::swap (attacking, value);
+	if (value != attacking) attackingChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setIsBeeinAttack (bool value)
+{
+	std::swap (beeingAttacked, value);
+	if (value != beeingAttacked) beeingAttackedChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setMarkedAsDone (bool value)
+{
+	std::swap (markedAsDone, value);
+	if (value != markedAsDone) markedAsDoneChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setHasBeenAttacked (bool value)
+{
+	std::swap (beenAttacked, value);
+	if (value != beenAttacked) beenAttackedChanged ();
+}
+
+//------------------------------------------------------------------------------
+int cUnit::getDisabledTurns () const
+{
+	return turnsDisabled;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isSentryActive () const
+{
+	return sentryActive;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isManualFireActive () const
+{
+	return manualFireActive;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isAttacking () const
+{
+	return attacking;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isBeeingAttacked () const
+{
+	return beeingAttacked;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::isMarkedAsDone () const
+{
+	return markedAsDone;
+}
+
+//------------------------------------------------------------------------------
+bool cUnit::hasBeenAttacked () const
+{
+	return beenAttacked;
 }

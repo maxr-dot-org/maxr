@@ -118,20 +118,20 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		}
 
 		// Manual fire
-		if ((unit->manualFireActive || unit->data.canAttack))
+		if ((unit->isManualFireActive() || unit->data.canAttack))
 		{
 			auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~ManualFireMode_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (unit->manualFireActive);
+			button->setChecked (unit->isManualFireActive());
 			button->toggled.connect ([&](){ manualFireToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
 		}
 
 		// Sentry status:
-		if ((unit->sentryActive || unit->data.canAttack || (!unit->isABuilding () && !unit->canBeStoppedViaUnitMenu ())))
+		if ((unit->isSentryActive() || unit->data.canAttack || (!unit->isABuilding () && !unit->canBeStoppedViaUnitMenu ())))
 		{
 			auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Sentry"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (unit->sentryActive);
+			button->setChecked (unit->isSentryActive());
 			button->toggled.connect ([&](){ sentryToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
