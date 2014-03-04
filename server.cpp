@@ -710,19 +710,19 @@ void cServer::handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (!Vehicle) return;
 
-	Vehicle->ClearMines = message.popBool();
-	Vehicle->LayMines = message.popBool();
+	Vehicle->setClearMines(message.popBool());
+	Vehicle->setLayMines(message.popBool());
 
-	if (Vehicle->ClearMines && Vehicle->LayMines)
+	if (Vehicle->isUnitClearingMines () && Vehicle->isUnitLayingMines ())
 	{
-		Vehicle->ClearMines = false;
-		Vehicle->LayMines = false;
+		Vehicle->setClearMines(false);
+		Vehicle->setLayMines(false);
 		return;
 	}
 
 	bool result = false;
-	if (Vehicle->ClearMines) result = Vehicle->clearMine (*this);
-	if (Vehicle->LayMines) result = Vehicle->layMine (*this);
+	if (Vehicle->isUnitClearingMines ()) result = Vehicle->clearMine (*this);
+	if (Vehicle->isUnitLayingMines ()) result = Vehicle->layMine (*this);
 
 	if (result)
 	{
@@ -741,7 +741,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle == NULL) return;
-	if (Vehicle->IsBuilding || Vehicle->BuildPath) return;
+	if (Vehicle->isUnitBuildingABuilding () || Vehicle->BuildPath) return;
 
 	const sID BuildingTyp = message.popID();
 	if (BuildingTyp.getUnitDataOriginalVersion() == NULL)
@@ -807,19 +807,19 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 		}
 	}
 
-	Vehicle->BuildingTyp = BuildingTyp;
+	Vehicle->setBuildingType(BuildingTyp);
 	const bool bBuildPath = message.popBool();
 	const int iPathOff = message.popInt32();
 	if (Map->isValidOffset (iPathOff) == false) return;
 	Vehicle->BandX = iPathOff % Map->getSize();
 	Vehicle->BandY = iPathOff / Map->getSize();
 
-	Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
-	Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
-	Vehicle->BuildCostsStart = Vehicle->BuildCosts;
-	Vehicle->BuildRoundsStart = Vehicle->BuildRounds;
+	Vehicle->setBuildCosts (iTurboBuildCosts[iBuildSpeed]);
+	Vehicle->setBuildTurns (iTurboBuildRounds[iBuildSpeed]);
+	Vehicle->setBuildCostsStart(Vehicle->getBuildCosts ());
+	Vehicle->setBuildTurnsStart(Vehicle->getBuildTurns ());
 
-	Vehicle->IsBuilding = true;
+	Vehicle->setBuildingABuilding(true);
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (*this, true, *Vehicle);
@@ -839,7 +839,7 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	const int iEscapeX = message.popInt16();
 	const int iEscapeY = message.popInt16();
 
-	if (!Vehicle->IsBuilding || Vehicle->BuildRounds > 0) return;
+	if (!Vehicle->isUnitBuildingABuilding () || Vehicle->getBuildTurns () > 0) return;
 	if (!Map->possiblePlace (*Vehicle, iEscapeX, iEscapeY))
 	{
 		sideStepStealthUnit (iEscapeX, iEscapeY, *Vehicle);
@@ -847,14 +847,14 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 
 	if (!Map->possiblePlace (*Vehicle, iEscapeX, iEscapeY)) return;
 
-	addBuilding (Vehicle->PosX, Vehicle->PosY, Vehicle->BuildingTyp, Vehicle->owner);
+	addBuilding (Vehicle->PosX, Vehicle->PosY, Vehicle->getBuildingType (), Vehicle->owner);
 
 	// end building
-	Vehicle->IsBuilding = false;
+	Vehicle->setBuildingABuilding(false);
 	Vehicle->BuildPath = false;
 
 	// set the vehicle to the border
-	if (Vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
+	if (Vehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
 		int x = Vehicle->PosX;
 		int y = Vehicle->PosY;
@@ -889,7 +889,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle == NULL) return;
-	if (!Vehicle->IsBuilding) return;
+	if (!Vehicle->isUnitBuildingABuilding ()) return;
 	stopVehicleBuilding (Vehicle);
 }
 
@@ -933,7 +933,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 		}
 		else
 		{
-			if (DestVehicle->IsBuilding || DestVehicle->IsClearing) return;
+			if (DestVehicle->isUnitBuildingABuilding () || DestVehicle->isUnitClearing ()) return;
 			if (DestVehicle->data.storeResType != iType) return;
 			if (DestVehicle->data.storageResCur + iTranfer > DestVehicle->data.storageResMax || DestVehicle->data.storageResCur + iTranfer < 0) return;
 			switch (iType)
@@ -996,7 +996,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 		}
 		else
 		{
-			if (DestVehicle->IsBuilding || DestVehicle->IsClearing) return;
+			if (DestVehicle->isUnitBuildingABuilding () || DestVehicle->isUnitClearing ()) return;
 			if (DestVehicle->data.storeResType != iType) return;
 			if (DestVehicle->data.storageResCur + iTranfer > DestVehicle->data.storageResMax || DestVehicle->data.storageResCur + iTranfer < 0) return;
 			DestVehicle->data.storageResCur += iTranfer;
@@ -1052,7 +1052,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	}
 
 	// reset building status
-	if (Building->IsWorking)
+	if (Building->isUnitWorking ())
 	{
 		Building->ServerStopWork (*this, false);
 	}
@@ -1488,12 +1488,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		Map->moveVehicleBig (*Vehicle, building->PosX, building->PosY);
 	}
 
-	Vehicle->IsClearing = true;
-	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
+	Vehicle->setClearing(true);
+	Vehicle->setClearingTurns(building->data.isBig ? 4 : 1);
 	Vehicle->owner->doScan();
 	addJob (new cStartBuildJob (*Vehicle, off % Map->getSize(), off / Map->getSize(), building->data.isBig));
 
-	sendClearAnswer (*this, 0, *Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->getNr());
+	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns (), rubbleoffset, Vehicle->owner->getNr ());
 	for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 	{
 		sendClearAnswer (*this, 0, *Vehicle, 0, rubbleoffset, Vehicle->seenByPlayerList[i]->getNr());
@@ -1513,10 +1513,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		return;
 	}
 
-	if (Vehicle->IsClearing)
+	if (Vehicle->isUnitClearing ())
 	{
-		Vehicle->IsClearing = false;
-		Vehicle->ClearingRounds = 0;
+		Vehicle->setClearing(false);
+		Vehicle->setClearingTurns(0);
 
 		if (Vehicle->data.isBig)
 		{
@@ -1879,7 +1879,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 		int centersToAssign = newResearchSettings[newArea];
 		while (centersToAssign > 0 && curBuilding != 0)
 		{
-			if (curBuilding->data.canResearch && curBuilding->IsWorking)
+			if (curBuilding->data.canResearch && curBuilding->isUnitWorking ())
 			{
 				researchCentersToChangeArea.push_back (curBuilding);
 				newAreasForResearchCenters.push_back (newArea);
@@ -1896,7 +1896,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 	// shut down unused research centers
 	for (; curBuilding != 0; curBuilding = curBuilding->next)
 	{
-		if (curBuilding->data.canResearch && curBuilding->IsWorking)
+		if (curBuilding->data.canResearch && curBuilding->isUnitWorking ())
 			researchCentersToStop.push_back (curBuilding);
 	}
 	if (error)
@@ -1952,7 +1952,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			if (destVehicle)
 			{
 				// change the owner
-				if (destVehicle->IsBuilding) stopVehicleBuilding (destVehicle);
+				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 				changeUnitOwner (destVehicle, srcVehicle->owner);
 			}
@@ -1963,7 +1963,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			// As higher his level is as slower he rises onto the next one.
 			// every 5 rankings he needs one successful disabling more,
 			// to get to the next ranking
-			srcVehicle->CommandoRank += 1.f / (((int) srcVehicle->CommandoRank + 5) / 5);
+			srcVehicle->setCommandoRank(srcVehicle->getCommandoRank() +  1.f / (((int) srcVehicle->getCommandoRank() + 5) / 5));
 
 			const int strength = srcVehicle->calcCommandoTurns (destUnit);
 			// stop the unit and make it disabled
@@ -1977,7 +1977,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destVehicle->data.speedCur = 0;
 				destVehicle->data.shotsCur = 0;
 
-				if (destVehicle->IsBuilding) stopVehicleBuilding (destVehicle);
+				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 			}
 			else if (destBuilding)
@@ -1986,7 +1986,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destBuilding->lastShots = destBuilding->data.shotsCur;
 
 				destBuilding->data.shotsCur = 0;
-				destBuilding->wasWorking = destBuilding->IsWorking;
+				destBuilding->wasWorking = destBuilding->isUnitWorking ();
 				destBuilding->ServerStopWork (*this, true);
 				sendDoStopWork (*this, *destBuilding);
 			}
@@ -2657,7 +2657,7 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 	std::vector<cPlayer*>& seenByPlayers = vehicle.seenByPlayerList;
 	const bool stealthUnit = vehicle.data.isStealthOn != TERRAIN_NONE;
 
-	if (MapPlayer.canSeeAnyAreaUnder (vehicle) && !vehicle.Loaded &&
+	if (MapPlayer.canSeeAnyAreaUnder (vehicle) && !vehicle.isUnitLoaded () &&
 		(!stealthUnit || vehicle.isDetectedByPlayer (&MapPlayer) || (MapPlayer.isDefeated && openMapDefeat)))
 	{
 		if (Contains (seenByPlayers, &MapPlayer) == false)
@@ -3410,12 +3410,12 @@ void cServer::handleMoveJobs()
 			// continue path building
 			if (Vehicle && Vehicle->BuildPath)
 			{
-				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY, Vehicle))
+				if (Vehicle->data.storageResCur >= Vehicle->getBuildCostsStart () && Map->possiblePlaceBuilding (*Vehicle->getBuildingType ().getUnitDataOriginalVersion (), Vehicle->PosX, Vehicle->PosY, Vehicle))
 				{
 					addJob (new cStartBuildJob (*Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
-					Vehicle->IsBuilding = true;
-					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
-					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
+					Vehicle->setBuildingABuilding(true);
+					Vehicle->setBuildCosts(Vehicle->getBuildCostsStart());
+					Vehicle->setBuildTurns(Vehicle->getBuildTurnsStart ());
 					sendBuildAnswer (*this, true, *Vehicle);
 				}
 				else
@@ -3734,7 +3734,7 @@ void cServer::deletePlayer (cPlayer* Player)
 	for (cVehicle* Vehicle = Player->VehicleList; Vehicle;)
 	{
 		cVehicle* nextVehicle = Vehicle->next;
-		if (!Vehicle->Loaded) deleteUnit (Vehicle);
+		if (!Vehicle->isUnitLoaded ()) deleteUnit (Vehicle);
 		Vehicle = nextVehicle;
 	}
 	while (Player->BuildingList)
@@ -3808,7 +3808,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	// send all units to the client
 	for (cVehicle* Vehicle = Player->VehicleList; Vehicle; Vehicle = Vehicle->next)
 	{
-		if (!Vehicle->Loaded) resyncVehicle (*Vehicle, *Player);
+		if (!Vehicle->isUnitLoaded ()) resyncVehicle (*Vehicle, *Player);
 	}
 
 	for (cBuilding* Building = Player->BuildingList; Building; Building = Building->next)
@@ -3886,7 +3886,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 //------------------------------------------------------------------------------
 void cServer::resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player)
 {
-	sendAddUnit (*this, Vehicle.PosX, Vehicle.PosY, Vehicle.iID, true, Vehicle.data.ID, Player.getNr(), true, !Vehicle.Loaded);
+	sendAddUnit (*this, Vehicle.PosX, Vehicle.PosY, Vehicle.iID, true, Vehicle.data.ID, Player.getNr (), true, !Vehicle.isUnitLoaded ());
 	if (Vehicle.ServerMoveJob) sendMoveJobServer (*this, *Vehicle.ServerMoveJob, Player.getNr());
 	for (size_t i = 0; i != Vehicle.storedUnits.size(); ++i)
 	{
@@ -3971,14 +3971,14 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 //------------------------------------------------------------------------------
 void cServer::stopVehicleBuilding (cVehicle* vehicle)
 {
-	if (!vehicle->IsBuilding) return;
+	if (!vehicle->isUnitBuildingABuilding ()) return;
 
 	int iPos = Map->getOffset (vehicle->PosX, vehicle->PosY);
 
-	vehicle->IsBuilding = false;
+	vehicle->setBuildingABuilding(false);
 	vehicle->BuildPath = false;
 
-	if (vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
+	if (vehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
 		Map->moveVehicle (*vehicle, vehicle->BuildBigSavedPos % Map->getSize(), vehicle->BuildBigSavedPos / Map->getSize());
 		iPos = vehicle->BuildBigSavedPos;

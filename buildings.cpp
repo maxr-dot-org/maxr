@@ -52,7 +52,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 		   ID),
 	next (0),
 	prev (0),
-	BuildList (0)
+	BuildList (0),
+	isWorking (false)
 {
 	setSentryActive(data.canAttack != TERRAIN_NONE);
 
@@ -61,7 +62,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	EffectAlpha = 0;
 	EffectInc = true;
 	StartUp = 0;
-	IsWorking = false;
 	researchArea = cResearch::kAttackResearch;
 	uiData = b ? UnitsData.getBuildingUI (b->ID) : 0;
 	points = 0;
@@ -123,7 +123,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		sText += iToStr (getDisabledTurns()) + ")";
 		return sText;
 	}
-	if (IsWorking || (factoryHasJustFinishedBuilding() && isDisabled() == false))
+	if (isUnitWorking () || (factoryHasJustFinishedBuilding () && isDisabled () == false))
 	{
 		// Factory:
 		if (!data.canBuild.empty () && !BuildList.empty () && owner == player)
@@ -800,7 +800,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 //--------------------------------------------------------------------------
 void cBuilding::ServerStartWork (cServer& server)
 {
-	if (IsWorking)
+	if (isUnitWorking ())
 	{
 		sendDoStartWork (server, *this);
 		return;
@@ -881,7 +881,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// So if an energy generator has to be started,
 	// it can use the fuel production of this building
 	// (when this building is a mine).
-	IsWorking = true;
+	setWorking(true);
 
 	// set mine values. This has to be undone, if the energy is insufficient
 	if (data.canMineMaxRes > 0)
@@ -905,7 +905,7 @@ void cBuilding::ServerStartWork (cServer& server)
 			// try to increase energy production
 			if (!SubBase->increaseEnergyProd (server, data.needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd))
 			{
-				IsWorking = false;
+				setWorking(false);
 
 				// reset mine values
 				if (data.canMineMaxRes > 0)
@@ -968,9 +968,9 @@ void cBuilding::ServerStartWork (cServer& server)
 //------------------------------------------------------------
 void cBuilding::clientStartWork ()
 {
-	if (IsWorking)
+	if (isUnitWorking ())
 		return;
-	IsWorking = true;
+	setWorking(true);
 	EffectAlpha = 0;
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
@@ -981,7 +981,7 @@ void cBuilding::clientStartWork ()
 //--------------------------------------------------------------------------
 void cBuilding::ServerStopWork (cServer& server, bool override)
 {
-	if (!IsWorking)
+	if (!isUnitWorking ())
 	{
 		sendDoStopWork (server, *this);
 		return;
@@ -1000,7 +1000,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 		SubBase->OilNeed -= data.needsOil;
 	}
 
-	IsWorking = false;
+	setWorking(false);
 
 	// Energy consumers:
 	if (data.needsEnergy)
@@ -1054,9 +1054,9 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 //------------------------------------------------------------
 void cBuilding::clientStopWork ()
 {
-	if (!IsWorking)
+	if (!isUnitWorking ())
 		return;
-	IsWorking = false;
+	setWorking(false);
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
 }
@@ -1074,7 +1074,7 @@ bool cBuilding::canTransferTo (const cPosition position, const cMapField& overUn
 		if (v->data.storeResType != data.storeResType)
 			return false;
 
-		if (v->IsBuilding || v->IsClearing)
+		if (v->isUnitBuildingABuilding () || v->isUnitClearing ())
 			return false;
 
 		for (size_t i = 0; i != SubBase->buildings.size(); ++i)
@@ -1155,7 +1155,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 {
 	if (!Vehicle) return false;
 
-	if (Vehicle->Loaded) return false;
+	if (Vehicle->isUnitLoaded ()) return false;
 
 	if (data.storageUnitsCur == data.storageUnitsMax) return false;
 
@@ -1165,7 +1165,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
 
-	if (Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing) return false;
+	if (Vehicle->owner != owner || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
 
 	if (Vehicle->isBeeingAttacked ()) return false;
 
@@ -1183,7 +1183,7 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 		vehicle.owner->deleteSentry (vehicle);
 	}
 
-	vehicle.Loaded = true;
+	vehicle.setLoaded(true);
 
 	storedUnits.push_back (&vehicle);
 	data.storageUnitsCur++;
@@ -1202,8 +1202,9 @@ void cBuilding::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
 	map.addVehicle (vehicle, offset);
 
 	vehicle.PosX = offset % map.getSize();
-	vehicle.PosY = offset / map.getSize();
-	vehicle.Loaded = false;
+	vehicle.PosY = offset / map.getSize ();
+
+	vehicle.setLoaded (false);
 
 	owner->doScan();
 }
@@ -1506,7 +1507,7 @@ void cBuilding::Select (cGameGUI& gameGUI)
 	{
 		PlayRandomVoice (VoiceData.VOIBuildDone);
 	}
-	else if (!IsWorking)
+	else if (!isUnitWorking ())
 		PlayFX (SoundData.SNDHudButton);
 
 	// display the details:
@@ -1674,4 +1675,11 @@ bool cBuilding::buildingCanBeUpgraded() const
 {
 	const sUnitData& upgraded = *owner->getUnitDataCurrentVersion (data.ID);
 	return (data.version != upgraded.version && SubBase && SubBase->Metal >= 2);
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::setWorking (bool value)
+{
+	std::swap (isWorking, value);
+	if (value != isWorking) workingChanged ();
 }

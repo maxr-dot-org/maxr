@@ -155,7 +155,7 @@ int sSubBase::calcMaxProd (int ressourceType) const
 	{
 		const cBuilding& building = *buildings[i];
 
-		if (building.data.canMineMaxRes <= 0 || !building.IsWorking) continue;
+		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking ()) continue;
 
 		switch (ressourceType)
 		{
@@ -222,7 +222,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	{
 		const cBuilding& building = *buildings[i];
 
-		if (building.data.canMineMaxRes <= 0 || !building.IsWorking) continue;
+		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking ()) continue;
 
 		// how much of B can be produced in this mine,
 		// without decreasing the possible production of A and C?
@@ -244,7 +244,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	{
 		const cBuilding& building = *buildings[i];
 
-		if (building.data.canMineMaxRes <= 0 || !building.IsWorking) continue;
+		if (building.data.canMineMaxRes <= 0 || !building.isUnitWorking ()) continue;
 
 		int freeB = min (building.data.canMineMaxRes - building.*ressourceProdA, building.*ressourceProdB);
 		int freeC = min (building.data.canMineMaxRes - building.*ressourceProdA, building.*ressourceProdC);
@@ -278,22 +278,22 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 
 static bool isAOnlineStation (const cBuilding& building)
 {
-	return building.data.produceEnergy > 1 && building.IsWorking;
+	return building.data.produceEnergy > 1 && building.isUnitWorking ();
 }
 
 static bool isAOfflineStation (const cBuilding& building)
 {
-	return building.data.produceEnergy > 1 && !building.IsWorking;
+	return building.data.produceEnergy > 1 && !building.isUnitWorking ();
 }
 
 static bool isAOnlineGenerator (const cBuilding& building)
 {
-	return building.data.produceEnergy == 1 && building.IsWorking;
+	return building.data.produceEnergy == 1 && building.isUnitWorking ();
 }
 
 static bool isAOfflineGenerator (const cBuilding& building)
 {
-	return building.data.produceEnergy == 1 && !building.IsWorking;
+	return building.data.produceEnergy == 1 && !building.isUnitWorking ();
 }
 
 template <typename T>
@@ -492,7 +492,7 @@ bool sSubBase::checkHumanConsumer (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsHumans || !building.IsWorking) continue;
+		if (!building.data.needsHumans || !building.isUnitWorking ()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -508,7 +508,7 @@ bool sSubBase::checkGoldConsumer (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.convertsGold || !building.IsWorking) continue;
+		if (!building.data.convertsGold || !building.isUnitWorking ()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -524,7 +524,7 @@ bool sSubBase::checkMetalConsumer (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsMetal || !building.IsWorking) continue;
+		if (!building.data.needsMetal || !building.isUnitWorking ()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -637,7 +637,7 @@ bool sSubBase::checkEnergy (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsEnergy || !building.IsWorking) continue;
+		if (!building.data.needsEnergy || !building.isUnitWorking ()) continue;
 
 		// do not shut down ressource producers in the first run
 		if (building.MaxOilProd > 0 ||
@@ -652,7 +652,7 @@ bool sSubBase::checkEnergy (cServer& server)
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsEnergy || !building.IsWorking) continue;
+		if (!building.data.needsEnergy || !building.isUnitWorking ()) continue;
 
 		// do not shut down oil producers in the second run
 		if (building.MaxOilProd > 0) continue;
@@ -666,7 +666,7 @@ bool sSubBase::checkEnergy (cServer& server)
 	for (size_t i = 0; i < buildings.size(); i++)
 	{
 		cBuilding& building = *buildings[i];
-		if (!building.data.needsEnergy || !building.IsWorking) continue;
+		if (!building.data.needsEnergy || !building.isUnitWorking ()) continue;
 
 		building.ServerStopWork (server, false);
 
@@ -754,7 +754,7 @@ void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
 void sSubBase::makeTurnend_build (cServer& server, cBuilding& building)
 {
 	// build:
-	if (!building.IsWorking || building.data.canBuild.empty() || building.BuildList.empty())
+	if (!building.isUnitWorking () || building.data.canBuild.empty () || building.BuildList.empty ())
 	{
 		return;
 	}
@@ -888,7 +888,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	{
 		MaxEnergyProd += b->data.produceEnergy;
 		MaxOilNeed += b->data.needsOil;
-		if (b->IsWorking)
+		if (b->isUnitWorking ())
 		{
 			EnergyProd += b->data.produceEnergy;
 			OilNeed += b->data.needsOil;
@@ -897,7 +897,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	else if (b->data.needsEnergy)
 	{
 		MaxEnergyNeed += b->data.needsEnergy;
-		if (b->IsWorking)
+		if (b->isUnitWorking ())
 		{
 			EnergyNeed += b->data.needsEnergy;
 		}
@@ -906,7 +906,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	if (b->data.needsMetal)
 	{
 		MaxMetalNeed += b->data.needsMetal * 12;
-		if (b->IsWorking)
+		if (b->isUnitWorking ())
 		{
 			MetalNeed += min (b->MetalPerRound, b->BuildList[0].metall_remaining);
 		}
@@ -915,13 +915,13 @@ void sSubBase::addBuilding (cBuilding* b)
 	if (b->data.convertsGold)
 	{
 		MaxGoldNeed += b->data.convertsGold;
-		if (b->IsWorking)
+		if (b->isUnitWorking ())
 		{
 			GoldNeed += b->data.convertsGold;
 		}
 	}
 	// calculate ressource production
-	if (b->data.canMineMaxRes > 0 && b->IsWorking)
+	if (b->data.canMineMaxRes > 0 && b->isUnitWorking ())
 	{
 		int mineFree = b->data.canMineMaxRes;
 		changeMetalProd (b->MaxMetalProd);
@@ -940,7 +940,7 @@ void sSubBase::addBuilding (cBuilding* b)
 	if (b->data.needsHumans)
 	{
 		MaxHumanNeed += b->data.needsHumans;
-		if (b->IsWorking)
+		if (b->isUnitWorking ())
 		{
 			HumanNeed += b->data.needsHumans;
 		}
@@ -1151,7 +1151,7 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 		subBase.setOilProd (subBase.getMaxAllowedOilProd());
 	}
 
-	if (building->IsWorking && building->data.canResearch)
+	if (building->isUnitWorking () && building->data.canResearch)
 		building->owner->stopAResearch (building->researchArea);
 
 	if (server)

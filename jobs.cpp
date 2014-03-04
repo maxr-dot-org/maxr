@@ -90,7 +90,7 @@ cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, int orgX_, int orgY_, bool b
 
 void cStartBuildJob::run (const cGameTimer& gameTimer)
 {
-	if (!vehicle->IsBuilding && !vehicle->IsClearing)
+	if (!vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing ())
 	{
 		//cancel the job, if the vehicle is not building or clearing!
 		finished = true;

@@ -385,7 +385,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_building: " + iToStr (vehicle.IsBuilding) + " building_typ: " + vehicle.BuildingTyp.getText() + " build_costs: +" + iToStr (vehicle.BuildCosts) + " build_rounds: " + iToStr (vehicle.BuildRounds) + " build_round_start: " + iToStr (vehicle.BuildRoundsStart);
+	tmpString = "is_building: " + iToStr (vehicle.isUnitBuildingABuilding ()) + " building_typ: " + vehicle.getBuildingType ().getText () + " build_costs: +" + iToStr (vehicle.getBuildCosts ()) + " build_rounds: " + iToStr (vehicle.getBuildTurns ()) + " build_round_start: " + iToStr (vehicle.getBuildTurnsStart ());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -393,7 +393,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " is_clearing: " + iToStr (vehicle.IsClearing) + " clearing_rounds: +" + iToStr (vehicle.ClearingRounds) + " clear_big: " + iToStr (vehicle.data.isBig) + " loaded: " + iToStr (vehicle.Loaded);
+	tmpString = " is_clearing: " + iToStr (vehicle.isUnitClearing ()) + " clearing_rounds: +" + iToStr (vehicle.getClearingTurns ()) + " clear_big: " + iToStr (vehicle.data.isBig) + " loaded: " + iToStr (vehicle.isUnitLoaded ());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -401,7 +401,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_locked: " + iToStr (vehicle.isLocked()) + " clear_mines: +" + iToStr (vehicle.ClearMines) + " lay_mines: " + iToStr (vehicle.LayMines);
+	tmpString = "is_locked: " + iToStr (vehicle.isLocked ()) + " clear_mines: +" + iToStr (vehicle.isUnitClearingMines ()) + " lay_mines: " + iToStr (vehicle.isUnitLayingMines ());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -444,7 +444,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "attacking: " + iToStr (building.isAttacking()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.data.isBig) + " is_working: " + iToStr (building.IsWorking);
+	tmpString = "attacking: " + iToStr (building.isAttacking ()) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.data.isBig) + " is_working: " + iToStr (building.isUnitWorking ());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -927,13 +927,13 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 			const cMap& map = *client->getMap();
 			mouseInputMode = normalInput;
 
-			if(selectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
+			if (selectedVehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 			{
-				sendWantBuild(*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset(selectedVehicle->BandX, selectedVehicle->BandY), false, 0);
+				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->getBuildingType (), selectedVehicle->getBuildTurns (), map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY), false, 0);
 			}
 			else
 			{
-				sendWantBuild(*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset(selectedVehicle->PosX, selectedVehicle->PosY), true, map.getOffset(selectedVehicle->BandX, selectedVehicle->BandY));
+				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->getBuildingType (), selectedVehicle->getBuildTurns (), map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY), true, map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY));
 			}
 		}
 		else if(changeAllowed && mouse.getCursorType() == eMouseCursorType::Activate && selectedUnit && mouseInputMode == activateVehicle)
@@ -1099,7 +1099,7 @@ void cGameGUI::mouseButtonReleased(cMouse& mouse, eMouseButtonType button)
 			}
 			else if (changeAllowed && mouse.getCursorType () == eMouseCursorType::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
 			{
-				if(selectedVehicle->IsBuilding)
+				if (selectedVehicle->isUnitBuildingABuilding ())
 				{
 					sendWantEndBuilding(*client, *selectedVehicle, mouseTilePosition.x(), mouseTilePosition.y());
 				}
@@ -1276,7 +1276,7 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 			mouseInputMode = mouseInputAttackMode;
 			updateMouseCursor();
 		}
-		else if(key == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding)
+		else if (key == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty () && !selectedVehicle->isUnitBuildingABuilding ())
 		{
 			sendWantStopMove(*client, selectedVehicle->iID);
 			cBuildingsBuildMenu buildMenu(*client, &player, selectedVehicle);
@@ -1287,7 +1287,7 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 			cVehiclesBuildMenu buildMenu(*this, &player, selectedBuilding);
 			switchTo(buildMenu, client);
 		}
-		else if(key == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing)
+		else if (key == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing ())
 		{
 			mouseInputMode = transferMode;
 		}
@@ -1303,11 +1303,11 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 			}
 			selectedVehicle->executeAutoMoveJobCommand(*client);
 		}
-		else if(key == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && (selectedBuilding->BuildList.size() || selectedBuilding->data.canBuild.empty()))
+		else if (key == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->isUnitWorking () && (selectedBuilding->BuildList.size () || selectedBuilding->data.canBuild.empty ()))
 		{
 			sendWantStartWork(*client, *selectedBuilding);
 		}
-		else if(key == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)))
+		else if (key == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->isUnitBuildingABuilding () && selectedVehicle->getBuildTurns ()) || (selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns ())))
 		{
 			if(selectedVehicle->ClientMoveJob)
 			{
@@ -1317,32 +1317,32 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 				}
 				sendWantStopMove(*client, selectedVehicle->iID);
 			}
-			else if(selectedVehicle->IsBuilding)
+			else if (selectedVehicle->isUnitBuildingABuilding ())
 			{
 				for(size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 				{
-					if(selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding(*client, selectedVehiclesGroup[i]->iID);
+					if (selectedVehiclesGroup[i]->isUnitBuildingABuilding () && selectedVehiclesGroup[i]->getBuildTurns ()) sendWantStopBuilding (*client, selectedVehiclesGroup[i]->iID);
 				}
 				sendWantStopBuilding(*client, selectedVehicle->iID);
 			}
-			else if(selectedVehicle->IsClearing)
+			else if (selectedVehicle->isUnitClearing ())
 			{
 				for(size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 				{
-					if(selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear(*client, *selectedVehiclesGroup[i]);
+					if (selectedVehiclesGroup[i]->isUnitClearing () && selectedVehiclesGroup[i]->getClearingTurns ()) sendWantStopClear (*client, *selectedVehiclesGroup[i]);
 				}
 				sendWantStopClear(*client, *selectedVehicle);
 			}
 		}
-		else if(key == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->isFreezed())
+		else if (key == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->isUnitWorking () && !client->isFreezed ())
 		{
 			sendWantStopWork(*client, *selectedBuilding);
 		}
-		else if(key == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map.fields[map.getOffset(selectedVehicle->PosX, selectedVehicle->PosY)].getRubble() && !selectedVehicle->IsClearing)
+		else if (key == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map.fields[map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY)].getRubble () && !selectedVehicle->isUnitClearing ())
 		{
 			for(size_t i = 1; i < selectedVehiclesGroup.size(); ++i)
 			{
-				if(selectedVehiclesGroup[i]->data.canClearArea && map.fields[map.getOffset(selectedVehiclesGroup[i]->PosX, selectedVehiclesGroup[i]->PosY)].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear(*client, *selectedVehiclesGroup[i]);
+				if (selectedVehiclesGroup[i]->data.canClearArea && map.fields[map.getOffset (selectedVehiclesGroup[i]->PosX, selectedVehiclesGroup[i]->PosY)].getRubble () && !selectedVehiclesGroup[i]->isUnitClearing ()) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
 			}
 			sendWantStartClear(*client, *selectedVehicle);
 		}
@@ -1418,12 +1418,12 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 		{
 			mouseInputMode = stealMode;
 		}
-		else if(key == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking)
+		else if (key == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->isUnitWorking ())
 		{
 			cMineManagerMenu mineManager(*client, selectedBuilding);
 			switchTo(mineManager, client);
 		}
-		else if(key == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking)
+		else if (key == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->isUnitWorking ())
 		{
 			cDialogResearch researchDialog(*client);
 			switchTo(researchDialog, client);
@@ -1547,7 +1547,7 @@ void cGameGUI::stopFXLoop()
 //----------------------------------------------------------------
 void cGameGUI::playStream (const cBuilding& building)
 {
-	if (building.IsWorking)
+	if (building.isUnitWorking ())
 		playFXLoop (building.uiData->Running);
 	else
 		playFXLoop (building.uiData->Wait);
@@ -1563,9 +1563,9 @@ void cGameGUI::playStream (const cVehicle& vehicle)
 	bool water = map.isWater (vehicle.PosX, vehicle.PosY);
 	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-	if (vehicle.IsBuilding && (vehicle.BuildRounds || &client->getActivePlayer() != vehicle.owner))
+	if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || &client->getActivePlayer () != vehicle.owner))
 		playFXLoop (SoundData.SNDBuilding);
-	else if (vehicle.IsClearing)
+	else if (vehicle.isUnitClearing ())
 		playFXLoop (SoundData.SNDClearing);
 	else if (water && vehicle.data.factorSea > 0)
 		playFXLoop (vehicle.uiData->WaitWater);
@@ -2480,7 +2480,7 @@ void cGameGUI::selectUnit (cUnit& unit)
 {
 	cVehicle* vehicle = static_cast<cVehicle*> (unit.isAVehicle() ? &unit : NULL);
 
-	if (vehicle && vehicle->Loaded) return;
+	if (vehicle && vehicle->isUnitLoaded ()) return;
 
 	cBuilding* building = static_cast<cBuilding*> (unit.isABuilding() ? &unit : NULL);
 
@@ -2766,7 +2766,7 @@ void cGameGUI::updateMouseCursor()
 					 (
 						 (
 							 selectedBuilding->BuildList.empty() ||
-							 selectedBuilding->IsWorking ||
+							 selectedBuilding->isUnitWorking () ||
 							 selectedBuilding->BuildList[0].metall_remaining > 0
 						 ) &&
 						 mouseInputMode != loadMode &&
@@ -2801,7 +2801,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < HUD_LEFT_WIDTH + (Video.getResolutionX() - HUD_TOTAL_WIDTH) && y < HUD_TOP_HIGHT + (Video.getResolutionY() - HUD_TOTAL_HIGHT))
 		{
-			if (!selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && mouseInputMode != activateVehicle)
+			if (!selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing () && mouseInputMode != loadMode && mouseInputMode != activateVehicle)
 			{
 				if (selectedVehicle->MoveJobActive)
 				{
@@ -2816,10 +2816,10 @@ void cGameGUI::updateMouseCursor()
 					mouse.setCursorType(eMouseCursorType::No);
 				}
 			}
-			else if (selectedVehicle->IsBuilding || selectedVehicle->IsClearing)
+			else if (selectedVehicle->isUnitBuildingABuilding () || selectedVehicle->isUnitClearing ())
 			{
-				if (((selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
-					 (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)) &&
+				if (((selectedVehicle->isUnitBuildingABuilding () && selectedVehicle->getBuildTurns () == 0) ||
+					(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns () == 0)) &&
 					client->getMap()->possiblePlace (*selectedVehicle, mouseMapX, mouseMapY) && selectedVehicle->isNextTo (mouseMapX, mouseMapY))
 				{
 					mouse.setCursorType(eMouseCursorType::Move);
@@ -2834,7 +2834,7 @@ void cGameGUI::updateMouseCursor()
 			selectedBuilding &&
 			selectedBuilding->owner == &client->getActivePlayer() &&
 			!selectedBuilding->BuildList.empty() &&
-			!selectedBuilding->IsWorking &&
+			!selectedBuilding->isUnitWorking () &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0)
 		{
 			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
@@ -3214,7 +3214,7 @@ void cGameGUI::selectBoxVehicles(const cBox<cPosition>& box)
 			cVehicle* vehicle = map[offset].getVehicle();
 			if (!vehicle || vehicle->owner != &player) vehicle = map[offset].getPlane();
 
-			if (vehicle && vehicle->owner == &player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
+			if (vehicle && vehicle->owner == &player && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing () && !vehicle->moving)
 			{
 				if (vehicle == selectedUnit)
 				{
@@ -3906,7 +3906,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 			}
 
 			cVehicle* vehicle = map.fields[pos].getVehicle();
-			if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) &&
+			if (vehicle && (vehicle->isUnitClearing () || vehicle->isUnitBuildingABuilding ()) &&
 				player.canSeeAnyAreaUnder (*vehicle))
 			{
 				// make sure a big vehicle is drawn only once
@@ -3934,7 +3934,7 @@ void cGameGUI::drawVehicles (int startX, int startY, int endX, int endY, int zoo
 		{
 			cVehicle* vehicle = map.fields[pos].getVehicle();
 			if (vehicle == NULL) continue;
-			if (vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
+			if (vehicle->data.factorGround != 0 && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing ())
 			{
 				vehicle->draw (dest, *this);
 			}
@@ -4232,7 +4232,7 @@ void cGameGUI::drawUnitCircles()
 	if (selectedVehicle && selectedUnit->isDisabled() == false)
 	{
 		cVehicle& v = *selectedVehicle;
-		const bool movementOffset = !v.IsBuilding && !v.IsClearing;
+		const bool movementOffset = !v.isUnitBuildingABuilding () && !v.isUnitClearing ();
 		const int spx = getScreenPosX (v, movementOffset);
 		const int spy = getScreenPosY (v, movementOffset);
 		if (scanChecked())
@@ -4253,8 +4253,8 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (v.owner == &player &&
 			(
-				(v.IsBuilding && v.BuildRounds == 0) ||
-				(v.IsClearing && v.ClearingRounds == 0)
+			(v.isUnitBuildingABuilding () && v.getBuildTurns () == 0) ||
+			(v.isUnitClearing () && v.getClearingTurns () == 0)
 			) && !v.BuildPath)
 		{
 			const cMap& map = *client->getMap();
@@ -4288,7 +4288,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (mouseInputMode == placeBand)
 		{
-			if (v.BuildingTyp.getUnitDataOriginalVersion()->isBig)
+			if (v.getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 			{
 				SDL_Rect dest;
 				dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * v.BandX;
@@ -4356,7 +4356,7 @@ void cGameGUI::drawUnitCircles()
 		}
 
 		if (selectedBuilding->BuildList.empty() == false &&
-			!selectedBuilding->IsWorking &&
+			!selectedBuilding->isUnitWorking () &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
 			selectedBuilding->owner == &player)
 		{

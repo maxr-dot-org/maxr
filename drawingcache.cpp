@@ -34,8 +34,8 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 {
 	dir = vehicle.dir;
 	owner = vehicle.owner;
-	isBuilding = vehicle.IsBuilding;
-	isClearing = vehicle.IsClearing;
+	isBuilding = vehicle.isUnitBuildingABuilding ();
+	isClearing = vehicle.isUnitClearing ();
 	flightHigh = vehicle.FlightHigh;
 	big = vehicle.data.isBig;
 	id = vehicle.data.ID;
@@ -74,7 +74,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 		//height += shwOff;
 		//width  += shwOff;
 	}
-	if (vehicle.IsClearing || vehicle.IsBuilding)
+	if (vehicle.isUnitClearing () || vehicle.isUnitBuildingABuilding ())
 	{
 		width  = 130;
 		height = 130;
@@ -196,8 +196,8 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		if (entry.id != vehicle.data.ID) continue;
 		if (entry.owner != vehicle.owner) continue;
 		if (entry.big != vehicle.data.isBig) continue;
-		if (entry.isBuilding != vehicle.IsBuilding) continue;
-		if (entry.isClearing != vehicle.IsClearing) continue;
+		if (entry.isBuilding != vehicle.isUnitBuildingABuilding ()) continue;
+		if (entry.isClearing != vehicle.isUnitClearing ()) continue;
 
 		if (entry.flightHigh != vehicle.FlightHigh) continue;
 		if (entry.dir != vehicle.dir) continue;
@@ -206,7 +206,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		{
 			if (entry.frame != vehicle.WalkFrame) continue;
 		}
-		if (vehicle.IsBuilding || vehicle.IsClearing)
+		if (vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ())
 		{
 			if (entry.frame != animationTimer->getAnimationTime() % 4) continue;
 		}
@@ -214,7 +214,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		if (entry.zoom != zoom) continue;
 
 		bool water = map.isWaterOrCoast (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
-		if (vehicle.IsBuilding)
+		if (vehicle.isUnitBuildingABuilding ())
 		{
 			if (water != entry.water) continue;
 		}
@@ -333,7 +333,7 @@ bool cDrawingCache::canCache (const cBuilding& building)
 
 bool cDrawingCache::canCache (const cVehicle& vehicle)
 {
-	if ((vehicle.IsBuilding || vehicle.IsClearing) && vehicle.job)
+	if ((vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ()) && vehicle.job)
 	{
 		notCached++;
 		return false;
@@ -351,7 +351,7 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 		return false;
 	}
 
-	if (vehicle.IsBuilding && vehicle.data.isBig && vehicle.BigBetonAlpha < 254u)
+	if (vehicle.isUnitBuildingABuilding () && vehicle.data.isBig && vehicle.BigBetonAlpha < 254u)
 	{
 		notCached++;
 		return false;

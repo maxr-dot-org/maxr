@@ -4239,8 +4239,8 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 		menu->vehicle->BuildBigSavedPos = menu->client->getMap()->getOffset (menu->vehicle->PosX, menu->vehicle->PosY);
 
 		// save building information temporary to have them when placing band is finished
-		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
-		menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
+		menu->vehicle->setBuildingType (menu->selectedUnit->getUnitID ());
+		menu->vehicle->setBuildTurns (menu->speedHandler->getBuildSpeed ());
 
 		//FIXME: gameGUI
 		//menu->vehicle->FindNextband (menu->client->getGameGUI());
@@ -4253,8 +4253,8 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 {
 	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
 
-	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
-	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
+	menu->vehicle->setBuildingType (menu->selectedUnit->getUnitID ());
+	menu->vehicle->setBuildTurns (menu->speedHandler->getBuildSpeed ());
 
 	//FIXME: gameGUI
 	//menu->client->getGameGUI().mouseInputMode = placeBand;
@@ -5473,7 +5473,7 @@ void cReportsMenu::doubleClicked (cUnit* unit)
 
 	end = true;
 	cVehicle* vehicle = unit->isAVehicle() ? static_cast<cVehicle*> (unit) : NULL;
-	if (vehicle && vehicle->Loaded)
+	if (vehicle && vehicle->isUnitLoaded ())
 	{
 		// find storing unit
 		cUnit* storingUnit = vehicle->getContainerVehicle();

@@ -69,7 +69,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 			 vehicle;
 			 vehicle = vehicle->next)
 		{
-			if (!vehicle->Loaded)
+			if (!vehicle->isUnitLoaded ())
 			{
 				writeUnit (server, *vehicle, &unitnum);
 				unitnum++;
@@ -611,16 +611,11 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	unitNode->FirstChildElement ("Direction")->QueryIntAttribute ("num", &vehicle->dir);
 	if (XMLElement* const element = unitNode->FirstChildElement ("CommandoRank"))
 	{
-		element->QueryFloatAttribute ("num", &vehicle->CommandoRank);
+		vehicle->setCommandoRank(element->FloatAttribute ("num"));
 	}
 	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, x, y);
-	if (unitNode->FirstChildElement ("Disabled"))
-	{
-		int temp;
-		unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &temp);
-		vehicle->setDisabledTurns (temp);
-	}
-	if (unitNode->FirstChildElement ("LayMines")) vehicle->LayMines = true;
+	if (unitNode->FirstChildElement ("Disabled")) vehicle->setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
+	if (unitNode->FirstChildElement ("LayMines")) vehicle->setLayMines(true);
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
@@ -630,33 +625,35 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
-		vehicle->IsBuilding = true;
+		vehicle->setBuildingABuilding(true);
 		if (element->Attribute ("type_id") != NULL)
 		{
-			vehicle->BuildingTyp.generate (element->Attribute ("type_id"));
+			sID temp;
+			temp.generate (element->Attribute ("type_id"));
+			vehicle->setBuildingType (temp);
 		}
 		// be downward compatible and looke for 'type' too
 		else if (element->Attribute ("type") != NULL)
 		{
 			// element->Attribute ("type", &vehicle->BuildingTyp);
 		}
-		element->QueryIntAttribute ("turns", &vehicle->BuildRounds);
-		element->QueryIntAttribute ("costs", &vehicle->BuildCosts);
+		vehicle->setBuildTurns (element->IntAttribute ("turns"));
+		vehicle->setBuildCosts (element->IntAttribute ("costs"));
 		element->QueryIntAttribute ("savedpos", &vehicle->BuildBigSavedPos);
 
 		if (element->Attribute ("path"))
 		{
 			vehicle->BuildPath = true;
-			element->QueryIntAttribute ("turnsstart", &vehicle->BuildRoundsStart);
-			element->QueryIntAttribute ("costsstart", &vehicle->BuildCostsStart);
+			vehicle->setBuildTurnsStart (element->IntAttribute ("turnsstart"));
+			vehicle->setBuildCostsStart (element->IntAttribute ("costsstart"));
 			element->QueryIntAttribute ("endx", &vehicle->BandX);
 			element->QueryIntAttribute ("endy", &vehicle->BandY);
 		}
 	}
 	if (XMLElement* const element = unitNode->FirstChildElement ("Clearing"))
 	{
-		vehicle->IsClearing = true;
-		element->QueryIntAttribute ("turns", &vehicle->ClearingRounds);
+		vehicle->setClearing (true);
+		vehicle->setClearingTurns (element->IntAttribute ("turns"));
 		element->QueryIntAttribute ("savedpos", &vehicle->BuildBigSavedPos);
 	}
 
@@ -737,14 +734,9 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 
 	loadUnitValues (unitNode, &building->data);
 
-	if (unitNode->FirstChildElement ("IsWorking")) building->IsWorking = true;
+	if (unitNode->FirstChildElement ("IsWorking")) building->setWorking(true);
 	if (unitNode->FirstChildElement ("wasWorking")) building->wasWorking = true;
-	if (unitNode->FirstChildElement ("Disabled"))
-	{
-		int temp;
-		unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &temp);
-		building->setDisabledTurns (temp);
-	}
+	if (unitNode->FirstChildElement ("Disabled")) building->setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
 	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->QueryIntAttribute ("area", & (building->researchArea));
 	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building->points));
 	if (unitNode->FirstChildElement ("OnSentry"))
@@ -1359,32 +1351,32 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 
 	// add additional status information
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
-	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", fToStr (vehicle.CommandoRank));
+	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", fToStr (vehicle.getCommandoRank()));
 	if (vehicle.data.isBig) addMainElement (unitNode, "IsBig");
 	if (vehicle.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.getDisabledTurns()));
-	if (vehicle.LayMines) addMainElement (unitNode, "LayMines");
+	if (vehicle.isUnitLayingMines ()) addMainElement (unitNode, "LayMines");
 	if (vehicle.isSentryActive()) addMainElement (unitNode, "OnSentry");
 	if (vehicle.isManualFireActive()) addMainElement (unitNode, "ManualFire");
 	if (vehicle.hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
 
-	if (vehicle.IsBuilding)
+	if (vehicle.isUnitBuildingABuilding ())
 	{
 		XMLElement* element = addMainElement (unitNode, "Building");
-		element->SetAttribute ("type_id", vehicle.BuildingTyp.getText().c_str());
-		element->SetAttribute ("turns", iToStr (vehicle.BuildRounds).c_str());
-		element->SetAttribute ("costs", iToStr (vehicle.BuildCosts).c_str());
+		element->SetAttribute ("type_id", vehicle.getBuildingType ().getText ().c_str ());
+		element->SetAttribute ("turns", iToStr (vehicle.getBuildTurns()).c_str());
+		element->SetAttribute ("costs", iToStr (vehicle.getBuildCosts()).c_str());
 		if (vehicle.data.isBig) element->SetAttribute ("savedpos", iToStr (vehicle.BuildBigSavedPos).c_str());
 
 		if (vehicle.BuildPath)
 		{
 			element->SetAttribute ("path", "1");
-			element->SetAttribute ("turnsstart", iToStr (vehicle.BuildRoundsStart).c_str());
-			element->SetAttribute ("costsstart", iToStr (vehicle.BuildCostsStart).c_str());
+			element->SetAttribute ("turnsstart", iToStr (vehicle.getBuildTurnsStart()).c_str());
+			element->SetAttribute ("costsstart", iToStr (vehicle.getBuildCostsStart()).c_str());
 			element->SetAttribute ("endx", iToStr (vehicle.BandX).c_str());
 			element->SetAttribute ("endy", iToStr (vehicle.BandY).c_str());
 		}
 	}
-	if (vehicle.IsClearing) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.ClearingRounds), "savedpos", iToStr (vehicle.BuildBigSavedPos));
+	if (vehicle.isUnitClearing ()) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.getClearingTurns()), "savedpos", iToStr (vehicle.BuildBigSavedPos));
 	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->DestX), "desty", iToStr (vehicle.ServerMoveJob->DestY));
 
 	// write from which players this unit has been detected
@@ -1436,7 +1428,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	writeUnitValues (unitNode, building.data, *building.owner->getUnitDataCurrentVersion (building.data.ID));
 
 	// write additional stauts information
-	if (building.IsWorking) addMainElement (unitNode, "IsWorking");
+	if (building.isUnitWorking ()) addMainElement (unitNode, "IsWorking");
 	if (building.wasWorking) addMainElement (unitNode, "wasWorking");
 	if (building.isDisabled()) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.getDisabledTurns()));
 

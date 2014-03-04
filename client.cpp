@@ -568,7 +568,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			// the position should be changed
 			// so the log message will just be a debug one
 			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
-			if (Vehicle->IsBuilding || Vehicle->IsClearing || Vehicle->moving) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
+			if (Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing () || Vehicle->moving) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->PosX) + " Y" + iToStr (Vehicle->PosY) + "; SHOULD: X" + iToStr (iPosX) + " Y" + iToStr (iPosY) + "]", iLogType);
 
 			// set to server position if vehicle is not moving
@@ -585,12 +585,12 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Vehicle->setIsBeeinAttacked(message.popBool());
 		const bool bWasDisabled = Vehicle->isDisabled();
 		Vehicle->setDisabledTurns(message.popInt16 ());
-		Vehicle->CommandoRank = message.popInt16();
-		Vehicle->IsClearing = message.popBool();
-		bWasBuilding = Vehicle->IsBuilding;
-		Vehicle->IsBuilding = message.popBool();
-		Vehicle->BuildRounds = message.popInt16();
-		Vehicle->ClearingRounds = message.popInt16();
+		Vehicle->setCommandoRank(message.popInt16());
+		Vehicle->setClearing(message.popBool());
+		bWasBuilding = Vehicle->isUnitBuildingABuilding ();
+		Vehicle->setBuildingABuilding(message.popBool());
+		Vehicle->setBuildTurns(message.popInt16());
+		Vehicle->setClearingTurns(message.popInt16());
 		Vehicle->setSentryActive(message.popBool());
 		Vehicle->setManualFireActive(message.popBool());
 
@@ -619,7 +619,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		const bool bWasDisabled = Building->isDisabled();
 		Building->setDisabledTurns (message.popInt16 ());
 		Building->researchArea = message.popInt16();
-		Building->IsWorking = message.popBool();
+		Building->setWorking(message.popBool());
 		Building->setSentryActive( message.popBool ());
 		Building->setManualFireActive( message.popBool ());
 		Building->points = message.popInt16();
@@ -656,15 +656,15 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	{
 		if (Data->canPlaceMines)
 		{
-			if (Data->storageResCur <= 0) Vehicle->LayMines = false;
-			if (Data->storageResCur >= Data->storageResMax) Vehicle->ClearMines = false;
+			if (Data->storageResCur <= 0) Vehicle->setLayMines(false);
+			if (Data->storageResCur >= Data->storageResMax) Vehicle->setClearMines(false);
 		}
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
 		Vehicle->FlightHigh = message.popInt16 ();
 
-		if (bWasBuilding && !Vehicle->IsBuilding)
+		if (bWasBuilding && !Vehicle->isUnitBuildingABuilding ())
 		{
 			unitStoppedBuilding (*Vehicle);
 		}
@@ -678,7 +678,7 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (!Vehicle) return;
 	Vehicle->dir = message.popInt16();
-	Vehicle->BuildingTyp = message.popID();
+	Vehicle->setBuildingType (message.popID ());
 	Vehicle->BuildPath = message.popBool();
 	Vehicle->BandX = message.popInt16();
 	Vehicle->BandY = message.popInt16();
@@ -838,14 +838,14 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
 			}
 		}
-		Vehicle->BuildRounds = 0;
+		Vehicle->setBuildTurns(0);
 		Vehicle->BuildPath = false;
 		Vehicle->BandX = 0;
 		Vehicle->BandY = 0;
 		return;
 	}
 
-	if (Vehicle->IsBuilding) Log.write (" Client: Vehicle is already building", cLog::eLOG_TYPE_NET_ERROR);
+	if (Vehicle->isUnitBuildingABuilding ()) Log.write (" Client: Vehicle is already building", cLog::eLOG_TYPE_NET_ERROR);
 
 	const int iBuildX = message.popInt16();
 	const int iBuildY = message.popInt16();
@@ -868,14 +868,14 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (Vehicle->owner == ActivePlayer)
 	{
-		Vehicle->BuildingTyp = message.popID();
-		Vehicle->BuildRounds = message.popInt16();
+		Vehicle->setBuildingType (message.popID());
+		Vehicle->setBuildTurns (message.popInt16 ());
 		Vehicle->BuildPath = message.popBool();
 		Vehicle->BandX = message.popInt16();
 		Vehicle->BandY = message.popInt16();
 	}
 
-	Vehicle->IsBuilding = true;
+	Vehicle->setBuildingABuilding(true);
 	addJob (new cStartBuildJob (*Vehicle, oldPosX, oldPosY, buildBig));
 
 	unitStartedBuilding (*Vehicle);
@@ -905,7 +905,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 		Vehicle->owner->doScan();
 	}
 
-	Vehicle->IsBuilding = false;
+	Vehicle->setBuildingABuilding(false);
 	Vehicle->BuildPath = false;
 
 	unitStoppedBuilding (*Vehicle);
@@ -1079,7 +1079,7 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 		}
 		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.ammoCur = message.popInt16();
 		else DestVehicle->data.hitpointsCur = message.popInt16();
-		if (DestVehicle->Loaded)
+		if (DestVehicle->isUnitLoaded ())
 		{
 			// get the building which has loaded the unit
 			cBuilding* Building = DestVehicle->owner->BuildingList;
@@ -1190,14 +1190,14 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			const int orgX = Vehicle->PosX;
 			const int orgY = Vehicle->PosY;
 
-			Vehicle->ClearingRounds = message.popInt16();
+			Vehicle->setClearingTurns(message.popInt16());
 			const int bigoffset = message.popInt16();
 			if (bigoffset >= 0)
 			{
 				getMap()->moveVehicleBig (*Vehicle, bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
 				Vehicle->owner->doScan();
 			}
-			Vehicle->IsClearing = true;
+			Vehicle->setClearing(true);
 			addJob (new cStartBuildJob (*Vehicle, orgX, orgY, (bigoffset > 0)));
 
 			unitStartedClearing (*Vehicle);
@@ -1233,8 +1233,8 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 		getMap()->moveVehicle (*Vehicle, bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
 		Vehicle->owner->doScan();
 	}
-	Vehicle->IsClearing = false;
-	Vehicle->ClearingRounds = 0;
+	Vehicle->setClearing(false);
+	Vehicle->setClearingTurns(0);
 
 	unitStoppedClearing (*Vehicle);
 }

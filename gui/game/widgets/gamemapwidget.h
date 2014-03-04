@@ -160,6 +160,7 @@ private:
 	//
 	// data
 	//
+	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 
 	std::shared_ptr<const cStaticMap> staticMap;

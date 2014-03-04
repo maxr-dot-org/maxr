@@ -142,26 +142,14 @@ public:
 	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
 	int ditherX, ditherY; // Dithering für Flugzeuge
-	bool IsBuilding;  // Gibt an ob was gebaut wird
-	sID BuildingTyp;  // Gibt an, was gebaut wird
-	int BuildCosts;   // Die verbleibenden Baukosten
-	int BuildRounds;  // Die verbleibenden Baurunden
-	int BuildRoundsStart; // Startwert der Baurunden (fürs Pfadbauen)
-	int BuildCostsStart;  // Startwert der Baukosten (fürs Pfadbauen)
 	int BandX, BandY; // X,Y Position für das Band
 	int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
-	bool IsClearing;  // Gibt an, ob einn Feld geräumt wird
-	int ClearingRounds; // Gibt an, wie lange ein Feld noch geräumt wird
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	int StartUp;      // Zähler für die Startupannimation
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
-	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
-	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
-	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde
 	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame; // Frame der Geh-Annimation
-	float CommandoRank; // Rang des Commandos
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 
@@ -284,13 +272,51 @@ public:
 	void drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
 
-	bool isUnitLoaded() const { return Loaded; }
+	bool isUnitLoaded () const { return loaded; }
+
+	virtual bool isUnitMoving () const { return moving; }
+	virtual bool isAutoMoveJobActive () const { return autoMJob != 0; }
+	virtual bool isUnitClearing () const { return isClearing; }
+	virtual bool isUnitLayingMines () const { return layMines; }
+	virtual bool isUnitClearingMines () const { return clearMines; }
+	virtual bool isUnitBuildingABuilding () const { return isBuilding; }
+	virtual bool canBeStoppedViaUnitMenu () const;
+
+	void setLoaded (bool value);
+	void setClearing (bool value);
+	void setBuildingABuilding (bool value);
+	void setLayMines (bool value);
+	void setClearMines (bool value);
+
+	int getClearingTurns () const;
+	void setClearingTurns (int value);
+
+	float getCommandoRank () const;
+	void setCommandoRank (float value);
+
+	const sID& getBuildingType () const;
+	void setBuildingType (const sID& id);
+	int getBuildCosts () const;
+	void setBuildCosts (int value);
+	int getBuildTurns () const;
+	void setBuildTurns (int value);
+	int getBuildCostsStart () const;
+	void setBuildCostsStart (int value);
+	int getBuildTurnsStart () const;
+	void setBuildTurnsStart (int value);
+
+
 	/**
 	* return the unit which contains this vehicle
 	*/
 	cBuilding* getContainerBuilding();
 	cVehicle* getContainerVehicle();
 
+	mutable cSignal<void ()> clearingTurnsChanged;
+	mutable cSignal<void ()> buildingTurnsChanged;
+	mutable cSignal<void ()> buildingCostsChanged;
+	mutable cSignal<void ()> buildingTypeChanged;
+	mutable cSignal<void ()> commandoRankChanged;
 private:
 	void drawPath_BuildPath (cGameGUI& gameGUI);
 
@@ -322,17 +348,27 @@ private:
 	/// list of players, that detected this vehicle in this turn
 	std::vector<cPlayer*> detectedInThisTurnByPlayerList;
 
+	bool loaded;
+
+	bool isBuilding;
+	sID buildingTyp;
+	int buildCosts;
+	int buildTurns;
+	int buildTurnsStart;
+	int buildCostsStart;
+
+	bool isClearing;
+	int clearingTurns;
+
+	bool layMines;
+	bool clearMines;
+
+	float commandoRank;
+
 	//--------------------------------------------------------------------------
 protected:
 	//-- methods, that have been extracted during cUnit refactoring ------------
 
-	virtual bool isUnitMoving() const { return moving; }
-	virtual bool isAutoMoveJobActive() const { return autoMJob != 0; }
-	virtual bool isUnitClearing() const { return IsClearing; }
-	virtual bool isUnitLayingMines() const { return LayMines; }
-	virtual bool isUnitClearingMines() const { return ClearMines; }
-	virtual bool isUnitBuildingABuilding() const { return IsBuilding; }
-	virtual bool canBeStoppedViaUnitMenu() const;
 
 	// methods needed for execution of unit menu commands
 	virtual void executeBuildCommand (cGameGUI& gameGUI) const;

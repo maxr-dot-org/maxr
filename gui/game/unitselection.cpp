@@ -69,7 +69,7 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& m
 			cVehicle* vehicle = map[offset].getVehicle ();
 			if (!vehicle ||vehicle->owner != &player) vehicle = map[offset].getPlane ();
 
-			if (vehicle && vehicle->owner == &player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
+			if (vehicle && vehicle->owner == &player && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing() && !vehicle->moving)
 			{
 				if (vehicle == oldSelectedUnit)
 				{

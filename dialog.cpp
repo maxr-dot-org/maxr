@@ -1093,5 +1093,5 @@ void cDialogResearch::handleDestroyUnit (cUnit& destroyedUnit)
 	if (destroyedUnit.isAVehicle()) return;
 	if (destroyedUnit.owner != owner) return;
 	if (!destroyedUnit.data.canResearch) return;
-	if (static_cast<cBuilding&> (destroyedUnit).IsWorking) terminate = true;
+	if (destroyedUnit.isUnitWorking ()) terminate = true;
 }

@@ -323,8 +323,8 @@ void sendWantAttack (const cClient& client, int targetID, int targetOffset, int 
 void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_MINELAYERSTATUS);
-	message->pushBool (vehicle.LayMines);
-	message->pushBool (vehicle.ClearMines);
+	message->pushBool (vehicle.isUnitLayingMines ());
+	message->pushBool (vehicle.isUnitClearingMines ());
 	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }

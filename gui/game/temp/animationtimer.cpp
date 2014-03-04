@@ -88,10 +88,15 @@ Uint32 timerCallback (Uint32 interval, void* arg)
 
 //--------------------------------------------------------------------------
 cAnimationTimer::cAnimationTimer () :
-	timerTime (0),
-	lastUpdateTimerTime (0)
+	sdlTimerInterval (10),
+	timerTime (0)
 {
-	timerId = SDL_AddTimer (10, timerCallback, this);
+	timerId = SDL_AddTimer (sdlTimerInterval, timerCallback, this);
+
+	nextTrigger10msTime = 10 / sdlTimerInterval;
+	nextTrigger50msTime = 50 / sdlTimerInterval;
+	nextTrigger100msTime = 100 / sdlTimerInterval;
+	nextTrigger400msTime = 400 / sdlTimerInterval;
 }
 
 //--------------------------------------------------------------------------
@@ -109,7 +114,7 @@ void cAnimationTimer::increaseTimer ()
 //--------------------------------------------------------------------------
 unsigned long long cAnimationTimer::getAnimationTime () const
 {
-	return timerTime / 10; // in 100ms steps
+	return timerTime / (100 / sdlTimerInterval); // in 100ms steps
 }
 
 //--------------------------------------------------------------------------
@@ -120,20 +125,31 @@ void cAnimationTimer::updateAnimationFlags ()
 	animationFlags.set100ms (false);
 	animationFlags.set400ms (false);
 
-	if (lastUpdateTimerTime == timerTime) return;
+	if (timerTime >= nextTrigger10msTime)
+	{
+		animationFlags.set10ms (true);
+		nextTrigger10msTime += 10 / sdlTimerInterval;
+	}
+	if (timerTime >= nextTrigger50msTime)
+	{
+		animationFlags.set50ms (true);
+		nextTrigger50msTime += 50 / sdlTimerInterval;
+	}
+	if (timerTime >= nextTrigger100msTime)
+	{
+		animationFlags.set100ms (true);
+		nextTrigger100msTime += 100 / sdlTimerInterval;
+	}
+	if (timerTime >= nextTrigger400msTime)
+	{
+		animationFlags.set400ms (true);
+		nextTrigger400msTime += 400 / sdlTimerInterval;
+	}
 
-	lastUpdateTimerTime = timerTime;
-
-	animationFlags.set10ms (true);
-
-	if (timerTime % 5 == 0) animationFlags.set50ms (true);
-	if (timerTime % 10 == 0) animationFlags.set100ms (true);
-	if (timerTime % 40 == 0) animationFlags.set400ms (true);
-
-	triggered10ms ();
-	if (timerTime % 5 == 0) triggered50ms ();
-	if (timerTime % 10 == 0) triggered100ms ();
-	if (timerTime % 40 == 0) triggered400ms ();
+	if (animationFlags.is10ms ()) triggered10ms ();
+	if (animationFlags.is50ms ()) triggered50ms ();
+	if (animationFlags.is100ms ()) triggered100ms ();
+	if (animationFlags.is400ms ()) triggered400ms ();
 }
 
 //--------------------------------------------------------------------------

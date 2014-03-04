@@ -2039,9 +2039,9 @@ void cMenuUnitDetails::draw()
 	else if (data.produceEnergy && building)
 	{
 		// EnergieProduktion:
-		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data.produceEnergy : 0), data.produceEnergy);
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->isUnitWorking () ? data.produceEnergy : 0), data.produceEnergy);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Power"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data.produceEnergy : 0), data.produceEnergy);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->isUnitWorking () ? data.produceEnergy : 0), data.produceEnergy);
 
 		if (unitOwner == &activePlayer)
 		{
@@ -2079,7 +2079,7 @@ void cMenuUnitDetails::draw()
 	else if (data.needsHumans && building)
 	{
 		// HumanNeed:
-		if (building->IsWorking)
+		if (building->isUnitWorking ())
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.needsHumans, data.needsHumans);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Usage_7"), FONT_LATIN_SMALL_WHITE);

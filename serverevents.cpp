@@ -199,16 +199,16 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	if (unit.isAVehicle())
 	{
 		const cVehicle& vehicle = *static_cast<const cVehicle*> (&unit);
-		message->pushInt16 (vehicle.ClearingRounds);
-		message->pushInt16 (vehicle.BuildRounds);
-		message->pushBool (vehicle.IsBuilding);
-		message->pushBool (vehicle.IsClearing);
-		message->pushInt16 ((int) vehicle.CommandoRank);
+		message->pushInt16 (vehicle.getClearingTurns ());
+		message->pushInt16 (vehicle.getBuildTurns ());
+		message->pushBool (vehicle.isUnitBuildingABuilding ());
+		message->pushBool (vehicle.isUnitClearing ());
+		message->pushInt16 ((int) vehicle.getCommandoRank());
 	}
 	else
 	{
 		const cBuilding& building = *static_cast<const cBuilding*> (&unit);
-		message->pushBool (building.IsWorking);
+		message->pushBool (building.isUnitWorking ());
 		message->pushInt16 (building.researchArea);
 	}
 
@@ -245,7 +245,7 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 	message->pushInt16 (vehicle.BandY);
 	message->pushInt16 (vehicle.BandX);
 	message->pushBool (vehicle.BuildPath);
-	message->pushID (vehicle.BuildingTyp);
+	message->pushID (vehicle.getBuildingType ());
 	message->pushInt16 (vehicle.dir);
 	message->pushInt16 (vehicle.iID);
 	server.sendNetMessage (message, vehicle.owner->getNr());
@@ -481,9 +481,9 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		message->pushInt16 (vehicle.BandY);
 		message->pushInt16 (vehicle.BandX);
 		message->pushBool (vehicle.BuildPath);
-		message->pushInt16 (vehicle.BuildRounds);
-		message->pushID (vehicle.BuildingTyp);
-		message->pushBool (vehicle.BuildingTyp.getUnitDataOriginalVersion()->isBig);
+		message->pushInt16 (vehicle.getBuildTurns ());
+		message->pushID (vehicle.getBuildingType ());
+		message->pushBool (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig);
 		message->pushInt16 (vehicle.PosY);
 		message->pushInt16 (vehicle.PosX);
 	}
@@ -498,7 +498,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_BUILD_ANSWER));
 		if (bOK)
 		{
-			message->pushBool (vehicle.BuildingTyp.getUnitDataOriginalVersion()->isBig);
+			message->pushBool (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig);
 			message->pushInt16 (vehicle.PosY);
 			message->pushInt16 (vehicle.PosX);
 		}

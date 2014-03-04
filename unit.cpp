@@ -56,11 +56,17 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	if (unitData != 0)
 		data = *unitData;
 
-	disabledChanged.connect ([&](){statusChanged (); });
-	sentryChanged.connect ([&](){statusChanged (); });
-	manualFireChanged.connect ([&](){statusChanged (); });
-	attackingChanged.connect ([&](){statusChanged (); });
-	beeingAttackedChanged.connect ([&](){statusChanged (); });
+	disabledChanged.connect ([&](){ statusChanged (); });
+	sentryChanged.connect ([&](){ statusChanged (); });
+	manualFireChanged.connect ([&](){ statusChanged (); });
+	attackingChanged.connect ([&](){ statusChanged (); });
+	beeingAttackedChanged.connect ([&](){ statusChanged (); });
+
+	layingMinesChanged.connect ([&](){ statusChanged (); });
+	clearingMinesChanged.connect ([&](){ statusChanged (); });
+	buildingChanged.connect ([&](){ statusChanged (); });
+	clearingChanged.connect ([&](){ statusChanged (); });
+	workingChanged.connect ([&](){ statusChanged (); });
 }
 
 //------------------------------------------------------------------------------

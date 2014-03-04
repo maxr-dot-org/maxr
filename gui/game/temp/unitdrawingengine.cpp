@@ -171,7 +171,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	//}
 
 	// draw the effect if necessary
-	if (building.data.powerOnGraphic && cSettings::getInstance ().isAnimations () && (building.IsWorking || !building.data.canWork))
+	if (building.data.powerOnGraphic && cSettings::getInstance ().isAnimations () && (building.isUnitWorking () || !building.data.canWork))
 	{
 		// FIXME: remove the effect stuff from the building
 		auto& buildingNonConst = const_cast<cBuilding&>(building);
@@ -208,7 +208,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw the mark, when a build order is finished
-	if (building.owner == player && ((!building.BuildList.empty () && !building.IsWorking && building.BuildList[0].metall_remaining <= 0) ||
+	if (building.owner == player && ((!building.BuildList.empty () && !building.isUnitWorking () && building.BuildList[0].metall_remaining <= 0) ||
 									 (building.data.canResearch && building.owner->researchFinished)))
 	{
 		const Uint32 color = 0xFF00FF00 - (0x1000 * (animationTimer->getAnimationTime() % 0x8));
@@ -342,7 +342,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	//	}
 	//}
 
-	if (vehicle.IsBuilding && !vehicle.job && vehicle.BigBetonAlpha < 254u)
+	if (vehicle.isUnitBuildingABuilding() && !vehicle.job && vehicle.BigBetonAlpha < 254u)
 	{
 		// FIXME: remove the this animation stuff from the drawing code
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
@@ -407,14 +407,14 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// remove movement offset for working units
-	if (vehicle.IsBuilding || vehicle.IsClearing)
+	if (vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ())
 	{
 		destination.x -= ox;
 		destination.y -= oy;
 	}
 
 	// draw indication, when building is complete
-	if (vehicle.IsBuilding && vehicle.BuildRounds == 0 && vehicle.owner == player && !vehicle.BuildPath)
+	if (vehicle.isUnitBuildingABuilding () && vehicle.getBuildTurns () == 0 && vehicle.owner == player && !vehicle.BuildPath)
 	{
 		const Uint32 color = 0xFF00FF00 - (0x1000 * (animationTimer->getAnimationTime() % 0x8));
 		SDL_Rect d = {Sint16 (destination.x + 2), Sint16 (destination.y + 2), vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3, vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3};

@@ -168,7 +168,7 @@ void cUnitDetailsHud::reset ()
 	else if (data.produceEnergy && unit->data.ID.isABuilding ())
 	{
 		const auto& building = static_cast<const cBuilding&>(*unit);
-		drawRow (1, eUnitDataSymbolType::Energy, (building.IsWorking ? data.produceEnergy : 0), data.produceEnergy, lngPack.i18n ("Text~Others~Power"));
+		drawRow (1, eUnitDataSymbolType::Energy, (building.isUnitWorking () ? data.produceEnergy : 0), data.produceEnergy, lngPack.i18n ("Text~Others~Power"));
 
 		if (unit->owner == player)
 		{
@@ -190,7 +190,7 @@ void cUnitDetailsHud::reset ()
 	else if (data.needsHumans && unit->data.ID.isABuilding ())
 	{
 		const auto& building = static_cast<const cBuilding&>(*unit);
-		if (building.IsWorking) drawRow (1, eUnitDataSymbolType::Human, data.needsHumans, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
+		if (building.isUnitWorking ()) drawRow (1, eUnitDataSymbolType::Human, data.needsHumans, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 		else drawRow (1, eUnitDataSymbolType::Human, 0, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 
 		if (unit->owner == player) drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Total"));

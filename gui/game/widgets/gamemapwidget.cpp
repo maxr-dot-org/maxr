@@ -20,6 +20,7 @@
 #include "gamemapwidget.h"
 #include "unitcontextmenuwidget.h"
 #include "../hud.h"
+#include "../temp/animationtimer.h"
 #include "../../../map.h"
 #include "../../../settings.h"
 #include "../../../video.h"
@@ -41,7 +42,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	player (nullptr),
-	unitDrawingEngine (std::move(animationTimer)),
+	unitDrawingEngine (animationTimer),
 	pixelOffset (0, 0),
 	internalZoomFactor (1.),
 	shouldDrawSurvey (false),
@@ -53,6 +54,12 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	mouseInputMode (eNewMouseInputMode::Default)
 {
 	assert (staticMap != nullptr);
+
+	// FIXME: should this really be done here?
+	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
+	{
+		const_cast<cStaticMap&>(*staticMap).generateNextAnimationFrame ();
+	});
 
 	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget> ());
 	unitMenu->disable ();
@@ -692,7 +699,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 		}
 
 		auto vehicle = mapField.getVehicle();
-		if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player && player->canSeeAnyAreaUnder (*vehicle)))
+		if (vehicle && (vehicle->isUnitClearing () || vehicle->isUnitBuildingABuilding ()) && (player && player->canSeeAnyAreaUnder (*vehicle)))
 		{
 			// make sure a big vehicle is drawn only once
 			// FIXME: BUG: when PosX,PosY is outside of drawing screen
@@ -718,7 +725,7 @@ void cGameMapWidget::drawVehicles ()
 		auto& mapField = dynamicMap->getField (*i);
 		auto vehicle = mapField.getVehicle ();
 		if (vehicle == nullptr) continue;
-		if (vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
+		if (vehicle->data.factorGround != 0 && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing ())
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
@@ -874,7 +881,7 @@ void cGameMapWidget::drawUnitCircles ()
 
 	if (selectedVehicle && selectedVehicle->isDisabled () == false)
 	{
-		const bool movementOffset = !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing;
+		const bool movementOffset = !selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing ();
 		const auto screenPosition = getScreenPosition (*selectedVehicle, movementOffset);
 		if (shouldDrawScan)
 		{
@@ -941,11 +948,11 @@ void cGameMapWidget::drawExitPoints ()
 	{
 		if (dynamicMap && selectedVehicle->owner == player &&
 			(
-				(selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
-				(selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)
+				(selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) ||
+				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns() == 0)
 			) && !selectedVehicle->BuildPath)
 		{
-			const bool movementOffset = !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing;
+			const bool movementOffset = !selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing ();
 			const auto screenPosition = getScreenPosition (*selectedVehicle, movementOffset);
 
 			const cMap& map = *dynamicMap;
@@ -985,7 +992,7 @@ void cGameMapWidget::drawExitPoints ()
 	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
 	{
 		if (selectedBuilding->BuildList.empty () == false &&
-			!selectedBuilding->IsWorking &&
+			!selectedBuilding->isUnitWorking () &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
 			selectedBuilding->owner == player)
 		{
@@ -1010,7 +1017,7 @@ void cGameMapWidget::drawBuildBand ()
 	{
 		if (mouseInputMode == eNewMouseInputMode::PlaceBand)
 		{
-			if (selectedVehicle->BuildingTyp.getUnitDataOriginalVersion ()->isBig)
+			if (selectedVehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 			{
 				SDL_Rect dest;
 				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * selectedVehicle->BandX;
@@ -1512,7 +1519,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
 		{
-			if (selectedVehicle->IsBuilding)
+			if (selectedVehicle->isUnitBuildingABuilding ())
 			{
 				//sendWantEndBuilding (*client, *selectedVehicle, mouseTilePosition.x (), mouseTilePosition.y ());
 			}
@@ -1809,7 +1816,7 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 				(
 					(
 						selectedBuilding->BuildList.empty() ||
-						selectedBuilding->IsWorking ||
+						selectedBuilding->isUnitWorking () ||
 						selectedBuilding->BuildList[0].metall_remaining > 0
 					) &&
 					mouseInputMode != eNewMouseInputMode::Load &&
@@ -1844,7 +1851,7 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 	}
 	else if (selectedVehicle && selectedVehicle->owner == player)
 	{
-		if (!selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != eNewMouseInputMode::Load && mouseInputMode != eNewMouseInputMode::Activate)
+		if (!selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing () && mouseInputMode != eNewMouseInputMode::Load && mouseInputMode != eNewMouseInputMode::Activate)
 		{
 			if (selectedVehicle->MoveJobActive)
 			{
@@ -1859,10 +1866,10 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 				return eMouseClickAction::None;
 			}
 		}
-		else if (selectedVehicle->IsBuilding || selectedVehicle->IsClearing)
+		else if (selectedVehicle->isUnitBuildingABuilding () || selectedVehicle->isUnitClearing ())
 		{
-			if (((selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
-				(selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)) &&
+			if (((selectedVehicle->isUnitBuildingABuilding () && selectedVehicle->getBuildTurns() == 0) ||
+				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns () == 0)) &&
 				dynamicMap->possiblePlace (*selectedVehicle, mapTilePosition.x (), mapTilePosition.y ()) && selectedVehicle->isNextTo (mapTilePosition.x (), mapTilePosition.y ()))
 			{
 				return eMouseClickAction::Move;
@@ -1877,7 +1884,7 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 		selectedBuilding &&
 		selectedBuilding->owner == player &&
 		!selectedBuilding->BuildList.empty () &&
-		!selectedBuilding->IsWorking &&
+		!selectedBuilding->isUnitWorking () &&
 		selectedBuilding->BuildList[0].metall_remaining <= 0)
 	{
 		if (selectedBuilding->canExitTo (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)

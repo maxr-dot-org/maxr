@@ -524,12 +524,12 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 		Log.write (" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
 		return NULL;
 	}
-	if (vehicle->IsBuilding || (vehicle->BuildPath && vehicle->ServerMoveJob))
+	if (vehicle->isUnitBuildingABuilding () || (vehicle->BuildPath && vehicle->ServerMoveJob))
 	{
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return NULL;
 	}
-	if (vehicle->IsClearing)
+	if (vehicle->isUnitClearing ())
 	{
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
 		return NULL;
@@ -762,8 +762,8 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->data.canPlaceMines)
 	{
 		bool bResult = false;
-		if (Vehicle->LayMines) bResult = Vehicle->layMine (*server);
-		else if (Vehicle->ClearMines) bResult = Vehicle->clearMine (*server);
+		if (Vehicle->isUnitLayingMines ()) bResult = Vehicle->layMine (*server);
+		else if (Vehicle->isUnitClearingMines ()) bResult = Vehicle->clearMine (*server);
 		if (bResult)
 		{
 			// send new unit values

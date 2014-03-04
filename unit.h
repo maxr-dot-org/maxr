@@ -130,6 +130,15 @@ public:
 	mutable cSignal<void ()> markedAsDoneChanged;
 	mutable cSignal<void ()> beenAttackedChanged;
 
+	mutable cSignal<void ()> stored;
+	mutable cSignal<void ()> activated;
+
+	mutable cSignal<void ()> layingMinesChanged;
+	mutable cSignal<void ()> clearingMinesChanged;
+	mutable cSignal<void ()> buildingChanged;
+	mutable cSignal<void ()> clearingChanged;
+	mutable cSignal<void ()> workingChanged;
+
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit
 	const unsigned int iID; ///< the identification number of this unit

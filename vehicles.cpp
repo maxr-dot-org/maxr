@@ -51,7 +51,19 @@ using namespace std;
 cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	cUnit (Owner ? Owner->getUnitDataCurrentVersion (v.ID) : &v, Owner, ID),
 	next (0),
-	prev (0)
+	prev (0),
+	isBuilding (false),
+	isClearing (false),
+	layMines (false),
+	clearMines (false),
+	loaded (false),
+	buildingTyp (),
+	buildCosts (0),
+	buildCostsStart (0),
+	buildTurns (0),
+	buildTurnsStart (0),
+	clearingTurns (0),
+	commandoRank (0)
 {
 	uiData = UnitsData.getVehicleUI (v.ID);
 	BandX = 0;
@@ -63,13 +75,6 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	StartUp = 0;
 	FlightHigh = 0;
 	WalkFrame = 0;
-	CommandoRank = 0;
-	BuildingTyp.iFirstPart = 0;
-	BuildingTyp.iSecondPart = 0;
-	BuildCosts = 0;
-	BuildRounds = 0;
-	BuildRoundsStart = 0;
-	ClearingRounds = 0;
 	BuildBigSavedPos = 0;
 	data.hitpointsCur = data.hitpointsMax;
 	data.ammoCur = data.ammoMax;
@@ -79,12 +84,7 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	hasAutoMoveJob = false;
 	moving = false;
 	MoveJobActive = false;
-	IsBuilding = false;
-	IsClearing = false;
 	BuildPath = false;
-	LayMines = false;
-	ClearMines = false;
-	Loaded = false;
 	BigBetonAlpha = 0;
 	lastShots = 0;
 	lastSpeed = 0;
@@ -92,6 +92,11 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	DamageFXPointX = random (7) + 26 - 3;
 	DamageFXPointY = random (7) + 26 - 3;
 	refreshData();
+
+	clearingTurnsChanged.connect ([&](){ statusChanged (); });
+	buildingTurnsChanged.connect ([&](){ statusChanged (); });
+	buildingTypeChanged.connect ([&](){ statusChanged (); });
+	commandoRankChanged.connect ([&](){ statusChanged (); });
 }
 
 //-----------------------------------------------------------------------------
@@ -381,10 +386,10 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 
 void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert ((IsBuilding || (IsClearing && data.isBig)) && job == NULL);
+	assert ((isUnitBuildingABuilding () || (isUnitClearing () && data.isBig)) && job == NULL);
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
-	if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
+	if (isUnitBuildingABuilding () && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding ()))
 	{
 		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, BigBetonAlpha);
 		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
@@ -413,7 +418,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 
 void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (IsClearing && !data.isBig && job == NULL);
+	assert (isUnitClearing () && !data.isBig && job == NULL);
 
 	// draw shadow
 	SDL_Rect tmp = dest;
@@ -502,12 +507,12 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 	// draw working engineers and bulldozers:
 	if (map && job == NULL)
 	{
-		if (IsBuilding || (IsClearing && data.isBig))
+		if (isUnitBuildingABuilding () || (isUnitClearing () && data.isBig))
 		{
 			render_BuildingOrBigClearing (*map, animationTime, surface, dest, zoomFactor, drawShadow);
 			return;
 		}
-		if (IsClearing && !data.isBig)
+		if (isUnitClearing () && !data.isBig)
 		{
 			render_smallClearing (animationTime, surface, dest, zoomFactor, drawShadow);
 			return;
@@ -568,18 +573,18 @@ void cVehicle::Select (cGameGUI& gameGUI)
 
 bool cVehicle::refreshData_Build (cServer& server)
 {
-	if (IsBuilding == false || BuildRounds == 0) return false;
+	if (isUnitBuildingABuilding () == false || getBuildTurns () == 0) return false;
 
-	data.storageResCur -= (BuildCosts / BuildRounds);
-	BuildCosts -= (BuildCosts / BuildRounds);
+	data.storageResCur -= (getBuildCosts () / getBuildTurns ());
+	setBuildCosts(getBuildCosts() - (getBuildCosts () / getBuildTurns ()));
 
 	data.storageResCur = std::max (this->data.storageResCur, 0);
 
-	BuildRounds--;
-	if (BuildRounds != 0) return true;
+	setBuildTurns(getBuildTurns()-1);
+	if (getBuildTurns () != 0) return true;
 
 	const cMap& map = *server.Map;
-	server.addReport (BuildingTyp, owner->getNr());
+	server.addReport (getBuildingType (), owner->getNr ());
 
 	// handle pathbuilding
 	// here the new building is added (if possible) and
@@ -615,7 +620,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 				}
 			}
 			// Can we build at this next position?
-			if (map.possiblePlaceBuilding (*BuildingTyp.getUnitDataOriginalVersion(), nextX, nextY))
+			if (map.possiblePlaceBuilding (*getBuildingType ().getUnitDataOriginalVersion (), nextX, nextY))
 			{
 				// We can build here.
 				found_next = true;
@@ -626,8 +631,8 @@ bool cVehicle::refreshData_Build (cServer& server)
 		// If we've found somewhere to move to, move there now.
 		if (found_next && server.addMoveJob (PosX, PosY, nextX, nextY, this))
 		{
-			IsBuilding = false;
-			server.addBuilding (PosX, PosY, BuildingTyp, owner);
+			setBuildingABuilding (false);
+			server.addBuilding (PosX, PosY, getBuildingType (), owner);
 			// Begin the movement immediately,
 			// so no other unit can block the destination field.
 			this->ServerMoveJob->checkMove();
@@ -635,10 +640,10 @@ bool cVehicle::refreshData_Build (cServer& server)
 
 		else
 		{
-			if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
+			if (getBuildingType ().getUnitDataOriginalVersion ()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
 			{
-				server.addBuilding (PosX, PosY, BuildingTyp, owner);
-				IsBuilding = false;
+				server.addBuilding (PosX, PosY, getBuildingType (), owner);
+				setBuildingABuilding (false);
 			}
 			BuildPath = false;
 			sendBuildAnswer (server, false, *this);
@@ -648,10 +653,10 @@ bool cVehicle::refreshData_Build (cServer& server)
 	{
 		// add building immediately
 		// if it doesn't require the engineer to drive away
-		if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
+		if (getBuildingType ().getUnitDataOriginalVersion ()->surfacePosition != data.surfacePosition)
 		{
-			IsBuilding = false;
-			server.addBuilding (PosX, PosY, BuildingTyp, owner);
+			setBuildingABuilding(false);
+			server.addBuilding (PosX, PosY, getBuildingType (), owner);
 		}
 	}
 	return true;
@@ -659,15 +664,15 @@ bool cVehicle::refreshData_Build (cServer& server)
 
 bool cVehicle::refreshData_Clear (cServer& server)
 {
-	if (IsClearing == false || ClearingRounds == 0) return false;
+	if (isUnitClearing () == false || getClearingTurns () == 0) return false;
 
-	ClearingRounds--;
+	setClearingTurns(getClearingTurns() - 1);
 
 	cMap& map = *server.Map;
 
-	if (ClearingRounds != 0) return true;
+	if (getClearingTurns () != 0) return true;
 
-	IsClearing = false;
+	setClearing(false);
 	cBuilding* Rubble = map.fields[map.getOffset (PosX, PosY)].getRubble();
 	if (data.isBig)
 	{
@@ -849,27 +854,27 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 	}
 	else if (autoMJob)
 		return lngPack.i18n ("Text~Comp~Surveying");
-	else if (IsBuilding)
+	else if (isUnitBuildingABuilding ())
 	{
 		if (owner != player)
 			return lngPack.i18n ("Text~Comp~Producing");
 		else
 		{
 			string sText;
-			if (BuildRounds)
+			if (getBuildTurns ())
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing");
 				sText += ": ";
-				sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name + " (";
-				sText += iToStr (BuildRounds);
+				sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name + " (";
+				sText += iToStr (getBuildTurns ());
 				sText += ")";
 
 				if (font->getTextWide (sText) > 126)
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing");
 					sText += ":\n";
-					sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name + " (";
-					sText += iToStr (BuildRounds);
+					sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name + " (";
+					sText += iToStr (getBuildTurns ());
 					sText += ")";
 				}
 				return sText;
@@ -878,29 +883,29 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
 				sText += ": ";
-				sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name;
+				sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name;
 
 				if (font->getTextWide (sText) > 126)
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing_Fin");
 					sText += ":\n";
-					sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name;
+					sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name;
 				}
 				return sText;
 			}
 		}
 	}
-	else if (ClearMines)
+	else if (isUnitClearingMines ())
 		return lngPack.i18n ("Text~Comp~Clearing_Mine");
-	else if (LayMines)
+	else if (isUnitLayingMines ())
 		return lngPack.i18n ("Text~Comp~Laying");
-	else if (IsClearing)
+	else if (isUnitClearing ())
 	{
-		if (ClearingRounds)
+		if (getClearingTurns ())
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Clearing") + " (";
-			sText += iToStr (ClearingRounds) + ")";
+			sText += iToStr (getClearingTurns ()) + ")";
 			return sText;
 		}
 		else
@@ -930,14 +935,14 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 		if ((data.canCapture || data.canDisable) /* && owner == gameGUI.getClient()->getActivePlayer()*/ )
 		{
 			sTmp += "\n";
-			if (CommandoRank < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
-			else if (CommandoRank < 3.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
-			else if (CommandoRank < 6.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
-			else if (CommandoRank < 11.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
-			else if (CommandoRank < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
+			if (getCommandoRank() < 1.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
+			else if (getCommandoRank () < 3.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
+			else if (getCommandoRank () < 6.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
+			else if (getCommandoRank () < 11.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
+			else if (getCommandoRank () < 19.f) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
 			else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
-			if (CommandoRank > 0.f)
-				sTmp += " +" + iToStr ((int) CommandoRank);
+			if (getCommandoRank () > 0.f)
+				sTmp += " +" + iToStr ((int)getCommandoRank ());
 
 		}
 
@@ -1028,7 +1033,7 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 	const cMap& map = *gameGUI.getClient()->getMap();
 
 	//check, which positions are available
-	const sUnitData& BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
+	const sUnitData& BuildingType = *getBuildingType ().getUnitDataOriginalVersion ();
 	if (map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX    , PosY - 1)
 		&& map.possiblePlaceBuilding (BuildingType, PosX - 1, PosY))
@@ -1115,7 +1120,7 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 		return;
 	}
 
-	if (BuildingTyp.getUnitDataOriginalVersion()->isBig)
+	if (getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
 		BandX = PosX;
 		BandY = PosY;
@@ -1167,16 +1172,16 @@ void cVehicle::makeReport ()
 			// no more movement
 			PlayVoice (VoiceData.VOINoSpeed);
 		}
-		else if (IsBuilding)
+		else if (isUnitBuildingABuilding ())
 		{
 			// Beim bau:
-			if (!BuildRounds)
+			if (!getBuildTurns ())
 			{
 				// Bau beendet:
 				PlayRandomVoice (VoiceData.VOIBuildDone);
 			}
 		}
-		else if (IsClearing)
+		else if (isUnitClearing ())
 		{
 			// removing dirt
 			PlayVoice (VoiceData.VOIClearing);
@@ -1196,11 +1201,11 @@ void cVehicle::makeReport ()
 			// on sentry:
 			PlayVoice (VoiceData.VOISentry);
 		}
-		else if (ClearMines)
+		else if (isUnitClearingMines ())
 		{
 			PlayRandomVoice (VoiceData.VOIClearingMines);
 		}
-		else if (LayMines)
+		else if (isUnitLayingMines ())
 		{
 			PlayVoice (VoiceData.VOILayingMines);
 		}
@@ -1242,7 +1247,7 @@ bool cVehicle::canTransferTo (const cPosition position, const cMapField& overUni
 		if (v->data.storeResType != data.storeResType)
 			return false;
 
-		if (v->IsBuilding || v->IsClearing)
+		if (v->isUnitBuildingABuilding () || v->isUnitClearing ())
 			return false;
 
 		return true;
@@ -1493,7 +1498,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 {
 	if (!Vehicle) return false;
 
-	if (Vehicle->Loaded) return false;
+	if (Vehicle->isUnitLoaded ()) return false;
 
 	if (data.storageUnitsCur >= data.storageUnitsMax) return false;
 
@@ -1505,7 +1510,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
 
-	if (Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing) return false;
+	if (Vehicle->owner != owner || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
 
 	if (Vehicle->isBeeingAttacked ()) return false;
 
@@ -1523,7 +1528,7 @@ void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 
 	vehicle.setManualFireActive(false);
 
-	vehicle.Loaded = true;
+	vehicle.setLoaded (true);
 
 	storedUnits.push_back (&vehicle);
 	data.storageUnitsCur++;
@@ -1543,8 +1548,9 @@ void cVehicle::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
 	map.addVehicle (vehicle, offset);
 
 	vehicle.PosX = offset % map.getSize();
-	vehicle.PosY = offset / map.getSize();
-	vehicle.Loaded = false;
+	vehicle.PosY = offset / map.getSize ();
+
+	vehicle.setLoaded (false);
 	//vehicle.data.shotsCur = 0;
 
 	owner->doScan();
@@ -1619,7 +1625,7 @@ bool cVehicle::layMine (cServer& server)
 	}
 	data.storageResCur--;
 
-	if (data.storageResCur <= 0) LayMines = false;
+	if (data.storageResCur <= 0) setLayMines(false);
 
 	return true;
 }
@@ -1637,7 +1643,7 @@ bool cVehicle::clearMine (cServer& server)
 	server.deleteUnit (Mine);
 	data.storageResCur++;
 
-	if (data.storageResCur >= data.storageResMax) ClearMines = false;
+	if (data.storageResCur >= data.storageResMax) setClearMines(false);
 
 	return true;
 }
@@ -1683,7 +1689,7 @@ int cVehicle::calcCommandoChance (const cUnit* destUnit, bool steal) const
 	int destTurn = destUnit->data.buildCosts / 3;
 
 	int factor = steal ? 1 : 4;
-	int srcLevel = (int) CommandoRank + 7;
+	int srcLevel = (int) getCommandoRank() + 7;
 
 	// The chance to disable or steal a unit depends on
 	// the infiltrator ranking and the buildcosts
@@ -1710,14 +1716,14 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 	if (destUnit->isAVehicle())
 	{
 		destTurn = destUnit->data.buildCosts / 3;
-		srcLevel = (int) CommandoRank;
+		srcLevel = (int) getCommandoRank();
 		if (destTurn > 0 && destTurn < 13)
 			srcLevel += vehiclesTable[destTurn];
 	}
 	else
 	{
 		destTurn = destUnit->data.buildCosts / 2;
-		srcLevel = (int) CommandoRank + 8;
+		srcLevel = (int) getCommandoRank() + 8;
 	}
 
 	int turns = (int) (1.0f / destTurn * srcLevel);
@@ -1965,7 +1971,7 @@ void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rec
 
 cBuilding* cVehicle::getContainerBuilding()
 {
-	if (!Loaded) return NULL;
+	if (!isUnitLoaded ()) return NULL;
 
 	for (cBuilding* building = owner->BuildingList; building; building = building->next)
 		if (Contains (building->storedUnits, this)) return building;
@@ -1975,7 +1981,7 @@ cBuilding* cVehicle::getContainerBuilding()
 
 cVehicle* cVehicle::getContainerVehicle()
 {
-	if (!Loaded) return NULL;
+	if (!isUnitLoaded()) return NULL;
 
 	for (cVehicle* vehicle = owner->VehicleList; vehicle; vehicle = vehicle->next)
 		if (Contains (vehicle->storedUnits, this)) return vehicle;
@@ -1992,7 +1998,7 @@ cVehicle* cVehicle::getContainerVehicle()
 //-----------------------------------------------------------------------------
 bool cVehicle::canBeStoppedViaUnitMenu() const
 {
-	return (ClientMoveJob != 0 || (isUnitBuildingABuilding() && BuildRounds > 0) || (isUnitClearing() && ClearingRounds > 0));
+	return (ClientMoveJob != 0 || (isUnitBuildingABuilding () && getBuildTurns () > 0) || (isUnitClearing () && getClearingTurns () > 0));
 }
 
 //-----------------------------------------------------------------------------
@@ -2041,16 +2047,16 @@ void cVehicle::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const
 //-----------------------------------------------------------------------------
 void cVehicle::executeLayMinesCommand (const cClient& client)
 {
-	LayMines = !LayMines;
-	ClearMines = false;
+	setLayMines (!isUnitLayingMines ());
+	setClearMines(false);
 	sendMineLayerStatus (client, *this);
 }
 
 //-----------------------------------------------------------------------------
 void cVehicle::executeClearMinesCommand (const cClient& client)
 {
-	ClearMines = !ClearMines;
-	LayMines = false;
+	setClearing (!isUnitClearingMines ());
+	setLayMines(false);
 	sendMineLayerStatus (client, *this);
 }
 
@@ -2088,4 +2094,135 @@ bool cVehicle::canLand (const cMap& map) const
 	if ((*b_it)->owner != owner) return false;
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setLoaded (bool value)
+{
+	std::swap (loaded, value);
+	if (value != loaded)
+	{
+		if (loaded) stored ();
+		else activated ();
+	}
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setClearing (bool value)
+{
+	std::swap (isClearing, value);
+	if (value != isClearing) clearingChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setBuildingABuilding (bool value)
+{
+	std::swap (isBuilding, value);
+	if (value != isBuilding) buildingChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setLayMines (bool value)
+{
+	std::swap (layMines, value);
+	if (value != layMines) layingMinesChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setClearMines (bool value)
+{
+	std::swap (clearMines, value);
+	if (value != clearMines) clearingMinesChanged ();
+}
+
+//-----------------------------------------------------------------------------
+int cVehicle::getClearingTurns () const
+{
+	return clearingTurns;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setClearingTurns (int value)
+{
+	std::swap (clearingTurns, value);
+	if (value != clearingTurns) clearingTurnsChanged ();
+}
+
+//-----------------------------------------------------------------------------
+float cVehicle::getCommandoRank () const
+{
+	return commandoRank;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setCommandoRank (float value)
+{
+	std::swap (commandoRank, value);
+	if (value != commandoRank) commandoRankChanged ();
+}
+
+//-----------------------------------------------------------------------------
+const sID& cVehicle::getBuildingType () const
+{
+	return buildingTyp;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setBuildingType (const sID& id)
+{
+	auto oldId = id;
+	buildingTyp = id;
+	if (buildingTyp != oldId) buildingTypeChanged ();
+}
+
+//-----------------------------------------------------------------------------
+int cVehicle::getBuildCosts () const
+{
+	return buildCosts;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setBuildCosts (int value)
+{
+	std::swap (buildCosts, value);
+	if (value != buildCosts) buildingCostsChanged ();
+}
+
+//-----------------------------------------------------------------------------
+int cVehicle::getBuildTurns () const
+{
+	return buildTurns;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setBuildTurns (int value)
+{
+	std::swap (buildTurns, value);
+	if (value != buildTurns) buildingTurnsChanged ();
+}
+
+//-----------------------------------------------------------------------------
+int cVehicle::getBuildCostsStart () const
+{
+	return buildCostsStart;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setBuildCostsStart (int value)
+{
+	std::swap (buildCostsStart, value);
+	//if (value != buildCostsStart) event ();
+}
+
+//-----------------------------------------------------------------------------
+int cVehicle::getBuildTurnsStart () const
+{
+	return buildTurnsStart;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setBuildTurnsStart (int value)
+{
+	std::swap (buildTurnsStart, value);
+	//if (value != buildTurnsStart) event ();
 }

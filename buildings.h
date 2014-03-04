@@ -149,7 +149,6 @@ public:
 	struct sSubBase* SubBase;     // the subbase to which this building belongs
 	int EffectAlpha; // alpha value for the effect
 	bool EffectInc;  // is the effect counted upwards or dounwards?
-	bool IsWorking;  // is the building currently working?
 	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
 	std::vector<sBuildList> BuildList; // Die Bauliste der Fabrik
@@ -226,6 +225,14 @@ public:
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;
 	void executeSelfDestroyCommand (cGameGUI& gameGUI) const;
 	void executeMineManagerCommand (cGameGUI& gameGUI) const;
+
+	virtual bool isUnitWorking () const { return isWorking; }
+	virtual bool factoryHasJustFinishedBuilding () const;
+	virtual bool buildingCanBeStarted () const;
+	virtual bool buildingCanBeUpgraded () const;
+	virtual bool canBeStoppedViaUnitMenu () const { return isUnitWorking (); }
+
+	void setWorking (bool value);
 private:
 	/**
 	* draws the connectors onto the given surface
@@ -235,14 +242,11 @@ private:
 	void render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
+	bool isWorking;  // is the building currently working?
+
 	//-----------------------------------------------------------------------------
 protected:
 	//-- methods, that have been extracted during cUnit refactoring ---------------
-	virtual bool isUnitWorking() const { return IsWorking; }
-	virtual bool factoryHasJustFinishedBuilding() const;
-	virtual bool buildingCanBeStarted() const;
-	virtual bool buildingCanBeUpgraded() const;
-	virtual bool canBeStoppedViaUnitMenu() const { return isUnitWorking(); }
 
 	// methods needed for execution of unit menu commands
 	virtual void executeBuildCommand (cGameGUI& gameGUI) const;

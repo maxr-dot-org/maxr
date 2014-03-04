@@ -417,7 +417,7 @@ void cPlayer::doScan()
 	// iterate the vehicle list
 	for (const cVehicle* vp = VehicleList; vp; vp = vp->next)
 	{
-		if (vp->Loaded) continue;
+		if (vp->isUnitLoaded ()) continue;
 
 		if (vp->isDisabled())
 			ScanMap[getOffset (vp->PosX, vp->PosY)] = 1;
@@ -490,8 +490,8 @@ cVehicle* cPlayer::getNextVehicle (cVehicle* start)
 	start = (start == NULL) ? VehicleList : start->next;
 	for (cVehicle* it = start; it; it = it->next)
 	{
-		if (!it->isMarkedAsDone() && (!it->IsBuilding || it->BuildRounds == 0)
-			&& !it->IsClearing && !it->isSentryActive() && !it->Loaded
+		if (!it->isMarkedAsDone () && (!it->isUnitBuildingABuilding () || it->getBuildTurns () == 0)
+			&& !it->isUnitClearing () && !it->isSentryActive () && !it->isUnitLoaded ()
 			&& (it->data.speedCur || it->data.shotsCur))
 			return it;
 	}
@@ -503,7 +503,7 @@ cBuilding* cPlayer::getNextBuilding (cBuilding* start)
 	start = (start == NULL) ? BuildingList : start->next;
 	for (cBuilding* it = start; it; it = it->next)
 	{
-		if (!it->isMarkedAsDone () && !it->IsWorking && !it->isSentryActive ()
+		if (!it->isMarkedAsDone () && !it->isUnitWorking () && !it->isSentryActive ()
 			&& (!it->data.canBuild.empty() || it->data.shotsCur
 				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
 				|| it->data.canResearch))
@@ -565,8 +565,8 @@ cVehicle* cPlayer::getPrevVehicle (cVehicle* start)
 	start = (start == NULL) ? get_last_of_intrusivelist (VehicleList) : start->prev;
 	for (cVehicle* it = start; it; it = it->prev)
 	{
-		if (!it->isMarkedAsDone () && (!it->IsBuilding || it->BuildRounds == 0)
-			&& !it->IsClearing && !it->isSentryActive() && !it->Loaded
+		if (!it->isMarkedAsDone () && (!it->isUnitBuildingABuilding () || it->getBuildTurns () == 0)
+			&& !it->isUnitClearing () && !it->isSentryActive () && !it->isUnitLoaded ()
 			&& (it->data.speedCur || it->data.shotsCur))
 			return it;
 	}
@@ -578,7 +578,7 @@ cBuilding* cPlayer::getPrevBuilding (cBuilding* start)
 	start = (start == NULL) ? get_last_of_intrusivelist (BuildingList) : start->prev;
 	for (cBuilding* it = start; it; it = it->prev)
 	{
-		if (!it->isMarkedAsDone () && !it->IsWorking && !it->isSentryActive ()
+		if (!it->isMarkedAsDone () && !it->isUnitWorking () && !it->isSentryActive ()
 			&& (!it->data.canBuild.empty() || it->data.shotsCur
 				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
 				|| it->data.canResearch))
@@ -697,7 +697,7 @@ void cPlayer::accumulateScore (cServer& server)
 
 	for (cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
-		if (bp->data.canScore && bp->IsWorking)
+		if (bp->data.canScore && bp->isUnitWorking ())
 		{
 			bp->points++;
 			deltaScore++;
@@ -715,7 +715,7 @@ void cPlayer::countEcoSpheres()
 
 	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
-		if (bp->data.canScore && bp->IsWorking)
+		if (bp->data.canScore && bp->isUnitWorking ())
 			++numEcos;
 	}
 }
@@ -871,7 +871,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 
 	for (const cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = curBuilding->next)
 	{
-		if (curBuilding->data.canResearch && curBuilding->IsWorking)
+		if (curBuilding->data.canResearch && curBuilding->isUnitWorking ())
 		{
 			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
 			newResearchCount++;

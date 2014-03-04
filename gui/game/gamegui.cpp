@@ -348,13 +348,13 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->placedBand, [&](const cVehicle& vehicle)
 	{
-		if (vehicle.BuildingTyp.getUnitDataOriginalVersion ()->isBig)
+		if (vehicle.getBuildingType().getUnitDataOriginalVersion ()->isBig)
 		{
-			sendWantBuild (client, vehicle.iID, vehicle.BuildingTyp, vehicle.BuildRounds, client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY), false, 0);
+			sendWantBuild (client, vehicle.iID, vehicle.getBuildingType (), vehicle.getBuildTurns(), client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY), false, 0);
 		}
 		else
 		{
-			sendWantBuild (client, vehicle.iID, vehicle.BuildingTyp, vehicle.BuildRounds, client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY));
+			sendWantBuild (client, vehicle.iID, vehicle.getBuildingType (), vehicle.getBuildTurns (), client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY));
 		}
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, const cPosition& position)
@@ -918,7 +918,7 @@ void cNewGameGUI::updateSelectedUnitIdleSound ()
 	else if (selectedUnit->data.ID.isABuilding ())
 	{
 		const auto& building = static_cast<const cBuilding&>(*selectedUnit);
-		if (building.IsWorking)
+		if (building.isUnitWorking ())
 		{
 			startSelectedUnitSound (building.uiData->Running);
 		}
@@ -935,11 +935,11 @@ void cNewGameGUI::updateSelectedUnitIdleSound ()
 		bool water = staticMap->isWater (vehicle.PosX, vehicle.PosY);
 		if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-		if (vehicle.IsBuilding && (vehicle.BuildRounds || player != vehicle.owner))
+		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player != vehicle.owner))
 		{
 			startSelectedUnitSound (SoundData.SNDBuilding);
 		}
-		else if (vehicle.IsClearing)
+		else if (vehicle.isUnitClearing ())
 		{
 			startSelectedUnitSound (SoundData.SNDClearing);
 		}

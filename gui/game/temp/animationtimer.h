@@ -67,9 +67,15 @@ public:
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;
 private:
+	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;
+
 	unsigned long long timerTime;
-	unsigned long long lastUpdateTimerTime;
+
+	unsigned long long nextTrigger10msTime;
+	unsigned long long nextTrigger50msTime;
+	unsigned long long nextTrigger100msTime;
+	unsigned long long nextTrigger400msTime;
 
 	cAnimationTimeFlags animationFlags;
 };
