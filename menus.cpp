@@ -947,8 +947,14 @@ static std::vector<sPlayer*> buildPlayerList (const cHotSeatMenu& hotSeatMenu, s
 	std::vector<sPlayer*> res;
 	const char* const playerNames[] =
 	{
-		"Player 1", "Player 2", "Player 3", "Player 4",
-		"Player 5", "Player 6", "Player 7", "Player 8"
+		"Text~Multiplayer~Player1",
+		"Text~Multiplayer~Player2",
+		"Text~Multiplayer~Player3",
+		"Text~Multiplayer~Player4",
+		"Text~Multiplayer~Player5",
+		"Text~Multiplayer~Player6",
+		"Text~Multiplayer~Player7",
+		"Text~Multiplayer~Player8"
 	};
 
 	int nr = 0;
