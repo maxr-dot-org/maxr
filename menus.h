@@ -137,8 +137,8 @@ enum eSettingsDuration
 enum ePlayerType
 {
 	PLAYERTYPE_HUMAN,
-	PLAYERTYPE_NONE,
-	PLAYERTYPE_PC
+	PLAYERTYPE_PC,
+	PLAYERTYPE_NONE
 };
 
 /**
@@ -716,6 +716,13 @@ private:
 	static void onPlayerTypeClicked (void* parent);
 
 private:
+	cMenuLabel titleLabel;
+	cMenuLabel teamLabel;
+	cMenuLabel playerLabel;
+	cMenuLabel computerLabel;
+	cMenuLabel emptyLabel;
+	cMenuLabel clanLabel;
+
 	AutoPtr<cMenuButton> backButton;
 	AutoPtr<cMenuButton> okButton;
 

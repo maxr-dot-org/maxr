@@ -285,6 +285,8 @@ public:
 	const sSettings* getGameSettings() const { return gameSetting.get(); }
 	bool isTurnBasedGame() const;
 
+	int getActiveTurnPlayerNr() const { return iActiveTurnPlayerNr; }
+
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 

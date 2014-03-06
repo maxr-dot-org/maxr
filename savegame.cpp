@@ -289,6 +289,7 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.bridgeHead = (eSettingsBridgeHead) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("AlienTech")) gameSetting.alienTech = (eSettingsAlienTech) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.clans = (eSettingsClans) e->IntAttribute ("num");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Hotseat")) gameSetting.hotseat = e->BoolAttribute("YN");
 	//if (XMLElement* e = gameInfoNode->FirstChildElement ("GameType")) gameSetting.gameType = (eSettingsGameType) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType")) gameSetting.victoryType = (eSettingsVictoryType) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.duration = e->IntAttribute ("num");
@@ -1164,6 +1165,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 	addAttributeElement (gameinfoNode, "AlienTech", "num", iToStr (gameSetting.alienTech));
 	addAttributeElement (gameinfoNode, "Clan", "num", iToStr (gameSetting.clans));
 	//addAttributeElement (gameinfoNode, "GameType", "num", iToStr (gameSetting.gameType));
+	addAttributeElement (gameinfoNode, "Hotseat", "YN", gameSetting.hotseat ? "Yes" : "No");
 	addAttributeElement (gameinfoNode, "VictoryType", "num", iToStr (gameSetting.victoryType));
 	addAttributeElement (gameinfoNode, "Duration", "num", iToStr (gameSetting.duration));
 	addAttributeElement (gameinfoNode, "TurnDeadLine", "num", iToStr (gameSetting.iTurnDeadline));

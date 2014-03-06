@@ -1132,6 +1132,99 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	// TODO: implement it
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show (NULL);
+#if 0
+	cLoadMenu loadMenu;
+
+	if (loadMenu.show (NULL) == 1)
+	{
+		menu->draw();
+		return;
+	}
+	const int savegameNum = loadMenu.getLoadingSlotNumber();
+	cTCP* const network = NULL;
+	cServer server (network);
+	cSavegame savegame (savegameNum);
+	if (savegame.load (server) == false)
+	{
+		menu->draw();
+		return;
+	}
+	AutoPtr<cStaticMap> staticMap (server.Map->staticMap); // take ownership
+	if (!server.getGameSettings()->hotseat)
+	{
+		menu->draw();
+		return;
+	}
+
+	const std::vector<cPlayer*>& serverPlayerList = server.PlayerList;
+	std::vector<sPlayer*> splayers;
+	splayers.reserve (serverPlayerList.size());
+	// and now set sockets, playernumbers and colors
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	{
+		splayers.push_back(new sPlayer (serverPlayerList[i]->getName(),
+										serverPlayerList[i]->getColor(),
+										serverPlayerList[i]->getNr()));
+		splayers[i]->setLocal();
+	}
+	cEventHandling eventHandlings[4];
+	std::vector<cClient*> clients;
+	// Create clients.
+	//eventHandlings.resize (splayers.size());
+	assert (splayers.size() <= 4);
+	for (size_t i = 0, size = splayers.size(); i != size; ++i)
+	{
+		cClient* client = new cClient (&server, network, eventHandlings[i]);
+		clients.push_back (client);
+		client->setPlayers (splayers, *splayers[i]);
+		client->setMap (*staticMap);
+		client->setGameSetting (*server.getGameSettings());
+	}
+	for (size_t i = 0, size = clients.size(); i != size; ++i)
+	{
+		clients[i]->getGameGUI().setHotSeatClients (clients);
+	}
+	for (size_t i = 0, size = splayers.size(); i != size; ++i)
+		delete splayers[i];
+
+	// send data to all players
+	for (size_t i = 0; i != serverPlayerList.size(); ++i)
+	{
+		sendRequestResync (*clients[i], serverPlayerList[i]->getNr());
+		//sendHudSettings (server, *serverPlayerList[i]);
+		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
+		for (size_t j = 0; j != reportList.size(); ++j)
+		{
+			sendSavedReport (server, reportList[j], serverPlayerList[i]->getNr());
+		}
+		reportList.clear();
+		sendMakeTurnEnd (server, false, true, server.getActiveTurnPlayerNr(), serverPlayerList[i]->getNr());
+	}
+
+	// exit menu and start game
+	server.serverState = SERVER_STATE_INGAME;
+
+	int res = 0;
+	std::size_t activePlayer = server.getActiveTurnPlayerNr();
+	while (res == 0)
+	{
+		for (std::size_t i = activePlayer, size = clients.size(); i != size; ++i)
+		{
+			if (clients[i]->getActivePlayer().isDefeated) continue;
+			HotSeatWaitForClient (*clients[i]);
+			res = clients[i]->getGameGUI().show (clients[i]);
+			if (res != 0) break;
+		}
+		activePlayer = 0;
+	}
+	server.stop();
+	for (size_t i = 0, size = clients.size(); i != size; ++i)
+	{
+		delete clients[i];
+	}
+	reloadUnitValues();
+
+#endif
 	menu->draw();
 }
 
@@ -2506,8 +2599,27 @@ void cLandingMenu::hitPosition()
 
 cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	//cMenu (LoadPCX (GFXOD_HOTSEAT))     // 8 players
-	cMenu (LoadPCX (GFXOD_PLAYER_SELECT)) // 4 players
+	cMenu (LoadPCX (GFXOD_PLAYER_SELECT)), // 4 players
+	titleLabel (Video.getResolutionX() / 2, position.y + 10, "Hot Seat", FONT_LATIN_BIG),
+	teamLabel (position.x + 100, position.y + 35, "Team", FONT_LATIN_BIG),
+	playerLabel (position.x + 202, position.y + 35, "Player", FONT_LATIN_BIG),
+	computerLabel (position.x + 310, position.y + 35, "Computer", FONT_LATIN_BIG),
+	emptyLabel (position.x + 418, position.y + 35, "Empty", FONT_LATIN_BIG),
+	clanLabel (position.x + 540, position.y + 35, "Clan", FONT_LATIN_BIG)
 {
+	titleLabel.setCentered (true);
+	menuItems.push_back (&titleLabel);
+	teamLabel.setCentered (true);
+	menuItems.push_back (&teamLabel);
+	playerLabel.setCentered (true);
+	menuItems.push_back (&playerLabel);
+	computerLabel.setCentered (true);
+	menuItems.push_back (&computerLabel);
+	emptyLabel.setCentered (true);
+	menuItems.push_back (&emptyLabel);
+	clanLabel.setCentered (true);
+	menuItems.push_back (&clanLabel);
+
 	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Others~Back"));
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
@@ -2517,10 +2629,6 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	menuItems.push_back (okButton.get());
 
 	okButton->setLocked (true);
-
-	AutoSurface playerHumanSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
-	AutoSurface playerNoneSurface (LoadPCX (GFXOD_PLAYER_NONE));
-	AutoSurface playerPCSurface (LoadPCX (GFXOD_PLAYER_PC));
 
 	if (settings.clans == SETTING_CLANS_ON)
 	{
@@ -2550,20 +2658,22 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 		}
 	}
 
+	AutoSurface playerHumanSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
+	AutoSurface playerPCSurface (LoadPCX (GFXOD_PLAYER_PC));
+	AutoSurface playerNoneSurface (LoadPCX (GFXOD_PLAYER_NONE));
+	SDL_Surface* const playerSurfaces[3] = {
+		playerHumanSurface,
+		playerPCSurface,
+		playerNoneSurface
+	};
 	for (int i = 0; i != 4; ++i)
 	{
-		playerTypeImages[i][0] = new cMenuImage (position.x + 175 + 109 * 0, position.y + 67 + 92 * i, playerHumanSurface);
-		playerTypeImages[i][0]->setReleasedFunction (onPlayerTypeClicked);
-		menuItems.push_back (playerTypeImages[i][0].get());
-
-		playerTypeImages[i][1] = new cMenuImage (position.x + 175 + 109 * 1, position.y + 67 + 92 * i, playerNoneSurface);
-		playerTypeImages[i][1]->setReleasedFunction (onPlayerTypeClicked);
-		menuItems.push_back (playerTypeImages[i][1].get());
-
-		playerTypeImages[i][2] = new cMenuImage (position.x + 175 + 109 * 2, position.y + 67 + 92 * i, playerPCSurface);
-		playerTypeImages[i][2]->setReleasedFunction (onPlayerTypeClicked);
-		menuItems.push_back (playerTypeImages[i][2].get());
-
+		for (int j = 0; j != 3; ++j)
+		{
+			playerTypeImages[i][j] = new cMenuImage (position.x + 175 + 109 * j, position.y + 67 + 92 * i, playerSurfaces[j]);
+			playerTypeImages[i][j]->setReleasedFunction (onPlayerTypeClicked);
+			menuItems.push_back (playerTypeImages[i][j].get());
+		}
 		choosePlayerType (i, PLAYERTYPE_NONE);
 	}
 }
@@ -2592,12 +2702,8 @@ void cHotSeatMenu::choosePlayerType (int player, ePlayerType playerType)
 	playerTypeImages[player][1]->hide();
 	playerTypeImages[player][2]->hide();
 
-	switch (playerType)
-	{
-		case PLAYERTYPE_HUMAN: playerTypeImages[player][0]->unhide(); break;
-		case PLAYERTYPE_NONE: playerTypeImages[player][1]->unhide(); break;
-		case PLAYERTYPE_PC: playerTypeImages[player][2]->unhide(); break;
-	}
+	playerTypeImages[player][int(playerType)]->unhide();
+
 	okButton->setLocked (true);
 	for (int i = 0; i != 4; ++i)
 	{
