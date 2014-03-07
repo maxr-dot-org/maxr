@@ -2600,12 +2600,12 @@ void cLandingMenu::hitPosition()
 cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	//cMenu (LoadPCX (GFXOD_HOTSEAT))     // 8 players
 	cMenu (LoadPCX (GFXOD_PLAYER_SELECT)), // 4 players
-	titleLabel (Video.getResolutionX() / 2, position.y + 10, "Hot Seat", FONT_LATIN_BIG),
-	teamLabel (position.x + 100, position.y + 35, "Team", FONT_LATIN_BIG),
-	playerLabel (position.x + 202, position.y + 35, "Player", FONT_LATIN_BIG),
-	computerLabel (position.x + 310, position.y + 35, "Computer", FONT_LATIN_BIG),
-	emptyLabel (position.x + 418, position.y + 35, "Empty", FONT_LATIN_BIG),
-	clanLabel (position.x + 540, position.y + 35, "Clan", FONT_LATIN_BIG)
+	titleLabel (Video.getResolutionX() / 2, position.y + 10, lngPack.i18n ("Text~Title~HotSeat"), FONT_LATIN_BIG),
+	teamLabel (position.x + 100, position.y + 35, lngPack.i18n ("Text~Title~Team"), FONT_LATIN_BIG),
+	playerLabel (position.x + 202, position.y + 35, lngPack.i18n ("Text~Title~Human"), FONT_LATIN_BIG),
+	computerLabel (position.x + 310, position.y + 35, lngPack.i18n ("Text~Title~Computer"), FONT_LATIN_BIG),
+	emptyLabel (position.x + 418, position.y + 35, lngPack.i18n ("Text~Title~Nobody"), FONT_LATIN_BIG),
+	clanLabel (position.x + 540, position.y + 35, lngPack.i18n ("Text~Title~Clan"), FONT_LATIN_BIG)
 {
 	titleLabel.setCentered (true);
 	menuItems.push_back (&titleLabel);
