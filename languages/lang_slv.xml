@@ -42,6 +42,7 @@
 			<Choose_Planet ENG="Planetchoosing" localized="Izbira planeta"/>
 			
 			
+			
 			<Color ENG="Color:" localized="Barva:"/>
 			<Computer ENG="Computer" localized="Računalnik"/>
 			<Connect ENG="Connect" localized="Povezava"/>
@@ -49,6 +50,7 @@
 			
 			<Game_Type ENG="Game Type" localized="Tip igre"/>
 			<Gold ENG="Gold" localized="Zlato"/>
+			
 			<Human ENG="Human" localized="Človek"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Researchmenu" localized="Menu Raziskave"/>
@@ -253,6 +255,14 @@
 			
 			
 			<Player ENG="Player" localized="Igralec"/>
+			
+			
+			
+			
+			
+			
+			
+			
 			<Player_Amount ENG="Amount of players" localized="Število igralcev"/>
 			
 			<Player_Few ENG="Not enough players!" localized="Ni dovolj igralcev!"/>

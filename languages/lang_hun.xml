@@ -41,6 +41,7 @@
 			
 			<Choose_Planet ENG="Choose planet" localized="Bolygóválasztás"/>
 			
+			
 			<Clans ENG="Clans" localized="Klánok"/>
 			<Color ENG="Color:" localized="Szín:"/>
 			<Computer ENG="Computer" localized="Számítógép"/>
@@ -49,6 +50,7 @@
 			
 			<Game_Type ENG="Game Type" localized="Játéktípus"/>
 			<Gold ENG="Gold" localized="Arany"/>
+			
 			<Human ENG="Human" localized="Ember"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Fejlesztés Menü"/>
@@ -253,6 +255,14 @@
 			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
 			
 			<Player ENG="Player" localized="Játékos"/>
+			
+			
+			
+			
+			
+			
+			
+			
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
 			
 			<Player_Few ENG="Not enough players!" localized="Nincs elég játékos!"/>

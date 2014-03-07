@@ -41,6 +41,7 @@
 			<Choose_Clan ENG="Choose Clan"/>
 			<Choose_Planet ENG="Choose planet"/>
 			<Choose_Units ENG="Choose Units"/>
+			<Clan ENG="Clan"/>
 			<Clans ENG="Clans"/>
 			<Color ENG="Color:"/>
 			<Computer ENG="Computer"/>
@@ -49,6 +50,7 @@
 			<Credits_start ENG="Credit at gamestart"/>
 			<Game_Type ENG="Game Type"/>
 			<Gold ENG="Gold"/>
+			<HotSeat ENG="Hot Seat"/>
 			<Human ENG="Human"/>
 			<IP ENG="IP"/>
 			<Labs ENG="Research menu"/>
@@ -69,7 +71,7 @@
 			<Resource_Density ENG="Resource frequency"/>
 			<Savegame ENG="Saved Games"/><!--unused?! -- nonsinn -->
 			<Send ENG="Send"/>
-			<Team ENG="Team"/>
+			<Team ENG="Team"/> <!-- e.g. Player 1 is called as one team -->
 			<Unitinfo ENG="Unit status screen"/>
 			<Upgrades_Menu ENG="Upgrades menu"/>
 		</Title>
@@ -165,7 +167,7 @@ may as _7			<Cargo ENG="Cargo"/>Hud
 			<Survey ENG="Survey"/>Hud
 			<TCPIP_Client ENG="TCP/IP Client"/>Button
 			<TCPIP_Host ENG="TCP/IP Host"/>Button
-			<Teams_7 ENG="Teams"/>Hud
+			<Teams_7 ENG="Teams"/>Hud <!-- the workes for the habit -->
 check			<Title_Main_Menu_asdf_Button ENG="Main Menu"/>unused?!
 			<Total ENG="Total"/>Hud
 			<Transfer_7 ENG="X-fer"/>Context

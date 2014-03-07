@@ -41,6 +41,7 @@
 			
 			<Choose_Planet ENG="Planetchoosing" localized="Planeetkeuze"/>
 			
+			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clans"/>
 			<Color ENG="Color:" localized="Kleur:"/>
 			<Computer ENG="Computer" localized="Computer"/>
@@ -49,6 +50,7 @@
 			
 			<Game_Type ENG="Game Type" localized="Speltype"/>
 			<Gold ENG="Gold" localized="Goud"/>
+			
 			<Human ENG="Human" localized="Mens"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Researchmenu" localized="Onderzoeksmenu"/>
@@ -253,6 +255,14 @@
 			<Option_NoSet ENG="--no options set--" localized="--geen opties gezet--"/>
 			
 			<Player ENG="Player" localized="Speler"/>
+			
+			
+			
+			
+			
+			
+			
+			
 			<Player_Amount ENG="Amount of players" localized="Aantal spelers"/>
 			
 			<Player_Few ENG="Not enough players!" localized="Niet genoeg spelers!"/>

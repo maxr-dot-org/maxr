@@ -41,6 +41,7 @@
 			
 			<Choose_Planet ENG="Choose planet" localized="Choix planète"/>
 			
+			<Clan ENG="Clan" localized="Clan "/>
 			<Clans ENG="Clans" localized="Clans "/>
 			<Color ENG="Color:" localized="Couleur :"/>
 			<Computer ENG="Computer" localized="Ordinateur"/>
@@ -49,6 +50,7 @@
 			
 			<Game_Type ENG="Game Type" localized="Type de jeu "/>
 			<Gold ENG="Gold" localized="Or "/>
+			
 			<Human ENG="Human" localized="Humain"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Menu recherche"/>
@@ -253,6 +255,14 @@
 			<Option_NoSet ENG="--no options set--" localized="--pas d'options choisies--"/>
 			
 			<Player ENG="Player" localized="Joueur"/>
+			
+			
+			
+			
+			
+			
+			
+			
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Veuillez choisir le nombre de joueurs. Il doit y avoir deux joueurs humains au minimum pour commencer une partie locale. Le maximum est de 8 joueurs."/>
 			<Player_Color_Taken ENG="All player colors should be unique" localized="Les couleurs des joueurs doivent être uniques"/>
 			<Player_Few ENG="Not enough players!" localized="Pas assez de joueurs !"/>

@@ -41,6 +41,7 @@
 			<Choose_Clan ENG="Choose Clan" localized="Clan-Auswahl"/>
 			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
 			<Choose_Units ENG="Choose Units" localized="Einheitenauswahl"/>
+			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clans"/>
 			<Color ENG="Color:" localized="Farbe:"/>
 			<Computer ENG="Computer" localized="Computer"/>
@@ -50,6 +51,7 @@
 			<Game_Type ENG="Game Type" localized="Spielart"/>
 			<Gold ENG="Gold" localized="Gold"/>
 			<Human ENG="Human" localized="Mensch"/>
+			<HotSeat ENG="Hot Seat" localized="Hot Seat"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Forschungsmenü"/>
 			<Load ENG="Load Menu" localized="Laden-Menü"/>
