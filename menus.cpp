@@ -2676,6 +2676,8 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 		}
 		choosePlayerType (i, PLAYERTYPE_NONE);
 	}
+	choosePlayerType (0, PLAYERTYPE_HUMAN);
+	choosePlayerType (1, PLAYERTYPE_HUMAN);
 }
 
 //------------------------------------------------------------------------------
