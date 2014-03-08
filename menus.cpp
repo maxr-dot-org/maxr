@@ -900,12 +900,10 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 #ifndef RELEASE
 	newHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 2, lngPack.i18n ("Text~Others~HotSeat_New"));
 	newHotseatButton->setReleasedFunction (&newHotseatReleased);
-	//newHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.push_back (newHotseatButton.get());
 
 	loadHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Others~HotSeat_Load"));
 	loadHotseatButton->setReleasedFunction (&loadHotseatReleased);
-	//loadHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.push_back (loadHotseatButton.get());
 #endif
 
@@ -1014,14 +1012,26 @@ static int RunHostGamePreparation (std::vector<cClient*>& clients, cStaticMap& m
 	return 1;
 }
 
+static bool RunHotSeatGame(cServer& server, const std::vector<cClient*>& clients)
+{
+	// TODO while game is not finished
+	while (true)
+	{
+		for (std::size_t i = server.getActiveTurnPlayerNr(), size = clients.size(); i != size; ++i)
+		{
+			cClient& client = *clients[i];
+			if (client.getActivePlayer().isDefeated) continue;
+			HotSeatWaitForClient (client);
+			if (client.getGameGUI().show (&client) != 0) return false;
+		}
+	}
+	return true;
+}
+
 //------------------------------------------------------------------------------
 void cMultiPlayersMenu::newHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
-
-	// TODO: implement it
-	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
-	okDialog.show (NULL);
 
 	sSettings settings;
 	cStaticMap* map = NULL;
@@ -1097,18 +1107,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 			}
 			case 4:
 			{
-				// TODO while game is not finished
-				int res = 0;
-				while (res == 0)
-				{
-					for (size_t i = 0, size = clients.size(); i != size; ++i)
-					{
-						if (clients[i]->getActivePlayer().isDefeated) continue;
-						HotSeatWaitForClient (*clients[i]);
-						res = clients[i]->getGameGUI().show (clients[i]);
-						if (res != 0) break;
-					}
-				}
+				RunHotSeatGame (server, clients);
 				server.stop();
 				for (size_t i = 0, size = clients.size(); i != size; ++i)
 				{
@@ -1129,12 +1128,8 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
-	// TODO: implement it
-	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
-	okDialog.show (NULL);
-#if 0
-	cLoadMenu loadMenu;
 
+	cLoadMenu loadMenu;
 	if (loadMenu.show (NULL) == 1)
 	{
 		menu->draw();
@@ -1166,6 +1161,7 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 										serverPlayerList[i]->getColor(),
 										serverPlayerList[i]->getNr()));
 		splayers[i]->setLocal();
+		serverPlayerList[i]->setLocal();
 	}
 	cEventHandling eventHandlings[4];
 	std::vector<cClient*> clients;
@@ -1180,9 +1176,12 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 		client->setMap (*staticMap);
 		client->setGameSetting (*server.getGameSettings());
 	}
+	std::size_t activePlayer = server.getActiveTurnPlayerNr();
 	for (size_t i = 0, size = clients.size(); i != size; ++i)
 	{
-		clients[i]->getGameGUI().setHotSeatClients (clients);
+		cClient& client = *clients[i];
+		client.getGameGUI().setHotSeatClients (clients);
+		if (client.getActivePlayer().getNr() != int(activePlayer)) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	}
 	for (size_t i = 0, size = splayers.size(); i != size; ++i)
 		delete splayers[i];
@@ -1191,7 +1190,7 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
 		sendRequestResync (*clients[i], serverPlayerList[i]->getNr());
-		//sendHudSettings (server, *serverPlayerList[i]);
+		sendHudSettings (server, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
@@ -1204,19 +1203,7 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	// exit menu and start game
 	server.serverState = SERVER_STATE_INGAME;
 
-	int res = 0;
-	std::size_t activePlayer = server.getActiveTurnPlayerNr();
-	while (res == 0)
-	{
-		for (std::size_t i = activePlayer, size = clients.size(); i != size; ++i)
-		{
-			if (clients[i]->getActivePlayer().isDefeated) continue;
-			HotSeatWaitForClient (*clients[i]);
-			res = clients[i]->getGameGUI().show (clients[i]);
-			if (res != 0) break;
-		}
-		activePlayer = 0;
-	}
+	RunHotSeatGame (server, clients);
 	server.stop();
 	for (size_t i = 0, size = clients.size(); i != size; ++i)
 	{
@@ -1224,7 +1211,6 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	}
 	reloadUnitValues();
 
-#endif
 	menu->draw();
 }
 
@@ -3767,7 +3753,8 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	client.setMap (*map);
 	client.setGameSetting (*settings);
 
-	if (settings->isTurnBasedGame() && actPlayer->getNr() != 0) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+	const int activeTurnPlayerNr = 0;
+	if (settings->isTurnBasedGame() && actPlayer->getNr() != activeTurnPlayerNr) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 
 	//if (reconnect) sendReconnectionSuccess (client);
 
