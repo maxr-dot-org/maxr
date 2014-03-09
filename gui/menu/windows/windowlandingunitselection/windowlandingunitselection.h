@@ -30,10 +30,11 @@ class cResourceBar;
 class cLabel;
 class cPushButton;
 class cUnitUpgrade;
+class cUnitListViewItemCargo;
 struct sID;
 struct sLandingUnit;
 
-class cWindowLandingUnitSelection : public cWindowAdvancedHangar
+class cWindowLandingUnitSelection : public cWindowAdvancedHangar<cUnitListViewItemCargo>
 {
 public:
 	cWindowLandingUnitSelection (int playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold);

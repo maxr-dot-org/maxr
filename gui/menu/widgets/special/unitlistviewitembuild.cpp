@@ -17,42 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_windows_windowbuildvehicles_windowbuildvehiclesH
-#define gui_menu_windows_windowbuildvehicles_windowbuildvehiclesH
+#include "unitlistviewitembuild.h"
 
-#include <vector>
+//------------------------------------------------------------------------------
+cUnitListViewItemBuild::cUnitListViewItemBuild (unsigned int width, const sID& unitId, const cPlayer& owner) :
+	cUnitListViewItem (width, unitId, owner),
+	remainingMetal (-1)
+{}
 
-#include "../windowadvancedhangar/windowadvancedhangar.h"
-
-class cCheckBox;
-class cBuilding;
-class cMap;
-class cBuildSpeedHandlerWidget;
-class cUnitListViewItemBuild;
-struct sBuildList;
-
-class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild>
+//------------------------------------------------------------------------------
+int cUnitListViewItemBuild::getRemainingMetal () const
 {
-public:
-	cWindowBuildVehicles (const cBuilding& building, const cMap& map);
+	return remainingMetal;
+}
 
-	std::vector<sBuildList> getBuildList () const;
-	int getSelectedBuildSpeed () const;
-	bool isRepeatActive () const;
-protected:
-	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
-
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	const cBuilding& building;
-
-	cBuildSpeedHandlerWidget* speedHandler;
-
-	cCheckBox* repeatCheckBox;
-
-	void generateSelectionList (const cBuilding& building, const cMap& map);
-	void generateBuildList (const cBuilding& building);
-};
-
-#endif // gui_menu_windows_windowbuildvehicles_windowbuildvehiclesH
+//------------------------------------------------------------------------------
+void cUnitListViewItemBuild::setRemainingMetal (int remainingMetal_)
+{
+	remainingMetal = remainingMetal_;
+}

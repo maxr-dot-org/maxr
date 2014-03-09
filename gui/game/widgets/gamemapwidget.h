@@ -231,6 +231,7 @@ private:
 
 	void drawExitPoints ();
 	void drawExitPoint (const cPosition& position);
+	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
 	void drawBuildBand ();
 
 	void drawAttackCursor (const cPosition& position) const;
@@ -267,6 +268,5 @@ private:
 
 	std::pair<bool, cPosition> findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition, const sID& unitId);
 };
-
 
 #endif // gui_game_widgets_gamemapwidgetH

@@ -17,46 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_clickablewidgetH
-#define gui_menu_widgets_clickablewidgetH
+#ifndef gui_menu_widgets_special_unitlistviewitemcargoH
+#define gui_menu_widgets_special_unitlistviewitemcargoH
 
-#include <map>
+#include "unitlistviewitem.h"
 
-#include "../../../maxrconfig.h"
-#include "../../widget.h"
-
-class cClickableWidget : public cWidget
+class cUnitListViewItemBuild : public cUnitListViewItem
 {
 public:
-	cClickableWidget ();
-	explicit cClickableWidget (const cPosition& position);
-	explicit cClickableWidget (const cBox<cPosition>& area);
+	cUnitListViewItemBuild (unsigned int width, const sID& unitId, const cPlayer& owner);
 
-	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
-
-	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
-
-	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-
-	void setConsumeClick (bool consumeClick);
-protected:
-	bool isPressed;
-	bool mouseWasOver;
-
-	bool consumeClick;
-
-	virtual void setPressed (bool pressed);
-
-	void finishMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button);
-
-	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) = 0;
-
-	virtual bool acceptButton (eMouseButtonType button) const;
+	int getRemainingMetal () const;
+	void setRemainingMetal (int remainingMetal);
 private:
-	std::map<eMouseButtonType, bool> startedClickWithin;
-
-	bool& getStartedClickWithin (eMouseButtonType button);
+	int remainingMetal;
 };
 
-#endif // gui_menu_widgets_clickablewidgetH
+#endif // gui_menu_widgets_special_unitlistviewitemcargoH

@@ -85,13 +85,22 @@ bool cClickableWidget::handleMousePressed (cApplication& application, cMouse& mo
 }
 
 //------------------------------------------------------------------------------
-bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
+void cClickableWidget::finishMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
 	if (getStartedClickWithin (button))
 	{
 		getStartedClickWithin (button) = false;
 		setPressed (false);
 		application.releaseMouseFocus (*this);
+	}
+}
+
+//------------------------------------------------------------------------------
+bool cClickableWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
+{
+	if (getStartedClickWithin (button))
+	{
+		finishMousePressed (application, mouse, button);
 
 		if (isAt (mouse.getPosition ()))
 		{

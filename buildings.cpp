@@ -1108,32 +1108,10 @@ bool cBuilding::canTransferTo (const cPosition position, const cMapField& overUn
 }
 
 //--------------------------------------------------------------------------
-/** draws the exit points for a vehicle of the given type: */
-//--------------------------------------------------------------------------
-void cBuilding::DrawExitPoints (const sUnitData& vehicleData, cGameGUI& gameGUI)
+bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const sUnitData& vehicleData) const
 {
-	int const spx = gameGUI.getScreenPosX (*this);
-	int const spy = gameGUI.getScreenPosY (*this);
-	cMap& map = *gameGUI.getClient()->getMap();
-	const int tilesize = gameGUI.getTileSize();
-	T_2<int> offsets[12] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1), T_2<int> (2, -1),
-							T_2<int> (-1,  0),                                   T_2<int> (2, 0),
-							T_2<int> (-1,  1),                                   T_2<int> (2, 1),
-							T_2<int> (-1,  2), T_2<int> (0,  2), T_2<int> (1,  2), T_2<int> (2, 2)
-						   };
-
-	for (int i = 0; i != 12; ++i)
-	{
-		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, map, vehicleData))
-			gameGUI.drawExitPoint (spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize);
-	}
-}
-
-//--------------------------------------------------------------------------
-bool cBuilding::canExitTo (const int x, const int y, const cMap& map, const sUnitData& vehicleData) const
-{
-	if (!map.possiblePlaceVehicle (vehicleData, x, y, owner)) return false;
-	if (!isNextTo (x, y)) return false;
+	if (!map.possiblePlaceVehicle (vehicleData, position.x (), position.y (), owner)) return false;
+	if (!isNextTo (position)) return false;
 
 	return true;
 }
@@ -1413,77 +1391,77 @@ void cBuilding::CheckRessourceProd (const cServer& server)
  * iRemainingMetal is only needed for recalculating costs of vehicles
  * in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
-void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal)
+void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal) const
 {
 	// first calc costs for a new Vehical
 
 	// 1x
-	iTurboBuildCosts[0] = iVehicleCosts;
+	turboBuildCosts[0] = vehicleCosts;
 
 	// 2x
-	int a = iTurboBuildCosts[0];
-	iTurboBuildCosts[1] = iTurboBuildCosts[0];
+	int a = turboBuildCosts[0];
+	turboBuildCosts[1] = turboBuildCosts[0];
 
 	while (a >= 2 * data.needsMetal)
 	{
-		iTurboBuildCosts[1] += 2 * data.needsMetal;
+		turboBuildCosts[1] += 2 * data.needsMetal;
 		a -= 2 * data.needsMetal;
 	}
 
 	// 4x
-	iTurboBuildCosts[2] = iTurboBuildCosts[1];
-	a = iTurboBuildCosts[1];
+	turboBuildCosts[2] = turboBuildCosts[1];
+	a = turboBuildCosts[1];
 
 	while (a >= 15)
 	{
-		iTurboBuildCosts[2] += (12 * data.needsMetal - min (a, 8 * data.needsMetal));
+		turboBuildCosts[2] += (12 * data.needsMetal - min (a, 8 * data.needsMetal));
 		a -= 8 * data.needsMetal;
 	}
 
 	// now this is a litle bit tricky ...
 	// trying to calculate a plausible value,
 	// if we are changing the speed of an already started build-job
-	if (iRemainingMetal >= 0)
+	if (remainingMetal >= 0)
 	{
 		float WorkedRounds;
 
 		switch (BuildSpeed)  // BuildSpeed here is the previous build speed
 		{
 			case 0:
-				WorkedRounds = (iTurboBuildCosts[0] - iRemainingMetal) / (1.f * data.needsMetal);
-				iTurboBuildCosts[0] -= (int) (1     *  1 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[1] -= (int) (0.5f  *  4 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[2] -= (int) (0.25f * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[0] - remainingMetal) / (1.f * data.needsMetal);
+				turboBuildCosts[0] -= (int) (1     *  1 * data.needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (0.5f  *  4 * data.needsMetal * WorkedRounds);
+				turboBuildCosts[2] -= (int) (0.25f * 12 * data.needsMetal * WorkedRounds);
 				break;
 
 			case 1:
-				WorkedRounds = (iTurboBuildCosts[1] - iRemainingMetal) / (float) (4 * data.needsMetal);
-				iTurboBuildCosts[0] -= (int) (2    *  1 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[1] -= (int) (1    *  4 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[2] -= (int) (0.5f * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[1] - remainingMetal) / (float)(4 * data.needsMetal);
+				turboBuildCosts[0] -= (int) (2    *  1 * data.needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (1    *  4 * data.needsMetal * WorkedRounds);
+				turboBuildCosts[2] -= (int) (0.5f * 12 * data.needsMetal * WorkedRounds);
 				break;
 
 			case 2:
-				WorkedRounds = (iTurboBuildCosts[2] - iRemainingMetal) / (float) (12 * data.needsMetal);
-				iTurboBuildCosts[0] -= (int) (4 *  1 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[1] -= (int) (2 *  4 * data.needsMetal * WorkedRounds);
-				iTurboBuildCosts[2] -= (int) (1 * 12 * data.needsMetal * WorkedRounds);
+				WorkedRounds = (turboBuildCosts[2] - remainingMetal) / (float)(12 * data.needsMetal);
+				turboBuildCosts[0] -= (int) (4 *  1 * data.needsMetal * WorkedRounds);
+				turboBuildCosts[1] -= (int) (2 *  4 * data.needsMetal * WorkedRounds);
+				turboBuildCosts[2] -= (int) (1 * 12 * data.needsMetal * WorkedRounds);
 				break;
 		}
 	}
 
 	// calc needed Rounds
-	iTurboBuildRounds[0] = (int) ceilf (iTurboBuildCosts[0] / (1.f * data.needsMetal));
+	turboBuildRounds[0] = (int) ceilf (turboBuildCosts[0] / (1.f * data.needsMetal));
 
 	if (data.maxBuildFactor > 1)
 	{
-		iTurboBuildRounds[1] = (int) ceilf (iTurboBuildCosts[1] / (4.f * data.needsMetal));
-		iTurboBuildRounds[2] = (int) ceilf (iTurboBuildCosts[2] / (12.f * data.needsMetal));
+		turboBuildRounds[1] = (int) ceilf (turboBuildCosts[1] / (4.f * data.needsMetal));
+		turboBuildRounds[2] = (int) ceilf (turboBuildCosts[2] / (12.f * data.needsMetal));
 	}
 	else
 	{
-		iTurboBuildRounds[1] = 0;
-		iTurboBuildRounds[2] = 0;
+		turboBuildRounds[1] = 0;
+		turboBuildRounds[2] = 0;
 	}
 }
 

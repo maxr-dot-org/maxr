@@ -65,8 +65,8 @@ protected:
 
 	cPushButton* okButton;
 	cPushButton* backButton;
-	cPushButton* upButton;
-	cPushButton* downButton;
+	cPushButton* selectionListUpButton;
+	cPushButton* selectionListDownButton;
 
 	cSignal<void (const cUnitListViewItemBuy&)> selectionUnitClickedSecondTime;
 

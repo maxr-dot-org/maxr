@@ -2837,25 +2837,25 @@ void cGameGUI::updateMouseCursor()
 			!selectedBuilding->isUnitWorking () &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
-			{
-				mouse.setCursorType(eMouseCursorType::Activate);
-			}
-			else
-			{
-				mouse.setCursorType(eMouseCursorType::No);
-			}
+			//if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion()) && selectedUnit->isDisabled() == false)
+			//{
+			//	mouse.setCursorType(eMouseCursorType::Activate);
+			//}
+			//else
+			//{
+			//	mouse.setCursorType(eMouseCursorType::No);
+			//}
 		}
 		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && mouseInputMode == activateVehicle && selectedUnit->isDisabled() == false)
 		{
-			if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->data))
-			{
-				mouse.setCursorType(eMouseCursorType::Activate);
-			}
-			else
-			{
-				mouse.setCursorType(eMouseCursorType::No);
-			}
+			//if (selectedBuilding->canExitTo (mouseMapX, mouseMapY, *client->getMap(), selectedBuilding->storedUnits[vehicleToActivate]->data))
+			//{
+			//	mouse.setCursorType(eMouseCursorType::Activate);
+			//}
+			//else
+			//{
+			//	mouse.setCursorType(eMouseCursorType::No);
+			//}
 		}
 		else if (selectedBuilding && selectedBuilding->owner == &client->getActivePlayer() && mouseInputMode == loadMode)
 		{
@@ -4222,154 +4222,6 @@ void cGameGUI::closePanel()
 
 void cGameGUI::drawUnitCircles()
 {
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
-	SDL_SetClipRect (cVideo::buffer, &clipRect);
-
-	cVehicle* selectedVehicle = getSelectedVehicle();
-	cBuilding* selectedBuilding = getSelectedBuilding();
-	const cPlayer& player = client->getActivePlayer();
-
-	if (selectedVehicle && selectedUnit->isDisabled() == false)
-	{
-		cVehicle& v = *selectedVehicle;
-		const bool movementOffset = !v.isUnitBuildingABuilding () && !v.isUnitClearing ();
-		const int spx = getScreenPosX (v, movementOffset);
-		const int spy = getScreenPosY (v, movementOffset);
-		if (scanChecked())
-		{
-			if (v.data.isBig)
-			{
-				drawCircle (spx + getTileSize(), spy + getTileSize(), v.data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
-			}
-			else
-			{
-				drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
-			}
-		}
-		if (rangeChecked())
-		{
-			if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
-			else drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, cVideo::buffer);
-		}
-		if (v.owner == &player &&
-			(
-			(v.isUnitBuildingABuilding () && v.getBuildTurns () == 0) ||
-			(v.isUnitClearing () && v.getClearingTurns () == 0)
-			) && !v.BuildPath)
-		{
-			const cMap& map = *client->getMap();
-
-			if (v.data.isBig)
-			{
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize(),     spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX    , v.PosY - 1)) drawExitPoint (spx,                spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize(),     spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX + 2, v.PosY - 1)) drawExitPoint (spx + getTileSize() * 2, spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize(),     spy);
-				if (map.possiblePlace (v, v.PosX + 2, v.PosY)) drawExitPoint (spx + getTileSize() * 2, spy);
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize(),     spy + getTileSize());
-				if (map.possiblePlace (v, v.PosX + 2, v.PosY + 1)) drawExitPoint (spx + getTileSize() * 2, spy + getTileSize());
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY + 2)) drawExitPoint (spx - getTileSize(),     spy + getTileSize() * 2);
-				if (map.possiblePlace (v, v.PosX    , v.PosY + 2)) drawExitPoint (spx,                spy + getTileSize() * 2);
-				if (map.possiblePlace (v, v.PosX + 1, v.PosY + 2)) drawExitPoint (spx + getTileSize(),     spy + getTileSize() * 2);
-				if (map.possiblePlace (v, v.PosX + 2, v.PosY + 2)) drawExitPoint (spx + getTileSize() * 2, spy + getTileSize() * 2);
-			}
-			else
-			{
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize(), spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX    , v.PosY - 1)) drawExitPoint (spx,            spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize(), spy - getTileSize());
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize(), spy);
-				if (map.possiblePlace (v, v.PosX + 1, v.PosY)) drawExitPoint (spx + getTileSize(), spy);
-				if (map.possiblePlace (v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize(), spy + getTileSize());
-				if (map.possiblePlace (v, v.PosX    , v.PosY + 1)) drawExitPoint (spx,            spy + getTileSize());
-				if (map.possiblePlace (v, v.PosX + 1, v.PosY + 1)) drawExitPoint (spx + getTileSize(), spy + getTileSize());
-			}
-		}
-		if (mouseInputMode == placeBand)
-		{
-			if (v.getBuildingType ().getUnitDataOriginalVersion ()->isBig)
-			{
-				SDL_Rect dest;
-				dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * v.BandX;
-				dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * v.BandY;
-				CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getTileSize() / 64.0f);
-				SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
-			}
-			else
-			{
-				const auto mouseTilePosition = getTilePosition(cMouse::getInstance().getPosition());
-				const int x = mouseTilePosition.x();
-				const int y = mouseTilePosition.y();
-				if (x == v.PosX || y == v.PosY)
-				{
-					SDL_Rect dest;
-					dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * x;
-					dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * y;
-					CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getTileSize() / 64.0f);
-					SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
-					v.BandX = x;
-					v.BandY = y;
-				}
-				else
-				{
-					v.BandX = v.PosX;
-					v.BandY = v.PosY;
-				}
-			}
-		}
-		if (mouseInputMode == activateVehicle && v.owner == &player)
-		{
-			v.DrawExitPoints (v.storedUnits[vehicleToActivate]->data, *this);
-		}
-	}
-	else if (selectedBuilding && selectedUnit->isDisabled() == false)
-	{
-		const int spx = getScreenPosX (*selectedBuilding);
-		const int spy = getScreenPosY (*selectedBuilding);
-		if (scanChecked())
-		{
-			if (selectedBuilding->data.isBig)
-			{
-				drawCircle (spx + getTileSize(),
-							spy + getTileSize(),
-							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
-			}
-			else
-			{
-				drawCircle (spx + getTileSize() / 2,
-							spy + getTileSize() / 2,
-							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
-			}
-		}
-		if (rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
-		{
-			drawCircle (spx + getTileSize() / 2,
-						spy + getTileSize() / 2,
-						selectedBuilding->data.range * getTileSize() + 2, RANGE_GROUND_COLOR, cVideo::buffer);
-		}
-		if (rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_AIR))
-		{
-			drawCircle (spx + getTileSize() / 2,
-						spy + getTileSize() / 2,
-						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
-		}
-
-		if (selectedBuilding->BuildList.empty() == false &&
-			!selectedBuilding->isUnitWorking () &&
-			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
-			selectedBuilding->owner == &player)
-		{
-			selectedBuilding->DrawExitPoints (*selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion(), *this);
-		}
-		if (mouseInputMode == activateVehicle && selectedBuilding->owner == &player)
-		{
-			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->data, *this);
-		}
-	}
-	drawLockList (client->getActivePlayer());
-
-	SDL_SetClipRect (cVideo::buffer, NULL);
 }
 
 //--------------------------------------------------------------------------

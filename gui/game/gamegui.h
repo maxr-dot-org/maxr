@@ -39,6 +39,7 @@ class cBuilding;
 class cAnimationTimer;
 class cClient;
 struct sID;
+struct sBuildList;
 
 class cNewGameGUI : public cWindow
 {
@@ -106,6 +107,7 @@ private:
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
+	cSignal<void (const cBuilding&, const std::vector<sBuildList>&, int, bool)> buildVehiclesTriggered;
 };
 
 #endif // gui_game_gameguiH

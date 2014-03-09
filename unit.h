@@ -53,6 +53,11 @@ public:
 
 	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
+	//const cPosition& getPosition () const;
+	//void setPosition (const cPosition& position);
+
+	std::vector<cPosition> getAdjacentPositions () const;
+
 	int calcHealth (int damage) const;
 	bool isInRange (int x, int y) const;
 	/// checks whether the coordinates are next to the unit
@@ -60,6 +65,7 @@ public:
 	bool isNextTo (const cPosition& position) const;
 	bool isDisabled() const { return turnsDisabled > 0; }
 	bool isAbove(const cPosition& position) const;
+
 
 	const std::string& getName() const { return name; }
 	bool isNameOriginal() const { return isOriginalName; }

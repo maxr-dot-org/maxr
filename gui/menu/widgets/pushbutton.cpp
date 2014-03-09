@@ -117,7 +117,11 @@ bool cPushButton::handleMousePressed (cApplication& application, cMouse& mouse, 
 //------------------------------------------------------------------------------
 bool cPushButton::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (isLocked) return false;
+	if (isLocked)
+	{
+		cClickableWidget::finishMousePressed (application, mouse, button);
+		return false;
+	}
 	return cClickableWidget::handleMouseReleased (application, mouse, button);
 }
 

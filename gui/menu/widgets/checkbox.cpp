@@ -143,7 +143,11 @@ bool cCheckBox::handleMousePressed (cApplication& application, cMouse& mouse, eM
 //------------------------------------------------------------------------------
 bool cCheckBox::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (isLocked) return false;
+	if (isLocked)
+	{
+		cClickableWidget::finishMousePressed (application, mouse, button);
+		return false;
+	}
 	return cClickableWidget::handleMouseReleased (application, mouse, button);
 }
 

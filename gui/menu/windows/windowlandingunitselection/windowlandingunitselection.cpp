@@ -26,6 +26,7 @@
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/checkbox.h"
 #include "../../widgets/radiogroup.h"
+#include "../../widgets/listview.h"
 #include "../../widgets/special/resourcebar.h"
 #include "../../widgets/special/unitlistviewitembuy.h"
 #include "../../widgets/special/unitlistviewitemcargo.h"

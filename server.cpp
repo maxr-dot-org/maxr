@@ -1073,9 +1073,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		if (Building->BuildList.empty() == false && i == 0 && Type == Building->BuildList[0].type)
 		{
 			// recalculate costs, because build speed could have been changed
-			int iTurboBuildRounds[3];
-			int iTurboBuildCosts[3];
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, Building->BuildList[0].metall_remaining);
+			std::array<int, 3> iTurboBuildRounds;
+			std::array<int, 3> iTurboBuildCosts;
+			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, Building->BuildList[0].metall_remaining);
 			sBuildList BuildListItem;
 			BuildListItem.metall_remaining = iTurboBuildCosts[iBuildSpeed];
 			BuildListItem.type = Type;
@@ -1105,9 +1105,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	{
 		if (Building->BuildList[0].metall_remaining == -1)
 		{
-			int iTurboBuildRounds[3];
-			int iTurboBuildCosts[3];
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Building->BuildList[0].type)->buildCosts);
+			std::array<int, 3> iTurboBuildRounds;
+			std::array<int, 3> iTurboBuildCosts;
+			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Building->BuildList[0].type)->buildCosts);
 			Building->BuildList[0].metall_remaining = iTurboBuildCosts[iBuildSpeed];
 		}
 
@@ -1161,9 +1161,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 		sBuildList& BuildingListItem = Building->BuildList[0];
 		if (BuildingListItem.metall_remaining == -1)
 		{
-			int iTurboBuildCosts[3];
-			int iTurboBuildRounds[3];
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (BuildingListItem.type)->buildCosts);
+			std::array<int, 3> iTurboBuildRounds;
+			std::array<int, 3> iTurboBuildCosts;
+			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (BuildingListItem.type)->buildCosts);
 			BuildingListItem.metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
 		}
 		Building->ServerStartWork (*this);
@@ -1692,7 +1692,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		// sidestep stealth units if necessary
 		sideStepStealthUnit (x, y, *StoredVehicle);
 
-		if (StoringBuilding->canExitTo (x, y, *Map, StoredVehicle->data))
+		if (StoringBuilding->canExitTo (cPosition(x, y), *Map, StoredVehicle->data))
 		{
 			StoringBuilding->exitVehicleTo (*StoredVehicle, Map->getOffset (x, y), *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()

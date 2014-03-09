@@ -40,8 +40,8 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_) :
 	selectionUnitList->resize (cPosition(154,380));
 	selectionUnitList->setItemDistance (cPosition (0, 2));
 
-	upButton->moveTo (getPosition () + cPosition (471, 440));
-	downButton->moveTo (getPosition () + cPosition (491, 440));
+	selectionListUpButton->moveTo (getPosition () + cPosition (471, 440));
+	selectionListDownButton->moveTo (getPosition () + cPosition (491, 440));
 
 	backButton->moveTo (getPosition () + cPosition (300, 452));
 	okButton->moveTo (getPosition () + cPosition (387, 452));

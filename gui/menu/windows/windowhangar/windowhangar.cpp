@@ -57,11 +57,11 @@ cWindowHangar::cWindowHangar (SDL_Surface* surface, int playerColor, int playerC
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 
-	upButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (upButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
+	selectionListUpButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
+	signalConnectionManager.connect (selectionListUpButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
 
-	downButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (downButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
+	selectionListDownButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
+	signalConnectionManager.connect (selectionListDownButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
 
 
 	okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));

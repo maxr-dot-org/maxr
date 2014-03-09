@@ -18,12 +18,16 @@
  ***************************************************************************/
 #ifndef buildingsH
 #define buildingsH
+
+#include <vector>
+#include <array>
+
 #include <SDL.h>
+
 #include "defines.h"
 #include "maxrconfig.h"
 #include "main.h" // for sUnitData, sID
 #include "unit.h"
-#include <vector>
 
 class cBase;
 class cGameGUI;
@@ -185,9 +189,8 @@ public:
 	/** check whether a transfer to a unit on the field is possible */
 	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	void CheckRessourceProd (const cServer& server);
-	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
-	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI);
-	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
+	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
+	bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const;
 	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);

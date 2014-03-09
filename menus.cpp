@@ -4437,7 +4437,7 @@ void cVehiclesBuildMenu::selectionChanged (void* parent)
 
 	const sUnitData* vehicleData = menu->player->getUnitDataCurrentVersion (menu->selectedUnit->getUnitID());
 	int turboBuildTurns[3], turboBuildCosts[3];
-	menu->building->CalcTurboBuild (turboBuildTurns, turboBuildCosts, vehicleData->buildCosts, menu->selectedUnit->getResValue());
+	//menu->building->CalcTurboBuild (turboBuildTurns, turboBuildCosts, vehicleData->buildCosts, menu->selectedUnit->getResValue());
 
 	menu->speedHandler->setValues (turboBuildTurns, turboBuildCosts);
 }
@@ -4996,7 +4996,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 				if (xpos < 0 || xpos >= map.getSize()) continue;
 				if (((ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
 					((xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
-				if (((menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, map, vehicle->data)) ||
+				if (((menu->ownerBuilding && menu->ownerBuilding->canExitTo (cPosition(xpos, ypos), map, vehicle->data)) ||
 					 (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, map, vehicle->data)))
 					&& !hasCheckedPlace[poscount])
 				{

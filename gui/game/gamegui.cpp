@@ -35,6 +35,7 @@
 #include "../menu/dialogs/dialogtransfer.h"
 #include "../menu/windows/windowunitinfo/windowunitinfo.h"
 #include "../menu/windows/windowbuildbuildings/windowbuildbuildings.h"
+#include "../menu/windows/windowbuildvehicles/windowbuildvehicles.h"
 
 #include "../../keys.h"
 #include "../../player.h"
@@ -132,7 +133,9 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 		if (unit.isAVehicle ())
 		{
 			const auto& vehicle = static_cast<const cVehicle&>(unit);
+
 			auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle));
+
 			buildWindow->done.connect ([&, buildWindow]()
 			{
 				if (buildWindow->getSelectedUnitId ())
@@ -177,7 +180,40 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 		}
 		else if (unit.isABuilding ())
 		{
+			if (!dynamicMap) return;
+
+			const auto& building = static_cast<const cBuilding&>(unit);
+
+			auto buildWindow = application->show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap));
+
+			buildWindow->done.connect ([&, buildWindow]()
+			{
+				buildVehiclesTriggered (building, buildWindow->getBuildList (), buildWindow->getSelectedBuildSpeed(), buildWindow->isRepeatActive());
+				buildWindow->close ();
+			});
 		}
+	});
+	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, [&](const cUnit& unit)
+	{
+		//building->executeMineManagerCommand (*this);
+	});
+	signalConnectionManager.connect (gameMap->triggeredResearchMenu, [&](const cUnit& unit)
+	{
+		//cDialogResearch researchDialog (*client);
+		//switchTo (researchDialog, client);
+	});
+	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, [&](const cUnit& unit)
+	{
+		//cUpgradeMenu upgradeMenu (*client);
+		//switchTo (upgradeMenu, client);
+	});
+	signalConnectionManager.connect (gameMap->triggeredActivate, [&](const cUnit& unit)
+	{
+		//unit.executeActivateStoredVehiclesCommand (*this);
+	});
+	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, [&](const cUnit& unit)
+	{
+		//building->executeSelfDestroyCommand (*this);
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
@@ -305,6 +341,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (destination));
 		buildPositionSelectionConnectionManager.disconnectAll ();
 	});
+	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&](const cBuilding& building, const std::vector<sBuildList>& buildList, int buildSpeed, bool repeat)
+	{
+		sendWantBuildList (client, building, buildList, repeat, buildSpeed);
+	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
@@ -312,28 +352,6 @@ void cNewGameGUI::connectToClient (cClient& client)
 	clientSignalConnectionManager.connect (hud->triggeredRenameUnit, [&](const cUnit& unit, const std::string& name)
 	{
 		sendWantChangeUnitName (client, name, unit.iID);
-	});
-	clientSignalConnectionManager.connect (gameMap->triggeredResourceDistribution, [&](const cUnit& unit)
-	{
-		//building->executeMineManagerCommand (*this);
-	});
-	clientSignalConnectionManager.connect (gameMap->triggeredResearchMenu, [&](const cUnit& unit)
-	{
-		//cDialogResearch researchDialog (*client);
-		//switchTo (researchDialog, client);
-	});
-	clientSignalConnectionManager.connect (gameMap->triggeredUpgradesMenu, [&](const cUnit& unit)
-	{
-		//cUpgradeMenu upgradeMenu (*client);
-		//switchTo (upgradeMenu, client);
-	});
-	clientSignalConnectionManager.connect (gameMap->triggeredActivate, [&](const cUnit& unit)
-	{
-		//unit.executeActivateStoredVehiclesCommand (*this);
-	});
-	clientSignalConnectionManager.connect (gameMap->triggeredSelfDestruction, [&](const cUnit& unit)
-	{
-		//building->executeSelfDestroyCommand (*this);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredStartWork, [&](const cUnit& unit)
 	{

@@ -80,6 +80,41 @@ cUnit::~cUnit()
 }
 
 //------------------------------------------------------------------------------
+std::vector<cPosition> cUnit::getAdjacentPositions () const
+{
+	std::vector<cPosition> adjacentPositions;
+
+	const cPosition position(PosX, PosY);
+	if (data.isBig)
+	{
+		adjacentPositions.push_back (position + cPosition (-1, -1));
+		adjacentPositions.push_back (position + cPosition ( 0, -1));
+		adjacentPositions.push_back (position + cPosition ( 1, -1));
+		adjacentPositions.push_back (position + cPosition ( 2, -1));
+		adjacentPositions.push_back (position + cPosition (-1, 0));
+		adjacentPositions.push_back (position + cPosition ( 2, 0));
+		adjacentPositions.push_back (position + cPosition (-1, 1));
+		adjacentPositions.push_back (position + cPosition ( 2, 1));
+		adjacentPositions.push_back (position + cPosition (-1, 2));
+		adjacentPositions.push_back (position + cPosition ( 0, 2));
+		adjacentPositions.push_back (position + cPosition ( 1, 2));
+		adjacentPositions.push_back (position + cPosition ( 2, 2));
+	}
+	else
+	{
+		adjacentPositions.push_back (position + cPosition (-1, -1));
+		adjacentPositions.push_back (position + cPosition ( 0, -1));
+		adjacentPositions.push_back (position + cPosition ( 1, -1));
+		adjacentPositions.push_back (position + cPosition (-1, 0));
+		adjacentPositions.push_back (position + cPosition ( 1, 0));
+		adjacentPositions.push_back (position + cPosition (-1, 1));
+		adjacentPositions.push_back (position + cPosition ( 0, 1));
+		adjacentPositions.push_back (position + cPosition ( 1, 1));
+	}
+	return adjacentPositions;
+}
+
+//------------------------------------------------------------------------------
 /** returns the remaining hitpoints after an attack */
 //------------------------------------------------------------------------------
 int cUnit::calcHealth (int damage) const

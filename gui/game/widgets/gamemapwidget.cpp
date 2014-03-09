@@ -21,6 +21,7 @@
 #include "unitcontextmenuwidget.h"
 #include "../hud.h"
 #include "../temp/animationtimer.h"
+#include "../../application.h"
 #include "../../../map.h"
 #include "../../../settings.h"
 #include "../../../video.h"
@@ -967,41 +968,12 @@ void cGameMapWidget::drawExitPoints ()
 				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns() == 0)
 			) && !selectedVehicle->BuildPath)
 		{
-			const bool movementOffset = !selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing ();
-			const auto screenPosition = getScreenPosition (*selectedVehicle, movementOffset);
-
-			const cMap& map = *dynamicMap;
-
-			if (selectedVehicle->data.isBig)
-			{
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (0, -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), 0));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, 0));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), zoomedTileSize.y ()*2));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (0, zoomedTileSize.y ()*2));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), zoomedTileSize.y ()*2));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, zoomedTileSize.y ()*2));
-			}
-			else
-			{
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (0, -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), -zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), 0));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), 0));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (0, zoomedTileSize.y ()));
-				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), zoomedTileSize.y ()));
-			}
+			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return dynamicMap->possiblePlace (*selectedVehicle, position.x (), position.y ()); });
 		}
 		if (mouseInputMode == eNewMouseInputMode::Activate && selectedVehicle->owner == player)
 		{
-			//selectedVehicle->DrawExitPoints (selectedVehicle->storedUnits[vehicleToActivate]->data, *this);
+			//auto unitToExit = selectedVehicle->storedUnits[vehicleToActivate]->data;
+			//drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return selectedVehicle->canExitTo (position, *dynamicMap, *unitToExit); });
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
@@ -1011,11 +983,29 @@ void cGameMapWidget::drawExitPoints ()
 			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
 			selectedBuilding->owner == player)
 		{
-			//selectedBuilding->DrawExitPoints (*selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion (), *this);
+			auto unitToExit = selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ();
+			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
 		}
 		if (mouseInputMode == eNewMouseInputMode::Activate && selectedBuilding->owner == player)
 		{
-			//selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[vehicleToActivate]->data, *this);
+			//auto unitToExit = selectedBuilding->storedUnits[vehicleToActivate]->data;
+			//drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate)
+{
+	if (!dynamicMap) return;
+
+	auto adjacentPositions = unit.getAdjacentPositions ();
+
+	for (int i = 0; i != adjacentPositions.size(); ++i)
+	{
+		if (predicate(adjacentPositions[i]))
+		{
+			drawExitPoint (adjacentPositions[i]);
 		}
 	}
 }
@@ -1024,6 +1014,10 @@ void cGameMapWidget::drawExitPoints ()
 void cGameMapWidget::drawExitPoint (const cPosition& position)
 {
 	const auto zoomedTileSize = getZoomedTileSize ();
+	const auto tileDrawingRange = computeTileDrawingRange ();
+	const auto zoomedStartTilePixelOffset = getZoomedStartTilePixelOffset ();
+
+	auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, position);
 
 	const int nr = animationTimer->getAnimationTime () % 5;
 	SDL_Rect src;
@@ -1031,14 +1025,10 @@ void cGameMapWidget::drawExitPoint (const cPosition& position)
 	src.y = 0;
 	src.w = zoomedTileSize.x ();
 	src.h = zoomedTileSize.y ();
-	SDL_Rect dest;
-	dest.x = position.x ();
-	dest.y = position.y ();
 
 	CHECK_SCALING (GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, getZoomFactor());
-	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, cVideo::buffer, &drawDestination);
 }
-
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawBuildBand ()
@@ -1326,6 +1316,7 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 	{
 		unitSelection.selectVehiclesAt (unitSelectionBox.getCorrectedMapBox (), *dynamicMap, *player);
 		unitSelectionBox.invalidate ();
+		cClickableWidget::finishMousePressed (application, mouse, button);
 		return true;
 	}
 	else
@@ -1940,7 +1931,7 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 		!selectedBuilding->isUnitWorking () &&
 		selectedBuilding->BuildList[0].metall_remaining <= 0)
 	{
-		if (selectedBuilding->canExitTo (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
+		if (selectedBuilding->canExitTo (mapTilePosition, *dynamicMap, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
 		{
 			return eMouseClickAction::Activate;
 		}
