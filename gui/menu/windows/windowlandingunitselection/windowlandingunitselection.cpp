@@ -44,32 +44,32 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (int playerColor, int p
 	//
 	tankCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (467, 411), eCheckBoxType::Tank));
 	tankCheckBox->setChecked (true);
-	signalConnectionManager.connect (tankCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (tankCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
 	planeCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (467 + 33, 411), eCheckBoxType::Plane));
 	planeCheckBox->setChecked (true);
-	signalConnectionManager.connect (planeCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (planeCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
 	shipCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (467 + 33 * 2, 411), eCheckBoxType::Ship));
 	shipCheckBox->setChecked (true);
-	signalConnectionManager.connect (shipCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (shipCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
 	buildingCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (467 + 33 * 3, 411), eCheckBoxType::Building));
 	buildingCheckBox->setChecked (true);
-	signalConnectionManager.connect (buildingCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (buildingCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
 	tntCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (467 + 33 * 4, 411), eCheckBoxType::Tnt));
 	tntCheckBox->setChecked (false);
-	signalConnectionManager.connect (tntCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (tntCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
 	auto updateBuyGroup = addChild (std::make_unique<cRadioGroup> ());
 	
 	buyCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (542, 445), lngPack.i18n ("Text~Others~Buy"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
 	buyCheckBox->setChecked (true);
-	signalConnectionManager.connect (buyCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (buyCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 	
 	upgradeCheckBox = updateBuyGroup->addButton (std::make_unique<cCheckBox> (menuPosition + cPosition (542, 445 + 17), lngPack.i18n ("Text~Others~Upgrade"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Round));
-	signalConnectionManager.connect (upgradeCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this));
+	signalConnectionManager.connect (upgradeCheckBox->toggled, std::bind (&cWindowLandingUnitSelection::generateSelectionList, this, false));
 
 	//
 	// Resource Bar
@@ -119,7 +119,7 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (int playerColor, int p
 		fixedSelectedUnits.push_back (&addedItem);
 	}
 
-	generateSelectionList ();
+	generateSelectionList (true);
 	updateUpgradeButtons ();
 	handleSelectedUnitSelectionChanged (nullptr);
 
@@ -292,7 +292,7 @@ bool cWindowLandingUnitSelection::tryRemoveSelectedUnit (const cUnitListViewItem
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingUnitSelection::generateSelectionList ()
+void cWindowLandingUnitSelection::generateSelectionList (bool select)
 {
 	const bool buy = buyCheckBox->isChecked();
 	const bool tank = tankCheckBox->isChecked ();
@@ -313,7 +313,12 @@ void cWindowLandingUnitSelection::generateSelectionList ()
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
 			if (data.factorGround > 0 && !tank) continue;
-			addSelectionUnit (data.ID);
+			const auto& item = addSelectionUnit (data.ID);
+			if (select)
+			{
+				setSelectedSelectionItem (item);
+				select = false;
+			}
 		}
 	}
 
@@ -323,7 +328,12 @@ void cWindowLandingUnitSelection::generateSelectionList ()
 		{
 			const sUnitData& data = UnitsData.getBuilding (i, getPlayer ().getClan ());
 			if (tnt && !data.canAttack) continue;
-			addSelectionUnit (data.ID);
+			const auto& item = addSelectionUnit (data.ID);
+			if (select)
+			{
+				setSelectedSelectionItem (item);
+				select = false;
+			}
 		}
 	}
 }

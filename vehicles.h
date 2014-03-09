@@ -22,6 +22,7 @@
 #include "maxrconfig.h"
 #include <SDL.h>
 #include <vector>
+#include <array>
 
 #include "main.h" // for sUnitData
 #include "unit.h"
@@ -36,6 +37,7 @@ class cMapField;
 class cPlayer;
 class cServer;
 class cServerMoveJob;
+class cApplication;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -189,7 +191,7 @@ public:
 	bool canSupply (const cMap& map, int x, int y, int supplyType) const;
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	bool canSupply (const cUnit* unit, int supplyType) const;
-	void calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCosts) [3], int iBuild_Costs);
+	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath
@@ -371,9 +373,7 @@ protected:
 
 
 	// methods needed for execution of unit menu commands
-	virtual void executeBuildCommand (cGameGUI& gameGUI) const;
-	virtual void executeStopCommand (const cClient& client) const;
-	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const;
+	virtual void executeStopCommand (const cClient& client) const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif

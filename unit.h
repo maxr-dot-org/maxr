@@ -115,9 +115,7 @@ public:
 	virtual bool buildingCanBeUpgraded() const { return false; }
 	virtual bool canBeStoppedViaUnitMenu() const = 0;
 
-	virtual void executeBuildCommand (cGameGUI&) const = 0;
 	virtual void executeStopCommand (const cClient& client) const = 0;
-	virtual void executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const = 0;
 
 	mutable cSignal<void ()> renamed;
 	mutable cSignal<void ()> statusChanged;

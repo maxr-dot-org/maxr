@@ -335,7 +335,7 @@ void cLineEdit::deleteRight ()
 //------------------------------------------------------------------------------
 bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
-	if (readOnly) return false;
+	if (readOnly || !hasKeyFocus) return false;
 
 	switch (key)
 	{
@@ -374,6 +374,8 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 //------------------------------------------------------------------------------
 bool cLineEdit::handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* inputText)
 {
+	if (readOnly || !hasKeyFocus) return false;
+
 	text.insert (cursorPos, inputText);
 
 	if (validator)

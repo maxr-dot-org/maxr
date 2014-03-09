@@ -4270,7 +4270,7 @@ void cBuildingsBuildMenu::selectionChanged (void* parent)
 
 	const sUnitData* buildingData = menu->player->getUnitDataCurrentVersion (menu->selectedUnit->getUnitID());
 	int turboBuildTurns[3], turboBuildCosts[3];
-	menu->vehicle->calcTurboBuild (turboBuildTurns, turboBuildCosts, buildingData->buildCosts);
+	//menu->vehicle->calcTurboBuild (turboBuildTurns, turboBuildCosts, buildingData->buildCosts);
 
 	if (turboBuildTurns[0] == 0)
 	{

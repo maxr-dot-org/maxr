@@ -18,5 +18,88 @@
  ***************************************************************************/
 
 #include "windowbuildbuildings.h"
+#include "../../widgets/label.h"
+#include "../../widgets/pushbutton.h"
+#include "../../widgets/listview.h"
+#include "../../widgets/special/unitlistviewitembuy.h"
+#include "../../widgets/special/buildspeedhandlerwidget.h"
+#include "../../../../pcx.h"
+#include "../../../../vehicles.h"
+#include "../../../../player.h"
 
 //------------------------------------------------------------------------------
+cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_) :
+	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), vehicle_.owner->getColor(), vehicle_.owner->getClan()),
+	vehicle (vehicle_)
+{
+
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition () + cPosition (292, 345)));
+
+	selectionUnitList->resize (cPosition(154,380));
+	selectionUnitList->setItemDistance (cPosition (0, 2));
+
+	upButton->moveTo (getPosition () + cPosition (471, 440));
+	downButton->moveTo (getPosition () + cPosition (491, 440));
+
+	backButton->moveTo (getPosition () + cPosition (300, 452));
+	okButton->moveTo (getPosition () + cPosition (387, 452));
+
+	if (vehicle.data.canBuildPath)
+	{
+		auto pathButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (338, 428), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Path"), FONT_LATIN_NORMAL));
+		signalConnectionManager.connect (pathButton->clicked, [&](){ donePath (); });
+	}
+
+	generateSelectionList (vehicle);
+
+	signalConnectionManager.connect (selectionUnitClickedSecondTime, [&](const cUnitListViewItemBuy&){ done (); });
+}
+
+//------------------------------------------------------------------------------
+const sID* cWindowBuildBuildings::getSelectedUnitId () const
+{
+	return getActiveUnit ();
+}
+
+//------------------------------------------------------------------------------
+int cWindowBuildBuildings::getSelectedBuildSpeed () const
+{
+	return static_cast<int>(speedHandler->getBuildSpeedIndex ());
+}
+
+//------------------------------------------------------------------------------
+void cWindowBuildBuildings::setActiveUnit (const sID& unitId)
+{
+	cWindowHangar::setActiveUnit (unitId);
+
+	const auto& buildingData = *vehicle.owner->getUnitDataCurrentVersion (unitId);
+	std::array<int, 3> turns;
+	std::array<int, 3> costs;
+	vehicle.calcTurboBuild (turns, costs, buildingData.buildCosts);
+
+	speedHandler->setValues (turns, costs);
+}
+
+//------------------------------------------------------------------------------
+void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
+{
+	bool select = true;
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); ++i)
+	{
+		if (UnitsData.sbuildings[i].explodesOnContact) continue;
+
+		if (vehicle.data.canBuild != UnitsData.sbuildings[i].buildAs) continue;
+
+		auto& item = addSelectionUnit (UnitsData.sbuildings[i].ID);
+
+		if (select)
+		{
+			setSelectedSelectionItem (item);
+			select = false;
+		}
+
+		if (vehicle.data.storageResCur < vehicle.owner->BuildingData[i].buildCosts) item.markAsInsufficient();
+	}
+}

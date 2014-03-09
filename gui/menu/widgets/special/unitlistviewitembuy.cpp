@@ -30,3 +30,15 @@ cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitI
 
 	nameLabel->resize (nameLabel->getSize () - cPosition (15, 0));
 }
+
+//------------------------------------------------------------------------------
+void cUnitListViewItemBuy::markAsInsufficient ()
+{
+	nameLabel->setFont (FONT_LATIN_SMALL_RED);
+}
+
+//------------------------------------------------------------------------------
+void cUnitListViewItemBuy::unmarkAsInsufficient ()
+{
+	nameLabel->setFont (FONT_LATIN_SMALL_WHITE);
+}

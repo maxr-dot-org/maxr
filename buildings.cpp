@@ -1621,13 +1621,6 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeBuildCommand (cGameGUI& gameGUI) const
-{
-	//cVehiclesBuildMenu buildMenu (gameGUI, owner, this);
-	//gameGUI.switchTo(buildMenu, gameGUI.getClient());
-}
-
-//-----------------------------------------------------------------------------
 void cBuilding::executeMineManagerCommand (cGameGUI& gameGUI) const
 {
 	//cMineManagerMenu mineManager(*gameGUI.getClient(), this);
@@ -1638,13 +1631,6 @@ void cBuilding::executeMineManagerCommand (cGameGUI& gameGUI) const
 void cBuilding::executeStopCommand (const cClient& client) const
 {
 	sendWantStopWork (client, *this);
-}
-
-//-----------------------------------------------------------------------------
-void cBuilding::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const
-{
-	//cStorageMenu storageMenu(*gameGUI.getClient(), storedUnits, *this);
-	//gameGUI.switchTo(storageMenu, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------

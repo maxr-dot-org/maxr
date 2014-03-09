@@ -20,13 +20,31 @@
 #ifndef gui_menu_windows_windowbuildbuildings_windowbuildbuildingsH
 #define gui_menu_windows_windowbuildbuildings_windowbuildbuildingsH
 
-#include "../../../window.h"
+#include "../windowhangar/windowhangar.h"
 
-class cWindowBuildBuildings : public cWindow
+class cVehicle;
+class cBuildSpeedHandlerWidget;
+
+class cWindowBuildBuildings : public cWindowHangar
 {
 public:
+	cWindowBuildBuildings (const cVehicle& vehicle);
+
+	const sID* getSelectedUnitId () const;
+	int getSelectedBuildSpeed () const;
+
+	cSignal<void ()> donePath;
+protected:
+	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
 
 private:
+	cSignalConnectionManager signalConnectionManager;
+
+	const cVehicle& vehicle;
+
+	cBuildSpeedHandlerWidget* speedHandler;
+
+	void generateSelectionList (const cVehicle& vehicle);
 };
 
 #endif // gui_menu_windows_windowbuildbuildings_windowbuildbuildingsH

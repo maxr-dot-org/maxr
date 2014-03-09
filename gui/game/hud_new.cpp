@@ -142,6 +142,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 void cHud::setPlayer (const cPlayer* player_)
 {
 	player = player_;
+	unitRenameWidget->setPlayer (player_);
 }
 
 //------------------------------------------------------------------------------

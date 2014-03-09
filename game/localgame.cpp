@@ -54,7 +54,7 @@ void cLocalGame::start (cApplication& application, const cPosition& landingPosit
 
 	sendClan (*client);
 	sendLandingUnits (*client, landingUnits);
-	//sendUnitUpgrades (*client);
+	sendUnitUpgrades (*client);
 
 	sClientLandData landData;
 	landData.iLandX = landingPosition.x();

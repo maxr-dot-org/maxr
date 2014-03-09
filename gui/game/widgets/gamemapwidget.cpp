@@ -37,8 +37,9 @@
 #include "../../../input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer) :
+cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_) :
 	cClickableWidget (area),
+	animationTimer (animationTimer_),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	player (nullptr),
@@ -98,6 +99,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->selfDestroyClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredSelfDestruction (*unitMenu->getUnit ()); });
 	unitMenu->layMinesToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredLayMines (*unitMenu->getUnit ()); });
 	unitMenu->collectMinesToggled.connect ([&](){ if (unitMenu->getUnit ()) triggeredCollectMines (*unitMenu->getUnit ()); });
+	unitMenu->infoClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUnitHelp (*unitMenu->getUnit ()); });
 	unitMenu->doneClicked.connect ([&](){ if (unitMenu->getUnit ()) triggeredUnitDone (*unitMenu->getUnit ()); });
 
 	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
@@ -410,6 +412,19 @@ void cGameMapWidget::centerAt (const cPosition& position)
 	newPixelOffset.y () = position.y () * cStaticMap::tilePixelHeight - ((int)(((double)getSize ().y () / (2 * zoomedTileSize.y ())) * cStaticMap::tilePixelHeight)) + cStaticMap::tilePixelHeight / 2;
 
 	scroll (newPixelOffset - pixelOffset);
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::startFindBuildPosition (const sID& buildId)
+{
+	currentBuildUnitId = buildId;
+	setMouseInputMode (eNewMouseInputMode::SelectBuildPosition);
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::startFindPathBuildPosition ()
+{
+	setMouseInputMode (eNewMouseInputMode::SelectBuildPathDestintaion);
 }
 
 //------------------------------------------------------------------------------
@@ -957,32 +972,32 @@ void cGameMapWidget::drawExitPoints ()
 
 			const cMap& map = *dynamicMap;
 
-			//if (selectedVehicle->data.isBig)
-			//{
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x (), screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x () + zoomedTileSize. x(), screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x () + zoomedTileSize. x() * 2, screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y ());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY)) drawExitPoint (screenPosition.x () + zoomedTileSize. x() * 2, screenPosition.y ());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y () + zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition.x () + zoomedTileSize. x() * 2, screenPosition.y () + zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y () + zoomedTileSize. y() * 2);
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition.x (), screenPosition.y () + zoomedTileSize. y() * 2);
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition.x () + zoomedTileSize. x(), screenPosition.y () + zoomedTileSize. y() * 2);
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition.x () + zoomedTileSize. x() * 2, screenPosition.y () + zoomedTileSize. y() * 2);
-			//}
-			//else
-			//{
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x (), screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition.x () + zoomedTileSize. x(), screenPosition.y () - zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y ());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY)) drawExitPoint (screenPosition.x () + zoomedTileSize. x(), screenPosition.y ());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition.x () - zoomedTileSize. x(), screenPosition.y () + zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition.x (), screenPosition.y () + zoomedTileSize. y());
-			//	if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition.x () + zoomedTileSize. x(), screenPosition.y () + zoomedTileSize. y());
-			//}
+			if (selectedVehicle->data.isBig)
+			{
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (0, -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), 0));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, 0));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), zoomedTileSize.y ()*2));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (0, zoomedTileSize.y ()*2));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), zoomedTileSize.y ()*2));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 2, selectedVehicle->PosY + 2)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x ()*2, zoomedTileSize.y ()*2));
+			}
+			else
+			{
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (0, -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY - 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), -zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), 0));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), 0));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX - 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (-zoomedTileSize.x (), zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (0, zoomedTileSize.y ()));
+				if (map.possiblePlace (*selectedVehicle, selectedVehicle->PosX + 1, selectedVehicle->PosY + 1)) drawExitPoint (screenPosition + cPosition (zoomedTileSize.x (), zoomedTileSize.y ()));
+			}
 		}
 		if (mouseInputMode == eNewMouseInputMode::Activate && selectedVehicle->owner == player)
 		{
@@ -1006,6 +1021,26 @@ void cGameMapWidget::drawExitPoints ()
 }
 
 //------------------------------------------------------------------------------
+void cGameMapWidget::drawExitPoint (const cPosition& position)
+{
+	const auto zoomedTileSize = getZoomedTileSize ();
+
+	const int nr = animationTimer->getAnimationTime () % 5;
+	SDL_Rect src;
+	src.x = zoomedTileSize.x () * nr;
+	src.y = 0;
+	src.w = zoomedTileSize.x ();
+	src.h = zoomedTileSize.y ();
+	SDL_Rect dest;
+	dest.x = position.x ();
+	dest.y = position.y ();
+
+	CHECK_SCALING (GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, getZoomFactor());
+	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, cVideo::buffer, &dest);
+}
+
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::drawBuildBand ()
 {
 	auto selectedVehicle = unitSelection.getSelectedVehicle ();
@@ -1013,38 +1048,35 @@ void cGameMapWidget::drawBuildBand ()
 
 	const auto zoomedTileSize = getZoomedTileSize ();
 
-	if (selectedVehicle && selectedVehicle->isDisabled () == false)
+	if (selectedVehicle && !selectedVehicle->isDisabled ())
 	{
-		if (mouseInputMode == eNewMouseInputMode::PlaceBand)
+		auto mouse = getActiveMouse ();
+
+		if (!mouse || !getArea().withinOrTouches(mouse->getPosition())) return;
+
+		if (mouseInputMode == eNewMouseInputMode::SelectBuildPosition)
 		{
-			if (selectedVehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
+			bool validPosition;
+			cPosition destination;
+			std::tie (validPosition, destination) = findNextBuildPosition (cPosition (selectedVehicle->PosX, selectedVehicle->PosY), getMapTilePosition (mouse->getPosition ()), currentBuildUnitId);
+			if (!validPosition) return;
+
+			SDL_Rect dest;
+			dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * destination.x ();
+			dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * destination.y ();
+			CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getZoomFactor ());
+			SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
+		}
+		else if (mouseInputMode == eNewMouseInputMode::SelectBuildPathDestintaion)
+		{
+			const auto mouseTilePosition = getMapTilePosition (mouse->getPosition ());
+			if (mouseTilePosition.x () == selectedVehicle->PosX || mouseTilePosition.y () == selectedVehicle->PosY)
 			{
 				SDL_Rect dest;
-				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * selectedVehicle->BandX;
-				dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * selectedVehicle->BandY;
-				CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getZoomFactor ());
-				SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
-			}
-			else
-			{
-				//const auto mouseTilePosition = getTilePosition (cMouse::getInstance ().getPosition ());
-				//const int x = mouseTilePosition.x ();
-				//const int y = mouseTilePosition.y ();
-				//if (x == selectedVehicle->PosX || y == selectedVehicle->PosY)
-				//{
-				//	SDL_Rect dest;
-				//	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * x;
-				//	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * y;
-				//	CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getZoomFactor ());
-				//	SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
-				//	selectedVehicle->BandX = x;
-				//	selectedVehicle->BandY = y;
-				//}
-				//else
-				//{
-				//	selectedVehicle->BandX = selectedVehicle->PosX;
-				//	selectedVehicle->BandY = selectedVehicle->PosY;
-				//}
+				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mouseTilePosition.x ();
+				dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * mouseTilePosition.y ();
+				CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getZoomFactor ());
+				SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
 			}
 		}
 	}
@@ -1094,7 +1126,7 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 {
-	if (!vehicle.BuildPath || (vehicle.BandX == vehicle.PosX && vehicle.BandY == vehicle.PosY) || mouseInputMode == eNewMouseInputMode::PlaceBand) return;
+	if (!vehicle.BuildPath || (vehicle.BandX == vehicle.PosX && vehicle.BandY == vehicle.PosY) || mouseInputMode == eNewMouseInputMode::SelectBuildPathDestintaion) return;
 
 	const auto zoomedTileSize = getZoomedTileSize ();
 
@@ -1445,10 +1477,26 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			}
 			if (mouseInputMode == eNewMouseInputMode::Transfer) setMouseInputMode (eNewMouseInputMode::Default);
 		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::PlaceBand && selectedVehicle && mouseInputMode == eNewMouseInputMode::PlaceBand)
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::SelectBuildPosition && selectedVehicle && mouseInputMode == eNewMouseInputMode::SelectBuildPosition)
 		{
-			placedBand (*selectedVehicle);
-			toggleMouseInputMode (eNewMouseInputMode::PlaceBand);
+			bool validPosition;
+			cPosition destination;
+			std::tie (validPosition, destination) = findNextBuildPosition (cPosition (selectedVehicle->PosX, selectedVehicle->PosY), tilePosition, currentBuildUnitId);
+			if (validPosition)
+			{
+				selectedBuildPosition (*selectedVehicle, destination);
+			}
+
+			toggleMouseInputMode (eNewMouseInputMode::SelectBuildPosition);
+		}
+		else if (changeAllowed && mouseClickAction == eMouseClickAction::SelectBuildPathDestintaion && selectedVehicle && mouseInputMode == eNewMouseInputMode::SelectBuildPathDestintaion)
+		{
+			cPosition destination;
+			if (tilePosition.x () == selectedVehicle->PosX || tilePosition.y () == selectedVehicle->PosY) destination = tilePosition;
+			else destination = cPosition (selectedVehicle->PosX, selectedVehicle->PosY);
+
+			selectedBuildPathDestination (*selectedVehicle, destination);
+			toggleMouseInputMode (eNewMouseInputMode::SelectBuildPathDestintaion);
 		}
 		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedUnit && mouseInputMode == eNewMouseInputMode::Activate)
 		{
@@ -1522,7 +1570,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		{
 			if (selectedVehicle->isUnitBuildingABuilding ())
 			{
-				//sendWantEndBuilding (*client, *selectedVehicle, mouseTilePosition.x (), mouseTilePosition.y ());
+				triggeredEndBuilding (*unitSelection.getSelectedVehicle (), tilePosition);
 			}
 			else
 			{
@@ -1652,9 +1700,13 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
-	if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::PlaceBand)
+	if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::SelectBuildPosition)
 	{
-		return eMouseClickAction::PlaceBand;
+		return eMouseClickAction::SelectBuildPosition;
+	}
+	else  if (selectedVehicle && selectedVehicle->owner == player && mouseInputMode == eNewMouseInputMode::SelectBuildPathDestintaion)
+	{
+		return eMouseClickAction::SelectBuildPathDestintaion;
 	}
 	else if (selectedUnit && selectedUnit->owner == player && mouseInputMode == eNewMouseInputMode::Transfer)
 	{
@@ -1924,6 +1976,93 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 }
 
 //------------------------------------------------------------------------------
+std::pair<bool, cPosition> cGameMapWidget::findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition, const sID& unitId)
+{
+	if (!dynamicMap) return std::make_pair (false, cPosition ());
+
+	bool pos[4] = {false, false, false, false};
+
+	//check, which positions are available
+	const auto& unitData = *unitId.getUnitDataOriginalVersion ();
+	if (dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () - 1, sourcePosition.y () - 1)
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x (), sourcePosition.y () - 1)
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () - 1, sourcePosition.y ()))
+	{
+		pos[0] = true;
+	}
+
+	if (dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x (), sourcePosition.y () - 1)
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () + 1, sourcePosition.y () - 1)
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () + 1, sourcePosition.y ()))
+	{
+		pos[1] = true;
+	}
+
+	if (dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () + 1, sourcePosition.y ())
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () + 1, sourcePosition.y () + 1)
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x (), sourcePosition.y () + 1))
+	{
+		pos[2] = true;
+	}
+
+	if (dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () - 1, sourcePosition.y ())
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x () - 1, sourcePosition.y () + 1)
+		&& dynamicMap->possiblePlaceBuilding (unitData, sourcePosition.x (), sourcePosition.y () + 1))
+	{
+		pos[3] = true;
+	}
+
+	// chose the position, which matches the cursor position, if available
+	if (desiredPosition.x () <= sourcePosition.x () && desiredPosition.y () <= sourcePosition.y () && pos[0])
+	{
+		return std::make_pair(true, cPosition(sourcePosition.x () - 1, sourcePosition.y () - 1));
+	}
+
+	if (desiredPosition.x () >= sourcePosition.x () && desiredPosition.y () <= sourcePosition.y () && pos[1])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x (), sourcePosition.y () - 1));
+	}
+
+	if (desiredPosition.x () >= sourcePosition.x () && desiredPosition.y () >= sourcePosition.y () && pos[2])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x (), sourcePosition.y ()));
+	}
+
+	if (desiredPosition.x () <= sourcePosition.x () && desiredPosition.y () >= sourcePosition.y () && pos[3])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x () - 1, sourcePosition.y ()));
+	}
+
+	// if the best position is not available, chose the next free one
+	if (pos[0])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x () - 1, sourcePosition.y () - 1));
+	}
+
+	if (pos[1])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x (), sourcePosition.y () - 1));
+	}
+
+	if (pos[2])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x (), sourcePosition.y ()));
+	}
+
+	if (pos[3])
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x () - 1, sourcePosition.y ()));
+	}
+
+	if (unitData.isBig)
+	{
+		return std::make_pair (true, cPosition (sourcePosition.x (), sourcePosition.y ()));
+	}
+
+	return std::make_pair (false, cPosition ());
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 {
 	if (!isAt (mouse.getPosition ())) return;
@@ -1936,7 +2075,10 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 
 	switch (mouseClickAction)
 	{
-	case eMouseClickAction::PlaceBand:
+	case eMouseClickAction::SelectBuildPosition:
+		mouse.setCursorType (eMouseCursorType::Band);
+		break;
+	case eMouseClickAction::SelectBuildPathDestintaion:
 		mouse.setCursorType (eMouseCursorType::Band);
 		break;
 	case eMouseClickAction::Transfer:

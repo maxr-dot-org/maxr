@@ -40,7 +40,8 @@ class cFx;
 
 enum class eMouseClickAction
 {
-	PlaceBand,
+	SelectBuildPosition,
+	SelectBuildPathDestintaion,
 	Transfer,
 	Help,
 	Attack,
@@ -85,6 +86,9 @@ public:
 
 	void centerAt (const cPosition& position);
 
+	void startFindBuildPosition (const sID& buildId);
+	void startFindPathBuildPosition ();
+
 	void addEffect (std::shared_ptr<cFx> effect);
 
 	void setDrawSurvey (bool drawSurvey);
@@ -117,9 +121,11 @@ public:
 	//
 	cSignal<void (const cUnit&)> triggeredUnitHelp;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredTransfer;
+	cSignal<void (cVehicle&, const cPosition&)> triggeredEndBuilding;
 	cSignal<void (cVehicle&, const cPosition&)> triggeredMoveSingle;
 	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
-	cSignal<void (const cVehicle&)> placedBand;
+	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPosition;
+	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPathDestination;
 	cSignal<void (const cUnit&, const cPosition&)> triggeredActivateAt;
 	cSignal<void (const cBuilding&, const cPosition&)> triggeredExitFinishedUnit;
 	cSignal<void (const cUnit&, const cPosition&)> triggeredLoadAt;
@@ -166,6 +172,8 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 
+	std::shared_ptr<cAnimationTimer> animationTimer;
+
 	std::shared_ptr<const cStaticMap> staticMap;
 	const cMap* dynamicMap; // may be null
 	const cPlayer* player; // may be null
@@ -178,6 +186,7 @@ private:
 	cUnitContextMenuWidget* unitMenu;
 
 	eNewMouseInputMode mouseInputMode;
+	sID currentBuildUnitId;
 
 	std::vector<std::shared_ptr<cFx>> effects;
 
@@ -221,6 +230,7 @@ private:
 	void drawLockList (const cPlayer& player);
 
 	void drawExitPoints ();
+	void drawExitPoint (const cPosition& position);
 	void drawBuildBand ();
 
 	void drawAttackCursor (const cPosition& position) const;
@@ -254,6 +264,8 @@ private:
 	void toggleMouseInputMode (eNewMouseInputMode mouseInputMode);
 
 	eMouseClickAction getMouseClickAction (const cMouse& mouse);
+
+	std::pair<bool, cPosition> findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition, const sID& unitId);
 };
 
 

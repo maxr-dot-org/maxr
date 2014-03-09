@@ -79,11 +79,10 @@ public:
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
-	cSignal<void ()> clicked;
-
 	void lock ();
 	void unlock ();
 
+	cSignal<void ()> clicked;
 protected:
 	virtual void setPressed (bool pressed) MAXR_OVERRIDE_FUNCTION;
 

@@ -4912,7 +4912,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				unit.executeBuildCommand (*this);
+//				unit.executeBuildCommand (*this);
 				return;
 			}
 			++nr;
@@ -5033,7 +5033,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				unitMenuActive = false;
 				PlayFX (SoundData.SNDObjectMenu);
-				unit.executeActivateStoredVehiclesCommand(*this);
+//				unit.executeActivateStoredVehiclesCommand(*this);
 				return;
 			}
 			++nr;

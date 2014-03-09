@@ -28,6 +28,7 @@ class cImage;
 class cLabel;
 class cPlayer;
 class cCheckBox;
+class cPushButton;
 class cUnitDetails;
 template<typename T>
 class cListView;
@@ -45,7 +46,9 @@ public:
 	cSignal<void ()> done;
 
 protected:
-	void addSelectionUnit (const sID& unitId);
+	cUnitListViewItemBuy& addSelectionUnit (const sID& unitId);
+	void setSelectedSelectionItem (const cUnitListViewItemBuy& item);
+
 	void clearSelectionUnits ();
 
 	const cPlayer& getPlayer () const;
@@ -54,7 +57,16 @@ protected:
 
 	virtual void setActiveUnit (const sID& unitId);
 
-	const sID* getActiveUnit ();
+	const sID* getActiveUnit () const;
+
+	// TODO: the following widgets should be private instead.
+	// They are protect at the moment because some inheriting windows need to move/resize the widgets.
+	cListView<cUnitListViewItemBuy>* selectionUnitList;
+
+	cPushButton* okButton;
+	cPushButton* backButton;
+	cPushButton* upButton;
+	cPushButton* downButton;
 
 	cSignal<void (const cUnitListViewItemBuy&)> selectionUnitClickedSecondTime;
 
@@ -68,8 +80,6 @@ private:
 	cLabel* infoLabel;
 
 	cUnitDetails* unitDetails;
-
-	cListView<cUnitListViewItemBuy>* selectionUnitList;
 
 	cCheckBox* infoTextCheckBox;
 

@@ -31,7 +31,8 @@ cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool cente
 	textAnchor (eCheckBoxTextAnchor::Right),
 	textLimitWidth (-1),
 	clickSound (clickSound_),
-	checked (false)
+	checked (false),
+	isLocked (false)
 {
 	renewSurface ();
 	if (centered) move (cPosition (-getSize ().x () / 2, 0));
@@ -45,7 +46,8 @@ cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnic
 	textAnchor (textAnchor_),
 	textLimitWidth (-1),
 	clickSound (clickSound_),
-	checked (false)
+	checked (false),
+	isLocked (false)
 {
 	renewSurface ();
 	if (centered) move (cPosition (-getSize ().x () / 2, 0));
@@ -132,6 +134,20 @@ void cCheckBox::draw ()
 }
 
 //------------------------------------------------------------------------------
+bool cCheckBox::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
+{
+	if (isLocked) return false;
+	return cClickableWidget::handleMousePressed (application, mouse, button);
+}
+
+//------------------------------------------------------------------------------
+bool cCheckBox::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
+{
+	if (isLocked) return false;
+	return cClickableWidget::handleMouseReleased (application, mouse, button);
+}
+
+//------------------------------------------------------------------------------
 void cCheckBox::setChecked (bool checked_)
 {
 	if (checked != checked_) toggle ();
@@ -150,6 +166,20 @@ void cCheckBox::toggle ()
 
 	renewSurface ();
 	toggled ();
+}
+
+//------------------------------------------------------------------------------
+void cCheckBox::lock ()
+{
+	isLocked = true;
+	renewSurface ();
+}
+
+//------------------------------------------------------------------------------
+void cCheckBox::unlock ()
+{
+	isLocked = false;
+	renewSurface ();
 }
 
 //------------------------------------------------------------------------------

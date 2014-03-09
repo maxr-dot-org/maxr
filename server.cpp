@@ -754,8 +754,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (iBuildSpeed > 2 || iBuildSpeed < 0) return;
 	const int iBuildOff = message.popInt32();
 
-	int iTurboBuildRounds[3];
-	int iTurboBuildCosts[3];
+	std::array<int, 3> iTurboBuildRounds;
+	std::array<int, 3> iTurboBuildCosts;
 	Vehicle->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Vehicle->owner->getUnitDataCurrentVersion (BuildingTyp)->buildCosts);
 
 	if (iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur ||

@@ -912,6 +912,7 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 	case FONT_LATIN_SMALL_RED:
 	case FONT_LATIN_SMALL_WHITE:
 	case FONT_LATIN_SMALL_YELLOW:
+		unicodeCharacter = toupper (unicodeCharacter);
 		space = 1;
 		break;
 	default:

@@ -40,6 +40,8 @@
 #include "settings.h"
 #include "video.h"
 #include "input/mouse/mouse.h"
+#include "gui/application.h"
+#include "gui/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 
 using namespace std;
 
@@ -966,27 +968,26 @@ void cVehicle::DecSpeed (int value)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCosts) [3], int iBuild_Costs)
+void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const
 {
-	iTurboBuildRounds[0] = 0;
-	iTurboBuildRounds[1] = 0;
-	iTurboBuildRounds[2] = 0;
-
-	// prevent division by zero
-	if (data.needsMetal == 0) data.needsMetal = 1;
+	turboBuildTurns[0] = 0;
+	turboBuildTurns[1] = 0;
+	turboBuildTurns[2] = 0;
 
 	// step 1x
-	if (data.storageResCur >= iBuild_Costs)
+	if (data.storageResCur >= buildCosts)
 	{
-		iTurboBuildCosts[0] = iBuild_Costs;
-		iTurboBuildRounds[0] = (int) ceilf (iTurboBuildCosts[0] / (float) (data.needsMetal));
+		turboBuildCosts[0] = buildCosts;
+		// prevent division by zero
+		const auto needsMetal = data.needsMetal == 0 ? 1 : data.needsMetal;
+		turboBuildTurns[0] = (int)ceilf (turboBuildCosts[0] / (float)(needsMetal));
 	}
 
 	// step 2x
 	// calculate building time and costs
-	int a = iTurboBuildCosts[0];
-	int rounds = iTurboBuildRounds[0];
-	int costs = iTurboBuildCosts[0];
+	int a = turboBuildCosts[0];
+	int rounds = turboBuildTurns[0];
+	int costs = turboBuildCosts[0];
 
 	while (a >= 4 && data.storageResCur >= costs + 4)
 	{
@@ -995,16 +996,16 @@ void cVehicle::calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCo
 		a -= 4;
 	}
 
-	if (rounds < iTurboBuildRounds[0] && rounds > 0 && iTurboBuildRounds[0])
+	if (rounds < turboBuildTurns[0] && rounds > 0 && turboBuildTurns[0])
 	{
-		iTurboBuildCosts[1] = costs;
-		iTurboBuildRounds[1] = rounds;
+		turboBuildCosts[1] = costs;
+		turboBuildTurns[1] = rounds;
 	}
 
 	// step 4x
-	a = iTurboBuildCosts[1];
-	rounds = iTurboBuildRounds[1];
-	costs = iTurboBuildCosts[1];
+	a = turboBuildCosts[1];
+	rounds = turboBuildTurns[1];
+	costs = turboBuildCosts[1];
 
 	while (a >= 10 && costs < data.storageResMax - 2)
 	{
@@ -1016,10 +1017,10 @@ void cVehicle::calcTurboBuild (int (&iTurboBuildRounds) [3], int (&iTurboBuildCo
 		a -= 16;
 	}
 
-	if (rounds < iTurboBuildRounds[1] && rounds > 0 && iTurboBuildRounds[1])
+	if (rounds < turboBuildTurns[1] && rounds > 0 && turboBuildTurns[1])
 	{
-		iTurboBuildCosts[2] = costs;
-		iTurboBuildRounds[2] = rounds;
+		turboBuildCosts[2] = costs;
+		turboBuildTurns[2] = rounds;
 	}
 }
 
@@ -2002,15 +2003,6 @@ bool cVehicle::canBeStoppedViaUnitMenu() const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeBuildCommand (cGameGUI& gameGUI) const
-{
-	if (ClientMoveJob)
-		sendWantStopMove (*gameGUI.getClient(), iID);
-	//cBuildingsBuildMenu buildMenu(*gameGUI.getClient(), owner, this);
-	//gameGUI.switchTo(buildMenu, gameGUI.getClient());
-}
-
-//-----------------------------------------------------------------------------
 void cVehicle::executeStopCommand (const cClient& client) const
 {
 	if (ClientMoveJob != 0)
@@ -2035,13 +2027,6 @@ void cVehicle::executeAutoMoveJobCommand (cClient& client)
 		delete autoMJob;
 		autoMJob = 0;
 	}
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::executeActivateStoredVehiclesCommand (cGameGUI& gameGUI) const
-{
-	//cStorageMenu storageMenu (*gameGUI.getClient(), storedUnits, *this);
-	//gameGUI.switchTo(storageMenu, gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------

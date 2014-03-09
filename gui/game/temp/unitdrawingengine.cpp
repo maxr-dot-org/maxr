@@ -26,6 +26,7 @@
 #include "../../../buildings.h"
 #include "../../../vehicles.h"
 #include "../../../player.h"
+#include "../../../map.h"
 
 namespace
 {
@@ -161,14 +162,15 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	if (!building.owner) return;
 
-	//if (StartUp)
-	//{
-	//	if (animationFlags.is100ms())
-	//		StartUp += 25;
+	if (building.StartUp)
+	{
+		// FIXME: remove the effect stuff from the building
+		auto& buildingNonConst = const_cast<cBuilding&>(building);
 
-	//	if (StartUp >= 255)
-	//		StartUp = 0;
-	//}
+		if (animationFlags.is100ms ()) buildingNonConst.StartUp += 25;
+
+		if (building.StartUp >= 255) buildingNonConst.StartUp = 0;
+	}
 
 	// draw the effect if necessary
 	if (building.data.powerOnGraphic && cSettings::getInstance ().isAnimations () && (building.isUnitWorking () || !building.data.canWork))
@@ -177,18 +179,18 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		auto& buildingNonConst = const_cast<cBuilding&>(building);
 
 		SDL_Rect tmp = dest;
-		SDL_SetSurfaceAlphaMod (buildingNonConst.uiData->eff, buildingNonConst.EffectAlpha);
+		SDL_SetSurfaceAlphaMod (building.uiData->eff, building.EffectAlpha);
 
-		CHECK_SCALING (buildingNonConst.uiData->eff, buildingNonConst.uiData->eff_org, zoomFactor);
-		SDL_BlitSurface (buildingNonConst.uiData->eff, NULL, cVideo::buffer, &tmp);
+		CHECK_SCALING (building.uiData->eff, building.uiData->eff_org, zoomFactor);
+		SDL_BlitSurface (building.uiData->eff, NULL, cVideo::buffer, &tmp);
 
 		if (animationFlags.is100ms ())
 		{
-			if (buildingNonConst.EffectInc)
+			if (building.EffectInc)
 			{
 				buildingNonConst.EffectAlpha += 30;
 
-				if (buildingNonConst.EffectAlpha > 220)
+				if (building.EffectAlpha > 220)
 				{
 					buildingNonConst.EffectAlpha = 254;
 					buildingNonConst.EffectInc = false;
@@ -198,7 +200,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 			{
 				buildingNonConst.EffectAlpha -= 30;
 
-				if (buildingNonConst.EffectAlpha < 30)
+				if (building.EffectAlpha < 30)
 				{
 					buildingNonConst.EffectAlpha = 0;
 					buildingNonConst.EffectInc = true;
@@ -298,12 +300,12 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		if (vehicle.canLand (map))
 		{
 			vehicleNonConst.FlightHigh -= 8;
-			vehicleNonConst.FlightHigh = std::max (vehicleNonConst.FlightHigh, 0);
+			vehicleNonConst.FlightHigh = std::max (vehicle.FlightHigh, 0);
 		}
 		else
 		{
 			vehicleNonConst.FlightHigh += 8;
-			vehicleNonConst.FlightHigh = std::min (64, vehicleNonConst.FlightHigh);
+			vehicleNonConst.FlightHigh = std::min (64, vehicle.FlightHigh);
 		}
 	}
 
@@ -313,7 +315,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		// FIXME: remove the the dithering stuff from the vehicle or the dithering code from the drawing
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
-		if (vehicleNonConst.FlightHigh > 0 && !vehicleNonConst.moving && animationTimer->getAnimationTime() % 10 != 0)
+		if (vehicle.FlightHigh > 0 && !vehicle.moving && animationTimer->getAnimationTime () % 10 != 0)
 		{
 			vehicleNonConst.ditherX = random (2) - 1;
 			vehicleNonConst.ditherY = random (2) - 1;
@@ -326,25 +328,26 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// run start up effect
-	//if (StartUp)
-	//{
-	//	if (animationFlags.is50ms())
-	//		StartUp += 25;
+	if (vehicle.StartUp)
+	{
+		// FIXME: remove this animation stuff from the drawing code
+		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
-	//	if (StartUp >= 255)
-	//		StartUp = 0;
+		if (animationFlags.is50ms ()) vehicleNonConst.StartUp += 25;
 
-	//	// max StartUp value for undetected stealth units is 100,
-	//	// because they stay half visible
-	//	if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient ()->getMap ()->isWater (PosX, PosY) && detectedByPlayerList.empty () && owner == &gameGUI.getClient ()->getActivePlayer ())
-	//	{
-	//		if (StartUp > 100) StartUp = 0;
-	//	}
-	//}
+		if (vehicle.StartUp >= 255) vehicleNonConst.StartUp = 0;
+
+		// max StartUp value for undetected stealth units is 100,
+		// because they stay half visible
+		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && map.isWater (vehicle.PosX, vehicle.PosY) && vehicle.detectedByPlayerList.empty () && vehicle.owner == player)
+		{
+			if (vehicle.StartUp > 100) vehicleNonConst.StartUp = 0;
+		}
+	}
 
 	if (vehicle.isUnitBuildingABuilding() && !vehicle.job && vehicle.BigBetonAlpha < 254u)
 	{
-		// FIXME: remove the this animation stuff from the drawing code
+		// FIXME: remove this animation stuff from the drawing code
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
 		if (animationFlags.is50ms())

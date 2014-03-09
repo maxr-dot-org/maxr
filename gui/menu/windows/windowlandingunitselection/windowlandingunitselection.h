@@ -85,7 +85,7 @@ private:
 
 	std::map<sID, cUnitUpgrade> unitUpgrades;
 
-	void generateSelectionList ();
+	void generateSelectionList (bool select);
 
 	void metalChanged ();
 	void goldChanged ();

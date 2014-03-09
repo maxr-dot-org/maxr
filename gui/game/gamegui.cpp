@@ -33,6 +33,8 @@
 #include "../application.h"
 #include "../menu/dialogs/dialogpreferences.h"
 #include "../menu/dialogs/dialogtransfer.h"
+#include "../menu/windows/windowunitinfo/windowunitinfo.h"
+#include "../menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 
 #include "../../keys.h"
 #include "../../player.h"
@@ -103,10 +105,12 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
 
 
-	signalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit&)
+	signalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit& unit)
 	{
-		//cUnitHelpMenu helpMenu (&overVehicle->data, overVehicle->owner);
-		//switchTo (helpMenu, client);
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		application->show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.owner));
 	});
 	signalConnectionManager.connect (gameMap->triggeredTransfer, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
 	{
@@ -122,29 +126,58 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	});
 	signalConnectionManager.connect (gameMap->triggeredBuild, [&](const cUnit& unit)
 	{
-		//unit.executeBuildCommand (*this);
-	});
-	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, [&](const cUnit& unit)
-	{
-		//building->executeMineManagerCommand (*this);
-	});
-	signalConnectionManager.connect (gameMap->triggeredResearchMenu, [&](const cUnit& unit)
-	{
-		//cDialogResearch researchDialog (*client);
-		//switchTo (researchDialog, client);
-	});
-	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, [&](const cUnit& unit)
-	{
-		//cUpgradeMenu upgradeMenu (*client);
-		//switchTo (upgradeMenu, client);
-	});
-	signalConnectionManager.connect (gameMap->triggeredActivate, [&](const cUnit& unit)
-	{
-		//unit.executeActivateStoredVehiclesCommand (*this);
-	});
-	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, [&](const cUnit& unit)
-	{
-		//building->executeSelfDestroyCommand (*this);
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		if (unit.isAVehicle ())
+		{
+			const auto& vehicle = static_cast<const cVehicle&>(unit);
+			auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle));
+			buildWindow->done.connect ([&, buildWindow]()
+			{
+				if (buildWindow->getSelectedUnitId ())
+				{
+					if (buildWindow->getSelectedUnitId ()->getUnitDataOriginalVersion ()->isBig)
+					{
+						gameMap->startFindBuildPosition (*buildWindow->getSelectedUnitId ());
+						auto buildType = *buildWindow->getSelectedUnitId ();
+						auto buildSpeed = buildWindow->getSelectedBuildSpeed ();
+
+						buildPositionSelectionConnectionManager.disconnectAll ();
+						buildPositionSelectionConnectionManager.connect (gameMap->selectedBuildPosition, [&, buildType, buildSpeed](const cVehicle& selectedVehicle, const cPosition& destination)
+						{
+							assert (&vehicle == &selectedVehicle);
+							buildBuildingTriggered (vehicle, destination, buildType, buildSpeed);
+						});
+					}
+					else
+					{
+						buildBuildingTriggered (vehicle, cPosition(vehicle.PosX, vehicle.PosY), *buildWindow->getSelectedUnitId (), buildWindow->getSelectedBuildSpeed ());
+					}
+				}
+				buildWindow->close ();
+			});
+			buildWindow->donePath.connect ([&, buildWindow]()
+			{
+				if (buildWindow->getSelectedUnitId ())
+				{
+					gameMap->startFindPathBuildPosition ();
+					auto buildType = *buildWindow->getSelectedUnitId ();
+					auto buildSpeed = buildWindow->getSelectedBuildSpeed ();
+
+					buildPositionSelectionConnectionManager.disconnectAll ();
+					buildPositionSelectionConnectionManager.connect (gameMap->selectedBuildPathDestination, [&, buildType, buildSpeed](const cVehicle& selectedVehicle, const cPosition& destination)
+					{
+						assert (&vehicle == &selectedVehicle);
+						buildBuildingPathTriggered (vehicle, destination, buildType, buildSpeed);
+					});
+				}
+				buildWindow->close ();
+			});
+		}
+		else if (unit.isABuilding ())
+		{
+		}
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
@@ -262,6 +295,16 @@ void cNewGameGUI::connectToClient (cClient& client)
 			sendWantTransfer (client, sourceUnit.isAVehicle (), sourceUnit.iID, destinationUnit.isAVehicle (), destinationUnit.iID, transferValue, resourceType);
 		}
 	});
+	clientSignalConnectionManager.connect (buildBuildingTriggered, [&](const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
+	{
+		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (destination), false, 0);
+		buildPositionSelectionConnectionManager.disconnectAll ();
+	});
+	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&](const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
+	{
+		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (destination));
+		buildPositionSelectionConnectionManager.disconnectAll ();
+	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
@@ -269,6 +312,28 @@ void cNewGameGUI::connectToClient (cClient& client)
 	clientSignalConnectionManager.connect (hud->triggeredRenameUnit, [&](const cUnit& unit, const std::string& name)
 	{
 		sendWantChangeUnitName (client, name, unit.iID);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredResourceDistribution, [&](const cUnit& unit)
+	{
+		//building->executeMineManagerCommand (*this);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredResearchMenu, [&](const cUnit& unit)
+	{
+		//cDialogResearch researchDialog (*client);
+		//switchTo (researchDialog, client);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredUpgradesMenu, [&](const cUnit& unit)
+	{
+		//cUpgradeMenu upgradeMenu (*client);
+		//switchTo (upgradeMenu, client);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredActivate, [&](const cUnit& unit)
+	{
+		//unit.executeActivateStoredVehiclesCommand (*this);
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredSelfDestruction, [&](const cUnit& unit)
+	{
+		//building->executeSelfDestroyCommand (*this);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredStartWork, [&](const cUnit& unit)
 	{
@@ -344,25 +409,18 @@ void cNewGameGUI::connectToClient (cClient& client)
 			}
 		}
 	});
-
-	clientSignalConnectionManager.connect(gameMap->triggeredMoveSingle, [&](cVehicle& vehicle, const cPosition& destination)
+	
+	clientSignalConnectionManager.connect (gameMap->triggeredEndBuilding, [&](cVehicle& vehicle, const cPosition& destination)
+	{
+		sendWantEndBuilding (client, vehicle, destination.x (), destination.y ());
+	});
+	clientSignalConnectionManager.connect (gameMap->triggeredMoveSingle, [&](cVehicle& vehicle, const cPosition& destination)
 	{
 		client.addMoveJob (vehicle, destination.x (), destination.y ());
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredMoveGroup, [&](const std::vector<cVehicle*>& vehicles, const cPosition& destination)
 	{
 		client.startGroupMove (vehicles, destination.x (), destination.y ());
-	});
-	clientSignalConnectionManager.connect (gameMap->placedBand, [&](const cVehicle& vehicle)
-	{
-		if (vehicle.getBuildingType().getUnitDataOriginalVersion ()->isBig)
-		{
-			sendWantBuild (client, vehicle.iID, vehicle.getBuildingType (), vehicle.getBuildTurns(), client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY), false, 0);
-		}
-		else
-		{
-			sendWantBuild (client, vehicle.iID, vehicle.getBuildingType (), vehicle.getBuildTurns (), client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (vehicle.BandX, vehicle.BandY));
-		}
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, const cPosition& position)
 	{

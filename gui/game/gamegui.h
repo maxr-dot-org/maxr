@@ -38,6 +38,7 @@ class cVehicle;
 class cBuilding;
 class cAnimationTimer;
 class cClient;
+struct sID;
 
 class cNewGameGUI : public cWindow
 {
@@ -69,6 +70,7 @@ private:
 	cSignalConnectionManager playerSignalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager moveJobSignalConnectionManager;
+	cSignalConnectionManager buildPositionSelectionConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
@@ -102,6 +104,8 @@ private:
 	void connectMoveJob (const cVehicle& vehicle);
 
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
+	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
+	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
 };
 
 #endif // gui_game_gameguiH

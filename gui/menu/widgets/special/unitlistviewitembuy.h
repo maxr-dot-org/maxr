@@ -26,6 +26,9 @@ class cUnitListViewItemBuy : public cUnitListViewItem
 {
 public:
 	cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner);
+
+	void markAsInsufficient ();
+	void unmarkAsInsufficient ();
 };
 
 #endif // gui_menu_widgets_special_unitlistviewitembuyH

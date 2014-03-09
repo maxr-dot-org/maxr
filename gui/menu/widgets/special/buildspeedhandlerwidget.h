@@ -17,23 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_mouseinputmodeH
-#define gui_game_mouseinputmodeH
+#ifndef gui_menu_widgets_special_buildspeedhandlerwidgetH
+#define gui_menu_widgets_special_buildspeedhandlerwidgetH
 
-enum class eNewMouseInputMode
+#include <array>
+
+#include "../../../../maxrconfig.h"
+#include "../../../widget.h"
+
+class cLabel;
+class cCheckBox;
+
+class cBuildSpeedHandlerWidget : public cWidget
 {
-	Default,
-	Attack,
-	SelectBuildPosition,
-	SelectBuildPathDestintaion,
-	Transfer,
-	Load,
-	SupplyAmmo,
-	Repair,
-	Activate,
-	Disable,
-	Steal,
-	Help
+	static const size_t elementsCount = 3;
+public:
+	cBuildSpeedHandlerWidget (const cPosition& position);
+
+	void setValues (const std::array<int, elementsCount>& turns, const std::array<int, elementsCount>& costs);
+
+	void setBuildSpeedIndex (size_t speedIndex);
+	size_t getBuildSpeedIndex ();
+private:
+	std::array<cLabel*, elementsCount> turnLabels;
+	std::array<cLabel*, elementsCount> costLabels;
+	std::array<cCheckBox*, elementsCount> buttons;
 };
 
-#endif // gui_game_mouseinputmodeH
+#endif // gui_menu_widgets_special_buildspeedhandlerwidgetH

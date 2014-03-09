@@ -21,12 +21,19 @@
 #define gui_menu_windows_windowunitinfo_windowunitinfoH
 
 #include "../../../window.h"
+#include "../../../../utility/signal/signalconnectionmanager.h"
+
+class cCheckBox;
+class cLabel;
+class cPlayer;
+struct sUnitData;
 
 class cWindowUnitInfo : public cWindow
 {
 public:
-
+	cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner);
 private:
+	cSignalConnectionManager signalConnectionManager;
 };
 
 #endif // gui_menu_windows_windowunitinfo_windowunitinfoH

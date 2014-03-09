@@ -72,14 +72,20 @@ public:
 	explicit cCheckBox (const cPosition& position, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, sSOUND* clickSound = SoundData.SNDObjectMenu);
 	cCheckBox (const cPosition& position, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor textAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, sSOUND* clickSound = SoundData.SNDObjectMenu);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-
 	void setChecked (bool checked);
 	bool isChecked () const;
 
 	void toggle ();
 
-	cSignal<void()> toggled;
+	void lock ();
+	void unlock ();
+
+	cSignal<void ()> toggled;
+
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual void setPressed (bool pressed) MAXR_OVERRIDE_FUNCTION;
 
@@ -97,6 +103,8 @@ private:
 	sSOUND* clickSound;
 
 	bool checked;
+
+	bool isLocked;
 
 
 	void renewSurface ();

@@ -57,17 +57,17 @@ cWindowHangar::cWindowHangar (SDL_Surface* surface, int playerColor, int playerC
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 
-	auto upButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
+	upButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (upButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
 
-	auto downButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
+	downButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (downButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
 
 
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowHangar::okClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowHangar::backClicked, this));
 }
 
@@ -116,7 +116,7 @@ void cWindowHangar::setActiveUnit (const sID& unitId)
 }
 
 //------------------------------------------------------------------------------
-const sID* cWindowHangar::getActiveUnit ()
+const sID* cWindowHangar::getActiveUnit () const
 {
 	return unitDetails->getCurrentUnitId ();
 }
@@ -133,9 +133,16 @@ void cWindowHangar::handleSelectionChanged ()
 }
 
 //------------------------------------------------------------------------------
-void cWindowHangar::addSelectionUnit (const sID& unitId)
+cUnitListViewItemBuy& cWindowHangar::addSelectionUnit (const sID& unitId)
 {
 	auto selectedItem = selectionUnitList->addItem (std::make_unique<cUnitListViewItemBuy> (selectionUnitList->getSize ().x () - 9, unitId, getPlayer()));
+	return *selectedItem;
+}
+
+//------------------------------------------------------------------------------
+void cWindowHangar::setSelectedSelectionItem (const cUnitListViewItemBuy& item)
+{
+	selectionUnitList->setSelectedItem (&item);
 }
 
 //------------------------------------------------------------------------------
