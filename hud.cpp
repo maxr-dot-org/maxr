@@ -642,6 +642,21 @@ cGameGUI::cGameGUI() :
 	updateTurn (1);
 }
 
+
+cGameGUI::~cGameGUI()
+{
+	stopFXLoop();
+
+	SDL_RemoveTimer (TimerID);
+
+	if (FLC) FLI_Close (FLC);
+
+	for (size_t i = 0; i != messages.size(); ++i)
+	{
+		delete messages[i];
+	}
+}
+
 void cGameGUI::setClient (cClient* client)
 {
 	assert (client);
@@ -691,20 +706,6 @@ void cGameGUI::recalcPosition (bool resetItemPositions)
 	chatBox.move (chatBox.getPosition().x, Video.getResolutionY() - 48);
 	infoTextLabel.move (HUD_LEFT_WIDTH + (Video.getResolutionX() - HUD_TOTAL_WIDTH) / 2, infoTextLabel.getPosition().y);
 	infoTextAdditionalLabel.move (HUD_LEFT_WIDTH + (Video.getResolutionX() - HUD_TOTAL_WIDTH) / 2, 235 + font->getFontHeight (FONT_LATIN_BIG));
-}
-
-cGameGUI::~cGameGUI()
-{
-	stopFXLoop();
-
-	SDL_RemoveTimer (TimerID);
-
-	if (FLC) FLI_Close (FLC);
-
-	for (size_t i = 0; i != messages.size(); ++i)
-	{
-		delete messages[i];
-	}
 }
 
 void cGameGUI::playFXLoop (sSOUND* sound)
@@ -928,6 +929,12 @@ int cGameGUI::show (cClient* client)
 	// flush event queue before exiting menu
 	cEventHandling::handleInputEvents (*this, client);
 
+	stopFXLoop();
+	if (FLC)
+	{
+		FLI_Close (FLC);
+		FLC = NULL;
+	}
 	if (end) return 0;
 	assert (terminate);
 	return 1;
