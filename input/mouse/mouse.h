@@ -39,6 +39,8 @@ class cEventMouseMotion;
 class cEventMouseButton;
 class cEventMouseWheel;
 
+class cMouseCursor;
+
 /**
  * A class to handle a mouse device.
  *
@@ -55,6 +57,7 @@ public:
 	 * we should ever create another mouse instance.
 	 */
 	cMouse();
+	~cMouse ();
 
 	/**
 	 * Returns the global instance of the mouse.
@@ -95,19 +98,19 @@ public:
 	/**
 	 * Sets the cursor of the mouse.
 	 *
-	 * @param type The type of the new cursor to set.
+	 * @param cursor The new cursor to set.
 	 * @param force Force setting the cursor, even if the mouse internally thinks
 	 *              that the same cursor is currently set.
 	 * @return True if the cursor has been reset.
 	 *         False if the same cursor has been set already and force has been false.
 	 */
-	bool setCursorType(eMouseCursorType type, bool force = false);
+	bool setCursor (std::unique_ptr<cMouseCursor> cursor, bool force = false);
 
 	/**
 	 * Returns the current cursor type.
 	 * @return The cursor type.
 	 */
-	eMouseCursorType getCursorType() const;
+	//eMouseCursorType getCursorType() const;
 
 	/**
 	 * Returns whether a mouse button is currently pressed.
@@ -147,7 +150,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	cPosition position;
-	eMouseCursorType cursorType;
+	std::unique_ptr<cMouseCursor> cursor;
 
 	mutable std::map<eMouseButtonType, bool> buttonPressedState;
 	mutable std::map<eMouseButtonType, unsigned int> buttonClickCount;
@@ -160,9 +163,6 @@ private:
 	void handleMouseMotionEvent(const cEventMouseMotion& mouseEvent);
 	void handleMouseButtonEvent(const cEventMouseButton& mouseEvent);
 	void handleMouseWheelEvent(const cEventMouseWheel& mouseEvent);
-
-	SDL_Surface* getCursorSurface(eMouseCursorType type);
-	cPosition getCursorHotPoint(eMouseCursorType type);
 
 	std::chrono::steady_clock::time_point& getLastClickTime(eMouseButtonType button);
 };

@@ -21,6 +21,7 @@
 #include "application.h"
 
 #include "../input/mouse/mouse.h"
+#include "../input/mouse/cursor/mousecursorsimple.h"
 #include "../settings.h"
 #include "../video.h"
 
@@ -91,16 +92,13 @@ void cWindow::handleActivated (cApplication& application)
 	hasBeenDrawnOnce = false;
 	activeApplication = &application;
 
-	bool hasDefaultCursor;
-	eMouseCursorType defaultCursor;
-	std::tie (hasDefaultCursor, defaultCursor) = getDefaultCursor ();
-
-	if (hasDefaultCursor)
+	auto mouse = activeApplication->getActiveMouse ();
+	if (mouse)
 	{
-		auto mouse = activeApplication->getActiveMouse ();
-		if (mouse)
+		auto defaultCursor = getDefaultCursor ();
+		if (defaultCursor)
 		{
-			mouse->setCursorType (defaultCursor);
+			mouse->setCursor (std::move (defaultCursor));
 		}
 	}
 }
@@ -122,9 +120,9 @@ cApplication* cWindow::getActiveApplication () const
 }
 
 //------------------------------------------------------------------------------
-std::pair<bool, eMouseCursorType> cWindow::getDefaultCursor () const
+std::unique_ptr<cMouseCursor> cWindow::getDefaultCursor () const
 {
-	return std::make_pair (true, eMouseCursorType::Hand);
+	return std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand);
 }
 
 //------------------------------------------------------------------------------

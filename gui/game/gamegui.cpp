@@ -48,6 +48,7 @@
 #include "../../attackjobs.h"
 #include "../../log.h"
 #include "../../input/mouse/mouse.h"
+#include "../../input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
 cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
@@ -850,15 +851,15 @@ bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse, co
 	if (currentMousePosition.y () <= scrollFrameWidth) mouseScrollDirection.y () = -cSettings::getInstance ().getScrollSpeed () / 4;
 	else if (currentMousePosition.y () >= getEndPosition ().y () - scrollFrameWidth) mouseScrollDirection.y () = +cSettings::getInstance ().getScrollSpeed () / 4;
 
-	if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () == 0) mouse.setCursorType (eMouseCursorType::ArrowRight);
-	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () == 0) mouse.setCursorType (eMouseCursorType::ArrowLeft);
-	else if (mouseScrollDirection.x () == 0 &&  mouseScrollDirection.y () > 0) mouse.setCursorType (eMouseCursorType::ArrowDown);
-	else if (mouseScrollDirection.x () == 0 &&  mouseScrollDirection.y () < 0) mouse.setCursorType (eMouseCursorType::ArrowUp);
-	else if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () > 0) mouse.setCursorType (eMouseCursorType::ArrowRightDown);
-	else if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () < 0) mouse.setCursorType (eMouseCursorType::ArrowRightUp);
-	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () > 0) mouse.setCursorType (eMouseCursorType::ArrowLeftDown);
-	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () < 0) mouse.setCursorType (eMouseCursorType::ArrowLeftUp);
-	else if (hud->isAt (currentMousePosition)) mouse.setCursorType (eMouseCursorType::Hand);
+	if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () == 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
+	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () == 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeft));
+	else if (mouseScrollDirection.x () == 0 &&  mouseScrollDirection.y () > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowDown));
+	else if (mouseScrollDirection.x () == 0 &&  mouseScrollDirection.y () < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowUp));
+	else if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightDown));
+	else if (mouseScrollDirection.x () > 0 &&  mouseScrollDirection.y () < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRightUp));
+	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
+	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
+	else if (hud->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 
 	return cWindow::handleMouseMoved (application, mouse, offset);
 }
@@ -959,15 +960,15 @@ void cNewGameGUI::handleActivated (cApplication& application)
 	auto mouse = getActiveMouse ();
 	if (mouse)
 	{
-		if (hud->isAt (mouse->getPosition ())) mouse->setCursorType (eMouseCursorType::Hand);
+		if (hud->isAt (mouse->getPosition ())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 		else gameMap->updateMouseCursor (*mouse);
 	}
 }
 
 //------------------------------------------------------------------------------
-std::pair<bool, eMouseCursorType> cNewGameGUI::getDefaultCursor () const
+std::unique_ptr<cMouseCursor> cNewGameGUI::getDefaultCursor () const
 {
-	return std::make_pair (false, eMouseCursorType::Hand);
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------

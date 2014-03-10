@@ -23,6 +23,7 @@
 #include "../../../../settings.h"
 #include "../../../../video.h"
 #include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
 cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition>& area, std::shared_ptr<cStaticMap> map_) :
@@ -68,12 +69,12 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 
 	if (mapTile)
 	{
-		if (isAllowedTerrain (*mapTile)) mouse.setCursorType (eMouseCursorType::Move);
-		else mouse.setCursorType (eMouseCursorType::No);
+		if (isAllowedTerrain (*mapTile)) mouse.setCursor (std::make_unique<cMouseCursorSimple>(eMouseCursorSimpleType::Move));
+		else mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 	}
 	else
 	{
-		mouse.setCursorType (eMouseCursorType::Hand);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 	}
 	return true;
 }

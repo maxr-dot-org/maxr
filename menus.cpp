@@ -421,7 +421,7 @@ int cMenu::show (cClient* client)
 	activate();
 	auto deactivator = makeScopedOperation(std::bind(&cMenu::deactivate, this));
 
-	cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
+//	cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
 	draw (true);
 
 	int lastResX = Video.getResolutionX();
@@ -458,7 +458,7 @@ int cMenu::show (cClient* client)
 	if(!client) handleNetMessages();
 	cEventManager::getInstance().run();
 
-	cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
+//	cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
 	if (end) return 0;
 	assert (terminate);
 	return 1;
@@ -2458,7 +2458,7 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (!menu->canClick) return;
 
-	if(cMouse::getInstance().getCursorType() != eMouseCursorType::Move) return;
+	//if(cMouse::getInstance().getCursorType() != eMouseCursorType::Move) return;
 
 	const auto& mousePosition = cMouse::getInstance().getPosition();
 	menu->landData->iLandX = (int)((mousePosition.x() - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
@@ -2467,7 +2467,7 @@ void cLandingMenu::mapClicked (void* parent)
 	menu->backButton->setLocked (true);
 	menu->drawLandingPos (menu->landData->iLandX, menu->landData->iLandY);
 	Video.draw();
-	cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
+//	cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
 
 	menu->hitPosition();
 }
@@ -2481,10 +2481,10 @@ void cLandingMenu::mouseMoved (void* parent)
 	if (menu->mapImage->overItem (mousePosition.x(), mousePosition.y()))
 	{
 		const sTerrain* terrain = menu->getMapTile(mousePosition.x() - 180, mousePosition.y() - 18);
-		if(terrain && !(terrain->water || terrain->coast || terrain->blocked)) cMouse::getInstance().setCursorType(eMouseCursorType::Move);
-		else cMouse::getInstance().setCursorType(eMouseCursorType::No);
+//		if(terrain && !(terrain->water || terrain->coast || terrain->blocked)) cMouse::getInstance().setCursorType(eMouseCursorType::Move);
+//		else cMouse::getInstance().setCursorType(eMouseCursorType::No);
 	}
-	else cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
+//	else cMouse::getInstance().setCursorType(eMouseCursorType::Hand);
 }
 
 //------------------------------------------------------------------------------

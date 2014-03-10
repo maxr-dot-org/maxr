@@ -26,6 +26,7 @@
 #include "../../../../video.h"
 #include "../../../../main.h"
 #include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap) :
@@ -69,7 +70,7 @@ bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& applicatio
 	}
 	else
 	{
-		mouse.setCursorType (eMouseCursorType::Hand);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 	}
 	return false;
 }

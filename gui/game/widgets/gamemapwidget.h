@@ -51,7 +51,8 @@ enum class eMouseClickAction
 	Repair,
 	Select,
 	Load,
-	Activate,
+	ActivateStored,
+	ActivateFinished,
 	Move,
 	None,
 	Unknown

@@ -25,7 +25,8 @@
 #include "widget.h"
 #include "../maxrconfig.h"
 #include "../autosurface.h"
-#include "../input/mouse/mousecursortype.h"
+
+class cMouseCursor;
 
 /**
  * Different methods what to do with the background
@@ -116,7 +117,7 @@ protected:
 	 */
 	virtual cApplication* getActiveApplication () const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::pair<bool, eMouseCursorType> getDefaultCursor () const;
+	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const;
 
 	/**
 	 * Sets a new background surface image.

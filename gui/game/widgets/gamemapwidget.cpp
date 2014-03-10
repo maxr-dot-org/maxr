@@ -36,6 +36,9 @@
 #include "../../../movejobs.h"
 #include "../../../utility/indexiterator.h"
 #include "../../../input/mouse/mouse.h"
+#include "../../../input/mouse/cursor/mousecursorsimple.h"
+#include "../../../input/mouse/cursor/mousecursoramount.h"
+#include "../../../input/mouse/cursor/mousecursorattack.h"
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_) :
@@ -334,6 +337,7 @@ void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 	{
 		unitMenu->disable ();
 		unitMenu->hide ();
+		updateMouseCursor ();
 	}
 	else
 	{
@@ -1453,68 +1457,92 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		// then the newly selected unit has to be added / removed
 		// from the "locked units" list.
 		auto oldSelectedUnitForLock = selectedUnit;
+		bool consumed = false;
 
-		const auto mouseClickAction = getMouseClickAction (mouse);
-
-		if (changeAllowed && mouseClickAction == eMouseClickAction::Transfer && selectedUnit)
+		switch (getMouseClickAction (mouse))
 		{
-			if (overVehicle)
+		case eMouseClickAction::Transfer:
+			if (changeAllowed && selectedUnit)
 			{
-				triggeredTransfer (*selectedUnit, *overVehicle);
+				if (overVehicle)
+				{
+					triggeredTransfer (*selectedUnit, *overVehicle);
+				}
+				else if (overBuilding)
+				{
+					triggeredTransfer (*selectedUnit, *overBuilding);
+				}
+				if (mouseInputMode == eNewMouseInputMode::Transfer) setMouseInputMode (eNewMouseInputMode::Default);
+				consumed = true;
 			}
-			else if (overBuilding)
+			break;
+		case eMouseClickAction::SelectBuildPosition:
+			if (changeAllowed && selectedVehicle)
 			{
-				triggeredTransfer (*selectedUnit, *overBuilding);
+				bool validPosition;
+				cPosition destination;
+				std::tie (validPosition, destination) = findNextBuildPosition (cPosition (selectedVehicle->PosX, selectedVehicle->PosY), tilePosition, currentBuildUnitId);
+				if (validPosition)
+				{
+					selectedBuildPosition (*selectedVehicle, destination);
+				}
+
+				toggleMouseInputMode (eNewMouseInputMode::SelectBuildPosition);
+				consumed = true;
 			}
-			if (mouseInputMode == eNewMouseInputMode::Transfer) setMouseInputMode (eNewMouseInputMode::Default);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::SelectBuildPosition && selectedVehicle && mouseInputMode == eNewMouseInputMode::SelectBuildPosition)
-		{
-			bool validPosition;
-			cPosition destination;
-			std::tie (validPosition, destination) = findNextBuildPosition (cPosition (selectedVehicle->PosX, selectedVehicle->PosY), tilePosition, currentBuildUnitId);
-			if (validPosition)
+			break;
+		case eMouseClickAction::SelectBuildPathDestintaion:
+			if (changeAllowed && selectedVehicle)
 			{
-				selectedBuildPosition (*selectedVehicle, destination);
+				cPosition destination;
+				if (tilePosition.x () == selectedVehicle->PosX || tilePosition.y () == selectedVehicle->PosY) destination = tilePosition;
+				else destination = cPosition (selectedVehicle->PosX, selectedVehicle->PosY);
+
+				selectedBuildPathDestination (*selectedVehicle, destination);
+				toggleMouseInputMode (eNewMouseInputMode::SelectBuildPathDestintaion);
+				consumed = true;
 			}
-
-			toggleMouseInputMode (eNewMouseInputMode::SelectBuildPosition);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::SelectBuildPathDestintaion && selectedVehicle && mouseInputMode == eNewMouseInputMode::SelectBuildPathDestintaion)
-		{
-			cPosition destination;
-			if (tilePosition.x () == selectedVehicle->PosX || tilePosition.y () == selectedVehicle->PosY) destination = tilePosition;
-			else destination = cPosition (selectedVehicle->PosX, selectedVehicle->PosY);
-
-			selectedBuildPathDestination (*selectedVehicle, destination);
-			toggleMouseInputMode (eNewMouseInputMode::SelectBuildPathDestintaion);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedUnit && mouseInputMode == eNewMouseInputMode::Activate)
-		{
-			triggeredActivateAt (*selectedUnit, tilePosition);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Activate && selectedBuilding && selectedBuilding->BuildList.size ())
-		{
-			triggeredExitFinishedUnit (*selectedBuilding, tilePosition);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Load && selectedUnit && mouseInputMode == eNewMouseInputMode::Load)
-		{
-			triggeredLoadAt (*selectedUnit, tilePosition);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::SupplyAmmo && selectedVehicle && mouseInputMode == eNewMouseInputMode::SupplyAmmo)
-		{
-			if (overVehicle) triggeredSupplyAmmo (*selectedVehicle, *overVehicle);
-			else if (overPlane && overPlane->FlightHigh == 0) triggeredSupplyAmmo (*selectedVehicle, *overPlane);
-			else if (overBuilding) triggeredSupplyAmmo (*selectedVehicle, *overBuilding);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Repair && selectedVehicle && mouseInputMode == eNewMouseInputMode::Repair)
-		{
-			if (overVehicle) triggeredRepair (*selectedVehicle, *overVehicle);
-			else if (overPlane && overPlane->FlightHigh == 0) triggeredRepair (*selectedVehicle, *overPlane);
-			else if (overBuilding) triggeredRepair (*selectedVehicle, *overBuilding);
-		}
-		else if (mouseInputMode == eNewMouseInputMode::Help)
-		{
+			break;
+		case eMouseClickAction::ActivateStored:
+			if (changeAllowed && selectedUnit)
+			{
+				triggeredActivateAt (*selectedUnit, tilePosition);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::ActivateFinished:
+			if (changeAllowed && selectedBuilding && selectedBuilding->BuildList.size ())
+			{
+				triggeredExitFinishedUnit (*selectedBuilding, tilePosition);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Load:
+			if (changeAllowed && selectedUnit)
+			{
+				triggeredLoadAt (*selectedUnit, tilePosition);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::SupplyAmmo:
+			if (changeAllowed && selectedVehicle)
+			{
+				if (overVehicle) triggeredSupplyAmmo (*selectedVehicle, *overVehicle);
+				else if (overPlane && overPlane->FlightHigh == 0) triggeredSupplyAmmo (*selectedVehicle, *overPlane);
+				else if (overBuilding) triggeredSupplyAmmo (*selectedVehicle, *overBuilding);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Repair:
+			if (changeAllowed && selectedVehicle)
+			{
+				if (overVehicle) triggeredRepair (*selectedVehicle, *overVehicle);
+				else if (overPlane && overPlane->FlightHigh == 0) triggeredRepair (*selectedVehicle, *overPlane);
+				else if (overBuilding) triggeredRepair (*selectedVehicle, *overBuilding);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Help:
 			if (overPlane)
 			{
 				triggeredUnitHelp (*overPlane);
@@ -1532,60 +1560,91 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				triggeredUnitHelp (*overBaseBuilding);
 			}
 			toggleMouseInputMode (eNewMouseInputMode::Help);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedVehicle && !selectedVehicle->isAttacking() && !selectedVehicle->MoveJobActive)
-		{
-			triggeredAttack (*selectedVehicle, tilePosition);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Attack && selectedBuilding && !selectedBuilding->isAttacking ())
-		{
-			triggeredAttack (*selectedBuilding, tilePosition);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Steal && selectedVehicle)
-		{
-			if (overVehicle) triggeredSteal (*selectedVehicle, *overVehicle);
-			else if (overPlane && overPlane->FlightHigh == 0) triggeredSteal (*selectedVehicle, *overPlane);
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Disable && selectedVehicle)
-		{
-			if (overVehicle) triggeredDisable (*selectedVehicle, *overVehicle);
-			else if (overPlane && overPlane->FlightHigh == 0) triggeredDisable (*selectedVehicle, *overPlane);
-			else if (overBuilding) triggeredDisable (*selectedVehicle, *overBuilding);
-		}
-		else if (MouseStyle == OldSchool && mouseClickAction == eMouseClickAction::Select && unitSelection.selectUnitAt (field, false))
-		{
-			auto vehicle = unitSelection.getSelectedVehicle ();
-			if (vehicle) vehicle->makeReport ();
-		}
-		else if (changeAllowed && mouseClickAction == eMouseClickAction::Move && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
-		{
-			if (selectedVehicle->isUnitBuildingABuilding ())
+			consumed = true;
+			break;
+		case eMouseClickAction::Attack:
+			if (changeAllowed&& selectedVehicle && !selectedVehicle->isAttacking () && !selectedVehicle->MoveJobActive)
 			{
-				triggeredEndBuilding (*unitSelection.getSelectedVehicle (), tilePosition);
+				triggeredAttack (*selectedVehicle, tilePosition);
+				consumed = true;
 			}
-			else
+			else if (changeAllowed && selectedBuilding && !selectedBuilding->isAttacking ())
 			{
-				if (unitSelection.getSelectedVehiclesCount () > 1) triggeredMoveGroup (unitSelection.getSelectedVehicles (), tilePosition);
-				else triggeredMoveSingle (*unitSelection.getSelectedVehicle (), tilePosition);
+				triggeredAttack (*selectedBuilding, tilePosition);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Steal:
+			if (changeAllowed && selectedVehicle)
+			{
+				if (overVehicle) triggeredSteal (*selectedVehicle, *overVehicle);
+				else if (overPlane && overPlane->FlightHigh == 0) triggeredSteal (*selectedVehicle, *overPlane);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Disable:
+			if (changeAllowed && selectedVehicle)
+			{
+				if (overVehicle) triggeredDisable (*selectedVehicle, *overVehicle);
+				else if (overPlane && overPlane->FlightHigh == 0) triggeredDisable (*selectedVehicle, *overPlane);
+				else if (overBuilding) triggeredDisable (*selectedVehicle, *overBuilding);
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Select:
+			if (MouseStyle == OldSchool && unitSelection.selectUnitAt (field, false))
+			{
+				auto vehicle = unitSelection.getSelectedVehicle ();
+				if (vehicle) vehicle->makeReport ();
+				consumed = true;
+			}
+			else if (MouseStyle == Modern &&
+				(
+				  !changeAllowed ||
+				  (
+				    (!selectedVehicle || (!Contains (field.getPlanes (), selectedVehicle) && selectedVehicle != overVehicle)) &&
+				    (!selectedBuilding || (overBaseBuilding != selectedBuilding && overBuilding != selectedBuilding))
+				  )
+				) &&
+				unitSelection.selectUnitAt (field, true))
+			{
+				auto vehicle = unitSelection.getSelectedVehicle ();
+				if (vehicle) vehicle->makeReport ();
+				consumed = true;
+			}
+			break;
+		case eMouseClickAction::Move:
+			if (changeAllowed && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
+			{
+				if (selectedVehicle->isUnitBuildingABuilding ())
+				{
+					triggeredEndBuilding (*unitSelection.getSelectedVehicle (), tilePosition);
+				}
+				else
+				{
+					if (unitSelection.getSelectedVehiclesCount () > 1) triggeredMoveGroup (unitSelection.getSelectedVehicles (), tilePosition);
+					else triggeredMoveSingle (*unitSelection.getSelectedVehicle (), tilePosition);
+				}
+				consumed = true;
 			}
 		}
-		else if (changeAllowed && selectedVehicle && (Contains (field.getPlanes (), selectedVehicle) || selectedVehicle == overVehicle))
+
+		// toggle unit context menu if no other click action has been performed
+		if (!consumed)
 		{
-			if (!selectedVehicle->moving)
+			if (changeAllowed && selectedVehicle && (Contains (field.getPlanes (), selectedVehicle) || selectedVehicle == overVehicle))
 			{
-				toggleUnitContextMenu (selectedVehicle);
+				if (!selectedVehicle->moving)
+				{
+					toggleUnitContextMenu (selectedVehicle);
+					PlayFX (SoundData.SNDHudButton);
+				}
+			}
+			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
+			{
+				toggleUnitContextMenu (selectedBuilding);
 				PlayFX (SoundData.SNDHudButton);
 			}
-		}
-		else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
-		{
-			toggleUnitContextMenu (selectedBuilding);
-			PlayFX (SoundData.SNDHudButton);
-		}
-		else if (MouseStyle == Modern && mouseClickAction == eMouseClickAction::Select && unitSelection.selectUnitAt (field, true))
-		{
-			auto vehicle = unitSelection.getSelectedVehicle ();
-			if (vehicle) vehicle->makeReport ();
 		}
 
 		// toggle the lock state of an enemy unit,
@@ -1933,7 +1992,7 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 	{
 		if (selectedBuilding->canExitTo (mapTilePosition, *dynamicMap, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
 		{
-			return eMouseClickAction::Activate;
+			return eMouseClickAction::ActivateFinished;
 		}
 		else
 		{
@@ -1944,7 +2003,7 @@ eMouseClickAction cGameMapWidget::getMouseClickAction (const cMouse& mouse)
 	{
 		//if (selectedBuilding->canExitTo (mapTilePosition.x (), mapTilePosition.y (), *dynamicMap, selectedBuilding->storedUnits[vehicleToActivate]->data))
 		//{
-		//	return eMouseClickAction::Activate;
+		//	return eMouseClickAction::ActivateStored;
 		//}
 		//else
 		//{
@@ -2062,64 +2121,86 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 
 	auto mapTilePosition = getMapTilePosition (mouse.getPosition ());
 
+	auto selectedUnit = unitSelection.getSelectedUnit ();
 	auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
 	switch (mouseClickAction)
 	{
 	case eMouseClickAction::SelectBuildPosition:
-		mouse.setCursorType (eMouseCursorType::Band);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 		break;
 	case eMouseClickAction::SelectBuildPathDestintaion:
-		mouse.setCursorType (eMouseCursorType::Band);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 		break;
 	case eMouseClickAction::Transfer:
-		mouse.setCursorType (eMouseCursorType::Transfer);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Transfer));
 		break;
 	case eMouseClickAction::Help:
-		mouse.setCursorType (eMouseCursorType::Help);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Help));
 		break;
 	case eMouseClickAction::Attack:
-		if (mouse.setCursorType (eMouseCursorType::Attack))
+		if (selectedUnit != nullptr)
 		{
-			drawAttackCursor (mapTilePosition);
+			const sUnitData& data = selectedUnit->data;
+			const cUnit* target = selectTarget (mapTilePosition.x (), mapTilePosition.y (), data.canAttack, *dynamicMap);
+
+			if (target && (target != selectedUnit))
+			{
+				const auto currentHealthPercent = 100 * target->data.hitpointsCur / target->data.hitpointsMax;
+				const auto newHealthPercent = 100 * target->calcHealth (data.damage) / target->data.hitpointsMax;
+				mouse.setCursor (std::make_unique<cMouseCursorAttack> (currentHealthPercent, newHealthPercent));
+				break;
+			}
 		}
+		mouse.setCursor (std::make_unique<cMouseCursorAttack> ());
 		break;
 	case eMouseClickAction::Disable:
-		if (mouse.setCursorType (eMouseCursorType::Disable))
+		if (selectedVehicle)
 		{
-			if (selectedVehicle) drawCommandoCursor (mapTilePosition, *selectedVehicle, false);
+			const auto& field = dynamicMap->getField (mapTilePosition);
+			const cUnit* unit = field.getVehicle ();
+			if (!unit) unit = field.getTopBuilding ();
+
+			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable, selectedVehicle->calcCommandoChance (unit, false)));
 		}
-		break;
+		else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Disable));
 	case eMouseClickAction::Steal:
-		if (mouse.setCursorType (eMouseCursorType::Steal))
+		if (selectedVehicle)
 		{
-			if (selectedVehicle) drawCommandoCursor (mapTilePosition, *selectedVehicle, true);
+			const auto& field = dynamicMap->getField (mapTilePosition);
+			const cUnit* unit = field.getVehicle ();
+
+			mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->calcCommandoChance (unit, true)));
 		}
+		else mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal));
 		break;
 	case eMouseClickAction::SupplyAmmo:
-		mouse.setCursorType (eMouseCursorType::Muni);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Muni));
 		break;
 	case eMouseClickAction::Repair:
-		mouse.setCursorType (eMouseCursorType::Repair);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Repair));
 		break;
 	case eMouseClickAction::Select:
-		mouse.setCursorType (eMouseCursorType::Select);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Select));
 		break;
 	case eMouseClickAction::Load:
-		mouse.setCursorType (eMouseCursorType::Load);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Load));
 		break;
-	case eMouseClickAction::Activate:
-		mouse.setCursorType (eMouseCursorType::Activate);
+	case eMouseClickAction::ActivateStored:
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Activate));
+		break;
+	case eMouseClickAction::ActivateFinished:
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Activate));
 		break;
 	case eMouseClickAction::Move:
-		mouse.setCursorType (eMouseCursorType::Move);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Move));
 		break;
 	case eMouseClickAction::None:
-		mouse.setCursorType (eMouseCursorType::No);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 		break;
 	default:
 	case eMouseClickAction::Unknown:
-		mouse.setCursorType (eMouseCursorType::Hand);
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 		break;
 	}
 }

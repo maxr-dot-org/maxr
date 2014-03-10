@@ -20,6 +20,7 @@
 #include <algorithm>
 
 #include "mouse.h"
+#include "cursor/mousecursorsimple.h"
 
 #include "../../main.h"
 #include "../../events/eventmanager.h"
@@ -30,7 +31,7 @@ cMouse::cMouse() :
 	sdlCursor(nullptr, SDL_FreeCursor),
 	doubleClickTime(500)
 {
-	setCursorType(eMouseCursorType::Hand, true);
+	setCursor(std::make_unique<cMouseCursorSimple>(eMouseCursorSimpleType::Hand), true);
 
 	using namespace std::placeholders;
 
@@ -38,6 +39,10 @@ cMouse::cMouse() :
 	signalConnectionManager.connect(cEventManager::getInstance().mouseButtonEvent, std::bind(&cMouse::handleMouseButtonEvent, this, _1));
 	signalConnectionManager.connect(cEventManager::getInstance().mouseWheelEvent, std::bind(&cMouse::handleMouseWheelEvent, this, _1));
 }
+
+//------------------------------------------------------------------------------
+cMouse::~cMouse ()
+{}	
 
 //------------------------------------------------------------------------------
 cMouse& cMouse::getInstance()
@@ -91,20 +96,22 @@ const cPosition& cMouse::getPosition() const
 }
 
 //------------------------------------------------------------------------------
-bool cMouse::setCursorType(eMouseCursorType type, bool force)
+bool cMouse::setCursor (std::unique_ptr<cMouseCursor> cursor_, bool force)
 {
-	if(!force && cursorType == type) return false;
+	if (cursor_ == nullptr) return false;
 
-	cursorType = type;
+	if (!force && cursor != nullptr && *cursor_ == *cursor) return false;
 
-	auto cursorSurface = getCursorSurface(type);
-	auto hotPoint = getCursorHotPoint(type);
+	auto cursorSurface = cursor_->getSurface ();
+	auto hotPoint = cursor_->getHotPoint ();
 
 	auto newSdlCursor = SdlCursorPtrType(SDL_CreateColorCursor(cursorSurface, hotPoint.x(), hotPoint.y()), SDL_FreeCursor);
 
 	SDL_SetCursor(newSdlCursor.get());
 
-	sdlCursor = std::move(newSdlCursor);
+	sdlCursor = std::move (newSdlCursor);
+
+	cursor = std::move (cursor_);
 
 	return true;
 }
@@ -122,10 +129,10 @@ void cMouse::hide()
 }
 
 //------------------------------------------------------------------------------
-eMouseCursorType cMouse::getCursorType() const
-{
-	return cursorType;
-}
+//eMouseCursorType cMouse::getCursorType() const
+//{
+//	return cursorType;
+//}
 
 //------------------------------------------------------------------------------
 bool cMouse::isButtonPressed(eMouseButtonType button) const
@@ -158,93 +165,4 @@ std::chrono::steady_clock::time_point& cMouse::getLastClickTime(eMouseButtonType
 		return lastClickTime[button]; // use default initialization. Is this really correct?!
 	}
 	else return iter->second;
-}
-
-//------------------------------------------------------------------------------
-SDL_Surface* cMouse::getCursorSurface(eMouseCursorType type)
-{
-	switch(type)
-	{
-	case eMouseCursorType::Hand:
-		return GraphicsData.gfx_Chand;
-	case eMouseCursorType::No:
-		return GraphicsData.gfx_Cno;
-	case eMouseCursorType::Select:
-		return GraphicsData.gfx_Cselect;
-	case eMouseCursorType::Move:
-		return GraphicsData.gfx_Cmove;
-	case eMouseCursorType::ArrowLeftDown:
-		return GraphicsData.gfx_Cpfeil1;
-	case eMouseCursorType::ArrowDown:
-		return GraphicsData.gfx_Cpfeil2;
-	case eMouseCursorType::ArrowRightDown:
-		return GraphicsData.gfx_Cpfeil3;
-	case eMouseCursorType::ArrowLeft:
-		return GraphicsData.gfx_Cpfeil4;
-	case eMouseCursorType::ArrowRight:
-		return GraphicsData.gfx_Cpfeil6;
-	case eMouseCursorType::ArrowLeftUp:
-		return GraphicsData.gfx_Cpfeil7;
-	case eMouseCursorType::ArrowUp:
-		return GraphicsData.gfx_Cpfeil8;
-	case eMouseCursorType::ArrowRightUp:
-		return GraphicsData.gfx_Cpfeil9;
-	case eMouseCursorType::Help:
-		return GraphicsData.gfx_Chelp;
-	case eMouseCursorType::Attack:
-		return GraphicsData.gfx_Cattack;
-	case eMouseCursorType::Band:
-		return GraphicsData.gfx_Cband;
-	case eMouseCursorType::Transfer:
-		return GraphicsData.gfx_Ctransf;
-	case eMouseCursorType::Load:
-		return GraphicsData.gfx_Cload;
-	case eMouseCursorType::Muni:
-		return GraphicsData.gfx_Cmuni;
-	case eMouseCursorType::Repair:
-		return GraphicsData.gfx_Crepair;
-	case eMouseCursorType::Steal:
-		return GraphicsData.gfx_Csteal;
-	case eMouseCursorType::Disable:
-		return GraphicsData.gfx_Cdisable;
-	case eMouseCursorType::Activate:
-		return GraphicsData.gfx_Cactivate;
-	case eMouseCursorType::MoveDraft:
-		return GraphicsData.gfx_Cmove_draft;
-	case eMouseCursorType::AttacOOR:
-		return GraphicsData.gfx_Cattackoor;
-	default:
-		assert(false);
-	}
-	return GraphicsData.gfx_Chand;
-}
-
-//------------------------------------------------------------------------------
-cPosition cMouse::getCursorHotPoint(eMouseCursorType type)
-{
-	switch(type)
-	{
-	case eMouseCursorType::Select:
-	case eMouseCursorType::Help:
-	case eMouseCursorType::Move:
-	case eMouseCursorType::MoveDraft:
-	case eMouseCursorType::No:
-	case eMouseCursorType::Transfer:
-	case eMouseCursorType::Band:
-	case eMouseCursorType::Load:
-	case eMouseCursorType::Muni:
-	case eMouseCursorType::Repair:
-	case eMouseCursorType::Activate:
-		return cPosition(12, 12);
-	case eMouseCursorType::Attack:
-	case eMouseCursorType::Steal:
-	case eMouseCursorType::Disable:
-	case eMouseCursorType::AttacOOR:
-		return cPosition(19, 16);
-		break;
-	default:
-		return cPosition(0, 0);
-		break;
-	}
-	return cPosition(0, 0);
 }

@@ -64,7 +64,7 @@ public:
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 protected:
 
-	virtual std::pair<bool, eMouseCursorType> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager clientSignalConnectionManager;
