@@ -3497,6 +3497,7 @@ bool cNetworkHostMenu::runSavedGame()
 	// init client and his player
 	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
 	client->setMap (*server.Map->staticMap);
+	client->setGameSetting (*server.getGameSettings());
 	client->setPlayers (players, *actPlayer);
 
 	// send the correct player numbers to client
@@ -3507,6 +3508,15 @@ bool cNetworkHostMenu::runSavedGame()
 	// and colors of each player.
 	sendPlayerList (*network, players);
 
+	for (size_t i = 0; i != players.size(); ++i)
+	{
+		if (!players[i]->isLocal())
+			sendGameData (*server.network,
+						  server.Map->staticMap,
+						  server.getGameSettings(),
+						  this->savegame,
+						  players[i]);
+	}
 	// send client that the game has to be started
 	sendGo (server);
 
