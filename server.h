@@ -120,7 +120,7 @@ public:
 	*@param message The message to be prozessed
 	*@return 0 for success
 	*/
-	int handleNetMessage (cNetMessage* message);
+	int handleNetMessage (cNetMessage& message);
 
 	/**
 	 * gets the unit with the ID

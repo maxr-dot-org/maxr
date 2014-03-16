@@ -504,14 +504,14 @@ void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
+void cClientAttackJob::lockTarget (cClient& client, cNetMessage& message)
 {
-	const bool bIsAir = message->popBool();
-	const int offset = message->popInt32();
+	const bool bIsAir = message.popBool();
+	const int offset = message.popInt32();
 	cMap& map = *client.getMap();
 	const int x = offset % map.getSize();
 	const int y = offset / map.getSize();
-	const int ID = message->popInt32();
+	const int ID = message.popInt32();
 	if (ID != 0)
 	{
 		cVehicle* vehicle = client.getVehicleFromID (ID);
@@ -531,8 +531,8 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 			map.moveVehicle (*vehicle, x, y);
 			vehicle->owner->doScan();
 
-			vehicle->OffY = message->popChar();
-			vehicle->OffX = message->popChar();
+			vehicle->OffY = message.popChar();
+			vehicle->OffX = message.popChar();
 		}
 	}
 	if (!bIsAir)
@@ -575,12 +575,12 @@ void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
 }
 
 //--------------------------------------------------------------------------
-cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
+cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 {
 	state = ROTATING;
 	wait = 0;
 	length = 0;
-	this->iID = message->popInt16();
+	this->iID = message.popInt16();
 	iTargetOffset = -1;
 	unit = NULL;
 
@@ -594,18 +594,18 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 		}
 	}
 
-	const int unitID = message->popInt32();
+	const int unitID = message.popInt32();
 
 	// get muzzle type and aggressor position
 	if (unitID == 0)
 	{
-		iMuzzleType = message->popChar();
+		iMuzzleType = message.popChar();
 		if (iMuzzleType != sUnitData::MUZZLE_TYPE_ROCKET && iMuzzleType != sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER && iMuzzleType != sUnitData::MUZZLE_TYPE_TORPEDO)
 		{
 			state = FINISHED;
 			return;
 		}
-		iAgressorOffset = message->popInt32();
+		iAgressorOffset = message.popInt32();
 	}
 	else
 	{
@@ -625,20 +625,20 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 
 	if (iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET || iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER || iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO)
 	{
-		iTargetOffset = message->popInt32();
+		iTargetOffset = message.popInt32();
 	}
-	iFireDir = message->popChar();
+	iFireDir = message.popChar();
 
 	// get remaining shots, ammo and movement points
 	if (unit)
 	{
-		unit->data.shotsCur = message->popInt16();
-		unit->data.ammoCur = message->popInt16();
+		unit->data.shotsCur = message.popInt16();
+		unit->data.ammoCur = message.popInt16();
 		unit->attacking = true;
 		if (unit->isAVehicle())
-			unit->data.speedCur = message->popInt16();
+			unit->data.speedCur = message.popInt16();
 	}
-	const bool sentryReaction = message->popBool();
+	const bool sentryReaction = message.popBool();
 	if (sentryReaction && unit && unit->owner == &client->getActivePlayer())
 	{
 		const int x = unit->PosX;

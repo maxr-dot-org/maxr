@@ -81,7 +81,7 @@ protected:
 	void loadSaveGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
-	bool handleDedicatedServerEvents (cNetMessage* message);
+	bool handleDedicatedServerEvents (cNetMessage& message);
 	void sendChatMessage (const std::string& text, int type, int socket = -1);
 
 	cDedicatedServerConfig* configuration;

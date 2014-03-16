@@ -159,7 +159,7 @@ public:
 	*@param message The netMessage to be handled.
 	*@return 0 for success
 	*/
-	int HandleNetMessage (cNetMessage* message, cMenu* activeMenu);
+	int HandleNetMessage (cNetMessage& message, cMenu* activeMenu);
 
 	void addFx (cFx* fx);
 

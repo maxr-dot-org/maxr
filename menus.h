@@ -292,7 +292,7 @@ public:
 	 * If the message should be handled overwrite this virtual method.
 	 *@author alzi
 	 */
-	virtual void handleNetMessage (cNetMessage* message) {}
+	virtual void handleNetMessage (cNetMessage& message) {}
 	virtual void handleNetMessages() {}
 
 	virtual void handleDestroyUnit (cUnit& destroyedUnit) {}
@@ -663,7 +663,7 @@ public:
 private:
 	virtual void handleKeyInput (const SDL_KeyboardEvent& key);
 
-	void handleNetMessage (cNetMessage* message);
+	void handleNetMessage (cNetMessage& message);
 	void handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& message);
 protected:
 	void createHud();
@@ -841,14 +841,14 @@ public:
 	~cNetworkHostMenu();
 
 private:
-	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
-	void handleNetMessage_TCP_ACCEPT (cNetMessage* message);
-	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
-	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message);
-	void handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message);
-	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage* message);
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
+	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
+	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message);
+	void handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage& message);
+	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message);
 
-	virtual void handleNetMessage (cNetMessage* message);
+	virtual void handleNetMessage (cNetMessage& message);
 	virtual void playerSettingsChanged();
 
 private:
@@ -876,20 +876,20 @@ public:
 	~cNetworkClientMenu();
 
 private:
-	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
-	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
-	void handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage* message);
-	void handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* message);
-	void handleNetMessage_MU_MSG_OPTINS (cNetMessage* message);
-	void initMapDownload (cNetMessage* message);
-	void receiveMapData (cNetMessage* message);
-	void canceledMapDownload (cNetMessage* message);
-	void finishedMapDownload (cNetMessage* message);
-	void handleNetMessage_MU_MSG_GO (cNetMessage* message);
-	void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage* message);
-	void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage* message);
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
+	void handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage& message);
+	void handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage& message);
+	void handleNetMessage_MU_MSG_OPTINS (cNetMessage& message);
+	void initMapDownload (cNetMessage& message);
+	void receiveMapData (cNetMessage& message);
+	void canceledMapDownload (cNetMessage& message);
+	void finishedMapDownload (cNetMessage& message);
+	void handleNetMessage_MU_MSG_GO (cNetMessage& message);
+	void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage& message);
 
-	virtual void handleNetMessage (cNetMessage* message);
+	virtual void handleNetMessage (cNetMessage& message);
 	virtual void playerSettingsChanged();
 private:
 	static void connectReleased (void* parent);

@@ -72,12 +72,12 @@ protected:
 	friend int serverGameThreadFunction (void* data);
 	void run();
 	cNetMessage* pollEvent();
-	void handleNetMessage (cNetMessage* message);
+	void handleNetMessage (cNetMessage& message);
 
-	void handleNetMessage_TCP_ACCEPT (cNetMessage* message);
-	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
-	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message);
-	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
+	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
+	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message);
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
 
 	void terminateServer();
 

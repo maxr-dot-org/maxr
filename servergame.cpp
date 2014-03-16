@@ -128,12 +128,12 @@ void cServerGame::run()
 		{
 			if (server != NULL)
 			{
-				server->handleNetMessage (event.get());
+				server->handleNetMessage (*event);
 				server->checkPlayerUnits();
 			}
 			else
 			{
-				handleNetMessage (event.get());
+				handleNetMessage (*event);
 			}
 		}
 
@@ -163,24 +163,24 @@ void cServerGame::run()
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
+void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
-	assert (message->iType == TCP_ACCEPT);
+	assert (message.iType == TCP_ACCEPT);
 
-	sPlayer* player = new sPlayer ("unidentified", 0, menuPlayers.size(), message->popInt16());
+	sPlayer* player = new sPlayer ("unidentified", 0, menuPlayers.size(), message.popInt16());
 	menuPlayers.push_back (player);
 	sendMenuChatMessage (*network, "type --server help for dedicated server help", player);
 	sendRequestIdentification (*network, *player);
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage* message)
+void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage& message)
 {
-	assert (message->iType == TCP_CLOSE);
+	assert (message.iType == TCP_CLOSE);
 
 	// TODO: this is only ok in cNetwork(Host)Menu.
 	// when server runs already, it must be treated another way
-	int socket = message->popInt16();
+	int socket = message.popInt16();
 	network->close (socket);
 	string playerName;
 
@@ -211,21 +211,21 @@ void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
+void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 {
-	assert (message->iType == MU_MSG_IDENTIFIKATION);
+	assert (message.iType == MU_MSG_IDENTIFIKATION);
 
-	unsigned int playerNr = message->popInt16();
+	unsigned int playerNr = message.popInt16();
 	if (playerNr >= menuPlayers.size())
 		return;
 	sPlayer* player = menuPlayers[playerNr];
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
-	player->setColorIndex (message->popInt16());
-	player->setName (message->popString());
-	player->setReady (message->popBool());
+	player->setColorIndex (message.popInt16());
+	player->setName (message.popString());
+	player->setReady (message.popBool());
 
-	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message.popString(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	//if (freshJoined)
 	//	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name)); // TODO: instead send a chat message to all players?
@@ -240,14 +240,14 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
+void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 {
-	assert (message->iType == MU_MSG_CHAT);
+	assert (message.iType == MU_MSG_CHAT);
 
-	bool translationText = message->popBool();
-	string chatText = message->popString();
+	bool translationText = message.popBool();
+	string chatText = message.popString();
 
-	unsigned int senderPlyerNr = message->iPlayerNr;
+	unsigned int senderPlyerNr = message.iPlayerNr;
 	if (senderPlyerNr >= menuPlayers.size())
 		return;
 	sPlayer* senderPlayer = menuPlayers[senderPlyerNr];
@@ -349,19 +349,19 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 		// send to other clients
 		for (size_t i = 0; i < menuPlayers.size(); i++)
 		{
-			if (menuPlayers[i]->getNr() == message->iPlayerNr)
+			if (menuPlayers[i]->getNr() == message.iPlayerNr)
 				continue;
 			sendMenuChatMessage (*network, chatText, menuPlayers[i], -1, translationText);
 		}
 	}
 }
 
-void cServerGame::handleNetMessage (cNetMessage* message)
+void cServerGame::handleNetMessage (cNetMessage& message)
 {
-	cout << "Msg received: " << message->getTypeAsString() << endl;
+	cout << "Msg received: " << message.getTypeAsString() << endl;
 
 	// TODO: reduce/avoid duplicate code with cNetwork(Host)Menu
-	switch (message->iType)
+	switch (message.iType)
 	{
 		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (message); break;
 		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
