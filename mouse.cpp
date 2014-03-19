@@ -44,7 +44,7 @@ cMouse::~cMouse()
 
 bool cMouse::SetCursor (eCursor const typ, int value_, int max_value_)
 {
-	assert (value_ <= max_value_);
+	assert (value_ <= max_value_ || max_value_ == -1);
 	assert (max_value_ == -1 || typ == CAttack);
 	assert (value_ == -1 || typ == CAttack || typ == CDisable || typ == CSteal);
 
