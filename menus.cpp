@@ -5308,7 +5308,7 @@ string cMineManagerMenu::secondBarText (int prod, int need)
 	int perTurn = prod - need;
 	string text = iToStr (need) + " (";
 	if (perTurn > 0) text += "+";
-	text += iToStr (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn") + ")";
+	text += iToStr (perTurn) + " / " + lngPack.i18n ("Text~Comp~Turn_5") + ")";
 	return text;
 }
 

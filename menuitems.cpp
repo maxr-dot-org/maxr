@@ -3741,7 +3741,7 @@ void cMenuReportsScreen::drawScoreScreen()
 			case SETTINGS_VICTORY_TURNS:
 			{
 				ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
-				   plural (gameSetting.duration, "Text~Comp~Turn", "Text~Comp~Turns");
+				   plural (gameSetting.duration, "Text~Comp~Turn_5", "Text~Comp~Turns");
 				break;
 			}
 			case SETTINGS_VICTORY_POINTS:
