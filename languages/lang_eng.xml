@@ -353,7 +353,7 @@
 			<Team_Insufficient ENG="Cannot start, workers needed."/>
 			<Team_Low ENG="Workers needed, building turned off."/>
 			<Themes ENG="Themes"/>
-			<Turn ENG="Turn"/>
+			<Turn_5 ENG="Turn"/>
 			<Turn_Automove ENG="Executing remaining movements"/>
 			<Turn_Start ENG="Start turn"/>
 			<Turn_Wait ENG="Please wait until all movements are completed"/>

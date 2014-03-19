@@ -353,7 +353,7 @@
 			
 			<Team_Low ENG="To low teams, disabled consumer!" localized="Premalo prebivališč, porabnik izključen!"/>
 			<Themes ENG="Themes" localized="Teme"/>
-			<Turn ENG="Turn" localized="Potezo"/>
+			<Turn_5 ENG="Turn" localized="Potezo"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Izvajanje preostalih premikov"/>
 			<Turn_Start ENG="Start turn" localized="Začni potezo"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Prosim počakaj, da se zaključijo vsi premiki"/>

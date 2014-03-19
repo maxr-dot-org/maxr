@@ -353,7 +353,7 @@
 			<Team_Insufficient ENG="Cannot start, workers needed." localized="No se puede encender, se necesitan trabajadores"/>
 			<Team_Low ENG="Workers needed, building turned off." localized="Se necesitan trabajadores, edificio apagado."/>
 			<Themes ENG="Themes" localized="Temas"/>
-			<Turn ENG="Turn" localized="Turno"/>
+			<Turn_5 ENG="Turn" localized="Turno"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Ejecutando movimientos restantes"/>
 			<Turn_Start ENG="Start turn" localized="Comienza el turno"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Por favor espera hasta que todos los movimientos se hayan completado"/>

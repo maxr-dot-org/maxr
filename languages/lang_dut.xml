@@ -353,7 +353,7 @@
 			
 			<Team_Low ENG="To low teams, disabled consumer!" localized="Te weinig teams, verbruiker uitgeschakeld!"/>
 			<Themes ENG="Themes" localized="Themas"/>
-			<Turn ENG="Turn" localized="Beurt"/>
+			<Turn_5 ENG="Turn" localized="Beurt"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Uitvoeren overgebleven verplaatsingen"/>
 			<Turn_Start ENG="Start turn" localized="Start beurt"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Wacht tot alle verplaatsingen klaar zijn"/>

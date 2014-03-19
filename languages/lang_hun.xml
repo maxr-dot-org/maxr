@@ -353,7 +353,7 @@
 			<Team_Insufficient ENG="Cannot start, workers needed." localized="Nincs elegendő ümunkás az elindításhoz."/>
 			<Team_Low ENG="Workers needed, building turned off." localized="Nincs elég munkás, épület leállítva!"/>
 			<Themes ENG="Themes" localized="Határ"/>
-			<Turn ENG="Turn" localized="Kör"/>
+			<Turn_5 ENG="Turn" localized="Kör"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Fennmaradó lépések végrehajtása"/>
 			<Turn_Start ENG="Start turn" localized="Kör kezdése"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Kérlek várd meg, míg az összes lépés végrehajtódik"/>
