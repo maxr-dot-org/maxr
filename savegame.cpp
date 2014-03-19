@@ -1132,6 +1132,7 @@ void cSavegame::writeHeader (const cServer& server, const string& saveName)
 	XMLElement* headerNode = addMainElement (SaveFile.RootElement(), "Header");
 
 	addAttributeElement (headerNode, "Game_Version", "string", PACKAGE_VERSION);
+	addAttributeElement (headerNode, "Game_Revision", "string", PACKAGE_REV);
 	addAttributeElement (headerNode, "Name", "string", saveName);
 	switch (server.getGameType())
 	{
