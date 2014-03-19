@@ -1946,7 +1946,7 @@ void cMenuUnitDetails::draw()
 	}
 	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unitOwner == &activePlayer)
 	{
-		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Cargo"), FONT_LATIN_SMALL_WHITE);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Cargo_7"), FONT_LATIN_SMALL_WHITE);
 
 		if (data.storeResType > 0)
 		{
@@ -2168,7 +2168,7 @@ void cMenuUnitDetailsBig::draw()
 	if (transport != sUnitData::STORE_RES_NONE)
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->storageResMax));
-		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Cargo"));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Others~Cargo_7"));
 
 		switch (transport)
 		{
