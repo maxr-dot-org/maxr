@@ -90,7 +90,7 @@
 			<Build_7 ENG="Build" localized="Строй"/>
 			<Buy ENG="Buy" localized="Купить"/>
 			<Cancel ENG="Cancel" localized="Отмена"/>
-			<Cargo ENG="Cargo" localized="Груз"/>
+			<Cargo_7 ENG="Cargo" localized="Груз"/>
 			<Chat ENG="Chat" localized="Чат"/>
 			<Clear_7 ENG="Clear" localized="Чистка"/>
 			<Color ENG="Color" localized="Цвет"/>
@@ -168,7 +168,6 @@
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Клиент"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Сервер"/>
 			<Teams_7 ENG="Teams" localized="Команды"/>
-			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
 			<Total ENG="Total" localized="Всего"/>
 			<Transfer_7 ENG="X-fer" localized="Трансф."/>
 			<Units ENG="Units" localized=""/>

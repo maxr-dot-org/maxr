@@ -90,7 +90,7 @@
 			<Build_7 ENG="Build" localized="Bauen"/>
 			<Buy ENG="Buy" localized="Kaufen"/>
 			<Cancel ENG="Cancel" localized="Abbruch"/>
-			<Cargo ENG="Cargo" localized="Ladung"/>
+			<Cargo_7 ENG="Cargo" localized="Ladung"/>
 			<Chat ENG="Chat" localized="Chat"/>
 			<Clear_7 ENG="Clear" localized="Entf."/>
 			<Color ENG="Color" localized="Farben"/>
@@ -168,7 +168,6 @@
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
 			<Teams_7 ENG="Teams" localized="Teams"/>
-			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Trsfer."/>
 			<Units ENG="Units" localized="Einheiten"/>

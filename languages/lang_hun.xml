@@ -90,7 +90,7 @@
 			<Build_7 ENG="Build" localized="Építés"/>
 			<Buy ENG="Buy" localized="Vesz"/>
 			<Cancel ENG="Cancel" localized="Mégse"/>
-			<Cargo ENG="Cargo" localized="Rakomány"/>
+			<Cargo_7 ENG="Cargo" localized="Rakomány"/>
 			<Chat ENG="Chat" localized="Chat"/>
 			<Clear_7 ENG="Clear" localized="Eltakarítás"/>
 			<Color ENG="Color" localized="Szín"/>
@@ -168,7 +168,6 @@
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
 			<Teams_7 ENG="Teams" localized="Munkások"/>
-			<Title_Main_Menu ENG="Main Menu" localized="Főmenü"/>
 			<Total ENG="Total" localized="Összes"/>
 			<Transfer_7 ENG="X-fer" localized="Átvitel"/>
 			<Units ENG="Units" localized="Egység"/>

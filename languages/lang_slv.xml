@@ -90,7 +90,7 @@
 			<Build_7 ENG="Build" localized="Gradnja"/>
 			<Buy ENG="Buy" localized="Kupi"/>
 			<Cancel ENG="Cancel" localized="Prekliči"/>
-			<Cargo ENG="Cargo" localized="Tovor"/>
+			<Cargo_7 ENG="Cargo" localized="Tovor"/>
 			<Chat ENG="Chat" localized="Pogovor"/>
 			<Clear_7 ENG="Clear" localized="Počisti"/>
 			<Color ENG="Color" localized="Barva"/>
@@ -168,7 +168,6 @@
 			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Klient"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Strežnik"/>
 			<Teams_7 ENG="Teams" localized="Moštva"/>
-			<Title_Main_Menu ENG="Main Menu" localized="Glavni menu"/>
 			<Total ENG="Total" localized="Skupaj"/>
 			<Transfer_7 ENG="X-fer" localized="Prenos"/>
 			
