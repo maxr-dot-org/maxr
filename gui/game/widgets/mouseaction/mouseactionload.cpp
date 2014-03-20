@@ -17,23 +17,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_mouseinputmodeH
-#define gui_game_mouseinputmodeH
+#include "mouseactionload.h"
+#include "../gamemapwidget.h"
+#include "../../unitselection.h"
+#include "../../../../map.h"
+#include "../../../../unit.h"
+#include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
-enum class eNewMouseInputMode
+//------------------------------------------------------------------------------
+bool cMouseActionLoad::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
 {
-	Default,
-	Attack,
-	SelectBuildPosition,
-	SelectBuildPathDestintaion,
-	Transfer,
-	Load,
-	SupplyAmmo,
-	Repair,
-	Activate,
-	Disable,
-	Steal,
-	Help
-};
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
 
-#endif // gui_game_mouseinputmodeH
+	if (!selectedUnit) return false;
+
+	gameMapWidget.triggeredLoadAt (*selectedUnit, mapPosition);
+
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool cMouseActionLoad::doesChangeState () const
+{
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool cMouseActionLoad::isSingleAction () const
+{
+	return true;
+}

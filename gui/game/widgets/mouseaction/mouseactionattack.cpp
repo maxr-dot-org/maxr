@@ -17,38 +17,44 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#include "mouseactionattack.h"
+#include "../gamemapwidget.h"
+#include "../../unitselection.h"
+#include "../../../../map.h"
+#include "../../../../vehicles.h"
+#include "../../../../buildings.h"
+#include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
-
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+//------------------------------------------------------------------------------
+bool cMouseActionAttack::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
 {
-public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+	if (selectedVehicle && !selectedVehicle->isAttacking () && !selectedVehicle->MoveJobActive)
+	{
+		gameMapWidget.triggeredAttack (*selectedVehicle, mapPosition);
+	}
+	else if (selectedBuilding && !selectedBuilding->isAttacking ())
+	{
+		gameMapWidget.triggeredAttack (*selectedBuilding, mapPosition);
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
+//------------------------------------------------------------------------------
+bool cMouseActionAttack::doesChangeState () const
+{
+	return true;
+}
 
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
-
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
-
-	mutable AutoSurface surface;
-
-	void generateSurface () const;
-};
-
-#endif // input_mouse_cursor_mousecursorattackH
+//------------------------------------------------------------------------------
+bool cMouseActionAttack::isSingleAction () const
+{
+	return false;
+}

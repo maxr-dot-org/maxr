@@ -17,38 +17,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#ifndef gui_game_widgets_mousemode_mousemodetypeH
+#define gui_game_widgets_mousemode_mousemodetypeH
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
-
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+enum class eMouseModeType
 {
-public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
-
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
-
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
-
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
-
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
-
-	mutable AutoSurface surface;
-
-	void generateSurface () const;
+	Default,
+	Attack,
+	SelectBuildPosition,
+	SelectBuildPathDestintaion,
+	Transfer,
+	Load,
+	SupplyAmmo,
+	Repair,
+	Activate,
+	Disable,
+	Steal,
+	Help
 };
 
-#endif // input_mouse_cursor_mousecursorattackH
+#endif // gui_game_widgets_mousemode_mousemodetypeH

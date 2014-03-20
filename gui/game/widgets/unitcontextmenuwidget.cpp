@@ -30,7 +30,7 @@ cUnitContextMenuWidget::cUnitContextMenuWidget () :
 {}
 
 //------------------------------------------------------------------------------
-void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mouseInputMode, const cPlayer* player, const cMap* dynamicMap)
+void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap)
 {
 	unit = unit_;
 	removeChildren ();
@@ -46,7 +46,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.canAttack && unit->data.shotsCur)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Attack_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::Attack);
+			button->setChecked (mouseInputMode == eMouseModeType::Attack);
 			button->toggled.connect ([&](){ attackToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
@@ -74,7 +74,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.storeResType != sUnitData::STORE_RES_NONE && unit->isUnitBuildingABuilding () == false && unit->isUnitClearing () == false)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Transfer_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::Transfer);
+			button->setChecked (mouseInputMode == eMouseModeType::Transfer);
 			button->toggled.connect ([&](){ transferToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
@@ -150,7 +150,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.storageUnitsMax > 0)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Load_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::Load);
+			button->setChecked (mouseInputMode == eMouseModeType::Load);
 			button->toggled.connect ([&](){ loadToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
@@ -205,7 +205,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.canRearm && unit->data.storageResCur >= 1)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Reload_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::SupplyAmmo);
+			button->setChecked (mouseInputMode == eMouseModeType::SupplyAmmo);
 			button->toggled.connect ([&](){ supplyAmmoToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
@@ -215,7 +215,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.canRepair && unit->data.storageResCur >= 1)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Repair_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::Repair);
+			button->setChecked (mouseInputMode == eMouseModeType::Repair);
 			button->toggled.connect ([&](){ repairToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
@@ -245,7 +245,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.canDisable && unit->data.shotsCur)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Disable_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::Disable);
+			button->setChecked (mouseInputMode == eMouseModeType::Disable);
 			button->toggled.connect ([&](){ sabotageToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());
@@ -255,7 +255,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eNewMouseInputMode mou
 		if (unit->data.canCapture && unit->data.shotsCur)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Steal_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
-			button->setChecked (mouseInputMode == eNewMouseInputMode::Steal);
+			button->setChecked (mouseInputMode == eMouseModeType::Steal);
 			button->toggled.connect ([&](){ stealToggled (); });
 			nextButtonPosition.y () += button->getSize ().y ();
 			area.add (button->getArea ());

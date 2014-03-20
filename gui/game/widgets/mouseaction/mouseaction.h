@@ -17,52 +17,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_unitcontextmenuwidgetH
-#define gui_game_widgets_unitcontextmenuwidgetH
+#ifndef gui_game_widgets_mouseaction_mouseactionH
+#define gui_game_widgets_mouseaction_mouseactionH
 
-#include "mousemode/mousemodetype.h"
-#include "../../widget.h"
-#include "../../../utility/signal/signal.h"
-
-class cUnit;
-class cPlayer;
+class cMouse;
 class cMap;
+class cPosition;
+class cGameMapWidget;
+class cUnitSelection;
 
-class cUnitContextMenuWidget : public cWidget
+class cMouseAction
 {
 public:
-	cUnitContextMenuWidget ();
+	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const = 0;
 
-	void setUnit (const cUnit* unit, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap);
-	const cUnit* getUnit ();
+	virtual bool doesChangeState () const = 0;
 
-	cSignal<void ()> attackToggled;
-	cSignal<void ()> buildClicked;
-	cSignal<void ()> distributeClicked;
-	cSignal<void ()> transferToggled;
-	cSignal<void ()> startClicked;
-	cSignal<void ()> autoToggled;
-	cSignal<void ()> stopClicked;
-	cSignal<void ()> removeClicked;
-	cSignal<void ()> manualFireToggled;
-	cSignal<void ()> sentryToggled;
-	cSignal<void ()> activateClicked;
-	cSignal<void ()> loadToggled;
-	cSignal<void ()> researchClicked;
-	cSignal<void ()> buyUpgradesClicked;
-	cSignal<void ()> upgradeThisClicked;
-	cSignal<void ()> upgradeAllClicked;
-	cSignal<void ()> selfDestroyClicked;
-	cSignal<void ()> supplyAmmoToggled;
-	cSignal<void ()> repairToggled;
-	cSignal<void ()> layMinesToggled;
-	cSignal<void ()> collectMinesToggled;
-	cSignal<void ()> sabotageToggled;
-	cSignal<void ()> stealToggled;
-	cSignal<void ()> infoClicked;
-	cSignal<void ()> doneClicked;
-private:
-	const cUnit* unit;
+	virtual bool isSingleAction () const = 0;
 };
 
-#endif // gui_game_widgets_unitcontextmenuwidgetH
+#endif // gui_game_widgets_mouseaction_mouseactionH

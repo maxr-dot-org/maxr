@@ -17,38 +17,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#include "mousemodeselectbuildpathdestination.h"
+#include "../mouseaction/mouseactionselectbuildpathdestination.h"
+#include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
-
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+//------------------------------------------------------------------------------
+eMouseModeType cMouseModeSelectBuildPathDestination::getType () const
 {
-public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	return eMouseModeType::SelectBuildPathDestintaion;
+}
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+//------------------------------------------------------------------------------
+void cMouseModeSelectBuildPathDestination::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+{
+	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
+}
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
-
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
-
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
-
-	mutable AutoSurface surface;
-
-	void generateSurface () const;
-};
-
-#endif // input_mouse_cursor_mousecursorattackH
+//------------------------------------------------------------------------------
+std::unique_ptr<cMouseAction> cMouseModeSelectBuildPathDestination::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+{
+	return std::make_unique<cMouseActionSelectBuildPathDestination> ();
+}

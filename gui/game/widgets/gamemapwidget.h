@@ -20,9 +20,9 @@
 #ifndef gui_game_widgets_gamemapwidgetH
 #define gui_game_widgets_gamemapwidgetH
 
+#include "mousemode/mousemodetype.h"
 #include "../unitselection.h"
 #include "../unitselectionbox.h"
-#include "../mouseinputmode.h"
 #include "../temp/unitdrawingengine.h"
 #include "../../menu/widgets/clickablewidget.h"
 #include "../../../maxrconfig.h"
@@ -37,26 +37,7 @@ class cPlayer;
 class cUnitSelection;
 class cUnitContextMenuWidget;
 class cFx;
-
-enum class eMouseClickAction
-{
-	SelectBuildPosition,
-	SelectBuildPathDestintaion,
-	Transfer,
-	Help,
-	Attack,
-	Disable,
-	Steal,
-	SupplyAmmo,
-	Repair,
-	Select,
-	Load,
-	ActivateStored,
-	ActivateFinished,
-	Move,
-	None,
-	Unknown
-};
+class cMouseMode;
 
 class cGameMapWidget : public cClickableWidget
 {
@@ -186,8 +167,7 @@ private:
 
 	cUnitContextMenuWidget* unitMenu;
 
-	eNewMouseInputMode mouseInputMode;
-	sID currentBuildUnitId;
+	std::unique_ptr<cMouseMode> mouseMode;
 
 	std::vector<std::shared_ptr<cFx>> effects;
 
@@ -235,9 +215,6 @@ private:
 	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
 	void drawBuildBand ();
 
-	void drawAttackCursor (const cPosition& position) const;
-	void drawCommandoCursor (const cPosition& position, const cVehicle& vehicle, bool steal) const;
-
 	void addEffect ();
 	//
 	// position handling methods
@@ -262,12 +239,8 @@ private:
 
 	void toggleUnitContextMenu (const cUnit* unit);
 
-	void setMouseInputMode (eNewMouseInputMode mouseInputMode);
-	void toggleMouseInputMode (eNewMouseInputMode mouseInputMode);
-
-	eMouseClickAction getMouseClickAction (const cMouse& mouse);
-
-	std::pair<bool, cPosition> findNextBuildPosition (const cPosition& sourcePosition, const cPosition& desiredPosition, const sID& unitId);
+	void setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode);
+	void toggleMouseInputMode (eMouseModeType mouseInputMode);
 };
 
 #endif // gui_game_widgets_gamemapwidgetH

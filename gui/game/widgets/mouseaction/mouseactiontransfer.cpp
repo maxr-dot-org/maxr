@@ -17,38 +17,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#include "mouseactiontransfer.h"
+#include "../gamemapwidget.h"
+#include "../../unitselection.h"
+#include "../../../../map.h"
+#include "../../../../unit.h"
+#include "../../../../vehicles.h"
+#include "../../../../buildings.h"
+#include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
-
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+//------------------------------------------------------------------------------
+bool cMouseActionTransfer::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
 {
-public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+	if (!selectedUnit) return false;
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
+	const auto& field = map.getField (mapPosition);
 
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
+	const auto overVehicle = field.getVehicle ();
+	const auto overBuilding = field.getBuilding ();
 
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
+	if (overVehicle)
+	{
+		gameMapWidget.triggeredTransfer (*selectedUnit, *overVehicle);
+	}
+	else if (overBuilding)
+	{
+		gameMapWidget.triggeredTransfer (*selectedUnit, *overBuilding);
+	}
+	else
+	{
+		return false;
+	}
 
-	mutable AutoSurface surface;
+	return true;
+}
 
-	void generateSurface () const;
-};
+//------------------------------------------------------------------------------
+bool cMouseActionTransfer::doesChangeState () const
+{
+	return true;
+}
 
-#endif // input_mouse_cursor_mousecursorattackH
+//------------------------------------------------------------------------------
+bool cMouseActionTransfer::isSingleAction () const
+{
+	return true;
+}

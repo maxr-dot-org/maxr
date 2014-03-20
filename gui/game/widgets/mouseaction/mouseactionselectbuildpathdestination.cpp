@@ -17,38 +17,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#include "mouseactionselectbuildpathdestination.h"
+#include "../gamemapwidget.h"
+#include "../../unitselection.h"
+#include "../../../../map.h"
+#include "../../../../vehicles.h"
+#include "../../../../input/mouse/mouse.h"
+#include "../../../../input/mouse/cursor/mousecursorsimple.h"
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
-
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+//------------------------------------------------------------------------------
+bool cMouseActionSelectBuildPathDestination::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
 {
-public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+	if (!selectedVehicle) return false;
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
+	cPosition destination;
+	if (mapPosition.x () == selectedVehicle->PosX || mapPosition.y () == selectedVehicle->PosY) destination = mapPosition;
+	else destination = cPosition (selectedVehicle->PosX, selectedVehicle->PosY);
 
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
+	gameMapWidget.selectedBuildPathDestination (*selectedVehicle, destination);
 
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
+	return true;
+}
 
-	mutable AutoSurface surface;
+//------------------------------------------------------------------------------
+bool cMouseActionSelectBuildPathDestination::doesChangeState () const
+{
+	return true;
+}
 
-	void generateSurface () const;
-};
-
-#endif // input_mouse_cursor_mousecursorattackH
+//------------------------------------------------------------------------------
+bool cMouseActionSelectBuildPathDestination::isSingleAction () const
+{
+	return true;
+}

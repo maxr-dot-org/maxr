@@ -21,6 +21,9 @@
 
 #include "../../../main.h"
 #include "../../../video.h"
+#include "../../../unit.h"
+#include "../../../map.h"
+#include "../../../attackjobs.h"
 #include "../../../utility/position.h"
 
 //------------------------------------------------------------------------------
@@ -28,6 +31,22 @@ cMouseCursorAttack::cMouseCursorAttack () :
 	currentHealthPercent (-1),
 	newHealthPercent (-1)
 {}
+
+//------------------------------------------------------------------------------
+cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map) :
+	currentHealthPercent (-1),
+	newHealthPercent (-1)
+{
+	const sUnitData& data = sourceUnit.data;
+	const cUnit* target = selectTarget (targetPosition.x (), targetPosition.y (), data.canAttack, map);
+
+	if (target && (target != &sourceUnit))
+	{
+		currentHealthPercent = 100 * target->data.hitpointsCur / target->data.hitpointsMax;
+		newHealthPercent = 100 * target->calcHealth (data.damage) / target->data.hitpointsMax;
+	}
+	assert (currentHealthPercent >= newHealthPercent);
+}
 
 //------------------------------------------------------------------------------
 cMouseCursorAttack::cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_) :

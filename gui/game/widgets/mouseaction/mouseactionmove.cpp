@@ -17,38 +17,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#include "mouseactionmove.h"
+#include "../gamemapwidget.h"
+#include "../../unitselection.h"
+#include "../../../../map.h"
+#include "../../../../vehicles.h"
+#include "../../../../input/mouse/mouse.h"
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
-
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+//------------------------------------------------------------------------------
+bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
 {
-public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+	if (selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
+	{
+		if (selectedVehicle->isUnitBuildingABuilding ())
+		{
+			gameMapWidget.triggeredEndBuilding (*unitSelection.getSelectedVehicle (), mapPosition);
+		}
+		else
+		{
+			if (unitSelection.getSelectedVehiclesCount () > 1) gameMapWidget.triggeredMoveGroup (unitSelection.getSelectedVehicles (), mapPosition);
+			else gameMapWidget.triggeredMoveSingle (*unitSelection.getSelectedVehicle (), mapPosition);
+		}
+		return true;
+	}
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
+	return false;
+}
 
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
+//------------------------------------------------------------------------------
+bool cMouseActionMove::doesChangeState () const
+{
+	return true;
+}
 
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
-
-	mutable AutoSurface surface;
-
-	void generateSurface () const;
-};
-
-#endif // input_mouse_cursor_mousecursorattackH
+//------------------------------------------------------------------------------
+bool cMouseActionMove::isSingleAction () const
+{
+	return false;
+}

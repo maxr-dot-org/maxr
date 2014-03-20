@@ -17,38 +17,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef input_mouse_cursor_mousecursorattackH
-#define input_mouse_cursor_mousecursorattackH
+#ifndef gui_game_widgets_mousemode_mousemodehelpH
+#define gui_game_widgets_mousemode_mousemodehelpH
 
-#include "mousecursor.h"
-#include "../../../maxrconfig.h"
-#include "../../../autosurface.h"
+#include "../../../../maxrconfig.h"
+#include "mousemode.h"
 
-class cUnit;
-class cPosition;
-class cMap;
-
-class cMouseCursorAttack : public cMouseCursor
+class cMouseModeHelp : public cMouseMode
 {
 public:
-	cMouseCursorAttack ();
-	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	virtual eMouseModeType getType () const MAXR_OVERRIDE_FUNCTION;
 
-	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
+	virtual void setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual cPosition getHotPoint () const MAXR_OVERRIDE_FUNCTION;
-
-protected:
-	virtual bool equal (const cMouseCursor& other) const MAXR_OVERRIDE_FUNCTION;
-
-private:
-	int currentHealthPercent;
-	int newHealthPercent;
-
-	mutable AutoSurface surface;
-
-	void generateSurface () const;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 };
 
-#endif // input_mouse_cursor_mousecursorattackH
+#endif // gui_game_widgets_mousemode_mousemodehelpH

@@ -17,52 +17,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_unitcontextmenuwidgetH
-#define gui_game_widgets_unitcontextmenuwidgetH
+#ifndef gui_game_widgets_mousemode_mousemoderepairH
+#define gui_game_widgets_mousemode_mousemoderepairH
 
-#include "mousemode/mousemodetype.h"
-#include "../../widget.h"
-#include "../../../utility/signal/signal.h"
+#include "../../../../maxrconfig.h"
+#include "mousemode.h"
 
-class cUnit;
-class cPlayer;
-class cMap;
-
-class cUnitContextMenuWidget : public cWidget
+class cMouseModeRepair : public cMouseMode
 {
 public:
-	cUnitContextMenuWidget ();
+	virtual eMouseModeType getType () const MAXR_OVERRIDE_FUNCTION;
 
-	void setUnit (const cUnit* unit, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap);
-	const cUnit* getUnit ();
+	virtual void setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 
-	cSignal<void ()> attackToggled;
-	cSignal<void ()> buildClicked;
-	cSignal<void ()> distributeClicked;
-	cSignal<void ()> transferToggled;
-	cSignal<void ()> startClicked;
-	cSignal<void ()> autoToggled;
-	cSignal<void ()> stopClicked;
-	cSignal<void ()> removeClicked;
-	cSignal<void ()> manualFireToggled;
-	cSignal<void ()> sentryToggled;
-	cSignal<void ()> activateClicked;
-	cSignal<void ()> loadToggled;
-	cSignal<void ()> researchClicked;
-	cSignal<void ()> buyUpgradesClicked;
-	cSignal<void ()> upgradeThisClicked;
-	cSignal<void ()> upgradeAllClicked;
-	cSignal<void ()> selfDestroyClicked;
-	cSignal<void ()> supplyAmmoToggled;
-	cSignal<void ()> repairToggled;
-	cSignal<void ()> layMinesToggled;
-	cSignal<void ()> collectMinesToggled;
-	cSignal<void ()> sabotageToggled;
-	cSignal<void ()> stealToggled;
-	cSignal<void ()> infoClicked;
-	cSignal<void ()> doneClicked;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+
 private:
-	const cUnit* unit;
+	bool canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const;
 };
 
-#endif // gui_game_widgets_unitcontextmenuwidgetH
+#endif // gui_game_widgets_mousemode_mousemoderepairH

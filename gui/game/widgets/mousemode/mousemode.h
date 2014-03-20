@@ -17,52 +17,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_unitcontextmenuwidgetH
-#define gui_game_widgets_unitcontextmenuwidgetH
+#ifndef gui_game_widgets_mousemode_mousemodeH
+#define gui_game_widgets_mousemode_mousemodeH
 
-#include "mousemode/mousemodetype.h"
-#include "../../widget.h"
-#include "../../../utility/signal/signal.h"
+#include <memory>
 
-class cUnit;
-class cPlayer;
+#include "mousemodetype.h"
+
+class cMouse;
 class cMap;
+class cPosition;
+class cGameMapWidget;
+class cUnitSelection;
+class cMouseAction;
+class cPlayer;
 
-class cUnitContextMenuWidget : public cWidget
+class cMouseMode
 {
 public:
-	cUnitContextMenuWidget ();
+	virtual eMouseModeType getType () const = 0;
 
-	void setUnit (const cUnit* unit, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap);
-	const cUnit* getUnit ();
+	virtual void setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const = 0;
 
-	cSignal<void ()> attackToggled;
-	cSignal<void ()> buildClicked;
-	cSignal<void ()> distributeClicked;
-	cSignal<void ()> transferToggled;
-	cSignal<void ()> startClicked;
-	cSignal<void ()> autoToggled;
-	cSignal<void ()> stopClicked;
-	cSignal<void ()> removeClicked;
-	cSignal<void ()> manualFireToggled;
-	cSignal<void ()> sentryToggled;
-	cSignal<void ()> activateClicked;
-	cSignal<void ()> loadToggled;
-	cSignal<void ()> researchClicked;
-	cSignal<void ()> buyUpgradesClicked;
-	cSignal<void ()> upgradeThisClicked;
-	cSignal<void ()> upgradeAllClicked;
-	cSignal<void ()> selfDestroyClicked;
-	cSignal<void ()> supplyAmmoToggled;
-	cSignal<void ()> repairToggled;
-	cSignal<void ()> layMinesToggled;
-	cSignal<void ()> collectMinesToggled;
-	cSignal<void ()> sabotageToggled;
-	cSignal<void ()> stealToggled;
-	cSignal<void ()> infoClicked;
-	cSignal<void ()> doneClicked;
-private:
-	const cUnit* unit;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const = 0;
 };
 
-#endif // gui_game_widgets_unitcontextmenuwidgetH
+#endif // gui_game_widgets_mousemode_mousemodeH
