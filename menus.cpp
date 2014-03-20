@@ -2554,6 +2554,8 @@ void cLandingMenu::handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& messag
 
 	if (landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
 	else if (landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
+	canClick = landingState == LANDING_POSITION_TOO_CLOSE
+		|| landingState == LANDING_POSITION_WARNING;
 
 	draw();
 	mouseMoved (this); // update cursor
