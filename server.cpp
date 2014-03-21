@@ -940,19 +940,19 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 			{
 				case sUnitData::STORE_RES_METAL:
 				{
-					if (SrcBuilding->SubBase->Metal - iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal - iTranfer < 0) bBreakSwitch = true;
+					if (SrcBuilding->SubBase->getMetal () - iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->getMetal () - iTranfer < 0) bBreakSwitch = true;
 					if (!bBreakSwitch) SrcBuilding->SubBase->addMetal (*this, -iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_OIL:
 				{
-					if (SrcBuilding->SubBase->Oil - iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil - iTranfer < 0) bBreakSwitch = true;
+					if (SrcBuilding->SubBase->getOil () - iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->getOil () - iTranfer < 0) bBreakSwitch = true;
 					if (!bBreakSwitch) SrcBuilding->SubBase->addOil (*this, -iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_GOLD:
 				{
-					if (SrcBuilding->SubBase->Gold - iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold - iTranfer < 0) bBreakSwitch = true;
+					if (SrcBuilding->SubBase->getGold () - iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->getGold () - iTranfer < 0) bBreakSwitch = true;
 					if (!bBreakSwitch) SrcBuilding->SubBase->addGold (*this, -iTranfer);
 				}
 				break;
@@ -974,19 +974,19 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 			{
 				case sUnitData::STORE_RES_METAL:
 				{
-					if (DestBuilding->SubBase->Metal + iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->Metal + iTranfer < 0) bBreakSwitch = true;
+					if (DestBuilding->SubBase->getMetal () + iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->getMetal () + iTranfer < 0) bBreakSwitch = true;
 					if (!bBreakSwitch) DestBuilding->SubBase->addMetal (*this, iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_OIL:
 				{
-					if (DestBuilding->SubBase->Oil + iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->Oil + iTranfer < 0) bBreakSwitch = true;
+					if (DestBuilding->SubBase->getOil () + iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->getOil () + iTranfer < 0) bBreakSwitch = true;
 					if (!bBreakSwitch) DestBuilding->SubBase->addOil (*this, iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_GOLD:
 				{
-					if (DestBuilding->SubBase->Gold + iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->Gold + iTranfer < 0) bBreakSwitch = true;
+					if (DestBuilding->SubBase->getGold () + iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->getGold () + iTranfer < 0) bBreakSwitch = true;
 					if (!bBreakSwitch) DestBuilding->SubBase->addGold (*this, iTranfer);
 				}
 				break;
@@ -1351,7 +1351,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		// do the supply
 		if (iType == SUPPLY_TYPE_REARM)
 		{
-			if (SrcBuilding->SubBase->Metal < 1) return;
+			if (SrcBuilding->SubBase->getMetal () < 1) return;
 			SrcBuilding->SubBase->addMetal (*this, -1);
 			iValue = DestVehicle->data.ammoMax;
 		}
@@ -1359,7 +1359,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		{
 			// reduce cargo for repair and calculate maximal repair value
 			iValue = DestVehicle->data.getHitpoints ();
-			while (SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.hitpointsMax)
+			while (SrcBuilding->SubBase->getMetal () > 0 && iValue < DestVehicle->data.hitpointsMax)
 			{
 				iValue += Round (((float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
 				SrcBuilding->SubBase->addMetal (*this, -1);
@@ -1410,7 +1410,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 		return;
 
 	int totalCosts = 0;
-	const int availableMetal = storingBuilding->SubBase->Metal;
+	const int availableMetal = storingBuilding->SubBase->getMetal ();
 
 	std::vector<cVehicle*> upgradedVehicles;
 	for (size_t i = 0; i != storingBuilding->storedUnits.size(); ++i)
@@ -1785,7 +1785,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 	if (player == 0)
 		return;
 
-	const int availableMetal = building->SubBase->Metal;
+	const int availableMetal = building->SubBase->getMetal ();
 
 	const sUnitData& upgradedVersion = *player->getUnitDataCurrentVersion (building->data.ID);
 	if (building->data.getVersion () >= upgradedVersion.getVersion ())

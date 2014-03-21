@@ -79,7 +79,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	using namespace std::placeholders;
 
 	signalConnectionManager.connect (hud->preferencesClicked, std::bind (&cNewGameGUI::showPreferencesDialog, this));
-	signalConnectionManager.connect (hud->filesClicked, std::bind (&cNewGameGUI::showFilesMenu, this));
+	signalConnectionManager.connect (hud->filesClicked, std::bind (&cNewGameGUI::showFilesWindow, this));
 
 	signalConnectionManager.connect (hud->zoomChanged, [&](){ gameMap->setZoomFactor (hud->getZoomFactor (), true); });
 
@@ -100,13 +100,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 		if (selectedUnit) gameMap->centerAt (cPosition (selectedUnit->PosX, selectedUnit->PosY));
 	});
 
-	signalConnectionManager.connect (hud->reportsClicked, [&]()
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		auto reportsWindow = application->show (std::make_shared<cWindowReports> ());
-	});
+	signalConnectionManager.connect (hud->reportsClicked, std::bind (&cNewGameGUI::showReportsWindow, this));
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [&](){ miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly ()); });
@@ -119,228 +113,24 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
 
-
-	signalConnectionManager.connect (gameMap->triggeredUnitHelp, [&](const cUnit& unit)
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		application->show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.owner));
-	});
-	signalConnectionManager.connect (gameMap->triggeredTransfer, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		auto transferDialog = application->show (std::make_shared<cNewDialogTransfer> (sourceUnit, destinationUnit));
-		transferDialog->done.connect ([&,transferDialog]()
-		{
-			transferTriggered (sourceUnit, destinationUnit, transferDialog->getTransferValue (), transferDialog->getResourceType ());
-			transferDialog->close ();
-		});
-	});
+	signalConnectionManager.connect (gameMap->triggeredUnitHelp, std::bind (&cNewGameGUI::showUnitHelpWindow, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredTransfer, std::bind (&cNewGameGUI::showUnitTransferDialog, this, _1, _2));
 	signalConnectionManager.connect (gameMap->triggeredBuild, [&](const cUnit& unit)
 	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
 		if (unit.isAVehicle ())
 		{
-			const auto& vehicle = static_cast<const cVehicle&>(unit);
-
-			auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle));
-
-			buildWindow->done.connect ([&, buildWindow]()
-			{
-				if (buildWindow->getSelectedUnitId ())
-				{
-					if (buildWindow->getSelectedUnitId ()->getUnitDataOriginalVersion ()->isBig)
-					{
-						gameMap->startFindBuildPosition (*buildWindow->getSelectedUnitId ());
-						auto buildType = *buildWindow->getSelectedUnitId ();
-						auto buildSpeed = buildWindow->getSelectedBuildSpeed ();
-
-						buildPositionSelectionConnectionManager.disconnectAll ();
-						buildPositionSelectionConnectionManager.connect (gameMap->selectedBuildPosition, [&, buildType, buildSpeed](const cVehicle& selectedVehicle, const cPosition& destination)
-						{
-							assert (&vehicle == &selectedVehicle);
-							buildBuildingTriggered (vehicle, destination, buildType, buildSpeed);
-						});
-					}
-					else
-					{
-						buildBuildingTriggered (vehicle, cPosition(vehicle.PosX, vehicle.PosY), *buildWindow->getSelectedUnitId (), buildWindow->getSelectedBuildSpeed ());
-					}
-				}
-				buildWindow->close ();
-			});
-			buildWindow->donePath.connect ([&, buildWindow]()
-			{
-				if (buildWindow->getSelectedUnitId ())
-				{
-					gameMap->startFindPathBuildPosition ();
-					auto buildType = *buildWindow->getSelectedUnitId ();
-					auto buildSpeed = buildWindow->getSelectedBuildSpeed ();
-
-					buildPositionSelectionConnectionManager.disconnectAll ();
-					buildPositionSelectionConnectionManager.connect (gameMap->selectedBuildPathDestination, [&, buildType, buildSpeed](const cVehicle& selectedVehicle, const cPosition& destination)
-					{
-						assert (&vehicle == &selectedVehicle);
-						buildBuildingPathTriggered (vehicle, destination, buildType, buildSpeed);
-					});
-				}
-				buildWindow->close ();
-			});
+			showBuildBuildingsWindow (static_cast<const cVehicle&>(unit));
 		}
 		else if (unit.isABuilding ())
 		{
-			if (!dynamicMap) return;
-
-			const auto& building = static_cast<const cBuilding&>(unit);
-
-			auto buildWindow = application->show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap));
-
-			buildWindow->done.connect ([&, buildWindow]()
-			{
-				buildVehiclesTriggered (building, buildWindow->getBuildList (), buildWindow->getSelectedBuildSpeed(), buildWindow->isRepeatActive());
-				buildWindow->close ();
-			});
+			showBuildVehiclesWindow (static_cast<const cBuilding&>(unit));
 		}
 	});
-	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, [&](const cUnit& unit)
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> ());
-	});
-	signalConnectionManager.connect (gameMap->triggeredResearchMenu, [&](const cUnit& unit)
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		auto researchDialog = application->show (std::make_shared<cDialogResearch> ());
-	});
-	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, [&](const cUnit& unit)
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> ());
-	});
-	signalConnectionManager.connect (gameMap->triggeredActivate, [&](const cUnit& unit)
-	{
-		auto application = getActiveApplication ();
-		if (!application) return;
-
-		auto storageWindow = application->show (std::make_shared<cWindowStorage> (unit));
-		storageWindow->activate.connect ([&, storageWindow](size_t index)
-		{
-			if (unit.isAVehicle () && unit.data.factorAir > 0)
-			{
-				activateAtTriggered (unit, index, cPosition(unit.PosX, unit.PosY));
-			}
-			else
-			{
-				gameMap->startActivateVehicle (unit, index);
-			}
-			storageWindow->close ();
-		});
-		storageWindow->reload.connect ([&](size_t index)
-		{
-			reloadTriggered (unit, *unit.storedUnits[index]);
-		});
-		storageWindow->repair.connect ([&](size_t index)
-		{
-			repairTriggered (unit, *unit.storedUnits[index]);
-		});
-		storageWindow->upgrade.connect ([&](size_t index)
-		{
-			upgradeTriggered (unit, index);
-		});
-		storageWindow->activateAll.connect ([&, storageWindow]()
-		{
-			if (dynamicMap)
-			{
-				std::array<bool, 16> hasCheckedPlace;
-				hasCheckedPlace.fill (false);
-
-				for (size_t i = 0; i < unit.storedUnits.size (); ++i)
-				{
-					const auto& storedUnit = *unit.storedUnits[i];
-
-					bool activated = false;
-					for (int ypos = unit.PosY - 1, poscount = 0; ypos <= unit.PosY + (unit.data.isBig ? 2 : 1); ypos++)
-					{
-						if (ypos < 0 || ypos >= dynamicMap->getSize ()) continue;
-						for (int xpos = unit.PosX - 1; xpos <= unit.PosX + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
-						{
-							if (hasCheckedPlace[poscount]) continue;
-
-							if (xpos < 0 || xpos >= dynamicMap->getSize ()) continue;
-
-							if (((ypos == unit.PosY && unit.data.factorAir == 0) || (ypos == unit.PosY + 1 && unit.data.isBig)) &&
-								((xpos == unit.PosX && unit.data.factorAir == 0) || (xpos == unit.PosX + 1 && unit.data.isBig))) continue;
-
-							if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.data))
-							{
-								activateAtTriggered (unit, i, cPosition (xpos, ypos));
-								hasCheckedPlace[poscount] = true;
-								activated = true;
-								break;
-							}
-						}
-						if (activated) break;
-					}
-				}
-			}
-
-			storageWindow->close ();
-		});
-		storageWindow->reloadAll.connect ([&, storageWindow]()
-		{
-			if (!unit.isABuilding ()) return;
-			auto remainingResources = static_cast<const cBuilding&>(unit).SubBase->Metal;
-			for (size_t i = 0; i < unit.storedUnits.size () && remainingResources > 0; ++i)
-			{
-				const auto& storedUnit = *unit.storedUnits[i];
-
-				if (storedUnit.data.getAmmo () < storedUnit.data.ammoMax)
-				{
-					reloadTriggered (unit, storedUnit);
-					remainingResources--;
-				}
-			}
-		});
-		storageWindow->repairAll.connect ([&, storageWindow]()
-		{
-			if (!unit.isABuilding ()) return;
-			auto remainingResources = static_cast<const cBuilding&>(unit).SubBase->Metal;
-			for (size_t i = 0; i < unit.storedUnits.size () && remainingResources > 0; ++i)
-			{
-				const auto& storedUnit = *unit.storedUnits[i];
-
-				if (storedUnit.data.getHitpoints () < storedUnit.data.hitpointsMax)
-				{
-					repairTriggered (unit, storedUnit);
-					auto value = storedUnit.data.getHitpoints ();
-					while (value < storedUnit.data.hitpointsMax && remainingResources > 0)
-					{
-						value += Round (((float)storedUnit.data.hitpointsMax / storedUnit.data.buildCosts) * 4);
-						remainingResources--;
-					}
-				}
-			}
-		});
-		storageWindow->upgradeAll.connect ([&, storageWindow]()
-		{
-			upgradeAllTriggered (unit);
-		});
-	});
-	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, [&](const cUnit& unit)
-	{
-		//building->executeSelfDestroyCommand (*this);
-	});
+	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, std::bind (&cNewGameGUI::showResourceDistributionDialog, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredResearchMenu, std::bind (&cNewGameGUI::showResearchDialog, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, std::bind (&cNewGameGUI::showUpgradesWindow, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredActivate, std::bind (&cNewGameGUI::showStorageWindow, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, std::bind (&cNewGameGUI::showSelfDestroyDialog, this, _1));
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
 
@@ -1123,7 +913,7 @@ void cNewGameGUI::resetMiniMapViewWindow ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showFilesMenu ()
+void cNewGameGUI::showFilesWindow ()
 {
 
 }
@@ -1135,6 +925,248 @@ void cNewGameGUI::showPreferencesDialog ()
 	if (!application) return;
 
 	application->show (std::make_shared<cDialogNewPreferences> ());
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showReportsWindow ()
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto reportsWindow = application->show (std::make_shared<cWindowReports> ());
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showUnitHelpWindow (const cUnit& unit)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	application->show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.owner));
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto transferDialog = application->show (std::make_shared<cNewDialogTransfer> (sourceUnit, destinationUnit));
+	transferDialog->done.connect ([&, transferDialog]()
+	{
+		transferTriggered (sourceUnit, destinationUnit, transferDialog->getTransferValue (), transferDialog->getResourceType ());
+		transferDialog->close ();
+	});
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showBuildBuildingsWindow (const cVehicle& vehicle)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle));
+
+	buildWindow->done.connect ([&, buildWindow]()
+	{
+		if (buildWindow->getSelectedUnitId ())
+		{
+			if (buildWindow->getSelectedUnitId ()->getUnitDataOriginalVersion ()->isBig)
+			{
+				gameMap->startFindBuildPosition (*buildWindow->getSelectedUnitId ());
+				auto buildType = *buildWindow->getSelectedUnitId ();
+				auto buildSpeed = buildWindow->getSelectedBuildSpeed ();
+
+				buildPositionSelectionConnectionManager.disconnectAll ();
+				buildPositionSelectionConnectionManager.connect (gameMap->selectedBuildPosition, [this, buildType, buildSpeed](const cVehicle& selectedVehicle, const cPosition& destination)
+				{
+					buildBuildingTriggered (selectedVehicle, destination, buildType, buildSpeed);
+				});
+			}
+			else
+			{
+				buildBuildingTriggered (vehicle, cPosition (vehicle.PosX, vehicle.PosY), *buildWindow->getSelectedUnitId (), buildWindow->getSelectedBuildSpeed ());
+			}
+		}
+		buildWindow->close ();
+	});
+	buildWindow->donePath.connect ([&, buildWindow]()
+	{
+		if (buildWindow->getSelectedUnitId ())
+		{
+			gameMap->startFindPathBuildPosition ();
+			auto buildType = *buildWindow->getSelectedUnitId ();
+			auto buildSpeed = buildWindow->getSelectedBuildSpeed ();
+
+			buildPositionSelectionConnectionManager.disconnectAll ();
+			buildPositionSelectionConnectionManager.connect (gameMap->selectedBuildPathDestination, [this, buildType, buildSpeed](const cVehicle& selectedVehicle, const cPosition& destination)
+			{
+				buildBuildingPathTriggered (selectedVehicle, destination, buildType, buildSpeed);
+			});
+		}
+		buildWindow->close ();
+	});
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showBuildVehiclesWindow (const cBuilding& building)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	if (!dynamicMap) return;
+
+	auto buildWindow = application->show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap));
+
+	buildWindow->done.connect ([&, buildWindow]()
+	{
+		buildVehiclesTriggered (building, buildWindow->getBuildList (), buildWindow->getSelectedBuildSpeed (), buildWindow->isRepeatActive ());
+		buildWindow->close ();
+	});
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showResourceDistributionDialog (const cUnit& unit)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> ());
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showResearchDialog (const cUnit& unit)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto researchDialog = application->show (std::make_shared<cDialogResearch> ());
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showUpgradesWindow (const cUnit& unit)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> ());
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showStorageWindow (const cUnit& unit)
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	auto storageWindow = application->show (std::make_shared<cWindowStorage> (unit));
+	storageWindow->activate.connect ([&, storageWindow](size_t index)
+	{
+		if (unit.isAVehicle () && unit.data.factorAir > 0)
+		{
+			activateAtTriggered (unit, index, cPosition (unit.PosX, unit.PosY));
+		}
+		else
+		{
+			gameMap->startActivateVehicle (unit, index);
+		}
+		storageWindow->close ();
+	});
+	storageWindow->reload.connect ([&](size_t index)
+	{
+		reloadTriggered (unit, *unit.storedUnits[index]);
+	});
+	storageWindow->repair.connect ([&](size_t index)
+	{
+		repairTriggered (unit, *unit.storedUnits[index]);
+	});
+	storageWindow->upgrade.connect ([&](size_t index)
+	{
+		upgradeTriggered (unit, index);
+	});
+	storageWindow->activateAll.connect ([&, storageWindow]()
+	{
+		if (dynamicMap)
+		{
+			std::array<bool, 16> hasCheckedPlace;
+			hasCheckedPlace.fill (false);
+
+			for (size_t i = 0; i < unit.storedUnits.size (); ++i)
+			{
+				const auto& storedUnit = *unit.storedUnits[i];
+
+				bool activated = false;
+				for (int ypos = unit.PosY - 1, poscount = 0; ypos <= unit.PosY + (unit.data.isBig ? 2 : 1); ypos++)
+				{
+					if (ypos < 0 || ypos >= dynamicMap->getSize ()) continue;
+					for (int xpos = unit.PosX - 1; xpos <= unit.PosX + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
+					{
+						if (hasCheckedPlace[poscount]) continue;
+
+						if (xpos < 0 || xpos >= dynamicMap->getSize ()) continue;
+
+						if (((ypos == unit.PosY && unit.data.factorAir == 0) || (ypos == unit.PosY + 1 && unit.data.isBig)) &&
+							((xpos == unit.PosX && unit.data.factorAir == 0) || (xpos == unit.PosX + 1 && unit.data.isBig))) continue;
+
+						if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.data))
+						{
+							activateAtTriggered (unit, i, cPosition (xpos, ypos));
+							hasCheckedPlace[poscount] = true;
+							activated = true;
+							break;
+						}
+					}
+					if (activated) break;
+				}
+			}
+		}
+
+		storageWindow->close ();
+	});
+	storageWindow->reloadAll.connect ([&, storageWindow]()
+	{
+		if (!unit.isABuilding ()) return;
+		auto remainingResources = static_cast<const cBuilding&>(unit).SubBase->getMetal ();
+		for (size_t i = 0; i < unit.storedUnits.size () && remainingResources > 0; ++i)
+		{
+			const auto& storedUnit = *unit.storedUnits[i];
+
+			if (storedUnit.data.getAmmo () < storedUnit.data.ammoMax)
+			{
+				reloadTriggered (unit, storedUnit);
+				remainingResources--;
+			}
+		}
+	});
+	storageWindow->repairAll.connect ([&, storageWindow]()
+	{
+		if (!unit.isABuilding ()) return;
+		auto remainingResources = static_cast<const cBuilding&>(unit).SubBase->getMetal ();
+		for (size_t i = 0; i < unit.storedUnits.size () && remainingResources > 0; ++i)
+		{
+			const auto& storedUnit = *unit.storedUnits[i];
+
+			if (storedUnit.data.getHitpoints () < storedUnit.data.hitpointsMax)
+			{
+				repairTriggered (unit, storedUnit);
+				auto value = storedUnit.data.getHitpoints ();
+				while (value < storedUnit.data.hitpointsMax && remainingResources > 0)
+				{
+					value += Round (((float)storedUnit.data.hitpointsMax / storedUnit.data.buildCosts) * 4);
+					remainingResources--;
+				}
+			}
+		}
+	});
+	storageWindow->upgradeAll.connect ([&, storageWindow]()
+	{
+		upgradeAllTriggered (unit);
+	});
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::showSelfDestroyDialog (const cUnit& unit)
+{
+	//building->executeSelfDestroyCommand (*this);
 }
 
 //------------------------------------------------------------------------------

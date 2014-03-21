@@ -4708,7 +4708,7 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 	canStoreShips = unitData.storeUnitsImageType == sUnitData::STORE_UNIT_IMG_SHIP;
 	canRepairReloadUpgrade = ownerBuilding != NULL;
 
-	metalValue = ownerBuilding ? subBase->Metal : 0;
+	metalValue = ownerBuilding ? subBase->getMetal () : 0;
 
 	if (!canStorePlanes)
 	{
@@ -4868,7 +4868,7 @@ void cStorageMenu::resetInfos()
 
 	if (ownerBuilding)
 	{
-		metalValue = ownerBuilding->SubBase->Metal;
+		metalValue = ownerBuilding->SubBase->getMetal ();
 		metalBar->setCurrentValue (metalValue);
 	}
 
@@ -5115,7 +5115,7 @@ cMineManagerMenu::cMineManagerMenu (const cClient& client_, cBuilding* building_
 	cMenu (LoadPCX (GFXOD_MINEMANAGER), MNU_BG_ALPHA),
 	client (&client_),
 	building (building_),
-	subBase (*building_->SubBase)
+	subBase (building_->SubBase->owner) // FIXME: copy?!
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Title~Mine"));
 	titleLabel->setCentered (true);
@@ -5191,7 +5191,7 @@ void cMineManagerMenu::setBarValues()
 	metalBars[1]->setMaximalValue (subBase.MaxMetalNeed);
 	metalBars[1]->setCurrentValue (subBase.MetalNeed);
 	metalBars[2]->setMaximalValue (subBase.MaxMetal);
-	metalBars[2]->setCurrentValue (subBase.Metal);
+	metalBars[2]->setCurrentValue (subBase.getMetal ());
 	if (subBase.getMaxMetalProd() == 0)
 	{
 		noneBars[0]->setMaximalValue (1);
@@ -5208,7 +5208,7 @@ void cMineManagerMenu::setBarValues()
 	oilBars[1]->setMaximalValue (subBase.MaxOilNeed);
 	oilBars[1]->setCurrentValue (subBase.OilNeed);
 	oilBars[2]->setMaximalValue (subBase.MaxOil);
-	oilBars[2]->setCurrentValue (subBase.Oil);
+	oilBars[2]->setCurrentValue (subBase.getOil ());
 	if (subBase.getMaxOilProd() == 0)
 	{
 		noneBars[1]->setMaximalValue (1);
@@ -5225,7 +5225,7 @@ void cMineManagerMenu::setBarValues()
 	goldBars[1]->setMaximalValue (subBase.MaxGoldNeed);
 	goldBars[1]->setCurrentValue (subBase.GoldNeed);
 	goldBars[2]->setMaximalValue (subBase.MaxGold);
-	goldBars[2]->setCurrentValue (subBase.Gold);
+	goldBars[2]->setCurrentValue (subBase.getGold ());
 	if (subBase.getMaxGoldProd() == 0)
 	{
 		noneBars[2]->setMaximalValue (1);
@@ -5243,15 +5243,15 @@ void cMineManagerMenu::setBarLabels()
 {
 	metalBarLabels[0]->setText (iToStr (subBase.getMetalProd()));
 	metalBarLabels[1]->setText (secondBarText (subBase.getMetalProd(), subBase.MetalNeed));
-	metalBarLabels[2]->setText (iToStr (subBase.Metal));
+	metalBarLabels[2]->setText (iToStr (subBase.getMetal ()));
 
 	oilBarLabels[0]->setText (iToStr (subBase.getOilProd()));
 	oilBarLabels[1]->setText (secondBarText (subBase.getOilProd(), subBase.OilNeed));
-	oilBarLabels[2]->setText (iToStr (subBase.Oil));
+	oilBarLabels[2]->setText (iToStr (subBase.getOil ()));
 
 	goldBarLabels[0]->setText (iToStr (subBase.getGoldProd()));
 	goldBarLabels[1]->setText (secondBarText (subBase.getGoldProd(), subBase.GoldNeed));
-	goldBarLabels[2]->setText (iToStr (subBase.Gold));
+	goldBarLabels[2]->setText (iToStr (subBase.getGold ()));
 }
 
 //------------------------------------------------------------------------------

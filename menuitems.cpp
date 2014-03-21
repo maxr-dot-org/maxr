@@ -1964,18 +1964,18 @@ void cMenuUnitDetails::draw()
 				{
 					case sUnitData::STORE_RES_METAL:
 						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
-						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Metal, building->SubBase->MaxMetal);
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, building->SubBase->Metal, building->SubBase->MaxMetal);
+						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->getMetal (), building->SubBase->MaxMetal);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, building->SubBase->getMetal (), building->SubBase->MaxMetal);
 						break;
 					case sUnitData::STORE_RES_OIL:
 						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data.storageResCur, data.storageResMax);
-						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Oil, building->SubBase->MaxOil);
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, building->SubBase->Oil, building->SubBase->MaxOil);
+						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->getOil (), building->SubBase->MaxOil);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, building->SubBase->getOil (), building->SubBase->MaxOil);
 						break;
 					case sUnitData::STORE_RES_GOLD:
 						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, data.storageResCur, data.storageResMax);
-						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Gold, building->SubBase->MaxGold);
-						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 28, 70, building->SubBase->Gold, building->SubBase->MaxGold);
+						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->getGold (), building->SubBase->MaxGold);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 28, 70, building->SubBase->getGold (), building->SubBase->MaxGold);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;

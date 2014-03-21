@@ -17,46 +17,44 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_unitdetailshudH
-#define gui_game_widgets_unitdetailshudH
+#ifndef gui_game_widgets_unitdetailsstoredH
+#define gui_game_widgets_unitdetailsstoredH
 
 #include <array>
 
 #include "../../widget.h"
 
 #include "../../menu/widgets/special/unitdatasymboltype.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
 
 class cLabel;
 class cUnit;
 class cPlayer;
 
-class cUnitDetailsHud : public cWidget
+class cUnitDetailsStored : public cWidget
 {
 public:
-	explicit cUnitDetailsHud (const cBox<cPosition>& area);
+	explicit cUnitDetailsStored (const cBox<cPosition>& area);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-	void setUnit (const cUnit* unit, const cPlayer* player = nullptr);
-
-	// TODO: find nice place for these functions
-	static void drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
-	static cBox<cPosition> getSmallSymbolPosition (eUnitDataSymbolType symbolType);
+	void setUnit (const cUnit* unit);
 private:
+	cSignalConnectionManager unitSignalConnectionManager;
+
 	AutoSurface surface;
 
 	void reset ();
 
 	void drawRow (size_t index, eUnitDataSymbolType symbolType, int amount, int maximalAmount, const std::string& name);
 
-	static const size_t maxRows = 4;
-	static const int rowHeight = 12;
+	static const size_t maxRows = 2;
+	static const int rowHeight = 15;
 
 	std::array<cLabel*, maxRows> amountLabels;
 	std::array<cLabel*, maxRows> nameLabels;
 
 	const cUnit* unit;
-	const cPlayer* player;
 };
 
-#endif // gui_game_widgets_unitdetailshudH
+#endif // gui_game_widgets_unitdetailsstoredH

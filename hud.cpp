@@ -2911,13 +2911,13 @@ void cGameGUI::drawTopBuildings_DebugBaseClient (const cBuilding& building, cons
 	// and then cut this to Unit32 again.
 	SDL_FillRect (cVideo::buffer, &tmp, (Uint32) (long long) (sb));
 	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
-	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
+	string sTmp = "m " + iToStr (sb->getMetal ()) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd () - sb->MetalNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
 
-	sTmp = "o " + iToStr (sb->Oil) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd() - sb->OilNeed);
+	sTmp = "o " + iToStr (sb->getOil ()) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd () - sb->OilNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 16, sTmp, FONT_LATIN_SMALL_WHITE);
 
-	sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
+	sTmp = "g " + iToStr (sb->getGold ()) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd () - sb->GoldNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
 }
 
@@ -2936,13 +2936,13 @@ void cGameGUI::drawTopBuildings_DebugBaseServer (const cBuilding& building, cons
 	// and then cut this to Unit32 again.
 	SDL_FillRect (cVideo::buffer, &tmp, (Uint32) (long long) (sb));
 	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
-	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
+	string sTmp = "m " + iToStr (sb->getMetal ()) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd () - sb->MetalNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
 
-	sTmp = "o " + iToStr (sb->Oil) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd() - sb->OilNeed);
+	sTmp = "o " + iToStr (sb->getOil ()) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd () - sb->OilNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 16, sTmp, FONT_LATIN_SMALL_WHITE);
 
-	sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
+	sTmp = "g " + iToStr (sb->getGold ()) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd () - sb->GoldNeed);
 	font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
 }
 

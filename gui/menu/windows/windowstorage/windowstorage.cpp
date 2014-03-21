@@ -30,6 +30,7 @@
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/image.h"
 #include "../../widgets/special/resourcebar.h"
+#include "../../../game/widgets/unitdetailsstored.h"
 
 //------------------------------------------------------------------------------
 cWindowStorage::cWindowStorage (const cUnit& unit_) :
@@ -78,16 +79,27 @@ cWindowStorage::cWindowStorage (const cUnit& unit_) :
 			unitNames[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition () + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), ""));
 			unitNames[index]->setWordWrap (true);
 
-			//unitInfo[index] = new cMenuStoredUnitDetails (position.x + startX + 17 + x * xStepImage, position.y + 143 + y * 236);
+			unitDetails[index] = addChild (std::make_unique<cUnitDetailsStored> (cBox<cPosition> (getPosition () + cPosition (17 + x * stepImageX, 145 + y * 236), getPosition () + cPosition (17 + x * stepImageX + 130, 145 + y * 236 + 40))));
 		}
 	}
 
 	//
 	// Metal Bar
 	//
-	const auto metalValue = unit.isABuilding() ? static_cast<const cBuilding&>(unit).SubBase->Metal : 0;
+	auto metalValue = 0;
+	if (unit.isABuilding ())
+	{
+		const auto& building = static_cast<const cBuilding&>(unit);
 
-	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (536, 80), getPosition () + cPosition (536 + 40, 80 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		metalValue = building.SubBase->getMetal ();
+
+		signalConnectionManager.connect (building.SubBase->metalChanged, [&]()
+		{
+			metalBar->setValue (building.SubBase->getMetal ());
+		});
+	}
+
+	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (536, 85), getPosition () + cPosition (536 + 40, 85 + 10)), iToStr (metalValue), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	metalBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition () + cPosition (546, 106), getPosition () + cPosition (546 + 20, 106 + 115)), 0, metalValue, eResourceBarType::Metal, eOrientationType::Vertical));
 	signalConnectionManager.connect (metalBar->valueChanged, [&](){ metalBarAmountLabel->setText (iToStr (metalBar->getValue ())); });
 	metalBar->disable ();
@@ -122,29 +134,16 @@ cWindowStorage::cWindowStorage (const cUnit& unit_) :
 }
 
 //------------------------------------------------------------------------------
-void cWindowStorage::updateUnitWidgets (const cVehicle& unit, size_t positionIndex)
+void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t positionIndex)
 {
-	std::string name = unit.getDisplayName ();
-
-	const auto& upgraded = *unit.owner->getUnitDataCurrentVersion (unit.data.ID);
-	if (unit.data.getVersion () != upgraded.getVersion ())
-	{
-		name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
-	}
-	unitNames[positionIndex]->setText (name);
-
-	AutoSurface surface (SDL_CreateRGBSurface (0, unit.uiData->storage->w, unit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (unit.uiData->storage, NULL, surface, NULL);
-	unitImages[positionIndex]->setImage (surface.Release ());
-
-	//unitInfo[pos]->setUnitData (&vehicle->data);
+	const auto& upgraded = *storedUnit.owner->getUnitDataCurrentVersion (unit.data.ID);
 
 	activateButtons[positionIndex]->unlock ();
-	if (unit.data.getAmmo () != unit.data.ammoMax && metalBar->getValue () >= 1) reloadButtons[positionIndex]->unlock ();
+	if (storedUnit.data.getAmmo () != storedUnit.data.ammoMax && metalBar->getValue () >= 1) reloadButtons[positionIndex]->unlock ();
 	else reloadButtons[positionIndex]->lock ();
-	if (unit.data.getHitpoints () != unit.data.hitpointsMax && metalBar->getValue () >= 1) repairButtons[positionIndex]->unlock ();
+	if (storedUnit.data.getHitpoints () != storedUnit.data.hitpointsMax && metalBar->getValue () >= 1) repairButtons[positionIndex]->unlock ();
 	else repairButtons[positionIndex]->lock ();
-	if (unit.data.getVersion () != upgraded.getVersion () && metalBar->getValue () >= 1) upgradeButtons[positionIndex]->unlock ();
+	if (storedUnit.data.getVersion () != upgraded.getVersion () && metalBar->getValue () >= 1) upgradeButtons[positionIndex]->unlock ();
 	else upgradeButtons[positionIndex]->lock ();
 }
 
@@ -162,17 +161,32 @@ void cWindowStorage::updateUnitsWidgets ()
 
 			if (unitIndex < unit.storedUnits.size ())
 			{
-				const auto storedUnit = unit.storedUnits[unitIndex];
+				const auto& storedUnit = *unit.storedUnits[unitIndex];
 
-				updateUnitWidgets (*storedUnit, positionIndex);
+				std::string name = storedUnit.getDisplayName ();
 
-				unitsSignalConnectionManager.connect (storedUnit->data.hitpointsChanged, std::bind (&cWindowStorage::updateUnitWidgets, this, std::ref(*storedUnit), positionIndex));
-				unitsSignalConnectionManager.connect (storedUnit->data.ammoChanged, std::bind (&cWindowStorage::updateUnitWidgets, this, std::ref(*storedUnit), positionIndex));
-				unitsSignalConnectionManager.connect (storedUnit->data.versionChanged, std::bind (&cWindowStorage::updateUnitWidgets, this, std::ref(*storedUnit), positionIndex));
+				const auto& upgraded = *storedUnit.owner->getUnitDataCurrentVersion (storedUnit.data.ID);
+				if (storedUnit.data.getVersion () != upgraded.getVersion ())
+				{
+					name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
+				}
+				unitNames[positionIndex]->setText (name);
 
-				unitsSignalConnectionManager.connect (storedUnit->data.hitpointsChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
-				unitsSignalConnectionManager.connect (storedUnit->data.ammoChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
-				unitsSignalConnectionManager.connect (storedUnit->data.versionChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
+				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
+				SDL_BlitSurface (storedUnit.uiData->storage, NULL, surface, NULL);
+				unitImages[positionIndex]->setImage (surface.Release ());
+
+				unitDetails[positionIndex]->setUnit (&storedUnit);
+
+				updateUnitButtons (storedUnit, positionIndex);
+
+				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
+				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
+				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
+
+				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
+				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
+				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
 			}
 			else
 			{
@@ -187,7 +201,7 @@ void cWindowStorage::updateUnitsWidgets ()
 				SDL_BlitSurface (srcSurface, NULL, surface, NULL);
 				unitImages[positionIndex]->setImage (surface.Release ());
 
-				//unitInfo[pos]->setUnitData (NULL);
+				unitDetails[positionIndex]->setUnit (nullptr);
 
 				activateButtons[positionIndex]->lock ();
 				reloadButtons[positionIndex]->lock ();

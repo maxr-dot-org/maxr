@@ -825,7 +825,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs gold:
 	if (data.convertsGold)
 	{
-		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->Gold)
+		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
 			sendChatMessageToClient (server, "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
 			return;
@@ -835,7 +835,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs raw material:
 	if (data.needsMetal)
 	{
-		if (SubBase->MetalNeed + min (MetalPerRound, BuildList[0].metall_remaining) > SubBase->getMetalProd() + SubBase->Metal)
+		if (SubBase->MetalNeed + min (MetalPerRound, BuildList[0].metall_remaining) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
 			sendChatMessageToClient (server, "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
 			return;
@@ -847,15 +847,15 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		// check if there is enough Oil for the generators
 		// (current production + reserves)
-		if (data.needsOil + SubBase->OilNeed > SubBase->Oil + SubBase->getMaxOilProd())
+		if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getMaxOilProd())
 		{
 			sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
 			return;
 		}
-		else if (data.needsOil + SubBase->OilNeed > SubBase->Oil + SubBase->getOilProd())
+		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getOilProd ())
 		{
 			// increase oil production
-			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->Oil + SubBase->getOilProd());
+			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->getOil () + SubBase->getOilProd ());
 
 			int metal = SubBase->getMetalProd();
 			int gold = SubBase->getGoldProd();
@@ -1638,7 +1638,7 @@ bool cBuilding::buildingCanBeStarted() const
 bool cBuilding::buildingCanBeUpgraded() const
 {
 	const sUnitData& upgraded = *owner->getUnitDataCurrentVersion (data.ID);
-	return (data.getVersion () != upgraded.getVersion () && SubBase && SubBase->Metal >= 2);
+	return (data.getVersion () != upgraded.getVersion () && SubBase && SubBase->getMetal () >= 2);
 }
 
 //-----------------------------------------------------------------------------

@@ -196,10 +196,10 @@ struct sUnitData
 	int getAmmo () const;
 	void setAmmo (int value);
 
-	cSignal<void ()> versionChanged;
-	cSignal<void ()> hitpointsChanged;
-	cSignal<void ()> shotsChanged;
-	cSignal<void ()> ammoChanged;
+	mutable cSignal<void ()> versionChanged;
+	mutable cSignal<void ()> hitpointsChanged;
+	mutable cSignal<void ()> shotsChanged;
+	mutable cSignal<void ()> ammoChanged;
 private:
 	int version;
 

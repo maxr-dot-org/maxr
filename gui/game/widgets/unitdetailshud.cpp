@@ -124,13 +124,13 @@ void cUnitDetailsHud::reset ()
 				switch (data.storeResType)
 				{
 				case sUnitData::STORE_RES_METAL:
-					drawRow (2, symbolType, building.SubBase->Metal, building.SubBase->MaxMetal, lngPack.i18n ("Text~Others~Total"));
+					drawRow (2, symbolType, building.SubBase->getMetal (), building.SubBase->MaxMetal, lngPack.i18n ("Text~Others~Total"));
 					break;
 				case sUnitData::STORE_RES_OIL:
-					drawRow (2, symbolType, building.SubBase->Oil, building.SubBase->MaxOil, lngPack.i18n ("Text~Others~Total"));
+					drawRow (2, symbolType, building.SubBase->getOil (), building.SubBase->MaxOil, lngPack.i18n ("Text~Others~Total"));
 					break;
 				case sUnitData::STORE_RES_GOLD:
-					drawRow (2, symbolType, building.SubBase->Gold, building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
+					drawRow (2, symbolType, building.SubBase->getGold (), building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
 					break;
 				}
 			}
@@ -214,13 +214,13 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 	amountLabels[index]->setText (iToStr (amount) + "/" + iToStr (maximalAmount));
 
 	nameLabels[index]->setText (name);
-	drawSmallSymbols (symbolType, cPosition (80, rowHeight * index), amount, maximalAmount);
+	drawSmallSymbols (surface, rowHeight, symbolType, cPosition (80, rowHeight * index), amount, maximalAmount);
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsHud::drawSmallSymbols (eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
+void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2)
 {
-	const int maxX = getSize ().x () - position.x () - 5;
+	const int maxX = destination->w - position.x () - 5;
 	auto src = getSmallSymbolPosition (symbolType);
 	const cPosition srcSize = src.getMaxCorner () - src.getMinCorner ();
 	int toValue = value2;
@@ -266,7 +266,7 @@ void cUnitDetailsHud::drawSmallSymbols (eUnitDataSymbolType symbolType, const cP
 		}
 
 		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &srcRect, surface, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &srcRect, destination, &dest);
 
 		dest.x += offX;
 		value1 -= step;

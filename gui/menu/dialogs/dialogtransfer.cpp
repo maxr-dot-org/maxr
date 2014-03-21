@@ -158,15 +158,15 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 			default:
 			case sUnitData::STORE_RES_METAL:
 				maxCargo = building.SubBase->MaxMetal;
-				cargo = building.SubBase->Metal;
+				cargo = building.SubBase->getMetal ();
 				break;
 			case sUnitData::STORE_RES_OIL:
 				maxCargo = building.SubBase->MaxOil;
-				cargo = building.SubBase->Oil;
+				cargo = building.SubBase->getOil ();
 				break;
 			case sUnitData::STORE_RES_GOLD:
 				maxCargo = building.SubBase->MaxGold;
-				cargo = building.SubBase->Gold;
+				cargo = building.SubBase->getGold ();
 				break;
 			}
 		}

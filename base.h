@@ -47,7 +47,7 @@ public:
 	void addBuilding (cBuilding* b);
 
 	/**
-	* adds/subtracts a ressource to/from the subbase
+	* adds/subtracts a resource to/from the subbase
 	* @author eiko
 	*/
 	void addMetal (cServer& server, int value);
@@ -71,7 +71,7 @@ public:
 	//turn end management:
 
 	/**
-	* checks if consumers have to be switched off, due to a lack of ressources
+	* checks if consumers have to be switched off, due to a lack of resources
 	* @return returns true, if consumers have been shut down
 	* @author eiko
 	*/
@@ -97,43 +97,52 @@ public:
 	bool checkEnergy (cServer& server);
 	/**
 	* checks, if there are consumers, that have to be shut down,
-	* due to a lack of a ressources
+	* due to a lack of a resources
 	* @author eiko
 	*/
 	void prepareTurnend (cServer& server);
 	/**
-	* produce ressources, repair/reload buildings etc.
+	* produce resources, repair/reload buildings etc.
 	* @author eiko
 	*/
 	void makeTurnend (cServer& server);
 
 	//------------------------------------
-	//ressource management:
+	//resource management:
 
-	/** returns the maximum production of a ressource */
+	/** returns the maximum production of a resource */
 	int getMaxMetalProd() const;
 	int getMaxGoldProd() const;
 	int getMaxOilProd() const;
 
 	/** returns the maximum allowed production
-	 * (without decreasing one of the other ones) of a ressource */
+	 * (without decreasing one of the other ones) of a resource */
 	int getMaxAllowedMetalProd() const;
 	int getMaxAllowedGoldProd() const;
 	int getMaxAllowedOilProd() const;
 
-	/** returns the current production of a ressource */
+	/** returns the current production of a resource */
 	int getMetalProd() const;
 	int getGoldProd() const;
 	int getOilProd() const;
 
-	/** sets the production of a ressource.
+	/** sets the production of a resource.
 	 * If value is bigger then maxAllowed,
 	 * it will be reduced to the maximum allowed value */
 	void setMetalProd (int value);
 	void setGoldProd (int value);
 	void setOilProd (int value);
 
-	/** changes the production of a ressource by value. */
+	int getMetal () const;
+	void setMetal (int value);
+
+	int getOil () const;
+	void setOil (int value);
+
+	int getGold () const;
+	void setGold (int value);
+
+	/** changes the production of a resource by value. */
 	void changeMetalProd (int value);
 	void changeGoldProd (int value);
 	void changeOilProd (int value);
@@ -142,6 +151,10 @@ public:
 
 	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);
+
+	mutable cSignal<void ()> metalChanged;
+	mutable cSignal<void ()> oilChanged;
+	mutable cSignal<void ()> goldChanged;
 private:
 
 	void makeTurnend_reparation (cServer& server, cBuilding& building);
@@ -150,22 +163,24 @@ private:
 
 
 	/**
-	* calcs the maximum allowed production of a ressource,
+	* calcs the maximum allowed production of a resource,
 	* without decreasing the production of the other two
 	* @author eiko
 	*/
 	int calcMaxAllowedProd (int ressourceType) const;
 	/**
-	* calcs the maximum possible production of a ressource
+	* calcs the maximum possible production of a resource
 	* @author eiko
 	*/
 	int calcMaxProd (int ressourceType) const;
 	/**
-	* adds/subtracts ressourcec of the type storeResType to/from the subbase
+	* adds/subtracts resources of the type storeResType to/from the subbase
 	* @author eiko
 	*/
 	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
 
+	int getResource (sUnitData::eStorageResType storeResType) const;
+	void setResource (sUnitData::eStorageResType storeResType, int value);
 public:
 	//private:
 	//	friend class cBase;
@@ -173,11 +188,8 @@ public:
 	cPlayer* owner;
 
 	int MaxMetal;
-	int Metal;
 	int MaxOil;
-	int Oil;
 	int MaxGold;
-	int Gold;
 
 	int MaxEnergyProd;
 	int EnergyProd;
@@ -197,6 +209,11 @@ public:
 	int MetalProd;
 	int OilProd;
 	int GoldProd;
+
+private:
+	int metal;
+	int oil;
+	int gold;
 };
 
 class cBase

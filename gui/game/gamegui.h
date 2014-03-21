@@ -90,8 +90,19 @@ private:
 
 	void resetMiniMapViewWindow ();
 
-	void showFilesMenu ();
+	void showFilesWindow ();
 	void showPreferencesDialog ();
+	void showReportsWindow ();
+
+	void showUnitHelpWindow (const cUnit& unit);
+	void showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit);
+	void showBuildBuildingsWindow (const cVehicle& vehicle);
+	void showBuildVehiclesWindow (const cBuilding& building);
+	void showResourceDistributionDialog (const cUnit& unit);
+	void showResearchDialog (const cUnit& unit);
+	void showUpgradesWindow (const cUnit& unit);
+	void showStorageWindow (const cUnit& unit);
+	void showSelfDestroyDialog (const cUnit& unit);
 
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);

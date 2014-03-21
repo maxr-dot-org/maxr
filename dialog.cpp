@@ -656,15 +656,15 @@ void cDialogTransfer::getNamesNCargoNImages()
 			{
 				case sUnitData::STORE_RES_METAL:
 					maxSrcCargo = srcBuilding->SubBase->MaxMetal;
-					srcCargo = srcBuilding->SubBase->Metal;
+					srcCargo = srcBuilding->SubBase->getMetal ();
 					break;
 				case sUnitData::STORE_RES_OIL:
 					maxSrcCargo = srcBuilding->SubBase->MaxOil;
-					srcCargo = srcBuilding->SubBase->Oil;
+					srcCargo = srcBuilding->SubBase->getOil ();
 					break;
 				case sUnitData::STORE_RES_GOLD:
 					maxSrcCargo = srcBuilding->SubBase->MaxGold;
-					srcCargo = srcBuilding->SubBase->Gold;
+					srcCargo = srcBuilding->SubBase->getGold ();
 					break;
 				case sUnitData::STORE_RES_NONE:
 					break;
@@ -703,15 +703,15 @@ void cDialogTransfer::getNamesNCargoNImages()
 			{
 				case sUnitData::STORE_RES_METAL:
 					maxDestCargo = destBuilding->SubBase->MaxMetal;
-					destCargo = destBuilding->SubBase->Metal;
+					destCargo = destBuilding->SubBase->getMetal ();
 					break;
 				case sUnitData::STORE_RES_OIL:
 					maxDestCargo = destBuilding->SubBase->MaxOil;
-					destCargo = destBuilding->SubBase->Oil;
+					destCargo = destBuilding->SubBase->getOil ();
 					break;
 				case sUnitData::STORE_RES_GOLD:
 					maxDestCargo = destBuilding->SubBase->MaxGold;
-					destCargo = destBuilding->SubBase->Gold;
+					destCargo = destBuilding->SubBase->getGold ();
 					break;
 				case sUnitData::STORE_RES_NONE:
 					break;

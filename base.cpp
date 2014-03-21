@@ -35,11 +35,11 @@ sSubBase::sSubBase (cPlayer* owner_) :
 	buildings(),
 	owner (owner_),
 	MaxMetal(),
-	Metal(),
+	metal(),
 	MaxOil(),
-	Oil(),
+	oil(),
 	MaxGold(),
-	Gold(),
+	gold(),
 	MaxEnergyProd(),
 	EnergyProd(),
 	MaxEnergyNeed(),
@@ -131,6 +131,39 @@ void sSubBase::setOilProd (int value)
 	value = std::min (value, max);
 
 	OilProd = value;
+}
+
+int sSubBase::getMetal () const
+{
+	return metal;
+}
+
+void sSubBase::setMetal (int value)
+{
+	std::swap (metal, value);
+	if (metal != value) metalChanged ();
+}
+
+int sSubBase::getOil () const
+{
+	return oil;
+}
+
+void sSubBase::setOil (int value)
+{
+	std::swap (oil, value);
+	if (oil != value) oilChanged ();
+}
+
+int sSubBase::getGold () const
+{
+	return gold;
+}
+
+void sSubBase::setGold (int value)
+{
+	std::swap (gold, value);
+	if (gold != value) goldChanged ();
 }
 
 void sSubBase::changeMetalProd (int value)
@@ -339,7 +372,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int value)
 
 	// check available fuel
 	int neededFuel = stations * 6 + generators * 2;
-	if (neededFuel > Oil + getMaxOilProd())
+	if (neededFuel > getOil() + getMaxOilProd())
 	{
 		// not possible to produce enough fuel
 		sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
@@ -387,29 +420,46 @@ void sSubBase::addGold (cServer& server, int value)
 	addRessouce (server, sUnitData::STORE_RES_GOLD, value);
 }
 
-void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value)
+int sSubBase::getResource (sUnitData::eStorageResType storeResType) const
 {
-	int* storedRessources = NULL;
 	switch (storeResType)
 	{
-		case sUnitData::STORE_RES_METAL:
-			storedRessources = &Metal;
-			break;
-		case sUnitData::STORE_RES_OIL:
-			storedRessources = &Oil;
-			break;
-		case sUnitData::STORE_RES_GOLD:
-			storedRessources = &Gold;
-			break;
-		case sUnitData::STORE_RES_NONE:
-			assert (0);
-			break;
+	case sUnitData::STORE_RES_METAL:
+		return getMetal ();
+	case sUnitData::STORE_RES_OIL:
+		return getOil ();
+	case sUnitData::STORE_RES_GOLD:
+		return getGold();
+	default:
+		assert (0);
 	}
+	return 0;
+}
 
-	value = std::max (value, -*storedRessources);
-	if (!value) return;
+void sSubBase::setResource (sUnitData::eStorageResType storeResType, int value)
+{
+	switch (storeResType)
+	{
+	case sUnitData::STORE_RES_METAL:
+		setMetal (value);
+		break;
+	case sUnitData::STORE_RES_OIL:
+		setOil (value);
+		break;
+	case sUnitData::STORE_RES_GOLD:
+		setGold (value);
+		break;
+	default:
+		assert (0);
+	}
+}
 
-	*storedRessources += value;
+void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value)
+{
+	int storedRessources = getResource (storeResType);
+	value = std::max (value, -storedRessources);
+	if (value == 0) return;
+	setResource (storeResType, storedRessources + value);
 
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
@@ -456,11 +506,11 @@ void sSubBase::refresh()
 	// reset subbase
 	buildings.clear();
 	MaxMetal = 0;
-	Metal = 0;
+	setMetal(0);
 	MaxOil = 0;
-	Oil = 0;
+	setOil (0);
 	MaxGold = 0;
-	Gold = 0;
+	setGold (0);
 	MaxEnergyProd = 0;
 	EnergyProd = 0;
 	MaxEnergyNeed = 0;
@@ -503,7 +553,7 @@ bool sSubBase::checkHumanConsumer (cServer& server)
 
 bool sSubBase::checkGoldConsumer (cServer& server)
 {
-	if (GoldNeed <= GoldProd + Gold) return false;
+	if (GoldNeed <= GoldProd + getGold()) return false;
 
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
@@ -512,14 +562,14 @@ bool sSubBase::checkGoldConsumer (cServer& server)
 
 		building.ServerStopWork (server, false);
 
-		if (GoldNeed <= GoldProd + Gold) break;
+		if (GoldNeed <= GoldProd + getGold()) break;
 	}
 	return true;
 }
 
 bool sSubBase::checkMetalConsumer (cServer& server)
 {
-	if (MetalNeed <= MetalProd + Metal) return false;
+	if (MetalNeed <= MetalProd + getMetal ()) return false;
 
 	for (size_t i = 0; i != buildings.size(); ++i)
 	{
@@ -528,7 +578,7 @@ bool sSubBase::checkMetalConsumer (cServer& server)
 
 		building.ServerStopWork (server, false);
 
-		if (MetalNeed <= MetalProd + Metal) break;
+		if (MetalNeed <= MetalProd + getMetal ()) break;
 	}
 	return true;
 }
@@ -563,7 +613,7 @@ bool sSubBase::checkOil (cServer& server)
 
 	// check needed oil
 	int neededOil = stations * 6 + generators * 2;
-	const int availableOil = getMaxOilProd() + Oil;
+	const int availableOil = getMaxOilProd () + getOil ();
 	bool oilMissing = false;
 	if (neededOil > availableOil)
 	{
@@ -576,10 +626,10 @@ bool sSubBase::checkOil (cServer& server)
 
 	// increase oil production, if necessary
 	neededOil = stations * 6 + generators * 2;
-	if (neededOil > OilProd + Oil)
+	if (neededOil > OilProd + getOil ())
 	{
 		// temporary decrease gold and metal production
-		const int missingOil = neededOil - OilProd - Oil;
+		const int missingOil = neededOil - OilProd - getOil ();
 		const int gold = GoldProd;
 		const int metal = MetalProd;
 		setMetalProd (0);
@@ -724,7 +774,7 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
 	if (building.data.getHitpoints () >= building.data.hitpointsMax
-		|| Metal <= 0 || building.hasBeenAttacked ())
+		|| getMetal () <= 0 || building.hasBeenAttacked ())
 	{
 		return;
 	}
@@ -742,7 +792,7 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
 {
 	// reload:
-	if (building.data.canAttack && building.data.getAmmo () == 0 && Metal > 0)
+	if (building.data.canAttack && building.data.getAmmo () == 0 && getMetal () > 0)
 	{
 		building.data.setAmmo(building.data.ammoMax);
 		addMetal (server, -1);
@@ -810,14 +860,18 @@ void sSubBase::makeTurnend (cServer& server)
 	}
 
 	// check maximum storage limits
-	Metal = std::min (this->MaxMetal, this->Metal);
-	Oil = std::min (this->MaxOil, this->Oil);
-	Gold = std::min (this->MaxGold, this->Gold);
+	auto newMetal = std::min (this->MaxMetal, this->getMetal());
+	auto newOil = std::min (this->MaxOil, this->getOil());
+	auto newGold = std::min (this->MaxGold, this->getGold());
 
 	// should not happen, but to be sure:
-	Metal = std::max (this->Metal, 0);
-	Oil = std::max (this->Oil, 0);
-	Gold = std::max (this->Gold, 0);
+	newMetal = std::max (newMetal, 0);
+	newOil = std::max (newOil, 0);
+	newGold = std::max (newGold, 0);
+
+	setMetal (newMetal);
+	setOil (newOil);
+	setGold (newGold);
 
 	sendSubbaseValues (server, *this, owner->getNr());
 }
@@ -870,15 +924,15 @@ void sSubBase::addBuilding (cBuilding* b)
 	{
 		case sUnitData::STORE_RES_METAL:
 			MaxMetal += b->data.storageResMax;
-			Metal += b->data.storageResCur;
+			setMetal (getMetal () + b->data.storageResCur);
 			break;
 		case sUnitData::STORE_RES_OIL:
 			MaxOil += b->data.storageResMax;
-			Oil += b->data.storageResCur;
+			setOil (getOil () + b->data.storageResCur);
 			break;
 		case sUnitData::STORE_RES_GOLD:
 			MaxGold += b->data.storageResMax;
-			Gold += b->data.storageResCur;
+			setGold (getGold () + b->data.storageResCur);
 			break;
 		case sUnitData::STORE_RES_NONE:
 			break;
@@ -966,17 +1020,17 @@ void sSubBase::pushInto (cNetMessage& message) const
 	message.pushInt16 (EnergyNeed);
 	message.pushInt16 (MaxEnergyProd);
 	message.pushInt16 (MaxEnergyNeed);
-	message.pushInt16 (Metal);
+	message.pushInt16 (getMetal ());
 	message.pushInt16 (MaxMetal);
 	message.pushInt16 (MetalNeed);
 	message.pushInt16 (MaxMetalNeed);
 	message.pushInt16 (getMetalProd());
-	message.pushInt16 (Gold);
+	message.pushInt16 (getGold());
 	message.pushInt16 (MaxGold);
 	message.pushInt16 (GoldNeed);
 	message.pushInt16 (MaxGoldNeed);
 	message.pushInt16 (getGoldProd());
-	message.pushInt16 (Oil);
+	message.pushInt16 (getOil ());
 	message.pushInt16 (MaxOil);
 	message.pushInt16 (OilNeed);
 	message.pushInt16 (MaxOilNeed);
@@ -995,17 +1049,17 @@ void sSubBase::popFrom (cNetMessage& message)
 	MaxOilNeed = message.popInt16();
 	OilNeed = message.popInt16();
 	MaxOil = message.popInt16();
-	Oil = message.popInt16();
+	setOil(message.popInt16());
 	GoldProd = message.popInt16();
 	MaxGoldNeed = message.popInt16();
 	GoldNeed = message.popInt16();
 	MaxGold = message.popInt16();
-	Gold = message.popInt16();
+	setGold(message.popInt16());
 	MetalProd = message.popInt16();
 	MaxMetalNeed = message.popInt16();
 	MetalNeed = message.popInt16();
 	MaxMetal = message.popInt16();
-	Metal = message.popInt16();
+	setMetal(message.popInt16());
 	MaxEnergyNeed = message.popInt16();
 	MaxEnergyProd = message.popInt16();
 	EnergyNeed = message.popInt16();

@@ -32,6 +32,7 @@ class cPushButton;
 class cLabel;
 class cImage;
 class cResourceBar;
+class cUnitDetailsStored;
 
 class cWindowStorage : public cWindow
 {
@@ -82,9 +83,10 @@ private:
 
 	std::array<cImage*, maxColumns*maxRows> unitImages;
 	std::array<cLabel*, maxColumns*maxRows> unitNames;
+	std::array<cUnitDetailsStored*, maxColumns*maxRows> unitDetails;
 
 	void updateUnitsWidgets ();
-	void updateUnitWidgets (const cVehicle& unit, size_t positionIndex);
+	void updateUnitButtons (const cVehicle& unit, size_t positionIndex);
 	void updateGlobalButtons ();
 	void updateUpDownButtons ();
 
