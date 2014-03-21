@@ -4813,18 +4813,18 @@ void cStorageMenu::resetInfos()
 				srcSurface = vehicle->uiData->storage;
 				name = vehicle->getDisplayName();
 				const sUnitData& upgraded = *vehicle->owner->getUnitDataCurrentVersion (vehicle->data.ID);
-				if (vehicle->data.version != upgraded.version)
+				if (vehicle->data.getVersion () != upgraded.getVersion ())
 				{
 					name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
 				}
 				unitInfo[pos]->setUnitData (&vehicle->data);
 
 				activateButtons[pos]->setLocked (false);
-				if (vehicle->data.ammoCur != vehicle->data.ammoMax && metalValue >= 1) reloadButtons[pos]->setLocked (false);
+				if (vehicle->data.getAmmo () != vehicle->data.ammoMax && metalValue >= 1) reloadButtons[pos]->setLocked (false);
 				else reloadButtons[pos]->setLocked (true);
-				if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax && metalValue >= 1) repairButtons[pos]->setLocked (false);
+				if (vehicle->data.getHitpoints () != vehicle->data.hitpointsMax && metalValue >= 1) repairButtons[pos]->setLocked (false);
 				else repairButtons[pos]->setLocked (true);
-				if (vehicle->data.version != upgraded.version && metalValue >= 1) upgradeButtons[pos]->setLocked (false);
+				if (vehicle->data.getVersion () != upgraded.getVersion () && metalValue >= 1) upgradeButtons[pos]->setLocked (false);
 				else upgradeButtons[pos]->setLocked (true);
 			}
 			else
@@ -4860,9 +4860,9 @@ void cStorageMenu::resetInfos()
 		{
 			const cVehicle& vehicle = *storageList[i];
 			const sUnitData& upgraded = *vehicle.owner->getUnitDataCurrentVersion (vehicle.data.ID);
-			if (vehicle.data.ammoCur != vehicle.data.ammoMax) reloadAllButton->setLocked (false);
-			if (vehicle.data.hitpointsCur != vehicle.data.hitpointsMax) repairAllButton->setLocked (false);
-			if (vehicle.data.version != upgraded.version) upgradeAllButton->setLocked (false);
+			if (vehicle.data.getAmmo () != vehicle.data.ammoMax) reloadAllButton->setLocked (false);
+			if (vehicle.data.getHitpoints () != vehicle.data.hitpointsMax) repairAllButton->setLocked (false);
+			if (vehicle.data.getVersion () != upgraded.getVersion ()) upgradeAllButton->setLocked (false);
 		}
 	}
 
@@ -4997,7 +4997,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 				if (((ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
 					((xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
 				if (((menu->ownerBuilding && menu->ownerBuilding->canExitTo (cPosition(xpos, ypos), map, vehicle->data)) ||
-					 (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, map, vehicle->data)))
+					 (menu->ownerVehicle && menu->ownerVehicle->canExitTo (cPosition(xpos, ypos), map, vehicle->data)))
 					&& !hasCheckedPlace[poscount])
 				{
 					sendWantActivate (*menu->client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
@@ -5025,7 +5025,7 @@ void cStorageMenu::reloadAllReleased (void* parent)
 	{
 		if (resources < 1) break;
 		cVehicle* vehicle = menu->storageList[i];
-		if (vehicle->data.ammoCur != vehicle->data.ammoMax)
+		if (vehicle->data.getAmmo () != vehicle->data.ammoMax)
 		{
 			sendWantSupply (*menu->client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
 			resources--;
@@ -5046,10 +5046,10 @@ void cStorageMenu::repairAllReleased (void* parent)
 	{
 		if (resources < 1) break;
 		cVehicle* vehicle = menu->storageList[i];
-		if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax)
+		if (vehicle->data.getHitpoints () != vehicle->data.hitpointsMax)
 		{
 			sendWantSupply (*menu->client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
-			int value = vehicle->data.hitpointsCur;
+			int value = vehicle->data.getHitpoints ();
 			while (value < vehicle->data.hitpointsMax)
 			{
 				value += Round (((float) vehicle->data.hitpointsMax / vehicle->data.buildCosts) * 4);

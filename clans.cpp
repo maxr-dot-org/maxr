@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "clans.h"
+#include "unitdata.h"
 
 using namespace std;
 

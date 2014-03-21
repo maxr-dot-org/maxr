@@ -94,6 +94,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	signalConnectionManager.connect (centerButton->clicked, [&](){ centerClicked (); });
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
+	signalConnectionManager.connect (reportsButton->clicked, [&](){ reportsClicked (); });
 	auto chatButton = addChild (std::make_unique<cPushButton> (cPosition (51, 252), ePushButtonType::HudChat, lngPack.i18n ("Text~Others~Chat")));
 
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));

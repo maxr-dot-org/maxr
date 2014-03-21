@@ -20,7 +20,7 @@
 #define baseH
 
 #include <vector>
-#include "main.h" // for sUnitData and sUnitData::eStorageResType
+#include "unitdata.h" // for sUnitData and sUnitData::eStorageResType
 
 class cBuilding;
 class cMap;

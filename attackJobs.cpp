@@ -98,8 +98,8 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOf
 	else
 		lockTarget (targetOff);
 
-	unit->data.shotsCur--;
-	unit->data.ammoCur--;
+	unit->data.setShots(unit->data.getShots()-1);
+	unit->data.setAmmo(unit->data.getAmmo()-1);
 	if (unit->isAVehicle() && unit->data.canDriveAndFire == false)
 		unit->data.speedCur -= (int) (((float) unit->data.speedMax) / unit->data.shotsMax);
 	unit->setAttacking(true);
@@ -294,8 +294,8 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 
 	message->pushBool (sentryFire);
 	message->pushInt16 (unit->data.speedCur);
-	message->pushInt16 (unit->data.ammoCur);
-	message->pushInt16 (unit->data.shotsCur);
+	message->pushInt16 (unit->data.getAmmo());
+	message->pushInt16 (unit->data.getShots());
 	message->pushChar (unit->dir);
 	if (isMuzzleTypeRocket())
 		message->pushInt32 (iTargetOff);
@@ -398,11 +398,11 @@ void cServerAttackJob::makeImpact (int x, int y)
 		}
 
 		id = target->iID;
-		target->data.hitpointsCur = target->calcHealth (damage);
-		remainingHP = target->data.hitpointsCur;
+		target->data.setHitpoints(target->calcHealth (damage));
+		remainingHP = target->data.getHitpoints();
 		target->setHasBeenAttacked(true);
 		owner = target->owner;
-		Log.write (" Server: unit '" + target->getDisplayName() + "' (ID: " + iToStr (target->iID) + ") hit. Remaining HP: " + iToStr (target->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Server: unit '" + target->getDisplayName() + "' (ID: " + iToStr (target->iID) + ") hit. Remaining HP: " + iToStr (target->data.getHitpoints()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	// workaround
@@ -413,7 +413,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	sendAttackJobImpact (offset, remainingHP, id);
 
 	// remove the destroyed units
-	if (target && target->data.hitpointsCur <= 0)
+	if (target && target->data.getHitpoints() <= 0)
 	{
 		if (target->isABuilding())
 			server->destroyUnit (*static_cast<cBuilding*> (target));
@@ -636,8 +636,8 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 	// get remaining shots, ammo and movement points
 	if (unit)
 	{
-		unit->data.shotsCur = message->popInt16();
-		unit->data.ammoCur = message->popInt16();
+		unit->data.setShots(message->popInt16());
+		unit->data.setAmmo(message->popInt16());
 		unit->setAttacking(true);
 		if (unit->isAVehicle())
 			unit->data.speedCur = message->popInt16();
@@ -894,14 +894,14 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 		{
 			unitID = targetVehicle->data.ID;
 			isAir = (targetVehicle->data.factorAir > 0);
-			targetVehicle->data.hitpointsCur = remainingHP;
+			targetVehicle->data.setHitpoints(remainingHP);
 
-			Log.write (" Client: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr (targetVehicle->iID) + ") hit. Remaining HP: " + iToStr (targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write (" Client: vehicle '" + targetVehicle->getDisplayName () + "' (ID: " + iToStr (targetVehicle->iID) + ") hit. Remaining HP: " + iToStr (targetVehicle->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
 
 			name = targetVehicle->getDisplayName();
 			if (targetVehicle->owner == &client.getActivePlayer()) ownUnit = true;
 
-			if (targetVehicle->data.hitpointsCur <= 0)
+			if (targetVehicle->data.getHitpoints() <= 0)
 			{
 				client.destroyUnit (*targetVehicle);
 				targetVehicle = NULL;
@@ -917,14 +917,14 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 		else
 		{
 			unitID = targetBuilding->data.ID;
-			targetBuilding->data.hitpointsCur = remainingHP;
+			targetBuilding->data.setHitpoints(remainingHP);
 
-			Log.write (" Client: building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
+			Log.write (" Client: building '" + targetBuilding->getDisplayName () + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
 
 			name = targetBuilding->getDisplayName();
 			if (targetBuilding->owner == &client.getActivePlayer()) ownUnit = true;
 
-			if (targetBuilding->data.hitpointsCur <= 0)
+			if (targetBuilding->data.getHitpoints () <= 0)
 			{
 				client.destroyUnit (*targetBuilding);
 				targetBuilding = NULL;

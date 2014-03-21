@@ -202,6 +202,8 @@ cSignalConnection cSignal<R (Args...), ResultCombinerType>::connect (F&& f)
 	cSignalConnection connection (nextIdentifer++, std::weak_ptr<cSignalReference> (thisReference));
 	assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
 
+	assert (!isInvoking); // FIXME: can lead to endless loop! fix this and remove the assert
+
 	auto slotFunction = typename SlotType::function_type (std::forward<F> (f));
 	slots.emplace_back (connection, std::move (slotFunction));
 

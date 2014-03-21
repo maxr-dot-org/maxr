@@ -46,5 +46,5 @@ bool cMouseActionLoad::doesChangeState () const
 //------------------------------------------------------------------------------
 bool cMouseActionLoad::isSingleAction () const
 {
-	return true;
+	return false;
 }

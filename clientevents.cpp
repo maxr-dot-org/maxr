@@ -502,7 +502,7 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 
 	const sUnitData& currentVersion = building.data;
 	const sUnitData& upgradedVersion = *building.owner->getUnitDataCurrentVersion (building.data.ID);
-	if (currentVersion.version >= upgradedVersion.version)
+	if (currentVersion.getVersion () >= upgradedVersion.getVersion ())
 		return; // already uptodate
 
 	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);

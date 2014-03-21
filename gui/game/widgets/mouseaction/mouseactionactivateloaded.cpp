@@ -37,7 +37,7 @@ bool cMouseActionActivateLoaded::executeLeftClick (cGameMapWidget& gameMapWidget
 
 	if (!selectedUnit) return false;
 
-	gameMapWidget.triggeredActivateAt (*selectedUnit, mapPosition);
+	gameMapWidget.triggeredActivateAt (*selectedUnit, vehicleToActivateIndex, mapPosition);
 
 	return true;
 }

@@ -33,9 +33,14 @@
 #include "../application.h"
 #include "../menu/dialogs/dialogpreferences.h"
 #include "../menu/dialogs/dialogtransfer.h"
+#include "../menu/dialogs/dialogresearch.h"
 #include "../menu/windows/windowunitinfo/windowunitinfo.h"
 #include "../menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 #include "../menu/windows/windowbuildvehicles/windowbuildvehicles.h"
+#include "../menu/windows/windowstorage/windowstorage.h"
+#include "../menu/windows/windowresourcedistribution/windowresourcedistribution.h"
+#include "../menu/windows/windowupgrades/windowupgrades.h"
+#include "../menu/windows/windowreports/windowreports.h"
 
 #include "../../keys.h"
 #include "../../player.h"
@@ -93,6 +98,14 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	{
 		const auto selectedUnit = gameMap->getUnitSelection ().getSelectedUnit ();
 		if (selectedUnit) gameMap->centerAt (cPosition (selectedUnit->PosX, selectedUnit->PosY));
+	});
+
+	signalConnectionManager.connect (hud->reportsClicked, [&]()
+	{
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		auto reportsWindow = application->show (std::make_shared<cWindowReports> ());
 	});
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
@@ -196,21 +209,133 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	});
 	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, [&](const cUnit& unit)
 	{
-		//building->executeMineManagerCommand (*this);
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> ());
 	});
 	signalConnectionManager.connect (gameMap->triggeredResearchMenu, [&](const cUnit& unit)
 	{
-		//cDialogResearch researchDialog (*client);
-		//switchTo (researchDialog, client);
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		auto researchDialog = application->show (std::make_shared<cDialogResearch> ());
 	});
 	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, [&](const cUnit& unit)
 	{
-		//cUpgradeMenu upgradeMenu (*client);
-		//switchTo (upgradeMenu, client);
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> ());
 	});
 	signalConnectionManager.connect (gameMap->triggeredActivate, [&](const cUnit& unit)
 	{
-		//unit.executeActivateStoredVehiclesCommand (*this);
+		auto application = getActiveApplication ();
+		if (!application) return;
+
+		auto storageWindow = application->show (std::make_shared<cWindowStorage> (unit));
+		storageWindow->activate.connect ([&, storageWindow](size_t index)
+		{
+			if (unit.isAVehicle () && unit.data.factorAir > 0)
+			{
+				activateAtTriggered (unit, index, cPosition(unit.PosX, unit.PosY));
+			}
+			else
+			{
+				gameMap->startActivateVehicle (unit, index);
+			}
+			storageWindow->close ();
+		});
+		storageWindow->reload.connect ([&](size_t index)
+		{
+			reloadTriggered (unit, *unit.storedUnits[index]);
+		});
+		storageWindow->repair.connect ([&](size_t index)
+		{
+			repairTriggered (unit, *unit.storedUnits[index]);
+		});
+		storageWindow->upgrade.connect ([&](size_t index)
+		{
+			upgradeTriggered (unit, index);
+		});
+		storageWindow->activateAll.connect ([&, storageWindow]()
+		{
+			if (dynamicMap)
+			{
+				std::array<bool, 16> hasCheckedPlace;
+				hasCheckedPlace.fill (false);
+
+				for (size_t i = 0; i < unit.storedUnits.size (); ++i)
+				{
+					const auto& storedUnit = *unit.storedUnits[i];
+
+					bool activated = false;
+					for (int ypos = unit.PosY - 1, poscount = 0; ypos <= unit.PosY + (unit.data.isBig ? 2 : 1); ypos++)
+					{
+						if (ypos < 0 || ypos >= dynamicMap->getSize ()) continue;
+						for (int xpos = unit.PosX - 1; xpos <= unit.PosX + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
+						{
+							if (hasCheckedPlace[poscount]) continue;
+
+							if (xpos < 0 || xpos >= dynamicMap->getSize ()) continue;
+
+							if (((ypos == unit.PosY && unit.data.factorAir == 0) || (ypos == unit.PosY + 1 && unit.data.isBig)) &&
+								((xpos == unit.PosX && unit.data.factorAir == 0) || (xpos == unit.PosX + 1 && unit.data.isBig))) continue;
+
+							if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.data))
+							{
+								activateAtTriggered (unit, i, cPosition (xpos, ypos));
+								hasCheckedPlace[poscount] = true;
+								activated = true;
+								break;
+							}
+						}
+						if (activated) break;
+					}
+				}
+			}
+
+			storageWindow->close ();
+		});
+		storageWindow->reloadAll.connect ([&, storageWindow]()
+		{
+			if (!unit.isABuilding ()) return;
+			auto remainingResources = static_cast<const cBuilding&>(unit).SubBase->Metal;
+			for (size_t i = 0; i < unit.storedUnits.size () && remainingResources > 0; ++i)
+			{
+				const auto& storedUnit = *unit.storedUnits[i];
+
+				if (storedUnit.data.getAmmo () < storedUnit.data.ammoMax)
+				{
+					reloadTriggered (unit, storedUnit);
+					remainingResources--;
+				}
+			}
+		});
+		storageWindow->repairAll.connect ([&, storageWindow]()
+		{
+			if (!unit.isABuilding ()) return;
+			auto remainingResources = static_cast<const cBuilding&>(unit).SubBase->Metal;
+			for (size_t i = 0; i < unit.storedUnits.size () && remainingResources > 0; ++i)
+			{
+				const auto& storedUnit = *unit.storedUnits[i];
+
+				if (storedUnit.data.getHitpoints () < storedUnit.data.hitpointsMax)
+				{
+					repairTriggered (unit, storedUnit);
+					auto value = storedUnit.data.getHitpoints ();
+					while (value < storedUnit.data.hitpointsMax && remainingResources > 0)
+					{
+						value += Round (((float)storedUnit.data.hitpointsMax / storedUnit.data.buildCosts) * 4);
+						remainingResources--;
+					}
+				}
+			}
+		});
+		storageWindow->upgradeAll.connect ([&, storageWindow]()
+		{
+			upgradeAllTriggered (unit);
+		});
 	});
 	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, [&](const cUnit& unit)
 	{
@@ -346,6 +471,26 @@ void cNewGameGUI::connectToClient (cClient& client)
 	{
 		sendWantBuildList (client, building, buildList, repeat, buildSpeed);
 	});
+	clientSignalConnectionManager.connect (activateAtTriggered, [&](const cUnit& unit, size_t index, const cPosition& position)
+	{
+		sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[index]->iID, position.x (), position.y ());
+	});
+	clientSignalConnectionManager.connect (reloadTriggered, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
+	{
+		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, sourceUnit.isAVehicle (), SUPPLY_TYPE_REARM);
+	});
+	clientSignalConnectionManager.connect (repairTriggered, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
+	{
+		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, sourceUnit.isAVehicle (), SUPPLY_TYPE_REPAIR);
+	});
+	clientSignalConnectionManager.connect (upgradeTriggered, [&](const cUnit& unit, size_t index)
+	{
+		sendWantUpgrade (client, unit.iID, index, false);
+	});
+	clientSignalConnectionManager.connect (upgradeAllTriggered, [&](const cUnit& unit)
+	{
+		sendWantUpgrade (client, unit.iID, 0, true);
+	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
@@ -441,9 +586,9 @@ void cNewGameGUI::connectToClient (cClient& client)
 	{
 		client.startGroupMove (vehicles, destination.x (), destination.y ());
 	});
-	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, const cPosition& position)
+	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, size_t index, const cPosition& position)
 	{
-		//sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[vehicleToActivate]->iID, position.x (), position.y ());
+		sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[index]->iID, position.x (), position.y ());
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredExitFinishedUnit, [&](const cBuilding& building, const cPosition& position)
 	{
@@ -537,11 +682,11 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredSupplyAmmo, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
 	{
-		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, destinationUnit.isAVehicle(), SUPPLY_TYPE_REARM);
+		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, sourceUnit.isAVehicle (), SUPPLY_TYPE_REARM);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredRepair, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
 	{
-		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, destinationUnit.isAVehicle (), SUPPLY_TYPE_REPAIR);
+		sendWantSupply (client, destinationUnit.iID, destinationUnit.isAVehicle (), sourceUnit.iID, sourceUnit.isAVehicle (), SUPPLY_TYPE_REPAIR);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredAttack, [&](const cUnit& unit, const cPosition& position)
 	{

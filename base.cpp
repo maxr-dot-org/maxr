@@ -723,14 +723,14 @@ void sSubBase::prepareTurnend (cServer& server)
 void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
-	if (building.data.hitpointsCur >= building.data.hitpointsMax
+	if (building.data.getHitpoints () >= building.data.hitpointsMax
 		|| Metal <= 0 || building.hasBeenAttacked ())
 	{
 		return;
 	}
 	// calc new hitpoints
-	building.data.hitpointsCur += Round (((float) building.data.hitpointsMax / building.data.buildCosts) * 4);
-	building.data.hitpointsCur = std::min (building.data.hitpointsMax, building.data.hitpointsCur);
+	const auto newHitPoints = building.data.getHitpoints() + Round (((float) building.data.hitpointsMax / building.data.buildCosts) * 4);
+	building.data.setHitpoints(std::min (building.data.hitpointsMax, newHitPoints));
 	addMetal (server, -1);
 	sendUnitData (server, building, owner->getNr());
 	for (size_t j = 0; j != building.seenByPlayerList.size(); ++j)
@@ -742,9 +742,9 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
 {
 	// reload:
-	if (building.data.canAttack && building.data.ammoCur == 0 && Metal > 0)
+	if (building.data.canAttack && building.data.getAmmo () == 0 && Metal > 0)
 	{
-		building.data.ammoCur = building.data.ammoMax;
+		building.data.setAmmo(building.data.ammoMax);
 		addMetal (server, -1);
 		// ammo is not visible to enemies. So only send to the owner
 		sendUnitData (server, building, owner->getNr());

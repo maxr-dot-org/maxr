@@ -18,5 +18,9 @@
  ***************************************************************************/
 
 #include "windowupgrades.h"
+#include "../../../../pcx.h"
 
 //------------------------------------------------------------------------------
+cWindowUpgrades::cWindowUpgrades () :
+	cWindowHangar (LoadPCX (GFXOD_UPGRADE), 0, 0)
+{}

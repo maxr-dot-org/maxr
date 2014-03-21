@@ -1920,9 +1920,9 @@ void cMenuUnitDetails::draw()
 	const cBuilding* building = unit->isABuilding() ? static_cast<cBuilding*> (unit) : NULL;
 
 	// Die Hitpoints anzeigen:
-	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data.hitpointsCur, data.hitpointsMax);
+	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data.getHitpoints (), data.hitpointsMax);
 	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE);
-	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data.hitpointsCur, data.hitpointsMax);
+	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data.getHitpoints (), data.hitpointsMax);
 
 	// Den Speed anzeigen:
 	if (data.speedMax > 0)
@@ -2026,15 +2026,15 @@ void cMenuUnitDetails::draw()
 		if (unitOwner == &activePlayer)
 		{
 			// Munition:
-			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.ammoCur, data.ammoMax);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data.getAmmo (), data.ammoMax);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Others~Ammo_7"), FONT_LATIN_SMALL_WHITE);
-			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data.ammoCur, data.ammoMax);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data.getAmmo (), data.ammoMax);
 		}
 
 		// shots
-		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data.shotsCur, data.shotsMax);
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data.getShots (), data.shotsMax);
 		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Others~Shots_7"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data.shotsCur, data.shotsMax);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data.getShots (), data.shotsMax);
 	}
 	else if (data.produceEnergy && building)
 	{
@@ -3404,15 +3404,15 @@ void cMenuStoredUnitDetails::draw()
 {
 	if (!unitData) return;
 
-	cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12, unitData->hitpointsCur, unitData->hitpointsMax);
+	cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12, unitData->getHitpoints (), unitData->hitpointsMax);
 	font->showText (position.x + 30, position.y + 12, lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE);
-	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, unitData->hitpointsCur, unitData->hitpointsMax);
+	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, unitData->getHitpoints (), unitData->hitpointsMax);
 
 	if (unitData->canAttack)
 	{
-		cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12 + 15, unitData->ammoCur, unitData->ammoMax);
+		cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12 + 15, unitData->getAmmo (), unitData->ammoMax);
 		font->showText (position.x + 30, position.y + 27, lngPack.i18n ("Text~Others~Ammo_7"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, unitData->ammoCur, unitData->ammoMax);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, unitData->getAmmo (), unitData->ammoMax);
 	}
 }
 
@@ -3971,7 +3971,7 @@ bool cMenuReportsScreen::checkFilter (const sUnitData& data, bool checkInclude) 
 
 	if (data.canBuild.empty() && filterBuild) return false;
 	if (!data.canAttack && filterAttack) return false;
-	if (data.hitpointsCur >= data.hitpointsMax && filterDamaged) return false;
+	if (data.getHitpoints () >= data.hitpointsMax && filterDamaged) return false;
 	if (!data.isStealthOn && filterStealth) return false;
 
 	if (data.surfacePosition != sUnitData::SURFACE_POS_GROUND) return false;

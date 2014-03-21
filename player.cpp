@@ -492,7 +492,7 @@ cVehicle* cPlayer::getNextVehicle (cVehicle* start)
 	{
 		if (!it->isMarkedAsDone () && (!it->isUnitBuildingABuilding () || it->getBuildTurns () == 0)
 			&& !it->isUnitClearing () && !it->isSentryActive () && !it->isUnitLoaded ()
-			&& (it->data.speedCur || it->data.shotsCur))
+			&& (it->data.speedCur || it->data.getShots ()))
 			return it;
 	}
 	return NULL;
@@ -504,7 +504,7 @@ cBuilding* cPlayer::getNextBuilding (cBuilding* start)
 	for (cBuilding* it = start; it; it = it->next)
 	{
 		if (!it->isMarkedAsDone () && !it->isUnitWorking () && !it->isSentryActive ()
-			&& (!it->data.canBuild.empty() || it->data.shotsCur
+			&& (!it->data.canBuild.empty () || it->data.getShots ()
 				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
 				|| it->data.canResearch))
 			return it;
@@ -567,7 +567,7 @@ cVehicle* cPlayer::getPrevVehicle (cVehicle* start)
 	{
 		if (!it->isMarkedAsDone () && (!it->isUnitBuildingABuilding () || it->getBuildTurns () == 0)
 			&& !it->isUnitClearing () && !it->isSentryActive () && !it->isUnitLoaded ()
-			&& (it->data.speedCur || it->data.shotsCur))
+			&& (it->data.speedCur || it->data.getShots ()))
 			return it;
 	}
 	return NULL;
@@ -579,7 +579,7 @@ cBuilding* cPlayer::getPrevBuilding (cBuilding* start)
 	for (cBuilding* it = start; it; it = it->prev)
 	{
 		if (!it->isMarkedAsDone () && !it->isUnitWorking () && !it->isSentryActive ()
-			&& (!it->data.canBuild.empty() || it->data.shotsCur
+			&& (!it->data.canBuild.empty () || it->data.getShots ()
 				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
 				|| it->data.canResearch))
 			return it;
@@ -810,7 +810,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			}
 		}
 		if (incrementVersion)
-			VehicleData[i].version += 1;
+			VehicleData[i].setVersion(VehicleData[i].getVersion() + 1);
 	}
 
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
@@ -858,7 +858,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			}
 		}
 		if (incrementVersion)
-			BuildingData[i].version += 1;
+			BuildingData[i].setVersion(BuildingData[i].getVersion() + 1);
 	}
 }
 

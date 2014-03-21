@@ -78,8 +78,8 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	FlightHigh = 0;
 	WalkFrame = 0;
 	BuildBigSavedPos = 0;
-	data.hitpointsCur = data.hitpointsMax;
-	data.ammoCur = data.ammoMax;
+	data.setHitpoints(data.hitpointsMax);
+	data.setAmmo(data.ammoMax);
 	ClientMoveJob = NULL;
 	ServerMoveJob = NULL;
 	autoMJob = NULL;
@@ -710,13 +710,13 @@ bool cVehicle::refreshData()
 	if (isDisabled())
 	{
 		lastSpeed = data.speedMax;
-		lastShots = std::min (data.ammoCur, data.shotsMax);
+		lastShots = std::min (data.getAmmo (), data.shotsMax);
 		return true;
 	}
-	if (data.speedCur < data.speedMax || data.shotsCur < data.shotsMax)
+	if (data.speedCur < data.speedMax || data.getShots () < data.shotsMax)
 	{
 		data.speedCur = data.speedMax;
-		data.shotsCur = std::min (data.ammoCur, data.shotsMax);
+		data.setShots (std::min (data.getAmmo (), data.shotsMax));
 
 #if 0
 		// Regeneration:
@@ -964,7 +964,7 @@ void cVehicle::DecSpeed (int value)
 	if (data.canAttack == false || data.canDriveAndFire) return;
 
 	const int s = data.speedCur * data.shotsMax / data.speedMax;
-	data.shotsCur = std::min (data.shotsCur, s);
+	data.setShots(std::min (data.getShots (), s));
 }
 
 //-----------------------------------------------------------------------------
@@ -1157,7 +1157,7 @@ void cVehicle::makeReport ()
 		// Disabled:
 		PlayRandomVoice (VoiceData.VOIUnitDisabledByEnemy);
 	}
-	else if (data.hitpointsCur > data.hitpointsMax / 2)
+	else if (data.getHitpoints () > data.hitpointsMax / 2)
 	{
 		// Status green
 		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
@@ -1187,12 +1187,12 @@ void cVehicle::makeReport ()
 			// removing dirt
 			PlayVoice (VoiceData.VOIClearing);
 		}
-		else if (data.canAttack && data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
+		else if (data.canAttack && data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
 		{
 			// red ammo-status but still ammo left
 			PlayRandomVoice (VoiceData.VOIAmmoLow);
 		}
-		else if (data.canAttack && data.ammoCur == 0)
+		else if (data.canAttack && data.getAmmo () == 0)
 		{
 			// no ammo left
 			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
@@ -1215,7 +1215,7 @@ void cVehicle::makeReport ()
 			PlayRandomVoice (VoiceData.VOIOK);
 		}
 	}
-	else if (data.hitpointsCur > data.hitpointsMax / 4)
+	else if (data.getHitpoints () > data.hitpointsMax / 4)
 	{
 		// Status yellow:
 		PlayRandomVoice (VoiceData.VOIStatusYellow);
@@ -1230,7 +1230,7 @@ void cVehicle::makeReport ()
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transferred to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::canTransferTo (const cPosition position, const cMapField& overUnitField) const
+bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUnitField) const
 {
 	if (isNextTo (position) == false)
 		return false;
@@ -1429,7 +1429,7 @@ bool cVehicle::doReactionFire (cServer& server, cPlayer* player) const
 bool cVehicle::provokeReactionFire (cServer& server)
 {
 	// unit can't fire, so it can't provoke a reaction fire
-	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
+	if (data.canAttack == false || data.getShots () <= 0 || data.getAmmo () <= 0)
 		return false;
 
 	std::vector<cPlayer*>& playerList = server.PlayerList;
@@ -1456,32 +1456,11 @@ bool cVehicle::provokeReactionFire (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
-/** Draws exitpoints for a vehicle, that should be exited */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const
+bool cVehicle::canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const
 {
-	const int spx = gameGUI.getScreenPosX (*this);
-	const int spy = gameGUI.getScreenPosY (*this);
-	const cMap& map = *gameGUI.getClient()->getMap();
-	const int tilesize = gameGUI.getTileSize();
-	T_2<int> offsets[8] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1),
-						   T_2<int> (-1, 0),                  T_2<int> (1, 0),
-						   T_2<int> (-1, 1), T_2<int> (0,  1), T_2<int> (1, 1)
-						  };
-
-	for (int i = 0; i != 8; ++i)
-	{
-		if (canExitTo (PosX + offsets[i].x, PosY + offsets[i].y, map, unitData))
-			gameGUI.drawExitPoint (spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize);
-	}
-}
-
-//-----------------------------------------------------------------------------
-bool cVehicle::canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const
-{
-	if (!map.possiblePlaceVehicle (unitData, x, y, owner)) return false;
-	if (data.factorAir > 0 && (x != PosX || y != PosY)) return false;
-	if (!isNextTo (x, y)) return false;
+	if (!map.possiblePlaceVehicle (unitData, position.x (), position.y (), owner)) return false;
+	if (data.factorAir > 0 && (position.x () != PosX || position.y () != PosY)) return false;
+	if (!isNextTo (position)) return false;
 
 	return true;
 }
@@ -1590,13 +1569,13 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 	switch (supplyType)
 	{
 		case SUPPLY_TYPE_REARM:
-			if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
+			if (unit == this || unit->data.canAttack == false || unit->data.getAmmo () >= unit->data.ammoMax
 				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->isAttacking())
 				return false;
 			break;
 		case SUPPLY_TYPE_REPAIR:
-			if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
+			if (unit == this || unit->data.getHitpoints () >= unit->data.hitpointsMax
 				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->isAttacking())
 				return false;
@@ -1657,7 +1636,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) c
 	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
 
-	if (isNextTo (x, y) == false || data.shotsCur == 0)
+	if (isNextTo (x, y) == false || data.getShots () == 0)
 		return false;
 
 	int off = map.getOffset (x, y);

@@ -372,7 +372,7 @@ void cServer::handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message)
 		unitData.hitpointsMax = message.popInt16();
 		unitData.scan = message.popInt16();
 		if (ID.isAVehicle()) unitData.speedMax = message.popInt16();
-		unitData.version++;
+		unitData.setVersion(unitData.getVersion()+1);
 	}
 }
 
@@ -1331,7 +1331,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		{
 			sUnitData* DestData = DestVehicle ? &DestVehicle->data : &DestBuilding->data;
 			// reduce cargo for repair and calculate maximal repair value
-			iValue = DestData->hitpointsCur;
+			iValue = DestData->getHitpoints ();
 			while (SrcVehicle->data.storageResCur > 0 && iValue < DestData->hitpointsMax)
 			{
 				iValue += Round (((float) DestData->hitpointsMax / DestData->buildCosts) * 4);
@@ -1358,7 +1358,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		else
 		{
 			// reduce cargo for repair and calculate maximal repair value
-			iValue = DestVehicle->data.hitpointsCur;
+			iValue = DestVehicle->data.getHitpoints ();
 			while (SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.hitpointsMax)
 			{
 				iValue += Round (((float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
@@ -1374,8 +1374,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	// repair or reload the destination unit
 	if (DestVehicle)
 	{
-		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.ammoCur = DestVehicle->data.ammoMax;
-		else DestVehicle->data.hitpointsCur = iValue;
+		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(DestVehicle->data.ammoMax);
+		else DestVehicle->data.setHitpoints(iValue);
 
 		sendSupply (*this, DestVehicle->iID, true, iValue, iType, DestVehicle->owner->getNr());
 
@@ -1385,8 +1385,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	}
 	else
 	{
-		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.ammoCur = DestBuilding->data.ammoMax;
-		else DestBuilding->data.hitpointsCur = iValue;
+		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo(DestBuilding->data.ammoMax);
+		else DestBuilding->data.setHitpoints(iValue);
 
 		sendSupply (*this, DestBuilding->iID, false, iValue, iType, DestBuilding->owner->getNr());
 
@@ -1420,7 +1420,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 			cVehicle* vehicle = storingBuilding->storedUnits[i];
 			const sUnitData& upgradedVersion = *storingBuilding->owner->getUnitDataCurrentVersion (vehicle->data.ID);
 
-			if (vehicle->data.version >= upgradedVersion.version)
+			if (vehicle->data.getVersion () >= upgradedVersion.getVersion ())
 				continue; // already up to date
 			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 			const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
@@ -1658,7 +1658,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		// sidestep stealth units if necessary
 		sideStepStealthUnit (x, y, *StoredVehicle);
 
-		if (StoringVehicle->canExitTo (x, y, *Map, StoredVehicle->data))
+		if (StoringVehicle->canExitTo (cPosition(x, y), *Map, StoredVehicle->data))
 		{
 			StoringVehicle->exitVehicleTo (*StoredVehicle, Map->getOffset (x, y), *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
@@ -1760,7 +1760,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 			upgradedUnit->hitpointsMax = newMaxHitPoints;
 			upgradedUnit->scan = newScan;
 			if (ID.isAVehicle()) upgradedUnit->speedMax = newMaxSpeed;
-			upgradedUnit->version++;
+			upgradedUnit->setVersion(upgradedUnit->getVersion() + 1);
 
 			player->Credits -= costs;
 			updateCredits = true;
@@ -1788,7 +1788,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 	const int availableMetal = building->SubBase->Metal;
 
 	const sUnitData& upgradedVersion = *player->getUnitDataCurrentVersion (building->data.ID);
-	if (building->data.version >= upgradedVersion.version)
+	if (building->data.getVersion () >= upgradedVersion.getVersion ())
 		return; // already up to date
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	const int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
@@ -1812,7 +1812,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 				continue;
 			if (otherBuilding->data.ID != building->data.ID)
 				continue;
-			if (otherBuilding->data.version >= upgradedVersion.version)
+			if (otherBuilding->data.getVersion () >= upgradedVersion.getVersion ())
 				continue;
 			upgradedBuildings.push_back (otherBuilding);
 			totalCosts += upgradeCostPerBuilding;
@@ -1972,10 +1972,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			{
 				// save speed and number of shots before disabling
 				destVehicle->lastSpeed = destVehicle->data.speedCur;
-				destVehicle->lastShots = destVehicle->data.shotsCur;
+				destVehicle->lastShots = destVehicle->data.getShots ();
 
 				destVehicle->data.speedCur = 0;
-				destVehicle->data.shotsCur = 0;
+				destVehicle->data.setShots(0);
 
 				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
@@ -1983,9 +1983,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			else if (destBuilding)
 			{
 				// save number of shots before disabling
-				destBuilding->lastShots = destBuilding->data.shotsCur;
+				destBuilding->lastShots = destBuilding->data.getShots ();
 
-				destBuilding->data.shotsCur = 0;
+				destBuilding->data.setShots(0);
 				destBuilding->wasWorking = destBuilding->isUnitWorking ();
 				destBuilding->ServerStopWork (*this, true);
 				sendDoStopWork (*this, *destBuilding);
@@ -2018,7 +2018,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		checkPlayerUnits();
 		srcVehicle->InSentryRange (*this);
 	}
-	srcVehicle->data.shotsCur--;
+	srcVehicle->data.setShots(srcVehicle->data.getShots()-1);
 	sendUnitData (*this, *srcVehicle, srcVehicle->owner->getNr());
 	sendCommandoAnswer (*this, success, steal, *srcVehicle, srcVehicle->owner->getNr());
 }
@@ -3836,14 +3836,14 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	for (size_t i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
-		if (Player->VehicleData[i].version > 0
+		if (Player->VehicleData[i].getVersion () > 0
 			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan()).buildCosts)
 			sendUnitUpgrades (*this, Player->VehicleData[i], Player->getNr());
 	}
 	for (size_t i = 0; i != UnitsData.getNrBuildings(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
-		if (Player->BuildingData[i].version > 0
+		if (Player->BuildingData[i].getVersion () > 0
 			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan()).buildCosts)
 			sendUnitUpgrades (*this, Player->BuildingData[i], Player->getNr());
 	}
@@ -3939,7 +3939,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	if (vehicle->isDisabled())
 	{
 		vehicle->data.speedCur = vehicle->lastSpeed;
-		vehicle->data.shotsCur = vehicle->lastShots;
+		vehicle->data.setShots(vehicle->lastShots);
 	}
 	vehicle->setDisabledTurns (0);
 

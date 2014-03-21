@@ -20,11 +20,12 @@
 #ifndef gui_menu_windows_windowupgrades_windowupgradesH
 #define gui_menu_windows_windowupgrades_windowupgradesH
 
-#include "../../../window.h"
+#include "../../../menu/windows/windowhangar/windowhangar.h"
 
-class cWindowUpgrades : public cWindow
+class cWindowUpgrades : public cWindowHangar
 {
 public:
+	cWindowUpgrades ();
 
 private:
 };

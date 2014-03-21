@@ -17,17 +17,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_dialogs_dialogresearchH
-#define gui_menu_dialogs_dialogresearchH
+#ifndef gui_menu_windows_windowreports_windowreportsH
+#define gui_menu_windows_windowreports_windowreportsH
 
-#include "../../window.h"
+#include "../../../window.h"
 
-class cDialogResearch : public cWindow
+class cWindowReports : public cWindow
 {
 public:
-	cDialogResearch ();
+	cWindowReports ();
 
 private:
 };
 
-#endif // gui_menu_dialogs_dialogresearchH
+#endif // gui_menu_windows_windowreports_windowreportsH

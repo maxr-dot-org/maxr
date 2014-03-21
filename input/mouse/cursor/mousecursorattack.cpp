@@ -42,7 +42,7 @@ cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition
 
 	if (target && (target != &sourceUnit))
 	{
-		currentHealthPercent = 100 * target->data.hitpointsCur / target->data.hitpointsMax;
+		currentHealthPercent = 100 * target->data.getHitpoints () / target->data.hitpointsMax;
 		newHealthPercent = 100 * target->calcHealth (data.damage) / target->data.hitpointsMax;
 	}
 	assert (currentHealthPercent >= newHealthPercent);

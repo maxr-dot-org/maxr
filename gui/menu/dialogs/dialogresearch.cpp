@@ -18,5 +18,9 @@
  ***************************************************************************/
 
 #include "dialogresearch.h"
+#include "../../../pcx.h"
 
 //------------------------------------------------------------------------------
+cDialogResearch::cDialogResearch () :
+	cWindow (LoadPCX (GFXOD_DIALOG_RESEARCH), eWindowBackgrounds::Alpha)
+{}

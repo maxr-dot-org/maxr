@@ -51,7 +51,7 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 //------------------------------------------------------------------------------
 void cResourceBar::draw ()
 {
-	if (surface)
+	if (surface && (maxValue - minValue) > 0)
 	{
 		const bool horizontal = orientation == eOrientationType::Horizontal;
 

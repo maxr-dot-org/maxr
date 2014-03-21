@@ -85,8 +85,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	data.hitpointsCur = data.hitpointsMax;
-	data.ammoCur = data.ammoMax;
+	data.setHitpoints(data.hitpointsMax);
+	data.setAmmo(data.ammoMax);
 	SubBase = NULL;
 	BuildSpeed = 0;
 
@@ -223,13 +223,13 @@ int cBuilding::refreshData()
 {
 	if (isDisabled())
 	{
-		lastShots = std::min (this->data.shotsMax, this->data.ammoCur);
+		lastShots = std::min (this->data.shotsMax, this->data.getAmmo());
 		return 1;
 	}
 
-	if (data.shotsCur < data.shotsMax)
+	if (data.getShots () < data.shotsMax)
 	{
-		data.shotsCur = std::min (this->data.shotsMax, this->data.ammoCur);
+		data.setShots(std::min (this->data.shotsMax, this->data.getAmmo()));
 		return 1;
 	}
 	return 0;
@@ -1062,7 +1062,7 @@ void cBuilding::clientStopWork ()
 }
 
 //------------------------------------------------------------
-bool cBuilding::canTransferTo (const cPosition position, const cMapField& overUnitField) const
+bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overUnitField) const
 {
 	if (overUnitField.getVehicle ())
 	{
@@ -1498,24 +1498,24 @@ void cBuilding::Select (cGameGUI& gameGUI)
 		// running out of ammo
 		if (data.canAttack)
 		{
-			if (data.ammoCur <= data.ammoMax / 4 && data.ammoCur != 0)
+			if (data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
 			{
 				// red ammo-status but still ammo left
 				PlayRandomVoice (VoiceData.VOIAmmoLow);
 			}
-			else if (data.ammoCur == 0)
+			else if (data.getAmmo () == 0)
 			{
 				// no ammo left
 				PlayRandomVoice (VoiceData.VOIAmmoEmpty);
 			}
 		}
 		// damaged
-		if (data.hitpointsCur <= data.hitpointsMax / 2 && data.hitpointsCur > data.hitpointsMax / 4)
+		if (data.getHitpoints () <= data.hitpointsMax / 2 && data.getHitpoints () > data.hitpointsMax / 4)
 		{
 			// Status yellow:
 			PlayRandomVoice (VoiceData.VOIStatusYellow);
 		}
-		else if (data.hitpointsCur <= data.hitpointsMax / 4)
+		else if (data.getHitpoints () <= data.hitpointsMax / 4)
 		{
 			// Status red:
 			PlayRandomVoice (VoiceData.VOIStatusRed);
@@ -1638,7 +1638,7 @@ bool cBuilding::buildingCanBeStarted() const
 bool cBuilding::buildingCanBeUpgraded() const
 {
 	const sUnitData& upgraded = *owner->getUnitDataCurrentVersion (data.ID);
-	return (data.version != upgraded.version && SubBase && SubBase->Metal >= 2);
+	return (data.getVersion () != upgraded.getVersion () && SubBase && SubBase->Metal >= 2);
 }
 
 //-----------------------------------------------------------------------------

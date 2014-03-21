@@ -20,7 +20,7 @@
 #define unitH
 
 #include <string>
-#include "main.h" /// for sUnitData -> move that to cUnit, too?
+#include "unitdata.h"
 #include "utility/signal/signal.h"
 
 class cClient;
@@ -45,7 +45,8 @@ public:
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
 
-	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const = 0;
+	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const = 0;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const = 0;
 	virtual std::string getStatusStr (const cPlayer* player) const = 0;
 
 	virtual int getMovementOffsetX() const {return 0;}

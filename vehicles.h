@@ -177,10 +177,9 @@ public:
 	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
 	void makeReport ();
-	virtual bool canTransferTo (const cPosition position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
-	void DrawExitPoints (const sUnitData& unitData, cGameGUI& gameGUI) const;
-	bool canExitTo (const int x, const int y, const cMap& map, const sUnitData& unitData) const;
+	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
 	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);

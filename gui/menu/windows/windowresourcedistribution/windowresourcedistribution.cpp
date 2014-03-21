@@ -17,17 +17,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_dialogs_dialogresearchH
-#define gui_menu_dialogs_dialogresearchH
+#include "windowresourcedistribution.h"
+#include "../../../../pcx.h"
 
-#include "../../window.h"
-
-class cDialogResearch : public cWindow
-{
-public:
-	cDialogResearch ();
-
-private:
-};
-
-#endif // gui_menu_dialogs_dialogresearchH
+//------------------------------------------------------------------------------
+cWindowResourceDistribution::cWindowResourceDistribution () :
+	cWindow (LoadPCX (GFXOD_MINEMANAGER))
+{}

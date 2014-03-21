@@ -124,7 +124,7 @@ int cUnit::calcHealth (int damage) const
 	// minimum damage is 1
 	damage = std::max (1, damage);
 
-	const int hp = data.hitpointsCur - damage;
+	const int hp = data.getHitpoints () - damage;
 	return std::max (0, hp);
 }
 
@@ -205,7 +205,7 @@ string cUnit::getNamePrefix() const
 {
 	string rome = "MK ";
 	// +1, because the numbers in the name start at 1, not at 0
-	unsigned int nr = data.version + 1;
+	unsigned int nr = data.getVersion () + 1;
 
 	return "MK " + to_roman (nr);
 }
@@ -272,8 +272,8 @@ void cUnit::rotateTo (int newDir)
 bool cUnit::canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack, bool checkRange) const
 {
 	if (data.canAttack == false) return false;
-	if (data.shotsCur <= 0) return false;
-	if (data.ammoCur <= 0) return false;
+	if (data.getShots () <= 0) return false;
+	if (data.getAmmo () <= 0) return false;
 	if (attacking) return false;
 	if (isBeeingAttacked ()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
@@ -316,11 +316,11 @@ void cUnit::upgradeToCurrentVersion()
 	const sUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.ID);
 	if (upgradeVersion == NULL) return;
 
-	data.version = upgradeVersion->version;
+	data.setVersion(upgradeVersion->getVersion ());
 
 	// TODO: check behaviour in original
-	if (data.hitpointsCur == data.hitpointsMax)
-		data.hitpointsCur = upgradeVersion->hitpointsMax;
+	if (data.getHitpoints () == data.hitpointsMax)
+		data.setHitpoints (upgradeVersion->hitpointsMax);
 	data.hitpointsMax = upgradeVersion->hitpointsMax;
 
 	// don't change the current ammo-amount!

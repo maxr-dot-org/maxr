@@ -21,6 +21,7 @@
 
 #include "casualtiestracker.h"
 
+#include "unitdata.h"
 #include "log.h"
 #include "netmessage.h"
 #include "tinyxml2.h"

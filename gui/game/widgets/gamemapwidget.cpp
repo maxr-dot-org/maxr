@@ -21,6 +21,7 @@
 #include "unitcontextmenuwidget.h"
 #include "mousemode/mousemode.h"
 #include "mousemode/mousemodedefault.h"
+#include "mousemode/mousemodeactivateloaded.h"
 #include "mousemode/mousemodeattack.h"
 #include "mousemode/mousemodedisable.h"
 #include "mousemode/mousemodehelp.h"
@@ -481,6 +482,12 @@ void cGameMapWidget::startFindBuildPosition (const sID& buildId)
 void cGameMapWidget::startFindPathBuildPosition ()
 {
 	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination>());
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::startActivateVehicle (const cUnit& unit, size_t index)
+{
+	setMouseInputMode (std::make_unique<cMouseModeActivateLoaded> (index));
 }
 
 //------------------------------------------------------------------------------
@@ -1027,8 +1034,9 @@ void cGameMapWidget::drawExitPoints ()
 		}
 		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->owner == player)
 		{
-			//auto unitToExit = selectedVehicle->storedUnits[vehicleToActivate]->data;
-			//drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return selectedVehicle->canExitTo (position, *dynamicMap, *unitToExit); });
+			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get());
+			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
+			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return selectedVehicle->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
@@ -1043,8 +1051,9 @@ void cGameMapWidget::drawExitPoints ()
 		}
 		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->owner == player)
 		{
-			//auto unitToExit = selectedBuilding->storedUnits[vehicleToActivate]->data;
-			//drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
+			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get ());
+			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex ()]->data;
+			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, unitToExit); });
 		}
 	}
 }

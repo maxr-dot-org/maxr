@@ -411,7 +411,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, UnitID, ID);
 
 	AddedVehicle->dir = dir;
-	AddedVehicle->data.version = version;
+	AddedVehicle->data.setVersion(version);
 	addUnit (iPosX, iPosY, *AddedVehicle, false);
 }
 
@@ -432,7 +432,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	const int version = message.popInt16();
 	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID, ID);
 
-	AddedBuilding->data.version = version;
+	AddedBuilding->data.setVersion(version);
 	addUnit (iPosX, iPosY, *AddedBuilding, false);
 
 	if (AddedBuilding->data.connectsToBase)
@@ -640,21 +640,21 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	}
 
 	Data->buildCosts = message.popInt16();
-	Data->ammoCur = message.popInt16();
+	Data->setAmmo(message.popInt16());
 	Data->ammoMax = message.popInt16();
 	Data->storageResCur = message.popInt16();
 	Data->storageResMax = message.popInt16();
 	Data->storageUnitsCur = message.popInt16();
 	Data->storageUnitsMax = message.popInt16();
 	Data->damage = message.popInt16();
-	Data->shotsCur = message.popInt16();
+	Data->setShots(message.popInt16());
 	Data->shotsMax = message.popInt16();
 	Data->range = message.popInt16();
 	Data->scan = message.popInt16();
 	Data->armor = message.popInt16();
-	Data->hitpointsCur = message.popInt16();
+	Data->setHitpoints(message.popInt16());
 	Data->hitpointsMax = message.popInt16();
-	Data->version = message.popInt16();
+	Data->setVersion(message.popInt16());
 
 	if (bVehicle)
 	{
@@ -1081,8 +1081,8 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 			// TODO: Request sync of vehicle
 			return;
 		}
-		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.ammoCur = message.popInt16();
-		else DestVehicle->data.hitpointsCur = message.popInt16();
+		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(message.popInt16());
+		else DestVehicle->data.setHitpoints(message.popInt16());
 		if (DestVehicle->isUnitLoaded ())
 		{
 			// get the building which has loaded the unit
@@ -1116,8 +1116,8 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 			// TODO: Request sync of building
 			return;
 		}
-		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.ammoCur = message.popInt16();
-		else DestBuilding->data.hitpointsCur = message.popInt16();
+		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo(message.popInt16());
+		else DestBuilding->data.setHitpoints(message.popInt16());
 	}
 	if (!storageMenuActive)
 	{
@@ -1468,7 +1468,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 	sUnitData* Data = ActivePlayer->getUnitDataCurrentVersion (ID);
 	if (Data == NULL) return;
 
-	Data->version = message.popInt16();
+	Data->setVersion(message.popInt16());
 	Data->scan = message.popInt16();
 	Data->range = message.popInt16();
 	Data->damage = message.popInt16();

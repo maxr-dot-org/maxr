@@ -121,7 +121,7 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iClient)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (unit.isABuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE));
 
-	message->pushInt16 (unit.data.version);
+	message->pushInt16 (unit.data.getVersion ());
 	message->pushInt16 (unit.iID);
 	if (unit.isAVehicle())
 		message->pushInt16 (unit.dir);
@@ -169,21 +169,21 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 		message->pushInt16 (unit.data.speedMax);
 		message->pushInt16 (unit.data.speedCur);
 	}
-	message->pushInt16 (unit.data.version);
+	message->pushInt16 (unit.data.getVersion ());
 	message->pushInt16 (unit.data.hitpointsMax);
-	message->pushInt16 (unit.data.hitpointsCur);
+	message->pushInt16 (unit.data.getHitpoints ());
 	message->pushInt16 (unit.data.armor);
 	message->pushInt16 (unit.data.scan);
 	message->pushInt16 (unit.data.range);
 	message->pushInt16 (unit.data.shotsMax);
-	message->pushInt16 (unit.data.shotsCur);
+	message->pushInt16 (unit.data.getShots ());
 	message->pushInt16 (unit.data.damage);
 	message->pushInt16 (unit.data.storageUnitsMax);
 	message->pushInt16 (unit.data.storageUnitsCur);
 	message->pushInt16 (unit.data.storageResMax);
 	message->pushInt16 (unit.data.storageResCur);
 	message->pushInt16 (unit.data.ammoMax);
-	message->pushInt16 (unit.data.ammoCur);
+	message->pushInt16 (unit.data.getAmmo ());
 	message->pushInt16 (unit.data.buildCosts);
 
 	// Current state of the unit
@@ -823,7 +823,7 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, int player)
 	message->pushInt16 (unitData.damage);
 	message->pushInt16 (unitData.range);
 	message->pushInt16 (unitData.scan);
-	message->pushInt16 (unitData.version);
+	message->pushInt16 (unitData.getVersion ());
 	message->pushID (unitData.ID);
 	server.sendNetMessage (message, player);
 }

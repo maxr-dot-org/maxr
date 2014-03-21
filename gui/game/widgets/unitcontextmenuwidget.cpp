@@ -43,7 +43,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	if (!unit->isDisabled () && unit->owner == player)
 	{
 		// Attack
-		if (unit->data.canAttack && unit->data.shotsCur)
+		if (unit->data.canAttack && unit->data.getShots ())
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Attack_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
 			button->setChecked (mouseInputMode == eMouseModeType::Attack);
@@ -242,7 +242,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Sabotage/disable:
-		if (unit->data.canDisable && unit->data.shotsCur)
+		if (unit->data.canDisable && unit->data.getShots ())
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Disable_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
 			button->setChecked (mouseInputMode == eMouseModeType::Disable);
@@ -252,7 +252,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Steal:
-		if (unit->data.canCapture && unit->data.shotsCur)
+		if (unit->data.canCapture && unit->data.getShots ())
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Steal_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, SoundData.SNDObjectMenu));
 			button->setChecked (mouseInputMode == eMouseModeType::Steal);

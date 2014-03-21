@@ -878,7 +878,7 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 	// disable most hotkeys while selected unit is disabled
 	else if(selectedUnit && selectedUnit->isDisabled() == false && selectedUnit->owner == &player && !client->isFreezed())
 	{
-		if(key == KeysList.KeyUnitMenuAttack && selectedUnit->data.canAttack && selectedUnit->data.shotsCur)
+		if (key == KeysList.KeyUnitMenuAttack && selectedUnit->data.canAttack && selectedUnit->data.getShots ())
 		{
 			mouseInputMode = mouseInputAttackMode;
 			updateMouseCursor();
@@ -1017,11 +1017,11 @@ void cGameGUI::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 			}
 			selectedVehicle->executeClearMinesCommand(*client);
 		}
-		else if(key == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur)
+		else if (key == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.getShots ())
 		{
 			mouseInputMode = disableMode;
 		}
-		else if(key == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur)
+		else if (key == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.getShots ())
 		{
 			mouseInputMode = stealMode;
 		}
@@ -2832,7 +2832,7 @@ void cGameGUI::drawAttackCursor (int x, int y) const
 		return;
 	}
 
-	int t = target->data.hitpointsCur;
+	int t = target->data.getHitpoints ();
 	int wc = (int) ((float) t / target->data.hitpointsMax * 35);
 
 	t = target->calcHealth (data.damage);
@@ -3422,7 +3422,7 @@ void cGameGUI::checkMouseInputMode()
 		case mouseInputAttackMode:
 		case disableMode:
 		case stealMode:
-			if (selectedUnit && !selectedUnit->data.shotsCur)
+			if (selectedUnit && !selectedUnit->data.getShots ())
 				mouseInputMode = normalInput;
 			break;
 		case loadMode:
@@ -3520,7 +3520,7 @@ int cGameGUI::getNumberOfMenuEntries (const cUnit& unit) const
 	if (unit.isDisabled()) return result;
 
 	// Attack
-	if (unit.data.canAttack && unit.data.shotsCur)
+	if (unit.data.canAttack && unit.data.getShots ())
 		++result;
 
 	// Build
@@ -3596,11 +3596,11 @@ int cGameGUI::getNumberOfMenuEntries (const cUnit& unit) const
 		++result;
 
 	// Sabotage/disable
-	if (unit.data.canCapture && unit.data.shotsCur)
+	if (unit.data.canCapture && unit.data.getShots ())
 		++result;
 
 	// Steal
-	if (unit.data.canDisable && unit.data.shotsCur)
+	if (unit.data.canDisable && unit.data.getShots ())
 		++result;
 
 	return result;
@@ -3630,7 +3630,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 	if (unit.isDisabled() == false && unit.owner == &client->getActivePlayer())
 	{
 		// Attack:
-		if (unit.data.canAttack && unit.data.shotsCur)
+		if (unit.data.canAttack && unit.data.getShots ())
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == mouseInputAttackMode;
 			drawContextItem (lngPack.i18n ("Text~Others~Attack_7"), isMarked, dest.x, dest.y, cVideo::buffer);
@@ -3815,7 +3815,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		}
 
 		// Sabotage/disable:
-		if (unit.data.canDisable && unit.data.shotsCur)
+		if (unit.data.canDisable && unit.data.getShots ())
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == disableMode;
 			drawContextItem (lngPack.i18n ("Text~Others~Disable_7"), isMarked, dest.x, dest.y, cVideo::buffer);
@@ -3824,7 +3824,7 @@ void cGameGUI::drawMenu (const cUnit& unit)
 		}
 
 		// Steal:
-		if (unit.data.canCapture && unit.data.shotsCur)
+		if (unit.data.canCapture && unit.data.getShots ())
 		{
 			bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || mouseInputMode == stealMode;
 			drawContextItem (lngPack.i18n ("Text~Others~Steal_7"), isMarked, dest.x, dest.y, cVideo::buffer);
@@ -3869,7 +3869,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 	if (unit.isDisabled() == false && unit.owner == &client->getActivePlayer())
 	{
 		// attack:
-		if (unit.data.canAttack && unit.data.shotsCur)
+		if (unit.data.canAttack && unit.data.getShots ())
 		{
 			if (exeNr == nr)
 			{
@@ -4151,7 +4151,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 		}
 
 		// disable:
-		if (unit.data.canDisable && unit.data.shotsCur > 0)
+		if (unit.data.canDisable && unit.data.getShots () > 0)
 		{
 			if (exeNr == nr)
 			{
@@ -4164,7 +4164,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 		}
 
 		// steal:
-		if (unit.data.canCapture && unit.data.shotsCur > 0)
+		if (unit.data.canCapture && unit.data.getShots () > 0)
 		{
 			if (exeNr == nr)
 			{
@@ -4252,14 +4252,14 @@ void cGameGUI::drawMunBar (const cUnit& unit, const SDL_Rect& screenPos) const
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int) (((float) (r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
+	r2.w = (int)(((float)(r1.w - 2) / unit.data.ammoMax) * unit.data.getAmmo ());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
-	if (unit.data.ammoCur > unit.data.ammoMax / 2)
+	if (unit.data.getAmmo () > unit.data.ammoMax / 2)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFF04AE04);
-	else if (unit.data.ammoCur > unit.data.ammoMax / 4)
+	else if (unit.data.getAmmo () > unit.data.ammoMax / 4)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFDBDE00);
 	else
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFE60000);
@@ -4288,15 +4288,15 @@ void cGameGUI::drawHealthBar (const cUnit& unit, const SDL_Rect& screenPos) cons
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int) (((float) (r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
+	r2.w = (int)(((float)(r1.w - 2) / unit.data.hitpointsMax) * unit.data.getHitpoints ());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
 	Uint32 color;
-	if (unit.data.hitpointsCur > unit.data.hitpointsMax / 2)
+	if (unit.data.getHitpoints () > unit.data.hitpointsMax / 2)
 		color = 0xFF04AE04; // green
-	else if (unit.data.hitpointsCur > unit.data.hitpointsMax / 4)
+	else if (unit.data.getHitpoints () > unit.data.hitpointsMax / 4)
 		color = 0xFFDBDE00; // orange
 	else
 		color = 0xFFE60000; // red
@@ -4330,7 +4330,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 		}
 		if (unit.data.speedCur >= 4)
 		{
-			if (unit.data.shotsCur)
+			if (unit.data.getShots ())
 				dest.x -= getTileSize() / 4;
 
 			SDL_Rect destCopy = dest;
@@ -4338,7 +4338,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 		}
 
 		dest.x = screenPos.x + getTileSize() / 2 - 4;
-		if (unit.data.shotsCur)
+		if (unit.data.getShots ())
 		{
 			if (unit.data.speedCur)
 				dest.x += getTileSize() / 4;

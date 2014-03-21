@@ -114,11 +114,11 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	// draw the damage effects
 	if (animationFlags.is100ms () && building.data.hasDamageEffect &&
-		building.data.hitpointsCur < building.data.hitpointsMax &&
+		building.data.getHitpoints () < building.data.hitpointsMax &&
 		cSettings::getInstance ().isDamageEffects () &&
 		(building.owner == player || (!player || player->canSeeAnyAreaUnder (building))))
 	{
-		int intense = (int)(200 - 200 * ((float)building.data.hitpointsCur / building.data.hitpointsMax));
+		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
 		//gameGUI.addFx (new cFxDarkSmoke (building.PosX * 64 + building.DamageFXPointX, building.PosY * 64 + building.DamageFXPointY, intense, gameGUI.getWindDir ()));
 
 		if (building.data.isBig && intense > 50)
@@ -283,11 +283,11 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 
 	// make damage effect
-	if (animationFlags.is100ms () && vehicle.data.hitpointsCur < vehicle.data.hitpointsMax &&
+	if (animationFlags.is100ms () && vehicle.data.getHitpoints () < vehicle.data.hitpointsMax &&
 		cSettings::getInstance ().isDamageEffects () &&
 		(vehicle.owner == player || (!player || player->canSeeAnyAreaUnder (vehicle))))
 	{
-		int intense = (int)(100 - 100 * ((float)vehicle.data.hitpointsCur / vehicle.data.hitpointsMax));
+		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
 		//gameGUI.addFx (new cFxDarkSmoke (vehicle.PosX * 64 + vehicle.DamageFXPointX + vehicle.OffX, vehicle.PosY * 64 + vehicle.DamageFXPointY + vehicle.OffY, intense, gameGUI.getWindDir ()));
 	}
 
@@ -506,15 +506,15 @@ void cUnitDrawingEngine::drawHealthBar (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int)(((float)(r1.w - 2) / unit.data.hitpointsMax) * unit.data.hitpointsCur);
+	r2.w = (int)(((float)(r1.w - 2) / unit.data.hitpointsMax) * unit.data.getHitpoints ());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
 	Uint32 color;
-	if (unit.data.hitpointsCur > unit.data.hitpointsMax / 2)
+	if (unit.data.getHitpoints () > unit.data.hitpointsMax / 2)
 		color = 0xFF04AE04; // green
-	else if (unit.data.hitpointsCur > unit.data.hitpointsMax / 4)
+	else if (unit.data.getHitpoints () > unit.data.hitpointsMax / 4)
 		color = 0xFFDBDE00; // orange
 	else
 		color = 0xFFE60000; // red
@@ -539,14 +539,14 @@ void cUnitDrawingEngine::drawMunBar (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int)(((float)(r1.w - 2) / unit.data.ammoMax) * unit.data.ammoCur);
+	r2.w = (int)(((float)(r1.w - 2) / unit.data.ammoMax) * unit.data.getAmmo ());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
-	if (unit.data.ammoCur > unit.data.ammoMax / 2)
+	if (unit.data.getAmmo () > unit.data.ammoMax / 2)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFF04AE04);
-	else if (unit.data.ammoCur > unit.data.ammoMax / 4)
+	else if (unit.data.getAmmo () > unit.data.ammoMax / 4)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFDBDE00);
 	else
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFE60000);
@@ -579,7 +579,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		}
 		if (unit.data.speedCur >= 4)
 		{
-			if (unit.data.shotsCur)
+			if (unit.data.getShots ())
 				dest.x -= destination.w / 4;
 
 			SDL_Rect destCopy = dest;
@@ -587,7 +587,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		}
 
 		dest.x = destination.x + destination.w / 2 - 4;
-		if (unit.data.shotsCur)
+		if (unit.data.getShots ())
 		{
 			if (unit.data.speedCur)
 				dest.x += destination.w / 4;

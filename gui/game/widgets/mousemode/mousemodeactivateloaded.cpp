@@ -55,7 +55,7 @@ std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cM
 {
 	if (canExecuteAction (map, mapPosition, unitSelection))
 	{
-		return std::make_unique<cMouseActionActivateLoaded> ();
+		return std::make_unique<cMouseActionActivateLoaded> (vehicleToActivateIndex);
 	}
 	else return nullptr;
 }
@@ -66,6 +66,12 @@ bool cMouseModeActivateLoaded::canExecuteAction (const cMap& map, const cPositio
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
-	return (selectedVehicle && !selectedVehicle->isDisabled () && selectedVehicle->canExitTo (mapPosition.x (), mapPosition.y (), map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
+	return (selectedVehicle && !selectedVehicle->isDisabled () && selectedVehicle->canExitTo (mapPosition, map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
 		(selectedBuilding && !selectedBuilding->isDisabled () && selectedBuilding->canExitTo (mapPosition, map, selectedBuilding->storedUnits[vehicleToActivateIndex]->data));
+}
+
+//------------------------------------------------------------------------------
+size_t cMouseModeActivateLoaded::getVehicleToActivateIndex () const
+{
+	return vehicleToActivateIndex;
 }

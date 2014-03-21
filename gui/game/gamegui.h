@@ -108,6 +108,11 @@ private:
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
 	cSignal<void (const cBuilding&, const std::vector<sBuildList>&, int, bool)> buildVehiclesTriggered;
+	cSignal<void (const cUnit& unit, size_t index, const cPosition& position)> activateAtTriggered;
+	cSignal<void (const cUnit&, const cUnit&)> reloadTriggered;
+	cSignal<void (const cUnit&, const cUnit&)> repairTriggered;
+	cSignal<void (const cUnit&, size_t index)> upgradeTriggered;
+	cSignal<void (const cUnit&)> upgradeAllTriggered;
 };
 
 #endif // gui_game_gameguiH

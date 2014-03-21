@@ -22,6 +22,7 @@
 #include "upgradecalculator.h"
 #include "log.h"
 #include "main.h"
+#include "unitdata.h"
 #include <sstream>
 
 //--------------------------------------------------

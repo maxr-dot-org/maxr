@@ -92,6 +92,8 @@ public:
 	cSignal<void ()> centerClicked;
 	cSignal<void ()> helpClicked;
 
+	cSignal<void ()> reportsClicked;
+
 	cSignal<void ()> miniMapZoomFactorToggled;
 	cSignal<void ()> miniMapAttackUnitsOnlyToggled;
 

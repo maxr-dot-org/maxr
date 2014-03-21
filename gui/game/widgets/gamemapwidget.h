@@ -70,6 +70,7 @@ public:
 
 	void startFindBuildPosition (const sID& buildId);
 	void startFindPathBuildPosition ();
+	void startActivateVehicle (const cUnit& unit, size_t index);
 
 	void addEffect (std::shared_ptr<cFx> effect);
 
@@ -108,7 +109,7 @@ public:
 	cSignal<void (const std::vector<cVehicle*>&, const cPosition&)> triggeredMoveGroup;
 	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPosition;
 	cSignal<void (const cVehicle&, const cPosition&)> selectedBuildPathDestination;
-	cSignal<void (const cUnit&, const cPosition&)> triggeredActivateAt;
+	cSignal<void (const cUnit&, size_t, const cPosition&)> triggeredActivateAt;
 	cSignal<void (const cBuilding&, const cPosition&)> triggeredExitFinishedUnit;
 	cSignal<void (const cUnit&, const cPosition&)> triggeredLoadAt;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredSupplyAmmo;
