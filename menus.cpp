@@ -2243,7 +2243,7 @@ void cStartupHangarMenu::materialBarClicked (void* parent)
 	if (vehicle->storeResType == sUnitData::STORE_RES_GOLD) return;
 
 	const int oldCargo = unit->getResValue();
-	int newCargo = (int) ((float) (menu->position.y + 301 + 115 - mouse->y) / 115 * vehicle->storageResMax);
+	int newCargo = vehicle->storageResMax * (menu->position.y + 301 + 115 - mouse->y) / 115;
 	if (newCargo % 5 < 3) newCargo -= newCargo % 5;
 	else newCargo += 5 - newCargo % 5;
 
@@ -2431,6 +2431,18 @@ cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData&
 }
 
 //------------------------------------------------------------------------------
+unsigned int cLandingMenu::getMapPixelWidth() const
+{
+	return Video.getResolutionX() - 192;
+}
+
+//------------------------------------------------------------------------------
+unsigned int cLandingMenu::getMapPixelHeight() const
+{
+	return Video.getResolutionY() - 32;
+}
+
+//------------------------------------------------------------------------------
 void cLandingMenu::createHud()
 {
 	hudSurface = cGameGUI::generateSurface();
@@ -2449,18 +2461,16 @@ void cLandingMenu::createHud()
 //------------------------------------------------------------------------------
 void cLandingMenu::createMap()
 {
-	mapSurface = map->createBigSurface (Video.getResolutionX() - 192, Video.getResolutionY() - 32);
+	mapSurface = map->createBigSurface (getMapPixelWidth(), getMapPixelHeight());
 }
 
 //------------------------------------------------------------------------------
-const sTerrain* cLandingMenu::getMapTile (int x, int y) const
+const sTerrain* cLandingMenu::getMapTile (unsigned int x, unsigned int y) const
 {
-	if (x < 0 || x >= Video.getResolutionX() - 192 || y < 0 || y >= Video.getResolutionY() - 32) return NULL;
+	if (x >= getMapPixelWidth() || y >= getMapPixelHeight()) return NULL;
 
-	x = (int) (x * (448.0f / (Video.getResolutionX() - 180)));
-	y = (int) (y * (448.0f / (Video.getResolutionY() - 32)));
-	x = (int) (x * map->getSize() / 448.0f);
-	y = (int) (y * map->getSize() / 448.0f);
+	x = x * map->getSize() / getMapPixelWidth();
+	y = y * map->getSize() / getMapPixelHeight();
 	return &map->getTerrain (x, y);
 }
 
@@ -2472,20 +2482,21 @@ void cLandingMenu::drawLandingPos (int mapX, int mapY)
 		circlesImage->setImage (NULL);
 		return;
 	}
-	// pixel per field in x, y direction
-	const float fakx = (Video.getResolutionX() - 192.0f) / map->getSize();
-	const float faky = (Video.getResolutionY() - 32.0f) / map->getSize();
+	const int mapPixelWidth = getMapPixelWidth();
+	const int mapPixelHeight = getMapPixelHeight();
 
-	AutoSurface circleSurface (SDL_CreateRGBSurface (0, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
+	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapPixelWidth, mapPixelHeight, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_FillRect (circleSurface, NULL, 0xFF00FF);
 	SDL_SetColorKey (circleSurface, SDL_TRUE, 0xFF00FF);
 
-	const int posX = (int) (mapX * fakx);
-	const int posY = (int) (mapY * faky);
+	const int posX = mapX * mapPixelWidth / map->getSize();
+	const int posY = mapY * mapPixelHeight / map->getSize();
 	// for non 4:3 screen resolutions, the size of the circles is
 	// only correct in x dimension, because I don't draw an ellipse
-	drawCircle (posX, posY, (int) ((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
-	drawCircle (posX, posY, (int) ((LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
+	const int warningRadius = (LANDING_DISTANCE_WARNING / 2) * mapPixelWidth / map->getSize();
+	const int tooCloseRadius = (LANDING_DISTANCE_TOO_CLOSE / 2) * mapPixelWidth / map->getSize();
+	drawCircle (posX, posY, warningRadius, SCAN_COLOR, circleSurface);
+	drawCircle (posX, posY, tooCloseRadius, RANGE_GROUND_COLOR, circleSurface);
 
 	circlesImage->setImage (circleSurface);
 }
@@ -2499,8 +2510,8 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	menu->landData->iLandX = (int) ((mouse->x - 180) / (448.0f / menu->map->getSize()) * (448.0f / (Video.getResolutionX() - 192)));
-	menu->landData->iLandY = (int) ((mouse->y - 18) / (448.0f / menu->map-> getSize()) * (448.0f / (Video.getResolutionY() - 32)));
+	menu->landData->iLandX = (mouse->x - 180) * menu->map->getSize() / menu->getMapPixelWidth();
+	menu->landData->iLandY = (mouse->y - 18) * menu->map-> getSize() / menu->getMapPixelHeight();
 	menu->canClick = false;
 	menu->backButton->setLocked (true);
 	menu->drawLandingPos (menu->landData->iLandX, menu->landData->iLandY);

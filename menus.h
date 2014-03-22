@@ -665,18 +665,21 @@ private:
 
 	void handleNetMessage (cNetMessage& message);
 	void handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& message);
-protected:
+
 	void createHud();
 	void createMap();
-	const sTerrain* getMapTile (int x, int y) const;
+	const sTerrain* getMapTile (unsigned int x, unsigned int y) const;
 	void hitPosition();
 	void drawLandingPos (int mapX, int mapY);
+
+	unsigned int getMapPixelWidth() const;
+	unsigned int getMapPixelHeight() const;
 
 private:
 	static void mapClicked (void* parent);
 	static void mouseMoved (void* parent);
 
-protected:
+private:
 	cClient* client;
 
 	cStaticMap* map;
