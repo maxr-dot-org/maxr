@@ -124,6 +124,7 @@ private:
 	cSignal<void (const cUnit&, const cUnit&)> repairTriggered;
 	cSignal<void (const cUnit&, size_t index)> upgradeTriggered;
 	cSignal<void (const cUnit&)> upgradeAllTriggered;
+	cSignal<void (const cBuilding&, int, int, int)> changeResourceDistributionTriggered;
 };
 
 #endif // gui_game_gameguiH

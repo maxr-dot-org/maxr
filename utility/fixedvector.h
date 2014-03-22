@@ -24,7 +24,7 @@
 #include <type_traits>
 
 /**
- * A simple fixed size vector.
+ * A simple fixed size vector that provides basic mathematical operations.
  *
  * @tparam T Type of stored elements. Should be an arithmetic type.
  * @tparam D Dimension/size of the vector.

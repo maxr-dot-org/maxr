@@ -58,6 +58,9 @@ public:
 	int getFixedMaxValue () const;
 	void setFixedMaxValue (int maxValue);
 
+	bool isInverted () const;
+	void setInverted (bool inverted);
+
 	int getValue () const;
 	void setValue (int value);
 
@@ -88,6 +91,8 @@ private:
 	int fixedMinValue;
 	bool fixedMaxEnabled;
 	int fixedMaxValue;
+
+	bool inverted;
 
 	int stepSize;
 

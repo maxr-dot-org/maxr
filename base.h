@@ -32,6 +32,8 @@ struct sSubBase
 {
 public:
 	explicit sSubBase (cPlayer* owner_);
+	sSubBase (const sSubBase& other);
+
 	/**
 	* integrates all building of the given subbase in the own one
 	* @author eiko

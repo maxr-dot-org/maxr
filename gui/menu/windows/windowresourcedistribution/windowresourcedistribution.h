@@ -20,14 +20,49 @@
 #ifndef gui_menu_windows_windowresourcedistribution_windowresourcedistributionH
 #define gui_menu_windows_windowresourcedistribution_windowresourcedistributionH
 
+#include <array>
+
 #include "../../../window.h"
+#include "../../../../utility/signal/signalconnectionmanager.h"
+#include "../../../../utility/signal/signal.h"
+#include "../../../../base.h"
+
+class cResourceBar;
+class cLabel;
 
 class cWindowResourceDistribution : public cWindow
 {
 public:
-	cWindowResourceDistribution ();
+	cWindowResourceDistribution (const sSubBase& subBase);
 
+	int getMetalProduction ();
+	int getOilProduction ();
+	int getGoldProduction ();
+
+	cSignal<void ()> done;
 private:
+	cSignalConnectionManager signalConnectionManager;
+
+	sSubBase subBase; // TODO: do we really need to copy the whole subBase?
+
+	std::array<cResourceBar*, 3> metalBars;
+	std::array<cResourceBar*, 3> oilBars;
+	std::array<cResourceBar*, 3> goldBars;
+
+	std::array<cResourceBar*, 3> noneBars;
+
+	std::array<cLabel*, 3> metalLabels;
+	std::array<cLabel*, 3> oilLabels;
+	std::array<cLabel*, 3> goldLabels;
+
+	std::string secondBarText (int prod, int need);
+
+	void setBarLabels ();
+	void setBarValues ();
+
+	void handleMetalChanged ();
+	void handleOilChanged ();
+	void handleGoldChanged ();
 };
 
 #endif // gui_menu_windows_windowresourcedistribution_windowresourcedistributionH

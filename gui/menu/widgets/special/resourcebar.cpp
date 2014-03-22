@@ -37,6 +37,7 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 	fixedMinValue (minValue_),
 	fixedMaxEnabled (false),
 	fixedMaxValue (maxValue_),
+	inverted (false),
 	stepSize (1)
 {
 	assert (minValue <= maxValue);
@@ -66,7 +67,7 @@ void cResourceBar::draw ()
 		dest.x = getPosition ().x () + additionalArea.x();
 		dest.y = getPosition ().y () + (horizontal ? 0 : surface->h - src.h) + additionalArea.y();
 
-		if (/*inverted*/false && horizontal)
+		if (inverted && horizontal)
 		{
 			dest.x += surface->w - src.w;
 			src.x = 0;
@@ -146,6 +147,18 @@ void cResourceBar::setFixedMaxValue (int fixedMaxValue_)
 }
 
 //------------------------------------------------------------------------------
+bool cResourceBar::isInverted () const
+{
+	return inverted;
+}
+
+//------------------------------------------------------------------------------
+void cResourceBar::setInverted (bool inverted_)
+{
+	inverted = inverted_;
+}
+
+//------------------------------------------------------------------------------
 int cResourceBar::getValue () const
 {
 	return currentValue;
@@ -204,7 +217,7 @@ bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMou
 		}
 
 		const auto valueRange = maxValue - minValue;
-		setValue (minValue + (int)(factor * valueRange));
+		setValue (minValue + Round(factor * valueRange));
 
 		return true;
 	}

@@ -281,6 +281,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 	{
 		sendWantUpgrade (client, unit.iID, 0, true);
 	});
+	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&](const cBuilding& building, int metalProduction, int oilProduction, int goldProduction)
+	{
+		sendChangeResources (client, building, metalProduction, oilProduction, goldProduction);
+	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
@@ -1028,10 +1032,19 @@ void cNewGameGUI::showBuildVehiclesWindow (const cBuilding& building)
 //------------------------------------------------------------------------------
 void cNewGameGUI::showResourceDistributionDialog (const cUnit& unit)
 {
+	if (!unit.isABuilding ()) return;
+
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> ());
+	const auto& building = static_cast<const cBuilding&>(unit);
+
+	auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> (*building.SubBase));
+	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
+	{
+		changeResourceDistributionTriggered (building, resourceDistributionWindow->getMetalProduction (), resourceDistributionWindow->getOilProduction (), resourceDistributionWindow->getGoldProduction());
+		resourceDistributionWindow->close ();
+	});
 }
 
 //------------------------------------------------------------------------------
