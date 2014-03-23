@@ -108,7 +108,6 @@ void cWindow::handleDeactivated (cApplication& application)
 {
 	if (activeApplication == &application)
 	{
-		closing = false;
 		activeApplication = nullptr;
 	}
 }

@@ -170,6 +170,12 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
+void cApplication::grapKeyFocus (cWidget& widget)
+{
+	assignKeyFocus (&widget);
+}
+
+//------------------------------------------------------------------------------
 void cApplication::releaseKeyFocus (const cWidget& widget)
 {
 	if (keyFocusWidget == &widget)
@@ -194,6 +200,12 @@ cKeyboard* cApplication::getActiveKeyboard ()
 void cApplication::setGame (std::shared_ptr<cGame> game_)
 {
 	game = game_;
+}
+
+//------------------------------------------------------------------------------
+const std::shared_ptr<cGame>& cApplication::getGame () const
+{
+	return game;
 }
 
 //------------------------------------------------------------------------------

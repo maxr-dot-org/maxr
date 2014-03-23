@@ -32,6 +32,8 @@
 #include "temp/animationtimer.h"
 
 #include "../application.h"
+#include "../menu/dialogs/dialogok.h"
+#include "../menu/dialogs/dialogyesno.h"
 #include "../menu/dialogs/dialogpreferences.h"
 #include "../menu/dialogs/dialogtransfer.h"
 #include "../menu/dialogs/dialogresearch.h"
@@ -42,6 +44,7 @@
 #include "../menu/windows/windowresourcedistribution/windowresourcedistribution.h"
 #include "../menu/windows/windowupgrades/windowupgrades.h"
 #include "../menu/windows/windowreports/windowreports.h"
+#include "../menu/windows/windowloadsave/windowloadsave.h"
 
 #include "../../keys.h"
 #include "../../player.h"
@@ -53,6 +56,7 @@
 #include "../../clientevents.h"
 #include "../../attackjobs.h"
 #include "../../log.h"
+#include "../../game/game.h"
 #include "../../input/mouse/mouse.h"
 #include "../../input/mouse/cursor/mousecursorsimple.h"
 
@@ -156,6 +160,11 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
 	{
 		messageList->removeOldMessages ();
+	});
+
+	terminated.connect ([&]()
+	{
+		stopSelectedUnitSound ();
 	});
 }
 
@@ -930,6 +939,17 @@ void cNewGameGUI::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
+void cNewGameGUI::handleDeactivated (cApplication& application)
+{
+	cWindow::handleDeactivated (application);
+
+	if (isClosing ())
+	{
+		terminated ();
+	}
+}
+
+//------------------------------------------------------------------------------
 std::unique_ptr<cMouseCursor> cNewGameGUI::getDefaultCursor () const
 {
 	return nullptr;
@@ -951,6 +971,18 @@ void cNewGameGUI::startClosePanel ()
 }
 
 //------------------------------------------------------------------------------
+void cNewGameGUI::exit ()
+{
+	panelSignalConnectionManager.disconnectAll ();
+
+	panelSignalConnectionManager.connect (hudPanels->closed, [&]()
+	{
+		close ();
+	});
+	startClosePanel ();
+}
+
+//------------------------------------------------------------------------------
 void cNewGameGUI::resetMiniMapViewWindow ()
 {
 	miniMap->setViewWindow (gameMap->getDisplayedMapArea ());
@@ -959,7 +991,42 @@ void cNewGameGUI::resetMiniMapViewWindow ()
 //------------------------------------------------------------------------------
 void cNewGameGUI::showFilesWindow ()
 {
+	auto application = getActiveApplication ();
+	if (!application) return;
 
+	auto loadSaveWindow = application->show (std::make_shared<cWindowLoadSave> ());
+	loadSaveWindow->exit.connect ([&, loadSaveWindow, application]()
+	{
+		auto yesNoDialog = application->show (std::make_shared<cDialogNewYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [&, loadSaveWindow]()
+		{
+			loadSaveWindow->close ();
+			exit ();
+		});
+	});
+	loadSaveWindow->load.connect ([loadSaveWindow, application](int saveNumber)
+	{
+		// loading games while game is running is not yet implemented
+		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
+	});
+	loadSaveWindow->save.connect ([loadSaveWindow, application](int saveNumber, const std::string& name)
+	{
+		const auto& game = application->getGame ();
+		if (!game) return;
+
+		try
+		{
+			game->save (saveNumber, name);
+
+			PlayVoice (VoiceData.VOISaved);
+
+			loadSaveWindow->update ();
+		}
+		catch (std::runtime_error& e)
+		{
+			application->show (std::make_shared<cDialogOk> (e.what()));
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

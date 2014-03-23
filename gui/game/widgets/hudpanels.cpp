@@ -94,6 +94,6 @@ void cHudPanels::doCloseStep ()
 	{
 		percentClosed = std::min (100., percentClosed);
 		signalConnectionManager.disconnectAll ();
-		opened ();
+		closed ();
 	}
 }

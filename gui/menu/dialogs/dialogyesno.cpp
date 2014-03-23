@@ -26,43 +26,30 @@
 
 //------------------------------------------------------------------------------
 cDialogNewYesNo::cDialogNewYesNo (const std::string& text) :
-	cWindow (LoadPCX (GFXOD_DIALOG2), eWindowBackgrounds::Alpha),
-	result (eYesNoDialogResultType::None)
+	cWindow (LoadPCX (GFXOD_DIALOG2), eWindowBackgrounds::Alpha)
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (40, 40), menuPosition + cPosition (135, 267)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (35, 35), menuPosition + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
 	auto yesButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (yesButton->clicked, std::bind (&cDialogNewYesNo::yesClicked, this));
+	signalConnectionManager.connect (yesButton->clicked, [&]()
+	{
+		yesClicked ();
+		close ();
+	});
 	// FIXME: add hot key RETURN to button
 
 	auto noButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (noButton->clicked, std::bind (&cDialogNewYesNo::noClicked, this));
+	signalConnectionManager.connect (noButton->clicked, [&]()
+	{
+		noClicked ();
+		close ();
+	});
 	// FIXME: add hot key ESCAPE to button
-}
-
-//------------------------------------------------------------------------------
-eYesNoDialogResultType cDialogNewYesNo::getResult () const
-{
-	return result;
 }
 
 //------------------------------------------------------------------------------
 cDialogNewYesNo::~cDialogNewYesNo ()
 {}
-
-//------------------------------------------------------------------------------
-void cDialogNewYesNo::yesClicked ()
-{
-	result = eYesNoDialogResultType::Yes;
-	close ();
-}
-
-//------------------------------------------------------------------------------
-void cDialogNewYesNo::noClicked ()
-{
-	result = eYesNoDialogResultType::No;
-	close ();
-}

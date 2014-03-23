@@ -17,33 +17,54 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "dialogok.h"
-
-#include "../widgets/label.h"
-#include "../widgets/pushbutton.h"
-#include "../../../pcx.h"
-#include "../../../main.h"
+#include "windowloadsave.h"
+#include "../../widgets/pushbutton.h"
+#include "../../widgets/special/saveslotwidget.h"
+#include "../../../../menuitems.h" // sSaveFile
 
 //------------------------------------------------------------------------------
-cDialogOk::cDialogOk (const std::string& text) :
-	cWindow (LoadPCX (GFXOD_DIALOG2), eWindowBackgrounds::Alpha)
+cWindowLoadSave::cWindowLoadSave ()
 {
-	const auto& menuPosition = getArea ().getMinCorner ();
+	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (246, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Exit")));
+	signalConnectionManager.connect (exitButton->clicked, [&](){ exit (); });
 
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (35, 35), menuPosition + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
-	textLabel->setWordWrap (true);
-
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (okButton->clicked, std::bind (&cDialogOk::okClicked, this));
-	// FIXME: add hot key RETURN to button
+	saveButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save")));
+	signalConnectionManager.connect (saveButton->clicked, std::bind (&cWindowLoadSave::handleSaveClicked, this));
+	saveButton->lock ();
 }
 
 //------------------------------------------------------------------------------
-cDialogOk::~cDialogOk ()
+void cWindowLoadSave::handleSlotClicked (size_t index)
+{
+	selectSlot (index, true);
+
+	auto& slot = getSaveSlot (index);
+
+	slot.forceKeyFocus ();
+
+	saveButton->unlock ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowLoadSave::handleSlotDoubleClicked (size_t index)
 {}
 
 //------------------------------------------------------------------------------
-void cDialogOk::okClicked ()
+void cWindowLoadSave::handleSaveClicked ()
 {
-	close ();
+	auto saveNumber = getSelectedSaveNumber ();
+	if (saveNumber == -1) return;
+
+	auto slot = getSaveSlotFromSaveNumber (saveNumber);
+	if (slot)
+	{
+		save (saveNumber, slot->getName());
+	}
+	else
+	{
+		auto saveFile = getSaveFile (saveNumber);
+		if (!saveFile) return;
+
+		save (saveNumber, saveFile->filename);
+	}
 }

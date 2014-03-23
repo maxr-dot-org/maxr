@@ -639,7 +639,7 @@ void cGameMapWidget::drawEffects (bool bottom)
 	{
 		auto& effect = *it;
 
-		if (effect->isFinished() && it->use_count() == 1)
+		if (effect->isFinished())
 		{
 			it = effects.erase (it);
 		}

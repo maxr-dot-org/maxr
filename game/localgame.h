@@ -26,6 +26,7 @@
 
 #include "game.h"
 #include "../maxrconfig.h"
+#include "../utility/signal/signalconnectionmanager.h"
 
 class cClient;
 class cServer;
@@ -44,7 +45,10 @@ struct sID;
 class cLocalGame : public cGame
 {
 public:
+	~cLocalGame ();
+
 	void start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
+	void startSaved (cApplication& application, int saveGameNumber);
 
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
@@ -54,7 +58,11 @@ public:
 	sPlayer createPlayer ();
 
 	virtual void run () MAXR_OVERRIDE_FUNCTION;
+
+	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 private:
+	cSignalConnectionManager signalConnectionManager;
+
 	std::unique_ptr<cClient> client;
 	std::unique_ptr<cServer> server;
 	std::unique_ptr<cEventHandling> eventHandling;

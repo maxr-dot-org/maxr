@@ -17,19 +17,68 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_gameH
-#define game_gameH
+#ifndef gui_menu_windows_windowload_windowloadH
+#define gui_menu_windows_windowload_windowloadH
 
-#include <memory>
+#include <vector>
+#include <array>
 
-class cGame : public std::enable_shared_from_this<cGame>
+#include "../../../window.h"
+#include "../../../../utility/signal/signal.h"
+#include "../../../../utility/signal/signalconnectionmanager.h"
+
+class cPushButton;
+class cSaveSlotWidget;
+struct sSaveFile;
+
+class cWindowLoad : public cWindow
 {
 public:
-	virtual ~cGame () {}
+	cWindowLoad ();
 
-	virtual void run () = 0;
+	void update ();
 
-	virtual void save (int saveNumber, const std::string& saveName) = 0;
+	cSignal<void (int)> load;
+
+protected:
+	virtual void handleSlotClicked (size_t index);
+	virtual void handleSlotDoubleClicked (size_t index);
+
+	void selectSlot (size_t slotIndex, bool makeRenameable);
+
+	int getSelectedSaveNumber () const;
+
+	sSaveFile* getSaveFile (int saveNumber);
+
+	cSaveSlotWidget* getSaveSlotFromSaveNumber (size_t saveNumber);
+	cSaveSlotWidget& getSaveSlot (size_t slotIndex);
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* loadButton;
+	
+	static const size_t rows = 5;
+	static const size_t columns = 2;
+
+	std::array<cSaveSlotWidget*, rows * columns> saveSlots;
+
+	static const size_t maximalDisplayedSaves = 100;
+	int page;
+	const int lastPage;
+
+	int selectedSaveNumber;
+	std::string selectedOriginalName;
+
+	std::vector<sSaveFile> saveFiles;
+
+	void loadSaves ();
+	void updateSlots ();
+
+	void handleDownClicked ();
+	void handleUpClicked ();
+
+	void handleLoadClicked ();
 };
 
-#endif // game_gameH
+#endif // gui_menu_windows_windowload_windowloadH

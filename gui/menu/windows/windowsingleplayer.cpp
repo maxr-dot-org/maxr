@@ -26,6 +26,7 @@
 #include "windowclanselection/windowclanselection.h"
 #include "windowlandingunitselection/windowlandingunitselection.h"
 #include "windowlandingpositionselection/windowlandingpositionselection.h"
+#include "windowload/windowload.h"
 #include "../widgets/pushbutton.h"
 #include "../../application.h"
 #include "../../game/gamegui.h"
@@ -38,6 +39,7 @@
 #include "../../../client.h"
 #include "../../../server.h"
 #include "../../../menus.h"
+#include "../../../events.h"
 
 #include "../../../clientevents.h"
 
@@ -121,25 +123,6 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const 
 	}
 
 	return initialLandingUnits;
-}
-
-#include "../../../events.h"
-
-//------------------------------------------------------------------------------
-void startGame (cApplication& application, std::shared_ptr<cStaticMap> staticMap, const cPosition& landingPosition,
-				const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
-{
-	cTCP* network = nullptr;
-	cServer server (network);
-	cEventHandling eventHandling;
-	cClient client (&server, network, eventHandling);
-
-	client.setMap (staticMap);
-	server.setMap (staticMap);
-
-	auto gameGui = std::make_shared<cNewGameGUI> (staticMap);
-
-	application.show (gameGui);
 }
 
 //------------------------------------------------------------------------------
@@ -233,6 +216,19 @@ void cWindowSinglePlayer::newGameClicked ()
 //------------------------------------------------------------------------------
 void cWindowSinglePlayer::loadGameClicked ()
 {
+	if (!getActiveApplication ()) return;
+
+	auto application = getActiveApplication ();
+
+	auto windowLoad = getActiveApplication ()->show (std::make_shared<cWindowLoad> ());
+	windowLoad->load.connect ([=](int saveGameNumber)
+	{
+		auto game = std::make_shared<cLocalGame> ();
+
+		game->startSaved (*application, saveGameNumber);
+
+		windowLoad->close ();
+	});
 }
 
 //------------------------------------------------------------------------------

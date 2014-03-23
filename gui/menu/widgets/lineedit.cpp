@@ -74,6 +74,7 @@ void cLineEdit::setText (const std::string& text_)
 void cLineEdit::setReadOnly (bool readOnly_)
 {
 	readOnly = readOnly_;
+	setConsumeClick (!readOnly);
 }
 
 //------------------------------------------------------------------------------
@@ -135,15 +136,9 @@ void cLineEdit::draw ()
 	{
 		const auto now = std::chrono::steady_clock::now ();
 
-		if (showCursor && now - lastCursorBlinkTime > cursorVisibleTime)
+		if (now - lastCursorBlinkTime > cursorVisibleTime)
 		{
-			showCursor = false;
-			lastCursorBlinkTime = now;
-		}
-
-		if (!showCursor && now - lastCursorBlinkTime > cursorInvisibleTime)
-		{
-			showCursor = true;
+			showCursor = !showCursor;
 			lastCursorBlinkTime = now;
 		}
 
@@ -159,7 +154,9 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 	if (readOnly) return false;
 
 	hasKeyFocus = true;
+
 	showCursor = true;
+	lastCursorBlinkTime = std::chrono::steady_clock::now ();
 
 	SDL_StartTextInput ();
 

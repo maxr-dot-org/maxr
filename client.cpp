@@ -127,14 +127,17 @@ public:
 	}
 };
 
-void cClient::setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& splayer)
+void cClient::setPlayers (const std::vector<sPlayer>& splayers, size_t activePlayerIndex)
 {
+	assert (activePlayerIndex < splayers.size ());
+
 	for (size_t i = 0, size = splayers.size(); i != size; ++i)
 	{
-		PlayerList.push_back(new cPlayer(*splayers[i]));
+		PlayerList.push_back(new cPlayer(splayers[i]));
 	}
-	std::vector<sPlayer*>::const_iterator it = std::find(splayers.begin(), splayers.end(), &splayer);
-	ActivePlayer = PlayerList[it - splayers.begin()];
+
+	ActivePlayer = PlayerList[activePlayerIndex];
+
 	std::sort(PlayerList.begin(), PlayerList.end(), LessByNr());
 
 	initPlayersWithMap();

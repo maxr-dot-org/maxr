@@ -21,14 +21,8 @@
 #define gui_menu_dialogs_dialogyesnoH
 
 #include "../../window.h"
+#include "../../../utility/signal/signal.h"
 #include "../../../utility/signal/signalconnectionmanager.h"
-
-enum class eYesNoDialogResultType
-{
-	None,
-	Yes,
-	No
-};
 
 class cDialogNewYesNo : public cWindow
 {
@@ -36,14 +30,10 @@ public:
 	cDialogNewYesNo (const std::string& text);
 	~cDialogNewYesNo ();
 
-	eYesNoDialogResultType getResult () const;
+	cSignal<void ()> yesClicked;
+	cSignal<void ()> noClicked;
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	eYesNoDialogResultType result;
-
-	void yesClicked ();
-	void noClicked ();
 };
 
 #endif // gui_menu_dialogs_dialogyesnoH

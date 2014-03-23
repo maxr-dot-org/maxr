@@ -65,6 +65,9 @@ public:
 	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleDeactivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+
+	cSignal<void ()> terminated;
 protected:
 
 	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;
@@ -75,6 +78,7 @@ private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager moveJobSignalConnectionManager;
 	cSignalConnectionManager buildPositionSelectionConnectionManager;
+	cSignalConnectionManager panelSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
@@ -96,6 +100,8 @@ private:
 
 	void startOpenPanel ();
 	void startClosePanel ();
+
+	void exit ();
 
 	void resetMiniMapViewWindow ();
 

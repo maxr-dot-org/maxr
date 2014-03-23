@@ -64,7 +64,7 @@ public:
 	~cClient();
 
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers (const std::vector<sPlayer*>& splayers, const sPlayer& splayer);
+	void setPlayers (const std::vector<sPlayer>& splayers, size_t activePlayerIndex);
 
 	// Return local server if any.
 	// TODO: should be const cServer*

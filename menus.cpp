@@ -795,7 +795,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	sPlayer clientPlayer (splayer);
 
 	players.push_back (&clientPlayer);
-	client.setPlayers (players, clientPlayer);
+//	client.setPlayers (players, clientPlayer);
 
 	int lastDir = 1;
 	int step = 0;
@@ -889,7 +889,7 @@ void cSinglePlayerMenu::runSavedGame (int savegameNum)
 	cEventHandling eventHandler;
 	cClient client (&server, network, eventHandler);
 	client.setMap (server.Map->staticMap);
-	client.setPlayers (clientPlayerList, *clientPlayerList[player]);
+//	client.setPlayers (clientPlayerList, *clientPlayerList[player]);
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
 	{
@@ -1102,7 +1102,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 					{
 						cClient* client = new cClient (&server, network, eventHandlings[i]);
 						clients.push_back (client);
-						client->setPlayers(splayers, *splayers[i]);
+						//client->setPlayers(splayers, *splayers[i]);
 						client->getActivePlayer().setClan (clans[i]);
 						client->setMap (map);
 						client->setGameSetting (settings);
@@ -3113,7 +3113,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 			server.addPlayer (new cPlayer (*menu->players[i]));
 		}
 		cClient client (&server, NULL, *menu->eventHandler);
-		client.setPlayers (menu->players, *menu->players[0]);
+//		client.setPlayers (menu->players, *menu->players[0]);
 
 		server.setMap (menu->map);
 		server.setGameSettings (*menu->settings);
@@ -3449,7 +3449,7 @@ bool cNetworkHostMenu::runSavedGame()
 	// init client and his player
 	AutoPtr<cClient> client (new cClient (&server, network, *eventHandler));
 	client->setMap (server.Map->staticMap);
-	client->setPlayers (players, *actPlayer);
+//	client->setPlayers (players, *actPlayer);
 
 	// send the correct player numbers to client
 	for (size_t i = 0; i != players.size(); ++i)
@@ -3701,7 +3701,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 
 	cServer* const server = NULL;
 	cClient client (server, network, *eventHandler);
-	client.setPlayers (players, *actPlayer);
+	//client.setPlayers (players, *actPlayer);
 
 	client.setMap (map);
 	client.setGameSetting (*settings);
@@ -3766,7 +3766,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 		cServer* const server = NULL;
 		cClient client (server, network, *eventHandler);
-		client.setPlayers (clientPlayers, *localPlayer);
+//		client.setPlayers (clientPlayers, *localPlayer);
 		for (size_t i = 0; i != clientPlayers.size(); ++i)
 		{
 			delete clientPlayers[i];

@@ -17,19 +17,50 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_gameH
-#define game_gameH
+#ifndef gui_menu_widgets_special_saveslotwidgetH
+#define gui_menu_widgets_special_saveslotwidgetH
 
-#include <memory>
+#include "../clickablewidget.h"
+#include "../../../../utility/signal/signal.h"
 
-class cGame : public std::enable_shared_from_this<cGame>
+class cLabel;
+class cLineEdit;
+class cPosition;
+struct sSaveFile;
+
+class cSaveSlotWidget : public cClickableWidget
 {
 public:
-	virtual ~cGame () {}
+	cSaveSlotWidget (const cPosition& position);
 
-	virtual void run () = 0;
+	const std::string& getName () const;
 
-	virtual void save (int saveNumber, const std::string& saveName) = 0;
+	void setSelected (bool selected);
+
+	void setRenameable (bool renameable);
+
+	void setSaveData (const sSaveFile& saveFile);
+	void reset (int number);
+
+	bool isEmpty () const;
+
+	void forceKeyFocus ();
+
+	cSignal<void ()> clicked;
+	cSignal<void ()> doubleClicked;
+
+	cSignal<void ()> nameChanged;
+protected:
+
+	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+private:
+	cLabel* numberLabel;
+	cLabel* typeLabel;
+	cLabel* timeLabel;
+	cLineEdit* nameLineEdit;
+
+	bool empty;
+	bool renameable;
 };
 
-#endif // game_gameH
+#endif // gui_menu_widgets_special_saveslotwidgetH

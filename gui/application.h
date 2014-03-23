@@ -53,9 +53,11 @@ public:
 	void releaseMouseFocus (const cWidget& widget);
 	bool hasMouseFocus (const cWidget& widget) const;
 
+	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
 
 	void setGame (std::shared_ptr<cGame> game);
+	const std::shared_ptr<cGame>& getGame () const;
 
 	cMouse* getActiveMouse ();
 	cKeyboard* getActiveKeyboard ();

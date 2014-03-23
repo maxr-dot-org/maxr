@@ -17,19 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_gameH
-#define game_gameH
+#ifndef gui_menu_windows_windowloadsave_windowloadsaveH
+#define gui_menu_windows_windowloadsave_windowloadsaveH
 
-#include <memory>
+#include "../windowload/windowload.h"
 
-class cGame : public std::enable_shared_from_this<cGame>
+class cPushButton;
+
+class cWindowLoadSave : public cWindowLoad
 {
 public:
-	virtual ~cGame () {}
+	cWindowLoadSave ();
 
-	virtual void run () = 0;
+	cSignal<void (int, const std::string&)> save;
+	cSignal<void ()> exit;
 
-	virtual void save (int saveNumber, const std::string& saveName) = 0;
+protected:
+	virtual void handleSlotClicked (size_t index) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleSlotDoubleClicked (size_t index) MAXR_OVERRIDE_FUNCTION;
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* saveButton;
+
+	void handleSaveClicked ();
 };
 
-#endif // game_gameH
+#endif // gui_menu_windows_windowloadsave_windowloadsaveH
