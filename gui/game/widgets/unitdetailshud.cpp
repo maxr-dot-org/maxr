@@ -222,7 +222,7 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 {
 	const int maxX = destination->w - position.x () - 5;
 	auto src = getSmallSymbolPosition (symbolType);
-	const cPosition srcSize = src.getMaxCorner () - src.getMinCorner ();
+	const cPosition srcSize = src.getSize();
 	int toValue = value2;
 
 	if (symbolType == eUnitDataSymbolType::Hits)
@@ -344,5 +344,5 @@ cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType sym
 		break;
 	}
 
-	return cBox<cPosition> (position, position + size);
+	return cBox<cPosition> (position, position + size - 1);
 }

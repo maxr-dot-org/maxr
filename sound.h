@@ -130,5 +130,6 @@ void StopMusic();
 void StartMusic();
 int PlayFXLoop (sSOUND* snd);
 void StopFXLoop (int SndStream);
+int getSoundLength (sSOUND* snd); // in milliseconds
 //void play(sSOUND *snd);
 #endif

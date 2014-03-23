@@ -22,17 +22,24 @@
 #include "../../../main.h"
 
 //------------------------------------------------------------------------------
-cGameMessageListViewItem::cGameMessageListViewItem (int width, const std::string& message)
+cGameMessageListViewItem::cGameMessageListViewItem (int width, const std::string& message, bool alert)
 {
 	const cPosition beginMargin (2, 2);
 	const cPosition endMargin (2, 2);
 
-	const cBox<cPosition> labelArea (getPosition () + beginMargin, getPosition () + beginMargin + cPosition (width, 50) - endMargin);
+	const cBox<cPosition> labelArea (getPosition () + beginMargin, getPosition () + cPosition (width-1, 50) - endMargin);
 	messageLabel = addChild (std::make_unique<cLabel> (labelArea, message));
 	messageLabel->setWordWrap (true);
 	messageLabel->resizeToTextHeight ();
 
 	resize (cPosition (width, messageLabel->getSize ().y () + beginMargin.y () + endMargin.y ()));
+
+	if (alert)
+	{
+		const auto size = getSize ();
+		redShadow = SDL_CreateRGBSurface (0, size.x (), size. y(), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+		SDL_FillRect (redShadow, nullptr, SDL_MapRGBA (redShadow->format, 0xFF, 0, 0, 50));
+	}
 
 	creationTime = std::chrono::system_clock::now ();
 }
@@ -48,8 +55,10 @@ void cGameMessageListViewItem::draw ()
 {
 	if (cSettings::getInstance ().isAlphaEffects ())
 	{
-		SDL_Rect rect = getArea ().toSdlRect ();
-		Video.applyShadow (&rect);
+		auto rect = getArea ().toSdlRect ();
+
+		if (redShadow) SDL_BlitSurface (redShadow, nullptr, Video.buffer, &rect);
+		else Video.applyShadow (&rect);
 	}
 
 	cWidget::draw ();

@@ -250,7 +250,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 {
 	int maxX = 160;
 	auto src = getBigSymbolPosition (symbolType);
-	const cPosition srcSize = src.getMaxCorner () - src.getMinCorner ();
+	const auto srcSize = src.getSize();
 	maxX -= srcSize.x ();
 
 	if (value2 != value1) maxX -= srcSize.x() + 3;
@@ -299,7 +299,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataSymbolType symbolType)
 {
 	cPosition position (0, 109);
-	cPosition size (0, 0);
+	cPosition size (1, 1);
 
 	switch (symbolType)
 	{
@@ -378,5 +378,5 @@ cBox<cPosition> cUnitDetails::getBigSymbolPosition (eUnitDataSymbolType symbolTy
 		break;
 	}
 
-	return cBox<cPosition> (position, position + size);
+	return cBox<cPosition> (position, position + size - 1);
 }

@@ -277,7 +277,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		area.add (button->getArea ());
 	}
 
-	resize (area.getMaxCorner () - area.getMinCorner());
+	resize (area.getSize());
 }
 
 //------------------------------------------------------------------------------

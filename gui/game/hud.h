@@ -52,6 +52,7 @@ public:
 
 	static SDL_Surface* generateSurface ();
 
+	void setMinimalZoomFactor (float zoomFactor);
 	float getZoomFactor () const;
 	void increaseZoomFactor (double percent);
 	void decreaseZoomFactor (double percent);

@@ -32,9 +32,9 @@ cGameMessageListView::cGameMessageListView (const cBox<cPosition>& area) :
 }
 
 //------------------------------------------------------------------------------
-void cGameMessageListView::addMessage (const std::string& message)
+void cGameMessageListView::addMessage (const std::string& message, bool alert)
 {
-	auto addedItem = listView->addItem (std::make_unique<cGameMessageListViewItem> (getSize ().x () - listView->getBeginMargin ().x () - listView->getEndMargin ().x (), message));
+	auto addedItem = listView->addItem (std::make_unique<cGameMessageListViewItem> (getSize ().x () - listView->getBeginMargin ().x () - listView->getEndMargin ().x (), message, alert));
 	listView->scroolToItem (addedItem);
 }
 

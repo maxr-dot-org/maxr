@@ -25,10 +25,12 @@
 #include "../server.h"
 #include "../events.h"
 #include "../player.h"
+#include "../buildings.h"
+#include "../vehicles.h"
 #include "../clientevents.h"
 
 //------------------------------------------------------------------------------
-void cLocalGame::start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits)
+void cLocalGame::start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
 	eventHandling = std::make_unique<cEventHandling> ();
 	server = std::make_unique<cServer> (nullptr);
@@ -49,8 +51,9 @@ void cLocalGame::start (cApplication& application, const cPosition& landingPosit
 	players.push_back (&player);
 	client->setPlayers (players, player);
 
-	auto& clientActivePlayer = client->getActivePlayer ();
-	if (playerClan != -1) clientActivePlayer.setClan (playerClan);
+	auto& clientPlayer = client->getActivePlayer ();
+	if (playerClan != -1) clientPlayer.setClan (playerClan);
+	applyUnitUpgrades (clientPlayer, unitUpgrades);
 
 	sendClan (*client);
 	sendLandingUnits (*client, landingUnits);
@@ -68,6 +71,8 @@ void cLocalGame::start (cApplication& application, const cPosition& landingPosit
 	gameGui->setPlayer (&client->getActivePlayer ());
 
 	gameGui->connectToClient (*client);
+
+	gameGui->centerAt (landingPosition);
 
 	application.show (gameGui);
 
@@ -106,4 +111,21 @@ sPlayer cLocalGame::createPlayer ()
 void cLocalGame::run ()
 {
 	if (client) client->gameTimer.run (nullptr);
+}
+
+//------------------------------------------------------------------------------
+void cLocalGame::applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
+{
+	for (size_t i = 0; i < unitUpgrades.size (); ++i)
+	{
+		const auto& unitId = unitUpgrades[i].first;
+
+		auto unitData = player.getUnitDataCurrentVersion (unitId);
+
+		if (unitData)
+		{
+			const auto& upgrades = unitUpgrades[i].second;
+			upgrades.updateUnitData (*unitData);
+		}
+	}
 }

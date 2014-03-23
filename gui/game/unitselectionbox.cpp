@@ -30,7 +30,7 @@ bool cUnitSelectionBox::isTooSmall () const
 {
 	if (!isValid ()) return true;
 
-	auto diff = box.getMaxCorner () - box.getMinCorner ();
+	auto diff = box.getSize();
 	return std::abs (diff[0]) < 0.5 && std::abs (diff[1]) < 0.5;
 }
 

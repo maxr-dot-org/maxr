@@ -476,7 +476,7 @@ void cListView<ItemType>::updateItems ()
 			item.hide ();
 			continue;
 		}
-		const cPosition itemEndPosition = currentItemPosition + itemDistance + item.getSize ();
+		const cPosition itemEndPosition = currentItemPosition + item.getSize ();
 		if (itemEndPosition.y () > getEndPosition ().y () - endMargin.y ())
 		{
 			endDisplayItem = i;
@@ -489,7 +489,7 @@ void cListView<ItemType>::updateItems ()
 		item.show ();
 		item.moveTo (currentItemPosition);
 
-		currentItemPosition.y () = itemEndPosition.y ();
+		currentItemPosition.y () = itemEndPosition.y () + itemDistance.y ();
 	}
 }
 

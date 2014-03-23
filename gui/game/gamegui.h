@@ -38,6 +38,7 @@ class cVehicle;
 class cBuilding;
 class cAnimationTimer;
 class cClient;
+class cHudPanels;
 struct sID;
 struct sBuildList;
 
@@ -51,6 +52,8 @@ public:
 
 	void connectToClient (cClient& client);
 	void disconnectCurrentClient ();
+
+	void centerAt (const cPosition& position);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -80,6 +83,7 @@ private:
 	const cPlayer* player;
 
 	cHud* hud;
+	cHudPanels* hudPanels;
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 	cGameMessageListView* messageList;
@@ -87,6 +91,11 @@ private:
 	cPosition mouseScrollDirection;
 
 	int selectedUnitSoundStream;
+
+	bool openPanelOnActivation;
+
+	void startOpenPanel ();
+	void startClosePanel ();
 
 	void resetMiniMapViewWindow ();
 

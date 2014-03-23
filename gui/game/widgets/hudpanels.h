@@ -17,29 +17,42 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_gamemessagelistviewH
-#define gui_game_widgets_gamemessagelistviewH
+#ifndef gui_game_widgets_hudpanelsH
+#define gui_game_widgets_hudpanelsH
+
+#include <memory>
 
 #include "../../widget.h"
-#include "gamemessagelistviewitem.h"
+#include "../../../autosurface.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+#include "../../../utility/signal/signal.h"
 
-template<typename>
-class cListView;
+class cAnimationTimer;
 
-class cGameMessageListView : public cWidget
+class cHudPanels : public cWidget
 {
 public:
-	explicit cGameMessageListView (const cBox<cPosition>& area);
+	cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer, double percentClosed = 100);
 
-	void addMessage (const std::string& message, bool alert);
+	void open ();
+	void close ();
 
-	void removeOldMessages ();
+	cSignal<void ()> opened;
+	cSignal<void ()> closed;
 
-	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 private:
-	cListView<cGameMessageListViewItem>* listView;
+	cSignalConnectionManager signalConnectionManager;
 
-	const std::chrono::seconds maximalDisplayTime;
+	std::shared_ptr<cAnimationTimer> animationTimer;
+
+	const double openStep;
+	const double closeStep;
+
+	double percentClosed;
+
+	void doOpenStep ();
+	void doCloseStep ();
 };
 
-#endif // gui_game_widgets_gamemessagelistviewH
+#endif // gui_game_widgets_hudpanelsH

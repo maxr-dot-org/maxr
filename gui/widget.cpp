@@ -128,13 +128,13 @@ void cWidget::move (const cPosition& offset)
 //------------------------------------------------------------------------------
 cPosition cWidget::getSize () const
 {
-	return area.getMaxCorner () - area.getMinCorner ();
+	return area.getSize ();
 }
 
 //------------------------------------------------------------------------------
 void cWidget::resize (const cPosition& newSize)
 {
-	area.getMaxCorner () = area.getMinCorner () + newSize;
+	area.resize (newSize);
 
 	createFrameSurface ();
 }
@@ -148,7 +148,7 @@ const cBox<cPosition>& cWidget::getArea () const
 //------------------------------------------------------------------------------
 void cWidget::setArea (const cBox<cPosition>& area_)
 {
-	const cPosition newSize = area_.getMaxCorner () - area_.getMinCorner ();
+	const cPosition newSize = area_.getSize ();
 	const cPosition offset = area_.getMinCorner () - getArea ().getMinCorner ();
 
 	move (offset);

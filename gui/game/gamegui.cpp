@@ -27,6 +27,7 @@
 #include "widgets/minimapwidget.h"
 #include "widgets/unitcontextmenuwidget.h"
 #include "widgets/gamemessagelistview.h"
+#include "widgets/hudpanels.h"
 
 #include "temp/animationtimer.h"
 
@@ -62,7 +63,8 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	mouseScrollDirection (0, 0),
-	selectedUnitSoundStream (-1)
+	selectedUnitSoundStream (-1),
+	openPanelOnActivation (true)
 {
 	auto hudOwning = std::make_unique<cHud> (animationTimer);
 
@@ -74,7 +76,17 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	hud = addChild (std::move (hudOwning));
 
+	hud->setMinimalZoomFactor (gameMap->computeMinimalZoomFactor ());
+
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
+
+	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition (), getSize ().y (), animationTimer));
+
+	signalConnectionManager.connect (hudPanels->opened, [&]()
+	{
+		hudPanels->disable ();
+		hudPanels->hide ();
+	});
 
 	using namespace std::placeholders;
 
@@ -217,13 +229,14 @@ void cNewGameGUI::setPlayer (const cPlayer* player_)
 	{
 		playerSignalConnectionManager.connect (player->reportAdded, [&](const sSavedReportMessage& report)
 		{
+			const bool alert = false; // TODO: implement alerts (displayed with red background)
 			if (report.xPos == -1 || report.yPos == -1)
 			{
-				messageList->addMessage (report.getFullMessage ());
+				messageList->addMessage (report.getFullMessage (), alert);
 			}
 			else
 			{
-				messageList->addMessage (report.getFullMessage () + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")");
+				messageList->addMessage (report.getFullMessage () + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")", alert);
 				// TODO: save position for jump!
 			}
 
@@ -764,6 +777,12 @@ void cNewGameGUI::disconnectCurrentClient ()
 }
 
 //------------------------------------------------------------------------------
+void cNewGameGUI::centerAt (const cPosition& position)
+{
+	gameMap->centerAt (position);
+}
+
+//------------------------------------------------------------------------------
 void cNewGameGUI::draw ()
 {
 	animationTimer->updateAnimationFlags (); // TODO: remove this
@@ -902,12 +921,33 @@ void cNewGameGUI::handleActivated (cApplication& application)
 		if (hud->isAt (mouse->getPosition ())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 		else gameMap->updateMouseCursor (*mouse);
 	}
+
+	if (openPanelOnActivation)
+	{
+		startOpenPanel ();
+		openPanelOnActivation = false;
+	}
 }
 
 //------------------------------------------------------------------------------
 std::unique_ptr<cMouseCursor> cNewGameGUI::getDefaultCursor () const
 {
 	return nullptr;
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::startOpenPanel ()
+{
+	hudPanels->open ();
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::startClosePanel ()
+{
+	hudPanels->show ();
+	hudPanels->enable ();
+
+	hudPanels->close ();
 }
 
 //------------------------------------------------------------------------------

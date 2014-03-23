@@ -30,13 +30,16 @@ class cLabel;
 class cGameMessageListViewItem : public cAbstractListViewItem
 {
 public:
-	cGameMessageListViewItem (int width, const std::string& message);
+	cGameMessageListViewItem (int width, const std::string& message, bool alert);
 
 	std::chrono::system_clock::time_point getCreationTime () const;
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 private:
 	cLabel* messageLabel;
+	
+	AutoSurface redShadow;
+
 	std::chrono::system_clock::time_point creationTime;
 };
 

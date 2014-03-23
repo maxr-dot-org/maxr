@@ -85,11 +85,15 @@ int cSlider::getMinValue () const
 	return minValue;
 }
 
-////------------------------------------------------------------------------------
-//void cSlider::setMinValue (int minValue)
-//{
-//
-//}
+//------------------------------------------------------------------------------
+void cSlider::setMinValue (int minValue_)
+{
+	auto oldValue = getValue ();
+
+	minValue = minValue_;
+
+	setValue (oldValue);
+}
 
 //------------------------------------------------------------------------------
 int cSlider::getMaxValue () const
@@ -97,11 +101,15 @@ int cSlider::getMaxValue () const
 	return maxValue;
 }
 
-////------------------------------------------------------------------------------
-//void cSlider::setMaxValue (int maxValue)
-//{
-//
-//}
+//------------------------------------------------------------------------------
+void cSlider::setMaxValue (int maxValue_)
+{
+	auto oldValue = getValue ();
+
+	maxValue = maxValue_;
+
+	setValue (oldValue);
+}
 
 //------------------------------------------------------------------------------
 int cSlider::getValue () const

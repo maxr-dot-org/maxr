@@ -21,6 +21,7 @@
 #define utility_boxH
 
 #include <algorithm>
+#include <cassert>
 
 #include <SDL.h>
 
@@ -41,6 +42,9 @@ public:
 
 	const PointType& getMinCorner() const;
 	const PointType& getMaxCorner() const;
+
+	PointType getSize () const;
+	void resize (const PointType& newSize);
 
 	void add (const PointType& point);
 	void add (const cBox<PointType>& box);
@@ -123,6 +127,30 @@ const PointType& cBox<PointType>::getMaxCorner() const
 
 //------------------------------------------------------------------------------
 template<typename PointType>
+PointType cBox<PointType>::getSize () const
+{
+	auto diff = maxCorner - minCorner;
+	if (std::is_integral<typename PointType::value_type>::value)
+	{
+		diff += 1;
+	}
+	return diff;
+}
+
+//------------------------------------------------------------------------------
+template<typename PointType>
+void cBox<PointType>::resize (const PointType& newSize)
+{
+	maxCorner = minCorner + newSize;
+	if (std::is_integral<typename PointType::value_type>::value)
+	{
+		if (std::is_unsigned<typename PointType::value_type>::value) for (size_t d = 0; d < PointType::const_size::value; ++d) assert (newSize[d] != 0);
+		maxCorner -= 1;
+	}
+}
+
+//------------------------------------------------------------------------------
+template<typename PointType>
 void cBox<PointType>::add (const PointType& point)
 {
 	for (size_t d = 0; d < point.size (); ++d)
@@ -183,7 +211,7 @@ SDL_Rect cBox<PointType>::toSdlRect () const
 	static_assert(PointType::const_size::value == 2, "Converting to SDL_Rect not support in dimension other than 2.");
 	static_assert(std::is_same<typename PointType::value_type, int>::value, "Converting to SDL_Rect not support if point scalar value is other than int."); // NOTE: we may could allow all non-narrowing casts here (e.g. short to int).
 
-	auto diff = maxCorner - minCorner;
+	const auto diff = getSize();
 	return SDL_Rect{minCorner[0], minCorner[1], diff[0], diff[1]};
 }
 
@@ -194,8 +222,8 @@ void cBox<PointType>::fromSdlRect (const SDL_Rect& rect)
 	minCorner[0] = rect.x;
 	minCorner[1] = rect.y;
 
-	maxCorner[0] = rect.x + rect.w;
-	maxCorner[1] = rect.y + rect.h;
+	maxCorner[0] = rect.x + rect.w - 1;
+	maxCorner[1] = rect.y + rect.h - 1;
 }
 
 #endif // utility_boxH

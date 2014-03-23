@@ -197,3 +197,20 @@ void StopFXLoop (int SndStream)
 	if (!cSettings::getInstance().isSoundEnabled() || SndStream != SoundLoopChannel) return;
 	Mix_HaltChannel (SoundLoopChannel);
 }
+
+int getSoundLength (sSOUND* snd)
+{
+	if (!snd) return 0;
+
+	int freq = 0;
+	Uint16 fmt = 0;
+	int chans = 0;
+
+	if (!Mix_QuerySpec (&freq, &fmt, &chans)) return 0;
+
+	auto points = (SoundData.SNDPanelOpen->alen / ((fmt & 0xFF) / 8));
+
+	auto frames = (points / chans);
+
+	return (frames * 1000) / freq;
+}

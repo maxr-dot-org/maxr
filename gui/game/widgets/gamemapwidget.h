@@ -51,6 +51,8 @@ public:
 	void setZoomFactor (double zoomFactor, bool center);
 	double getZoomFactor () const;
 
+	double computeMinimalZoomFactor () const;
+
 	cUnitSelection& getUnitSelection ();
 	const cUnitSelection& getUnitSelection () const;
 
@@ -186,6 +188,8 @@ private:
 
 	bool lockActive;
 
+	float windDirection;
+
 	//
 	// draw methods
 	//
@@ -220,7 +224,6 @@ private:
 	//
 	// position handling methods
 	//
-	double computeMinimalZoomFactor () const;
 	cPosition computeMaximalPixelOffset () const;
 
 	//
@@ -242,6 +245,15 @@ private:
 
 	void setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode);
 	void toggleMouseInputMode (eMouseModeType mouseInputMode);
+
+	void runOwnedEffects ();
+
+	void renewDamageEffects ();
+	void renewDamageEffect (const cBuilding& building);
+	void renewDamageEffect (const cVehicle& vehicle);
+
+	void setWindDirection (int direction);
+	void changeWindDirection ();
 };
 
 #endif // gui_game_widgets_gamemapwidgetH

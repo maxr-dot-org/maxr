@@ -22,6 +22,7 @@
 
 #include <memory>
 #include <vector>
+#include <utility>
 
 #include "game.h"
 #include "../maxrconfig.h"
@@ -33,14 +34,17 @@ class cGameSettings;
 class cApplication;
 class cEventHandling;
 class sPlayer;
+class cPlayer;
 class cPosition;
+class cUnitUpgrade;
 
 struct sLandingUnit;
+struct sID;
 
 class cLocalGame : public cGame
 {
 public:
-	void start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits);
+	void start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
@@ -59,6 +63,8 @@ private:
 	std::shared_ptr<cGameSettings> gameSettings;
 
 	int playerClan;
+
+	void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 };
 
 #endif // game_localgameH

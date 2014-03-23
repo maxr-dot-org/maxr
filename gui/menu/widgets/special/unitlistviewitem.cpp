@@ -63,7 +63,7 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	auto size = unitImage->getArea ();
 	size.add (nameLabel->getArea ());;
 
-	resize (size.getMaxCorner () - size.getMinCorner());
+	resize (size.getSize());
 }
 
 namespace {

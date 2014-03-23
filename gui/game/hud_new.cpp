@@ -252,10 +252,15 @@ SDL_Surface* cHud::generateSurface ()
 	return surface;
 }
 
+void cHud::setMinimalZoomFactor (float zoomFactor)
+{
+	zoomSlider->setMaxValue ((int)std::ceil(100. - 100. * zoomFactor));
+}
+
 //------------------------------------------------------------------------------
 float cHud::getZoomFactor () const
 {
-	return 1.f - (float)zoomSlider->getValue () / (zoomSlider->getMaxValue () - zoomSlider->getMinValue ());
+	return 1.f - (float)zoomSlider->getValue () / 100;
 }
 
 //------------------------------------------------------------------------------

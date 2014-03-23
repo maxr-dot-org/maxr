@@ -57,8 +57,8 @@ void cResourceBar::draw ()
 		const bool horizontal = orientation == eOrientationType::Horizontal;
 
 		SDL_Rect src;
-		src.h = horizontal ? surface->h : (int)((float)currentValue / maxValue * surface->h);
-		src.w = horizontal ? (int)((float)currentValue / maxValue * surface->w) : surface->w;
+		src.h = horizontal ? surface->h : (currentValue * surface->h / maxValue);
+		src.w = horizontal ? (currentValue * surface->w / maxValue) : surface->w;
 		src.x = horizontal ? surface->w - src.w : 0;
 		src.y = 0;
 
@@ -204,20 +204,17 @@ bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMou
 	{
 		if (clickSound) PlayFX (clickSound);
 
-		double factor;
+		const auto valueRange = maxValue - minValue;
 		switch (orientation)
 		{
 		default:
 		case eOrientationType::Horizontal:
-			factor = (double)(mouse.getPosition ().x () - (getPosition ().x () + additionalArea.x ())) / (getSize ().x () - additionalArea.x () * 2);
+			setValue (minValue + (mouse.getPosition ().x () - (getPosition ().x () + additionalArea.x ())) * valueRange / (getSize ().x () - additionalArea.x () * 2));
 			break;
 		case eOrientationType::Vertical:
-			factor = 1. - (double)(mouse.getPosition ().y () - (getPosition ().y () + additionalArea.y ())) / (getSize ().y () - additionalArea.y () * 2);
+			setValue (minValue + valueRange - (mouse.getPosition ().y () - (getPosition ().y () + additionalArea.y ())) * valueRange / (getSize ().y () - additionalArea.y () * 2));
 			break;
 		}
-
-		const auto valueRange = maxValue - minValue;
-		setValue (minValue + Round(factor * valueRange));
 
 		return true;
 	}

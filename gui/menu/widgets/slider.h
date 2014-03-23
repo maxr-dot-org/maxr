@@ -47,10 +47,10 @@ public:
 	virtual void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 
 	int getMinValue () const;
-	//void setMinValue (int minValue);
+	void setMinValue (int minValue);
 
 	int getMaxValue () const;
-	//void setMaxValue (int maxValue);
+	void setMaxValue (int maxValue);
 
 	int getValue () const;
 	void setValue (int value);

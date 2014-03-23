@@ -80,6 +80,12 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 		const_cast<cStaticMap&>(*staticMap).generateNextAnimationFrame ();
 	});
 
+	setWindDirection (random (360));
+	signalConnectionManager.connect (animationTimer->triggered400ms, std::bind (&cGameMapWidget::changeWindDirection, this));
+
+	signalConnectionManager.connect (animationTimer->triggered50ms, std::bind (&cGameMapWidget::runOwnedEffects, this));
+	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cGameMapWidget::renewDamageEffects, this));
+
 	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget> ());
 	unitMenu->disable ();
 	unitMenu->hide ();
@@ -633,7 +639,7 @@ void cGameMapWidget::drawEffects (bool bottom)
 	{
 		auto& effect = *it;
 
-		if (effect->isFinished() || it->use_count() == 1)
+		if (effect->isFinished() && it->use_count() == 1)
 		{
 			it = effects.erase (it);
 		}
@@ -1646,4 +1652,112 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 	{
 		mouseMode->setCursor (mouse, *dynamicMap, getMapTilePosition (mouse.getPosition ()), unitSelection, player);
 	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::runOwnedEffects ()
+{
+	for (size_t i = 0; i < effects.size (); ++i)
+	{
+		auto& effect = effects[i];
+
+		if (effect.use_count () == 1)
+		{
+			effect->run ();
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::renewDamageEffects ()
+{
+	if (!cSettings::getInstance ().isDamageEffects ()) return;
+	if (!dynamicMap) return;
+
+	const auto tileDrawingRange = computeTileDrawingRange ();
+
+	for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+	{
+		auto& mapField = dynamicMap->getField (*i);
+
+		const auto& buildings = mapField.getBuildings ();
+		for (size_t i = 0; i < buildings.size (); ++i)
+		{
+			renewDamageEffect (*buildings[i]);
+		}
+
+		const auto& planes = mapField.getPlanes ();
+		for (size_t i = 0; i < planes.size (); ++i)
+		{
+			renewDamageEffect (*planes[i]);
+		}
+
+		if (mapField.getVehicle ())
+		{
+			renewDamageEffect (*mapField.getVehicle ());
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::renewDamageEffect (const cBuilding& building)
+{
+	if (building.data.hasDamageEffect &&
+		building.data.getHitpoints () < building.data.hitpointsMax &&
+		(building.owner == player || (!player || player->canSeeAnyAreaUnder (building))))
+	{
+		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.PosX * 64 + building.DamageFXPointX, building.PosY * 64 + building.DamageFXPointY), intense, windDirection));
+
+		if (building.data.isBig && intense > 50)
+		{
+			intense -= 50;
+			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.PosX * 64 + building.DamageFXPointX2, building.PosY * 64 + building.DamageFXPointY2), intense, windDirection));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
+{
+	if (vehicle.data.getHitpoints () < vehicle.data.hitpointsMax &&
+		(vehicle.owner == player || (!player || player->canSeeAnyAreaUnder (vehicle))))
+	{
+		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.PosX * 64 + vehicle.DamageFXPointX + vehicle.OffX, vehicle.PosY * 64 + vehicle.DamageFXPointY + vehicle.OffY), intense, windDirection));
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::setWindDirection (int direction)
+{
+	// 360 / (2 * PI) = 57.29577f;
+	windDirection = direction / 57.29577f;
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::changeWindDirection ()
+{
+	if (!cSettings::getInstance ().isDamageEffects ()) return;
+
+	static int nextChange = 25;
+	static int nextDirChange = 25;
+	static int dir = 90;
+	static int change = 3;
+	if (nextChange == 0)
+	{
+		nextChange = 10 + random (20);
+		dir += change;
+		setWindDirection (dir);
+		if (dir >= 360) dir -= 360;
+		else if (dir < 0) dir += 360;
+
+		if (nextDirChange == 0)
+		{
+			nextDirChange = random (25) + 10;
+			change = random (11) - 5;
+		}
+		else nextDirChange--;
+	}
+	else nextChange--;
 }

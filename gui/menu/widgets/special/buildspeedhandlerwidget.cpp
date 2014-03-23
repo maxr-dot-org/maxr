@@ -42,7 +42,7 @@ cBuildSpeedHandlerWidget::cBuildSpeedHandlerWidget (const cPosition& position) :
 	}
 
 	area.add (speedGroup->getArea());
-	resize (area.getMaxCorner () - area.getMinCorner ());
+	resize (area.getSize());
 }
 
 //------------------------------------------------------------------------------

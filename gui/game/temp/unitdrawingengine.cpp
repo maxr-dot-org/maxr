@@ -112,22 +112,6 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 {
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 
-	// draw the damage effects
-	if (animationFlags.is100ms () && building.data.hasDamageEffect &&
-		building.data.getHitpoints () < building.data.hitpointsMax &&
-		cSettings::getInstance ().isDamageEffects () &&
-		(building.owner == player || (!player || player->canSeeAnyAreaUnder (building))))
-	{
-		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
-		//gameGUI.addFx (new cFxDarkSmoke (building.PosX * 64 + building.DamageFXPointX, building.PosY * 64 + building.DamageFXPointY, intense, gameGUI.getWindDir ()));
-
-		if (building.data.isBig && intense > 50)
-		{
-			intense -= 50;
-			//gameGUI.addFx (new cFxDarkSmoke (building.PosX * 64 + building.DamageFXPointX2, building.PosY * 64 + building.DamageFXPointY2, intense, gameGUI.getWindDir ()));
-		}
-	}
-
 	SDL_Rect dest = {0, 0, 0, 0};
 	bool bDraw = false;
 	SDL_Surface* drawingSurface = drawingCache.getCachedImage (building, zoomFactor);
@@ -281,15 +265,6 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, double zoomFactor, const cMap& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	const auto animationFlags = animationTimer->getAnimationFlags ();
-
-	// make damage effect
-	if (animationFlags.is100ms () && vehicle.data.getHitpoints () < vehicle.data.hitpointsMax &&
-		cSettings::getInstance ().isDamageEffects () &&
-		(vehicle.owner == player || (!player || player->canSeeAnyAreaUnder (vehicle))))
-	{
-		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
-		//gameGUI.addFx (new cFxDarkSmoke (vehicle.PosX * 64 + vehicle.DamageFXPointX + vehicle.OffX, vehicle.PosY * 64 + vehicle.DamageFXPointY + vehicle.OffY, intense, gameGUI.getWindDir ()));
-	}
 
 	// make landing and take off of planes
 	if (vehicle.data.factorAir > 0 && animationFlags.is50ms())

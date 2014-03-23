@@ -30,7 +30,7 @@ cAnimationTimeFlags::cAnimationTimeFlags () :
 //--------------------------------------------------------------------------
 bool cAnimationTimeFlags::is10ms () const
 {
-	return is50msFlag;
+	return is10msFlag;
 }
 
 //--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool cAnimationTimeFlags::is400ms () const
 //--------------------------------------------------------------------------
 void  cAnimationTimeFlags::set10ms (bool flag)
 {
-	is50msFlag = flag;
+	is10msFlag = flag;
 }
 
 //--------------------------------------------------------------------------

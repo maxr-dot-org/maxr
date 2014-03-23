@@ -189,7 +189,7 @@ void cWindowSinglePlayer::newGameClicked ()
 							game->setStaticMap (staticMap);
 							game->setPlayerClan (windowClanSelection->getSelectedClan ());
 
-							game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits ());
+							game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits (), windowLandingUnitSelection->getUnitUpgrades());
 
 							windowLandingPositionSelection->close ();
 							windowLandingUnitSelection->close ();
@@ -217,7 +217,7 @@ void cWindowSinglePlayer::newGameClicked ()
 						game->setGameSettings (gameSettings);
 						game->setStaticMap (staticMap);
 
-						game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits ());
+						game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits (), windowLandingUnitSelection->getUnitUpgrades ());
 
 						windowLandingPositionSelection->close ();
 						windowLandingUnitSelection->close ();

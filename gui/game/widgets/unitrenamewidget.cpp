@@ -53,7 +53,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	area.add (selectedUnitStatusLabel->getArea());
 	area.add (selectedUnitNamePrefixLabel->getArea ());
 	area.add (selectedUnitNameEdit->getArea ());
-	resize (area.getMaxCorner () - area.getMinCorner ());
+	resize (area.getSize());
 }
 
 void cUnitRenameWidget::setUnit (const cUnit* unit)
