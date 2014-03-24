@@ -40,7 +40,8 @@ struct sID;
 class cWindowHangar : public cWindow
 {
 public:
-	explicit cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan);
+	cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan);
+	cWindowHangar (SDL_Surface* surface, const cPlayer& player);
 	~cWindowHangar ();
 
 	cSignal<void ()> done;
@@ -75,6 +76,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	std::unique_ptr<cPlayer> temporaryPlayer;
+	const cPlayer& player;
 
 	cImage* infoImage;
 	cLabel* infoLabel;
@@ -82,6 +84,8 @@ private:
 	cUnitDetails* unitDetails;
 
 	cCheckBox* infoTextCheckBox;
+
+	void initialize ();
 
 	void infoCheckBoxToggled ();
 

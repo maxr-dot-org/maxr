@@ -76,7 +76,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer));
 
-	messageList = addChild (std::make_unique<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 2, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 2, cHud::panelTopHeight + 200))));
+	messageList = addChild (std::make_unique<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200))));
 
 	hud = addChild (std::move (hudOwning));
 
@@ -306,6 +306,16 @@ void cNewGameGUI::connectToClient (cClient& client)
 	clientSignalConnectionManager.connect (changeResourceDistributionTriggered, [&](const cBuilding& building, int metalProduction, int oilProduction, int goldProduction)
 	{
 		sendChangeResources (client, building, metalProduction, oilProduction, goldProduction);
+	});
+	clientSignalConnectionManager.connect (changeResearchSettingsTriggered, [&](const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
+	{
+		if (!player) return;
+		sendWantResearchChange (client, newResearchSettings, player->getNr());
+	});
+	clientSignalConnectionManager.connect (takeUnitUpgradesTriggered, [&](const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
+	{
+		if (!player) return;
+		sendTakenUpgrades (client, unitUpgrades);
 	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
@@ -668,13 +678,13 @@ void cNewGameGUI::connectToClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.unitSuppliedWithAmmo, [&](const cUnit&)
 	{
-		PlayFX (SoundData.SNDReload);// play order changed else no VOIReammo-sound - nonsinn
+		PlayFX (SoundData.SNDReload);
 		PlayVoice (VoiceData.VOIReammo);
 	});
 
 	clientSignalConnectionManager.connect (client.unitRepaired, [&](const cUnit&)
 	{
-		PlayFX (SoundData.SNDRepair);// play order changed else no VOIRepaired-sound - nonsinn
+		PlayFX (SoundData.SNDRepair);
 		PlayRandomVoice (VoiceData.VOIRepaired);
 	});
 
@@ -1160,7 +1170,15 @@ void cNewGameGUI::showResearchDialog (const cUnit& unit)
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto researchDialog = application->show (std::make_shared<cDialogResearch> ());
+	if (unit.owner != player) return;
+	if (!player) return;
+
+	auto researchDialog = application->show (std::make_shared<cDialogNewResearch> (*player));
+	researchDialog->done.connect ([&, researchDialog]()
+	{
+		changeResearchSettingsTriggered (researchDialog->getResearchSettings ());
+		researchDialog->close ();
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -1169,7 +1187,15 @@ void cNewGameGUI::showUpgradesWindow (const cUnit& unit)
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> ());
+	if (unit.owner != player) return;
+	if (!player) return;
+
+	auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> (*player));
+	upgradesWindow->done.connect ([&, upgradesWindow]()
+	{
+		takeUnitUpgradesTriggered (upgradesWindow->getUnitUpgrades ());
+		upgradesWindow->close ();
+	});
 }
 
 //------------------------------------------------------------------------------

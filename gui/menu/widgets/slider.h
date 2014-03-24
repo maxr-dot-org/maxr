@@ -67,8 +67,12 @@ private:
 
 	AutoSurface surface;
 
+	int currentValue;
+
 	int minValue;
 	int maxValue;
+
+	bool settingValue;
 
 	eOrientationType orientation;
 
@@ -82,6 +86,8 @@ private:
 	void computeHandleMinMaxPosition (int& minPosition, int& maxPosition) const;
 
 	void movedHandle ();
+
+	int getValueFromHandlePosition () const;
 };
 
 #endif // gui_menu_widgets_sliderH

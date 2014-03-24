@@ -48,10 +48,10 @@ public:
 	void setPlayer (const cPlayer* player);
 	void setUnitSelection (const cUnitSelection* unitSelection);
 
-	void setZoomFactor (double zoomFactor, bool center);
-	double getZoomFactor () const;
+	void setZoomFactor (float zoomFactor, bool center);
+	float getZoomFactor () const;
 
-	double computeMinimalZoomFactor () const;
+	float computeMinimalZoomFactor () const;
 
 	cUnitSelection& getUnitSelection ();
 	const cUnitSelection& getUnitSelection () const;
@@ -178,7 +178,7 @@ private:
 	// drawing information data
 	//
 	cPosition pixelOffset;
-	double internalZoomFactor; // should not be used directly! use getZoomFactor() instead!
+	float internalZoomFactor; // should not be used directly! use getZoomFactor() instead!
 
 	bool shouldDrawSurvey;
 	bool shouldDrawScan;
@@ -229,7 +229,7 @@ private:
 	//
 	// drawing helper methods
 	//
-	cPosition zoomSize (const cPosition& size, double zoomFactor) const;
+	cPosition zoomSize (const cPosition& size, float zoomFactor) const;
 	cPosition getZoomedTileSize () const;
 	cPosition getZoomedStartTilePixelOffset () const;
 	std::pair<cPosition, cPosition> computeTileDrawingRange () const;

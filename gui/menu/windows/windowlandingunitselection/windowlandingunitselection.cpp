@@ -33,7 +33,7 @@
 
 //------------------------------------------------------------------------------
 cWindowLandingUnitSelection::cWindowLandingUnitSelection (int playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold) :
-	cWindowAdvancedHangar (LoadPCX (GFXOD_HANGAR), playerColor, playerClan),
+	cWindowAdvancedHangar<cUnitListViewItemCargo> (LoadPCX (GFXOD_HANGAR), playerColor, playerClan),
 	selectedCargoUnit (nullptr)
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
@@ -170,7 +170,7 @@ std::vector<std::pair<sID, cUnitUpgrade>> cWindowLandingUnitSelection::getUnitUp
 //------------------------------------------------------------------------------
 void cWindowLandingUnitSelection::setActiveUnit (const sID& unitId)
 {
-	cWindowAdvancedHangar::setActiveUnit (unitId);
+	cWindowAdvancedHangar<cUnitListViewItemCargo>::setActiveUnit (unitId);
 
 	cUnitUpgrade* unitUpgrade;
 	auto iter = unitUpgrades.find (unitId);

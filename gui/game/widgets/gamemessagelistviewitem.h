@@ -32,7 +32,7 @@ class cGameMessageListViewItem : public cAbstractListViewItem
 public:
 	cGameMessageListViewItem (int width, const std::string& message, bool alert);
 
-	std::chrono::system_clock::time_point getCreationTime () const;
+	std::chrono::steady_clock::time_point getCreationTime () const;
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 private:
@@ -40,7 +40,7 @@ private:
 	
 	AutoSurface redShadow;
 
-	std::chrono::system_clock::time_point creationTime;
+	std::chrono::steady_clock::time_point creationTime;
 };
 
 #endif // gui_game_widgets_gamemessagelistviewitemH

@@ -108,7 +108,7 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, double zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player)
+void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 
@@ -262,7 +262,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 }
 
 //--------------------------------------------------------------------------
-void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, double zoomFactor, const cMap& map, const cUnitSelection* unitSelection, const cPlayer* player)
+void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMap& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 

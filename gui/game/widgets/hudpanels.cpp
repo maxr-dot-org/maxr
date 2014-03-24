@@ -29,8 +29,8 @@
 cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),
 	animationTimer (std::move (animationTimer_)),
-	openStep (100. * 10 / (getSoundLength (SoundData.SNDPanelOpen) == 0 ? 800 : getSoundLength (SoundData.SNDPanelOpen))),
-	closeStep (100. * 10 / (getSoundLength (SoundData.SNDPanelClose) == 0 ? 800 : getSoundLength (SoundData.SNDPanelClose))),
+	openStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelOpen) == 0 ? 800 : getSoundLength (SoundData.SNDPanelOpen) * 0.95))),
+	closeStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelClose) == 0 ? 800 : getSoundLength (SoundData.SNDPanelClose) * 0.95))),
 	percentClosed (percentClosed_)
 {
 	percentClosed = std::max (0., percentClosed);

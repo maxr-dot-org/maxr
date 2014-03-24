@@ -106,6 +106,8 @@ bool cSaveSlotWidget::handleClicked (cApplication& application, cMouse& mouse, e
 	{
 		clicked ();
 
+		PlayFX (SoundData.SNDObjectMenu);
+
 		if (mouse.getButtonClickCount (button) == 2)
 		{
 			doubleClicked ();

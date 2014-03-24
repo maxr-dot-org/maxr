@@ -19,6 +19,8 @@
 #ifndef clienteventsH
 #define clienteventsH
 
+#include <array>
+
 #include "defines.h"
 #include "network.h"
 #include "serverevents.h"
@@ -110,7 +112,7 @@ void sendUnitUpgrades (const cClient& client);
 void sendLandingCoords (const cClient& client, const sClientLandData& c);
 
 void sendReconnectionSuccess (const cClient& client);
-void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrade);
+void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 /**
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
@@ -271,7 +273,7 @@ void sendSetAutoStatus (const cClient& client, int vehicleID, bool set);
 void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bool destIsVehicle, bool steal);
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
-void sendWantResearchChange (const cClient& client, int (&newResearchSettings) [cResearch::kNrResearchAreas], int ownerNr);
+void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings, int ownerNr);
 void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID);
 void sendSaveReportInfo (const cClient& client, const sSavedReportMessage& savedReport, int ownerNr, int savingID);
 void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID);

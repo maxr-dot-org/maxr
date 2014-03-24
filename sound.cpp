@@ -76,10 +76,10 @@ void FreesSound (sSOUND* sound)
 // FIXME: internal play function, should not be accessed from outside
 // and held more sanity checks and take care of sound channels
 // to e.g. open new channels if needed
-void play (sSOUND* snd)
+void play (sSOUND* snd, int channel)
 {
 	if (snd == NULL) return;
-	if (Mix_PlayChannel (SoundChannel, snd, 0) == -1)
+	if (Mix_PlayChannel (channel, snd, 0) == -1)
 	{
 		Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
 		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -92,7 +92,7 @@ void play (sSOUND* snd)
 void PlayVoice (sSOUND* snd)
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isVoiceMute()) return;
-	play (snd);
+	play (snd, VoiceChannel);
 	Mix_Volume (VoiceChannel, cSettings::getInstance().getVoiceVol());
 	VoiceChannel++;
 	if (VoiceChannel > VOICE_CHANNEL_MAX) VoiceChannel = VOICE_CHANNEL_MIN;
@@ -112,7 +112,7 @@ template void PlayRandomVoice<4> (AutoSound (&snds) [4]);
 void PlayFX (sSOUND* snd)
 {
 	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute()) return;
-	play (snd);
+	play (snd, SoundChannel);
 	Mix_Volume (SoundChannel, cSettings::getInstance().getSoundVol());
 	SoundChannel++;
 	if (SoundChannel > SOUND_CHANNEL_MAX) SoundChannel = SOUND_CHANNEL_MIN;

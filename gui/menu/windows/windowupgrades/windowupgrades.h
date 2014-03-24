@@ -20,14 +20,58 @@
 #ifndef gui_menu_windows_windowupgrades_windowupgradesH
 #define gui_menu_windows_windowupgrades_windowupgradesH
 
+#include <map>
+#include <array>
+
 #include "../../../menu/windows/windowhangar/windowhangar.h"
+
+class cLabel;
+class cPushButton;
+class cResourceBar;
+class cCheckBox;
+class cPlayer;
 
 class cWindowUpgrades : public cWindowHangar
 {
+	// TODO: implement restoring last filter state (without static variables!)
+
+	// FIXME: remove code duplication with @ref cWindowLandingUnitSelection
 public:
-	cWindowUpgrades ();
+	explicit cWindowUpgrades (const cPlayer& player);
+
+	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades () const;
+
+protected:
+	virtual void setActiveUnit (const sID& unitId) MAXR_OVERRIDE_FUNCTION;
 
 private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cCheckBox* tankCheckBox;
+	cCheckBox* planeCheckBox;
+	cCheckBox* shipCheckBox;
+	cCheckBox* buildingCheckBox;
+	cCheckBox* tntCheckBox;
+
+	cResourceBar* goldBar;
+	cLabel* goldBarAmountLabel;
+
+	static const size_t maxUpgradeButtons = 8;
+
+	std::array<cPushButton*, maxUpgradeButtons> upgradeDecreaseButton;
+	std::array<cPushButton*, maxUpgradeButtons> upgradeIncreaseButton;
+	std::array<cLabel*, maxUpgradeButtons> upgradeCostLabel;
+
+	std::map<sID, cUnitUpgrade> unitUpgrades;
+
+	void generateSelectionList (bool select);
+
+	void goldChanged ();
+
+	void upgradeIncreaseClicked (size_t index);
+	void upgradeDecreaseClicked (size_t index);
+
+	void updateUpgradeButtons ();
 };
 
 #endif // gui_menu_windows_windowupgrades_windowupgradesH

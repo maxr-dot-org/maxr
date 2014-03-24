@@ -1015,7 +1015,7 @@ void cDialogResearch::handleKeyInput (const SDL_KeyboardEvent& key)
 void cDialogResearch::doneReleased (void* parent)
 {
 	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
-	sendWantResearchChange (*menu->client, menu->newResearchSettings, menu->owner->getNr());
+	//sendWantResearchChange (*menu->client, menu->newResearchSettings, menu->owner->getNr());
 	menu->end = true;
 }
 

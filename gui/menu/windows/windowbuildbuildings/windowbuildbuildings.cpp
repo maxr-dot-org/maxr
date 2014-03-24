@@ -29,7 +29,7 @@
 
 //------------------------------------------------------------------------------
 cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_) :
-	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), vehicle_.owner->getColor(), vehicle_.owner->getClan()),
+	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), *vehicle_.owner),
 	vehicle (vehicle_)
 {
 

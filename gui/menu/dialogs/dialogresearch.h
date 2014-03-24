@@ -20,14 +20,46 @@
 #ifndef gui_menu_dialogs_dialogresearchH
 #define gui_menu_dialogs_dialogresearchH
 
-#include "../../window.h"
+#include <array>
 
-class cDialogResearch : public cWindow
+#include "../../window.h"
+#include "../../../utility/signal/signal.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+#include "../../../upgradecalculator.h"
+
+class cLabel;
+class cSlider;
+class cPushButton;
+class cPlayer;
+
+class cDialogNewResearch : public cWindow
 {
 public:
-	cDialogResearch ();
+	cDialogNewResearch (const cPlayer& player);
 
+	const std::array<int, cResearch::kNrResearchAreas>& getResearchSettings () const;
+
+	cSignal<void ()> done;
 private:
+	cSignalConnectionManager signalConnectionManager;
+
+	static const size_t rows = 8;
+	static_assert(cResearch::kNrResearchAreas == rows, "number of items displayed in the research dialog does not match the number of research areas!");
+
+	const cPlayer& player;
+
+	std::array<int, cResearch::kNrResearchAreas> researchSettings;
+	int unusedResearchCenters;
+
+	std::array<cLabel*, rows> researchCenterCountLabels;
+	std::array<cLabel*, rows> percentageLabels;
+	std::array<cLabel*, rows> turnsLabels;
+	std::array<cSlider*, rows> sliders;
+	std::array<cPushButton*, rows> decreaseButtons;
+	std::array<cPushButton*, rows> increaseButtons;
+
+	void updateWidgets ();
+	void handleSliderValueChanged (size_t index);
 };
 
 #endif // gui_menu_dialogs_dialogresearchH

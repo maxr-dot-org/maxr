@@ -33,11 +33,26 @@
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan) :
 	cWindow (surface),
-	temporaryPlayer (new cPlayer(sPlayer("unnamed", playerColor, 0)))
+	temporaryPlayer (new cPlayer (sPlayer ("unnamed", playerColor, 0))),
+	player (*temporaryPlayer)
+{
+	if (playerClan != -1) temporaryPlayer->setClan (playerClan);
+
+	initialize ();
+}
+
+//------------------------------------------------------------------------------
+cWindowHangar::cWindowHangar (SDL_Surface* surface, const cPlayer& player_) :
+	cWindow (surface),
+	player (player_)
+{
+	initialize ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowHangar::initialize ()
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
-
-	if (playerClan != -1) temporaryPlayer->setClan (playerClan);
 
 	infoImage = addChild (std::make_unique<cImage> (menuPosition + cPosition (11, 13)));
 
@@ -154,7 +169,7 @@ void cWindowHangar::clearSelectionUnits ()
 //------------------------------------------------------------------------------
 const cPlayer& cWindowHangar::getPlayer () const
 {
-	return *temporaryPlayer;
+	return player;
 }
 
 //------------------------------------------------------------------------------

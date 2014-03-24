@@ -4546,7 +4546,7 @@ void cUpgradeMenu::doneReleased (void* parent)
 {
 	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cMenu*) parent);
 	if (!menu) return;
-	sendTakenUpgrades (*menu->client, menu->upgradeHangarContainer.getUnitUpgrades());
+//	sendTakenUpgrades (*menu->client, menu->upgradeHangarContainer.getUnitUpgrades());
 	menu->end = true;
 }
 

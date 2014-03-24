@@ -26,7 +26,8 @@ template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	explicit cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan);
+	cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan);
+	cWindowAdvancedHangar (SDL_Surface* surface, const cPlayer& player);
 	~cWindowAdvancedHangar ();
 
 protected:
@@ -49,6 +50,8 @@ protected:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	void initialize ();
+
 	void handleSelectionChanged ();
 
 	void handleSelectionUnitClickedSecondTime (const cUnitListViewItemBuy& item);
@@ -60,6 +63,21 @@ private:
 template<typename SelectedUnitItemType>
 cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan) :
 	cWindowHangar (surface, playerColor, playerClan)
+{
+	initialize ();
+}
+
+//------------------------------------------------------------------------------
+template<typename SelectedUnitItemType>
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (SDL_Surface* surface, const cPlayer& player) :
+	cWindowHangar (surface, player)
+{
+	initialize ();
+}
+
+//------------------------------------------------------------------------------
+template<typename SelectedUnitItemType>
+void cWindowAdvancedHangar<SelectedUnitItemType>::initialize ()
 {
 	const auto& menuPosition = getArea ().getMinCorner ();
 

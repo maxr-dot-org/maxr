@@ -168,15 +168,16 @@ void sendReconnectionSuccess (const cClient& client)
 	client.sendNetMessage (message);
 }
 
-void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& unitUpgrades)
+void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
 	const cPlayer& player = client.getActivePlayer();
 	cNetMessage* msg = NULL;
 	int iCount = 0;
 
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); ++i)
+	for (size_t i = 0; i < unitUpgrades.size(); ++i)
 	{
-		const cUnitUpgrade& curUpgrade = unitUpgrades[i];
+		const auto& unitId = unitUpgrades[i].first;
+		const auto& curUpgrade = unitUpgrades[i].second;
 
 		if (!curUpgrade.hasBeenPurchased()) continue;
 
@@ -186,11 +187,9 @@ void sendTakenUpgrades (const cClient& client, const std::vector<cUnitUpgrade>& 
 			iCount = 0;
 		}
 
-		const sUnitData* currentVersion;
-		if (i < UnitsData.getNrVehicles()) currentVersion = &player.VehicleData[i];
-		else currentVersion = &player.BuildingData[i - UnitsData.getNrVehicles()];
+		const auto currentVersion = player.getUnitDataCurrentVersion (unitId);
 
-		if (i < UnitsData.getNrVehicles()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
+		if (unitId.isAVehicle()) msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
 		msg->pushInt16 (curUpgrade.getValueOrDefault (sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
@@ -521,7 +520,7 @@ void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bo
 	client.sendNetMessage (message);
 }
 
-void sendWantResearchChange (const cClient& client, int (&newResearchSettings) [cResearch::kNrResearchAreas], int ownerNr)
+void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings, int ownerNr)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_RESEARCH_CHANGE);
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)

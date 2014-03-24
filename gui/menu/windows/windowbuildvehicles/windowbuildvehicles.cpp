@@ -32,7 +32,7 @@
 
 //------------------------------------------------------------------------------
 cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map) :
-	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), building_.owner->getColor (), building_.owner->getClan ()),
+	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), *building_.owner),
 	building (building_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -102,6 +102,8 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 	building.calcTurboBuild (turns, costs, vehicleData.buildCosts, remainingMetal);
 
 	speedHandler->setValues (turns, costs);
+
+//	setActiveUpgrades (building.owner->getUnitDataCurrentVersion (unitId));
 }
 
 //------------------------------------------------------------------------------

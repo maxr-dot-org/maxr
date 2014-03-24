@@ -41,11 +41,11 @@ cGameMessageListViewItem::cGameMessageListViewItem (int width, const std::string
 		SDL_FillRect (redShadow, nullptr, SDL_MapRGBA (redShadow->format, 0xFF, 0, 0, 50));
 	}
 
-	creationTime = std::chrono::system_clock::now ();
+	creationTime = std::chrono::steady_clock::now ();
 }
 
 //------------------------------------------------------------------------------
-std::chrono::system_clock::time_point cGameMessageListViewItem::getCreationTime () const
+std::chrono::steady_clock::time_point cGameMessageListViewItem::getCreationTime () const
 {
 	return creationTime;
 }

@@ -20,10 +20,13 @@
 #ifndef gui_game_gameguiH
 #define gui_game_gameguiH
 
+#include <array>
+
 #include "../window.h"
 #include "../../utility/signal/signal.h"
 #include "../../utility/signal/signalconnectionmanager.h"
 #include "../../sound.h"
+#include "../../upgradecalculator.h"
 #include "unitselection.h"
 
 class cHud;
@@ -140,6 +143,8 @@ private:
 	cSignal<void (const cUnit&, size_t index)> upgradeTriggered;
 	cSignal<void (const cUnit&)> upgradeAllTriggered;
 	cSignal<void (const cBuilding&, int, int, int)> changeResourceDistributionTriggered;
+	cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
+	cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
 };
 
 #endif // gui_game_gameguiH

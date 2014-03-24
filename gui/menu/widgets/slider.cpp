@@ -32,8 +32,10 @@
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :
 	cClickableWidget (area),
 	surface (nullptr),
+	currentValue (minValue_),
 	minValue (minValue_),
 	maxValue (maxValue_),
+	settingValue (false),
 	orientation (orientation_),
 	handle (nullptr)
 {
@@ -48,8 +50,10 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderHandleType handleType, eSliderType sliderType) :
 	cClickableWidget (area),
 	surface (nullptr),
+	currentValue (minValue_),
 	minValue (minValue_),
 	maxValue (maxValue_),
+	settingValue (false),
 	orientation (orientation_),
 	handle (nullptr)
 {
@@ -114,6 +118,12 @@ void cSlider::setMaxValue (int maxValue_)
 //------------------------------------------------------------------------------
 int cSlider::getValue () const
 {
+	return currentValue;
+}
+
+//------------------------------------------------------------------------------
+int cSlider::getValueFromHandlePosition () const
+{
 	int minPosition, maxPosition;
 	computeHandleMinMaxPosition (minPosition, maxPosition);
 
@@ -122,29 +132,37 @@ int cSlider::getValue () const
 
 	const auto handlePosition = (orientation == eOrientationType::Horizontal ? handle->getPosition ().x () : handle->getPosition ().y ());
 
-	const auto factor = (double)(handlePosition - minPosition) / positionDiff;
-
-	return minValue + (int)(factor * valueDiff);
+	return positionDiff != 0 ? minValue + Round((float)(handlePosition - minPosition) * valueDiff / positionDiff) : minValue;
 }
 
 //------------------------------------------------------------------------------
 void cSlider::setValue (int value)
 {
-	value = std::max (value, minValue);
-	value = std::min (value, maxValue);
+	if (settingValue) return; // prevent recursive endless loop
 
-	int minPosition, maxPosition;
-	computeHandleMinMaxPosition (minPosition, maxPosition);
+	{
+		settingValue = true;
+		auto reseter = makeScopedOperation ([&](){ settingValue = false; });
 
-	const auto valueDiff = maxValue - minValue;
-	const auto positionDiff = maxPosition - minPosition;
+		value = std::max (value, minValue);
+		value = std::min (value, maxValue);
 
-	const auto factor = (double)(value - minValue) / valueDiff;
-	const auto newPosition = minPosition + (int)(factor * positionDiff);
+		std::swap (value, currentValue);
 
-	cPosition position = handle->getPosition ();
-	(orientation == eOrientationType::Horizontal ? position.x () : position.y ()) = newPosition;
-	handle->moveTo (position);
+		int minPosition, maxPosition;
+		computeHandleMinMaxPosition (minPosition, maxPosition);
+
+		const auto valueDiff = maxValue - minValue;
+		const auto positionDiff = maxPosition - minPosition;
+
+		const auto newPosition = valueDiff != 0 ? minPosition + (currentValue - minValue) * positionDiff / valueDiff : minPosition;
+
+		cPosition position = handle->getPosition ();
+		(orientation == eOrientationType::Horizontal ? position.x () : position.y ()) = newPosition;
+		handle->moveTo (position);
+	}
+
+	if (value != currentValue) valueChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -256,5 +274,5 @@ void cSlider::computeHandleMinMaxPosition (int& minPosition, int& maxPosition) c
 //------------------------------------------------------------------------------
 void cSlider::movedHandle ()
 {
-	valueChanged ();
+	setValue (getValueFromHandlePosition ());
 }

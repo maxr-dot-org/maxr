@@ -234,14 +234,14 @@ void cGameMapWidget::draw ()
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setZoomFactor (double zoomFactor_, bool center)
+void cGameMapWidget::setZoomFactor (float zoomFactor_, bool center)
 {
 	const auto oldZoom = getZoomFactor();
 
 	internalZoomFactor = zoomFactor_;
 
 	internalZoomFactor = std::max (internalZoomFactor, computeMinimalZoomFactor ());
-	internalZoomFactor = std::min (1., internalZoomFactor);
+	internalZoomFactor = std::min (1.f, internalZoomFactor);
 
 	const auto newZoom = getZoomFactor ();
 
@@ -336,9 +336,9 @@ cBox<cPosition> cGameMapWidget::getDisplayedMapArea () const
 }
 
 //------------------------------------------------------------------------------
-double cGameMapWidget::getZoomFactor () const
+float cGameMapWidget::getZoomFactor () const
 {
-	return (double)getZoomedTileSize ().x () / cStaticMap::tilePixelWidth; // should make no difference if we use y instead
+	return (float)getZoomedTileSize ().x () / cStaticMap::tilePixelWidth; // should make no difference if we use y instead
 }
 
 //------------------------------------------------------------------------------
@@ -472,8 +472,8 @@ void cGameMapWidget::centerAt (const cPosition& position)
 	const auto zoomedTileSize = getZoomedTileSize ();
 
 	cPosition newPixelOffset;
-	newPixelOffset.x () = position.x () * cStaticMap::tilePixelWidth - ((int)(((double)getSize ().x () / (2 * zoomedTileSize.x ())) * cStaticMap::tilePixelWidth)) + cStaticMap::tilePixelWidth / 2;
-	newPixelOffset.y () = position.y () * cStaticMap::tilePixelHeight - ((int)(((double)getSize ().y () / (2 * zoomedTileSize.y ())) * cStaticMap::tilePixelHeight)) + cStaticMap::tilePixelHeight / 2;
+	newPixelOffset.x () = position.x () * cStaticMap::tilePixelWidth - ((int)(((float)getSize ().x () / (2 * zoomedTileSize.x ())) * cStaticMap::tilePixelWidth)) + cStaticMap::tilePixelWidth / 2;
+	newPixelOffset.y () = position.y () * cStaticMap::tilePixelHeight - ((int)(((float)getSize ().y () / (2 * zoomedTileSize.y ())) * cStaticMap::tilePixelHeight)) + cStaticMap::tilePixelHeight / 2;
 
 	scroll (newPixelOffset - pixelOffset);
 }
@@ -507,7 +507,7 @@ void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect)
 }
 
 //------------------------------------------------------------------------------
-double cGameMapWidget::computeMinimalZoomFactor () const
+float cGameMapWidget::computeMinimalZoomFactor () const
 {
 	// inequality to be fulfilled:
 	//
@@ -517,13 +517,13 @@ double cGameMapWidget::computeMinimalZoomFactor () const
 	//
 	//   zoom = size_x / (map_x * tile_x)
 
-	auto xZoom = (double)getSize ().x () / (staticMap->getSizeNew ().x () * cStaticMap::tilePixelWidth);
-	auto yZoom = (double)getSize ().y () / (staticMap->getSizeNew ().y () * cStaticMap::tilePixelHeight);
+	auto xZoom = (float)getSize ().x () / (staticMap->getSizeNew ().x () * cStaticMap::tilePixelWidth);
+	auto yZoom = (float)getSize ().y () / (staticMap->getSizeNew ().y () * cStaticMap::tilePixelHeight);
 
 	// then we try to fix if round would have rounded up:
 
-	xZoom = std::max (xZoom, (double)((int)(cStaticMap::tilePixelWidth * xZoom) + (xZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelWidth);
-	yZoom = std::max (yZoom, (double)((int)(cStaticMap::tilePixelHeight * yZoom) + (yZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelHeight);
+	xZoom = std::max (xZoom, (float)((int)(cStaticMap::tilePixelWidth * xZoom) + (xZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelWidth);
+	yZoom = std::max (yZoom, (float)((int)(cStaticMap::tilePixelHeight * yZoom) + (yZoom >= 1.0f ? 0 : 1)) / cStaticMap::tilePixelHeight);
 
 	return std::max(xZoom, yZoom);
 }
@@ -538,7 +538,7 @@ cPosition cGameMapWidget::computeMaximalPixelOffset () const
 }
 
 //------------------------------------------------------------------------------
-cPosition cGameMapWidget::zoomSize (const cPosition& size, double zoomFactor) const
+cPosition cGameMapWidget::zoomSize (const cPosition& size, float zoomFactor) const
 {
 	return cPosition ((int)std::round (size.x () * zoomFactor), (int)std::round (size.y () * zoomFactor));
 }
