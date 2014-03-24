@@ -167,7 +167,7 @@ bool cGameTimerClient::nextTickAllowed()
 	return false;
 }
 
-void cGameTimerClient::run (cMenu* activeMenu)
+void cGameTimerClient::run ()
 {
 	// maximum time before GUI update
 	const unsigned int maxWorkingTime = 500; // 500 milliseconds
@@ -175,13 +175,13 @@ void cGameTimerClient::run (cMenu* activeMenu)
 
 	while (popEvent())
 	{
-		client->getEventHandling().handleNetMessages (client, activeMenu);
+		client->getEventHandling().handleNetMessages (client);
 
 		if (nextTickAllowed() == false) continue;
 
 		gameTime++;
 		handleTimer();
-		client->doGameActions (activeMenu);
+		client->doGameActions ();
 
 		//check crc
 		localChecksum = calcClientChecksum (*client);

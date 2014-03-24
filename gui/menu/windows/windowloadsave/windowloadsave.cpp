@@ -21,6 +21,7 @@
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/special/saveslotwidget.h"
 #include "../../../../menuitems.h" // sSaveFile
+#include "../../../../main.h" // sSaveFile
 
 //------------------------------------------------------------------------------
 cWindowLoadSave::cWindowLoadSave ()

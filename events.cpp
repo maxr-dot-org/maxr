@@ -38,7 +38,7 @@ void cEventHandling::pushEvent (cNetMessage* message)
 	eventQueue.write (message);
 }
 
-static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& message)
+static void HandleNetMessage (cClient* client, cNetMessage& message)
 {
 	switch (message.getClass())
 	{
@@ -49,30 +49,30 @@ static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& m
 				Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
-			client->HandleNetMessage (&message, activeMenu);
+			client->HandleNetMessage (&message);
 			break;
 		case NET_MSG_SERVER:
 			//should not happen!
 			Log.write ("Client: got a server message! Type: " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 			break;
 		case NET_MSG_MENU:
-			if (!activeMenu)
-			{
-				Log.write ("Got a menu message, but no menu active!", cLog::eLOG_TYPE_NET_ERROR);
-				break;
-			}
-			activeMenu->handleNetMessage (&message);
+			//if (!activeMenu)
+			//{
+			//	Log.write ("Got a menu message, but no menu active!", cLog::eLOG_TYPE_NET_ERROR);
+			//	break;
+			//}
+			//activeMenu->handleNetMessage (&message);
 			break;
 		case NET_MSG_STATUS:
-			if (client) client->HandleNetMessage (&message, activeMenu);
-			else if (activeMenu) activeMenu->handleNetMessage (&message);
+			if (client) client->HandleNetMessage (&message);
+			//else if (activeMenu) activeMenu->handleNetMessage (&message);
 			break;
 		default:
 			break;
 	}
 }
 
-void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
+void cEventHandling::handleNetMessages (cClient* client)
 {
 	// Do not read client messages, until client is started
 	if (!client && eventQueue.size() > 0 && eventQueue.peep()->getClass() == NET_MSG_CLIENT)
@@ -84,8 +84,7 @@ void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
 	while (eventQueue.size() > 0)
 	{
 		if (client && client->gameTimer.nextMsgIsNextGameTime) break;
-		if (activeMenu && activeMenu->exiting()) break;
 		AutoPtr<cNetMessage> message (eventQueue.read());
-		HandleNetMessage (client, activeMenu, *message);
+		HandleNetMessage (client, *message);
 	}
 }

@@ -158,9 +158,6 @@ int main (int argc, char* argv[])
 		application.show (startWindow);
 
 		application.execute ();
-
-		cStartMenu mainMenu;
-		mainMenu.show (NULL);
 	}
 
 	Quit();

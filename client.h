@@ -39,7 +39,6 @@ class cFx;
 class cFxContainer;
 class cJob;
 class cMap;
-class cMenu;
 class cNetMessage;
 class cPlayer;
 class cServer;
@@ -132,8 +131,8 @@ public:
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteUnit (cBuilding* Building, cMenu* activeMenu);
-	void deleteUnit (cVehicle* Vehicle, cMenu* activeMenu);
+	void deleteUnit (cBuilding* Building);
+	void deleteUnit (cVehicle* Vehicle);
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!
@@ -153,7 +152,7 @@ public:
 	* handles move and attack jobs
 	* this function should be called in all menu loops
 	*/
-	void doGameActions (cMenu* activeMenu);
+	void doGameActions ();
 
 	/**
 	* processes everything that is need for this netMessage
@@ -161,7 +160,7 @@ public:
 	*@param message The netMessage to be handled.
 	*@return 0 for success
 	*/
-	int HandleNetMessage (cNetMessage* message, cMenu* activeMenu);
+	int HandleNetMessage (cNetMessage* message);
 
 	void addFx (std::shared_ptr<cFx> fx);
 
@@ -257,8 +256,8 @@ private:
 	void HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message, cMenu* activeMenu);
-	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message, cMenu* activeMenu);
+	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message);
@@ -281,7 +280,7 @@ private:
 	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* activeMenu);
+	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message);
@@ -295,11 +294,11 @@ private:
 	void HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message, cMenu* activeMenu);
+	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message, cMenu* activeMenu);
+	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message);

@@ -23,6 +23,7 @@
 #include <SDL.h>
 #include <string>
 #include <vector>
+#include <memory>
 #include "autoptr.h"
 #include "menus.h"
 #include "ringbuffer.h"
@@ -32,6 +33,7 @@ class cPlayer;
 class cServer;
 class cTCP;
 class sPlayer;
+class cStaticMap;
 
 int serverGameThreadFunction (void* data);
 

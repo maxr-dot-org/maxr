@@ -25,6 +25,8 @@
 #include "player.h"
 #include "savegame.h"
 #include "serverevents.h"
+#include "map.h"
+#include "server.h"
 
 #include <algorithm>
 #include <iostream>

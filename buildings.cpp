@@ -38,6 +38,7 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 #include "video.h"
+#include "unifonts.h"
 
 using namespace std;
 
@@ -275,165 +276,6 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 	SDL_FillRect (surface, &line_v, color);
 }
 
-}
-
-//--------------------------------------------------------------------------
-void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
-{
-//	float factor = (float) gameGUI.getTileSize() / 64.0f;
-//	const cPlayer& activePlayer = gameGUI.getClient()->getActivePlayer();
-//	// draw the damage effects
-//	if (gameGUI.timer100ms && data.hasDamageEffect &&
-//		data.hitpointsCur < data.hitpointsMax &&
-//		cSettings::getInstance().isDamageEffects() &&
-//		(owner == &activePlayer || activePlayer.canSeeAnyAreaUnder (*this)))
-//	{
-//		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
-//		gameGUI.addFx (new cFxDarkSmoke (cPosition (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY), intense, gameGUI.getWindDir()));
-//
-//		if (data.isBig && intense > 50)
-//		{
-//			intense -= 50;
-//			gameGUI.addFx (new cFxDarkSmoke (cPosition (PosX * 64 + DamageFXPointX2, PosY * 64 + DamageFXPointY2), intense, gameGUI.getWindDir ()));
-//		}
-//	}
-//
-//	SDL_Rect dest = {0, 0, 0, 0};
-//	bool bDraw = false;
-//	SDL_Surface* drawingSurface = gameGUI.getDCache ()->getCachedImage (*this, factor);
-//	if (drawingSurface == NULL)
-//	{
-//		// no cached image found. building needs to be redrawn.
-//		bDraw = true;
-//		drawingSurface = gameGUI.getDCache ()->createNewEntry (*this, factor);
-//	}
-//
-//	if (drawingSurface == NULL)
-//	{
-//		// image will not be cached. So blitt directly to the screen buffer.
-//		dest = *screenPos;
-//		drawingSurface = cVideo::buffer;
-//	}
-//
-//	if (bDraw)
-//	{
-//		render (gameGUI.getAnimationSpeed(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
-//	}
-//
-//	// now check, whether the image has to be blitted to screen buffer
-//	if (drawingSurface != cVideo::buffer)
-//	{
-//		dest = *screenPos;
-//		SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
-//
-//		// all following graphic operations are drawn directly to buffer
-//		dest = *screenPos;
-//	}
-//
-//	if (!owner) return;
-//
-//	if (StartUp)
-//	{
-//		if (gameGUI.timer100ms)
-//			StartUp += 25;
-//
-//		if (StartUp >= 255)
-//			StartUp = 0;
-//	}
-//
-//	// draw the effect if necessary
-//	if (data.powerOnGraphic && cSettings::getInstance().isAnimations() && (IsWorking || !data.canWork))
-//	{
-//		SDL_Rect tmp = dest;
-//		SDL_SetSurfaceAlphaMod (uiData->eff, EffectAlpha);
-//
-//		CHECK_SCALING (uiData->eff, uiData->eff_org, factor);
-//		SDL_BlitSurface (uiData->eff, NULL, cVideo::buffer, &tmp);
-//
-//		if (gameGUI.timer100ms)
-//		{
-//			if (EffectInc)
-//			{
-//				EffectAlpha += 30;
-//
-//				if (EffectAlpha > 220)
-//				{
-//					EffectAlpha = 254;
-//					EffectInc = false;
-//				}
-//			}
-//			else
-//			{
-//				EffectAlpha -= 30;
-//
-//				if (EffectAlpha < 30)
-//				{
-//					EffectAlpha = 0;
-//					EffectInc = true;
-//				}
-//			}
-//		}
-//	}
-//
-//	// draw the mark, when a build order is finished
-//	if (((!BuildList.empty() && !IsWorking && BuildList[0].metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == &gameGUI.getClient()->getActivePlayer())
-//	{
-//		const Uint32 color = 0xFF00FF00 - (0x1000 * (gameGUI.getAnimationSpeed() % 0x8));
-//		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 3 : gameGUI.getTileSize() - 3;
-//		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
-//
-//		DrawRectangle (cVideo::buffer, d, color, 3);
-//	}
-//
-//#if 0
-//	// disabled color-frame for buildings
-//	//   => now it's original game behavior - see ticket #542 (GER) = FIXED
-//	// but maybe as setting interresting
-//	//   => ticket #784 (ENG) (so I just commented it) = TODO
-//
-//	// draw a colored frame if necessary
-//	if (gameGUI.colorChecked())
-//	{
-//		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (owner->getColorSurface()->pixels);
-//		const Uint16 max = data.isBig ? 2 * gameGUI.getTileSize() - 1 : gameGUI.getTileSize() - 1;
-//		SDL_Rect d = {Sint16 (dest.x + 1), Sint16 (dest.y + 1), max, max};
-//
-//		DrawRectangle (cVideo::buffer, d, color, 1);
-//	}
-//#endif
-//	// draw the seleted-unit-flash-frame for bulidings
-//	if (gameGUI.getSelectedUnit() == this)
-//	{
-//		Uint16 max = data.isBig ? gameGUI.getTileSize() * 2 : gameGUI.getTileSize();
-//		const int len = max / 4;
-//		max -= 3;
-//		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), max, max};
-//		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | gameGUI.getBlinkColor());
-//	}
-//
-//	// draw health bar
-//	if (gameGUI.hitsChecked())
-//		gameGUI.drawHealthBar (*this, *screenPos);
-//
-//	// draw ammo bar
-//	if (gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0)
-//		gameGUI.drawMunBar (*this, *screenPos);
-//
-//	// draw status
-//	if (gameGUI.statusChecked())
-//		gameGUI.drawStatus (*this, *screenPos);
-//
-//	// attack job debug output
-//	if (gameGUI.getAJobDebugStatus())
-//	{
-//		cServer* server = gameGUI.getClient()->getServer();
-//		const cBuilding* serverBuilding = NULL;
-//		if (server) serverBuilding = server->Map->fields[server->Map->getOffset (PosX, PosY)].getBuilding();
-//		if (isBeeingAttacked) font->showText (dest.x + 1, dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
-//		if (serverBuilding && serverBuilding->isBeeingAttacked) font->showText (dest.x + 1, dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
-//		if (attacking) font->showText (dest.x + 1, dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
-//		if (serverBuilding && serverBuilding->attacking) font->showText (dest.x + 1, dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW);
-//	}
 }
 
 void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
@@ -1466,64 +1308,6 @@ void cBuilding::calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::Select (cGameGUI& gameGUI)
-{
-	if (!owner) return;
-
-	// load video
-	if (gameGUI.getFLC() != NULL)
-	{
-		FLI_Close (gameGUI.getFLC());
-		gameGUI.setFLC (NULL);
-	}
-	gameGUI.setVideoSurface (uiData->video);
-
-	// play sound:
-	if (owner->researchFinished && data.canResearch && isDisabled() == false)
-		PlayVoice (VoiceData.VOIResearchComplete);
-	else if (factoryHasJustFinishedBuilding() && isDisabled() == false)
-	{
-		PlayRandomVoice (VoiceData.VOIBuildDone);
-	}
-	else if (!isUnitWorking ())
-		PlayFX (SoundData.SNDHudButton);
-
-	// display the details:
-	gameGUI.setUnitDetailsData (this);
-
-	// some sounds for special moments
-	// (disabled as long as you are not the owner)
-	if (&gameGUI.getClient()->getActivePlayer() == owner)
-	{
-		// running out of ammo
-		if (data.canAttack)
-		{
-			if (data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
-			{
-				// red ammo-status but still ammo left
-				PlayRandomVoice (VoiceData.VOIAmmoLow);
-			}
-			else if (data.getAmmo () == 0)
-			{
-				// no ammo left
-				PlayRandomVoice (VoiceData.VOIAmmoEmpty);
-			}
-		}
-		// damaged
-		if (data.getHitpoints () <= data.hitpointsMax / 2 && data.getHitpoints () > data.hitpointsMax / 4)
-		{
-			// Status yellow:
-			PlayRandomVoice (VoiceData.VOIStatusYellow);
-		}
-		else if (data.getHitpoints () <= data.hitpointsMax / 4)
-		{
-			// Status red:
-			PlayRandomVoice (VoiceData.VOIStatusRed);
-		}
-	}
-}
-
-//--------------------------------------------------------------------------
 bool cBuilding::isDetectedByPlayer (const cPlayer* player) const
 {
 	return Contains (detectedByPlayerList, player);
@@ -1599,13 +1383,6 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeMineManagerCommand (cGameGUI& gameGUI) const
-{
-	//cMineManagerMenu mineManager(*gameGUI.getClient(), this);
-	//gameGUI.switchTo(mineManager, gameGUI.getClient());
-}
-
-//-----------------------------------------------------------------------------
 void cBuilding::executeStopCommand (const cClient& client) const
 {
 	sendWantStopWork (client, *this);
@@ -1615,16 +1392,6 @@ void cBuilding::executeStopCommand (const cClient& client) const
 void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const
 {
 	sendUpgradeBuilding (client, *this, updateAllOfSameType);
-}
-
-//-----------------------------------------------------------------------------
-void cBuilding::executeSelfDestroyCommand (cGameGUI& gameGUI) const
-{
-	cDestructMenu destructMenu;
-	if(gameGUI.switchTo(destructMenu, gameGUI.getClient()) == 0)
-	{
-		sendWantSelfDestroy(*gameGUI.getClient(), *this);
-	}
 }
 
 //-----------------------------------------------------------------------------

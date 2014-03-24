@@ -26,6 +26,7 @@
 #include "main.h"
 #include "player.h"
 #include "video.h"
+#include "sound.h"
 
 cFx::cFx (bool bottom_, const cPosition& position_) :
 	position (position_),

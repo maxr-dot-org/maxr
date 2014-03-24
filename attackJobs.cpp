@@ -34,6 +34,7 @@
 #include "serverevents.h"
 #include "settings.h"
 #include "vehicles.h"
+#include "sound.h"
 
 using namespace std;
 
@@ -548,7 +549,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
+void cClientAttackJob::handleAttackJobs (cClient& client)
 {
 	for (size_t i = 0; i != client.attackJobs.size(); ++i)
 	{
@@ -566,7 +567,7 @@ void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
 			}
 			case PLAYING_MUZZLE:
 			{
-				job->playMuzzle (client, activeMenu);
+				job->playMuzzle (client);
 				break;
 			}
 			case ROTATING:
@@ -669,7 +670,7 @@ void cClientAttackJob::rotate()
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
+void cClientAttackJob::playMuzzle (cClient& client)
 {
 	int offx = 0, offy = 0;
 	const cMap& map = *client.getMap();
@@ -687,7 +688,7 @@ void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 		{
 			client.addFx (std::make_shared<cFxExploSmall> (cPosition (unit->PosX * 64 + 32, unit->PosY * 64 + 32)));
 		}
-		client.deleteUnit (building, activeMenu);
+		client.deleteUnit (building);
 		return;
 	}
 

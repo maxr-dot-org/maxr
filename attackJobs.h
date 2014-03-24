@@ -24,7 +24,6 @@
 class cBuilding;
 class cClient;
 class cMap;
-class cMenu;
 class cNetMessage;
 class cPlayer;
 class cServer;
@@ -103,14 +102,14 @@ public:
 	* @author Eiko
 	*/
 	static void lockTarget (cClient& client, cNetMessage* message);
-	static void handleAttackJobs (cClient& client, cMenu* activeMenu);
+	static void handleAttackJobs (cClient& client);
 	static void makeImpact (cClient& client, int offset, int remainingHP, int id);
 public:
 
 	cClientAttackJob (cClient* client, cNetMessage* message);
 
 	void rotate();
-	void playMuzzle (cClient& client, cMenu* activeMenu);
+	void playMuzzle (cClient& client);
 	void sendFinishMessage (cClient& client);
 	void onRemoveUnit (cUnit& unit_) { if (unit == &unit_) unit = 0; }
 };

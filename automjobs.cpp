@@ -29,6 +29,7 @@
 #include "movejobs.h"
 #include "player.h"
 #include "vehicles.h"
+#include "map.h"
 
 using namespace std;
 

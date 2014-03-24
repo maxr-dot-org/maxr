@@ -22,6 +22,8 @@
 #include "../lineedit.h"
 #include "../../../application.h"
 #include "../../../../input/mouse/mouse.h"
+#include "../../../../sound.h"
+#include "../../../../main.h" // iToStr
 #include "../../../../menuitems.h" // sSaveFile
 
 //------------------------------------------------------------------------------

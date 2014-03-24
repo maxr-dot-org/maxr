@@ -7,7 +7,6 @@
 #include <SDL.h>
 
 class cClient;
-class cMenu;
 class cNetMessage;
 class cPlayer;
 class cServer;
@@ -90,7 +89,7 @@ public:
 	cGameTimerClient();
 	void setClient (cClient* client);
 
-	void run (cMenu* activeMenu);
+	void run ();
 	void handleSyncMessage (cNetMessage& message);
 };
 

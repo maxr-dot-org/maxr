@@ -28,6 +28,7 @@
 #include "player.h"
 #include "settings.h"
 #include "vehicles.h"
+#include "map.h"
 #include "gui/game/temp/animationtimer.h"
 
 void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_)

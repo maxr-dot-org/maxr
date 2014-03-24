@@ -24,7 +24,6 @@
 #include "ringbuffer.h"
 
 class cClient;
-class cMenu;
 class cNetMessage;
 
 /**
@@ -42,7 +41,7 @@ public:
 	 */
 	virtual void pushEvent (cNetMessage* message);
 
-	void handleNetMessages (cClient* client, cMenu* activeMenu);
+	void handleNetMessages (cClient* client);
 
 private:
 	cRingbuffer<cNetMessage*> eventQueue;

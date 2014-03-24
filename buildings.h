@@ -30,7 +30,6 @@
 #include "unit.h"
 
 class cBase;
-class cGameGUI;
 class cPlayer;
 class cVehicle;
 class cMap;
@@ -165,12 +164,6 @@ public:
 	bool wasWorking;
 	int points;     // accumulated eco-sphere points
 
-	/**
-	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
-	*/
-	void draw (SDL_Rect* dest, cGameGUI& gameGUI);
-	void Select (cGameGUI& gameGUI);
-
 	int playStream();
 	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	/**
@@ -226,8 +219,6 @@ public:
 	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
 
 	void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) const;
-	void executeSelfDestroyCommand (cGameGUI& gameGUI) const;
-	void executeMineManagerCommand (cGameGUI& gameGUI) const;
 
 	virtual bool isUnitWorking () const { return isWorking; }
 	virtual bool factoryHasJustFinishedBuilding () const;

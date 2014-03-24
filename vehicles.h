@@ -30,7 +30,6 @@
 class cAutoMJob;
 class cBuilding;
 class cClientMoveJob;
-class cGameGUI;
 class cMap;
 class cStaticMap;
 class cMapField;
@@ -156,13 +155,6 @@ public:
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 
 	/**
-	* Draws the vehicle to the screen buffer.
-	* Takes the main image from the cache or calls cVehicle::render()
-	*/
-	void draw (SDL_Rect screenPosition, cGameGUI& gameGUI);
-	void Select (cGameGUI& gameGUI);
-
-	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath
 	*@return true if there has been refreshed something else false.
@@ -171,10 +163,8 @@ public:
 	bool refreshData_Build (cServer& server);
 	bool refreshData_Clear (cServer& server);
 
-	void DrawPath (cGameGUI& gameGUI);
 	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
-	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
 	void makeReport ();
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
@@ -319,7 +309,6 @@ public:
 	mutable cSignal<void ()> buildingTypeChanged;
 	mutable cSignal<void ()> commandoRankChanged;
 private:
-	void drawPath_BuildPath (cGameGUI& gameGUI);
 
 	void render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;

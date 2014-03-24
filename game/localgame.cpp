@@ -190,7 +190,7 @@ sPlayer cLocalGame::createPlayer ()
 //------------------------------------------------------------------------------
 void cLocalGame::run ()
 {
-	if (client) client->gameTimer.run (nullptr);
+	if (client) client->gameTimer.run ();
 }
 
 //------------------------------------------------------------------------------
