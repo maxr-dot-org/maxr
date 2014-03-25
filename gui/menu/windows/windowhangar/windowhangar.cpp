@@ -52,37 +52,35 @@ cWindowHangar::cWindowHangar (SDL_Surface* surface, const cPlayer& player_) :
 //------------------------------------------------------------------------------
 void cWindowHangar::initialize ()
 {
-	const auto& menuPosition = getArea ().getMinCorner ();
+	infoImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (11, 13)));
 
-	infoImage = addChild (std::make_unique<cImage> (menuPosition + cPosition (11, 13)));
-
-	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (21, 23), menuPosition + cPosition (21 + 280, 23 + 220)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (21, 23), getPosition () + cPosition (21 + 280, 23 + 220)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	infoLabel->setWordWrap (true);
 
-	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left));
+	infoTextCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (291, 264), lngPack.i18n ("Text~Comp~Description"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left));
 	infoTextCheckBox->setChecked (true);
 	signalConnectionManager.connect (infoTextCheckBox->toggled, std::bind (&cWindowHangar::infoCheckBoxToggled, this));
 
-	unitDetails = addChild (std::make_unique<cUnitDetails> (menuPosition + cPosition (16, 297)));
+	unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition () + cPosition (16, 297)));
 
 
 	using namespace std::placeholders;
 
-	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (menuPosition + cPosition (477, 50), menuPosition + cPosition (477 + 154, 50 + 326))));
+	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition () + cPosition (477, 50), getPosition () + cPosition (477 + 154, 50 + 326))));
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 
-	selectionListUpButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
+	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListUpButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
 
-	selectionListDownButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
+	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListDownButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
 
 
-	okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowHangar::okClicked, this));
 
-	backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowHangar::backClicked, this));
 }
 

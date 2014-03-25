@@ -21,6 +21,7 @@
 #include "defines.h"
 #include "tinyxml2.h"
 #include <vector>
+#include "utility/version.h"
 
 
 class cResearch;
@@ -36,7 +37,12 @@ struct sID;
 struct sHudStateContainer;
 struct sSavedReportMessage;
 
-#define SAVE_FORMAT_VERSION		((std::string)"0.3")
+//
+// 0.1 - ?
+// 0.2 - ?
+// 0.3 - ?
+// 0.4 - changed game settings format (from sSettings to cGameSettings)
+#define SAVE_FORMAT_VERSION		((std::string)"0.4")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad
@@ -92,7 +98,7 @@ private:
 	/* the xml save document */
 	tinyxml2::XMLDocument SaveFile;
 	/* the version of a loaded savegame */
-	std::string version;
+	cVersion version;
 
 	/* list with loaded movejobs */
 	std::vector<sMoveJobLoad*> MoveJobsLoad;

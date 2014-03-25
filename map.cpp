@@ -539,11 +539,11 @@ bool cMap::isValidOffset (int offset) const
 }
 
 // Platziert die Ressourcen für einen Spieler.
-void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
+void cMap::placeRessourcesAddPlayer (int x, int y, eGameSettingsResourceDensity desity)
 {
 	if (resSpots == NULL)
 	{
-		resSpotCount = (int) (getSize() * getSize() * 0.003f * (1.5f + frequency));
+		resSpotCount = (int)(getSize () * getSize () * 0.003f * (1.5f + getResourceDensityFactor (desity)));
 		resCurrentSpotCount = 0;
 		resSpots = new T_2<int>[resSpotCount];
 		resSpotTypes = new int[resSpotCount];
@@ -606,11 +606,11 @@ void cMap::setResourcesFromString (const std::string& str)
 }
 
 // Platziert die Ressourcen (0-wenig,3-viel):
-void cMap::placeRessources (int metal, int oil, int gold)
+void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsResourceAmount oil, eGameSettingsResourceAmount gold)
 {
 	std::fill (Resources.begin(), Resources.end(), sResources());
 
-	int frequencies[RES_COUNT];
+	eGameSettingsResourceAmount frequencies[RES_COUNT];
 
 	frequencies[RES_METAL] = metal;
 	frequencies[RES_OIL] = oil;
@@ -715,13 +715,13 @@ void cMap::placeRessources (int metal, int oil, int gold)
 					Resources[index].typ = type;
 					if (i >= playerCount)
 					{
-						Resources[index].value = 1 + random (2 + frequencies[type] * 2);
-						if (p == pos) Resources[index].value += 3 + random (4 + frequencies[type] * 2);
+						Resources[index].value = 1 + random (2 + getResourceAmountFactor(frequencies[type]) * 2);
+						if (p == pos) Resources[index].value += 3 + random (4 + getResourceAmountFactor (frequencies[type]) * 2);
 					}
 					else
 					{
-						Resources[index].value = 1 + 4 + frequencies[type];
-						if (p == pos) Resources[index].value += 3 + 2 + frequencies[type];
+						Resources[index].value = 1 + 4 + getResourceAmountFactor (frequencies[type]);
+						if (p == pos) Resources[index].value += 3 + 2 + getResourceAmountFactor (frequencies[type]);
 					}
 
 					Resources[index].value = std::min<unsigned char> (16, Resources[index].value);
@@ -1117,4 +1117,38 @@ void cMap::reset()
 		fields[i].vehicles.clear();
 		fields[i].planes.clear();
 	}
+}
+
+int cMap::getResourceDensityFactor (eGameSettingsResourceDensity desity) const
+{
+	switch (desity)
+	{
+	case eGameSettingsResourceDensity::Sparse:
+		return 0;
+	case eGameSettingsResourceDensity::Normal:
+		return 1;
+	case eGameSettingsResourceDensity::Dense:
+		return 2;
+	case eGameSettingsResourceDensity::TooMuch:
+		return 3;
+	}
+	assert (false);
+	return 0;
+}
+
+int cMap::getResourceAmountFactor (eGameSettingsResourceAmount desity) const
+{
+	switch (desity)
+	{
+	case eGameSettingsResourceAmount::Limited:
+		return 0;
+	case eGameSettingsResourceAmount::Normal:
+		return 1;
+	case eGameSettingsResourceAmount::High:
+		return 2;
+	case eGameSettingsResourceAmount::TooMuch:
+		return 3;
+	}
+	assert (false);
+	return 0;
 }

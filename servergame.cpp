@@ -103,17 +103,16 @@ void cServerGame::saveGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::prepareGameData()
 {
-	settings.metal = SETTING_RESVAL_HIGH;
-	settings.oil = SETTING_RESVAL_NORMAL;
-	settings.gold = SETTING_RESVAL_NORMAL;
-	settings.resFrequency = SETTING_RESFREQ_NORMAL;
-	settings.credits = SETTING_CREDITS_NORMAL;
-	settings.bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
-	settings.alienTech = SETTING_ALIENTECH_OFF;
-	settings.clans = SETTING_CLANS_ON;
-	settings.gameType = SETTINGS_GAMETYPE_SIMU;
-	settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
-	settings.duration = SETTINGS_DUR_LONG;
+	settings.setMetalAmount(eGameSettingsResourceAmount::Normal);
+	settings.setOilAmount (eGameSettingsResourceAmount::Normal);
+	settings.setGoldAmount (eGameSettingsResourceAmount::Normal);
+	settings.setResourceDensity(eGameSettingsResourceDensity::Normal);
+	settings.setStartCredits (cGameSettings::defaultCreditsNormal);
+	settings.setBridgeheadType(eGameSettingsBridgeheadType::Definite);
+	//settings.alienTech = SETTING_ALIENTECH_OFF;
+	settings.setClansEnabled(true);
+	settings.setGameType(eGameSettingsGameType::Simultaneous);
+	settings.setVictoryCondition(eGameSettingsVictoryCondition::Death);
 	map = std::make_shared<cStaticMap> ();
 	const std::string mapName = "Mushroom.wrl";
 	map->loadMap (mapName);
@@ -322,23 +321,11 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				if (tokens[0].compare ("credits") == 0)
 				{
 					int credits = atoi (tokens[1].c_str());
-					if (credits != SETTING_CREDITS_NONE
-						&& credits != SETTING_CREDITS_LOW
-						&& credits != SETTING_CREDITS_LIMITED
-						&& credits != SETTING_CREDITS_NORMAL
-						&& credits != SETTING_CREDITS_HIGH
-						&& credits != SETTING_CREDITS_MORE)
-					{
-						sendMenuChatMessage (*network, "Credits must be one of: 0 50 100 150 200 250", senderPlayer);
-					}
-					else
-					{
-						settings.credits = credits;
-						sendGameData (*network, map.get(), &settings, "");
-						string reply = senderPlayer->getName();
-						reply += " changed the starting credits.";
-						sendMenuChatMessage (*network, reply);
-					}
+					settings.setStartCredits(credits);
+					sendGameData (*network, map.get(), &settings, "");
+					string reply = senderPlayer->getName();
+					reply += " changed the starting credits.";
+					sendMenuChatMessage (*network, reply);
 				}
 				else if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0
 						 || tokens[0].compare ("res") == 0)
@@ -378,14 +365,17 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 {
 	if (tokens[0].compare ("res") == 0)
 	{
-		int density = -1;
-		if (tokens[1].compare ("sparse") == 0) density = SETTING_RESFREQ_SPARSE;
-		else if (tokens[1].compare ("normal") == 0) density = SETTING_RESFREQ_NORMAL;
-		else if (tokens[1].compare ("dense") == 0) density = SETTING_RESFREQ_DENCE;
-		else if (tokens[1].compare ("most") == 0) density = SETTING_RESFREQ_TOOMUCH;
-		if (density != -1)
+		bool valid = true;
+		eGameSettingsResourceDensity density;
+		if (tokens[1].compare ("sparse") == 0) density = eGameSettingsResourceDensity::Sparse;
+		else if (tokens[1].compare ("normal") == 0) density = eGameSettingsResourceDensity::Normal;
+		else if (tokens[1].compare ("dense") == 0) density = eGameSettingsResourceDensity::Dense;
+		else if (tokens[1].compare ("most") == 0) density = eGameSettingsResourceDensity::TooMuch;
+		else valid = false;
+
+		if (valid)
 		{
-			settings.resFrequency = (eSettingResFrequency) density;
+			settings.setResourceDensity(density);
 			sendGameData (*network, map.get(), &settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
@@ -398,16 +388,19 @@ void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlaye
 	}
 	if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0)
 	{
-		int amount = -1;
-		if (tokens[1].compare ("low") == 0) amount = SETTING_RESVAL_LIMITED;
-		else if (tokens[1].compare ("normal") == 0) amount = SETTING_RESVAL_NORMAL;
-		else if (tokens[1].compare ("much") == 0) amount = SETTING_RESVAL_HIGH;
-		else if (tokens[1].compare ("most") == 0) amount = SETTING_RESVAL_TOOMUCH;
-		if (amount != -1)
+		bool valid = true;
+		eGameSettingsResourceAmount amount;
+		if (tokens[1].compare ("low") == 0) amount = eGameSettingsResourceAmount::Limited;
+		else if (tokens[1].compare ("normal") == 0) amount = eGameSettingsResourceAmount::Normal;
+		else if (tokens[1].compare ("much") == 0) amount = eGameSettingsResourceAmount::High;
+		else if (tokens[1].compare ("most") == 0) amount = eGameSettingsResourceAmount::TooMuch;
+		else valid = false;
+
+		if (valid)
 		{
-			if (tokens[0].compare ("oil") == 0) settings.oil = (eSettingResourceValue) amount;
-			else if (tokens[0].compare ("metal") == 0) settings.metal = (eSettingResourceValue) amount;
-			else if (tokens[0].compare ("gold") == 0) settings.gold = (eSettingResourceValue) amount;
+			if (tokens[0].compare ("oil") == 0) settings.setOilAmount(amount);
+			else if (tokens[0].compare ("metal") == 0) settings.setMetalAmount(amount);
+			else if (tokens[0].compare ("gold") == 0) settings.setGoldAmount(amount);
 			sendGameData (*network, map.get(), &settings, "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";

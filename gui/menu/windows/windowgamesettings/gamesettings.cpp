@@ -17,9 +17,155 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <algorithm>
+#include <cctype>
+#include <cassert>
+
 #include "gamesettings.h"
-#include "../../../../menus.h" // for sSettings
 #include "../../../../utility/tounderlyingtype.h"
+
+//------------------------------------------------------------------------------
+std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount)
+{
+	switch (amount)
+	{
+	case eGameSettingsResourceAmount::Limited:
+		return "limited";
+	case eGameSettingsResourceAmount::Normal:
+		return "normal";
+	case eGameSettingsResourceAmount::High:
+		return "high";
+	case eGameSettingsResourceAmount::TooMuch:
+		return "toomuch";
+	}
+	assert (false);
+	return "";
+}
+
+//------------------------------------------------------------------------------
+eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string)
+{
+	auto lowerCaseString = string;
+	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+
+	if (lowerCaseString.compare ("limited") == 0) return eGameSettingsResourceAmount::Limited;
+	else if (lowerCaseString.compare ("normal") == 0) return eGameSettingsResourceAmount::Normal;
+	else if (lowerCaseString.compare ("high") == 0) return eGameSettingsResourceAmount::High;
+	else if (lowerCaseString.compare ("toomuch") == 0) return eGameSettingsResourceAmount::TooMuch;
+	else throw std::runtime_error ("Invalid resource amount string '" + string + "'");
+}
+
+//------------------------------------------------------------------------------
+std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density)
+{
+	switch (density)
+	{
+	case eGameSettingsResourceDensity::Sparse:
+		return "sparse";
+	case eGameSettingsResourceDensity::Normal:
+		return "normal";
+	case eGameSettingsResourceDensity::Dense:
+		return "dense";
+	case eGameSettingsResourceDensity::TooMuch:
+		return "toomuch";
+	}
+	assert (false);
+	return "";
+}
+
+//------------------------------------------------------------------------------
+eGameSettingsResourceDensity gameSettingsResourceDensityFromString (const std::string& string)
+{
+	auto lowerCaseString = string;
+	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+
+	if (lowerCaseString.compare ("sparse") == 0) return eGameSettingsResourceDensity::Sparse;
+	else if (lowerCaseString.compare ("normal") == 0) return eGameSettingsResourceDensity::Normal;
+	else if (lowerCaseString.compare ("dense") == 0) return eGameSettingsResourceDensity::Dense;
+	else if (lowerCaseString.compare ("toomuch") == 0) return eGameSettingsResourceDensity::TooMuch;
+	else throw std::runtime_error ("Invalid resource density string '" + string + "'");
+}
+
+//------------------------------------------------------------------------------
+std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type)
+{
+	switch (type)
+	{
+	case eGameSettingsBridgeheadType::Definite:
+		return "definite";
+	case eGameSettingsBridgeheadType::Mobile:
+		return "mobile";
+	}
+	assert (false);
+	return "";
+}
+
+//------------------------------------------------------------------------------
+eGameSettingsBridgeheadType gameSettingsBridgeheadTypeFromString (const std::string& string)
+{
+	auto lowerCaseString = string;
+	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+
+	if (lowerCaseString.compare ("definite") == 0) return eGameSettingsBridgeheadType::Definite;
+	else if (lowerCaseString.compare ("mobile") == 0) return eGameSettingsBridgeheadType::Mobile;
+	else throw std::runtime_error ("Invalid bridgehead type string '" + string + "'");
+}
+
+//------------------------------------------------------------------------------
+std::string gameSettingsGameTypeToString (eGameSettingsGameType type)
+{
+	switch (type)
+	{
+	case eGameSettingsGameType::Simultaneous:
+		return "simultaneous";
+	case eGameSettingsGameType::Turns:
+		return "turns";
+	case eGameSettingsGameType::HotSeat:
+		return "hotseat";
+	}
+	assert (false);
+	return "";
+}
+
+//------------------------------------------------------------------------------
+eGameSettingsGameType gameSettingsGameTypeString (const std::string& string)
+{
+	auto lowerCaseString = string;
+	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+
+	if (lowerCaseString.compare ("simultaneous") == 0) return eGameSettingsGameType::Simultaneous;
+	else if (lowerCaseString.compare ("turns") == 0) return eGameSettingsGameType::Turns;
+	else if (lowerCaseString.compare ("hotseat") == 0) return eGameSettingsGameType::HotSeat;
+	else throw std::runtime_error ("Invalid game type string '" + string + "'");
+}
+
+//------------------------------------------------------------------------------
+std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition)
+{
+	switch (condition)
+	{
+	case eGameSettingsVictoryCondition::Turns:
+		return "turns";
+	case eGameSettingsVictoryCondition::Points:
+		return "points";
+	case eGameSettingsVictoryCondition::Death:
+		return "death";
+	}
+	assert (false);
+	return "";
+}
+
+//------------------------------------------------------------------------------
+eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std::string& string)
+{
+	auto lowerCaseString = string;
+	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+
+	if (lowerCaseString.compare ("turns") == 0) return eGameSettingsVictoryCondition::Turns;
+	else if (lowerCaseString.compare ("points") == 0) return eGameSettingsVictoryCondition::Points;
+	else if (lowerCaseString.compare ("death") == 0) return eGameSettingsVictoryCondition::Death;
+	else throw std::runtime_error ("Invalid victory condition string '" + string + "'");
+}
 
 //------------------------------------------------------------------------------
 cGameSettings::cGameSettings () :
@@ -33,7 +179,8 @@ cGameSettings::cGameSettings () :
 	startCredits (150),
 	victoryConditionType (eGameSettingsVictoryCondition::Death),
 	victoryTurns (400),
-	vectoryPoints (400)
+	vectoryPoints (400),
+	turnDeadline (90)
 {}
 
 //------------------------------------------------------------------------------
@@ -169,26 +316,23 @@ void cGameSettings::setVictoryPoints (unsigned int value)
 }
 
 //------------------------------------------------------------------------------
-sSettings cGameSettings::toOldSettings () const
+unsigned int cGameSettings::getTurnDeadline () const
 {
-	sSettings settings;
+	return turnDeadline;
+}
 
-	settings.metal = (eSettingResourceValue)toUnderlyingType (getMetalAmount ());
-	settings.oil = (eSettingResourceValue)toUnderlyingType (getOilAmount ());
-	settings.gold = (eSettingResourceValue)toUnderlyingType (getGoldAmount ());
+//------------------------------------------------------------------------------
+void cGameSettings::setTurnDeadline (unsigned int value)
+{
+	turnDeadline = value;
+}
 
-	settings.resFrequency = (eSettingResFrequency)toUnderlyingType (getResourceDensity ());
+//------------------------------------------------------------------------------
+void cGameSettings::pushInto (cNetMessage& message) const
+{
+}
 
-	settings.credits = getStartCredits ();
-
-	settings.bridgeHead = (eSettingsBridgeHead)toUnderlyingType (getBridgeheadType ());
-	settings.alienTech = eSettingsAlienTech::SETTING_ALIENTECH_OFF;
-	settings.clans = getClansEnabled () ? eSettingsClans::SETTING_CLANS_ON : eSettingsClans::SETTING_CLANS_OFF;
-	settings.gameType = (eSettingsGameType)toUnderlyingType (getGameType ());
-	settings.victoryType = (eSettingsVictoryType)toUnderlyingType (getVictoryCondition ());
-	settings.duration = getVictoryTurns ();
-	settings.iTurnDeadline = 90;
-	settings.hotseat = false;
-
-	return settings;
+//------------------------------------------------------------------------------
+void cGameSettings::popFrom (cNetMessage& message)
+{
 }

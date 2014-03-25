@@ -359,6 +359,11 @@ std::string pToStr (void* x)
 	return "0x" + strStream.str();
 }
 
+std::string bToStr (bool x)
+{
+	return x ? "true" : "false";
+}
+
 // Round //////////////////////////////////////////////////////////////////////
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
 float Round (float dValueToRound, unsigned int iDecimalPlace)

@@ -16,27 +16,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef menuitemsH
-#define menuitemsH
+#ifndef gui_menu_windows_windowload_savegamedataH
+#define gui_menu_windows_windowload_savegamedataH
 
 #include <string>
 
-/**
- * A struct that contains information of a savegame.
- * @author alzi
- */
-struct sSaveFile
+class cSaveGameData
 {
-	/** the filename of the savegame */
-	std::string filename;
-	/** the displayed name of the savegame */
-	std::string gamename;
-	/** the type of the savegame (SIN, HOT, NET) */
+public:
+	cSaveGameData ();
+	cSaveGameData (std::string fileName, std::string gameName, std::string type, std::string date, int number);
+
+	const std::string& getFileName () const;
+	void setFileName (std::string name);
+
+	const std::string& getGameName () const;
+	void setGameName (std::string name);
+
+	const std::string& getType () const;
+	void setType (std::string type);
+
+	const std::string& getDate () const;
+	void setDate (std::string date);
+
+	int getNumber () const;
+	void setNumber (int number);
+
+private:
+	/** the file name of the save game */
+	std::string fileName;
+	/** the displayed name of the save game */
+	std::string gameName;
+	/** the type of the save game (SIN, HOT, NET) */
 	std::string type;
-	/** the time and date when this savegame was saved */
-	std::string time;
-	/** the number of the savegame */
+	/** the date and time when this save game was saved */
+	std::string date;
+
+	/** the number of the save game */
 	int number;
 };
 
-#endif // menuitemsH
+#endif // gui_menu_windows_windowload_savegamedataH

@@ -17,55 +17,78 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "windowloadsave.h"
-#include "../windowload/savegamedata.h"
-#include "../../widgets/pushbutton.h"
-#include "../../widgets/special/saveslotwidget.h"
-#include "../../../../main.h"
+#include "savegamedata.h"
 
 //------------------------------------------------------------------------------
-cWindowLoadSave::cWindowLoadSave ()
-{
-	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (246, 438), ePushButtonType::Huge, SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
-	signalConnectionManager.connect (exitButton->clicked, [&](){ exit (); });
-
-	saveButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save")));
-	signalConnectionManager.connect (saveButton->clicked, std::bind (&cWindowLoadSave::handleSaveClicked, this));
-	saveButton->lock ();
-}
-
-//------------------------------------------------------------------------------
-void cWindowLoadSave::handleSlotClicked (size_t index)
-{
-	selectSlot (index, true);
-
-	auto& slot = getSaveSlot (index);
-
-	slot.forceKeyFocus ();
-
-	saveButton->unlock ();
-}
-
-//------------------------------------------------------------------------------
-void cWindowLoadSave::handleSlotDoubleClicked (size_t index)
+cSaveGameData::cSaveGameData () :
+	number (-1)
 {}
 
 //------------------------------------------------------------------------------
-void cWindowLoadSave::handleSaveClicked ()
+cSaveGameData::cSaveGameData (std::string fileName_, std::string gameName_, std::string type_, std::string date_, int number_) :
+	fileName (std::move (fileName_)),
+	gameName (std::move (gameName_)),
+	type (std::move (type_)),
+	date (std::move (date_)),
+	number (number_)
+{}
+
+//------------------------------------------------------------------------------
+const std::string& cSaveGameData::getFileName () const
 {
-	auto saveNumber = getSelectedSaveNumber ();
-	if (saveNumber == -1) return;
+	return fileName;
+}
 
-	auto slot = getSaveSlotFromSaveNumber (saveNumber);
-	if (slot)
-	{
-		save (saveNumber, slot->getName());
-	}
-	else
-	{
-		auto saveFile = getSaveFile (saveNumber);
-		if (!saveFile) return;
+//------------------------------------------------------------------------------
+void cSaveGameData::setFileName (std::string name)
+{
+	fileName = name;
+}
 
-		save (saveNumber, saveFile->getFileName());
-	}
+//------------------------------------------------------------------------------
+const std::string& cSaveGameData::getGameName () const
+{
+	return gameName;
+}
+
+//------------------------------------------------------------------------------
+void cSaveGameData::setGameName (std::string name)
+{
+	gameName = name;
+}
+
+//------------------------------------------------------------------------------
+const std::string& cSaveGameData::getType () const
+{
+	return type;
+}
+
+//------------------------------------------------------------------------------
+void cSaveGameData::setType (std::string type_)
+{
+	type = type_;
+}
+
+//------------------------------------------------------------------------------
+const std::string& cSaveGameData::getDate () const
+{
+	return date;
+}
+
+//------------------------------------------------------------------------------
+void cSaveGameData::setDate (std::string date_)
+{
+	date = date_;
+}
+
+//------------------------------------------------------------------------------
+int cSaveGameData::getNumber () const
+{
+	return number;
+}
+
+//------------------------------------------------------------------------------
+void cSaveGameData::setNumber (int number_)
+{
+	number = number_;
 }

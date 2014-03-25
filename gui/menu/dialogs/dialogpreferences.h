@@ -27,11 +27,11 @@ class cSlider;
 class cLineEdit;
 class cCheckBox;
 
-class cDialogNewPreferences : public cWindow
+class cDialogPreferences : public cWindow
 {
 public:
-	cDialogNewPreferences ();
-	~cDialogNewPreferences ();
+	cDialogPreferences ();
+	~cDialogPreferences ();
 
 private:
 	cSignalConnectionManager signalConnectionManager;

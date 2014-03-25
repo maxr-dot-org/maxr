@@ -30,9 +30,7 @@ cWindowClanSelection::cWindowClanSelection () :
 	cWindow (LoadPCX (GFXOD_CLAN_SELECT)),
 	selectedClan (0)
 {
-	const auto& menuPosition = getArea ().getMinCorner ();
-
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 13), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Title~Choose_Clan"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	//
 	// Clan Images
@@ -56,10 +54,10 @@ cWindowClanSelection::cWindowClanSelection () :
 
 			auto image = LoadPCX (clanLogoPaths[index].c_str ());
 			SDL_SetColorKey (image, SDL_TRUE, 0xFF00FF);
-			clanImages[index] = addChild (std::make_unique<cImage> (menuPosition + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image, SoundData.SNDHudButton));
+			clanImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image, SoundData.SNDHudButton));
 			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
 
-			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (37 + 155 * column, 144 + 150 * row), menuPosition + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), cClanData::instance ().getClan (index)->getName (), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (37 + 155 * column, 144 + 150 * row), getPosition () + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), cClanData::instance ().getClan (index)->getName (), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
 	}
 	clanTitles[selectedClan]->setText (">" + cClanData::instance ().getClan (selectedClan)->getName () + "<");
@@ -67,17 +65,17 @@ cWindowClanSelection::cWindowClanSelection () :
 	//
 	// Clan Description
 	//
-	clanDescription1 = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (47, 362), menuPosition + cPosition (47 + 550, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	clanDescription2 = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (380, 362), menuPosition + cPosition (380 + 217, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	clanShortDescription = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (47, 349), menuPosition + cPosition (47 + 550, 349 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	clanDescription1 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (47, 362), getPosition () + cPosition (47 + 550, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	clanDescription2 = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (380, 362), getPosition () + cPosition (380 + 217, 362 + 50)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
+	clanShortDescription = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (47, 349), getPosition () + cPosition (47 + 550, 349 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::Left));
 
 	//
 	// Buttons
 	//
-	auto okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowClanSelection::okClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowClanSelection::backClicked, this));
 
 	updateClanDescription ();

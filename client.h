@@ -45,7 +45,7 @@ class cServer;
 class cStaticMap;
 class cTCP;
 class sPlayer;
-struct sSettings;
+class cGameSettings;
 struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -184,8 +184,8 @@ public:
 	std::vector<cPlayer*>& getPlayerList() { return PlayerList; }
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
-	void setGameSetting (const sSettings& gameSetting_);
-	const sSettings* getGameSetting() const { return gameSetting.get(); }
+	void setGameSetting (const cGameSettings& gameSetting_);
+	const cGameSettings* getGameSetting () const { return gameSetting.get (); }
 
 	mutable cSignal<void ()> turnChanged;
 	mutable cSignal<void ()> startedTurnEndProcess;
@@ -339,7 +339,7 @@ private:
 	/** serverTime when the TurnTime has been started */
 	unsigned int iStartTurnTime;
 	/** this client's copy of the gameSettings **/
-	AutoPtr<const sSettings> gameSetting;
+	AutoPtr<const cGameSettings> gameSetting;
 
 	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 

@@ -35,7 +35,7 @@
 #include "../widgets/tools/validatorint.h"
 
 //------------------------------------------------------------------------------
-cDialogNewPreferences::cDialogNewPreferences () :
+cDialogPreferences::cDialogPreferences () :
 	cWindow (LoadPCX (GFXOD_DIALOG5), eWindowBackgrounds::Alpha)
 {
 	// blit black titlebar behind textfield for playername
@@ -43,62 +43,60 @@ cDialogNewPreferences::cDialogNewPreferences () :
 	SDL_Rect dest = {140, 154, 0, 0};
 	SDL_BlitSurface (getSurface (), &src, getSurface (), &dest);
 
-	const auto& menuPosition = getArea ().getMinCorner ();
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 15), getPosition () + cPosition (getArea ().getMaxCorner ().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 15), menuPosition + cPosition (getArea ().getMaxCorner ().x(), 25)), lngPack.i18n ("Text~Settings~Preferences"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 56), menuPosition + cPosition (135, 66)), lngPack.i18n ("Text~Settings~Volume"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 56), getPosition () + cPosition (135, 66)), lngPack.i18n ("Text~Settings~Volume"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 56 + 20), menuPosition + cPosition (135, 66 + 20)), lngPack.i18n ("Text~Settings~Music"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	musicVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (menuPosition + cPosition (140, 53 + 20), menuPosition + cPosition (240, 70 + 20)), 0, 128, eOrientationType::Horizontal));
-	signalConnectionManager.connect (musicVolumeSlider->valueChanged, std::bind (&cDialogNewPreferences::musicVolumeChanged, this));
-	disableMusicCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (245, 73), lngPack.i18n ("Text~Settings~Disable")));
-	signalConnectionManager.connect (disableMusicCheckBox->toggled, std::bind (&cDialogNewPreferences::musicMuteChanged, this));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 56 + 20), getPosition () + cPosition (135, 66 + 20)), lngPack.i18n ("Text~Settings~Music"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	musicVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition () + cPosition (140, 53 + 20), getPosition () + cPosition (240, 70 + 20)), 0, 128, eOrientationType::Horizontal));
+	signalConnectionManager.connect (musicVolumeSlider->valueChanged, std::bind (&cDialogPreferences::musicVolumeChanged, this));
+	disableMusicCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (245, 73), lngPack.i18n ("Text~Settings~Disable")));
+	signalConnectionManager.connect (disableMusicCheckBox->toggled, std::bind (&cDialogPreferences::musicMuteChanged, this));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 56 + 20 * 2), menuPosition + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Text~Settings~Effects"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	effectsVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (menuPosition + cPosition (140, 53 + 20 * 2), menuPosition + cPosition (240, 70 + 20 * 2)), 0, 128, eOrientationType::Horizontal));
-	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, std::bind (&cDialogNewPreferences::effectsVolumeChanged, this));
-	disableEffectsCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable")));
-	signalConnectionManager.connect (disableEffectsCheckBox->toggled, std::bind (&cDialogNewPreferences::effectsMuteChanged, this));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 56 + 20 * 2), getPosition () + cPosition (135, 66 + 20 * 2)), lngPack.i18n ("Text~Settings~Effects"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	effectsVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition () + cPosition (140, 53 + 20 * 2), getPosition () + cPosition (240, 70 + 20 * 2)), 0, 128, eOrientationType::Horizontal));
+	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, std::bind (&cDialogPreferences::effectsVolumeChanged, this));
+	disableEffectsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable")));
+	signalConnectionManager.connect (disableEffectsCheckBox->toggled, std::bind (&cDialogPreferences::effectsMuteChanged, this));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 56 + 20 * 3), menuPosition + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	voicesVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (menuPosition + cPosition (140, 53 + 20 * 3), menuPosition + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal));
-	signalConnectionManager.connect (voicesVolumeSlider->valueChanged, std::bind (&cDialogNewPreferences::voicesVolumeChanged, this));
-	disableVoicesCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable")));
-	signalConnectionManager.connect (disableVoicesCheckBox->toggled, std::bind (&cDialogNewPreferences::voicesMuteChanged, this));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 56 + 20 * 3), getPosition () + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	voicesVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition () + cPosition (140, 53 + 20 * 3), getPosition () + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal));
+	signalConnectionManager.connect (voicesVolumeSlider->valueChanged, std::bind (&cDialogPreferences::voicesVolumeChanged, this));
+	disableVoicesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (245, 73 + 20 * 2), lngPack.i18n ("Text~Settings~Disable")));
+	signalConnectionManager.connect (disableVoicesCheckBox->toggled, std::bind (&cDialogPreferences::voicesMuteChanged, this));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 158), menuPosition + cPosition (135, 168)), lngPack.i18n ("Text~Title~Player_Name"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	nameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (menuPosition + cPosition (140, 154), menuPosition + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 158), getPosition () + cPosition (135, 168)), lngPack.i18n ("Text~Title~Player_Name"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	nameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (140, 154), getPosition () + cPosition (140 + 185, 154 + 18)), eLineEditFrameType::Box));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (25, 257), menuPosition + cPosition (135, 267)), lngPack.i18n ("Text~Settings~Scrollspeed"), FONT_LATIN_NORMAL, eAlignmentType::Left));
-	scrollSpeedSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (menuPosition + cPosition (140, 254), menuPosition + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 257), getPosition () + cPosition (135, 267)), lngPack.i18n ("Text~Settings~Scrollspeed"), FONT_LATIN_NORMAL, eAlignmentType::Left));
+	scrollSpeedSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition () + cPosition (140, 254), getPosition () + cPosition (240, 271)), 0, 128, eOrientationType::Horizontal));
 
-	animationCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 193), lngPack.i18n ("Text~Settings~Animation")));
-	shadowsCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 193 + 20), lngPack.i18n ("Text~Settings~Shadows")));
-	aplhaCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Alphaeffects")));
-	demageBuildingsCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (210, 193), lngPack.i18n ("Text~Settings~ShowDamage")));
-	demageVehiclesCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (210, 193 + 20), lngPack.i18n ("Text~Settings~ShowDamageVehicle")));
-	tracksCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Tracks")));
+	animationCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 193), lngPack.i18n ("Text~Settings~Animation")));
+	shadowsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 193 + 20), lngPack.i18n ("Text~Settings~Shadows")));
+	aplhaCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Alphaeffects")));
+	demageBuildingsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (210, 193), lngPack.i18n ("Text~Settings~ShowDamage")));
+	demageVehiclesCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (210, 193 + 20), lngPack.i18n ("Text~Settings~ShowDamageVehicle")));
+	tracksCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (210, 193 + 20 * 2), lngPack.i18n ("Text~Settings~Tracks")));
 
-	autosaveCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 294), lngPack.i18n ("Text~Settings~Autosave")));
-	introCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 294 + 20), lngPack.i18n ("Text~Settings~Intro")));
-	windowCheckBox = addChild (std::make_unique<cCheckBox> (menuPosition + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window")));
+	autosaveCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 294), lngPack.i18n ("Text~Settings~Autosave")));
+	introCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 294 + 20), lngPack.i18n ("Text~Settings~Intro")));
+	windowCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window")));
 
-	auto doneButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (doneButton->clicked, std::bind (&cDialogNewPreferences::doneClicked, this));
+	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	signalConnectionManager.connect (doneButton->clicked, std::bind (&cDialogPreferences::doneClicked, this));
 
-	auto cancelButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
-	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogNewPreferences::cancelClicked, this));
+	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
+	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogPreferences::cancelClicked, this));
 
 	loadValues ();
 }
 
 //------------------------------------------------------------------------------
-cDialogNewPreferences::~cDialogNewPreferences ()
+cDialogPreferences::~cDialogPreferences ()
 {}
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::loadValues ()
+void cDialogPreferences::loadValues ()
 {
 	musicVolumeSlider->setValue (cSettings::getInstance ().getMusicVol ());
 	effectsVolumeSlider->setValue (cSettings::getInstance ().getSoundVol());
@@ -127,7 +125,7 @@ void cDialogNewPreferences::loadValues ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::saveValues ()
+void cDialogPreferences::saveValues ()
 {
 	cSettings::getInstance ().setPlayerName (nameEdit->getText ().c_str ());
 
@@ -167,7 +165,7 @@ void cDialogNewPreferences::saveValues ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::storePreviewValues ()
+void cDialogPreferences::storePreviewValues ()
 {
 	storedMusicVolume = cSettings::getInstance ().getMusicVol ();
 	storedEffectsVolume = cSettings::getInstance ().getSoundVol ();
@@ -179,7 +177,7 @@ void cDialogNewPreferences::storePreviewValues ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::restorePreviewValues ()
+void cDialogPreferences::restorePreviewValues ()
 {
 	cSettings::getInstance ().setMusicVol (storedMusicVolume);
 	cSettings::getInstance ().setSoundVol (storedEffectsVolume);
@@ -195,41 +193,41 @@ void cDialogNewPreferences::restorePreviewValues ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::doneClicked ()
+void cDialogPreferences::doneClicked ()
 {
 	saveValues ();
 	close ();
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::cancelClicked ()
+void cDialogPreferences::cancelClicked ()
 {
 	restorePreviewValues ();
 	close ();
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::musicVolumeChanged ()
+void cDialogPreferences::musicVolumeChanged ()
 {
 	cSettings::getInstance ().setMusicVol (musicVolumeSlider->getValue ());
 	if (cSettings::getInstance ().isSoundEnabled ()) Mix_VolumeMusic (cSettings::getInstance ().getMusicVol ());
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::effectsVolumeChanged ()
+void cDialogPreferences::effectsVolumeChanged ()
 {
 	cSettings::getInstance ().setSoundVol (effectsVolumeSlider->getValue ());
 	if (cSettings::getInstance ().isSoundEnabled ()) Mix_Volume (SoundLoopChannel, cSettings::getInstance ().getSoundVol ());
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::voicesVolumeChanged ()
+void cDialogPreferences::voicesVolumeChanged ()
 {
 	cSettings::getInstance ().setVoiceVol (voicesVolumeSlider->getValue ());
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::musicMuteChanged ()
+void cDialogPreferences::musicMuteChanged ()
 {
 	bool wasMute = cSettings::getInstance ().isMusicMute ();
 	cSettings::getInstance ().setMusicMute (disableMusicCheckBox->isChecked ());
@@ -238,13 +236,13 @@ void cDialogNewPreferences::musicMuteChanged ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::effectsMuteChanged ()
+void cDialogPreferences::effectsMuteChanged ()
 {
 	cSettings::getInstance ().setSoundMute (disableEffectsCheckBox->isChecked ());
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewPreferences::voicesMuteChanged ()
+void cDialogPreferences::voicesMuteChanged ()
 {
 	cSettings::getInstance ().setVoiceMute (disableVoicesCheckBox->isChecked ());
 }

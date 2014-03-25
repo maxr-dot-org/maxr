@@ -25,8 +25,8 @@
 #include <vector>
 #include <memory>
 #include "autoptr.h"
-#include "menus.h"
 #include "ringbuffer.h"
+#include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
 class cNetMessage;
 class cPlayer;
@@ -63,7 +63,7 @@ public:
 	//------------------------------------------------------------------------
 protected:
 	cServer* server;
-	sSettings settings;
+	cGameSettings settings;
 	std::shared_ptr<cStaticMap> map;
 	cTCP* network;
 	SDL_Thread* thread;

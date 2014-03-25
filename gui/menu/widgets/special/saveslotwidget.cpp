@@ -20,11 +20,11 @@
 #include "saveslotwidget.h"
 #include "../label.h"
 #include "../lineedit.h"
+#include "../../windows/windowload/savegamedata.h"
 #include "../../../application.h"
 #include "../../../../input/mouse/mouse.h"
 #include "../../../../sound.h"
 #include "../../../../main.h" // iToStr
-#include "../../../../menuitems.h" // sSaveFile
 
 //------------------------------------------------------------------------------
 cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :
@@ -62,12 +62,12 @@ void cSaveSlotWidget::setRenameable (bool renameable_)
 }
 
 //------------------------------------------------------------------------------
-void cSaveSlotWidget::setSaveData (const sSaveFile& saveFile)
+void cSaveSlotWidget::setSaveData (const cSaveGameData& saveFile)
 {
-	numberLabel->setText (iToStr (saveFile.number));
-	timeLabel->setText (saveFile.time);
-	typeLabel->setText (saveFile.type);
-	nameLineEdit->setText (saveFile.gamename);
+	numberLabel->setText (iToStr (saveFile.getNumber()));
+	timeLabel->setText (saveFile.getDate());
+	typeLabel->setText (saveFile.getType());
+	nameLineEdit->setText (saveFile.getGameName());
 	nameLineEdit->setReadOnly (!renameable);
 
 	empty = false;

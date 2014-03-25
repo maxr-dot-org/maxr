@@ -25,13 +25,14 @@
 #include "hud.h"
 #include "loaddata.h"
 #include "log.h"
-#include "menus.h"
 #include "movejobs.h"
 #include "player.h"
 #include "server.h"
 #include "settings.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
+#include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "utility/tounderlyingtype.h"
 #include <ctime>
 
 using namespace std;
@@ -121,17 +122,27 @@ bool cSavegame::load (cServer& server)
 	if (!SaveFile.RootElement()) return false;
 	loadedXMLFileName = fileName;
 
-	version = SaveFile.RootElement()->Attribute ("version");
-	if (version.compare (SAVE_FORMAT_VERSION))
+	auto versionString = SaveFile.RootElement()->Attribute ("version");
+
+	// TODO: reorganize the whole save game loading/saving to support exception and do not catch this one internally.
+	try
 	{
-		Log.write ("Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING);
+		version.parseFromString (versionString);
+	}
+	catch (std::runtime_error& e)
+	{
+		Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
+	if (version != cVersion(SAVE_FORMAT_VERSION))
+	{
+		Log.write ("Save file version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING);
 	}
 
 	// load standard unit values
-	if (atoi (version.substr (0, version.find_first_of (".")).c_str()) == 0 &&
-		atoi (version.substr (version.find_first_of ("."), version.length() - version.find_first_of (".")).c_str()) <= 2)
+	if (version <= cVersion(0, 2))
 	{
-		Log.write ("Skiping loading standard unit values because savegame has version 0.2 or older.", LOG_TYPE_DEBUG);
+		Log.write ("Skipping loading standard unit values because save game has version 0.2 or older.", LOG_TYPE_DEBUG);
 	}
 	else
 	{
@@ -252,49 +263,141 @@ void cSavegame::loadGameInfo (cServer& server)
 
 	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
 
-	sSettings gameSetting;
+	cGameSettings gameSetting;
 
 	if (XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
-		gameSetting.gameType = SETTINGS_GAMETYPE_TURNS;
+		gameSetting.setGameType(eGameSettingsGameType::Turns);
 		server.iActiveTurnPlayerNr = element->IntAttribute ("activeplayer");
 	}
-#if 1 // old format
-	int turnLimit = 0;
-	int scoreLimit = 0;
-	if (XMLElement* const e = gameInfoNode->FirstChildElement ("TurnLimit")) turnLimit = e->IntAttribute ("num");
-	if (XMLElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) scoreLimit = e->IntAttribute ("num");
 
-	if (turnLimit != 0)
+	if (version < cVersion (0, 4))
 	{
-		gameSetting.victoryType = SETTINGS_VICTORY_TURNS;
-		gameSetting.duration = turnLimit;
-	}
-	else if (scoreLimit != 0)
-	{
-		gameSetting.victoryType = SETTINGS_VICTORY_POINTS;
-		gameSetting.duration = scoreLimit;
+#if 1 // old format
+		int turnLimit = 0;
+		int scoreLimit = 0;
+		if (XMLElement* const e = gameInfoNode->FirstChildElement ("TurnLimit")) turnLimit = e->IntAttribute ("num");
+		if (XMLElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) scoreLimit = e->IntAttribute ("num");
+
+		if (turnLimit != 0)
+		{
+			gameSetting.setVictoryCondition(eGameSettingsVictoryCondition::Turns);
+			gameSetting.setVictoryTurns(turnLimit);
+		}
+		else if (scoreLimit != 0)
+		{
+			gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Points);
+			gameSetting.setVictoryPoints(scoreLimit);
+		}
+		else
+		{
+			gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Death);
+		}
+#endif
+
+		auto intToResourceAmount = [](int value) -> eGameSettingsResourceAmount
+		{
+			switch (value)
+			{
+			case 0:
+				return eGameSettingsResourceAmount::Limited;
+				break;
+			default:
+			case 1:
+				return eGameSettingsResourceAmount::Normal;
+				break;
+			case 2:
+				return eGameSettingsResourceAmount::High;
+				break;
+			case 3:
+				return eGameSettingsResourceAmount::TooMuch;
+				break;
+			}
+		};
+
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Metal")) gameSetting.setMetalAmount (intToResourceAmount (e->IntAttribute ("num")));
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Oil")) gameSetting.setOilAmount (intToResourceAmount (e->IntAttribute ("num")));
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Gold")) gameSetting.setGoldAmount (intToResourceAmount (e->IntAttribute ("num")));
+
+
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("ResFrequency"))
+		{
+			int value = e->IntAttribute ("num");
+			switch (value)
+			{
+			case 0:
+				gameSetting.setResourceDensity (eGameSettingsResourceDensity::Sparse);
+				break;
+			case 1:
+				gameSetting.setResourceDensity (eGameSettingsResourceDensity::Normal);
+				break;
+			case 2:
+				gameSetting.setResourceDensity (eGameSettingsResourceDensity::Dense);
+				break;
+			case 3:
+				gameSetting.setResourceDensity (eGameSettingsResourceDensity::TooMuch);
+				break;
+			}
+		}
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits(e->IntAttribute ("num"));
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.setBridgeheadType (e->IntAttribute ("num") == 0 ? eGameSettingsBridgeheadType::Mobile : eGameSettingsBridgeheadType::Definite);
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.setClansEnabled(e->IntAttribute ("num") == 0);
+
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType"))
+		{
+			int value = e->IntAttribute ("num");
+			switch (value)
+			{
+			case 0:
+				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Turns);
+				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryTurns(e->IntAttribute ("num"));
+				break;
+			case 1:
+				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Points);
+				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryPoints(e->IntAttribute ("num"));
+				break;
+			case 2:
+				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Death);
+				break;
+			}
+		}
+
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadLine")) gameSetting.setTurnDeadline(e->IntAttribute ("num"));
 	}
 	else
 	{
-		gameSetting.victoryType = SETTINGS_VICTORY_ANNIHILATION;
+		try
+		{
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("Metal")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString(e->Attribute ("string")));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("Oil")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString (e->Attribute ("string")));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("Gold")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString (e->Attribute ("string")));
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("ResourceDensity")) gameSetting.setResourceDensity (gameSettingsResourceDensityFromString (e->Attribute ("string")));
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.setBridgeheadType (gameSettingsBridgeheadTypeFromString (e->Attribute ("string")));
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits(e->IntAttribute ("num"));
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("ClansEnabled")) gameSetting.setClansEnabled(e->BoolAttribute ("bool"));
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryCondition")) gameSetting.setVictoryCondition (gameSettingsVictoryConditionFromString (e->Attribute ("string")));
+			if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)
+			{
+				if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryTurns")) gameSetting.setVictoryTurns (e->IntAttribute ("num"));
+			}
+			else if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Points)
+			{
+				if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryPoints")) gameSetting.setVictoryPoints (e->IntAttribute ("num"));
+			}
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadline")) gameSetting.setTurnDeadline (e->IntAttribute ("num"));
+		}
+		catch (std::runtime_error&)
+		{
+			// FIXME: handle exception!
+		}
 	}
-#endif
-
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Metal")) gameSetting.metal = (eSettingResourceValue) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Oil")) gameSetting.oil = (eSettingResourceValue) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Gold")) gameSetting.gold = (eSettingResourceValue) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("ResFrequency")) gameSetting.resFrequency = (eSettingResFrequency) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.credits = e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.bridgeHead = (eSettingsBridgeHead) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("AlienTech")) gameSetting.alienTech = (eSettingsAlienTech) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.clans = (eSettingsClans) e->IntAttribute ("num");
-	//if (XMLElement* e = gameInfoNode->FirstChildElement ("GameType")) gameSetting.gameType = (eSettingsGameType) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType")) gameSetting.victoryType = (eSettingsVictoryType) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.duration = e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadLine")) gameSetting.iTurnDeadline = e->IntAttribute ("num");
-
-	server.gameSetting = new sSettings (gameSetting);
+	server.gameSetting = new cGameSettings (gameSetting);
 }
 
 //--------------------------------------------------------------------------
@@ -1155,19 +1258,25 @@ void cSavegame::writeGameInfo (const cServer& server)
 	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.iTurn));
 	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.iActiveTurnPlayerNr));
 
-	const sSettings& gameSetting = *server.getGameSettings();
-	addAttributeElement (gameinfoNode, "Metal", "num", iToStr (gameSetting.metal));
-	addAttributeElement (gameinfoNode, "Oil", "num", iToStr (gameSetting.oil));
-	addAttributeElement (gameinfoNode, "Gold", "num", iToStr (gameSetting.gold));
-	addAttributeElement (gameinfoNode, "ResFrequency", "num", iToStr (gameSetting.resFrequency));
-	addAttributeElement (gameinfoNode, "Credits", "num", iToStr (gameSetting.credits));
-	addAttributeElement (gameinfoNode, "BridgeHead", "num", iToStr (gameSetting.bridgeHead));
-	addAttributeElement (gameinfoNode, "AlienTech", "num", iToStr (gameSetting.alienTech));
-	addAttributeElement (gameinfoNode, "Clan", "num", iToStr (gameSetting.clans));
-	//addAttributeElement (gameinfoNode, "GameType", "num", iToStr (gameSetting.gameType));
-	addAttributeElement (gameinfoNode, "VictoryType", "num", iToStr (gameSetting.victoryType));
-	addAttributeElement (gameinfoNode, "Duration", "num", iToStr (gameSetting.duration));
-	addAttributeElement (gameinfoNode, "TurnDeadLine", "num", iToStr (gameSetting.iTurnDeadline));
+	const auto& gameSetting = *server.getGameSettings();
+
+	addAttributeElement (gameinfoNode, "Metal", "string", gameSettingsResourceAmountToString (gameSetting.getMetalAmount ()));
+	addAttributeElement (gameinfoNode, "Oil", "string", gameSettingsResourceAmountToString (gameSetting.getOilAmount ()));
+	addAttributeElement (gameinfoNode, "Gold", "string", gameSettingsResourceAmountToString (gameSetting.getGoldAmount ()));
+
+	addAttributeElement (gameinfoNode, "ResourceDensity", "string", gameSettingsResourceDensityToString (gameSetting.getResourceDensity ()));
+
+	addAttributeElement (gameinfoNode, "BridgeHead", "string", gameSettingsBridgeheadTypeToString (gameSetting.getBridgeheadType ()));
+
+	addAttributeElement (gameinfoNode, "ClansEnabled", "bool", bToStr (gameSetting.getClansEnabled ()));
+
+	addAttributeElement (gameinfoNode, "Credits", "num", iToStr (gameSetting.getStartCredits ()));
+
+	addAttributeElement (gameinfoNode, "VictoryCondition", "string", gameSettingsVictoryConditionToString (gameSetting.getVictoryCondition ()));
+	if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)	addAttributeElement (gameinfoNode, "VictoryTurns", "num", iToStr (gameSetting.getVictoryTurns ()));
+	else if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Points) addAttributeElement (gameinfoNode, "VictoryPoints", "num", iToStr (gameSetting.getVictoryPoints ()));
+	
+	addAttributeElement (gameinfoNode, "TurnDeadline", "num", iToStr (gameSetting.getTurnDeadline()));
 }
 
 //--------------------------------------------------------------------------

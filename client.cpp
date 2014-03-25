@@ -27,7 +27,6 @@
 #include "casualtiestracker.h"
 #include "clientevents.h"
 #include "clist.h"
-#include "dialog.h"
 #include "events.h"
 #include "fxeffects.h"
 #include "gametimer.h"
@@ -42,6 +41,7 @@
 #include "settings.h"
 #include "vehicles.h"
 #include "video.h"
+#include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
 using namespace std;
 
@@ -98,9 +98,9 @@ void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 	initPlayersWithMap();
 }
 
-void cClient::setGameSetting (const sSettings& gameSetting_)
+void cClient::setGameSetting (const cGameSettings& gameSetting_)
 {
-	gameSetting = new sSettings (gameSetting_);
+	gameSetting = new cGameSettings (gameSetting_);
 }
 
 class LessByNr
@@ -1672,7 +1672,7 @@ void cClient::HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message)
 		gameSetting = NULL;
 		return;
 	}
-	AutoPtr<sSettings> gameSetting_ (new sSettings());
+	AutoPtr<cGameSettings> gameSetting_ (new cGameSettings());
 
 	gameSetting_->popFrom (message);
 	gameSetting = gameSetting_.Release();

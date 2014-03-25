@@ -60,7 +60,7 @@ void sendPlayerList (cTCP& network, const std::vector<sPlayer*>& players)
 	//cMenu::sendMessage (network, message);
 }
 
-void sendGameData (cTCP& network, const cStaticMap* map, const sSettings* settings, const string& saveGameString, const sPlayer* player)
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, const string& saveGameString, const sPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 

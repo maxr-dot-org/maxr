@@ -24,11 +24,11 @@
 #include "../../../utility/signal/signal.h"
 #include "../../../utility/signal/signalconnectionmanager.h"
 
-class cDialogNewYesNo : public cWindow
+class cDialogYesNo : public cWindow
 {
 public:
-	cDialogNewYesNo (const std::string& text);
-	~cDialogNewYesNo ();
+	cDialogYesNo (const std::string& text);
+	~cDialogYesNo ();
 
 	cSignal<void ()> yesClicked;
 	cSignal<void ()> noClicked;

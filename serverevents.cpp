@@ -33,6 +33,7 @@
 #include "server.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
+#include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
 
 //------------------------------------------------------------------------------
@@ -461,7 +462,7 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 void sendGameSettings (cServer& server, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_GAME_SETTINGS));
-	const sSettings* gameSettings = server.getGameSettings();
+	const cGameSettings* gameSettings = server.getGameSettings ();
 
 	if (gameSettings)
 	{

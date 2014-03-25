@@ -17,49 +17,58 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_dialogs_dialogresearchH
-#define gui_menu_dialogs_dialogresearchH
+#ifndef utility_versionH
+#define utility_versionH
 
-#include <array>
+#include <string>
 
-#include "../../window.h"
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-#include "../../../upgradecalculator.h"
-
-class cLabel;
-class cSlider;
-class cPushButton;
-class cPlayer;
-
-class cDialogResearch : public cWindow
+/**
+ * Class representing a simple 3-part version of the form
+ *
+ *   "<major>.<minor>.<revision>"
+ *
+ */
+class cVersion
 {
 public:
-	cDialogResearch (const cPlayer& player);
+	cVersion ();
+	explicit cVersion (const std::string& string);
+	explicit cVersion (int major, int minor = 0, int revision = 0);
+	
+	int getMajor () const;
+	void setMajor (int value);
 
-	const std::array<int, cResearch::kNrResearchAreas>& getResearchSettings () const;
+	int getMinor () const;
+	void setMinor (int value);
 
-	cSignal<void ()> done;
+	int getRevision () const;
+	void setRevision (int value);
+
+	/**
+	 * Parses a version from the string.
+	 *
+	 * If only one or two parts are are given
+	 * in the string the others will be assumed to be zero
+	 *
+	 * @param string The string to parse the version from.
+	 * @exception std::runtime_error thrown if the string is not a valid
+	 *                               version string.
+	 */
+	void parseFromString (const std::string& string);
+	std::string toString () const;
+
+	bool operator==(const cVersion& other) const;
+	bool operator!=(const cVersion& other) const;
+
+	bool operator<(const cVersion& other) const;
+	bool operator<=(const cVersion& other) const;
+	bool operator>(const cVersion& other) const;
+	bool operator>=(const cVersion& other) const;
+
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	static const size_t rows = 8;
-	static_assert(cResearch::kNrResearchAreas == rows, "number of items displayed in the research dialog does not match the number of research areas!");
-
-	const cPlayer& player;
-
-	std::array<int, cResearch::kNrResearchAreas> researchSettings;
-	int unusedResearchCenters;
-
-	std::array<cLabel*, rows> researchCenterCountLabels;
-	std::array<cLabel*, rows> percentageLabels;
-	std::array<cLabel*, rows> turnsLabels;
-	std::array<cSlider*, rows> sliders;
-	std::array<cPushButton*, rows> decreaseButtons;
-	std::array<cPushButton*, rows> increaseButtons;
-
-	void updateWidgets ();
-	void handleSliderValueChanged (size_t index);
+	int major;
+	int minor;
+	int revision;
 };
 
-#endif // gui_menu_dialogs_dialogresearchH
+#endif // utility_versionH

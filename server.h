@@ -39,7 +39,7 @@ class cTCP;
 class cUnit;
 struct sClientLandData;
 struct sLandingUnit;
-struct sSettings;
+class cGameSettings;
 
 /**
 * The Types which are possible for a game
@@ -97,7 +97,7 @@ public:
 	explicit cServer (cTCP* network_);
 	~cServer();
 
-	void setGameSettings (const sSettings& gameSettings);
+	void setGameSettings (const cGameSettings& gameSettings);
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
 	void addPlayer (cPlayer* player);
 	void setDeadline (int iDeadline);
@@ -282,7 +282,7 @@ public:
 	void makeAdditionalSaveRequest (int saveNum);
 
 	int getTurn() const;
-	const sSettings* getGameSettings() const { return gameSetting.get(); }
+	const cGameSettings* getGameSettings () const { return gameSetting.get (); }
 	bool isTurnBasedGame() const;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
@@ -515,7 +515,7 @@ private:
 	 * before turn end is processed */
 	bool executingRemainingMovements;
 
-	AutoPtr<sSettings> gameSetting;
+	AutoPtr<cGameSettings> gameSetting;
 	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 	sFreezeModes freezeModes;
 public:

@@ -42,6 +42,8 @@ cLocalGame::~cLocalGame ()
 //------------------------------------------------------------------------------
 void cLocalGame::start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
+	assert (gameSettings != nullptr);
+
 	eventHandling = std::make_unique<cEventHandling> ();
 	server = std::make_unique<cServer> (nullptr);
 	client = std::make_unique<cClient> (server.get(), nullptr, *eventHandling);
@@ -49,8 +51,8 @@ void cLocalGame::start (cApplication& application, const cPosition& landingPosit
 	server->setMap (staticMap);
 	client->setMap (staticMap);
 
-	server->setGameSettings (gameSettings->toOldSettings());
-	client->setGameSetting (gameSettings->toOldSettings ());
+	server->setGameSettings (*gameSettings);
+	client->setGameSetting (*gameSettings);
 
 	auto player = createPlayer ();
 

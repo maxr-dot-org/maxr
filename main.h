@@ -360,6 +360,9 @@ std::string fToStr (float x);
 /**Converts pointer to string
 */
 std::string pToStr (void* x);
+/**Converts bool to string
+*/
+std::string bToStr (bool x);
 
 /**
 * Rounds given param num to specified position after decimal point<br>

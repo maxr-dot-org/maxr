@@ -28,7 +28,7 @@
 #include "../../../video.h"
 
 //------------------------------------------------------------------------------
-cDialogNewResearch::cDialogNewResearch (const cPlayer& player_) :
+cDialogResearch::cDialogResearch (const cPlayer& player_) :
 	cWindow (LoadPCX (GFXOD_DIALOG_RESEARCH), eWindowBackgrounds::Alpha),
 	player (player_)
 {
@@ -88,7 +88,7 @@ cDialogNewResearch::cDialogNewResearch (const cPlayer& player_) :
 		turnsLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (291, 72 + 28 * i), getPosition () + cPosition (291 + 44, 72 + 28 * i + 10)), "0", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 		sliders[i] = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (90, 70 + 28 * i), cPosition (90 + 51, 70 + 28 * i + 15)), 0, player.workingResearchCenterCount, eOrientationType::Horizontal, eSliderHandleType::Horizontal, eSliderType::Invisible));
-		signalConnectionManager.connect (sliders[i]->valueChanged, std::bind (&cDialogNewResearch::handleSliderValueChanged, this, i));
+		signalConnectionManager.connect (sliders[i]->valueChanged, std::bind (&cDialogResearch::handleSliderValueChanged, this, i));
 
 		decreaseButtons[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (71, 70 + 28 * i), ePushButtonType::ArrowLeftSmall));
 		signalConnectionManager.connect (decreaseButtons[i]->clicked, [&, i](){ sliders[i]->decrease (1);  });
@@ -109,13 +109,13 @@ cDialogNewResearch::cDialogNewResearch (const cPlayer& player_) :
 
 
 //------------------------------------------------------------------------------
-const std::array<int, cResearch::kNrResearchAreas>& cDialogNewResearch::getResearchSettings () const
+const std::array<int, cResearch::kNrResearchAreas>& cDialogResearch::getResearchSettings () const
 {
 	return researchSettings;
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewResearch::updateWidgets ()
+void cDialogResearch::updateWidgets ()
 {
 	for (size_t i = 0; i < rows; ++i)
 	{
@@ -133,7 +133,7 @@ void cDialogNewResearch::updateWidgets ()
 }
 
 //------------------------------------------------------------------------------
-void cDialogNewResearch::handleSliderValueChanged (size_t index)
+void cDialogResearch::handleSliderValueChanged (size_t index)
 {
 	const auto wantResearchCenters = sliders[index]->getValue ();
 

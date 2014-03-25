@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "windowload.h"
+#include "savegamedata.h"
 #include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/special/saveslotwidget.h"
@@ -25,7 +26,6 @@
 #include "../../../../main.h"
 #include "../../../../files.h"
 #include "../../../../savegame.h"
-#include "../../../../menuitems.h" // sSaveFile
 
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad () :
@@ -66,7 +66,7 @@ cWindowLoad::cWindowLoad () :
 //------------------------------------------------------------------------------
 void cWindowLoad::update ()
 {
-	saveFiles.clear ();
+	saveGames.clear ();
 
 	loadSaves ();
 	updateSlots ();
@@ -91,9 +91,9 @@ void cWindowLoad::loadSaves ()
 		if (file.length () < 8 || (number = atoi (file.substr (file.length () - 7, 3).c_str ())) < page || number > page + (int)(rows * columns)) continue;
 		// don't add files twice
 		bool found = false;
-		for (unsigned int j = 0; j < saveFiles.size (); j++)
+		for (unsigned int j = 0; j < saveGames.size (); j++)
 		{
-			if (saveFiles[j].number == number)
+			if (saveGames[j].getNumber() == number)
 			{
 				found = true;
 				break;
@@ -101,12 +101,10 @@ void cWindowLoad::loadSaves ()
 		}
 		if (found) continue;
 		// read the information and add it to the saves list
-		sSaveFile savefile;
-		savefile.number = number;
-		savefile.filename = file;
+		std::string gameName, type, time;
 		cSavegame Savegame (number);
-		Savegame.loadHeader (&savefile.gamename, &savefile.type, &savefile.time);
-		saveFiles.push_back (savefile);
+		Savegame.loadHeader (&gameName, &type, &time);
+		saveGames.push_back (cSaveGameData (file, gameName, type, time, number));
 	}
 }
 
@@ -169,7 +167,7 @@ void cWindowLoad::selectSlot (size_t slotIndex, bool makeRenameable)
 	selectedSaveNumber = page * (columns * rows) + slotIndex + 1;
 
 	auto newSelected = getSaveFile (selectedSaveNumber);
-	selectedOriginalName = newSelected ? newSelected->gamename : "";
+	selectedOriginalName = newSelected ? newSelected->getGameName() : "";
 
 	bool isEmptySlot = true;
 	for (size_t x = 0; x < columns; x++)
@@ -202,10 +200,10 @@ int cWindowLoad::getSelectedSaveNumber () const
 }
 
 //------------------------------------------------------------------------------
-sSaveFile* cWindowLoad::getSaveFile (int saveNumber)
+cSaveGameData* cWindowLoad::getSaveFile (int saveNumber)
 {
-	auto iter = std::find_if (saveFiles.begin (), saveFiles.end (), [=](const sSaveFile& save) { return save.number == saveNumber; });
-	return iter == saveFiles.end () ? nullptr : &(*iter);
+	auto iter = std::find_if (saveGames.begin (), saveGames.end (), [=](const cSaveGameData& save) { return save.getNumber() == saveNumber; });
+	return iter == saveGames.end () ? nullptr : &(*iter);
 }
 
 //------------------------------------------------------------------------------

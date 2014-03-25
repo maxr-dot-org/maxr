@@ -34,25 +34,23 @@ cWindowStart::cWindowStart () :
 {
 	using namespace std::placeholders;
 
-	const auto& menuPosition = getArea ().getMinCorner ();
-
-	auto singlePlayerButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player"));
+	auto singlePlayerButton = std::make_unique<cPushButton> (getPosition () + cPosition (390, 190), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Single_Player"));
 	signalConnectionManager.connect (singlePlayerButton->clicked, std::bind (&cWindowStart::singlePlayerClicked, this));
 	addChild (std::move (singlePlayerButton));
 
-	auto multiPlayerButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player"));
+	auto multiPlayerButton = std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Multi_Player"));
 	signalConnectionManager.connect (multiPlayerButton->clicked, std::bind (&cWindowStart::multiPlayerClicked, this));
 	addChild (std::move (multiPlayerButton));
 
-	auto preferencesButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences"));
+	auto preferencesButton = std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 2), ePushButtonType::StandardBig, lngPack.i18n ("Text~Settings~Preferences"));
 	signalConnectionManager.connect (preferencesButton->clicked, std::bind (&cWindowStart::preferencesClicked, this));
 	addChild (std::move (preferencesButton));
 
-	auto licenceButton = std::make_unique<cPushButton> (menuPosition + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani"));
+	auto licenceButton = std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani"));
 	signalConnectionManager.connect (licenceButton->clicked, std::bind (&cWindowStart::licenceClicked, this));
 	addChild (std::move (licenceButton));
 
-	auto exitButton = std::make_unique<cPushButton> (menuPosition + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
+	auto exitButton = std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
 	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
 	addChild (std::move (exitButton));
 }
@@ -93,7 +91,7 @@ void cWindowStart::preferencesClicked ()
 {
 	if (!getActiveApplication ()) return;
 
-	auto dialog = std::make_shared<cDialogNewPreferences> ();
+	auto dialog = std::make_shared<cDialogPreferences> ();
 	getActiveApplication ()->show (dialog);
 }
 

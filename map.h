@@ -28,6 +28,7 @@
 #include "t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
+#include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
 class cUnit;
 class cVehicle;
@@ -190,8 +191,11 @@ public:
 	*/
 	void setResourcesFromString (const std::string& str);
 
-	void placeRessourcesAddPlayer (int x, int y, int frequency);
-	void placeRessources (int Metal, int Oil, int Gold);
+	void placeRessourcesAddPlayer (int x, int y, eGameSettingsResourceDensity desity);
+	void placeRessources (eGameSettingsResourceAmount metal, eGameSettingsResourceAmount oil, eGameSettingsResourceAmount gold);
+
+	int getResourceDensityFactor (eGameSettingsResourceDensity desity) const;
+	int getResourceAmountFactor (eGameSettingsResourceAmount amount) const;
 	/**
 	* Access to a map field
 	* @param the offset of the map field

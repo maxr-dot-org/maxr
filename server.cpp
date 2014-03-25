@@ -45,6 +45,7 @@
 #include "settings.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
+#include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
@@ -136,9 +137,9 @@ void cServer::addPlayer (cPlayer* player)
 }
 
 //------------------------------------------------------------------------------
-void cServer::setGameSettings (const sSettings& gameSettings_)
+void cServer::setGameSettings (const cGameSettings& gameSettings_)
 {
-	gameSetting = new sSettings (gameSettings_);
+	gameSetting = new cGameSettings (gameSettings_);
 }
 
 //------------------------------------------------------------------------------
@@ -177,14 +178,14 @@ void cServer::cancelStateInitGame()
 //------------------------------------------------------------------------------
 bool cServer::isTurnBasedGame() const
 {
-	return gameSetting->gameType == SETTINGS_GAMETYPE_TURNS;
+	return gameSetting->getGameType() == eGameSettingsGameType::Turns;
 }
 
 //------------------------------------------------------------------------------
 eGameTypes cServer::getGameType() const
 {
 	if (network) return GAME_TYPE_TCPIP;
-	if (gameSetting->hotseat) return GAME_TYPE_HOTSEAT;
+	if (gameSetting->getGameType () == eGameSettingsGameType::HotSeat) return GAME_TYPE_HOTSEAT;
 	return GAME_TYPE_SINGLE;
 }
 
@@ -207,7 +208,7 @@ void cServer::stop()
 //------------------------------------------------------------------------------
 void cServer::setDeadline (int iDeadline)
 {
-	gameSetting->iTurnDeadline = iDeadline;
+	gameSetting->setTurnDeadline(iDeadline);
 }
 
 //------------------------------------------------------------------------------
@@ -2293,9 +2294,9 @@ void cServer::placeInitialResources (std::vector<sClientLandData>& landData)
 	for (size_t i = 0; i != landData.size(); ++i)
 	{
 		correctLandingPos (landData[i].iLandX, landData[i].iLandY);
-		Map->placeRessourcesAddPlayer (landData[i].iLandX, landData[i].iLandY, gameSetting->resFrequency);
+		Map->placeRessourcesAddPlayer (landData[i].iLandX, landData[i].iLandY, gameSetting->getResourceDensity());
 	}
-	Map->placeRessources (gameSetting->metal, gameSetting->oil, gameSetting->gold);
+	Map->placeRessources (gameSetting->getMetalAmount(), gameSetting->getOilAmount(), gameSetting->getGoldAmount());
 }
 
 //------------------------------------------------------------------------------
@@ -2317,7 +2318,7 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const s
 void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
 						   const std::vector<std::vector<sLandingUnit>*>& landingUnits)
 {
-	const bool fixed = gameSetting->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
+	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
 		const int x = landPos[i].iLandX;
@@ -2331,7 +2332,7 @@ void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
 //------------------------------------------------------------------------------
 void cServer::makeLanding()
 {
-	const bool fixed = gameSetting->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE;
+	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
 		const int x = landingPositions[i].iLandX;
@@ -2421,7 +2422,7 @@ void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::v
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 		sendGameSettings (*this, *PlayerList[i]);
 	// send clan info to clients
-	if (gameSetting->clans == SETTING_CLANS_ON)
+	if (gameSetting->getClansEnabled())
 		sendClansToClients (*this, PlayerList);
 
 	// place resources
@@ -2439,7 +2440,7 @@ void cServer::startNewGame()
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 		sendGameSettings (*this, *PlayerList[i]);
 	// send clan info to clients
-	if (gameSetting->clans == SETTING_CLANS_ON)
+	if (gameSetting->getClansEnabled())
 		sendClansToClients (*this, PlayerList);
 
 	// place resources
@@ -2940,7 +2941,7 @@ void cServer::handleEnd (int iPlayerNum)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				sendTurnFinished (*this, iPlayerNum, 100 * gameSetting->iTurnDeadline);
+				sendTurnFinished (*this, iPlayerNum, 100 * gameSetting->getTurnDeadline());
 				iDeadlineStartTime = gameTimer.gameTime;
 			}
 			else
@@ -3197,20 +3198,21 @@ void cServer::makeTurnEnd()
 //------------------------------------------------------------------------------
 bool cServer::isVictoryConditionMet() const
 {
-	switch (gameSetting->victoryType)
+	switch (gameSetting->getVictoryCondition())
 	{
-		case SETTINGS_VICTORY_TURNS: return iTurn >= gameSetting->duration;
-		case SETTINGS_VICTORY_POINTS:
+		case eGameSettingsVictoryCondition::Turns:
+			return iTurn >= gameSetting->getVictoryTurns();
+		case eGameSettingsVictoryCondition::Points:
 		{
 			for (size_t i = 0; i != PlayerList.size(); ++i)
 			{
 				const cPlayer& player = *PlayerList[i];
 				if (player.isDefeated) continue;
-				if (player.getScore (iTurn) >= gameSetting->duration) return true;
+				if (player.getScore (iTurn) >= gameSetting->getVictoryTurns()) return true;
 			}
 			return false;
 		}
-		case SETTINGS_VICTORY_ANNIHILATION:
+		case eGameSettingsVictoryCondition::Death:
 		{
 			int nbActivePlayer = 0;
 			for (size_t i = 0; i != PlayerList.size(); ++i)
@@ -3344,9 +3346,9 @@ void cServer::addReport (sID id, int iPlayerNum)
 void cServer::checkDeadline()
 {
 	if (!gameTimer.timer50ms) return;
-	if (gameSetting->iTurnDeadline < 0 || iDeadlineStartTime <= 0) return;
+	if (gameSetting->getTurnDeadline () < 0 || iDeadlineStartTime <= 0) return;
 
-	if (gameTimer.gameTime <= iDeadlineStartTime + gameSetting->iTurnDeadline * 100) return;
+	if (gameTimer.gameTime <= iDeadlineStartTime + gameSetting->getTurnDeadline () * 100) return;
 
 	if (checkEndActions (-1))
 	{
@@ -3802,7 +3804,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendClansToClients (*this, PlayerList);
 	}
 	sendTurn (*this, iTurn, lastTurnEnd, *Player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->iTurnDeadline - (gameTimer.gameTime - iDeadlineStartTime), Player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), Player);
 	sendResources (*this, *Player);
 
 	// send all units to the client

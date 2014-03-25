@@ -25,15 +25,13 @@
 #include "../../../main.h"
 
 //------------------------------------------------------------------------------
-cDialogNewYesNo::cDialogNewYesNo (const std::string& text) :
+cDialogYesNo::cDialogYesNo (const std::string& text) :
 	cWindow (LoadPCX (GFXOD_DIALOG2), eWindowBackgrounds::Alpha)
 {
-	const auto& menuPosition = getArea ().getMinCorner ();
-
-	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (35, 35), menuPosition + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
+	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 35), getPosition () + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
 
-	auto yesButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
+	auto yesButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (yesButton->clicked, [&]()
 	{
 		yesClicked ();
@@ -41,7 +39,7 @@ cDialogNewYesNo::cDialogNewYesNo (const std::string& text) :
 	});
 	// FIXME: add hot key RETURN to button
 
-	auto noButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
+	auto noButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (noButton->clicked, [&]()
 	{
 		noClicked ();
@@ -51,5 +49,5 @@ cDialogNewYesNo::cDialogNewYesNo (const std::string& text) :
 }
 
 //------------------------------------------------------------------------------
-cDialogNewYesNo::~cDialogNewYesNo ()
+cDialogYesNo::~cDialogYesNo ()
 {}

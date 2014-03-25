@@ -26,7 +26,7 @@
 
 class cStaticMap;
 class sPlayer;
-struct sSettings;
+class cGameSettings;
 
 enum eMenuMessages
 {
@@ -53,7 +53,7 @@ void sendRequestIdentification (cTCP& network, const sPlayer& player);
 
 void sendPlayerList (cTCP& network, const std::vector<sPlayer*>& players);
 
-void sendGameData (cTCP& network, const cStaticMap* map, const sSettings* settings, const std::string& saveGameString, const sPlayer* player = NULL);
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::string& saveGameString, const sPlayer* player = NULL);
 
 void sendIdentification (cTCP& network, const sPlayer& player);
 

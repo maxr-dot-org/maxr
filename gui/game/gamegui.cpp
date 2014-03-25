@@ -1007,7 +1007,7 @@ void cNewGameGUI::showFilesWindow ()
 	auto loadSaveWindow = application->show (std::make_shared<cWindowLoadSave> ());
 	loadSaveWindow->exit.connect ([&, loadSaveWindow, application]()
 	{
-		auto yesNoDialog = application->show (std::make_shared<cDialogNewYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
+		auto yesNoDialog = application->show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
 		signalConnectionManager.connect (yesNoDialog->yesClicked, [&, loadSaveWindow]()
 		{
 			loadSaveWindow->close ();
@@ -1045,7 +1045,7 @@ void cNewGameGUI::showPreferencesDialog ()
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	application->show (std::make_shared<cDialogNewPreferences> ());
+	application->show (std::make_shared<cDialogPreferences> ());
 }
 
 //------------------------------------------------------------------------------
@@ -1173,7 +1173,7 @@ void cNewGameGUI::showResearchDialog (const cUnit& unit)
 	if (unit.owner != player) return;
 	if (!player) return;
 
-	auto researchDialog = application->show (std::make_shared<cDialogNewResearch> (*player));
+	auto researchDialog = application->show (std::make_shared<cDialogResearch> (*player));
 	researchDialog->done.connect ([&, researchDialog]()
 	{
 		changeResearchSettingsTriggered (researchDialog->getResearchSettings ());

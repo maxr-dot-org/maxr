@@ -26,12 +26,12 @@
 class cLabel;
 class cLineEdit;
 class cPosition;
-struct sSaveFile;
+class cSaveGameData;
 
 class cSaveSlotWidget : public cClickableWidget
 {
 public:
-	cSaveSlotWidget (const cPosition& position);
+	explicit cSaveSlotWidget (const cPosition& position);
 
 	const std::string& getName () const;
 
@@ -39,7 +39,7 @@ public:
 
 	void setRenameable (bool renameable);
 
-	void setSaveData (const sSaveFile& saveFile);
+	void setSaveData (const cSaveGameData& saveFile);
 	void reset (int number);
 
 	bool isEmpty () const;

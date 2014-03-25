@@ -29,7 +29,7 @@
 
 class cPushButton;
 class cSaveSlotWidget;
-struct sSaveFile;
+class cSaveGameData;
 
 class cWindowLoad : public cWindow
 {
@@ -48,7 +48,7 @@ protected:
 
 	int getSelectedSaveNumber () const;
 
-	sSaveFile* getSaveFile (int saveNumber);
+	cSaveGameData* getSaveFile (int saveNumber);
 
 	cSaveSlotWidget* getSaveSlotFromSaveNumber (size_t saveNumber);
 	cSaveSlotWidget& getSaveSlot (size_t slotIndex);
@@ -70,7 +70,7 @@ private:
 	int selectedSaveNumber;
 	std::string selectedOriginalName;
 
-	std::vector<sSaveFile> saveFiles;
+	std::vector<cSaveGameData> saveGames;
 
 	void loadSaves ();
 	void updateSlots ();

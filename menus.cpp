@@ -22,67 +22,81 @@
 #include "menus.h"
 #include "netmessage.h"
 
-//------------------------------------------------------------------------------
-void sSettings::pushInto (cNetMessage& message) const
-{
-	message.pushBool (hotseat);
-	message.pushInt16 (iTurnDeadline);
-	message.pushInt16 (duration);
-	message.pushChar (victoryType);
-	message.pushChar (gameType);
-	message.pushChar (clans);
-	message.pushChar (alienTech);
-	message.pushChar (bridgeHead);
-	message.pushInt16 (credits);
-	message.pushChar (resFrequency);
-	message.pushChar (gold);
-	message.pushChar (oil);
-	message.pushChar (metal);
-}
-
-//------------------------------------------------------------------------------
-void sSettings::popFrom (cNetMessage& message)
-{
-	metal = (eSettingResourceValue) message.popChar();
-	oil = (eSettingResourceValue) message.popChar();
-	gold = (eSettingResourceValue) message.popChar();
-	resFrequency = (eSettingResFrequency) message.popChar();
-	credits = message.popInt16();
-	bridgeHead = (eSettingsBridgeHead) message.popChar();
-	alienTech = (eSettingsAlienTech) message.popChar();
-	clans = (eSettingsClans) message.popChar();
-	gameType = (eSettingsGameType) message.popChar();
-	victoryType = (eSettingsVictoryType) message.popChar();
-	duration = message.popInt16();
-	iTurnDeadline = message.popInt16();
-	hotseat = message.popBool();
-}
-
-//------------------------------------------------------------------------------
-std::string sSettings::getResValString (eSettingResourceValue type) const
-{
-	switch (type)
-	{
-		case SETTING_RESVAL_LIMITED: return lngPack.i18n ("Text~Option~Limited");
-		case SETTING_RESVAL_NORMAL: return lngPack.i18n ("Text~Option~Normal");
-		case SETTING_RESVAL_HIGH: return lngPack.i18n ("Text~Option~High");
-		case SETTING_RESVAL_TOOMUCH: return lngPack.i18n ("Text~Option~TooMuch");
-	}
-	return "";
-}
-
-//------------------------------------------------------------------------------
-std::string sSettings::getResFreqString () const
-{
-	switch (resFrequency)
-	{
-		case SETTING_RESFREQ_SPARSE: return lngPack.i18n ("Text~Option~Sparse");
-		case SETTING_RESFREQ_NORMAL: return lngPack.i18n ("Text~Option~Normal");
-		case SETTING_RESFREQ_DENCE: return lngPack.i18n ("Text~Option~Dense");
-		case SETTING_RESFREQ_TOOMUCH: return lngPack.i18n ("Text~Option~TooMuch");
-	}
-	return "";
-}
+////------------------------------------------------------------------------------
+//void sSettings::pushInto (cNetMessage& message) const
+//{
+//	message.pushBool (hotseat);
+//	message.pushInt16 (iTurnDeadline);
+//	message.pushInt16 (duration);
+//	message.pushChar (victoryType);
+//	message.pushChar (gameType);
+//	message.pushChar (clans);
+//	message.pushChar (alienTech);
+//	message.pushChar (bridgeHead);
+//	message.pushInt16 (credits);
+//	message.pushChar (resFrequency);
+//	message.pushChar (gold);
+//	message.pushChar (oil);
+//	message.pushChar (metal);
+//}
+//
+////------------------------------------------------------------------------------
+//void sSettings::popFrom (cNetMessage& message)
+//{
+//	metal = (eSettingResourceValue) message.popChar();
+//	oil = (eSettingResourceValue) message.popChar();
+//	gold = (eSettingResourceValue) message.popChar();
+//	resFrequency = (eSettingResFrequency) message.popChar();
+//	credits = message.popInt16();
+//	bridgeHead = (eSettingsBridgeHead) message.popChar();
+//	alienTech = (eSettingsAlienTech) message.popChar();
+//	clans = (eSettingsClans) message.popChar();
+//	gameType = (eSettingsGameType) message.popChar();
+//	victoryType = (eSettingsVictoryType) message.popChar();
+//	duration = message.popInt16();
+//	iTurnDeadline = message.popInt16();
+//	hotseat = message.popBool();
+//}
+//
+////------------------------------------------------------------------------------
+//std::string sSettings::getResValString (eSettingResourceValue type) const
+//{
+//	switch (type)
+//	{
+//		case SETTING_RESVAL_LIMITED: return lngPack.i18n ("Text~Option~Limited");
+//		case SETTING_RESVAL_NORMAL: return lngPack.i18n ("Text~Option~Normal");
+//		case SETTING_RESVAL_HIGH: return lngPack.i18n ("Text~Option~High");
+//		case SETTING_RESVAL_TOOMUCH: return lngPack.i18n ("Text~Option~TooMuch");
+//	}
+//	return "";
+//}
+//
+////------------------------------------------------------------------------------
+//std::string sSettings::getResFreqString () const
+//{
+//	switch (resFrequency)
+//	{
+//		case SETTING_RESFREQ_SPARSE: return lngPack.i18n ("Text~Option~Sparse");
+//		case SETTING_RESFREQ_NORMAL: return lngPack.i18n ("Text~Option~Normal");
+//		case SETTING_RESFREQ_DENCE: return lngPack.i18n ("Text~Option~Dense");
+//		case SETTING_RESFREQ_TOOMUCH: return lngPack.i18n ("Text~Option~TooMuch");
+//	}
+//	return "";
+//}
+//
+////------------------------------------------------------------------------------
+//std::string sSettings::getVictoryConditionString () const
+//{
+//	std::string r = iToStr (duration) + " ";
+//
+//	switch (victoryType)
+//	{
+//	case SETTINGS_VICTORY_TURNS: r += lngPack.i18n ("Text~Comp~Turns");  break;
+//	case SETTINGS_VICTORY_POINTS: r += lngPack.i18n ("Text~Comp~Points"); break;
+//	case SETTINGS_VICTORY_ANNIHILATION: return lngPack.i18n ("Text~Comp~NoLimit");
+//	}
+//	return r;
+//}
 
 std::string ToString (eLandingState state)
 {
@@ -178,18 +192,4 @@ std::string ToString (eLandingState state)
 
 	landData[playerNr].landingState = newState;
 	return newState;
-}
-
-//------------------------------------------------------------------------------
-std::string sSettings::getVictoryConditionString() const
-{
-	std::string r = iToStr (duration) + " ";
-
-	switch (victoryType)
-	{
-		case SETTINGS_VICTORY_TURNS: r += lngPack.i18n ("Text~Comp~Turns");  break;
-		case SETTINGS_VICTORY_POINTS: r += lngPack.i18n ("Text~Comp~Points"); break;
-		case SETTINGS_VICTORY_ANNIHILATION: return lngPack.i18n ("Text~Comp~NoLimit");
-	}
-	return r;
 }

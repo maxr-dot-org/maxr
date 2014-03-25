@@ -24,7 +24,6 @@
 #include "client.h"
 #include "clientevents.h"
 #include "clist.h"
-#include "dialog.h"
 #include "events.h"
 #include "fxeffects.h"
 #include "hud.h"

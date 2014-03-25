@@ -20,7 +20,9 @@
 #ifndef gui_menu_windows_windowgamesettings_gamesettingsH
 #define gui_menu_windows_windowgamesettings_gamesettingsH
 
-struct sSettings;
+#include <string>
+
+class cNetMessage;
 
 enum class eGameSettingsResourceAmount
 {
@@ -58,9 +60,31 @@ enum class eGameSettingsVictoryCondition
 	Death
 };
 
+std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount);
+eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string);
+
+std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density);
+eGameSettingsResourceDensity gameSettingsResourceDensityFromString (const std::string& string);
+
+std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type);
+eGameSettingsBridgeheadType gameSettingsBridgeheadTypeFromString (const std::string& string);
+
+std::string gameSettingsGameTypeToString (eGameSettingsGameType type);
+eGameSettingsGameType gameSettingsGameTypeString (const std::string& string);
+
+std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition);
+eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std::string& string);
+
 class cGameSettings
 {
 public:
+	static const int defaultCreditsNone    = 0;
+	static const int defaultCreditsLow     = 50;
+	static const int defaultCreditsLimited = 100;
+	static const int defaultCreditsNormal  = 150;
+	static const int defaultCreditsHigh    = 200;
+	static const int defaultCreditsMore    = 250;
+
 	cGameSettings ();
 
 	eGameSettingsResourceAmount getMetalAmount () const;
@@ -96,7 +120,11 @@ public:
 	unsigned int getVictoryPoints () const;
 	void setVictoryPoints (unsigned int value);
 
-	sSettings toOldSettings () const; // TODO: to be removed
+	unsigned int getTurnDeadline () const;
+	void setTurnDeadline (unsigned int value);
+
+	void pushInto (cNetMessage& message) const;
+	void popFrom (cNetMessage& message);
 private:
 	eGameSettingsResourceAmount metalAmount;
 	eGameSettingsResourceAmount oilAmount;
@@ -115,6 +143,8 @@ private:
 	eGameSettingsVictoryCondition victoryConditionType;
 	unsigned int victoryTurns;
 	unsigned int vectoryPoints;
+
+	unsigned int turnDeadline;
 };
 
 #endif // gui_menu_windows_windowgamesettings_gamesettingsH

@@ -34,9 +34,7 @@ cWindowMapSelection::cWindowMapSelection () :
 	selectedMapIndex (-1),
 	page (0)
 {
-	const auto& menuPosition = getArea ().getMinCorner ();
-
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (0, 13), menuPosition + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 13), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Title~Choose_Planet"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	//
 	// Map Images
@@ -47,27 +45,27 @@ cWindowMapSelection::cWindowMapSelection () :
 		{
 			const auto index = row * mapColumns + column;
 
-			mapImages[index] = addChild (std::make_unique<cImage> (menuPosition + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, SoundData.SNDHudButton));
+			mapImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, SoundData.SNDHudButton));
 			signalConnectionManager.connect (mapImages[index]->clicked, std::bind (&cWindowMapSelection::mapClicked, this, mapImages[index]));
 
-			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (menuPosition + cPosition (6 + 158 * column, 48 + 198 * row), menuPosition + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (6 + 158 * column, 48 + 198 * row), getPosition () + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 		}
 	}
 	
 	//
 	// Buttons
 	//
-	upButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (292, 435), ePushButtonType::ArrowUpBig));
+	upButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (292, 435), ePushButtonType::ArrowUpBig));
 	signalConnectionManager.connect (upButton->clicked, std::bind (&cWindowMapSelection::upClicked, this));
 
-	downButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (321, 435), ePushButtonType::ArrowDownBig));
+	downButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (321, 435), ePushButtonType::ArrowDownBig));
 	signalConnectionManager.connect (downButton->clicked, std::bind (&cWindowMapSelection::downClicked, this));
 
-	okButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
+	okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	okButton->lock ();
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowMapSelection::okClicked, this));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (menuPosition + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
+	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (50, 440), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowMapSelection::backClicked, this));
 
 	loadMaps ();
