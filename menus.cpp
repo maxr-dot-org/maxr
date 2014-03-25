@@ -1002,10 +1002,7 @@ static int RunHostGamePreparation (std::vector<cClient*>& clients, cStaticMap& m
 				continue;
 			}
 			allOk = false;
-			Video.clearBuffer();
-			const std::string& name = clients[i]->getActivePlayer().getName();
-			cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", name));
-			okDialog.show (NULL);
+			HotSeatWaitForClient (*clients[i]);
 			if (landingMenu.show (clients[i]) == 1) return -1;
 		}
 	}
