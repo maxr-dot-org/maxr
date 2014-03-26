@@ -80,7 +80,6 @@ cDedicatedServer::~cDedicatedServer()
 {
 	for (size_t i = 0; i < games.size(); i++)
 		delete games[i];
-	delete network;
 
 	delete configuration;
 }
@@ -179,7 +178,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 	cout << "Starting server on port " << configuration->port << "..." << endl;
 
 	assert (network == 0);
-	network = new cTCP();
+	network = std::make_shared<cTCP>();
 	network->setMessageReceiver (this);
 	if (network->create (configuration->port) == -1)
 	{
@@ -202,7 +201,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 void cDedicatedServer::startNewGame()
 {
 	cout << "Setting up new game..." << endl;
-	cServerGame* game = new cServerGame (*network);
+	cServerGame* game = new cServerGame (network);
 	game->prepareGameData();
 	games.push_back (game);
 	game->runInThread();
@@ -212,7 +211,7 @@ void cDedicatedServer::startNewGame()
 void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
 	cout << "Setting up game from saved game number " << saveGameNumber << " ..." << endl;
-	cServerGame* game = new cServerGame (*network);
+	cServerGame* game = new cServerGame (network);
 	if (game->loadGame (saveGameNumber) == false)
 	{
 		delete game;

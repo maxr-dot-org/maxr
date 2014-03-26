@@ -37,7 +37,6 @@ class cServerAttackJob;
 class cServerMoveJob;
 class cTCP;
 class cUnit;
-struct sClientLandData;
 struct sLandingUnit;
 class cGameSettings;
 
@@ -94,7 +93,7 @@ public:
 	 *@author alzi alias DoctorDeath
 	 *@param network_ non null for GAME_TYPE_TCPIP
 	 */
-	explicit cServer (cTCP* network_);
+	explicit cServer (std::shared_ptr<cTCP> network);
 	~cServer();
 
 	void setGameSettings (const cGameSettings& gameSettings);
@@ -232,9 +231,6 @@ public:
 	cVehicle* addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
 	cBuilding* addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
-
-	void startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
-
 	/**
 	* adds a report to the reportlist
 	*@author alzi alias DoctorDeath
@@ -289,9 +285,9 @@ public:
 	void disableFreezeMode (eFreezeMode mode);
 
 private:
-	void placeInitialResources (std::vector<sClientLandData>& landData);
+	void startNewGame ();
 
-	void startNewGame();
+	void placeInitialResources (std::vector<cPosition>& landData);
 
 	/**
 	* lands all units at the given position
@@ -303,7 +299,7 @@ private:
 	*@param bFixed true if the bridgehead is fixed.
 	*/
 	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
-	void makeLanding (const std::vector<sClientLandData>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
+	void makeLanding (const std::vector<cPosition>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
 	void makeLanding();
 	/**
 	 *
@@ -329,6 +325,7 @@ private:
 	void handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message);
+	void handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message);
 	void handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
@@ -463,12 +460,13 @@ private:
 
 	void addJob (cJob* job);
 public:
-	cTCP* network;
+	std::shared_ptr<cTCP> network;
 private:
 	/** local clients if any. */
 	std::vector<cClient*> localClients;
 
-	std::vector<sClientLandData> landingPositions;
+	std::vector<cPosition> landingPositions;
+	std::vector<bool> playerReadyToStart;
 	std::vector<std::vector<sLandingUnit> > landingUnits;
 
 	/** controls the timesynchoneous actions on server and client */

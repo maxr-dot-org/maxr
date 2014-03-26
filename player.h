@@ -74,24 +74,31 @@ class sPlayer
 {
 public:
 	sPlayer (const std::string& name_, unsigned int color_, int Nr_, int socketIndex_ = -1);
+	sPlayer (const sPlayer& other);
+	sPlayer& operator=(const sPlayer& other);
 
-	const std::string& getName() const { return name; }
-	void setName (const std::string& name_) { name = name_; }
+	const std::string& getName () const;
+	void setName (std::string name);
 	unsigned int getColorIndex() const { return colorIndex; }
-	void setColorIndex (unsigned int index) { assert (index < PLAYERCOLORS); colorIndex = index; }
+	void setColorIndex (unsigned int index);
 	void setToNextColorIndex();
 	void setToPrevColorIndex();
 	SDL_Surface* getColorSurface() const;
-	int getNr() const { return Nr; }
-	void setNr (int index) { Nr = index; }
-	int getSocketIndex() const { return socketIndex; }
-	void setSocketIndex (int index) { socketIndex = index; }
+	int getNr () const;
+	void setNr (int index);
+	int getSocketIndex () const;
+	void setSocketIndex (int index);
 	void setLocal();
 	bool isLocal() const;
 	void onSocketIndexDisconnected (int socketIndex);
-	void setReady (bool ready_) { ready = ready_; }
-	bool isReady() const { return ready; }
+	void setReady (bool ready);
+	bool isReady () const;
 
+	mutable cSignal<void ()> nameChanged;
+	mutable cSignal<void ()> numberChanged;
+	mutable cSignal<void ()> colorChanged;
+	mutable cSignal<void ()> socketIndexChanged;
+	mutable cSignal<void ()> readyChanged;
 private:
 	std::string name;
 	unsigned int colorIndex;

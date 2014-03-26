@@ -44,13 +44,13 @@ void sendGo (cServer& server)
 }
 
 //------------------------------------------------------------------------------
-void sendReselectLanding (cServer& server, eLandingState state, int iPlayer)
-{
-	AutoPtr<cNetMessage> message (new cNetMessage (MU_MSG_RESELECT_LANDING));
-	message->pushChar (state);
-
-	server.sendNetMessage (message, iPlayer);
-}
+//void sendReselectLanding (cServer& server, eLandingState state, int iPlayer)
+//{
+//	AutoPtr<cNetMessage> message (new cNetMessage (MU_MSG_RESELECT_LANDING));
+//	message->pushChar (state);
+//
+//	server.sendNetMessage (message, iPlayer);
+//}
 
 //------------------------------------------------------------------------------
 void sendAllLanded (cServer& server)

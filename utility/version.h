@@ -51,8 +51,6 @@ public:
 	 * in the string the others will be assumed to be zero
 	 *
 	 * @param string The string to parse the version from.
-	 * @exception std::runtime_error thrown if the string is not a valid
-	 *                               version string.
 	 */
 	void parseFromString (const std::string& string);
 	std::string toString () const;

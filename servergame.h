@@ -45,7 +45,7 @@ int serverGameThreadFunction (void* data);
 class cServerGame
 {
 public:
-	explicit cServerGame (cTCP& network_);
+	explicit cServerGame (std::shared_ptr<cTCP> network);
 	virtual ~cServerGame();
 	void prepareGameData();
 	bool loadGame (int saveGameNumber);
@@ -65,7 +65,7 @@ protected:
 	cServer* server;
 	cGameSettings settings;
 	std::shared_ptr<cStaticMap> map;
-	cTCP* network;
+	std::shared_ptr<cTCP> network;
 	SDL_Thread* thread;
 	bool canceled;
 	bool shouldSave;

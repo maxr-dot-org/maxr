@@ -31,6 +31,7 @@
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap) :
 	cWindow (nullptr),
+	lastSelectedPosition (0, 0),
 	firstActivate (true)
 {
 	using namespace std::placeholders;
@@ -46,12 +47,20 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	auto backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition ().y () - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowLandingPositionSelection::backClicked, this));
 
+	signalConnectionManager.connect (selectedPosition, [&](const cPosition& position){ lastSelectedPosition = position; });
+
 	resize (hudImage->getSize ());
 }
 
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::~cWindowLandingPositionSelection ()
 {}
+
+//------------------------------------------------------------------------------
+const cPosition& cWindowLandingPositionSelection::getSelectedPosition () const
+{
+	return lastSelectedPosition;
+}
 
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application)

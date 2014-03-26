@@ -42,6 +42,7 @@ static void HandleNetMessage (cClient* client, cNetMessage& message)
 {
 	switch (message.getClass())
 	{
+		case NET_MSG_STATUS: // fall through
 		case NET_MSG_CLIENT:
 			if (!client)
 			{
@@ -56,16 +57,8 @@ static void HandleNetMessage (cClient* client, cNetMessage& message)
 			Log.write ("Client: got a server message! Type: " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 			break;
 		case NET_MSG_MENU:
-			//if (!activeMenu)
-			//{
-			//	Log.write ("Got a menu message, but no menu active!", cLog::eLOG_TYPE_NET_ERROR);
-			//	break;
-			//}
-			//activeMenu->handleNetMessage (&message);
-			break;
-		case NET_MSG_STATUS:
-			if (client) client->HandleNetMessage (&message);
-			//else if (activeMenu) activeMenu->handleNetMessage (&message);
+			//should not happen!
+			Log.write ("Client: got a menu message! Type: " + message.getTypeAsString (), cLog::eLOG_TYPE_NET_ERROR);
 			break;
 		default:
 			break;

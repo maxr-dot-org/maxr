@@ -28,6 +28,7 @@
 #include "network.h"
 #include "player.h"
 #include "vehicles.h"
+#include "utility/position.h"
 
 using namespace std;
 
@@ -221,13 +222,21 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 	}
 }
 
-void sendLandingCoords (const cClient& client, const sClientLandData& c)
+void sendLandingCoords (const cClient& client, const cPosition& coords)
 {
 	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_COORDS);
-	message->pushInt16 (c.iLandY);
-	message->pushInt16 (c.iLandX);
+	message->pushInt16 (coords.y ());
+	message->pushInt16 (coords.x ());
 	message->pushChar (client.getActivePlayer().getNr());
+
+	client.sendNetMessage (message);
+}
+
+void sendReadyToStart (const cClient& client)
+{
+	cNetMessage* message = new cNetMessage (MU_MSG_READY_TO_START);
+	message->pushChar (client.getActivePlayer ().getNr ());
 
 	client.sendNetMessage (message);
 }

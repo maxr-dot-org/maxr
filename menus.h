@@ -30,34 +30,4 @@ struct sLandingUnit
 	int cargo;
 };
 
-enum eLandingState
-{
-	LANDING_STATE_UNKNOWN,      //initial state
-	LANDING_POSITION_OK,        //there are no other players near the position
-	LANDING_POSITION_WARNING,   //there are players within the warning distance
-	LANDING_POSITION_TOO_CLOSE, //the position is too close to another player
-	LANDING_POSITION_CONFIRMED  //warnings about nearby players will be ignored,
-	//because the player has confirmed his position
-};
-
-std::string ToString (eLandingState state);
-
-struct sClientLandData
-{
-	int iLandX, iLandY;
-	int iLastLandX, iLastLandY;
-	eLandingState landingState;
-	bool receivedOK;
-
-	sClientLandData() :
-		iLandX (-1), iLandY (-1), iLastLandX (-1), iLastLandY (-1),
-		landingState (LANDING_STATE_UNKNOWN), receivedOK (false)
-	{}
-
-	/** checks whether the landing positions are okay
-	 *@author alzi
-	 */
-	static eLandingState checkLandingState (std::vector<sClientLandData>& landData, unsigned int playerNr);
-};
-
 #endif //menusH

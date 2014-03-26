@@ -94,10 +94,12 @@ public:
 	cPosition getSize () const;
 	void resize (const cPosition& newSize);
 
+	void fitToChildren ();
+
 	const cBox<cPosition>& getArea () const;
 	void setArea (const cBox<cPosition>& area);
 
-	cWidget* getChildAt (const cPosition& position) const;
+	virtual cWidget* getChildAt (const cPosition& position) const;
 
 	virtual bool isAt (const cPosition& position) const;
 
@@ -141,6 +143,8 @@ protected:
 	template<typename WidgetType>
 	WidgetType* addChild (std::unique_ptr<WidgetType> child);
 
+	void setParent (cWidget* parent);
+
 	/**
 	 * Removes all children.
 	 *
@@ -183,7 +187,7 @@ WidgetType* cWidget::addChild (std::unique_ptr<WidgetType> child)
 
 	if (child == nullptr) return nullptr;
 
-	child->parent = this;
+	child->setParent(this);
 	children.push_back (std::move (child));
 
 	return static_cast<WidgetType*>(children.back ().get ());

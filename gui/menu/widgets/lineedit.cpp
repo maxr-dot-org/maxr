@@ -337,12 +337,13 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 	switch (key)
 	{
 	case SDLK_ESCAPE:
+		application.releaseKeyFocus (*this);
 		escapePressed ();
-		application.releaseKeyFocus (*this);
 		break;
+	case SDLK_KP_ENTER: // fall through
 	case SDLK_RETURN:
-		returnPressed ();
 		application.releaseKeyFocus (*this);
+		returnPressed ();
 		break;
 	case SDLK_LEFT:
 		scrollLeft ();

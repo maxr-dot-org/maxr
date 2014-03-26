@@ -898,6 +898,13 @@ Uint16 cUnicodeFont::encodeUTF8Char (const char* pch, int& increase) const
 	return uni;
 }
 
+bool cUnicodeFont::isUtf8Space (const char* pch) const
+{
+	if (!pch) return false;
+
+	return *pch == ' ' || *pch == '\f' || *pch == '\n' || *pch == '\r' || *pch == '\t' || *pch == '\v';
+}
+
 int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);

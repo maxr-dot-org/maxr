@@ -38,6 +38,9 @@ class cListView : public cClickableWidget
 public:
 	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, sSOUND* clickSound = SoundData.SNDObjectMenu);
 
+	void disableSelectable ();
+	void enableSelectable ();
+
 	void setBeginMargin (const cPosition& margin);
 	void setEndMargin (const cPosition& margin);
 	void setItemDistance (const cPosition& distance);
@@ -75,6 +78,8 @@ public:
 
 	cSignal<void (ItemType&)> itemClicked;
 
+	virtual cWidget* getChildAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleMoved (const cPosition& offset);
@@ -99,6 +104,8 @@ private:
 	size_t beginDisplayItem;
 	size_t endDisplayItem;
 
+	bool selectable;
+
 	void updateItems ();
 };
 
@@ -111,9 +118,27 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSele
 	clickSound (clickSound_),
 	itemDistance (0, 3),
 	beginDisplayItem (0),
-	endDisplayItem (0)
+	endDisplayItem (0),
+	selectable (true)
 {
 	assert (!allowMultiSelection); // multi selection not yet implemented
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::disableSelectable ()
+{
+	selectable = false;
+	deselectAll ();
+	setConsumeClick (false);
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::enableSelectable ()
+{
+	selectable = true;
+	setConsumeClick (true);
 }
 
 //------------------------------------------------------------------------------
@@ -164,6 +189,8 @@ template<typename ItemType>
 ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 {
 	items.push_back (std::move (item));
+
+	items.back ()->setParent(this);
 
 	updateItems ();
 
@@ -251,6 +278,22 @@ void cListView<ItemType>::clearItems ()
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
+cWidget* cListView<ItemType>::getChildAt (const cPosition& position) const
+{
+	for (auto i = beginDisplayItem; i < endDisplayItem; ++i)
+	{
+		auto& item = *items[i];
+		if (item.isAt (position))
+		{
+			auto itemChild = item.getChildAt (position);
+			return itemChild ? itemChild : &item;
+		}
+	}
+	return nullptr;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
 bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
 {
 	if (amount.y () > 0)
@@ -296,6 +339,8 @@ void cListView<ItemType>::draw ()
 template<typename ItemType>
 bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
+	if (!selectable) return false;
+
 	if (button == eMouseButtonType::Left)
 	{
 		for (auto i = beginDisplayItem; i < endDisplayItem; ++i)
@@ -338,6 +383,8 @@ ItemType* cListView<ItemType>::getSelectedItem ()
 template<typename ItemType>
 void cListView<ItemType>::setSelectedItem (const ItemType* item)
 {
+	if (!selectable) return;
+
 	if (selectedItems.size () == 1 && selectedItems[0] == item) return;
 
 	if (item == nullptr)

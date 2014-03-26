@@ -22,7 +22,7 @@
 
 #include <memory>
 
-class cGame : public std::enable_shared_from_this<cGame>
+class cGame : protected std::enable_shared_from_this<cGame>
 {
 public:
 	virtual ~cGame () {}

@@ -177,6 +177,8 @@ public:
 	 */
 	Uint16 encodeUTF8Char (const char* pch, int& increase) const;
 
+	bool isUtf8Space (const char* pch) const;
+
 	int getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/;
 private:
 	typedef AutoSurface FontTypeSurfaces[0xFFFF];

@@ -45,9 +45,9 @@ int serverGameThreadFunction (void* data)
 }
 
 //------------------------------------------------------------------------------
-cServerGame::cServerGame (cTCP& network_) :
+cServerGame::cServerGame (std::shared_ptr<cTCP> network_) :
 	server (NULL),
-	network (&network_),
+	network (std::move(network_)),
 	thread (NULL),
 	canceled (false),
 	shouldSave (false),

@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "network.h"
 
 class cDedicatedServerConfig;
@@ -92,7 +93,7 @@ protected:
 private:
 	cDedicatedServer();
 	virtual ~cDedicatedServer();
-	cTCP* network;
+	std::shared_ptr<cTCP> network;
 };
 
 #endif

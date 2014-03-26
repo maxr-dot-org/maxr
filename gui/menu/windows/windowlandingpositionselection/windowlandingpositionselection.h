@@ -40,6 +40,8 @@ public:
 	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> map);
 	~cWindowLandingPositionSelection ();
 
+	const cPosition& getSelectedPosition () const;
+
 	cSignal<void (const cPosition&)> selectedPosition;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
@@ -51,6 +53,8 @@ private:
 	bool firstActivate;
 
 	cLandingPositionSelectionMap* map;
+
+	cPosition lastSelectedPosition;
 
 	SDL_Surface* createHudSurface ();
 

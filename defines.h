@@ -28,8 +28,6 @@
 #define PFEILS_COLOR       0xFF00FF00 // color of a special waypointarrow
 #define MOVE_SPEED 2     // speed of vehiclemovements
 #define MSG_TICKS  30000 // number of ticks for how long a message will be displayed
-#define LANDING_DISTANCE_WARNING   28
-#define LANDING_DISTANCE_TOO_CLOSE 10
 #define MAX_PLANES_PER_FIELD 5
 
 // minimap configuration

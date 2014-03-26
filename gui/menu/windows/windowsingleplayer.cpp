@@ -30,7 +30,8 @@
 #include "../widgets/pushbutton.h"
 #include "../../application.h"
 #include "../../game/gamegui.h"
-#include "../../../game/localgame.h"
+#include "../../../game/local/singleplayer/localsingleplayergamenew.h"
+#include "../../../game/local/singleplayer/localsingleplayergamesaved.h"
 
 #include "../../../main.h"
 #include "../../../network.h"
@@ -63,6 +64,7 @@ cWindowSinglePlayer::cWindowSinglePlayer () :
 cWindowSinglePlayer::~cWindowSinglePlayer ()
 {}
 
+// FIXME: find nice place
 //------------------------------------------------------------------------------
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings)
 {
@@ -130,11 +132,16 @@ void cWindowSinglePlayer::newGameClicked ()
 
 	auto application = getActiveApplication ();
 
+	auto game = std::make_shared<cLocalSingleplayerGameNew> ();
+
 	auto windowGameSettings = getActiveApplication ()->show (std::make_shared<cWindowGameSettings> ());
 	windowGameSettings->applySettings (cGameSettings ());
 
 	windowGameSettings->done.connect ([=]()
 	{
+		auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings ());
+		game->setGameSettings (gameSettings);
+
 		auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection> ());
 
 		windowMapSelection->done.connect ([=]()
@@ -145,8 +152,7 @@ void cWindowSinglePlayer::newGameClicked ()
 				// TODO: error dialog: could not load selected map!
 				return;
 			}
-
-			auto gameSettings = std::make_shared<cGameSettings> (windowGameSettings->getGameSettings ());
+			game->setStaticMap (staticMap);
 
 			if (gameSettings->getClansEnabled ())
 			{
@@ -154,23 +160,24 @@ void cWindowSinglePlayer::newGameClicked ()
 
 				windowClanSelection->done.connect ([=]()
 				{
+					game->setPlayerClan (windowClanSelection->getSelectedClan ());
+
 					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan (), *gameSettings);
 
 					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
 
 					windowLandingUnitSelection->done.connect ([=]()
 					{
+						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
+						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
+
 						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
 
 						windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
 						{
-							auto game = std::make_shared<cLocalGame> ();
+							game->setLandingPosition (landingPosition);
 
-							game->setGameSettings (gameSettings);
-							game->setStaticMap (staticMap);
-							game->setPlayerClan (windowClanSelection->getSelectedClan ());
-
-							game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits (), windowLandingUnitSelection->getUnitUpgrades());
+							game->start (*application);
 
 							windowLandingPositionSelection->close ();
 							windowLandingUnitSelection->close ();
@@ -189,16 +196,16 @@ void cWindowSinglePlayer::newGameClicked ()
 
 				windowLandingUnitSelection->done.connect ([=]()
 				{
+					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
+					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
+
 					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
 
 					windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
 					{
-						auto game = std::make_shared<cLocalGame> ();
+						game->setLandingPosition (landingPosition);
 
-						game->setGameSettings (gameSettings);
-						game->setStaticMap (staticMap);
-
-						game->start (*application, landingPosition, windowLandingUnitSelection->getLandingUnits (), windowLandingUnitSelection->getUnitUpgrades ());
+						game->start (*application);
 
 						windowLandingPositionSelection->close ();
 						windowLandingUnitSelection->close ();
@@ -221,9 +228,9 @@ void cWindowSinglePlayer::loadGameClicked ()
 	auto windowLoad = getActiveApplication ()->show (std::make_shared<cWindowLoad> ());
 	windowLoad->load.connect ([=](int saveGameNumber)
 	{
-		auto game = std::make_shared<cLocalGame> ();
-
-		game->startSaved (*application, saveGameNumber);
+		auto game = std::make_shared<cLocalSingleplayerGameSaved> ();
+		game->setSaveGameNumber (saveGameNumber);
+		game->start (*application);
 
 		windowLoad->close ();
 	});

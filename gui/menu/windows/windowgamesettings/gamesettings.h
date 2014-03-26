@@ -60,19 +60,19 @@ enum class eGameSettingsVictoryCondition
 	Death
 };
 
-std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount);
+std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount, bool translated = false);
 eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string);
 
-std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density);
+std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity density, bool translated = false);
 eGameSettingsResourceDensity gameSettingsResourceDensityFromString (const std::string& string);
 
-std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type);
+std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type, bool translated = false);
 eGameSettingsBridgeheadType gameSettingsBridgeheadTypeFromString (const std::string& string);
 
-std::string gameSettingsGameTypeToString (eGameSettingsGameType type);
+std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool translated = false);
 eGameSettingsGameType gameSettingsGameTypeString (const std::string& string);
 
-std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition);
+std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition condition, bool translated = false);
 eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std::string& string);
 
 class cGameSettings

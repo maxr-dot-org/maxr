@@ -121,7 +121,7 @@ cWindowGameSettings::cWindowGameSettings () :
 	currentLine += lineHeight;
 	creditsRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	
-	creditsNoneCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + iToStr (cGameSettings::defaultCreditsNormal) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	creditsNoneCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + iToStr (cGameSettings::defaultCreditsNone) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
 	creditsLowCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (140, currentLine), lngPack.i18n ("Text~Option~Low") + " (" + iToStr (cGameSettings::defaultCreditsLow) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;

@@ -60,8 +60,8 @@ int CallbackRunServerThread (void* arg)
 }
 
 //------------------------------------------------------------------------------
-cServer::cServer (cTCP* network_) :
-	network (network_),
+cServer::cServer (std::shared_ptr<cTCP> network_) :
+	network (std::move(network_)),
 	gameTimer(),
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
@@ -157,7 +157,8 @@ void cServer::changeStateToInitGame()
 	landingPositions.clear();
 	landingPositions.resize (PlayerList.size());
 	landingUnits.clear();
-	landingUnits.resize (PlayerList.size());
+	landingUnits.resize (PlayerList.size ());
+	playerReadyToStart.resize (PlayerList.size (), false);
 
 	serverState = SERVER_STATE_INITGAME;
 }
@@ -386,54 +387,29 @@ void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
 	int playerNr = message.popChar();
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	sClientLandData& c = landingPositions[playerNr];
-	cPlayer& player = *getPlayerFromNumber(playerNr);
-	// save last coords, so that a player can confirm his position
-	// after a warning about nearby players
-	c.iLastLandX = c.iLandX;
-	c.iLastLandY = c.iLandY;
-	c.iLandX = message.popInt16();
-	c.iLandY = message.popInt16();
-	c.receivedOK = true;
-	player.setLandingPos(c.iLandX, c.iLandY);
+	auto& position = landingPositions[playerNr];
 
-	for (size_t player = 0; player != landingPositions.size(); ++player)
+	position.x () = message.popInt16 ();
+	position.y () = message.popInt16 ();
+}
+
+//------------------------------------------------------------------------------
+void cServer::handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_READY_TO_START);
+	assert (serverState == SERVER_STATE_INITGAME);
+
+	int playerNr = message.popChar ();
+	Log.write ("Server: received ready to start from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
+	playerReadyToStart[playerNr] = true;
+
+	for (size_t i = 0; i < playerReadyToStart.size (); ++i)
 	{
-		if (!landingPositions[player].receivedOK) return;
+		if (!playerReadyToStart[i]) return;
 	}
 
-	// now check the landing positions
-	for (size_t player = 0; player != landingPositions.size(); ++player)
-	{
-		const sClientLandData& landingPos = landingPositions[player];
-		eLandingState state = sClientLandData::checkLandingState (landingPositions, player);
-		const std::string posStr = iToStr (landingPos.iLandX) + ", " + iToStr (landingPos.iLandY);
-
-		Log.write ("Server: Player " + iToStr (player) + "has state " + ToString (state) + ", Position:" + posStr, cLog::eLOG_TYPE_NET_DEBUG);
-
-		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
-		{
-			sendReselectLanding (*this, state, PlayerList[player]->getNr());
-		}
-	}
-
-	// now remove all players with warning
-	bool ok = true;
-	for (size_t player = 0; player != landingPositions.size(); ++player)
-	{
-		sClientLandData& landingPos = landingPositions[player];
-		eLandingState state = landingPos.landingState;
-		if (state != LANDING_POSITION_OK && state != LANDING_POSITION_CONFIRMED)
-		{
-			landingPos.receivedOK = false;
-			ok = false;
-		}
-	}
-	if (!ok) return;
-
-	sendAllLanded (*this);
-
-	startNewGame();
+	startNewGame ();
 }
 
 //------------------------------------------------------------------------------
@@ -2149,6 +2125,7 @@ int cServer::handleNetMessage (cNetMessage* message)
 		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (*message); break;
 		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (*message); break;
 		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (*message); break;
+		case MU_MSG_READY_TO_START: handleNetMessage_MU_MSG_READY_TO_START (*message); break;
 
 		case TCP_CLOSE: // Follow
 		case GAME_EV_WANT_DISCONNECT:
@@ -2289,12 +2266,12 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 }
 
 //------------------------------------------------------------------------------
-void cServer::placeInitialResources (std::vector<sClientLandData>& landData)
+void cServer::placeInitialResources (std::vector<cPosition>& landData)
 {
 	for (size_t i = 0; i != landData.size(); ++i)
 	{
-		correctLandingPos (landData[i].iLandX, landData[i].iLandY);
-		Map->placeRessourcesAddPlayer (landData[i].iLandX, landData[i].iLandY, gameSetting->getResourceDensity());
+		correctLandingPos (landData[i].x (), landData[i].y ());
+		Map->placeRessourcesAddPlayer (landData[i].x (), landData[i].y (), gameSetting->getResourceDensity ());
 	}
 	Map->placeRessources (gameSetting->getMetalAmount(), gameSetting->getOilAmount(), gameSetting->getGoldAmount());
 }
@@ -2315,14 +2292,14 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const s
 }
 
 //------------------------------------------------------------------------------
-void cServer::makeLanding (const std::vector<sClientLandData>& landPos,
+void cServer::makeLanding (const std::vector<cPosition>& landPos,
 						   const std::vector<std::vector<sLandingUnit>*>& landingUnits)
 {
 	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		const int x = landPos[i].iLandX;
-		const int y = landPos[i].iLandY;
+		const int x = landPos[i].x ();
+		const int y = landPos[i].y ();
 		cPlayer* player = PlayerList[i];
 
 		makeLanding (x, y, player, *landingUnits[i], fixed);
@@ -2335,8 +2312,8 @@ void cServer::makeLanding()
 	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
-		const int x = landingPositions[i].iLandX;
-		const int y = landingPositions[i].iLandY;
+		const int x = landingPositions[i].x ();
+		const int y = landingPositions[i].y ();
 		cPlayer* player = PlayerList[i];
 
 		makeLanding (x, y, player, landingUnits[i], fixed);
@@ -2412,24 +2389,6 @@ void cServer::correctLandingPos (int& iX, int& iY)
 		iWidth += 2;
 		iHeight += 2;
 	}
-}
-
-//------------------------------------------------------------------------------
-void cServer::startNewGame (std::vector<sClientLandData>& landData, const std::vector<std::vector<sLandingUnit>*>& landingUnits_)
-{
-	assert (serverState == SERVER_STATE_INITGAME);
-	// send victory conditions to clients
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-		sendGameSettings (*this, *PlayerList[i]);
-	// send clan info to clients
-	if (gameSetting->getClansEnabled())
-		sendClansToClients (*this, PlayerList);
-
-	// place resources
-	placeInitialResources (landData);
-	// make the landing
-	makeLanding (landData, landingUnits_);
-	serverState = SERVER_STATE_INGAME;
 }
 
 //------------------------------------------------------------------------------
@@ -3201,14 +3160,14 @@ bool cServer::isVictoryConditionMet() const
 	switch (gameSetting->getVictoryCondition())
 	{
 		case eGameSettingsVictoryCondition::Turns:
-			return iTurn >= gameSetting->getVictoryTurns();
+			return iTurn >= static_cast<int>(gameSetting->getVictoryTurns());
 		case eGameSettingsVictoryCondition::Points:
 		{
 			for (size_t i = 0; i != PlayerList.size(); ++i)
 			{
 				const cPlayer& player = *PlayerList[i];
 				if (player.isDefeated) continue;
-				if (player.getScore (iTurn) >= gameSetting->getVictoryTurns()) return true;
+				if (player.getScore (iTurn) >= static_cast<int>(gameSetting->getVictoryPoints ())) return true;
 			}
 			return false;
 		}

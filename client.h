@@ -59,7 +59,7 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutput;
 	friend class cPlayer;
 public:
-	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_);
+	cClient (cServer* server, std::shared_ptr<cTCP> network, cEventHandling& eventHandling);
 	~cClient();
 
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
@@ -317,7 +317,7 @@ private:
 
 private:
 	cServer* server;
-	cTCP* network;
+	std::shared_ptr<cTCP> network;
 	cEventHandling* eventHandling;
 	/** the map */
 	AutoPtr<cMap> Map;

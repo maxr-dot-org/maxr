@@ -65,6 +65,65 @@ sPlayer::sPlayer (const string& name_, unsigned int colorIndex_, int nr_, int so
 }
 
 //------------------------------------------------------------------------------
+sPlayer::sPlayer (const sPlayer& other) :
+	name (other.name),
+	colorIndex (other.colorIndex),
+	Nr (other.Nr),
+	socketIndex (other.socketIndex),
+	ready (other.ready)
+{}
+
+//------------------------------------------------------------------------------
+sPlayer& sPlayer::operator=(const sPlayer& other)
+{
+	name = other.name;
+	colorIndex = other.colorIndex;
+	Nr = other.Nr;
+	socketIndex = other.socketIndex;
+	ready = other.ready;
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+const std::string& sPlayer::getName () const
+{
+	return name;
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setName (std::string name_)
+{
+	std::swap (name, name_);
+	if (name != name_) nameChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sPlayer::getNr () const
+{
+	return Nr;
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setNr (int nr)
+{
+	std::swap (Nr, nr);
+	if (Nr != nr) numberChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sPlayer::getSocketIndex () const
+{
+	return socketIndex;
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setSocketIndex (int index)
+{
+	std::swap (socketIndex, index);
+	if (socketIndex != index) socketIndexChanged ();
+}
+
+//------------------------------------------------------------------------------
 void sPlayer::setLocal()
 {
 	socketIndex = MAX_CLIENTS;
@@ -97,6 +156,14 @@ SDL_Surface* sPlayer::getColorSurface() const
 }
 
 //------------------------------------------------------------------------------
+void sPlayer::setColorIndex (unsigned int index)
+{
+	assert (index < PLAYERCOLORS);
+	std::swap(colorIndex, index);
+	if (colorIndex != index) colorChanged();
+}
+
+//------------------------------------------------------------------------------
 void sPlayer::setToNextColorIndex()
 {
 	setColorIndex ((colorIndex + 1) % PLAYERCOLORS);
@@ -106,6 +173,19 @@ void sPlayer::setToNextColorIndex()
 void sPlayer::setToPrevColorIndex()
 {
 	setColorIndex ((colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setReady (bool ready_)
+{
+	std::swap (ready, ready_);
+	if (ready != ready_) readyChanged ();
+}
+
+//------------------------------------------------------------------------------
+bool sPlayer::isReady () const
+{
+	return ready;
 }
 
 //------------------------------------------------------------------------------

@@ -50,15 +50,17 @@ using namespace std;
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_) :
+cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_, cEventHandling& eventHandling_) :
 	server (server_),
-	network (network_),
+	network (std::move(network_)),
 	eventHandling (&eventHandling_),
 	ActivePlayer (NULL),
 	casualtiesTracker (new cCasualtiesTracker()),
 	gameTimer(),
 	effectsList (new cFxContainer)
 {
+	assert (server != nullptr || network != nullptr);
+
 	gameTimer.setClient (this);
 	if (server) server->addLocalClient (*this);
 	else network->setMessageReceiver (this);

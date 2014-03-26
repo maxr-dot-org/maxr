@@ -17,23 +17,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_localgameH
-#define game_localgameH
+#ifndef game_network_host_networkhostgamenewH
+#define game_network_host_networkhostgamenewH
 
 #include <memory>
 #include <vector>
 #include <utility>
 
-#include "game.h"
-#include "../maxrconfig.h"
-#include "../utility/signal/signalconnectionmanager.h"
+#include "networkhostgame.h"
+#include "../../../maxrconfig.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+#include "../../../utility/position.h"
 
-class cClient;
-class cServer;
+class cApplication;
 class cStaticMap;
 class cGameSettings;
-class cApplication;
-class cEventHandling;
 class sPlayer;
 class cPlayer;
 class cPosition;
@@ -42,37 +40,40 @@ class cUnitUpgrade;
 struct sLandingUnit;
 struct sID;
 
-class cLocalGame : public cGame
+class cNetworkHostGameNew : public cNetworkHostGame
 {
 public:
-	~cLocalGame ();
+	cNetworkHostGameNew ();
 
-	void start (cApplication& application, const cPosition& landingPosition, const std::vector<sLandingUnit>& landingUnits, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
-	void startSaved (cApplication& application, int saveGameNumber);
+	void start (cApplication& application);
+
+	void setPlayers (std::vector<std::shared_ptr<sPlayer>> players, const sPlayer& localPlayer);
 
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
+
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-	void setPlayerClan (int clan);
+	void setLocalPlayerClan (int clan);
 
-	sPlayer createPlayer ();
+	void setLocalPlayerLandingUnits (std::vector<sLandingUnit> landingUnits);
 
-	virtual void run () MAXR_OVERRIDE_FUNCTION;
+	void setLocalPlayerUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
 
-	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
+	void setLocalPlayerLandingPosition (const cPosition& landingPosition);
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	std::unique_ptr<cClient> client;
-	std::unique_ptr<cServer> server;
-	std::unique_ptr<cEventHandling> eventHandling;
+	size_t localPlayerIndex;
+	std::vector<std::shared_ptr<sPlayer>> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 
-	int playerClan;
+	int localPlayerClan;
 
-	void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
+	std::vector<sLandingUnit> localPlayerLandingUnits;
+	std::vector<std::pair<sID, cUnitUpgrade>> localPlayerUnitUpgrades;
+	cPosition localPlayerLandingPosition;
 };
 
-#endif // game_localgameH
+#endif // game_network_host_networkhostgamenewH
