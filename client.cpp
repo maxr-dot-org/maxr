@@ -1785,6 +1785,13 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 	sendNetMessage (response);
 }
 
+void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP(cNetMessage& message)
+{
+	assert(message.iType == GAME_EV_REVEAL_MAP);
+
+	ActivePlayer->revealMap();
+}
+
 int cClient::HandleNetMessage (cNetMessage& message, cMenu* activeMenu)
 {
 	if (message.iType != NET_GAME_TIME_SERVER)
@@ -1863,7 +1870,8 @@ int cClient::HandleNetMessage (cNetMessage& message, cMenu* activeMenu)
 		case GAME_EV_GAME_SETTINGS: HandleNetMessage_GAME_EV_GAME_SETTINGS (message); break;
 		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (message); break;
-		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (message); break;
+		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME(message); break;
+		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP(message); break;
 		case NET_GAME_TIME_SERVER: gameTimer.handleSyncMessage (message); break;
 
 		default:

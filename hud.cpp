@@ -2719,19 +2719,32 @@ void cGameGUI::doCommand (const string& cmd)
 	else if (cmd.compare (0, 7, "/color ") == 0)
 	{
 		int cl = 0;
-		sscanf (cmd.c_str(), "color %d", &cl);
+		sscanf (cmd.c_str(), "/color %d", &cl);
 		cl %= 8;
 		player.setColor (cl);
 	}
-	else if (cmd.compare ("/fog off") == 0)
+	else if (cmd.compare (0, 8, "/fog off") == 0)
 	{
 		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		server->getPlayerFromNumber (player.getNr())->revealMap();
-		player.revealMap();
+		cPlayer* serverPlayer = nullptr;
+		if(cmd.length() > 8)
+		{
+			serverPlayer = server->getPlayerFromString(cmd.substr(9));
+		}
+		else
+		{
+			serverPlayer = server->getPlayerFromNumber(player.getNr());
+		}
+		if(serverPlayer)
+		{
+			sendChatMessageToClient(*server, "Server entered command: '" + cmd + "'", USER_MESSAGE);
+			serverPlayer->revealMap();
+			sendRevealMap(*server, serverPlayer->getNr());
+		}
 	}
 	else if (cmd.compare ("/survey") == 0)
 	{

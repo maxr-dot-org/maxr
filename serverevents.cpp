@@ -1044,3 +1044,11 @@ void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int de
 
 	server.sendNetMessage (message, vehicle.owner->getNr());
 }
+
+//------------------------------------------------------------------------------
+void sendRevealMap(cServer& server, int player)
+{
+	AutoPtr<cNetMessage> message(new cNetMessage(GAME_EV_REVEAL_MAP));
+
+	server.sendNetMessage(message, player);
+}
