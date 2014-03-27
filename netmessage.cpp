@@ -473,6 +473,7 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_WAIT_FOR: return "GAME_EV_WAIT_FOR";
 		case GAME_EV_END_MOVE_ACTION_SERVER: return "GAME_EV_END_MOVE_ACTION_SERVER";
 		case GAME_EV_END_MOVE_ACTION: return "GAME_EV_END_MOVE_ACTION";
+		case GAME_EV_REVEAL_MAP: return "GAME_EV_REVEAL_MAP";
 		case NET_GAME_TIME_SERVER: return "NET_GAME_TIME_SERVER";
 		case NET_GAME_TIME_CLIENT: return "NET_GAME_TIME_CLIENT";
 		default: return iToStr (iType);

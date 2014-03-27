@@ -348,5 +348,6 @@ void sendSelfDestroy (cServer& server, const cBuilding& building);
 
 void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type);
 
+void sendRevealMap (cServer& server, int player);
 
 #endif // servereventsH

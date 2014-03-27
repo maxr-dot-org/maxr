@@ -96,6 +96,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
+	GAME_EV_REVEAL_MAP,             // a client should reveal the whole map
 	NET_GAME_TIME_SERVER,			// notification about current server time
 	GAME_EV_SET_GAME_TIME,			// used to resync the gametime of a client
 };

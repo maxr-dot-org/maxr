@@ -17,8 +17,8 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef concurrentqueueH
-#define concurrentqueueH
+#ifndef utility_concurrentqueueH
+#define utility_concurrentqueueH
 
 #include <deque>
 
@@ -139,4 +139,4 @@ typename cConcurrentQueue<T>::const_iterator cConcurrentQueue<T>::unsafe_end() c
     return internalQueue.end();
 }
 
-#endif // concurrentqueueH
+#endif // utility_concurrentqueueH

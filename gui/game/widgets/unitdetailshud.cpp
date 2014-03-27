@@ -117,10 +117,11 @@ void cUnitDetailsHud::reset ()
 				break;
 			}
 
+			drawRow (1, symbolType, data.storageResCur, data.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
+
 			if (unit->data.ID.isABuilding ())
 			{
 				const auto& building = static_cast<const cBuilding&>(*unit);
-				drawRow (1, symbolType, data.storageResCur, data.storageResMax, lngPack.i18n ("Text~Others~Cargo"));
 				switch (data.storeResType)
 				{
 				case sUnitData::STORE_RES_METAL:
@@ -133,10 +134,6 @@ void cUnitDetailsHud::reset ()
 					drawRow (2, symbolType, building.SubBase->getGold (), building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
 					break;
 				}
-			}
-			else
-			{
-				drawRow (1, symbolType, data.storageResCur, data.storageResMax, lngPack.i18n ("Text~Others~Cargo"));
 			}
 		}
 		else if (data.storeUnitsImageType != sUnitData::STORE_UNIT_IMG_NONE)
@@ -156,7 +153,7 @@ void cUnitDetailsHud::reset ()
 				break;
 			}
 
-			drawRow (1, symbolType, data.storageUnitsCur, data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo"));
+			drawRow (1, symbolType, data.storageUnitsCur, data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
 		}
 	}
 	else if (data.canAttack && !data.explodesOnContact)

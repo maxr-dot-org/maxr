@@ -846,7 +846,12 @@ void cSettings::initialize()
 	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load saves path from config file: using default value", LOG_TYPE_WARNING);
-		setSavesPath ((homeDir + "saves").c_str());
+		setSavesPath ("saves");
+		savesPath = homeDir + "saves";
+	}
+	else if (std::string (xmlElement->Attribute ("Text")) == "saves")
+	{
+		savesPath = homeDir + xmlElement->Attribute ("Text");
 	}
 	else
 	{
@@ -1638,7 +1643,7 @@ const std::string& cSettings::getVehiclesPath() const
 void cSettings::setVehiclesPath (const char* vehiclesPath, bool save)
 {
 	this->vehiclesPath = vehiclesPath;
-	if (save) saveSetting ("Options~Game~Paths~SaveValue", vehiclesPath);
+	if (save) saveSetting ("Options~Game~Paths~Vehicles", vehiclesPath);
 }
 
 //------------------------------------------------------------------------------
