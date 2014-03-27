@@ -25,7 +25,7 @@
 #include <vector>
 #include <memory>
 #include "autoptr.h"
-#include "ringbuffer.h"
+#include "utility/concurrentqueue.h"
 #include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
 class cNetMessage;
@@ -53,7 +53,7 @@ public:
 
 	void runInThread();
 
-	void pushEvent (cNetMessage* message);
+	void pushEvent (std::unique_ptr<cNetMessage> message);
 
 	// retrieve state
 	std::string getGameState() const;
@@ -73,13 +73,12 @@ protected:
 
 	friend int serverGameThreadFunction (void* data);
 	void run();
-	cNetMessage* pollEvent();
-	void handleNetMessage (cNetMessage* message);
+	void handleNetMessage (cNetMessage& message);
 
-	void handleNetMessage_TCP_ACCEPT (cNetMessage* message);
-	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
-	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message);
-	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
+	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
+	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message);
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
 
 	void terminateServer();
 
@@ -89,7 +88,7 @@ private:
 	void configRessources (std::vector<std::string>& tokens, sPlayer* senderPlayer);
 
 	//------------------------------------------------------------------------
-	cRingbuffer<cNetMessage*> eventQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 };
 
 #endif

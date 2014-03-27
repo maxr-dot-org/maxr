@@ -27,6 +27,7 @@
 #include "../autosurface.h"
 
 class cMouseCursor;
+class cNetMessage;
 
 /**
  * Different methods what to do with the background
@@ -81,7 +82,19 @@ public:
 	void close ();
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-
+	
+	/**
+	 * Gets called when the window is activated.
+	 *
+	 * This means it now is on top of the window stack of the application
+	 * and is the window that will be drawn.
+	 *
+	 * Inheriting classes that are overwriting this function should
+	 * absolutely call this function of the base class!
+	 *
+	 * @param application The application that activated this window.
+	 */
+	virtual void handleActivated (cApplication& application);
 	/**
 	 * Gets called when the window is deactivated.
 	 *
@@ -91,19 +104,25 @@ public:
 	 * or because an other window has been but above the current one
 	 * on the window stack.
 	 *
+	 * Inheriting classes that are overwriting this function should
+	 * absolutely call this function of the base class!
+	 *
 	 * @param application The application that deactivated this window.
 	 */
 	virtual void handleDeactivated (cApplication& application);
 	/**
-	 * Gets called when the window is activated.
+	 * Gets called when the window is removed entirely from the
+	 * applications window stack.
 	 *
-	 * This means it now is on top of the window stack of the application
-	 * and is the window that will be drawn.
+	 * This happens when the window itself requested closing it
+	 * through @ref isClosing(). @ref handleDeactivated() will be
+	 * called as well.
 	 *
-	 * @param application The application that activated this window.
+	 * @param application The application that removed the window from it's stack.
 	 */
-	virtual void handleActivated (cApplication& application);
+	virtual void handleRemoved (cApplication& application);
 
+	virtual bool handleNetMessage (cNetMessage& message);
 protected:
 	virtual cMouse* getActiveMouse () const MAXR_OVERRIDE_FUNCTION;
 	virtual cKeyboard* getActiveKeyboard () const MAXR_OVERRIDE_FUNCTION;

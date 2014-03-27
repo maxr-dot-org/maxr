@@ -28,7 +28,6 @@
 
 class cClient;
 class cServer;
-class cEventHandling;
 class cTCP;
 
 class cNetworkHostGame : public cGame
@@ -46,7 +45,6 @@ protected:
 
 	std::unique_ptr<cClient> localClient;
 	std::unique_ptr<cServer> server;
-	std::unique_ptr<cEventHandling> eventHandling;
 };
 
 #endif // game_network_host_networkhostgameH

@@ -23,7 +23,6 @@
 #include "../../../gui/game/gamegui.h"
 #include "../../../client.h"
 #include "../../../server.h"
-#include "../../../events.h"
 #include "../../../player.h"
 #include "../../../clientevents.h"
 #include "../../../savegame.h"
@@ -31,9 +30,8 @@
 //------------------------------------------------------------------------------
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
-	eventHandling = std::make_unique<cEventHandling> ();
 	server = std::make_unique<cServer> (nullptr);
-	client = std::make_unique<cClient> (server.get (), nullptr, *eventHandling);
+	client = std::make_unique<cClient> (server.get (), nullptr);
 
 	cSavegame savegame (saveGameNumber);
 	if (savegame.load (*server) == false) return;

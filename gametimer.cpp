@@ -4,7 +4,6 @@
 #include "client.h"
 #include "clientevents.h"
 #include "clist.h"
-#include "events.h"
 #include "files.h"
 #include "log.h"
 #include "netmessage.h"
@@ -175,7 +174,7 @@ void cGameTimerClient::run ()
 
 	while (popEvent())
 	{
-		client->getEventHandling().handleNetMessages (client);
+		client->handleNetMessages ();
 
 		if (nextTickAllowed() == false) continue;
 

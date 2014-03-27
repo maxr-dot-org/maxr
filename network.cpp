@@ -17,8 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <cassert>
+
 #include "network.h"
-#include "events.h"
 #include "log.h"
 #include "main.h"
 #include "netmessage.h"
@@ -241,9 +242,9 @@ void cTCP::HandleNetworkThread_SERVER (unsigned int socketIndex)
 		Sockets[iNum].iType = CLIENT_SOCKET;
 		Sockets[iNum].iState = STATE_NEW;
 		Sockets[iNum].buffer.clear();
-		cNetMessage* message = new cNetMessage (TCP_ACCEPT);
+		auto message = std::make_unique<cNetMessage> (TCP_ACCEPT);
 		message->pushInt16 (iNum);
-		pushEvent (message);
+		pushEvent (std::move(message));
 	}
 	else SDLNet_TCP_Close (socket);
 }
@@ -307,8 +308,7 @@ void cTCP::HandleNetworkThread_CLIENT_pushReadyMessage (unsigned int socketIndex
 		if (s.buffer.iLength - readPos < s.messagelength) break;
 
 		//push message
-		cNetMessage* message = new cNetMessage (s.buffer.data + readPos);
-		pushEvent (message);
+		pushEvent (std::make_unique<cNetMessage> (s.buffer.data + readPos));
 
 		//save position of next message
 		readPos += s.messagelength;
@@ -357,23 +357,22 @@ void cTCP::HandleNetworkThread()
 }
 
 //------------------------------------------------------------------------
-void cTCP::pushEvent (cNetMessage* message)
+void cTCP::pushEvent (std::unique_ptr<cNetMessage> message)
 {
 	if (messageReceiver == NULL)
 	{
 		Log.write ("Discarded message: no receiver!", LOG_TYPE_NET_ERROR);
-		delete message;
 		return;
 	}
-	messageReceiver->pushEvent (message);
+	messageReceiver->pushEvent (std::move(message));
 }
 
 //------------------------------------------------------------------------
 void cTCP::pushEventTCP_Close (unsigned int socketIndex)
 {
-	cNetMessage* message = new cNetMessage (TCP_CLOSE);
+	auto message = std::make_unique<cNetMessage> (TCP_CLOSE);
 	message->pushInt16 (socketIndex);
-	pushEvent (message);
+	pushEvent (std::move(message));
 }
 
 //------------------------------------------------------------------------

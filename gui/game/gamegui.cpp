@@ -949,14 +949,11 @@ void cNewGameGUI::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::handleDeactivated (cApplication& application)
+void cNewGameGUI::handleRemoved (cApplication& application)
 {
-	cWindow::handleDeactivated (application);
+	cWindow::handleRemoved (application);
 
-	if (isClosing ())
-	{
-		terminated ();
-	}
+	terminated ();
 }
 
 //------------------------------------------------------------------------------

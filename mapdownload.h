@@ -24,7 +24,6 @@
 
 #include <SDL.h>
 
-class cEventHandling;
 class cNetMessage;
 class cTCP;
 struct SDL_Thread;
@@ -72,7 +71,6 @@ class cMapSender
 {
 public:
 	cMapSender (cTCP& network_, int toSocket,
-				cEventHandling* eventHandling_,
 				const std::string& mapName,
 				const std::string& receivingPlayerName);
 	~cMapSender();
@@ -93,7 +91,6 @@ private:
 private:
 	cTCP* network;
 	int toSocket;
-	cEventHandling* eventHandling;
 	std::string receivingPlayerName;
 	std::string mapName;
 	int mapSize;

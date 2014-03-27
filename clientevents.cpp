@@ -21,7 +21,6 @@
 
 #include "buildings.h"
 #include "client.h"
-#include "events.h"
 #include "hud.h"
 #include "log.h"
 #include "netmessage.h"

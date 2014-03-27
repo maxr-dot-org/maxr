@@ -41,7 +41,7 @@ public:
 	static cDedicatedServer& instance();
 
 	void run();
-	void pushEvent (cNetMessage* message);
+	void pushEvent (std::unique_ptr<cNetMessage> message);
 
 	void doAutoSave (cServer& server);
 
@@ -82,7 +82,7 @@ protected:
 	void loadSaveGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
 
-	bool handleDedicatedServerEvents (cNetMessage* message);
+	bool handleDedicatedServerEvents (cNetMessage& message);
 	void sendChatMessage (const std::string& text, int type, int socket = -1);
 
 	cDedicatedServerConfig* configuration;

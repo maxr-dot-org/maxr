@@ -38,7 +38,7 @@
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	player (std::make_shared<sPlayer>(cSettings::getInstance ().getPlayerName (), cSettings::getInstance ().getPlayerColor (), 0, MAX_CLIENTS)),
+	localPlayer (std::make_shared<sPlayer> (cSettings::getInstance ().getPlayerName (), cSettings::getInstance ().getPlayerColor (), 0, MAX_CLIENTS)),
 	network (std::make_shared<cTCP> ()),
 	saveGameNumber (-1)
 {
@@ -51,9 +51,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	settingsTextLabel->setWordWrap (true);
 
 	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (20, 424), getPosition () + cPosition (20 + 430, 424 + 10))));
-	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cWindowNetworkLobby::sendChatMessage, this, true));
+	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, true));
 	auto sendButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
-	signalConnectionManager.connect (sendButton->clicked, std::bind (&cWindowNetworkLobby::sendChatMessage, this, false));
+	signalConnectionManager.connect (sendButton->clicked, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, false));
 	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition () + cPosition (14, 284), getPosition () + cPosition (14 + 439, 284 + 124))));
 	chatList->disableSelectable ();
 	chatList->setBeginMargin (cPosition (12, 12));
@@ -74,8 +74,8 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	portLineEdit->setText (iToStr (cSettings::getInstance ().getPort ()));
 	
 	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (353, 260), getPosition () + cPosition (353 + 95, 260 + 10))));
-	nameLineEdit->setText (player->getName());
-	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit](eValidatorState){player->setName (nameLineEdit->getText ()); });
+	nameLineEdit->setText (localPlayer->getName ());
+	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit](eValidatorState){localPlayer->setName (nameLineEdit->getText ()); });
 
 	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition () + cPosition (465, 284), getPosition () + cPosition (465 + 167, 284 + 124))));
 	playersList->disableSelectable ();
@@ -84,9 +84,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	playersList->setItemDistance (cPosition (0, 4));
 
 	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (prevColorButton->clicked, [&]() { player->setToPrevColorIndex (); });
+	signalConnectionManager.connect (prevColorButton->clicked, [&]() { localPlayer->setToPrevColorIndex (); });
 	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (nextColorButton->clicked, [&]() { player->setToNextColorIndex (); });
+	signalConnectionManager.connect (nextColorButton->clicked, [&]() { localPlayer->setToNextColorIndex (); });
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
@@ -96,9 +96,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	updateMap ();
 	updatePlayerColor ();
 
-	player->colorChanged.connect (std::bind (&cWindowNetworkLobby::updatePlayerColor, this));
+	localPlayer->colorChanged.connect (std::bind (&cWindowNetworkLobby::updatePlayerColor, this));
 
-	addPlayer (player);
+	addPlayer (localPlayer);
 }
 
 //------------------------------------------------------------------------------
@@ -177,15 +177,28 @@ void cWindowNetworkLobby::updatePlayerColor ()
 {
 	SDL_Rect src = {0, 0, 83, 10};
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (OtherData.colors[player->getColorIndex ()], &src, colorSurface, NULL);
+	SDL_BlitSurface (OtherData.colors[localPlayer->getColorIndex ()], &src, colorSurface, NULL);
 	colorImage->setImage (colorSurface);
 }
 
-void cWindowNetworkLobby::sendChatMessage (bool refocusChatLine)
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::handleWantPlayerReadyChange (const std::shared_ptr<sPlayer>& player)
+{
+	if (player->getNr () != localPlayer->getNr ()) return;
+	if (!staticMap && !triedLoadMapName.empty ())
+	{
+		if (!player->isReady ()) addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", triedLoadMapName));
+		player->setReady (false);
+	}
+	else player->setReady (!player->isReady ());
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::triggerChatMessage (bool refocusChatLine)
 {
 	if (!chatLineEdit->getText ().empty ())
 	{
-		addChatEntry (player->getName (), chatLineEdit->getText ());
+		addChatEntry (localPlayer->getName (), chatLineEdit->getText ());
 		chatLineEdit->setText ("");
 	}
 	if (refocusChatLine)
@@ -215,7 +228,15 @@ void cWindowNetworkLobby::addInfoEntry (const std::string& message)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
 {
-	playersList->addItem (std::make_unique<cLobbyPlayerListViewItem> (player, playersList->getSize ().x () - playersList->getBeginMargin ().x () - playersList->getEndMargin ().x ()));
+	auto item = playersList->addItem (std::make_unique<cLobbyPlayerListViewItem> (player, playersList->getSize ().x () - playersList->getBeginMargin ().x () - playersList->getEndMargin ().x ()));
+	if (player == localPlayer)
+	{
+		signalConnectionManager.connect (item->readyClicked, [player, this]()
+		{
+			PlayFX (SoundData.SNDHudButton);
+			handleWantPlayerReadyChange (player);
+		});
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -281,7 +302,7 @@ int cWindowNetworkLobby::getSaveGameNumber () const
 //------------------------------------------------------------------------------
 const std::shared_ptr<sPlayer>& cWindowNetworkLobby::getLocalPlayer () const
 {
-	return player;
+	return localPlayer;
 }
 
 //------------------------------------------------------------------------------

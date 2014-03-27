@@ -23,7 +23,6 @@
 #include "../../../gui/game/gamegui.h"
 #include "../../../client.h"
 #include "../../../server.h"
-#include "../../../events.h"
 #include "../../../player.h"
 #include "../../../buildings.h"
 #include "../../../vehicles.h"
@@ -57,9 +56,8 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	eventHandling = std::make_unique<cEventHandling> ();
 	server = std::make_unique<cServer> (nullptr);
-	client = std::make_unique<cClient> (server.get(), nullptr, *eventHandling);
+	client = std::make_unique<cClient> (server.get(), nullptr);
 
 	server->setMap (staticMap);
 	client->setMap (staticMap);

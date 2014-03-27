@@ -26,6 +26,7 @@
 #include "../video.h"
 #include "../main.h"
 #include "../unifonts.h"
+#include "../netmessage.h"
 #include "../game/game.h"
 
 #include "widget.h"
@@ -40,6 +41,11 @@ cApplication::cApplication () :
 	//underMouseWidget (nullptr)
 {}
 
+//------------------------------------------------------------------------------
+cApplication::~cApplication ()
+{}
+
+// TODO: find nice place for this class
 class cFrameCounter
 {
 public:
@@ -92,7 +98,14 @@ void cApplication::execute ()
 	while (!modalWindows.empty())
 	{
 		cEventManager::getInstance ().run ();
+
 		if (game) game->run ();
+
+		std::unique_ptr<cNetMessage> message;
+		while (messageQueue.try_pop (message))
+		{
+			handleNetMessage (*message);
+		}
 
 		const auto activeWindow = getActiveWindow ();
 
@@ -106,9 +119,10 @@ void cApplication::execute ()
 
 			if (activeWindow->isClosing ())
 			{
-				auto activeWindowOwned = modalWindows.top ();
-				modalWindows.pop ();
+				auto activeWindowOwned = modalWindows.back ();
+				modalWindows.pop_back ();
 				activeWindowOwned->handleDeactivated (*this);
+				activeWindowOwned->handleRemoved (*this);
 				lastActiveWindow = nullptr;
 			}
 			else
@@ -212,9 +226,9 @@ const std::shared_ptr<cGame>& cApplication::getGame () const
 cWindow* cApplication::getActiveWindow ()
 {
 	// remove null widgets on the top if there are any
-	while (!modalWindows.empty () && modalWindows.top () == nullptr) modalWindows.pop ();
+	while (!modalWindows.empty () && modalWindows.back () == nullptr) modalWindows.pop_back ();
 
-	return modalWindows.empty () ? nullptr : modalWindows.top ().get ();
+	return modalWindows.empty () ? nullptr : modalWindows.back ().get ();
 }
 
 //------------------------------------------------------------------------------
@@ -374,4 +388,21 @@ void cApplication::assignKeyFocus (cWidget* widget)
 	}
 	if (keyFocusWidget && keyFocusWidget != widget) keyFocusWidget->handleLooseKeyFocus (*this);
 	keyFocusWidget = widget;
+}
+
+//------------------------------------------------------------------------------
+void cApplication::pushEvent (std::unique_ptr<cNetMessage> message)
+{
+	messageQueue.push (std::move (message));
+}
+
+//------------------------------------------------------------------------------
+void cApplication::handleNetMessage (cNetMessage& message)
+{
+	for (auto iter = modalWindows.rbegin (); iter != modalWindows.rend (); ++iter)
+	{
+		if (*iter == nullptr) continue;
+
+		if ((*iter)->handleNetMessage (message)) break;
+	}
 }

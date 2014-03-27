@@ -389,30 +389,30 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::pushEvent (cNetMessage* message)
+void cDedicatedServer::pushEvent (std::unique_ptr<cNetMessage> message)
 {
-	if (handleDedicatedServerEvents (message))
+	if (handleDedicatedServerEvents (*message))
 		return;
 	// TODO: delegate to correct game (and not simply first game)
 	if (games.empty() == false)
-		games[0]->pushEvent (message);
+		games[0]->pushEvent (std::move (message));
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
+bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 {
-	switch (message->getType())
+	switch (message.getType())
 	{
 		case GAME_EV_CHAT_CLIENT:
 		case MU_MSG_CHAT:
 		{
-			if (message->getType() == MU_MSG_CHAT)
-				message->popBool();
-			string chatText = message->popString();
-			message->rewind();
+			if (message.getType() == MU_MSG_CHAT)
+				message.popBool();
+			string chatText = message.popString();
+			message.rewind();
 			int senderSocket = -1;
-			if (games.empty() == false && message->iPlayerNr >= 0)
-				senderSocket = games[0]->getSocketForPlayerNr (message->iPlayerNr);
+			if (games.empty() == false && message.iPlayerNr >= 0)
+				senderSocket = games[0]->getSocketForPlayerNr (message.iPlayerNr);
 			if (senderSocket < 0)
 				return false;
 
@@ -428,7 +428,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 					if (tokens[0].compare ("games") == 0)
 					{
 						sendChatMessage (getGamesString(),
-										 message->getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
+										 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
 										 senderSocket);
 						return true;
 					}
@@ -440,7 +440,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 					else if (tokens[0].compare ("help") == 0)
 					{
 						sendChatMessage (getServerHelpString(),
-										 message->getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
+										 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
 										 senderSocket);
 						return true;
 					}

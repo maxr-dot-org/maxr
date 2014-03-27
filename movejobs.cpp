@@ -501,11 +501,11 @@ void cServerMoveJob::addEndAction (int destID, eEndMoveActionType type)
 
 }
 
-cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessage* message)
+cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessage& message)
 {
-	if (message->iType != GAME_EV_MOVE_JOB_CLIENT) return NULL;
+	if (message.iType != GAME_EV_MOVE_JOB_CLIENT) return NULL;
 
-	int iVehicleID = message->popInt32();
+	int iVehicleID = message.popInt32();
 	cVehicle* vehicle = server.getVehicleFromID (iVehicleID);
 	if (vehicle == NULL)
 	{
@@ -539,7 +539,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 	sWaypoint* path = NULL;
 	sWaypoint* dest = NULL;
 	int iCount = 0;
-	int iReceivedCount = message->popInt16();
+	int iReceivedCount = message.popInt16();
 
 	if (iReceivedCount == 0)
 	{
@@ -549,9 +549,9 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 	while (iCount < iReceivedCount)
 	{
 		sWaypoint* waypoint = new sWaypoint;
-		waypoint->Y = message->popInt16();
-		waypoint->X = message->popInt16();
-		waypoint->Costs = message->popInt16();
+		waypoint->Y = message.popInt16();
+		waypoint->X = message.popInt16();
+		waypoint->Costs = message.popInt16();
 
 		if (!dest) dest = waypoint;
 
@@ -913,11 +913,11 @@ cClientMoveJob::~cClientMoveJob()
 	delete endMoveAction;
 }
 
-bool cClientMoveJob::generateFromMessage (cNetMessage* message)
+bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 {
-	if (message->iType != GAME_EV_MOVE_JOB_SERVER) return false;
+	if (message.iType != GAME_EV_MOVE_JOB_SERVER) return false;
 	int iCount = 0;
-	int iReceivedCount = message->popInt16();
+	int iReceivedCount = message.popInt16();
 
 	Log.write (" Client: Received MoveJob: VehicleID: " + iToStr (Vehicle->iID) + ", SrcX: " + iToStr (ScrX) + ", SrcY: " + iToStr (ScrY) + ", DestX: " + iToStr (DestX) + ", DestY: " + iToStr (DestY) + ", WaypointCount: " + iToStr (iReceivedCount), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -925,9 +925,9 @@ bool cClientMoveJob::generateFromMessage (cNetMessage* message)
 	while (iCount < iReceivedCount)
 	{
 		sWaypoint* waypoint = new sWaypoint;
-		waypoint->Y = message->popInt16();
-		waypoint->X = message->popInt16();
-		waypoint->Costs = message->popInt16();
+		waypoint->Y = message.popInt16();
+		waypoint->X = message.popInt16();
+		waypoint->Costs = message.popInt16();
 
 		waypoint->next = Waypoints;
 		Waypoints = waypoint;

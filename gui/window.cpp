@@ -104,12 +104,24 @@ void cWindow::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
+bool cWindow::handleNetMessage (cNetMessage& message)
+{
+	return false;
+}
+
+//------------------------------------------------------------------------------
 void cWindow::handleDeactivated (cApplication& application)
 {
 	if (activeApplication == &application)
 	{
 		activeApplication = nullptr;
 	}
+}
+
+//------------------------------------------------------------------------------
+void cWindow::handleRemoved (cApplication& application)
+{
+	assert (isClosing ());
 }
 
 //------------------------------------------------------------------------------

@@ -83,8 +83,9 @@ private:
 
 	cImage* colorImage;
 
-	std::shared_ptr<sPlayer> player;
+	std::shared_ptr<sPlayer> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;
+	std::string triedLoadMapName;
 	std::shared_ptr<cGameSettings> gameSettings;
 
 	std::shared_ptr<cTCP> network;
@@ -97,7 +98,9 @@ private:
 	void updateMap ();
 	void updatePlayerColor ();
 
-	void sendChatMessage (bool refocusChatLine);
+	void handleWantPlayerReadyChange (const std::shared_ptr<sPlayer>& player);
+
+	void triggerChatMessage (bool refocusChatLine);
 };
 
 #endif // gui_menu_windows_windownetworklobby_windownetworklobbyH

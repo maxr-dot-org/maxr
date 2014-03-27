@@ -20,7 +20,6 @@
 #include "localsingleplayergame.h"
 #include "../../../client.h"
 #include "../../../server.h"
-#include "../../../events.h"
 #include "../../../savegame.h"
 #include "../../../loaddata.h"
 

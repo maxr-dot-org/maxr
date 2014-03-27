@@ -26,9 +26,9 @@
 #include <sstream>
 #include <algorithm> // std::transform
 #include <cctype> // std::tolower
+#include <cassert>
 
 #include "defines.h"
-#include "events.h"
 #include "files.h"
 #include "log.h"
 #include "menuevents.h"
@@ -230,12 +230,10 @@ int mapSenderThreadFunction (void* data)
 
 //------------------------------------------------------------------------------
 cMapSender::cMapSender (cTCP& network_, int toSocket,
-						cEventHandling* eventHandling_,
 						const std::string& mapName,
 						const std::string& receivingPlayerName) :
 	network (&network_),
 	toSocket (toSocket),
-	eventHandling (eventHandling_),
 	receivingPlayerName (receivingPlayerName),
 	mapName (mapName),
 	mapSize (0),
@@ -346,12 +344,15 @@ void cMapSender::run()
 	// The EventHandler mechanism is used,
 	// because this code runs in another thread than the code,
 	// that must display the msg.
-	if (eventHandling)
-	{
-		cNetMessage* message = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
-		message->pushString (receivingPlayerName);
-		eventHandling->pushEvent (message);
-	}
+
+	// FIXME: may use a signal here? (and protect it by mutexes?!)
+
+	//if (eventHandling)
+	//{
+	//	cNetMessage* message = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
+	//	message->pushString (receivingPlayerName);
+	//	eventHandling->pushEvent (message);
+	//}
 }
 
 //------------------------------------------------------------------------------

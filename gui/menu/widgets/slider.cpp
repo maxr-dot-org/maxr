@@ -140,6 +140,7 @@ void cSlider::setValue (int value)
 {
 	if (settingValue) return; // prevent recursive endless loop
 
+	// block for scoped operation
 	{
 		settingValue = true;
 		auto reseter = makeScopedOperation ([&](){ settingValue = false; });

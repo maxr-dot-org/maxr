@@ -207,7 +207,7 @@ public:
 
 	sWaypoint* Waypoints;
 
-	static cServerMoveJob* generateFromMessage (cServer& server, cNetMessage* message);
+	static cServerMoveJob* generateFromMessage (cServer& server, cNetMessage& message);
 
 	bool calcPath();
 	void release();
@@ -246,7 +246,7 @@ public:
 
 	sWaypoint* Waypoints;
 
-	bool generateFromMessage (cNetMessage* message);
+	bool generateFromMessage (cNetMessage& message);
 
 	void release();
 	void handleNextMove (int iType, int iSavedSpeed);

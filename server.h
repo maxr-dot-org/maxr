@@ -18,7 +18,11 @@
  ***************************************************************************/
 #ifndef serverH
 #define serverH
+
+#include <vector>
+
 #include <SDL.h>
+
 #include "autoptr.h"
 #include "defines.h"
 #include "gametimer.h"
@@ -26,8 +30,7 @@
 #include "main.h" // for sID
 #include "map.h"
 #include "network.h"
-#include "ringbuffer.h"
-#include <vector>
+#include "utility/concurrentqueue.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -119,7 +122,7 @@ public:
 	*@param message The message to be prozessed
 	*@return 0 for success
 	*/
-	int handleNetMessage (cNetMessage* message);
+	int handleNetMessage (cNetMessage& message);
 
 	/**
 	 * gets the unit with the ID
@@ -177,7 +180,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param event The SDL_Event to be pushed.
 	*/
-	virtual void pushEvent (cNetMessage* event);
+	virtual void pushEvent (std::unique_ptr<cNetMessage> event) MAXR_OVERRIDE_FUNCTION;
 
 	/**
 	* sends a netMessage to the client
@@ -187,6 +190,7 @@ public:
 	*@param message The message to be send.
 	*@param iPlayerNum Number of player who should receive this event.
 	*/
+	// TODO: change AutoPtr to std::unique_ptr
 	void sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum = -1);
 
 	/**
@@ -309,16 +313,6 @@ private:
 
 	void defeatLoserPlayers();
 	bool isVictoryConditionMet() const;
-
-	/**
-	* returns a pointer to the next event of the eventqueue.
-	* If the queue is empty it will return NULL.
-	* the returned message and its data structures are valid
-	* until the next call of pollEvent()
-	*@author eiko
-	*@return the next net message or NULL if queue is empty
-	*/
-	cNetMessage* pollEvent();
 
 	void handleNetMessage_TCP_ACCEPT (cNetMessage& message);
 	void handleNetMessage_MU_MSG_CLAN (cNetMessage& message);
@@ -474,7 +468,7 @@ private:
 	/** little helper jobs, that do some time dependent actions */
 	cJobContainer helperJobs;
 	/** a list with all events for the server */
-	cRingbuffer<cNetMessage*> eventQueue;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 
 	/** the thread the server runs in */
 	SDL_Thread* serverThread;

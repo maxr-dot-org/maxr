@@ -28,13 +28,13 @@
 #include "gametimer.h"
 #include "main.h"
 #include "network.h"
+#include "utility/concurrentqueue.h"
 #include "utility/signal/signal.h"
 
 class cBuilding;
 class cCasualtiesTracker;
 class cClientAttackJob;
 class cClientMoveJob;
-class cEventHandling;
 class cFx;
 class cFxContainer;
 class cJob;
@@ -59,7 +59,7 @@ class cClient : public INetMessageReceiver
 	friend class cDebugOutput;
 	friend class cPlayer;
 public:
-	cClient (cServer* server, std::shared_ptr<cTCP> network, cEventHandling& eventHandling);
+	cClient (cServer* server, std::shared_ptr<cTCP> network);
 	~cClient();
 
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
@@ -68,8 +68,7 @@ public:
 	// Return local server if any.
 	// TODO: should be const cServer*
 	cServer* getServer() const { return server; }
-	cEventHandling& getEventHandling() { return *eventHandling; }
-	virtual void pushEvent (cNetMessage* message);
+	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
@@ -154,13 +153,15 @@ public:
 	*/
 	void doGameActions ();
 
+	void handleNetMessages ();
+
 	/**
 	* processes everything that is need for this netMessage
 	*@author alzi alias DoctorDeath
 	*@param message The netMessage to be handled.
 	*@return 0 for success
 	*/
-	int HandleNetMessage (cNetMessage* message);
+	int handleNetMessage (cNetMessage& message);
 
 	void addFx (std::shared_ptr<cFx> fx);
 
@@ -318,7 +319,7 @@ private:
 private:
 	cServer* server;
 	std::shared_ptr<cTCP> network;
-	cEventHandling* eventHandling;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 	/** the map */
 	AutoPtr<cMap> Map;
 	/** List with all players */

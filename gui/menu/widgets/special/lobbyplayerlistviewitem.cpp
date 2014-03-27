@@ -28,8 +28,8 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> pla
 {
 	assert (player != nullptr);
 
-	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (width - 10, 0), nullptr, SoundData.SNDHudButton));
-	signalConnectionManager.connect (readyImage->clicked, [&](){ player->setReady (!player->isReady ()); });
+	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (width - 10, 0)));
+	signalConnectionManager.connect (readyImage->clicked, [&](){ readyClicked(); });
 
 	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
 

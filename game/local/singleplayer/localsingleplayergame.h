@@ -28,7 +28,6 @@
 
 class cClient;
 class cServer;
-class cEventHandling;
 
 class cLocalSingleplayerGame : public cGame
 {
@@ -42,7 +41,6 @@ public:
 protected:
 	std::unique_ptr<cClient> client;
 	std::unique_ptr<cServer> server;
-	std::unique_ptr<cEventHandling> eventHandling;
 };
 
 #endif // game_local_singleplayer_localsingleplayergameH

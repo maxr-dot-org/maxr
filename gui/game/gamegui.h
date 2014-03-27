@@ -68,7 +68,7 @@ public:
 	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	virtual void handleDeactivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleRemoved (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void ()> terminated;
 protected:

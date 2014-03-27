@@ -20,6 +20,7 @@
 #define networkH
 #include <SDL_net.h>
 #include <string>
+#include <memory>
 #include "defines.h"
 #include "cmutex.h"
 
@@ -102,7 +103,7 @@ class INetMessageReceiver
 {
 public:
 	virtual ~INetMessageReceiver() {}
-	virtual void pushEvent (cNetMessage* message) = 0;
+	virtual void pushEvent (std::unique_ptr<cNetMessage> message) = 0;
 };
 
 //------------------------------------------------------------------------
@@ -216,7 +217,7 @@ private:
 	*/
 	void deleteSocket (int socketIndex);
 
-	void pushEvent (cNetMessage* message);
+	void pushEvent (std::unique_ptr<cNetMessage> message);
 
 	void pushEventTCP_Close (unsigned int socketIndex);
 

@@ -28,7 +28,6 @@
 #include "client.h"
 #include "clientevents.h"
 #include "clist.h"
-#include "events.h"
 #include "gametimer.h"
 #include "hud.h"
 #include "jobs.h"
@@ -39,7 +38,6 @@
 #include "netmessage.h"
 #include "network.h"
 #include "player.h"
-#include "ringbuffer.h"
 #include "savegame.h"
 #include "serverevents.h"
 #include "settings.h"
@@ -100,11 +98,6 @@ cServer::~cServer()
 		{
 			network->close (PlayerList[i]->getSocketNum());
 		}
-	}
-
-	while (eventQueue.size())
-	{
-		delete eventQueue.read();
 	}
 
 	for (size_t i = 0; i != AJobs.size(); ++i)
@@ -213,19 +206,9 @@ void cServer::setDeadline (int iDeadline)
 }
 
 //------------------------------------------------------------------------------
-cNetMessage* cServer::pollEvent()
+void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 {
-	if (eventQueue.size() <= 0)
-	{
-		return NULL;
-	}
-	return eventQueue.read();
-}
-
-//------------------------------------------------------------------------------
-void cServer::pushEvent (cNetMessage* message)
-{
-	eventQueue.write (message);
+	eventQueue.push (std::move(message));
 }
 
 //------------------------------------------------------------------------------
@@ -246,7 +229,7 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
 		if (network)
 			network->send (message->iLength, message->data);
 		for (size_t i = 0; i != localClients.size(); ++i)
-			localClients[i]->pushEvent (new cNetMessage (*message));
+			localClients[i]->pushEvent (std::make_unique<cNetMessage> (*message));
 		return;
 	}
 
@@ -264,7 +247,7 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
 		{
 			if (localClients[i]->getActivePlayer().getNr() == iPlayerNum)
 			{
-				localClients[i]->pushEvent (message.Release());
+				localClients[i]->pushEvent (std::unique_ptr<cNetMessage>(message.Release()));
 				break;
 			}
 		}
@@ -281,11 +264,10 @@ void cServer::run()
 {
 	while (!bExit)
 	{
-		AutoPtr<cNetMessage> event (pollEvent());
-
-		if (event != NULL)
+		std::unique_ptr<cNetMessage> message;
+		if (eventQueue.try_pop (message))
 		{
-			handleNetMessage (event.get());
+			handleNetMessage (*message);
 			checkPlayerUnits();
 		}
 
@@ -297,7 +279,7 @@ void cServer::run()
 		}
 
 		// nothing done
-		if (!event && lastTime == gameTimer.gameTime)
+		if (!message && lastTime == gameTimer.gameTime)
 		{
 			SDL_Delay (10);
 		}
@@ -512,7 +494,7 @@ void cServer::handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MOVE_JOB_CLIENT);
 
-	cServerMoveJob* MoveJob = cServerMoveJob::generateFromMessage (*this, &message);
+	cServerMoveJob* MoveJob = cServerMoveJob::generateFromMessage (*this, message);
 	if (!MoveJob)
 	{
 		return;
@@ -2108,74 +2090,74 @@ void cServer::handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-int cServer::handleNetMessage (cNetMessage* message)
+int cServer::handleNetMessage (cNetMessage& message)
 {
-	if (message->iType != NET_GAME_TIME_CLIENT)
+	if (message.iType != NET_GAME_TIME_CLIENT)
 	{
-		Log.write ("Server: <-- Player " + iToStr (message->iPlayerNr) + " "
-				   + message->getTypeAsString ()
+		Log.write ("Server: <-- Player " + iToStr (message.iPlayerNr) + " "
+				   + message.getTypeAsString ()
 				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
-				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+				   + ", Hexdump: " + message.getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	switch (message->iType)
+	switch (message.iType)
 	{
-		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (*message); break;
-		case MU_MSG_CLAN: handleNetMessage_MU_MSG_CLAN (*message); break;
-		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (*message); break;
-		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (*message); break;
-		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (*message); break;
-		case MU_MSG_READY_TO_START: handleNetMessage_MU_MSG_READY_TO_START (*message); break;
+		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (message); break;
+		case MU_MSG_CLAN: handleNetMessage_MU_MSG_CLAN (message); break;
+		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (message); break;
+		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (message); break;
+		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (message); break;
+		case MU_MSG_READY_TO_START: handleNetMessage_MU_MSG_READY_TO_START (message); break;
 
 		case TCP_CLOSE: // Follow
 		case GAME_EV_WANT_DISCONNECT:
-			handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (*message);
+			handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (message);
 			break;
-		case GAME_EV_CHAT_CLIENT: handleNetMessage_GAME_EV_CHAT_CLIENT (*message); break;
-		case GAME_EV_WANT_TO_END_TURN: handleNetMessage_GAME_EV_WANT_TO_END_TURN (*message); break;
-		case GAME_EV_WANT_START_WORK: handleNetMessage_GAME_EV_WANT_START_WORK (*message); break;
-		case GAME_EV_WANT_STOP_WORK: handleNetMessage_GAME_EV_WANT_STOP_WORK (*message); break;
-		case GAME_EV_MOVE_JOB_CLIENT: handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (*message); break;
-		case GAME_EV_WANT_STOP_MOVE: handleNetMessage_GAME_EV_WANT_STOP_MOVE (*message); break;
-		case GAME_EV_MOVEJOB_RESUME: handleNetMessage_GAME_EV_MOVEJOB_RESUME (*message); break;
-		case GAME_EV_WANT_ATTACK: handleNetMessage_GAME_EV_WANT_ATTACK (*message); break;
-		case GAME_EV_ATTACKJOB_FINISHED: handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (*message); break;
-		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (*message); break;
-		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (*message); break;
-		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (*message); break;
-		case GAME_EV_WANT_STOP_BUILDING: handleNetMessage_GAME_EV_WANT_STOP_BUILDING (*message); break;
-		case GAME_EV_WANT_TRANSFER: handleNetMessage_GAME_EV_WANT_TRANSFER (*message); break;
-		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (*message); break;
-		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (*message); break;
-		case GAME_EV_CHANGE_RESOURCES: handleNetMessage_GAME_EV_CHANGE_RESOURCES (*message); break;
-		case GAME_EV_WANT_CHANGE_MANUAL_FIRE: handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (*message); break;
-		case GAME_EV_WANT_CHANGE_SENTRY: handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (*message); break;
-		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (*message); break;
-		case GAME_EV_WANT_SUPPLY: handleNetMessage_GAME_EV_WANT_SUPPLY (*message); break;
-		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (*message); break;
-		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (*message); break;
-		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (*message); break;
-		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (*message); break;
-		case GAME_EV_IDENTIFICATION: handleNetMessage_GAME_EV_IDENTIFICATION (*message); break;
-		case GAME_EV_RECON_SUCCESS: handleNetMessage_GAME_EV_RECON_SUCCESS (*message); break;
-		case GAME_EV_WANT_LOAD: handleNetMessage_GAME_EV_WANT_LOAD (*message); break;
-		case GAME_EV_WANT_EXIT: handleNetMessage_GAME_EV_WANT_EXIT (*message); break;
-		case GAME_EV_REQUEST_RESYNC: handleNetMessage_GAME_EV_REQUEST_RESYNC (*message); break;
-		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (*message); break;
-		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (*message); break;
-		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (*message); break;
-		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (*message); break;
-		case GAME_EV_WANT_COM_ACTION: handleNetMessage_GAME_EV_WANT_COM_ACTION (*message); break;
-		case GAME_EV_SAVE_HUD_INFO: handleNetMessage_GAME_EV_SAVE_HUD_INFO (*message); break;
-		case GAME_EV_SAVE_REPORT_INFO: handleNetMessage_GAME_EV_SAVE_REPORT_INFO (*message); break;
-		case GAME_EV_FIN_SEND_SAVE_INFO: handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (*message); break;
-		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (*message); break;
-		case GAME_EV_WANT_SELFDESTROY: handleNetMessage_GAME_EV_WANT_SELFDESTROY (*message); break;
-		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (*message); break;
-		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (*message); break;
-		case NET_GAME_TIME_CLIENT: gameTimer.handleSyncMessage (*message); break;
+		case GAME_EV_CHAT_CLIENT: handleNetMessage_GAME_EV_CHAT_CLIENT (message); break;
+		case GAME_EV_WANT_TO_END_TURN: handleNetMessage_GAME_EV_WANT_TO_END_TURN (message); break;
+		case GAME_EV_WANT_START_WORK: handleNetMessage_GAME_EV_WANT_START_WORK (message); break;
+		case GAME_EV_WANT_STOP_WORK: handleNetMessage_GAME_EV_WANT_STOP_WORK (message); break;
+		case GAME_EV_MOVE_JOB_CLIENT: handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (message); break;
+		case GAME_EV_WANT_STOP_MOVE: handleNetMessage_GAME_EV_WANT_STOP_MOVE (message); break;
+		case GAME_EV_MOVEJOB_RESUME: handleNetMessage_GAME_EV_MOVEJOB_RESUME (message); break;
+		case GAME_EV_WANT_ATTACK: handleNetMessage_GAME_EV_WANT_ATTACK (message); break;
+		case GAME_EV_ATTACKJOB_FINISHED: handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (message); break;
+		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (message); break;
+		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
+		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
+		case GAME_EV_WANT_STOP_BUILDING: handleNetMessage_GAME_EV_WANT_STOP_BUILDING (message); break;
+		case GAME_EV_WANT_TRANSFER: handleNetMessage_GAME_EV_WANT_TRANSFER (message); break;
+		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;
+		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (message); break;
+		case GAME_EV_CHANGE_RESOURCES: handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
+		case GAME_EV_WANT_CHANGE_MANUAL_FIRE: handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (message); break;
+		case GAME_EV_WANT_CHANGE_SENTRY: handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (message); break;
+		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
+		case GAME_EV_WANT_SUPPLY: handleNetMessage_GAME_EV_WANT_SUPPLY (message); break;
+		case GAME_EV_WANT_VEHICLE_UPGRADE: handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (message); break;
+		case GAME_EV_WANT_START_CLEAR: handleNetMessage_GAME_EV_WANT_START_CLEAR (message); break;
+		case GAME_EV_WANT_STOP_CLEAR: handleNetMessage_GAME_EV_WANT_STOP_CLEAR (message); break;
+		case GAME_EV_ABORT_WAITING: handleNetMessage_GAME_EV_ABORT_WAITING (message); break;
+		case GAME_EV_IDENTIFICATION: handleNetMessage_GAME_EV_IDENTIFICATION (message); break;
+		case GAME_EV_RECON_SUCCESS: handleNetMessage_GAME_EV_RECON_SUCCESS (message); break;
+		case GAME_EV_WANT_LOAD: handleNetMessage_GAME_EV_WANT_LOAD (message); break;
+		case GAME_EV_WANT_EXIT: handleNetMessage_GAME_EV_WANT_EXIT (message); break;
+		case GAME_EV_REQUEST_RESYNC: handleNetMessage_GAME_EV_REQUEST_RESYNC (message); break;
+		case GAME_EV_WANT_BUY_UPGRADES: handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (message); break;
+		case GAME_EV_WANT_BUILDING_UPGRADE: handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (message); break;
+		case GAME_EV_WANT_RESEARCH_CHANGE: handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (message); break;
+		case GAME_EV_AUTOMOVE_STATUS: handleNetMessage_GAME_EV_AUTOMOVE_STATUS (message); break;
+		case GAME_EV_WANT_COM_ACTION: handleNetMessage_GAME_EV_WANT_COM_ACTION (message); break;
+		case GAME_EV_SAVE_HUD_INFO: handleNetMessage_GAME_EV_SAVE_HUD_INFO (message); break;
+		case GAME_EV_SAVE_REPORT_INFO: handleNetMessage_GAME_EV_SAVE_REPORT_INFO (message); break;
+		case GAME_EV_FIN_SEND_SAVE_INFO: handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (message); break;
+		case GAME_EV_REQUEST_CASUALTIES_REPORT: handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (message); break;
+		case GAME_EV_WANT_SELFDESTROY: handleNetMessage_GAME_EV_WANT_SELFDESTROY (message); break;
+		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
+		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (message); break;
+		case NET_GAME_TIME_CLIENT: gameTimer.handleSyncMessage (message); break;
 		default:
-			Log.write ("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("Server: Can not handle message, type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 			break;
 	}
 

@@ -23,7 +23,6 @@
 #include "../../../gui/game/gamegui.h"
 #include "../../../client.h"
 #include "../../../server.h"
-#include "../../../events.h"
 #include "../../../player.h"
 #include "../../../clientevents.h"
 
@@ -40,9 +39,8 @@ void cNetworkHostGameNew::start (cApplication& application)
 {
 	assert (gameSettings != nullptr);
 
-	eventHandling = std::make_unique<cEventHandling> ();
 	server = std::make_unique<cServer> (network);
-	localClient = std::make_unique<cClient> (server.get(), nullptr, *eventHandling);
+	localClient = std::make_unique<cClient> (server.get(), nullptr);
 
 	std::vector<sPlayer> clientPlayers;
 	for (size_t i = 0; i < players.size (); ++i)

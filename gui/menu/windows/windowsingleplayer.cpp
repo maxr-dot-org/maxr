@@ -40,7 +40,6 @@
 #include "../../../client.h"
 #include "../../../server.h"
 #include "../../../menus.h"
-#include "../../../events.h"
 
 #include "../../../clientevents.h"
 

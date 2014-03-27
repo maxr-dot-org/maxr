@@ -24,8 +24,9 @@
 
 #include <vector>
 #include <memory>
-#include <stack>
 
+#include "../network.h"
+#include "../utility/concurrentqueue.h"
 #include "../utility/signal/signalconnectionmanager.h"
 #include "../input/mouse/mousebuttontype.h"
 
@@ -36,10 +37,11 @@ class cWindow;
 class cPosition;
 class cGame;
 
-class cApplication
+class cApplication : public INetMessageReceiver
 {
 public:
 	cApplication ();
+	~cApplication ();
 
 	void execute ();
 
@@ -61,8 +63,11 @@ public:
 
 	cMouse* getActiveMouse ();
 	cKeyboard* getActiveKeyboard ();
+
+	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 private:
-	std::stack<std::shared_ptr<cWindow>> modalWindows;
+	std::vector<std::shared_ptr<cWindow>> modalWindows;
+	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 
 	bool terminate;
 
@@ -95,6 +100,8 @@ private:
 	void textEntered (cKeyboard& keyboard, const char* text);
 
 	void assignKeyFocus (cWidget* widget);
+
+	void handleNetMessage (cNetMessage& message);
 };
 
 //------------------------------------------------------------------------------
@@ -108,9 +115,9 @@ WindowType* cApplication::show (std::shared_ptr<WindowType> window, bool centere
 		center (*window);
 	}
 
-	modalWindows.push (std::move (window));
+	modalWindows.push_back (std::move (window));
 
-	return static_cast<WindowType*>(modalWindows.top ().get ());
+	return static_cast<WindowType*>(modalWindows.back ().get ());
 }
 
 #endif // gui_applicationH

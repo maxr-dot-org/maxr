@@ -36,7 +36,6 @@
 #include "buildings.h"
 #include "clans.h"
 #include "dedicatedserver.h"
-#include "events.h"
 #include "files.h"
 #include "keys.h"
 #include "loaddata.h"

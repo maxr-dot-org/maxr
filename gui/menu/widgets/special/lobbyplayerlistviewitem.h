@@ -24,6 +24,7 @@
 
 #include "../abstractlistviewitem.h"
 #include "../../../../main.h"
+#include "../../../../utility/signal/signal.h"
 #include "../../../../utility/signal/signalconnectionmanager.h"
 
 class cImage;
@@ -37,6 +38,7 @@ public:
 
 	const std::shared_ptr<sPlayer>& getPlayer () const;
 
+	cSignal<void ()> readyClicked;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
