@@ -29,10 +29,11 @@
 * Checks whether a file exists or not
 * @author beko
 * @param path Filename to check for
+* @param silent Bool to prevent log message on false
 * @return true if exists (as in readable)
 * @return false if does not exist (as in not readable)
 */
-bool FileExists (const char* path);
+bool FileExists (const char* path, bool silent = false);
 
 /**
 * Checks whether a directory exists.

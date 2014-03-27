@@ -45,13 +45,15 @@
 //--------------------------------------------------------------
 /** @return exists a file at path */
 //--------------------------------------------------------------
-bool FileExists (const char* path)
+bool FileExists (const char* path, bool silent)
 {
 	SDL_RWops* file = SDL_RWFromFile (path, "r");
 
 	if (file == NULL)
 	{
-		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+		if(silent == false){
+			Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+		}
 		return false;
 	}
 	SDL_RWclose (file);
@@ -82,7 +84,7 @@ bool DirExists (const std::string& path)
 	}
 	else return false;
 #else
-	return FileExists (path.c_str()); // on linux everything is a file
+	return FileExists (path.c_str(), true); // on linux everything is a file
 #endif
 }
 
