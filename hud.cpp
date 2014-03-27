@@ -2730,7 +2730,7 @@ void cGameGUI::doCommand (const string& cmd)
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		cPlayer* serverPlayer = nullptr;
+		cPlayer* serverPlayer = 0;
 		if(cmd.length() > 8)
 		{
 			serverPlayer = server->getPlayerFromString(cmd.substr(9));
