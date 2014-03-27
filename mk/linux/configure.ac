@@ -1,19 +1,21 @@
 AC_INIT([maxr], [0.2.8], [bugs@maxr.org])
-AC_PREREQ(2.61)
+AC_PREREQ(2.64)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_AUX_DIR([build-aux])
-AC_PROG_SED
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-AC_PROG_CC
-AC_LANG_CPLUSPLUS
-AC_PROG_CXX
-AC_PROG_AWK
+AC_CONFIG_MACRO_DIR([m4])
+m4_include([m4/ax_cxx_compile_stdcxx_11.m4])
+AC_GNU_SOURCE
+AM_INIT_AUTOMAKE([foreign])
 AC_PROG_LIBTOOL
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
-	Makefile
-	src/Makefile
+        Makefile
+        src/Makefile
 ])
+
+AC_LANG([C++])
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_11(, [mandatory])
 
 AC_ARG_ENABLE([dedicated],
 	AS_HELP_STRING([--enable-dedicated], [Build as dedicted server version]))
