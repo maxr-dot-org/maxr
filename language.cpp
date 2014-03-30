@@ -127,7 +127,7 @@ std::string cLanguage::i18n (const std::string& szMainText, const std::string& s
 int cLanguage::ReadLanguagePack()
 {
 	// First let's load the English language pack and use it as master
-	if (ReadLanguagePackHeader() != 0)
+	if (ReadLanguagePackFooter() != 0)
 	{
 		return -1;
 	}
@@ -195,7 +195,7 @@ int cLanguage::ReadLanguagePack()
 		m_bErrorMsgTranslationLoaded = true;
 		return 0;
 	}
-	if (ReadLanguagePackHeader (m_szLanguage) != 0)
+	if (ReadLanguagePackFooter (m_szLanguage) != 0)
 	{
 		return -1;
 	}
@@ -342,12 +342,12 @@ int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
 //child = child->NextSibling() )
 /////////////
 
-int cLanguage::ReadLanguagePackHeader()
+int cLanguage::ReadLanguagePackFooter()
 {
-	return ReadLanguagePackHeader ("");
+	return ReadLanguagePackFooter ("");
 }
 
-int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
+int cLanguage::ReadLanguagePackFooter (const std::string& strLanguageCode)
 {
 	XMLElement* xmlElement = NULL;
 	std::string strErrorMsg;
@@ -381,7 +381,7 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 	}
 
 	// Who is responsible for the file ? (Who is to blame in case of errors?)
-	xmlElement = XmlGetFirstElement (m_XmlDoc, XNP_MAX_LANG_FILE_HEADER_AUTHOR);
+	xmlElement = XmlGetFirstElement (m_XmlDoc, XNP_MAX_LANG_FILE_FOOTER_AUTHOR);
 	if (xmlElement == NULL)
 	{
 		strErrorMsg = "Language file (" + szLanguageCode + "): missing author node!";
@@ -431,7 +431,7 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 		m_bLeftToRight = true;
 	}
 
-	xmlElement = XmlGetFirstElement (m_XmlDoc, XNP_MAX_LANG_FILE_HEADER_GAMEVERSION);
+	xmlElement = XmlGetFirstElement (m_XmlDoc, XNP_MAX_LANG_FILE_FOOTER_GAMEVERSION);
 	if (xmlElement == NULL)
 	{
 		strErrorMsg = "Language file (" + szLanguageCode + "): missing game version node!";

@@ -41,9 +41,9 @@
 
 // With NULL as ending sign
 #define XNP_MAX_LANG_FILE "MAX_Language_File", NULL
-#define XNP_MAX_LANG_FILE_HEADER_AUTHOR "MAX_Language_File", "Header", "Author", NULL
-#define XNP_MAX_LANG_FILE_HEADER_AUTHOR_EDITOR "MAX_Language_File", "Header", "Author", "Editor", NULL
-#define XNP_MAX_LANG_FILE_HEADER_GAMEVERSION "MAX_Language_File", "Header", "Game_Version", NULL
+#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR "MAX_Language_File", "Footer", "Author", NULL
+#define XNP_MAX_LANG_FILE_FOOTER_AUTHOR_EDITOR "MAX_Language_File", "Footer", "Author", "Editor", NULL
+#define XNP_MAX_LANG_FILE_FOOTER_GAMEVERSION "MAX_Language_File", "Footer", "Game_Version", NULL
 #define XNP_MAX_LANG_FILE_TEXT "MAX_Language_File", "Text", NULL
 #define XNP_MAX_LANG_FILE_GRAPHIC "MAX_Language_File", "Graphic", NULL
 #define XNP_MAX_LANG_FILE_SPEECH "MAX_Language_File", "Speech", NULL
@@ -77,8 +77,8 @@ private:
 
 	int         ReadSingleTranslation (const char* pszCurrent, ...);
 	std::string ReadSingleTranslation (const std::string& strInput);
-	int         ReadLanguagePackHeader();
-	int         ReadLanguagePackHeader (const std::string& strLanguageCode);
+	int         ReadLanguagePackFooter();
+	int         ReadLanguagePackFooter (const std::string& strLanguageCode);
 	int         ReadLanguageMaster();
 	int         ReadRecursiveLanguagePack (tinyxml2::XMLElement* xmlElement, std::string strNodePath);
 
