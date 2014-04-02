@@ -1797,14 +1797,10 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		// Infiltrators: manual action from unit-menu
-		// disable vs. vehicle/building
+		// Infiltrators: manual disable vs. unit
 		else if (selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
-			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false)
-				&& (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false)
-				&& (!overUnitField->getBuilding() || overUnitField->getBuilding()->isDisabled() == false)
-			   )
+			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false))
 			{
 				selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 			}
@@ -1813,7 +1809,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		// steal vs. vehicle
+		// Infiltrators: manual steal vs. unit
 		else if (selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
 			if (selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), true))
@@ -1825,19 +1821,12 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		// Infiltrators: auto-action
-		// no disable vs. disabled building
-		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false) && overUnitField->getBuilding() && overUnitField->getBuilding()->isDisabled())
-		{
-			mouse->SetCursor (CNo);
-		}
-		// vehicle can be disabled, and if it is ...
-		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false) && (!overUnitField->getVehicle() || overUnitField->getVehicle()->isDisabled() == false))
+		// Infiltrators: autoselected disable vs. vehicle/building
+		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), false))
 		{
 			selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, false);
 		}
-		// ... disabled (the) vehicle can be stolen
-		// (without selecting the 'steal' from menu)
+		// Infiltrators: autoselected steal vs. vehicle/building
 		else if (selectedVehicle && selectedVehicle->owner == &client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, *client->getMap(), true))
 		{
 			selectedVehicle->drawCommandoCursor (*this, mouseMapX, mouseMapY, true);

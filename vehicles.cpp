@@ -1655,19 +1655,33 @@ bool cVehicle::clearMine (cServer& server)
 //-----------------------------------------------------------------------------
 bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) const
 {
-	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
-		return false;
-
-	if (isNextTo (x, y) == false || data.shotsCur == 0)
-		return false;
-
 	int off = map.getOffset (x, y);
-	const cUnit* vehicle  = map.fields[off].getVehicle();
-	const cUnit* building = map.fields[off].getBuilding();
-	const cUnit* unit = vehicle ? vehicle : building;
 
+	const cUnit* unit  = map.fields[off].getPlane();
+	if (canDoCommandoAction(unit, steal)) return true;
+
+	unit  = map.fields[off].getVehicle();
+	if (canDoCommandoAction(unit, steal)) return true;
+
+	unit = map.fields[off].getBuilding();
+	if (canDoCommandoAction(unit, steal)) return true;
+
+	return false;
+}
+	
+
+bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
+{
 	if (unit == NULL) return false;
 
+	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
+		return false;
+	if (data.shotsCur == 0) return false;
+
+	if (unit->isNextTo(PosX, PosY) == false)
+		return false;
+
+	if (steal == false && unit->isDisabled()) return false;
 	if (unit->isABuilding() && unit->owner == 0) return false;   // rubble
 	if (steal && unit->data.canBeCaptured == false) return false;
 	if (steal == false && unit->data.canBeDisabled == false) return false;
@@ -1676,6 +1690,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) c
 	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
 	return true;
+
 }
 
 //-----------------------------------------------------------------------------

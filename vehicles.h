@@ -218,6 +218,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	bool canDoCommandoAction (int x, int y, const cMap& map, bool steal) const;
+	bool canDoCommandoAction (const cUnit* unit, bool steal) const;
 	/**
 	* draws the commando curser for stealing or disabling
 	* with the calculated chance
