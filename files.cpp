@@ -51,7 +51,8 @@ bool FileExists (const char* path, bool silent)
 
 	if (file == NULL)
 	{
-		if(silent == false){
+		if (silent == false)
+		{
 			Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		}
 		return false;

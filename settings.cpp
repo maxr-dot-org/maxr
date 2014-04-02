@@ -1593,7 +1593,7 @@ void cSettings::setSavesPath (const char* savesPath, bool save)
 	this->savesPath = savesPath;
 	if (save) saveSetting ("Options~Game~Paths~Saves", savesPath);
 	if (save) saveSetting ("Options~Game~Paths~SavesHint", "replace saves with an absolut path if you need a different location to store your save files");
-	// TODO / FIXME add the hint to manual.pdf and remove it afterwards from the save process 
+	// TODO / FIXME add the hint to manual.pdf and remove it afterwards from the save process
 }
 
 //------------------------------------------------------------------------------

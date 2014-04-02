@@ -2731,19 +2731,19 @@ void cGameGUI::doCommand (const string& cmd)
 			return;
 		}
 		cPlayer* serverPlayer = 0;
-		if(cmd.length() > 8)
+		if (cmd.length() > 8)
 		{
-			serverPlayer = server->getPlayerFromString(cmd.substr(9));
+			serverPlayer = server->getPlayerFromString (cmd.substr (9));
 		}
 		else
 		{
-			serverPlayer = server->getPlayerFromNumber(player.getNr());
+			serverPlayer = server->getPlayerFromNumber (player.getNr());
 		}
-		if(serverPlayer)
+		if (serverPlayer)
 		{
-			sendChatMessageToClient(*server, "Server entered command: '" + cmd + "'", USER_MESSAGE);
+			sendChatMessageToClient (*server, "Server entered command: '" + cmd + "'", USER_MESSAGE);
 			serverPlayer->revealMap();
-			sendRevealMap(*server, serverPlayer->getNr());
+			sendRevealMap (*server, serverPlayer->getNr());
 		}
 	}
 	else if (cmd.compare ("/survey") == 0)

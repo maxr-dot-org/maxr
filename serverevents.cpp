@@ -1046,9 +1046,9 @@ void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int de
 }
 
 //------------------------------------------------------------------------------
-void sendRevealMap(cServer& server, int player)
+void sendRevealMap (cServer& server, int player)
 {
-	AutoPtr<cNetMessage> message(new cNetMessage(GAME_EV_REVEAL_MAP));
+	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_REVEAL_MAP));
 
-	server.sendNetMessage(message, player);
+	server.sendNetMessage (message, player);
 }

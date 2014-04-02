@@ -289,7 +289,7 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.bridgeHead = (eSettingsBridgeHead) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("AlienTech")) gameSetting.alienTech = (eSettingsAlienTech) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.clans = (eSettingsClans) e->IntAttribute ("num");
-	if (XMLElement* e = gameInfoNode->FirstChildElement ("Hotseat")) gameSetting.hotseat = e->BoolAttribute("YN");
+	if (XMLElement* e = gameInfoNode->FirstChildElement ("Hotseat")) gameSetting.hotseat = e->BoolAttribute ("YN");
 	//if (XMLElement* e = gameInfoNode->FirstChildElement ("GameType")) gameSetting.gameType = (eSettingsGameType) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType")) gameSetting.victoryType = (eSettingsVictoryType) e->IntAttribute ("num");
 	if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.duration = e->IntAttribute ("num");

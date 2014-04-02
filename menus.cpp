@@ -1009,7 +1009,7 @@ static int RunHostGamePreparation (std::vector<cClient*>& clients, cStaticMap& m
 	return 1;
 }
 
-static bool RunHotSeatGame(cServer& server, const std::vector<cClient*>& clients)
+static bool RunHotSeatGame (cServer& server, const std::vector<cClient*>& clients)
 {
 	// TODO while game is not finished
 	while (true)
@@ -1154,9 +1154,9 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	// and now set sockets, playernumbers and colors
 	for (size_t i = 0; i != serverPlayerList.size(); ++i)
 	{
-		splayers.push_back(new sPlayer (serverPlayerList[i]->getName(),
-										serverPlayerList[i]->getColor(),
-										serverPlayerList[i]->getNr()));
+		splayers.push_back (new sPlayer (serverPlayerList[i]->getName(),
+										 serverPlayerList[i]->getColor(),
+										 serverPlayerList[i]->getNr()));
 		splayers[i]->setLocal();
 		serverPlayerList[i]->setLocal();
 	}
@@ -1178,7 +1178,7 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	{
 		cClient& client = *clients[i];
 		client.getGameGUI().setHotSeatClients (clients);
-		if (client.getActivePlayer().getNr() != int(activePlayer)) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+		if (client.getActivePlayer().getNr() != int (activePlayer)) client.enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	}
 	for (size_t i = 0, size = splayers.size(); i != size; ++i)
 		delete splayers[i];
@@ -2563,7 +2563,7 @@ void cLandingMenu::handleNetMessage_MU_MSG_RESELECT_LANDING (cNetMessage& messag
 	if (landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
 	else if (landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
 	canClick = landingState == LANDING_POSITION_TOO_CLOSE
-		|| landingState == LANDING_POSITION_WARNING;
+			   || landingState == LANDING_POSITION_WARNING;
 
 	draw();
 	mouseMoved (this); // update cursor
@@ -2657,7 +2657,8 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	AutoSurface playerHumanSurface (LoadPCX (GFXOD_PLAYER_HUMAN));
 	AutoSurface playerPCSurface (LoadPCX (GFXOD_PLAYER_PC));
 	AutoSurface playerNoneSurface (LoadPCX (GFXOD_PLAYER_NONE));
-	SDL_Surface* const playerSurfaces[3] = {
+	SDL_Surface* const playerSurfaces[3] =
+	{
 		playerHumanSurface,
 		playerPCSurface,
 		playerNoneSurface
@@ -2700,7 +2701,7 @@ void cHotSeatMenu::choosePlayerType (int player, ePlayerType playerType)
 	playerTypeImages[player][1]->hide();
 	playerTypeImages[player][2]->hide();
 
-	playerTypeImages[player][int(playerType)]->unhide();
+	playerTypeImages[player][int (playerType)]->unhide();
 
 	okButton->setLocked (true);
 	for (int i = 0; i != 4; ++i)

@@ -278,8 +278,8 @@ private:
 	void HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_SET_GAME_TIME(cNetMessage& message);
-	void HandleNetMessage_GAME_EV_REVEAL_MAP(cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 
 private:
 	cServer* server;
