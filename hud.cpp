@@ -2410,7 +2410,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
 				{
 					if (overVehicle) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, true);
-					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, true);
+					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overPlane->iID, true, true);
 				}
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle)
 				{
