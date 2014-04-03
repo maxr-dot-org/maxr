@@ -170,7 +170,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// make landing and take off of planes
-	if (data.factorAir > 0 && gameGUI.timer50ms)
+	if (data.factorAir > 0 && gameGUI.timer50ms && !isDisabled())
 	{
 		if (canLand (*gameGUI.getClient()->getMap()))
 		{
