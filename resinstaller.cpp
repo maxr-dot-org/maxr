@@ -2446,7 +2446,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "torpedo.pcx" )
 
-
+#if 0
 // start iMuzzleTypes for alien units
 	// alien tank plasma ball
 	try
@@ -2506,7 +2506,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "alien_missle.pcx" )
 // end iMuzzleTypes for alien units
-
+#endif
 	// saveload.flc
 	copyFile( sMAXPath + "SAVELOAD.FLC", path + "saveload.flc" );
 
@@ -4168,26 +4168,53 @@ bool validateOutputPath (string& outputPath)
 	return false;
 }
 
-bool gNewGrafic = false;
+
+string validateRessources ( string zChoices )
+{
+	if ( zChoices.find("all") != string::npos )
+	{
+		zChoices = "0123456789ab";
+	}
+	if ( zChoices.find("z") != string::npos )
+	{
+		zChoices = "012345b";
+	}
+	return zChoices;
+}
+
 
 void getResChoiceFromUser()
 {
 	string sChoiceFromUser = "";
+	// what kind of ressources should the resinstaller import into M.A.X. Reloaded
+	cout << "What kind of ressources should the resinstaller import into your M.A.X. Reloaded installation?" << endl;
+	cout << "========================================================================" << endl;
+	cout << "All Ressources       (all)" << endl;
+	cout << "==========================" << endl;
+	cout << "Building Sounds        (0)" << endl;
+	cout << "Vehicle Sounds         (1)" << endl;
+	cout << "Voices                 (2)" << endl;
+	cout << "Sounds                 (3)" << endl;
+	cout << "Music                  (4)" << endl;
+	cout << "Movies                 (5)" << endl;
+	cout << "FX                     (6)" << endl;
+	cout << "GFX                    (7)" << endl;
+	cout << "Vehicle Videos         (8)" << endl;
+	cout << "Vehicle Graphics       (9)" << endl;
+	cout << "Building Graphics      (a)" << endl;
+	cout << "Maps                   (b)" << endl;
+	cout << "==========================" << endl;
+	cout << "All but no old Graphic (z)" << endl;
+	cout << "==========================" << endl;
+	cout << "Example: Type \"0123458b\", \"all\" or \"z\" without the \"" << endl;
 
-	// use original MAX graphics?
-	cout << "Would you like to use the new M.A.X. Reloaded graphics? Type y for yes." << endl;
-	getline(cin, sChoiceFromUser);
-	writeLog("sChoiceFromUser from command line: " + sChoiceFromUser + TEXT_FILE_LF);
-	sChoiceFromUser = toupper(sChoiceFromUser[0]);
-	writeLog("sChoiceFromUser from command line: toupper " + sChoiceFromUser + TEXT_FILE_LF);
-	if(sChoiceFromUser != "Y")
-	{
-		gNewGrafic = false;
-	}
-	else
-	{
-		gNewGrafic = true;
-	}
+	getline(cin, sChoiceFromUser); // get user input
+	for(unsigned int i = 0; i < (sChoiceFromUser.length()); i++)
+		{
+		// convert string into lowercase
+		sChoiceFromUser[i] = tolower(sChoiceFromUser[i]);
+		}
+	sResChoice = validateRessources(sChoiceFromUser); // call validate function
 }
 
 //-------------------------------------------------------------
@@ -4314,28 +4341,139 @@ bool gFinishedInstalling = false; // MAC: needed as flag, for closing the proges
 int installEverything (void*)
 {
 	gFinishedInstalling = false;
-	installBuildingSounds ();
-	installVehicleSounds ();
 
-	if(!(gNewGrafic))
+	if ( sResChoice.find("0") != string::npos )
+	{
+		installBuildingSounds ();
+	}
+	else
+	{
+		cout << "Skip Building Sounds" << endl;
+		writeLog( string("Skip Building Sounds") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("1") != string::npos )
+	{
+		installVehicleSounds ();
+	}
+	else
+	{
+		cout << "Skip Vehicle Sounds" << endl;
+		writeLog( string("Skip Vehicle Sounds") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("2") != string::npos )
+	{
+		installVoices ();
+	}
+	else
+	{
+		cout << "Skip Voices" << endl;
+		writeLog( string("Skip Voices") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("3") != string::npos )
+	{
+		installSounds ();
+	}
+	else
+	{
+		cout << "Skip Sounds" << endl;
+		writeLog( string("Skip Sounds") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("4") != string::npos )
+	{
+		installMusic ();
+	}
+	else
+	{
+		cout << "Skip Music" << endl;
+		writeLog( string("Skip Music") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("5") != string::npos )
+	{
+		installMVEs ();
+	}
+	else
+	{
+		cout << "Skip Movies" << endl;
+		writeLog( string("Skip Movies") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("6") != string::npos )
 	{
 		installFX();
+	}
+	else
+	{
+		cout << "Skip FX" << endl;
+		writeLog( string("Skip FX") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("7") != string::npos )
+	{
 		installGfx();
+	}
+	else
+	{
+		cout << "Skip GFX" << endl;
+		writeLog( string("Skip GFX") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("8") != string::npos )
+	{
 		installVehicleVideos();
+	}
+	else
+	{
+		cout << "Skip Vehicle Videos" << endl;
+		writeLog( string("Skip Vehicle Videos") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("9") != string::npos )
+	{
 		installVehicleGraphics();
+	}
+	else
+	{
+		cout << "Skip Vehicle Graphics" << endl;
+		writeLog( string("Skip Vehicle Graphics") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
+	if ( sResChoice.find("a") != string::npos )
+	{
 		installBuildingGraphics();
 	}
 	else
 	{
-		cout << "========================================================================\n";
-		cout << "Skip old graphics\n";
+		cout << "Skip Building Graphics" << endl;
+		writeLog( string("Skip Building Graphics") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
 	}
 
-	installVoices ();
-	installMaps ();
-	installSounds ();
-	installMVEs ();
-	installMusic ();
+	if ( sResChoice.find("b") != string::npos )
+	{
+		installMaps ();
+	}
+	else
+	{
+		cout << "Skip Maps" << endl;
+		writeLog( string("Skip Maps") + TEXT_FILE_LF);
+		writeLog( string("========================================================================") + TEXT_FILE_LF);
+	}
+
 	gFinishedInstalling = true;
 
 	return 0;
@@ -4378,18 +4516,24 @@ int main ( int argc, char* argv[] )
 	sAppName = argv[0];
 
 	// look for paths in argv[]
+
+	// original M.A.X. Path (CD or installation)
 	if (argc > 1) sMAXPath = argv[1];
 	else sMAXPath = "";
 	
+	// M.A.X. Reloaded Path
 	if (argc > 2) sOutputPath = argv[2];
 	else sOutputPath = "";
 	
+	// language german, english, french, italian 
 	if (argc > 3) sLanguage = argv[3];
 	else sLanguage = "";
 
-	// 4. Parameter for gNewGrafic yes / no
+	// Parameter for gNewGrafic
 	if (argc > 4) sResChoice = argv[4];
 	else sResChoice = "";
+	
+	sResChoice = validateRessources(sResChoice); // validate the parameter for importing the ressources
 
 	if (string(argv[argc-1]) == "/donotelevate")
 		bDoNotElevate = true;
@@ -4404,21 +4548,9 @@ int main ( int argc, char* argv[] )
 	if (sOutputPath.size () == 0)
 		exit (-1);
 
-	if(!sResChoice.empty())
+	if(sResChoice.empty())
 	{
-		writeLog("UserNewGrafics argument from command line: " + sResChoice);
-		if(sResChoice.compare("-Gyes") == 0)
-		{
-			gNewGrafic = true;
-		}
-		else
-		{
-			gNewGrafic = false;
-		}
-	}
-	else
-	{
-		// keep old graphics? user input
+		// what ressources should the resinstaller import into M.A.X. Reloaded? Call user input!
 		getResChoiceFromUser();
 	}
 	
