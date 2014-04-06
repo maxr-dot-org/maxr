@@ -2168,7 +2168,8 @@ void cStartupHangarMenu::doneReleased (void* parent)
 
 	menu->updateUnitData();
 
-	for (int i = 0; i < menu->secondList->getSize(); i++)
+	menu->landingUnits->clear();
+	for (int i = 0; i != menu->secondList->getSize(); ++i)
 	{
 		sLandingUnit landingUnit;
 		landingUnit.unitID = menu->secondList->getItem (i)->getUnitID();

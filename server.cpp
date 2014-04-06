@@ -339,14 +339,16 @@ void cServer::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message)
 
 	std::vector<sLandingUnit>& playerLandingUnits = landingUnits[playerNr];
 
-	int iCount = message.popInt16();
-	for (int i = 0; i < iCount; i++)
+	playerLandingUnits.clear();
+	const int iCount = message.popInt16();
+	for (int i = 0; i != iCount; ++i)
 	{
 		sLandingUnit unit;
 		unit.cargo = message.popInt16();
 		unit.unitID = message.popID();
 		playerLandingUnits.push_back (unit);
 	}
+	// TODO: check gold used is correct.
 }
 
 //------------------------------------------------------------------------------
