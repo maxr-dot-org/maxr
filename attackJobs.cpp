@@ -419,7 +419,8 @@ void cServerAttackJob::makeImpact (int x, int y)
 			server->destroyUnit (*static_cast<cBuilding*> (target));
 		else
 			server->destroyUnit (*static_cast<cVehicle*> (target));
-
+		if (unit == target)
+			unit = 0;
 		target = 0;
 	}
 
