@@ -131,18 +131,18 @@ void cDebugOutput::draw()
 
 			if (playerList[i]->bFinishedTurn /* && playerList[i] != &player*/)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, cVideo::buffer, &rDotDest);
 			}
 #if 0
 			else if (playerList[i] == &player && client->bWantToEnd)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, cVideo::buffer, &rDotDest);
 			}
 #endif
 			else
 			{
 				rDot.x = 0; // for red dot
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, cVideo::buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &rDot, cVideo::buffer, &rDotDest);
 			}
 
 			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, cVideo::buffer, &rDest);
@@ -490,19 +490,19 @@ cGameGUI::cGameGUI() :
 	stopButton (146, 143, "", cMenuButton::BUTTON_TYPE_HUD_STOP),
 	FLCImage (10, 29, NULL),
 	unitDetails (8, 171, false),
-	surveyButton (2, 296, lngPack.i18n ("Text~Others~Survey"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	hitsButton (57, 296, lngPack.i18n ("Text~Others~Hitpoints_7"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	scanButton (112, 296, lngPack.i18n ("Text~Others~Scan"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	statusButton (2, 296 + 18, lngPack.i18n ("Text~Others~Status"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	ammoButton (57, 296 + 18, lngPack.i18n ("Text~Others~Ammo"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	gridButton (112, 296 + 18, lngPack.i18n ("Text~Others~Grid"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	colorButton (2, 296 + 18 + 16, lngPack.i18n ("Text~Others~Color"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	rangeButton (57, 296 + 18 + 16, lngPack.i18n ("Text~Others~Range"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	fogButton (112, 296 + 18 + 16, lngPack.i18n ("Text~Others~Fog"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	lockButton (32, 227, "", false, false, cMenuCheckButton::CHECKBOX_HUD_LOCK, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	TNTButton (136, 413, "", false, false, cMenuCheckButton::CHECKBOX_HUD_TNT, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	twoXButton (136, 387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
-	playersButton (136, 439, "", false, false, cMenuCheckButton::CHECKBOX_HUD_PLAYERS, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch),
+	surveyButton (2, 296, lngPack.i18n ("Text~Others~Survey"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	hitsButton (57, 296, lngPack.i18n ("Text~Others~Hitpoints_7"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	scanButton (112, 296, lngPack.i18n ("Text~Others~Scan"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	statusButton (2, 296 + 18, lngPack.i18n ("Text~Others~Status"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	ammoButton (57, 296 + 18, lngPack.i18n ("Text~Others~Ammo"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	gridButton (112, 296 + 18, lngPack.i18n ("Text~Others~Grid"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	colorButton (2, 296 + 18 + 16, lngPack.i18n ("Text~Others~Color"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	rangeButton (57, 296 + 18 + 16, lngPack.i18n ("Text~Others~Range"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	fogButton (112, 296 + 18 + 16, lngPack.i18n ("Text~Others~Fog"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	lockButton (32, 227, "", false, false, cMenuCheckButton::CHECKBOX_HUD_LOCK, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	TNTButton (136, 413, "", false, false, cMenuCheckButton::CHECKBOX_HUD_TNT, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	twoXButton (136, 387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
+	playersButton (136, 439, "", false, false, cMenuCheckButton::CHECKBOX_HUD_PLAYERS, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch.get()),
 	helpButton (20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP),
 	centerButton (4, 227, "", cMenuButton::BUTTON_TYPE_HUD_CENTER),
 	reportsButton (101, 252, lngPack.i18n ("Text~Others~Log"), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE),
@@ -669,7 +669,7 @@ void cGameGUI::setClient (cClient* client)
 	zoomSlider.setBorders (calcMinZoom(), 1.f);
 	{
 		AutoSurface mini (generateMiniMapSurface());
-		miniMapImage.setImage (mini);
+		miniMapImage.setImage (mini.get());
 		needMiniMapDraw = false;
 	}
 	playersInfo.setClient (*client);
@@ -741,9 +741,9 @@ void cGameGUI::playStream (const cVehicle& vehicle)
 	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 	if (vehicle.IsBuilding && (vehicle.BuildRounds || &client->getActivePlayer() != vehicle.owner))
-		playFXLoop (SoundData.SNDBuilding);
+		playFXLoop (SoundData.SNDBuilding.get());
 	else if (vehicle.IsClearing)
-		playFXLoop (SoundData.SNDClearing);
+		playFXLoop (SoundData.SNDClearing.get());
 	else if (water && vehicle.data.factorSea > 0)
 		playFXLoop (vehicle.uiData->WaitWater);
 	else
@@ -896,7 +896,7 @@ int cGameGUI::show (cClient* client)
 		if (needMiniMapDraw)
 		{
 			AutoSurface mini (generateMiniMapSurface());
-			miniMapImage.setImage (mini);
+			miniMapImage.setImage (mini.get());
 			needMiniMapDraw = false;
 		}
 		if (timer100ms)
@@ -1002,13 +1002,13 @@ void cGameGUI::onLostConnection()
 void cGameGUI::onAddedBuilding (const cBuilding& building)
 {
 	if (building.owner != &client->getActivePlayer()) return;
-	if (building.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace);
-	else if (building.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace);
+	if (building.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace.get());
+	else if (building.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace.get());
 }
 
 void cGameGUI::onChat_errorMessage (const std::string& msg)
 {
-	PlayFX (SoundData.SNDQuitsch);
+	PlayFX (SoundData.SNDQuitsch.get());
 	addMessage (msg);
 	client->getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
 }
@@ -1021,7 +1021,7 @@ void cGameGUI::onChat_infoMessage (const std::string& msg)
 
 void cGameGUI::onChat_userMessage (const std::string& msg)
 {
-	PlayFX (SoundData.SNDChat);
+	PlayFX (SoundData.SNDChat.get());
 	addMessage (msg);
 	client->getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_CHAT);
 }
@@ -1036,7 +1036,7 @@ void cGameGUI::onVehicleStored (const cUnit& storingUnit, const cVehicle& stored
 
 	if (&storedVehicle == getSelectedUnit()) deselectUnit();
 
-	PlayFX (SoundData.SNDLoad);
+	PlayFX (SoundData.SNDLoad.get());
 }
 
 SDL_Surface* cGameGUI::generateSurface()
@@ -1049,70 +1049,70 @@ SDL_Surface* cGameGUI::generateSurface()
 	const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
 	{
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_left.pcx"));
-		if (tmpSurface)
+		if (tmpSurface != NULL)
 		{
-			SDL_BlitSurface (tmpSurface, NULL, surface, NULL);
+			SDL_BlitSurface (tmpSurface.get(), NULL, surface, NULL);
 		}
 	}
 
 	SDL_Rect dest;
 	{
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_top.pcx"));
-		if (tmpSurface)
+		if (tmpSurface != NULL)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h) };
 			dest.x = HUD_LEFT_WIDTH;
 			dest.y = 0;
-			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), &src, surface, &dest);
 			src.x = 1275;
 			src.w = 18;
 			src.h = HUD_TOP_HIGHT;
 			dest.x = surface->w - HUD_TOP_HIGHT;
-			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), &src, surface, &dest);
 		}
 	}
 
 	{
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_right.pcx"));
-		if (tmpSurface)
+		if (tmpSurface != NULL)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h) };
 			dest.x = surface->w - HUD_RIGHT_WIDTH;
 			dest.y = HUD_TOP_HIGHT;
-			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), &src, surface, &dest);
 		}
 	}
 
 	{
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_bottom.pcx"));
-		if (tmpSurface)
+		if (tmpSurface != NULL)
 		{
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h) };
 			dest.x = HUD_LEFT_WIDTH;
 			dest.y = surface->h - 24;
-			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), &src, surface, &dest);
 			src.x = 1275;
 			src.w = 23;
 			src.h = 24;
 			dest.x = surface->w - 23;
-			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), &src, surface, &dest);
 			src.x = 1299;
 			src.w = 16;
 			src.h = 22;
 			dest.x = HUD_LEFT_WIDTH - 16;
 			dest.y = surface->h - 22;
-			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), &src, surface, &dest);
 		}
 	}
 
 	if (Video.getResolutionY() > 480)
 	{
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "logo.pcx"));
-		if (tmpSurface)
+		if (tmpSurface != NULL)
 		{
 			dest.x = 9;
 			dest.y = Video.getResolutionY() - HUD_TOTAL_HIGHT - 15;
-			SDL_BlitSurface (tmpSurface, NULL, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get(), NULL, surface, &dest);
 		}
 	}
 	return surface;
@@ -1577,7 +1577,7 @@ void cGameGUI::updateUnderMouseObject()
 	if (!player.ScanMap[map.getOffset (x, y)])
 	{
 		overUnitField = NULL;
-		if (mouse->cur == GraphicsData.gfx_Cattack)
+		if (mouse->cur == GraphicsData.gfx_Cattack.get())
 		{
 			mouse->SetCursor (CAttack);
 		}
@@ -1586,11 +1586,11 @@ void cGameGUI::updateUnderMouseObject()
 	// check whether there is a unit under the mouse:
 	overUnitField = map.fields + (map.getOffset (x, y));
 	cVehicle* selectedVehicle = getSelectedVehicle();
-	if (mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
+	if (mouse->cur == GraphicsData.gfx_Csteal.get() && selectedVehicle)
 	{
 		selectedVehicle->drawCommandoCursor (*this, x, y, true);
 	}
-	else if (mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle)
+	else if (mouse->cur == GraphicsData.gfx_Cdisable.get() && selectedVehicle)
 	{
 		selectedVehicle->drawCommandoCursor (*this, x, y, false);
 	}
@@ -1603,7 +1603,7 @@ void cGameGUI::updateUnderMouseObject()
 		// a length check in the future.
 		// that goes for unitnames itself too. -- beko
 		unitNameLabel.setText (vehicle.getDisplayName() + " (" + vehicle.owner->getName() + ")");
-		if (mouse->cur == GraphicsData.gfx_Cattack)
+		if (mouse->cur == GraphicsData.gfx_Cattack.get())
 		{
 			drawAttackCursor (x, y);
 		}
@@ -1612,7 +1612,7 @@ void cGameGUI::updateUnderMouseObject()
 	{
 		const cVehicle& plane = *overUnitField->getPlane();
 		unitNameLabel.setText (plane.getDisplayName() + " (" + plane.owner->getName() + ")");
-		if (mouse->cur == GraphicsData.gfx_Cattack)
+		if (mouse->cur == GraphicsData.gfx_Cattack.get())
 		{
 			drawAttackCursor (x, y);
 		}
@@ -1621,7 +1621,7 @@ void cGameGUI::updateUnderMouseObject()
 	{
 		const cBuilding& topBuilding = *overUnitField->getTopBuilding();
 		unitNameLabel.setText (topBuilding.getDisplayName() + " (" + topBuilding.owner->getName() + ")");
-		if (mouse->cur == GraphicsData.gfx_Cattack)
+		if (mouse->cur == GraphicsData.gfx_Cattack.get())
 		{
 			drawAttackCursor (x, y);
 		}
@@ -1630,7 +1630,7 @@ void cGameGUI::updateUnderMouseObject()
 	{
 		const cBuilding& baseBuilding = *overUnitField->getBaseBuilding();
 		unitNameLabel.setText (baseBuilding.getDisplayName() + " (" + baseBuilding.owner->getName() + ")");
-		if (mouse->cur == GraphicsData.gfx_Cattack)
+		if (mouse->cur == GraphicsData.gfx_Cattack.get())
 		{
 			drawAttackCursor (x, y);
 		}
@@ -1638,7 +1638,7 @@ void cGameGUI::updateUnderMouseObject()
 	else
 	{
 		unitNameLabel.setText ("");
-		if (mouse->cur == GraphicsData.gfx_Cattack)
+		if (mouse->cur == GraphicsData.gfx_Cattack.get())
 		{
 			mouse->SetCursor (CAttack);
 		}
@@ -2233,7 +2233,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			selectBoxVehicles (mouseBox);
 		}
-		else if (changeAllowed && selectedUnit && mouse->cur == GraphicsData.gfx_Ctransf)
+		else if (changeAllowed && selectedUnit && mouse->cur == GraphicsData.gfx_Ctransf.get())
 		{
 			if (overVehicle)
 			{
@@ -2246,7 +2246,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				transferDialog.show (client);
 			}
 		}
-		else if (changeAllowed && selectedVehicle && mouseInputMode == placeBand && mouse->cur == GraphicsData.gfx_Cband)
+		else if (changeAllowed && selectedVehicle && mouseInputMode == placeBand && mouse->cur == GraphicsData.gfx_Cband.get())
 		{
 			const cMap& map = *client->getMap();
 			mouseInputMode = normalInput;
@@ -2260,16 +2260,16 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map.getOffset (selectedVehicle->PosX, selectedVehicle->PosY), true, map.getOffset (selectedVehicle->BandX, selectedVehicle->BandY));
 			}
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedUnit && mouseInputMode == activateVehicle)
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate.get() && selectedUnit && mouseInputMode == activateVehicle)
 		{
 			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isAVehicle(), selectedUnit->storedUnits[vehicleToActivate]->iID, mouseMapX, mouseMapY);
 			updateMouseCursor();
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList.size())
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate.get() && selectedBuilding && selectedBuilding->BuildList.size())
 		{
 			sendWantExitFinishedVehicle (*client, *selectedBuilding, mouseMapX, mouseMapY);
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && mouseInputMode == loadMode)
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cload.get() && selectedBuilding && mouseInputMode == loadMode)
 		{
 			if (overVehicle && selectedBuilding->canLoad (overVehicle, false))
 			{
@@ -2308,7 +2308,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				}
 			}
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedVehicle && mouseInputMode == loadMode)
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cload.get() && selectedVehicle && mouseInputMode == loadMode)
 		{
 			if (selectedVehicle->data.factorAir > 0 && overVehicle)
 			{
@@ -2347,13 +2347,13 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				}
 			}
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cmuni && selectedVehicle && mouseInputMode == muniActive)
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cmuni.get() && selectedVehicle && mouseInputMode == muniActive)
 		{
 			if (overVehicle) sendWantSupply (*client, overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 			else if (overPlane && overPlane->FlightHigh == 0) sendWantSupply (*client, overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 			else if (overBuilding) sendWantSupply (*client, overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Crepair && selectedVehicle && mouseInputMode == repairActive)
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Crepair.get() && selectedVehicle && mouseInputMode == repairActive)
 		{
 			if (overVehicle) sendWantSupply (*client, overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
 			else if (overPlane && overPlane->FlightHigh == 0) sendWantSupply (*client, overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
@@ -2368,7 +2368,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			}
 			else
 				// check, if the player wants to attack:
-				if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
+				if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack.get() && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
 				{
 					cUnit* target = selectTarget (mouseMapX, mouseMapY, selectedVehicle->data.canAttack, *client->getMap());
 
@@ -2396,7 +2396,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						}
 					}
 				}
-				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedBuilding && !selectedBuilding->attacking)
+				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack.get() && selectedBuilding && !selectedBuilding->attacking)
 				{
 					// find target ID
 					int targetId = 0;
@@ -2407,12 +2407,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					const int offset = map.getOffset (selectedBuilding->PosX, selectedBuilding->PosY);
 					sendWantAttack (*client, targetId, map.getOffset (mouseMapX, mouseMapY), offset, false);
 				}
-				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
+				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Csteal.get() && selectedVehicle)
 				{
 					if (overVehicle) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, true);
 					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overPlane->iID, true, true);
 				}
-				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle)
+				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cdisable.get() && selectedVehicle)
 				{
 					if (overVehicle) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, false);
 					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overPlane->iID, true, false);
@@ -2420,7 +2420,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				}
 				else if (MouseStyle == OldSchool && overUnitField && selectUnit (overUnitField, false))
 				{}
-				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cmove && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking)
+				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cmove.get() && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking)
 				{
 					if (selectedVehicle->IsBuilding)
 					{
@@ -2441,14 +2441,14 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						{
 							unitMenuActive = !unitMenuActive;
 							if (unitMenuActive) selectedMenuButtonIndex = -1;
-							PlayFX (SoundData.SNDHudButton);
+							PlayFX (SoundData.SNDHudButton.get());
 						}
 					}
 					else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 					{
 						unitMenuActive = !unitMenuActive;
 						if (unitMenuActive) selectedMenuButtonIndex = -1;
-						PlayFX (SoundData.SNDHudButton);
+						PlayFX (SoundData.SNDHudButton.get());
 					}
 					// select unit when using modern style
 					else if (MouseStyle == Modern) selectUnit (overUnitField, true);
@@ -2783,7 +2783,7 @@ void cGameGUI::selectUnit_vehicle (cVehicle& vehicle)
 		if (selectedUnit->owner == &client->getActivePlayer())
 		{
 			unitMenuActive = !unitMenuActive;
-			PlayFX (SoundData.SNDHudButton);
+			PlayFX (SoundData.SNDHudButton.get());
 		}
 	}
 	else
@@ -2800,7 +2800,7 @@ void cGameGUI::selectUnit_building (cBuilding& building)
 		if (selectedUnit->owner == &client->getActivePlayer())
 		{
 			unitMenuActive = !unitMenuActive;
-			PlayFX (SoundData.SNDHudButton);
+			PlayFX (SoundData.SNDHudButton.get());
 		}
 	}
 	else
@@ -3540,13 +3540,13 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 					// draw the fog:
 					if (fogChecked() && !player.ScanMap[pos])
 					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (terr.shw->w != tileSize || terr.shw->h != tileSize)) scaleSurface (terr.shw_org, terr.shw, tileSize, tileSize);
-						SDL_BlitSurface (terr.shw, NULL, cVideo::buffer, &tmp);
+						if (!cSettings::getInstance().shouldDoPrescale() && (terr.shw->w != tileSize || terr.shw->h != tileSize)) scaleSurface (terr.shw_org.get(), terr.shw.get(), tileSize, tileSize);
+						SDL_BlitSurface (terr.shw.get(), NULL, cVideo::buffer, &tmp);
 					}
 					else
 					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (terr.sf->w != tileSize || terr.sf->h != tileSize)) scaleSurface (terr.sf_org, terr.sf, tileSize, tileSize);
-						SDL_BlitSurface (terr.sf, NULL, cVideo::buffer, &tmp);
+						if (!cSettings::getInstance().shouldDoPrescale() && (terr.sf->w != tileSize || terr.sf->h != tileSize)) scaleSurface (terr.sf_org.get(), terr.sf.get(), tileSize, tileSize);
+						SDL_BlitSurface (terr.sf.get(), NULL, cVideo::buffer, &tmp);
 					}
 				}
 				pos++;
@@ -3911,8 +3911,8 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 			{
 				src.x = 0;
 				tmp = dest;
-				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
-				SDL_BlitSurface (ResourceData.res_metal, &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org.get(), ResourceData.res_metal.get(), ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
+				SDL_BlitSurface (ResourceData.res_metal.get(), &src, cVideo::buffer, &tmp);
 			}
 			else
 			{
@@ -3920,18 +3920,18 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 				tmp = dest;
 				if (resource.typ == RES_METAL)
 				{
-					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
-					SDL_BlitSurface (ResourceData.res_metal, &src, cVideo::buffer, &tmp);
+					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org.get(), ResourceData.res_metal.get(), ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
+					SDL_BlitSurface (ResourceData.res_metal.get(), &src, cVideo::buffer, &tmp);
 				}
 				else if (resource.typ == RES_OIL)
 				{
-					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * tileSize || ResourceData.res_oil->h != tileSize)) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * tileSize, tileSize);
-					SDL_BlitSurface (ResourceData.res_oil, &src, cVideo::buffer, &tmp);
+					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * tileSize || ResourceData.res_oil->h != tileSize)) scaleSurface (ResourceData.res_oil_org.get(), ResourceData.res_oil.get(), ResourceData.res_oil_org->w / 64 * tileSize, tileSize);
+					SDL_BlitSurface (ResourceData.res_oil.get(), &src, cVideo::buffer, &tmp);
 				}
 				else // Gold
 				{
-					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * tileSize || ResourceData.res_gold->h != tileSize)) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * tileSize, tileSize);
-					SDL_BlitSurface (ResourceData.res_gold, &src, cVideo::buffer, &tmp);
+					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * tileSize || ResourceData.res_gold->h != tileSize)) scaleSurface (ResourceData.res_gold_org.get(), ResourceData.res_gold.get(), ResourceData.res_gold_org->w / 64 * tileSize, tileSize);
+					SDL_BlitSurface (ResourceData.res_gold.get(), &src, cVideo::buffer, &tmp);
 				}
 			}
 		}
@@ -4037,7 +4037,7 @@ void cGameGUI::scaleColors()
 {
 	for (int i = 0; i < PLAYERCOLORS; i++)
 	{
-		scaleSurface (OtherData.colors_org[i], OtherData.colors[i], (int) (OtherData.colors_org[i]->w * getZoom()), (int) (OtherData.colors_org[i]->h * getZoom()));
+		scaleSurface (OtherData.colors_org[i].get(), OtherData.colors[i].get(), (int) (OtherData.colors_org[i]->w * getZoom()), (int) (OtherData.colors_org[i]->h * getZoom()));
 	}
 }
 
@@ -4048,22 +4048,22 @@ void cGameGUI::scaleSurfaces()
 
 	UnitsData.scaleSurfaces (getZoom());
 	// Bänder:
-	if (GraphicsData.gfx_band_small_org && GraphicsData.gfx_band_small) scaleSurface (GraphicsData.gfx_band_small_org, GraphicsData.gfx_band_small, getTileSize(), getTileSize());
-	if (GraphicsData.gfx_band_big_org && GraphicsData.gfx_band_big) scaleSurface (GraphicsData.gfx_band_big_org, GraphicsData.gfx_band_big, getTileSize() * 2, getTileSize() * 2);
+	if (GraphicsData.gfx_band_small_org != NULL && GraphicsData.gfx_band_small != NULL) scaleSurface (GraphicsData.gfx_band_small_org.get(), GraphicsData.gfx_band_small.get(), getTileSize(), getTileSize());
+	if (GraphicsData.gfx_band_big_org != NULL && GraphicsData.gfx_band_big != NULL) scaleSurface (GraphicsData.gfx_band_big_org.get(), GraphicsData.gfx_band_big.get(), getTileSize() * 2, getTileSize() * 2);
 
 	// Resources:
-	if (ResourceData.res_metal_org && ResourceData.res_metal) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * getTileSize(), getTileSize());
-	if (ResourceData.res_oil_org && ResourceData.res_oil) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * getTileSize(), getTileSize());
-	if (ResourceData.res_gold_org && ResourceData.res_gold) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * getTileSize(), getTileSize());
+	if (ResourceData.res_metal_org != NULL && ResourceData.res_metal != NULL) scaleSurface (ResourceData.res_metal_org.get(), ResourceData.res_metal.get(), ResourceData.res_metal_org->w / 64 * getTileSize(), getTileSize());
+	if (ResourceData.res_oil_org != NULL && ResourceData.res_oil != NULL) scaleSurface (ResourceData.res_oil_org.get(), ResourceData.res_oil.get(), ResourceData.res_oil_org->w / 64 * getTileSize(), getTileSize());
+	if (ResourceData.res_gold_org != NULL && ResourceData.res_gold != NULL) scaleSurface (ResourceData.res_gold_org.get(), ResourceData.res_gold.get(), ResourceData.res_gold_org->w / 64 * getTileSize(), getTileSize());
 
 	// Big Beton:
-	if (GraphicsData.gfx_big_beton_org && GraphicsData.gfx_big_beton) scaleSurface (GraphicsData.gfx_big_beton_org, GraphicsData.gfx_big_beton, getTileSize() * 2, getTileSize() * 2);
+	if (GraphicsData.gfx_big_beton_org != NULL && GraphicsData.gfx_big_beton != NULL) scaleSurface (GraphicsData.gfx_big_beton_org.get(), GraphicsData.gfx_big_beton.get(), getTileSize() * 2, getTileSize() * 2);
 
 	// Andere:
-	if (GraphicsData.gfx_exitpoints_org && GraphicsData.gfx_exitpoints) scaleSurface (GraphicsData.gfx_exitpoints_org, GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org->w / 64 * getTileSize(), getTileSize());
+	if (GraphicsData.gfx_exitpoints_org != NULL && GraphicsData.gfx_exitpoints != NULL) scaleSurface (GraphicsData.gfx_exitpoints_org.get(), GraphicsData.gfx_exitpoints.get(), GraphicsData.gfx_exitpoints_org->w / 64 * getTileSize(), getTileSize());
 
 	// FX:
-#define SCALE_FX(a) if (a) scaleSurface(a[0], a[1], (a[0]->w * getTileSize()) / 64, (a[0]->h * getTileSize()) / 64);
+#define SCALE_FX(a) if (a) scaleSurface(a[0].get(), a[1].get(), (a[0]->w * getTileSize()) / 64, (a[0]->h * getTileSize()) / 64);
 	SCALE_FX (EffectsData.fx_explo_small);
 	SCALE_FX (EffectsData.fx_explo_big);
 	SCALE_FX (EffectsData.fx_explo_water);
@@ -4082,12 +4082,12 @@ void cGameGUI::scaleSurfaces()
 
 void cGameGUI::openPanel()
 {
-	PlayFX (SoundData.SNDPanelOpen);
+	PlayFX (SoundData.SNDPanelOpen.get());
 	SDL_Rect top = { 0, Sint16 ((Video.getResolutionY() / 2) - 479), 171, 479 };
 	SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY() / 2), 171, 481 };
-	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, NULL);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), NULL, cVideo::buffer, NULL);
 	SDL_Rect tmp = bottom;
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &tmp);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), NULL, cVideo::buffer, &tmp);
 	while (top.y > -479)
 	{
 		Video.draw();
@@ -4096,14 +4096,14 @@ void cGameGUI::openPanel()
 		bottom.y += 10;
 		draw (false, false);
 		tmp = top;
-		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, &tmp);
-		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &bottom);
+		SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), NULL, cVideo::buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), NULL, cVideo::buffer, &bottom);
 	}
 }
 
 void cGameGUI::closePanel()
 {
-	PlayFX (SoundData.SNDPanelClose);
+	PlayFX (SoundData.SNDPanelClose.get());
 	SDL_Rect top = { 0, -480, 171, 479 };
 	SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY()), 171, 481 };
 	while (bottom.y > Video.getResolutionY() / 2)
@@ -4116,9 +4116,9 @@ void cGameGUI::closePanel()
 		if (bottom.y < Video.getResolutionY() / 2 + 9) bottom.y = Video.getResolutionY() / 2;
 		draw (false, false);
 		SDL_Rect tmp = top;
-		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), NULL, cVideo::buffer, &tmp);
 		tmp = bottom;
-		SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), NULL, cVideo::buffer, &tmp);
 	}
 	Video.draw();
 	SDL_Delay (100);
@@ -4143,17 +4143,17 @@ void cGameGUI::drawUnitCircles()
 		{
 			if (v.data.isBig)
 			{
-				drawCircle (spx + getTileSize(), spy + getTileSize(), v.data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
+				drawCircle (spx + getTileSize(), spy + getTileSize(), v.data.scan * getTileSize(), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
+				drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.scan * getTileSize(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (rangeChecked())
 		{
-			if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
-			else drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, cVideo::buffer);
+			if (v.data.canAttack & TERRAIN_AIR) drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			else drawCircle (spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 		if (v.owner == &player &&
 			(
@@ -4197,8 +4197,8 @@ void cGameGUI::drawUnitCircles()
 				SDL_Rect dest;
 				dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * v.BandX;
 				dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * v.BandY;
-				CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getTileSize() / 64.0f);
-				SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
+				CHECK_SCALING (*GraphicsData.gfx_band_big, *GraphicsData.gfx_band_big_org, getTileSize() / 64.0f);
+				SDL_BlitSurface (GraphicsData.gfx_band_big.get(), NULL, cVideo::buffer, &dest);
 			}
 			else
 			{
@@ -4209,8 +4209,8 @@ void cGameGUI::drawUnitCircles()
 					SDL_Rect dest;
 					dest.x = HUD_LEFT_WIDTH - (int) (offX * getZoom()) + getTileSize() * x;
 					dest.y = HUD_TOP_HIGHT - (int) (offY * getZoom()) + getTileSize() * y;
-					CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getTileSize() / 64.0f);
-					SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
+					CHECK_SCALING (*GraphicsData.gfx_band_small, *GraphicsData.gfx_band_small_org, getTileSize() / 64.0f);
+					SDL_BlitSurface (GraphicsData.gfx_band_small.get(), NULL, cVideo::buffer, &dest);
 					v.BandX = x;
 					v.BandY = y;
 				}
@@ -4236,26 +4236,26 @@ void cGameGUI::drawUnitCircles()
 			{
 				drawCircle (spx + getTileSize(),
 							spy + getTileSize(),
-							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
+							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
 				drawCircle (spx + getTileSize() / 2,
 							spy + getTileSize() / 2,
-							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, cVideo::buffer);
+							selectedBuilding->data.scan * getTileSize(), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
 		{
 			drawCircle (spx + getTileSize() / 2,
 						spy + getTileSize() / 2,
-						selectedBuilding->data.range * getTileSize() + 2, RANGE_GROUND_COLOR, cVideo::buffer);
+						selectedBuilding->data.range * getTileSize() + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 		if (rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_AIR))
 		{
 			drawCircle (spx + getTileSize() / 2,
 						spy + getTileSize() / 2,
-						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, cVideo::buffer);
+						selectedBuilding->data.range * getTileSize() + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		}
 
 		if (selectedBuilding->BuildList.empty() == false &&
@@ -4298,16 +4298,16 @@ void cGameGUI::drawLockList (cPlayer& player)
 		if (scanChecked())
 		{
 			if (unit->data.isBig)
-				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, cVideo::buffer);
+				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, *cVideo::buffer);
 			else
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, cVideo::buffer);
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, *cVideo::buffer);
 		}
 		if (rangeChecked() && (unit->data.canAttack & TERRAIN_GROUND))
 			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, cVideo::buffer);
+						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		if (rangeChecked() && (unit->data.canAttack & TERRAIN_AIR))
 			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, cVideo::buffer);
+						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		if (ammoChecked() && unit->data.canAttack)
 			drawMunBar (*unit, screenPos);
 		if (hitsChecked())
@@ -4328,8 +4328,8 @@ void cGameGUI::drawExitPoint (int x, int y)
 	dest.y = y;
 	const float factor = getTileSize() / 64.0f;
 
-	CHECK_SCALING (GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, factor);
-	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, cVideo::buffer, &dest);
+	CHECK_SCALING (*GraphicsData.gfx_exitpoints, *GraphicsData.gfx_exitpoints_org, factor);
+	SDL_BlitSurface (GraphicsData.gfx_exitpoints.get(), &src, cVideo::buffer, &dest);
 }
 
 void cGameGUI::toggleMouseInputMode (eMouseInputMode mode)
@@ -4801,7 +4801,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (mouseInputAttackMode);
 				return;
 			}
@@ -4814,7 +4814,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				unit.executeBuildCommand (*this);
 				return;
 			}
@@ -4828,7 +4828,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				cBuilding* building = static_cast<cBuilding*> (&unit);
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				building->executeMineManagerCommand (*client);
 				return;
 			}
@@ -4841,7 +4841,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (transferMode);
 				return;
 			}
@@ -4854,7 +4854,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				sendWantStartWork (*client, unit);
 				return;
 			}
@@ -4868,7 +4868,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				cVehicle* vehicle = static_cast<cVehicle*> (&unit);
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				vehicle->executeAutoMoveJobCommand (*client);
 				return;
 			}
@@ -4881,7 +4881,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				unit.executeStopCommand (*client);
 				return;
 			}
@@ -4895,7 +4895,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				assert (unit.isAVehicle());
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				sendWantStartClear (*client, static_cast<cVehicle&> (unit));
 				return;
 			}
@@ -4908,7 +4908,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				sendChangeManualFireStatus (*client, unit.iID, unit.isAVehicle());
 				return;
 			}
@@ -4921,7 +4921,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				sendChangeSentry (*client, unit.iID, unit.isAVehicle());
 				return;
 			}
@@ -4935,7 +4935,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				unit.executeActivateStoredVehiclesCommand (*client);
 				return;
 			}
@@ -4945,7 +4945,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (loadMode);
 				return;
 			}
@@ -4958,7 +4958,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				cDialogResearch researchDialog (*client);
 				researchDialog.show (client);
 				return;
@@ -4972,7 +4972,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				cUpgradeMenu upgradeMenu (*client);
 				upgradeMenu.show (client);
 				return;
@@ -4989,7 +4989,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 				cBuilding* building = static_cast<cBuilding*> (&unit);
 
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				building->executeUpdateBuildingCommmand (*client, false);
 				return;
 			}
@@ -5001,7 +5001,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 				cBuilding* building = static_cast<cBuilding*> (&unit);
 
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				building->executeUpdateBuildingCommmand (*client, true);
 				return;
 			}
@@ -5016,7 +5016,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 				cBuilding* building = static_cast<cBuilding*> (&unit);
 
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				building->executeSelfDestroyCommand (*client);
 				return;
 			}
@@ -5029,7 +5029,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (muniActive);
 				return;
 			}
@@ -5042,7 +5042,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (repairActive);
 				return;
 			}
@@ -5056,7 +5056,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				cVehicle* vehicle = static_cast<cVehicle*> (&unit);
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				vehicle->executeLayMinesCommand (*client);
 				return;
 			}
@@ -5070,7 +5070,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			{
 				cVehicle* vehicle = static_cast<cVehicle*> (&unit);
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				vehicle->executeClearMinesCommand (*client);
 				return;
 			}
@@ -5083,7 +5083,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (disableMode);
 				return;
 			}
@@ -5096,7 +5096,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 			if (exeNr == nr)
 			{
 				unitMenuActive = false;
-				PlayFX (SoundData.SNDObjectMenu);
+				PlayFX (SoundData.SNDObjectMenu.get());
 				toggleMouseInputMode (stealMode);
 				return;
 			}
@@ -5107,7 +5107,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 	if (exeNr == nr)
 	{
 		unitMenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
+		PlayFX (SoundData.SNDObjectMenu.get());
 		cUnitHelpMenu helpMenu (&unit.data, unit.owner);
 		helpMenu.show (client);
 		return;
@@ -5118,7 +5118,7 @@ void cGameGUI::menuReleased (cUnit& unit)
 	if (exeNr == nr)
 	{
 		unitMenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
+		PlayFX (SoundData.SNDObjectMenu.get());
 		if (unit.owner == &client->getActivePlayer())
 		{
 			unit.isMarkedAsDone = true;
@@ -5244,7 +5244,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 			return;
 		dest.x = screenPos.x + getTileSize() / 2 - 12;
 		dest.y = screenPos.y + getTileSize() / 2 - 12;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, cVideo::buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &disabledSymbol, cVideo::buffer, &dest);
 	}
 	else
 	{
@@ -5261,7 +5261,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 				dest.x -= getTileSize() / 4;
 
 			SDL_Rect destCopy = dest;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, cVideo::buffer, &destCopy);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &speedSymbol, cVideo::buffer, &destCopy);
 		}
 
 		dest.x = screenPos.x + getTileSize() / 2 - 4;
@@ -5269,7 +5269,7 @@ void cGameGUI::drawStatus (const cUnit& unit, const SDL_Rect& screenPos) const
 		{
 			if (unit.data.speedCur)
 				dest.x += getTileSize() / 4;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, cVideo::buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &shotsSymbol, cVideo::buffer, &dest);
 		}
 	}
 }

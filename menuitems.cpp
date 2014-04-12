@@ -445,10 +445,10 @@ void cMenuImage::setImage (SDL_Surface* image_)
 	{
 		image = SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0);
 
-		SDL_FillRect (image, NULL, 0xFF00FF);
-		SDL_SetColorKey (image, SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (image.get(), NULL, 0xFF00FF);
+		SDL_SetColorKey (image.get(), SDL_TRUE, 0xFF00FF);
 
-		SDL_BlitSurface (image_, NULL, image, NULL);
+		SDL_BlitSurface (image_, NULL, image.get(), NULL);
 
 		position.w = image->w;
 		position.h = image->h;
@@ -462,9 +462,9 @@ void cMenuImage::setImage (SDL_Surface* image_)
 
 void cMenuImage::draw()
 {
-	if (image && !isHidden())
+	if (image != NULL && !isHidden())
 	{
-		SDL_BlitSurface (image, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (image.get(), NULL, cVideo::buffer, &position);
 	}
 }
 
@@ -704,10 +704,10 @@ void cMenuButton::renewButtonSurface()
 			break;
 	}
 	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
-	if (buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
-	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), NULL, 0xFF00FF);
+	if (buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, surface.get(), NULL);
+	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &src, surface.get(), NULL);
 
 	text = font->shortenStringToSize (text, position.w - getBordersSize(), fontType);
 }
@@ -802,9 +802,9 @@ bool cMenuButton::preHoveredAway()
 
 void cMenuButton::draw()
 {
-	if (surface)
+	if (surface != NULL)
 	{
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 
 		if (buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES)
 		{
@@ -884,18 +884,18 @@ void cMenuDestroyButton::draw()
 	if (isClicked)
 	{
 		SDL_Rect src = {6, 269, 59, 56};
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &position);
 	}
 	else
 	{
 		SDL_Rect src = {15, 13, 59, 56};
-		SDL_BlitSurface (GraphicsData.gfx_destruction, &src, cVideo::buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_destruction.get(), &src, cVideo::buffer, &position);
 	}
 
 	if (glassHeight < 56)
 	{
 		SDL_Rect src = { 0, Sint16 (glassHeight), 59, Uint16 (56 - glassHeight) };
-		SDL_BlitSurface (GraphicsData.gfx_destruction_glas, &src, cVideo::buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get(), &src, cVideo::buffer, &position);
 	}
 
 	Video.draw();
@@ -1048,8 +1048,8 @@ void cMenuCheckButton::renewButtonSurface()
 	if (src.w > 0)
 	{
 		surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
-		if (buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
-		else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
+		if (buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, surface.get(), NULL);
+		else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &src, surface.get(), NULL);
 	}
 
 	if (textLimitWight != -1) text = font->shortenStringToSize (text, textLimitWight, fontType);
@@ -1076,7 +1076,7 @@ void cMenuCheckButton::draw()
 {
 	int textDestx = -1;
 	int textDesty = -1;
-	if (surface)
+	if (surface != NULL)
 	{
 		switch (textOrientation)
 		{
@@ -1096,7 +1096,7 @@ void cMenuCheckButton::draw()
 		default:
 		case CHECKBOX_TYPE_STANDARD:
 		case RADIOBTN_TYPE_BTN_ROUND:
-			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+			SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 			font->showText (textDestx, textDesty, text, fontType);
 			break;
 		case CHECKBOX_TYPE_TANK:
@@ -1104,7 +1104,7 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_TYPE_SHIP:
 		case CHECKBOX_TYPE_BUILD:
 		case CHECKBOX_TYPE_TNT:
-			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+			SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 			break;
 		case RADIOBTN_TYPE_TEXT_ONLY:
 			font->showText (position.x, position.y, text, fontType);
@@ -1116,7 +1116,7 @@ void cMenuCheckButton::draw()
 			}
 			break;
 		case RADIOBTN_TYPE_ANGULAR_BUTTON:
-			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+			SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + 5, text, fontType);
 			else font->showTextCentered (position.x + position.w / 2, position.y + 4, text, fontType);
 			break;
@@ -1132,7 +1132,7 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_HUD_INDEX_21:
 		case CHECKBOX_HUD_INDEX_22:
 			if (textDesty != 6 && textDesty != 7) textDesty = 5;
-			SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+			SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, FONT_LATIN_SMALL_GREEN);
 			else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, FONT_LATIN_SMALL_RED);
 			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
@@ -1251,22 +1251,22 @@ void cMenuUnitListItem::init()
 {
 	const int UNIT_IMAGE_SIZE = 32;
 	surface = SDL_CreateRGBSurface (0, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_TRUE, 0x00FF00FF);
-	SDL_FillRect (surface, NULL, 0x00FF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (surface.get(), NULL, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
 	if (unitID.isAVehicle())
 	{
 		cVehicle vehicle (*unitID.getUnitDataOriginalVersion(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / 64.0f;
-		vehicle.render_simple (surface, dest, zoomFactor);
-		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
+		vehicle.render_simple (surface.get(), dest, zoomFactor);
+		vehicle.drawOverlayAnimation (surface.get(), dest, zoomFactor, 0);
 	}
 	else if (unitID.isABuilding())
 	{
 		cBuilding building (unitID.getUnitDataOriginalVersion(), owner, 0);
 		const float zoomFactor = UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
-		building.render_simple (surface, dest, zoomFactor, 0);
+		building.render_simple (surface.get(), dest, zoomFactor, 0);
 	}
 	else surface = NULL;
 
@@ -1281,7 +1281,7 @@ void cMenuUnitListItem::draw()
 {
 	SDL_Rect src = { 0, 0, 32, 32 };
 	SDL_Rect dest = { position.x, position.y, 0, 0 };
-	SDL_BlitSurface (surface, &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (surface.get(), &src, cVideo::buffer, &dest);
 
 	if (selected)
 	{
@@ -1573,7 +1573,7 @@ void cMenuUnitsList::setSelection (cMenuUnitListItem* selectedUnit_)
 
 void cMenuUnitsList::addUnit (cMenuUnitListItem* unitItem, bool scroll)
 {
-	unitItem->setReleaseSound (SoundData.SNDObjectMenu);
+	unitItem->setReleaseSound (SoundData.SNDObjectMenu.get());
 	unitItem->position.h = 32;
 	unitItem->position.w = position.w - 20;
 	unitsList.push_back (unitItem);
@@ -1663,7 +1663,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 
 	for (int i = 0; i != value1; ++i)
 	{
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &dest);
 
 		dest.x += offX;
 	}
@@ -1680,7 +1680,7 @@ void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, in
 	}
 	for (int i = value1; i != value2; ++i)
 	{
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &dest);
 
 		dest.x += offX;
 	}
@@ -1718,7 +1718,7 @@ void cUnitDataSymbolHandler::drawSmallSymbols (eUnitDataSymbols symType, int x, 
 	{
 		if (value1 <= 0) src.x = oriSrcX + src.w;
 
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, cVideo::buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, cVideo::buffer, &dest);
 
 		dest.x += offX;
 		value1 -= step;
@@ -2298,7 +2298,7 @@ void cMenuUnitDetailsBig::setSelection (cMenuUnitListItem* selectedUnit_)
 
 cMenuMaterialBar::cMenuMaterialBar (int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_, bool showLabel_) : cMenuItem (x, y)
 {
-	setReleaseSound (SoundData.SNDObjectMenu);
+	setReleaseSound (SoundData.SNDObjectMenu.get());
 	currentValue = maxValue = maxValue_;
 	inverted = inverted_;
 	showLabel = showLabel_;
@@ -2310,7 +2310,7 @@ cMenuMaterialBar::cMenuMaterialBar (int x, int y, int labelX, int labelY, int ma
 
 void cMenuMaterialBar::setType (eMaterialBarTypes materialType_)
 {
-	if (surface && materialType == materialType_) return;
+	if (surface != NULL && materialType == materialType_) return;
 
 	materialType = materialType_;
 
@@ -2348,8 +2348,8 @@ void cMenuMaterialBar::generateSurface()
 {
 	SDL_Rect src = { 114, 336, position.w, position.h };
 	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), NULL, 0xFF00FF);
 
 	switch (materialType)
 	{
@@ -2396,7 +2396,7 @@ void cMenuMaterialBar::generateSurface()
 			break;
 	}
 
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, surface.get(), NULL);
 }
 
 void cMenuMaterialBar::draw()
@@ -2418,7 +2418,7 @@ void cMenuMaterialBar::draw()
 		src.x = 0;
 	}
 
-	SDL_BlitSurface (surface, &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (surface.get(), &src, cVideo::buffer, &dest);
 
 	if (showLabel) valueLabel->draw();
 }
@@ -2448,12 +2448,12 @@ cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cMenu* parentMenu_, cMen
 {
 	for (int i = 0; i < 8; i++)
 	{
-		decreaseButtons[i] = new cMenuButton (position.x, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+		decreaseButtons[i] = new cMenuButton (position.x, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 		decreaseButtons[i]->setLocked (true);
 		decreaseButtons[i]->setReleasedFunction (&buttonReleased);
 		addItem (decreaseButtons[i].get());
 
-		increaseButtons[i] = new cMenuButton (position.x + 18, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+		increaseButtons[i] = new cMenuButton (position.x + 18, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 		increaseButtons[i]->setLocked (true);
 		increaseButtons[i]->setReleasedFunction (&buttonReleased);
 		addItem (increaseButtons[i].get());
@@ -2567,15 +2567,15 @@ cMenuScroller::cMenuScroller (int x, int y, eMenuScrollerTypes scrollerType_, cM
 	mouseXOff = mouseYOff = 0;
 
 	surface = SDL_CreateRGBSurface (0, position.w, position.h, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
-	if (scrollerType == SCROLLER_TYPE_HUD_ZOOM) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
-	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), NULL, 0xFF00FF);
+	if (scrollerType == SCROLLER_TYPE_HUD_ZOOM) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &src, surface.get(), NULL);
+	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &src, surface.get(), NULL);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 }
 
 void cMenuScroller::draw()
 {
-	SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+	SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 }
 
 bool cMenuScroller::preClicked()
@@ -2647,10 +2647,10 @@ cMenuScrollBar::cMenuScrollBar (int x, int y, int h, int pageSteps_, cMenu* pare
 	std::max<Uint16> (this->position.h, 48);
 	createSurface();
 
-	upButton = new cMenuButton (position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	upButton = new cMenuButton (position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	upButton->setReleasedFunction (&upButtonReleased);
 	itemList.push_back (upButton.get());
-	downButton = new cMenuButton (position.x, position.y + position.h - 17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	downButton = new cMenuButton (position.x, position.y + position.h - 17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	downButton->setReleasedFunction (&downButtonReleased);
 	itemList.push_back (downButton.get());
 	scroller = new cMenuScroller (position.x, position.y + 17, cMenuScroller::SCROLLER_TYPE_VERT, this);
@@ -2665,7 +2665,7 @@ void cMenuScrollBar::createSurface()
 	do
 	{
 		if (position.h - 28 - dest.y < 48) src.h = position.h - 28 - dest.x;
-		SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &src, surface.get(), &dest);
 		dest.y += src.h;
 	}
 	while (dest.y < position.h - 28);
@@ -2676,7 +2676,7 @@ void cMenuScrollBar::draw()
 	SDL_Rect dest = position;
 	dest.x++;
 	dest.y += 14;
-	SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
+	SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &dest);
 	upButton->draw();
 	downButton->draw();
 	scroller->move (position.y + 17 + offset * scrollerSteps);
@@ -2975,7 +2975,7 @@ bool cMenuLineEdit::handleKeyInput (const SDL_Keysym& keysym, cMenu* parent)
 		case SDLK_RETURN:
 			if (returnPressed)
 			{
-				PlayFX (SoundData.SNDHudButton);
+				PlayFX (SoundData.SNDHudButton.get());
 				returnPressed (parent);
 				SDL_StopTextInput();
 			}
@@ -3049,18 +3049,18 @@ void cMenuChatBox::generateSurface()
 	if (Video.getResolutionX() - HUD_TOTAL_WIDTH - 20 < 60) return;
 
 	surface = SDL_CreateRGBSurface (0, Video.getResolutionX() - HUD_TOTAL_WIDTH - 20, 48, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get(), NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0xFF00FF);
 
 	SDL_Rect src = { 0, 0, 30, 48 };
 	SDL_Rect dest = { 0, 0, 0, 0 };
 
 	// blit the beginning
-	SDL_BlitSurface (GraphicsData.gfx_hud_chatbox, &src, surface, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_chatbox.get(), &src, surface.get(), &dest);
 	// blit the end
 	src.x = 40;
 	dest.x = surface->w - 30;
-	SDL_BlitSurface (GraphicsData.gfx_hud_chatbox, &src, surface, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_chatbox.get(), &src, surface.get(), &dest);
 
 	int restWidth = surface->w - 60;
 	src.x = 30;
@@ -3069,7 +3069,7 @@ void cMenuChatBox::generateSurface()
 	{
 		src.w = 10;
 		if (restWidth < 10) src.w = restWidth;
-		SDL_BlitSurface (GraphicsData.gfx_hud_chatbox, &src, surface, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_chatbox.get(), &src, surface.get(), &dest);
 		dest.x += src.w;
 		restWidth -= src.w;
 	}
@@ -3084,9 +3084,9 @@ void cMenuChatBox::draw()
 {
 	if (disabled) return;
 
-	if (surface)
+	if (surface != NULL)
 	{
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 	}
 
 	font->showText (position.x + 28, position.y + 5, text.substr (startOffset, endOffset - startOffset));
@@ -3129,27 +3129,27 @@ void cMenuPlayersBox::draw()
 	SDL_Rect src = { 10, 0, 10, 10 };
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (readySurface, NULL, 0xFF00FF);
-	SDL_BlitSurface (GraphicsData.gfx_player_ready, &src, readySurface, NULL);
+	SDL_SetColorKey (readySurface.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (readySurface.get(), NULL, 0xFF00FF);
+	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, readySurface.get(), NULL);
 
 	src.x -= 10;
 	AutoSurface notReadySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_SetColorKey (notReadySurface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (notReadySurface, NULL, 0xFF00FF);
-	SDL_BlitSurface (GraphicsData.gfx_player_ready, &src, notReadySurface, NULL);
+	SDL_SetColorKey (notReadySurface.get(), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (notReadySurface.get(), NULL, 0xFF00FF);
+	SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &src, notReadySurface.get(), NULL);
 
 	for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++)
 	{
 		int index = i - scrollBar->offset;
 		if (i < (int) players->size())
 		{
-			if ((*players) [i]->isReady()) playerReadys[index]->setImage (readySurface);
-			else playerReadys[index]->setImage (notReadySurface);
+			if ((*players) [i]->isReady()) playerReadys[index]->setImage (readySurface.get());
+			else playerReadys[index]->setImage (notReadySurface.get());
 
 			AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-			SDL_BlitSurface ((*players) [i]->getColorSurface(), &src, colorSurface, NULL);
-			playerColors[index]->setImage (colorSurface);
+			SDL_BlitSurface ((*players) [i]->getColorSurface(), &src, colorSurface.get(), NULL);
+			playerColors[index]->setImage (colorSurface.get());
 
 			playerNames[index]->setText ((*players) [i]->getName());
 		}
@@ -3431,7 +3431,7 @@ cMenuSlider::cMenuSlider (int x, int y, float minValue_, float maxValue_, cMenu*
 			position.h = src.h;
 
 			surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
-			SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
+			SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get(), &src, surface.get(), NULL);
 
 			scroller = new cMenuScroller (x - 7, y - 7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved);
 		}
@@ -3451,7 +3451,7 @@ cMenuSlider::cMenuSlider (int x, int y, float minValue_, float maxValue_, cMenu*
 
 void cMenuSlider::draw()
 {
-	if (surface) SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+	if (surface != NULL) SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &position);
 	cMenuSlider::scroller->draw();
 }
 
@@ -3709,7 +3709,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						{
 							continue;
 						}
-						SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
+						SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &dest);
 					}
 
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
@@ -3936,7 +3936,7 @@ void cMenuReportsScreen::drawReportsScreen()
 				{
 					break;
 				}
-				SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
+				SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &dest);
 			}
 			break;
 			case sSavedReportMessage::REPORT_TYPE_CHAT:
@@ -4004,7 +4004,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 			{
 				cVehicle vehicle (nextVehicle->data, nextVehicle->owner, 0);
 				AutoSurface surface (generateUnitSurface (&vehicle));
-				SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
+				SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &dest);
 			}
 
 			font->showTextAsBlock (nameDest, nextVehicle->getDisplayName());
@@ -4036,7 +4036,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cUnit** unit)
 				{
 					cBuilding building (&nextBuilding->data, nextBuilding->owner, 0);
 					AutoSurface surface (generateUnitSurface (&building));
-					SDL_BlitSurface (surface, NULL, cVideo::buffer, &dest);
+					SDL_BlitSurface (surface.get(), NULL, cVideo::buffer, &dest);
 				}
 
 				font->showTextAsBlock (nameDest, nextBuilding->getDisplayName());
@@ -4267,22 +4267,22 @@ void cMenuPlayerInfo::draw()
 	//skip eyecandy spit before playerbar if screen is big enough to draw the box under the minimap
 	int sourceX = Video.getResolutionY() >= 768 ? 18 : 0;
 
-	if (GraphicsData.gfx_hud_extra_players)
+	if (GraphicsData.gfx_hud_extra_players.get())
 	{
 		SDL_Rect srcRect = { Sint16 (sourceX), 0, Uint16 (GraphicsData.gfx_hud_extra_players->w), Uint16 (GraphicsData.gfx_hud_extra_players->h) };
 
-		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players, &srcRect, cVideo::buffer, &position);
+		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players.get(), &srcRect, cVideo::buffer, &position);
 	}
 
 
 	if (!player->isDefeated && !player->isRemovedFromGame)
 	{
-		if (GraphicsData.gfx_player_ready)
+		if (GraphicsData.gfx_player_ready.get())
 		{
 			SDL_Rect srcDotRect = { Sint16 (player->bFinishedTurn ? 10 : 0), 0, 10, 10 };
 			SDL_Rect destDotRect = { Sint16 (position.x + 23 - sourceX), Sint16 (position.y + 6), srcDotRect.w, srcDotRect.h };
 
-			SDL_BlitSurface (GraphicsData.gfx_player_ready, &srcDotRect, cVideo::buffer, &destDotRect);
+			SDL_BlitSurface (GraphicsData.gfx_player_ready.get(), &srcDotRect, cVideo::buffer, &destDotRect);
 		}
 
 		SDL_Rect srcColorRect = { 0, 0, 10, 12 };

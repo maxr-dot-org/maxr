@@ -253,7 +253,7 @@ void cMenu::recalcPosition (bool resetItemPositions)
 {
 	SDL_Rect oldPosition = position;
 
-	if (background)
+	if (background != NULL)
 	{
 		position.w = background->w;
 		position.h = background->h;
@@ -307,7 +307,7 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 	preDrawFunction();
 
 	// draw the menu background
-	if (background) SDL_BlitSurface (background, NULL, cVideo::buffer, &position);
+	if (background != NULL) SDL_BlitSurface (background.get(), NULL, cVideo::buffer, &position);
 
 	// show mouse
 	mouse->Show();
@@ -486,7 +486,7 @@ cMainMenu::cMainMenu()
 {
 	infoImage = new cMenuImage (position.x + 16, position.y + 182, getRandomInfoImage());
 	infoImage->setReleasedFunction (&infoImageReleased);
-	infoImage->setClickSound (SoundData.SNDHudButton);
+	infoImage->setClickSound (SoundData.SNDHudButton.get());
 	menuItems.push_back (infoImage.get());
 
 	creditsLabel = new cMenuLabel (position.x + position.w / 2, position.y + 465, lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION);
@@ -570,7 +570,7 @@ cStartMenu::cStartMenu()
 	licenceButton->setReleasedFunction (&licenceReleased);
 	menuItems.push_back (licenceButton.get());
 
-	exitButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Others~Exit"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	exitButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Others~Exit"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL, FONT_LATIN_BIG, SoundData.SNDMenuButton.get());
 	exitButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (exitButton.get());
 
@@ -1514,7 +1514,7 @@ cPlanetsSelectionMenu::cPlanetsSelectionMenu() :
 		{
 			planetImages[index] = new cMenuImage (position.x + 21 + 158 * x, position.y + 86 + 198 * y);
 			planetImages[index]->setReleasedFunction (&mapReleased);
-			planetImages[index]->setClickSound (SoundData.SNDHudButton);
+			planetImages[index]->setClickSound (SoundData.SNDHudButton.get());
 			menuItems.push_back (planetImages[index].get());
 
 			planetTitles[index] = new cMenuLabel (position.x + 77 + 158 * x, position.y + 48 + 198 * y);
@@ -1578,7 +1578,7 @@ void cPlanetsSelectionMenu::showMaps()
 
 			if (selectedMapIndex == i + offset)
 			{
-				SDL_FillRect (imageSurface, NULL, SELECTED);
+				SDL_FillRect (imageSurface.get(), NULL, SELECTED);
 
 				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
@@ -1592,7 +1592,7 @@ void cPlanetsSelectionMenu::showMaps()
 			}
 			else
 			{
-				SDL_FillRect (imageSurface, NULL, UNSELECTED);
+				SDL_FillRect (imageSurface.get(), NULL, UNSELECTED);
 
 				if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
@@ -1605,9 +1605,9 @@ void cPlanetsSelectionMenu::showMaps()
 				else mapName = mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
 			}
 			SDL_Rect dest = { 4, 4, MAPWINSIZE, MAPWINSIZE };
-			SDL_BlitSurface (mapSurface, NULL, imageSurface, &dest);
+			SDL_BlitSurface (mapSurface.get(), NULL, imageSurface.get(), &dest);
 
-			planetImages[i]->setImage (imageSurface);
+			planetImages[i]->setImage (imageSurface.get());
 			planetTitles[i]->setText (mapName);
 		}
 		else
@@ -1828,11 +1828,11 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 	selectionList = new cMenuUnitsList (position.x + 477,  position.y + 50, 154, 326, this, MUL_DIS_TYPE_COSTS);
 	menuItems.push_back (selectionList.get());
 
-	selListUpButton = new cMenuButton (position.x + 471, position.y + 387, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	selListUpButton = new cMenuButton (position.x + 471, position.y + 387, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	selListUpButton->setReleasedFunction (&selListUpReleased);
 	menuItems.push_back (selListUpButton.get());
 
-	selListDownButton = new cMenuButton (position.x + 491, position.y + 387, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	selListDownButton = new cMenuButton (position.x + 491, position.y + 387, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	selListDownButton->setReleasedFunction (&selListDownReleased);
 	menuItems.push_back (selListDownButton.get());
 
@@ -1920,11 +1920,11 @@ cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* playe
 
 	selectionList->setDoubleClickedFunction (&selListDoubleClicked);
 
-	secondListUpButton = new cMenuButton (position.x + 327, position.y + 240, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	secondListUpButton = new cMenuButton (position.x + 327, position.y + 240, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	secondListUpButton->setReleasedFunction (&secondListUpReleased);
 	menuItems.push_back (secondListUpButton.get());
 
-	secondListDownButton = new cMenuButton (position.x + 348, position.y + 240, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	secondListDownButton = new cMenuButton (position.x + 348, position.y + 240, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	secondListDownButton->setReleasedFunction (&secondListDownReleased);
 	menuItems.push_back (secondListDownButton.get());
 }
@@ -2018,11 +2018,11 @@ cStartupHangarMenu::cStartupHangarMenu (cClient& client_,
 	materialBarLabel->setCentered (true);
 	menuItems.push_back (materialBarLabel.get());
 
-	materialBarUpButton = new cMenuButton (position.x + 413, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	materialBarUpButton = new cMenuButton (position.x + 413, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	materialBarUpButton->setReleasedFunction (&materialBarUpReleased);
 	menuItems.push_back (materialBarUpButton.get());
 
-	materialBarDownButton = new cMenuButton (position.x + 433, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	materialBarDownButton = new cMenuButton (position.x + 433, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	materialBarDownButton->setReleasedFunction (&materialBarDownReleased);
 	menuItems.push_back (materialBarDownButton.get());
 
@@ -2399,7 +2399,7 @@ cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData&
 	canClick (true)
 {
 	createMap();
-	mapImage = new cMenuImage (180, 18, mapSurface);
+	mapImage = new cMenuImage (180, 18, mapSurface.get());
 	mapImage->setClickedFunction (&mapClicked);
 	menuItems.push_back (mapImage.get());
 
@@ -2408,7 +2408,7 @@ cLandingMenu::cLandingMenu (cClient& client_, cStaticMap& map_, sClientLandData&
 	drawLandingPos (landData->iLandX, landData->iLandY);
 
 	createHud();
-	hudImage = new cMenuImage (0, 0, hudSurface);
+	hudImage = new cMenuImage (0, 0, hudSurface.get());
 	hudImage->setMovedOverFunction (&mouseMoved);
 	menuItems.push_back (hudImage.get());
 
@@ -2452,8 +2452,8 @@ void cLandingMenu::createHud()
 	bottom.x = 0;
 	bottom.y = (Video.getResolutionY() / 2);
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, hudSurface, &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, hudSurface, &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get(), NULL, hudSurface.get(), &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get(), NULL, hudSurface.get(), &bottom);
 }
 
 //------------------------------------------------------------------------------
@@ -2484,8 +2484,8 @@ void cLandingMenu::drawLandingPos (int mapX, int mapY)
 	const int mapPixelHeight = getMapPixelHeight();
 
 	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapPixelWidth, mapPixelHeight, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_FillRect (circleSurface, NULL, 0xFF00FF);
-	SDL_SetColorKey (circleSurface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (circleSurface.get(), NULL, 0xFF00FF);
+	SDL_SetColorKey (circleSurface.get(), SDL_TRUE, 0xFF00FF);
 
 	const int posX = mapX * mapPixelWidth / map->getSize();
 	const int posY = mapY * mapPixelHeight / map->getSize();
@@ -2493,10 +2493,10 @@ void cLandingMenu::drawLandingPos (int mapX, int mapY)
 	// only correct in x dimension, because I don't draw an ellipse
 	const int warningRadius = (LANDING_DISTANCE_WARNING / 2) * mapPixelWidth / map->getSize();
 	const int tooCloseRadius = (LANDING_DISTANCE_TOO_CLOSE / 2) * mapPixelWidth / map->getSize();
-	drawCircle (posX, posY, warningRadius, SCAN_COLOR, circleSurface);
-	drawCircle (posX, posY, tooCloseRadius, RANGE_GROUND_COLOR, circleSurface);
+	drawCircle (posX, posY, warningRadius, SCAN_COLOR, *circleSurface);
+	drawCircle (posX, posY, tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
 
-	circlesImage->setImage (circleSurface);
+	circlesImage->setImage (circleSurface.get());
 }
 
 //------------------------------------------------------------------------------
@@ -2506,7 +2506,7 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (!menu->canClick) return;
 
-	if (mouse->cur != GraphicsData.gfx_Cmove) return;
+	if (mouse->cur != GraphicsData.gfx_Cmove.get()) return;
 
 	menu->landData->iLandX = (mouse->x - 180) * menu->map->getSize() / menu->getMapPixelWidth();
 	menu->landData->iLandY = (mouse->y - 18) * menu->map-> getSize() / menu->getMapPixelHeight();
@@ -2660,9 +2660,9 @@ cHotSeatMenu::cHotSeatMenu (const sSettings& settings) :
 	AutoSurface playerNoneSurface (LoadPCX (GFXOD_PLAYER_NONE));
 	SDL_Surface* const playerSurfaces[3] =
 	{
-		playerHumanSurface,
-		playerPCSurface,
-		playerNoneSurface
+		playerHumanSurface.get(),
+		playerPCSurface.get(),
+		playerNoneSurface.get()
 	};
 	for (int i = 0; i != 4; ++i)
 	{
@@ -2689,7 +2689,7 @@ void cHotSeatMenu::setClan (int player, int clan)
 	}
 	else
 	{
-		clanImages[player]->setImage (clanSurfaces[clan]);
+		clanImages[player]->setImage (clanSurfaces[clan].get());
 	}
 }
 
@@ -2825,7 +2825,7 @@ cNetworkMenu::cNetworkMenu() :
 	// little icon that restores our default port on click.
 	// TODO: find a proper gfx for this or change menu style to dropdown
 	setDefaultPortImage = new cMenuImage (position.x + 224 + 85, position.y + 253);
-	setDefaultPortImage->setImage (GraphicsData.gfx_Cpfeil2);
+	setDefaultPortImage->setImage (GraphicsData.gfx_Cpfeil2.get());
 	setDefaultPortImage->setClickedFunction (&setDefaultPort);
 	menuItems.push_back (setDefaultPortImage.get());
 
@@ -2834,10 +2834,10 @@ cNetworkMenu::cNetworkMenu() :
 	nameLine->setWasKeyInputFunction (&wasNameImput);
 	menuItems.push_back (nameLine.get());
 
-	nextColorButton = new cMenuButton (position.x + 596, position.y + 256, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	nextColorButton = new cMenuButton (position.x + 596, position.y + 256, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	nextColorButton->setReleasedFunction (&nextColorReleased);
 	menuItems.push_back (nextColorButton.get());
-	prevColorButton = new cMenuButton (position.x + 478, position.y + 256, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	prevColorButton = new cMenuButton (position.x + 478, position.y + 256, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu.get());
 	prevColorButton->setReleasedFunction (&prevColorReleased);
 	menuItems.push_back (prevColorButton.get());
 	colorImage = new cMenuImage (position.x + 505, position.y + 260);
@@ -2913,7 +2913,7 @@ void cNetworkMenu::showMap()
 	AutoSurface surface (cStaticMap::loadMapPreview (map->getName()));
 	if (surface != NULL)
 	{
-		mapImage->setImage (surface);
+		mapImage->setImage (surface.get());
 	}
 
 	string mapName = map->getName();
@@ -2936,8 +2936,8 @@ void cNetworkMenu::setColor (int color)
 {
 	SDL_Rect src = { 0, 0, 83, 10 };
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-	SDL_BlitSurface (OtherData.colors[color], &src, colorSurface, NULL);
-	colorImage->setImage (colorSurface);
+	SDL_BlitSurface (OtherData.colors[color].get(), &src, colorSurface.get(), NULL);
+	colorImage->setImage (colorSurface.get());
 }
 
 //------------------------------------------------------------------------------
@@ -2980,7 +2980,7 @@ bool cNetworkMenu::enteredCommand (const string& text)
 void cNetworkMenu::playerReadyClicked (sPlayer* player)
 {
 	if (player != actPlayer) return;
-	PlayFX (SoundData.SNDHudButton);
+	PlayFX (SoundData.SNDHudButton.get());
 	changePlayerReadyState (player);
 }
 
@@ -3295,7 +3295,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 	{
 		chatBox->addLine (chatText);
 		// play some chattersound if we got a player message
-		PlayFX (SoundData.SNDChat);
+		PlayFX (SoundData.SNDChat.get());
 	}
 	// send to other clients
 	for (size_t i = 1; i != players.size(); ++i)
@@ -3956,11 +3956,11 @@ cLoadMenu::cLoadMenu (eMenuBackgrounds backgroundType_) :
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel.get());
 
-	backButton = new cMenuButton (position.x + 353, position.y + 438, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	backButton = new cMenuButton (position.x + 353, position.y + 438, lngPack.i18n ("Text~Others~Back"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton.get());
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton.get());
 
-	loadButton = new cMenuButton (position.x + 514, position.y + 438, lngPack.i18n ("Text~Others~Load"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	loadButton = new cMenuButton (position.x + 514, position.y + 438, lngPack.i18n ("Text~Others~Load"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton.get());
 	loadButton->setReleasedFunction (&loadReleased);
 	menuItems.push_back (loadButton.get());
 
@@ -3978,7 +3978,7 @@ cLoadMenu::cLoadMenu (eMenuBackgrounds backgroundType_) :
 		{
 			saveSlots[5 * x + y] = new cMenuSaveSlot (position.x + 17 + 402 * x, position.y + 45 + 76 * y, this);
 			saveSlots[5 * x + y]->setReleasedFunction (&slotClicked);
-			saveSlots[5 * x + y]->setClickSound (SoundData.SNDObjectMenu);
+			saveSlots[5 * x + y]->setClickSound (SoundData.SNDObjectMenu.get());
 			menuItems.push_back (saveSlots[5 * x + y].get());
 		}
 	}
@@ -4146,11 +4146,11 @@ cLoadSaveMenu::cLoadSaveMenu (cClient& client_, cServer* server_) :
 	client (&client_),
 	server (server_)
 {
-	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Others~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Others~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton.get());
 	exitButton->setReleasedFunction (&exitReleased);
 	menuItems.push_back (exitButton.get());
 
-	saveButton = new cMenuButton (position.x + 132, position.y + 438, lngPack.i18n ("Text~Others~Save"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
+	saveButton = new cMenuButton (position.x + 132, position.y + 438, lngPack.i18n ("Text~Others~Save"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton.get());
 	saveButton->setReleasedFunction (&saveReleased);
 	menuItems.push_back (saveButton.get());
 
@@ -4191,7 +4191,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 	savegame.save (*menu->server, menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
 	menu->server->makeAdditionalSaveRequest (menu->selected + 1);
 
-	PlayVoice (VoiceData.VOISaved);
+	PlayVoice (VoiceData.VOISaved.get());
 
 	menu->files = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
 	for (size_t i = 0; i != menu->savefiles.size(); ++i)
@@ -4774,8 +4774,8 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 
 	if (!canStorePlanes)
 	{
-		SDL_Surface* surface = LoadPCX (GFXOD_STORAGE_GROUND);
-		SDL_BlitSurface (surface, NULL, background, NULL);
+		AutoSurface surface (LoadPCX (GFXOD_STORAGE_GROUND));
+		SDL_BlitSurface (surface.get(), NULL, background.get(), NULL);
 	}
 
 	doneButton = new cMenuButton (position.x + 518, position.y + 371, lngPack.i18n ("Text~Others~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
@@ -4892,9 +4892,9 @@ void cStorageMenu::resetInfos()
 			else
 			{
 				name = "";
-				if (canStoreShips) srcSurface = GraphicsData.gfx_edock;
-				else if (canStorePlanes) srcSurface = GraphicsData.gfx_ehangar;
-				else srcSurface = GraphicsData.gfx_edepot;
+				if (canStoreShips) srcSurface = GraphicsData.gfx_edock.get();
+				else if (canStorePlanes) srcSurface = GraphicsData.gfx_ehangar.get();
+				else srcSurface = GraphicsData.gfx_edepot.get();
 				unitInfo[pos]->setUnitData (NULL);
 
 				activateButtons[pos]->setLocked (true);
@@ -5142,19 +5142,19 @@ void cStorageMenu::playVoice (int Type)
 
 	if (Type == SUPPLY_TYPE_REARM)
 	{
-		PlayFX (SoundData.SNDReload);
+		PlayFX (SoundData.SNDReload.get());
 		if (voiceTypeAll == true)
 		{
-			PlayVoice (VoiceData.VOIReammoAll);
+			PlayVoice (VoiceData.VOIReammoAll.get());
 		}
 		else
 		{
-			PlayVoice (VoiceData.VOIReammo);
+			PlayVoice (VoiceData.VOIReammo.get());
 		}
 	}
 	else
 	{
-		PlayFX (SoundData.SNDRepair);
+		PlayFX (SoundData.SNDRepair.get());
 		if (voiceTypeAll == true)
 		{
 			PlayRandomVoice (VoiceData.VOIRepairedAll);

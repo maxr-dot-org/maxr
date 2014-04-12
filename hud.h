@@ -486,18 +486,18 @@ public:
 	bool tntChecked() const { return TNTButton.isChecked(); }
 	bool twoXChecked() const { return twoXButton.isChecked(); }
 
-	void setSurvey (bool checked) { surveyButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setHits (bool checked) { hitsButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setScan (bool checked) { scanButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setStatus (bool checked) { statusButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setAmmo (bool checked) { ammoButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setGrid (bool checked) { gridButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setColor (bool checked) { colorButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setRange (bool checked) { rangeButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setFog (bool checked) { fogButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setLock (bool checked) { lockButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setTNT (bool checked) { TNTButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
-	void setTwoX (bool checked) { resetMiniMapOffset(); twoXButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
+	void setSurvey (bool checked) { surveyButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setHits (bool checked) { hitsButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setScan (bool checked) { scanButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setStatus (bool checked) { statusButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setAmmo (bool checked) { ammoButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setGrid (bool checked) { gridButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setColor (bool checked) { colorButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setRange (bool checked) { rangeButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setFog (bool checked) { fogButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setLock (bool checked) { lockButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setTNT (bool checked) { TNTButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
+	void setTwoX (bool checked) { resetMiniMapOffset(); twoXButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch.get()); }
 
 	/**
 	* draws an exitpoint on the ground

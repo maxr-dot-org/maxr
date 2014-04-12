@@ -82,7 +82,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 	surface = SDL_CreateRGBSurface (0, width, height, 32,
 									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
-	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding& building)
@@ -111,7 +111,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding& buildin
 	surface = SDL_CreateRGBSurface (0, width, height, 32,
 									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
-	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get(), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 cDrawingCache::cDrawingCache()
@@ -172,7 +172,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building)
 		//cache hit!
 		cacheHits++;
 		entry.lastUsed = gameGUI->getFrame();
-		return entry.surface;
+		return entry.surface.get();
 	}
 
 	//cache miss!
@@ -237,7 +237,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 		//cache hit!
 		cacheHits++;
 		entry.lastUsed = gameGUI->getFrame();
-		return entry.surface;
+		return entry.surface.get();
 	}
 
 	//cache miss!
@@ -257,7 +257,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building)
 		//set properties of the cached image
 		entry.init (*gameGUI, building);
 
-		return entry.surface;
+		return entry.surface.get();
 	}
 
 	//try to find an old entry to reuse
@@ -271,7 +271,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building)
 		//set properties of the cached image
 		entry.init (*gameGUI, building);
 
-		return entry.surface;
+		return entry.surface.get();
 	}
 
 	//there are no old entries in the cache.
@@ -291,7 +291,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle)
 		entry.init (*gameGUI, vehicle);
 
 		cacheSize++;
-		return entry.surface;
+		return entry.surface.get();
 	}
 
 	//try to find an old entry to reuse
@@ -304,7 +304,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle)
 
 		//set properties of the cached image
 		entry.init (*gameGUI, vehicle);
-		return entry.surface;
+		return entry.surface.get();
 	}
 
 	//there are no old entries in the cache.

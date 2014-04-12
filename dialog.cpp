@@ -132,7 +132,7 @@ cDestructMenu::cDestructMenu() :
 	menuItems.push_back (&armButton);
 
 	destroyButton.setReleasedFunction (&cMenu::doneReleased);
-	destroyButton.setReleaseSound (SoundData.SNDMenuButton);
+	destroyButton.setReleaseSound (SoundData.SNDMenuButton.get());
 	menuItems.push_back (&destroyButton);
 }
 
@@ -308,7 +308,7 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 	// blit black titlebar behind textfield for playername
 	SDL_Rect src = { 108, 12, 186, 18 };
 	SDL_Rect dest = { 108, 154, 0, 0 };
-	SDL_BlitSurface (background, &src, background, &dest);
+	SDL_BlitSurface (background.get(), &src, background.get(), &dest);
 
 	titleLabel.setCentered (true);
 	menuItems.push_back (&titleLabel);
@@ -782,7 +782,7 @@ void cDialogTransfer::setCargos()
 		const Sint16 x = arrowImage.getPosition().x - position.x; // 140
 		const Sint16 y = arrowImage.getPosition().y - position.y; //  77
 		SDL_Rect src = {x, y, w, h};
-		SDL_BlitSurface (background, &src, arrowSurface, NULL);
+		SDL_BlitSurface (background.get(), &src, arrowSurface, NULL);
 		FlipSurfaceHorizontally (arrowSurface);
 
 		arrowImage.setImage (arrowSurface);
@@ -860,7 +860,7 @@ void drawContextItem (const string& sText, bool bPressed, int x, int y, SDL_Surf
 	SDL_Rect src = {0, 0, 42, 21}; //default button deselected
 	if (bPressed) src.y += 21;
 
-	SDL_BlitSurface (GraphicsData.gfx_context_menu, &src, surface, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_context_menu.get(), &src, surface, &dest);
 	font->showTextCentered (dest.x + dest.w / 2, dest.y + (dest.h / 2 - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2) + 1, sText, FONT_LATIN_SMALL_WHITE);
 }
 
@@ -918,28 +918,28 @@ cDialogResearch::cDialogResearch (cClient& client_) :
 
 	dest.x = 167;
 	dest.y = 70;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &attackSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &attackSymbol, background.get(), &dest);
 	dest.x = 165;
 	dest.y = 102;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &shotsSymbol, background.get(), &dest);
 	dest.x = 166;
 	dest.y = 127;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &rangeSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &rangeSymbol, background.get(), &dest);
 	dest.x = 167;
 	dest.y = 154;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &armorSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &armorSymbol, background.get(), &dest);
 	dest.x = 169;
 	dest.y = 184;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &hitpointsSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &hitpointsSymbol, background.get(), &dest);
 	dest.x = 167;
 	dest.y = 212;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &speedSymbol, background.get(), &dest);
 	dest.x = 166;
 	dest.y = 239;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &scanSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &scanSymbol, background.get(), &dest);
 	dest.x = 166;
 	dest.y = 268;
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &costsSymbol, background, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get(), &costsSymbol, background.get(), &dest);
 
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{

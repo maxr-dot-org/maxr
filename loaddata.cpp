@@ -365,9 +365,9 @@ int LoadData (void* data)
 	// so that Video.draw() can be called in main thread.
 }
 
-static SDL_Surface* CloneSDLSurface (SDL_Surface* src)
+static SDL_Surface* CloneSDLSurface (SDL_Surface& src)
 {
-	return SDL_ConvertSurface (src, src->format, src->flags);
+	return SDL_ConvertSurface (&src, src.format, src.flags);
 }
 
 /**
@@ -431,7 +431,7 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* dire
 	}
 
 	dest[0] = LoadPCX (filepath);
-	dest[1] = CloneSDLSurface (dest[0]);
+	dest[1] = CloneSDLSurface (*dest[0]);
 
 	filepath.insert (0, "Effect successful loaded: ");
 	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
@@ -454,9 +454,9 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* direct
 		return 0;
 
 	dest[0] = LoadPCX (filepath);
-	dest[1] = CloneSDLSurface (dest[0]);
-	SDL_SetSurfaceAlphaMod (dest[0], alpha);
-	SDL_SetSurfaceAlphaMod (dest[1], alpha);
+	dest[1] = CloneSDLSurface (*dest[0]);
+	SDL_SetSurfaceAlphaMod (dest[0].get(), alpha);
+	SDL_SetSurfaceAlphaMod (dest[1].get(), alpha);
 
 	filepath.insert (0, "Effectalpha loaded: ");
 	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
@@ -538,7 +538,7 @@ static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char*
 	SDL_RWops* file = SDL_RWFromFile (filepath.c_str(), "r");
 	if (!file)
 	{
-		dest = SoundData.DummySound;
+		dest = SoundData.DummySound.get();
 		return;
 	}
 	SDL_RWclose (file);
@@ -800,11 +800,11 @@ static int LoadGraphics (const char* path)
 	LoadGraphicToSurface (GraphicsData.gfx_context_menu, path, "object_menu2.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_destruction, path, "destruction.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_band_small_org, path, "band_small.pcx");
-	GraphicsData.gfx_band_small = CloneSDLSurface (GraphicsData.gfx_band_small_org);
+	GraphicsData.gfx_band_small = CloneSDLSurface (*GraphicsData.gfx_band_small_org);
 	LoadGraphicToSurface (GraphicsData.gfx_band_big_org, path, "band_big.pcx");
-	GraphicsData.gfx_band_big = CloneSDLSurface (GraphicsData.gfx_band_big_org);
+	GraphicsData.gfx_band_big = CloneSDLSurface (*GraphicsData.gfx_band_big_org);
 	LoadGraphicToSurface (GraphicsData.gfx_big_beton_org, path, "big_beton.pcx");
-	GraphicsData.gfx_big_beton = CloneSDLSurface (GraphicsData.gfx_big_beton_org);
+	GraphicsData.gfx_big_beton = CloneSDLSurface (*GraphicsData.gfx_big_beton_org);
 	LoadGraphicToSurface (GraphicsData.gfx_storage, path, "storage.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_storage_ground, path, "storage_ground.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_dialog, path, "dialog.pcx");
@@ -815,7 +815,7 @@ static int LoadGraphics (const char* path)
 	LoadGraphicToSurface (GraphicsData.gfx_player_human, path, "player_human.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_player_none, path, "player_none.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_exitpoints_org, path, "activate_field.pcx");
-	GraphicsData.gfx_exitpoints = CloneSDLSurface (GraphicsData.gfx_exitpoints_org);
+	GraphicsData.gfx_exitpoints = CloneSDLSurface (*GraphicsData.gfx_exitpoints_org);
 	LoadGraphicToSurface (GraphicsData.gfx_player_select, path, "customgame_menu.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_menu_buttons, path, "menu_buttons.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_player_ready, path, "player_ready.pcx");
@@ -840,15 +840,15 @@ static int LoadGraphics (const char* path)
 	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
 													Video.getColDepth(),
 													0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	SDL_FillRect (GraphicsData.gfx_shadow, NULL, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+	SDL_FillRect (GraphicsData.gfx_shadow.get(), NULL, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
 
 	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (GraphicsData.gfx_tmp, SDL_TRUE, 0xFF00FF);
+	SDL_SetColorKey (GraphicsData.gfx_tmp.get(), SDL_TRUE, 0xFF00FF);
 
 	// Glas:
 	Log.write ("Glassgraphic...", LOG_TYPE_DEBUG);
 	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx");
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas, 150);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_destruction_glas.get(), 150);
 
 	// Waypoints:
 	Log.write ("Waypointgraphics...", LOG_TYPE_DEBUG);
@@ -872,7 +872,7 @@ void cOtherData::loadColors (const char* path)
 	LoadGraphicToSurface (colors[cl_aqua], path, "cl_aqua.pcx");
 
 	for (int i = 0; i != PLAYERCOLORS; ++i)
-		colors_org[i] = CloneSDLSurface (colors[i]);
+		colors_org[i] = CloneSDLSurface (*colors[i]);
 }
 
 void cOtherData::loadWayPoints()
@@ -904,22 +904,22 @@ void cResourceData::load (const char* path)
 	// metal
 	if (LoadGraphicToSurface (res_metal_org, path, "res.pcx") == 1)
 	{
-		res_metal = CloneSDLSurface (res_metal_org);
-		SDL_SetColorKey (res_metal, SDL_TRUE, 0xFF00FF);
+		res_metal = CloneSDLSurface (*res_metal_org);
+		SDL_SetColorKey (res_metal.get(), SDL_TRUE, 0xFF00FF);
 	}
 
 	// gold
 	if (LoadGraphicToSurface (res_gold_org, path, "gold.pcx") == 1)
 	{
-		res_gold = CloneSDLSurface (res_gold_org);
-		SDL_SetColorKey (res_gold, SDL_TRUE, 0xFF00FF);
+		res_gold = CloneSDLSurface (*res_gold_org);
+		SDL_SetColorKey (res_gold.get(), SDL_TRUE, 0xFF00FF);
 	}
 
 	// fuel
 	if (LoadGraphicToSurface (res_oil_org, path, "fuel.pcx") == 1)
 	{
-		res_oil = CloneSDLSurface (res_oil_org);
-		SDL_SetColorKey (res_oil, SDL_TRUE, 0xFF00FF);
+		res_oil = CloneSDLSurface (*res_oil_org);
+		SDL_SetColorKey (res_oil.get(), SDL_TRUE, 0xFF00FF);
 	}
 }
 
@@ -1045,7 +1045,7 @@ static int LoadVehicles()
 						{
 							rcDest.x = 64 * j + 32 - sfTempSurface->w / 2;
 							rcDest.y = 32 - sfTempSurface->h / 2;
-							SDL_BlitSurface (sfTempSurface, NULL, ui.img[n], &rcDest);
+							SDL_BlitSurface (sfTempSurface.get(), NULL, ui.img[n], &rcDest);
 						}
 					}
 				}
@@ -1092,7 +1092,7 @@ static int LoadVehicles()
 				if (FileExists (sTmpString.c_str()))
 				{
 					ui.img_org[n] = LoadPCX (sTmpString);
-					ui.img[n] = CloneSDLSurface (ui.img_org[n]);
+					ui.img[n] = CloneSDLSurface (*ui.img_org[n]);
 					SDL_SetColorKey (ui.img_org[n], SDL_TRUE, 0xFFFFFF);
 					SDL_SetColorKey (ui.img[n], SDL_TRUE, 0xFFFFFF);
 				}
@@ -1107,7 +1107,7 @@ static int LoadVehicles()
 				if (FileExists (sTmpString.c_str()))
 				{
 					ui.shw_org[n] = LoadPCX (sTmpString);
-					ui.shw[n] = CloneSDLSurface (ui.shw_org[n]);
+					ui.shw[n] = CloneSDLSurface (*ui.shw_org[n]);
 					SDL_SetSurfaceAlphaMod (ui.shw[n], 50);
 				}
 				else
@@ -1166,7 +1166,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.overlay_org = LoadPCX (sTmpString);
-				ui.overlay = CloneSDLSurface (ui.overlay_org);
+				ui.overlay = CloneSDLSurface (*ui.overlay_org);
 			}
 			else
 			{
@@ -1192,7 +1192,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.build_org = LoadPCX (sTmpString);
-				ui.build = CloneSDLSurface (ui.build_org);
+				ui.build = CloneSDLSurface (*ui.build_org);
 				SDL_SetColorKey (ui.build_org, SDL_TRUE, 0xFFFFFF);
 				SDL_SetColorKey (ui.build, SDL_TRUE, 0xFFFFFF);
 			}
@@ -1209,7 +1209,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.build_shw_org = LoadPCX (sTmpString);
-				ui.build_shw = CloneSDLSurface (ui.build_shw_org);
+				ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
 				SDL_SetSurfaceAlphaMod (ui.build_shw, 50);
 			}
 			else
@@ -1237,7 +1237,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.clear_small_org = LoadPCX (sTmpString);
-				ui.clear_small = CloneSDLSurface (ui.clear_small_org);
+				ui.clear_small = CloneSDLSurface (*ui.clear_small_org);
 				SDL_SetColorKey (ui.clear_small_org, SDL_TRUE, 0xFFFFFF);
 				SDL_SetColorKey (ui.clear_small, SDL_TRUE, 0xFFFFFF);
 			}
@@ -1254,7 +1254,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.clear_small_shw_org = LoadPCX (sTmpString);
-				ui.clear_small_shw = CloneSDLSurface (ui.clear_small_shw_org);
+				ui.clear_small_shw = CloneSDLSurface (*ui.clear_small_shw_org);
 				SDL_SetSurfaceAlphaMod (ui.clear_small_shw, 50);
 			}
 			else
@@ -1270,7 +1270,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.build_org = LoadPCX (sTmpString);
-				ui.build = CloneSDLSurface (ui.build_org);
+				ui.build = CloneSDLSurface (*ui.build_org);
 				SDL_SetColorKey (ui.build_org, SDL_TRUE, 0xFFFFFF);
 				SDL_SetColorKey (ui.build, SDL_TRUE, 0xFFFFFF);
 			}
@@ -1287,7 +1287,7 @@ static int LoadVehicles()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.build_shw_org = LoadPCX (sTmpString);
-				ui.build_shw = CloneSDLSurface (ui.build_shw_org);
+				ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
 				SDL_SetSurfaceAlphaMod (ui.build_shw, 50);
 			}
 			else
@@ -1576,7 +1576,7 @@ static int LoadBuildings()
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.img_org = LoadPCX (sTmpString);
-			ui.img = CloneSDLSurface (ui.img_org);
+			ui.img = CloneSDLSurface (*ui.img_org);
 			SDL_SetColorKey (ui.img_org, SDL_TRUE, 0xFFFFFF);
 			SDL_SetColorKey (ui.img, SDL_TRUE, 0xFFFFFF);
 		}
@@ -1591,7 +1591,7 @@ static int LoadBuildings()
 		if (FileExists (sTmpString.c_str()))
 		{
 			ui.shw_org = LoadPCX (sTmpString);
-			ui.shw     = CloneSDLSurface (ui.shw_org);
+			ui.shw     = CloneSDLSurface (*ui.shw_org);
 			SDL_SetSurfaceAlphaMod (ui.shw, 50);
 		}
 
@@ -1615,7 +1615,7 @@ static int LoadBuildings()
 			if (FileExists (sTmpString.c_str()))
 			{
 				ui.eff_org = LoadPCX (sTmpString);
-				ui.eff = CloneSDLSurface (ui.eff_org);
+				ui.eff = CloneSDLSurface (*ui.eff_org);
 				SDL_SetSurfaceAlphaMod (ui.eff, 10);
 			}
 		}
@@ -1660,15 +1660,15 @@ static int LoadBuildings()
 	if (!DEDICATED_SERVER)
 	{
 		LoadGraphicToSurface (UnitsData.dirt_big_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
-		UnitsData.dirt_big = CloneSDLSurface (UnitsData.dirt_big_org);
+		UnitsData.dirt_big = CloneSDLSurface (*UnitsData.dirt_big_org);
 		LoadGraphicToSurface (UnitsData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
-		UnitsData.dirt_big_shw = CloneSDLSurface (UnitsData.dirt_big_shw_org);
-		if (UnitsData.dirt_big_shw) SDL_SetSurfaceAlphaMod (UnitsData.dirt_big_shw, 50);
+		UnitsData.dirt_big_shw = CloneSDLSurface (*UnitsData.dirt_big_shw_org);
+		if (UnitsData.dirt_big_shw != NULL) SDL_SetSurfaceAlphaMod (UnitsData.dirt_big_shw.get(), 50);
 		LoadGraphicToSurface (UnitsData.dirt_small_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
-		UnitsData.dirt_small = CloneSDLSurface (UnitsData.dirt_small_org);
+		UnitsData.dirt_small = CloneSDLSurface (*UnitsData.dirt_small_org);
 		LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
-		UnitsData.dirt_small_shw = CloneSDLSurface (UnitsData.dirt_small_shw_org);
-		if (UnitsData.dirt_small_shw) SDL_SetSurfaceAlphaMod (UnitsData.dirt_small_shw, 50);
+		UnitsData.dirt_small_shw = CloneSDLSurface (*UnitsData.dirt_small_shw_org);
+		if (UnitsData.dirt_small_shw != NULL) SDL_SetSurfaceAlphaMod (UnitsData.dirt_small_shw.get(), 50);
 	}
 	return 1;
 }

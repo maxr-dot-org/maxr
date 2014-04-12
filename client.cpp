@@ -382,8 +382,8 @@ void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message, cMenu
 	if (Building)
 	{
 		// play clearsound if it is a mine
-		if (Building->owner && Building->data.ID == UnitsData.specialIDLandMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDLandMineClear);
-		else if (Building->owner && Building->data.ID == UnitsData.specialIDSeaMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDSeaMineClear);
+		if (Building->owner && Building->data.ID == UnitsData.specialIDLandMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDLandMineClear.get());
+		else if (Building->owner && Building->data.ID == UnitsData.specialIDSeaMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDSeaMineClear.get());
 
 		deleteUnit (Building, activeMenu);
 	}
@@ -610,7 +610,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 				const std::string msg = Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
 				gameGUI->addCoords (report);
-				PlayVoice (VoiceData.VOIUnitDisabled);
+				PlayVoice (VoiceData.VOIUnitDisabled.get());
 			}
 			Vehicle->owner->doScan();
 		}
@@ -643,7 +643,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
 				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
 				gameGUI->addCoords (report);
-				PlayVoice (VoiceData.VOIUnitDisabled);
+				PlayVoice (VoiceData.VOIUnitDisabled.get());
 			}
 			Building->owner->doScan();
 		}
@@ -1017,16 +1017,16 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 
 	const int nrResearchAreasFinished = message.popChar();
 	const bool bFinishedResearch = (nrResearchAreasFinished > 0);
-	if ((iCount == 0 || !playVoice) && !bFinishedResearch) PlayVoice (VoiceData.VOIStartNone);
+	if ((iCount == 0 || !playVoice) && !bFinishedResearch) PlayVoice (VoiceData.VOIStartNone.get());
 	if (iCount == 1)
 	{
 		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
-		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartOne);
+		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartOne.get());
 	}
 	else if (iCount > 1)
 	{
 		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
-		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartMore);
+		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartMore.get());
 	}
 	gameGUI->addMessage (lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn));
 	if (sReportMsg.length() > 0) gameGUI->addMessage (sReportMsg);
@@ -1034,7 +1034,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 	if (bFinishedResearch)
 	{
 		ActivePlayer->researchFinished = true;
-		PlayVoice (VoiceData.VOIResearchComplete);
+		PlayVoice (VoiceData.VOIResearchComplete.get());
 
 		// build research finished string
 		const string themeNames[8] =
@@ -1136,12 +1136,12 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* acti
 	{
 		if (iType == SUPPLY_TYPE_REARM)
 		{
-			PlayFX (SoundData.SNDReload);// play order changed else no VOIReammo-sound - nonsinn
-			PlayVoice (VoiceData.VOIReammo);
+			PlayFX (SoundData.SNDReload.get());// play order changed else no VOIReammo-sound - nonsinn
+			PlayVoice (VoiceData.VOIReammo.get());
 		}
 		else
 		{
-			PlayFX (SoundData.SNDRepair);// play order changed else no VOIRepaired-sound - nonsinn
+			PlayFX (SoundData.SNDRepair.get());// play order changed else no VOIRepaired-sound - nonsinn
 			PlayRandomVoice (VoiceData.VOIRepaired);
 		}
 	}
@@ -1434,7 +1434,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 			gameGUI->mouseInputMode = normalInput;
 		}
 	}
-	PlayFX (SoundData.SNDActivate);
+	PlayFX (SoundData.SNDActivate.get());
 	gameGUI->updateMouseCursor();
 }
 
@@ -1660,7 +1660,7 @@ void cClient::HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message)
 		}
 		else
 		{
-			PlayVoice (VoiceData.VOIUnitDisabled);
+			PlayVoice (VoiceData.VOIUnitDisabled.get());
 		}
 	}
 	else
@@ -1895,7 +1895,7 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit,
 	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
 		//this unit was captured by an infiltrator
-		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
+		PlayVoice (VoiceData.VOIUnitStolenByEnemy.get());
 		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", addedVehicle.getDisplayName());
 		const sSavedReportMessage& report = getActivePlayer().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, addedVehicle.PosX, addedVehicle.PosY);
 		gameGUI->addCoords (report);
@@ -1908,7 +1908,7 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit,
 		gameGUI->addCoords (report);
 
 		if (addedVehicle.data.isStealthOn & TERRAIN_SEA && addedVehicle.data.canAttack)
-			PlayVoice (VoiceData.VOISubDetected);
+			PlayVoice (VoiceData.VOISubDetected.get());
 		else
 			PlayRandomVoice (VoiceData.VOIDetected);
 	}

@@ -533,7 +533,7 @@ public:
 	cMenuButton (int x, int y, const std::string& text_ = "",
 				 eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG,
 				 eUnicodeFontType fontType_ = FONT_LATIN_BIG,
-				 sSOUND* clickSound_ = SoundData.SNDHudButton);
+				 sSOUND* clickSound_ = SoundData.SNDHudButton.get());
 	virtual void draw();
 };
 
@@ -637,7 +637,7 @@ public:
 					  eCheckButtonTypes buttonType_ = RADIOBTN_TYPE_BTN_ROUND,
 					  eCheckButtonTextOriantation textOrientation = TEXT_ORIENT_RIGHT,
 					  eUnicodeFontType fontType_ = FONT_LATIN_NORMAL,
-					  sSOUND* clickSound_ = SoundData.SNDObjectMenu);
+					  sSOUND* clickSound_ = SoundData.SNDObjectMenu.get());
 	virtual void draw();
 
 	void setChecked (bool checked_);

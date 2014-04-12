@@ -57,28 +57,28 @@ bool cMouse::SetCursor (eCursor const typ, int value_, int max_value_)
 	switch (typ)
 	{
 		default:
-		case CHand:      cur = GraphicsData.gfx_Chand;       break;
-		case CNo:        cur = GraphicsData.gfx_Cno;         break;
-		case CSelect:    cur = GraphicsData.gfx_Cselect;     break;
-		case CMove:      cur = GraphicsData.gfx_Cmove;       break;
-		case CMoveDraft: cur = GraphicsData.gfx_Cmove_draft; break;
-		case CPfeil1:    cur = GraphicsData.gfx_Cpfeil1;     break;
-		case CPfeil2:    cur = GraphicsData.gfx_Cpfeil2;     break;
-		case CPfeil3:    cur = GraphicsData.gfx_Cpfeil3;     break;
-		case CPfeil4:    cur = GraphicsData.gfx_Cpfeil4;     break;
-		case CPfeil6:    cur = GraphicsData.gfx_Cpfeil6;     break;
-		case CPfeil7:    cur = GraphicsData.gfx_Cpfeil7;     break;
-		case CPfeil8:    cur = GraphicsData.gfx_Cpfeil8;     break;
-		case CPfeil9:    cur = GraphicsData.gfx_Cpfeil9;     break;
-		case CHelp:      cur = GraphicsData.gfx_Chelp;       break;
+		case CHand:      cur = GraphicsData.gfx_Chand.get();       break;
+		case CNo:        cur = GraphicsData.gfx_Cno.get();         break;
+		case CSelect:    cur = GraphicsData.gfx_Cselect.get();     break;
+		case CMove:      cur = GraphicsData.gfx_Cmove.get();       break;
+		case CMoveDraft: cur = GraphicsData.gfx_Cmove_draft.get(); break;
+		case CPfeil1:    cur = GraphicsData.gfx_Cpfeil1.get();     break;
+		case CPfeil2:    cur = GraphicsData.gfx_Cpfeil2.get();     break;
+		case CPfeil3:    cur = GraphicsData.gfx_Cpfeil3.get();     break;
+		case CPfeil4:    cur = GraphicsData.gfx_Cpfeil4.get();     break;
+		case CPfeil6:    cur = GraphicsData.gfx_Cpfeil6.get();     break;
+		case CPfeil7:    cur = GraphicsData.gfx_Cpfeil7.get();     break;
+		case CPfeil8:    cur = GraphicsData.gfx_Cpfeil8.get();     break;
+		case CPfeil9:    cur = GraphicsData.gfx_Cpfeil9.get();     break;
+		case CHelp:      cur = GraphicsData.gfx_Chelp.get();       break;
 		case CAttack:
 		{
-			cur = GraphicsData.gfx_Cattack;
+			cur = GraphicsData.gfx_Cattack.get();
 			SDL_Rect r = {1, 29, 35, 3};
 			if (max_value == -1)
 			{
 				assert (value == -1);
-				SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+				SDL_FillRect (GraphicsData.gfx_Cattack.get(), &r, 0);
 			}
 			else
 			{
@@ -87,33 +87,33 @@ bool cMouse::SetCursor (eCursor const typ, int value_, int max_value_)
 				SDL_Rect r = {1, 29, Uint16 (value), 3};
 
 				if (r.w)
-					SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0x00FF00);
+					SDL_FillRect (GraphicsData.gfx_Cattack.get(), &r, 0x00FF00);
 
 				r.x += r.w;
 				r.w = max_value - value;
 
 				if (r.w)
-					SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0xFF0000);
+					SDL_FillRect (GraphicsData.gfx_Cattack.get(), &r, 0xFF0000);
 
 				r.x += r.w;
 				r.w = 35 - max_value;
 
 				if (r.w)
-					SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
+					SDL_FillRect (GraphicsData.gfx_Cattack.get(), &r, 0);
 			}
 			break;
 		}
-		case CAttackOOR: cur = GraphicsData.gfx_Cattackoor;  break;
-		case CBand:      cur = GraphicsData.gfx_Cband;       break;
-		case CTransf:    cur = GraphicsData.gfx_Ctransf;     break;
-		case CLoad:      cur = GraphicsData.gfx_Cload;       break;
-		case CMuni:      cur = GraphicsData.gfx_Cmuni;       break;
-		case CRepair:    cur = GraphicsData.gfx_Crepair;     break;
+		case CAttackOOR: cur = GraphicsData.gfx_Cattackoor.get();  break;
+		case CBand:      cur = GraphicsData.gfx_Cband.get();       break;
+		case CTransf:    cur = GraphicsData.gfx_Ctransf.get();     break;
+		case CLoad:      cur = GraphicsData.gfx_Cload.get();       break;
+		case CMuni:      cur = GraphicsData.gfx_Cmuni.get();       break;
+		case CRepair:    cur = GraphicsData.gfx_Crepair.get();     break;
 		case CSteal: // follow
 		case CDisable:
 		{
 			assert (0 <= value && value <= 100);
-			cur = typ == CSteal ? GraphicsData.gfx_Csteal : GraphicsData.gfx_Cdisable;
+			cur = typ == CSteal ? GraphicsData.gfx_Csteal.get() : GraphicsData.gfx_Cdisable.get();
 			SDL_Rect r = {1, 28, 35, 3};
 
 			if (value == 0)
@@ -128,7 +128,7 @@ bool cMouse::SetCursor (eCursor const typ, int value_, int max_value_)
 			}
 			break;
 		}
-		case CActivate:  cur = GraphicsData.gfx_Cactivate;   break;
+		case CActivate:  cur = GraphicsData.gfx_Cactivate.get();   break;
 	}
 	if (lastCur == cur && value == last_value && max_value == lastmax_value)
 	{
@@ -152,25 +152,25 @@ void cMouse::updatePos()
 // gets the cursor offset. transforms screenspace to clickspace
 void cMouse::getCursorOffset (int& x, int& y) const
 {
-	if (cur == GraphicsData.gfx_Cselect
-		|| cur == GraphicsData.gfx_Chelp
-		|| cur == GraphicsData.gfx_Cmove
-		|| cur == GraphicsData.gfx_Cmove_draft
-		|| cur == GraphicsData.gfx_Cno
-		|| cur == GraphicsData.gfx_Ctransf
-		|| cur == GraphicsData.gfx_Cband
-		|| cur == GraphicsData.gfx_Cload
-		|| cur == GraphicsData.gfx_Cmuni
-		|| cur == GraphicsData.gfx_Crepair
-		|| cur == GraphicsData.gfx_Cactivate)
+	if (cur == GraphicsData.gfx_Cselect.get()
+		|| cur == GraphicsData.gfx_Chelp.get()
+		|| cur == GraphicsData.gfx_Cmove.get()
+		|| cur == GraphicsData.gfx_Cmove_draft.get()
+		|| cur == GraphicsData.gfx_Cno.get()
+		|| cur == GraphicsData.gfx_Ctransf.get()
+		|| cur == GraphicsData.gfx_Cband.get()
+		|| cur == GraphicsData.gfx_Cload.get()
+		|| cur == GraphicsData.gfx_Cmuni.get()
+		|| cur == GraphicsData.gfx_Crepair.get()
+		|| cur == GraphicsData.gfx_Cactivate.get())
 	{
 		x = 12;
 		y = 12;
 	}
-	else if (cur == GraphicsData.gfx_Cattack
-			 || cur == GraphicsData.gfx_Csteal
-			 || cur == GraphicsData.gfx_Cdisable
-			 || cur == GraphicsData.gfx_Cattackoor)
+	else if (cur == GraphicsData.gfx_Cattack.get()
+			 || cur == GraphicsData.gfx_Csteal.get()
+			 || cur == GraphicsData.gfx_Cdisable.get()
+			 || cur == GraphicsData.gfx_Cattackoor.get())
 	{
 		x = 19;
 		y = 16;
