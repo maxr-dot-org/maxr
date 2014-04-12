@@ -1658,13 +1658,13 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) c
 	int off = map.getOffset (x, y);
 
 	const cUnit* unit  = map.fields[off].getPlane();
-	if (canDoCommandoAction(unit, steal)) return true;
+	if (canDoCommandoAction (unit, steal)) return true;
 
 	unit  = map.fields[off].getVehicle();
-	if (canDoCommandoAction(unit, steal)) return true;
+	if (canDoCommandoAction (unit, steal)) return true;
 
 	unit = map.fields[off].getBuilding();
-	if (canDoCommandoAction(unit, steal)) return true;
+	if (canDoCommandoAction (unit, steal)) return true;
 
 	return false;
 }
@@ -1677,7 +1677,7 @@ bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
 		return false;
 	if (data.shotsCur == 0) return false;
 
-	if (unit->isNextTo(PosX, PosY) == false)
+	if (unit->isNextTo (PosX, PosY) == false)
 		return false;
 
 	if (steal == false && unit->isDisabled()) return false;
