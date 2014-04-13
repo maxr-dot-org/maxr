@@ -248,7 +248,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added
 	*/
-	void addActiveMoveJob (cServerMoveJob* MoveJob);
+	void addActiveMoveJob (cServerMoveJob& MoveJob);
 	/**
 	* generates a new movejob
 	*/
@@ -266,7 +266,7 @@ public:
 	*/
 	void deleteRubble (cBuilding* rubble);
 
-	void resyncPlayer (cPlayer* Player, bool firstDelete = false);
+	void resyncPlayer (cPlayer& player, bool firstDelete = false);
 	void resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player);
 	/**
 	* deletes a player and all his units
@@ -274,7 +274,7 @@ public:
 	*/
 	void deletePlayer (cPlayer* Player);
 
-	void kickPlayer (cPlayer* player);
+	void kickPlayer (cPlayer& player);
 
 	void sideStepStealthUnit (int PosX, int PosY, const cVehicle& vehicle, int bigOffset = -1);
 	void sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1);
@@ -443,12 +443,12 @@ private:
 	* changes the owner of a vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner);
+	void changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner);
 	/**
 	* stops the buildingprocess of a working vehicle.
 	*@author alzi alias DoctorDeath
 	*/
-	void stopVehicleBuilding (cVehicle* vehicle);
+	void stopVehicleBuilding (cVehicle& vehicle);
 
 	/**
 	 * Helper for destroyUnit(cBuilding) that deletes all buildings

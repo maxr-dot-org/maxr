@@ -488,7 +488,7 @@ void cServerMoveJob::resume()
 		bEndForNow = false;
 		SrcX = Vehicle->PosX;
 		SrcY = Vehicle->PosY;
-		server->addActiveMoveJob (this);
+		server->addActiveMoveJob (*this);
 	}
 }
 
@@ -608,7 +608,7 @@ void cServerMoveJob::release()
 	{
 		if (this == server->ActiveMJobs[i]) return;
 	}
-	server->addActiveMoveJob (this);
+	server->addActiveMoveJob (*this);
 	Log.write (" Server: Added released movejob to active ones", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
@@ -954,7 +954,7 @@ void cClientMoveJob::release()
 	bEndForNow = false;
 	bFinished = true;
 	Log.write (" Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG);
-	client->addActiveMoveJob (this);
+	client->addActiveMoveJob (*this);
 	Log.write (" Client: Added released movejob to active ones", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
@@ -978,13 +978,13 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (!Vehicle->MoveJobActive)
 			{
 				startMoveSound();
-				client->addActiveMoveJob (this);
+				client->addActiveMoveJob (*this);
 				if (client->getGameGUI().getSelectedUnit() == Vehicle) client->getGameGUI().unitMenuActive = false;
 			}
 			if (bEndForNow)
 			{
 				bEndForNow = false;
-				client->addActiveMoveJob (Vehicle->ClientMoveJob);
+				client->addActiveMoveJob (*Vehicle->ClientMoveJob);
 				Log.write (" Client: reactivated movejob; Vehicle-ID: " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			Vehicle->MoveJobActive = true;
@@ -1002,7 +1002,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		{
 			Log.write (" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 			if (Vehicle->moving) doEndMoveVehicle();
-			if (bEndForNow) client->addActiveMoveJob (this);
+			if (bEndForNow) client->addActiveMoveJob (*this);
 			this->iSavedSpeed = iSavedSpeed;
 			Vehicle->data.speedCur = 0;
 			bSuspended = true;

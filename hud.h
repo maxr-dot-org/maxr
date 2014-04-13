@@ -301,7 +301,7 @@ class cGameGUI : public cMenu
 	*/
 	void setWind (int dir);
 	void changeWindDir();
-	bool selectUnit (cMapField* OverUnitField, bool base);
+	bool selectUnit (cMapField& overUnitField, bool base);
 	/**
 	* selects all vehicles which are within the mousebox
 	*@author alzi alias DoctorDeath

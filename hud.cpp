@@ -2130,7 +2130,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			cUnitHelpMenu helpMenu (&selectedUnit->data, selectedUnit->owner);
 			helpMenu.show (client);
 		}
-		else if (overUnitField) selectUnit (overUnitField, true);
+		else if (overUnitField) selectUnit (*overUnitField, true);
 	}
 	else
 	{
@@ -2418,7 +2418,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overPlane->iID, true, false);
 					else if (overBuilding) sendWantComAction (*client, selectedVehicle->iID, overBuilding->iID, false, false);
 				}
-				else if (MouseStyle == OldSchool && overUnitField && selectUnit (overUnitField, false))
+				else if (MouseStyle == OldSchool && overUnitField && selectUnit (*overUnitField, false))
 				{}
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cmove.get() && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking)
 				{
@@ -2451,7 +2451,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						PlayFX (SoundData.SNDHudButton.get());
 					}
 					// select unit when using modern style
-					else if (MouseStyle == Modern) selectUnit (overUnitField, true);
+					else if (MouseStyle == Modern) selectUnit (*overUnitField, true);
 				}
 		}
 		else if (overUnitField)
@@ -2585,7 +2585,7 @@ void cGameGUI::doCommand (const string& cmd)
 			return;
 		}
 
-		server->kickPlayer (Player);
+		server->kickPlayer (*Player);
 	}
 	else if (cmd.compare (0, 9, "/credits ") == 0)
 	{
@@ -2809,29 +2809,29 @@ void cGameGUI::selectUnit_building (cBuilding& building)
 	}
 }
 
-bool cGameGUI::selectUnit (cMapField* OverUnitField, bool base)
+bool cGameGUI::selectUnit (cMapField& overUnitField, bool base)
 {
 	deselectGroup();
-	cVehicle* plane = OverUnitField->getPlane();
+	cVehicle* plane = overUnitField.getPlane();
 	if (plane && !plane->moving)
 	{
 		selectUnit_vehicle (*plane);
 		return true;
 	}
-	cVehicle* vehicle = OverUnitField->getVehicle();
+	cVehicle* vehicle = overUnitField.getVehicle();
 	if (vehicle && !vehicle->moving && ! (plane && (unitMenuActive || vehicle->owner != &client->getActivePlayer())))
 	{
 		selectUnit_vehicle (*vehicle);
 		return true;
 	}
-	cBuilding* topBuilding = OverUnitField->getTopBuilding();
+	cBuilding* topBuilding = overUnitField.getTopBuilding();
 	const cVehicle* selectedVehicle = getSelectedVehicle();
-	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!OverUnitField->getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
+	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!overUnitField.getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
 	{
 		selectUnit_building (*topBuilding);
 		return true;
 	}
-	cBuilding* baseBuilding = OverUnitField->getBaseBuilding();
+	cBuilding* baseBuilding = overUnitField.getBaseBuilding();
 	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->owner != NULL)
 	{
 		selectUnit_building (*baseBuilding);
