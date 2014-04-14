@@ -145,15 +145,15 @@ void cMiniMapWidget::draw ()
 	if(surfaceOutdated) renewSurface ();
 	if(viewWindowSurfaeOutdated) renewViewWindowSurface ();
 
-	if (surface)
+	if (surface != nullptr)
 	{
 		auto position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
 	}
-	if (viewWindowSurface)
+	if (viewWindowSurface != nullptr)
 	{
 		auto position = getArea ().toSdlRect ();
-		SDL_BlitSurface (viewWindowSurface, nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (viewWindowSurface.get (), nullptr, cVideo::buffer, &position);
 	}
 	cWidget::draw ();
 }
@@ -293,7 +293,7 @@ void cMiniMapWidget::drawUnits ()
 				if (!attackUnitsOnly || building->data.canAttack)
 				{
 					unsigned int color = *static_cast<Uint32*> (building->owner->getColorSurface ()->pixels);
-					SDL_FillRect (surface, &rect, color);
+					SDL_FillRect (surface.get (), &rect, color);
 				}
 			}
 
@@ -304,7 +304,7 @@ void cMiniMapWidget::drawUnits ()
 				if (!attackUnitsOnly || vehicle->data.canAttack)
 				{
 					unsigned int color = *static_cast<Uint32*> (vehicle->owner->getColorSurface ()->pixels);
-					SDL_FillRect (surface, &rect, color);
+					SDL_FillRect (surface.get (), &rect, color);
 				}
 			}
 
@@ -315,7 +315,7 @@ void cMiniMapWidget::drawUnits ()
 				if (!attackUnitsOnly || vehicle->data.canAttack)
 				{
 					unsigned int color = *static_cast<Uint32*> (vehicle->owner->getColorSurface ()->pixels);
-					SDL_FillRect (surface, &rect, color);
+					SDL_FillRect (surface.get (), &rect, color);
 				}
 			}
 		}
@@ -325,8 +325,8 @@ void cMiniMapWidget::drawUnits ()
 //------------------------------------------------------------------------------
 void cMiniMapWidget::renewViewWindowSurface ()
 {
-	SDL_FillRect (viewWindowSurface, nullptr, 0xFF00FF);
-	SDL_SetColorKey (viewWindowSurface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (viewWindowSurface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (viewWindowSurface.get (), SDL_TRUE, 0xFF00FF);
 
 	const cPosition start = (mapViewWindow.getMinCorner () - offset) * getSize () * zoomFactor / staticMap->getSizeNew ();
 	const cPosition end = (mapViewWindow.getMaxCorner () - offset) * getSize () * zoomFactor / staticMap->getSizeNew ();

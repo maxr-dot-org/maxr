@@ -96,8 +96,8 @@ SDL_Surface* cWindowLandingPositionSelection::createHudSurface ()
 	bottom.x = 0;
 	bottom.y = (Video.getResolutionY () / 2);
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, hudSurface, &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, hudSurface, &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), NULL, hudSurface.get (), &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), NULL, hudSurface.get (), &bottom);
 
 	return hudSurface.Release ();
 }

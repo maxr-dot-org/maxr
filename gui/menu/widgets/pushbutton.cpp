@@ -33,7 +33,7 @@ cPushButton::cPushButton (const cBox<cPosition>& area) :
 	buttonType (ePushButtonType::Invisible),
 	fontType (FONT_LATIN_BIG),
 	text (""),
-	clickSound (SoundData.SNDHudButton),
+	clickSound (SoundData.SNDHudButton.get ()),
 	isLocked (false)
 {
 	renewSurface ();
@@ -45,7 +45,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	buttonType (buttonType_),
 	fontType (FONT_LATIN_BIG),
 	text (""),
-	clickSound (SoundData.SNDHudButton),
+	clickSound (SoundData.SNDHudButton.get ()),
 	isLocked (false)
 {
 	renewSurface ();
@@ -69,7 +69,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	buttonType (buttonType_),
 	fontType (fontType_),
 	text (text_),
-	clickSound (SoundData.SNDHudButton),
+	clickSound (SoundData.SNDHudButton.get ()),
 	isLocked (false)
 {
 	renewSurface ();
@@ -91,7 +91,7 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 void cPushButton::draw ()
 {
 	SDL_Rect position = getArea ().toSdlRect ();
-	if (surface) SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+	if (surface != nullptr) SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 
 	if (!text.empty ())
 	{
@@ -314,18 +314,18 @@ void cPushButton::renewSurface ()
 	src.h = size.y ();
 
 	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 
 	SDL_Surface* srcSurface = nullptr;
 
-	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop) srcSurface = GraphicsData.gfx_hud_stuff;
-	else if (buttonType == ePushButtonType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu;
-	else srcSurface = GraphicsData.gfx_menu_stuff;
+	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop) srcSurface = GraphicsData.gfx_hud_stuff.get ();
+	else if (buttonType == ePushButtonType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu.get ();
+	else srcSurface = GraphicsData.gfx_menu_stuff.get ();
 
 	assert (srcSurface != nullptr);
 
-	SDL_BlitSurface (srcSurface, &src, surface, NULL);
+	SDL_BlitSurface (srcSurface, &src, surface.get (), NULL);
 
 	text = font->shortenStringToSize (text, size.x() - getBordersSize (), fontType);
 }

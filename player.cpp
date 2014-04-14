@@ -152,7 +152,7 @@ void sPlayer::onSocketIndexDisconnected (int socketIndex_)
 //------------------------------------------------------------------------------
 SDL_Surface* sPlayer::getColorSurface() const
 {
-	return OtherData.colors[getColorIndex()];
+	return OtherData.colors[getColorIndex ()].get ();
 }
 
 //------------------------------------------------------------------------------

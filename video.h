@@ -220,17 +220,17 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 
 /** this function checks, whether the surface has to be rescaled,
  * and scales it if necessary */
-inline void CHECK_SCALING (SDL_Surface* surface, SDL_Surface* surface_org, float factor)
+inline void CHECK_SCALING (SDL_Surface& surface, SDL_Surface& surface_org, float factor)
 {
 	if (!cSettings::getInstance().shouldDoPrescale() &&
-		(surface->w != (int) (surface_org->w * factor) ||
-		 surface->h != (int) (surface_org->h * (factor))))
-		scaleSurface (surface_org, surface, (int) (surface_org->w * factor), (int) (surface_org->h * factor));
+		(surface.w != (int) (surface_org.w * factor) ||
+		 surface.h != (int) (surface_org.h * (factor))))
+		scaleSurface (&surface_org, &surface, (int) (surface_org.w * factor), (int) (surface_org.h * factor));
 }
 
 SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
 
 /** Draws a circle on the surface */
-void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface);
+void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface);
 
 #endif

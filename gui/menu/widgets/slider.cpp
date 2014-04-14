@@ -67,10 +67,10 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 //------------------------------------------------------------------------------
 void cSlider::draw ()
 {
-	if (surface)
+	if (surface != nullptr)
 	{
 		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &positionRect);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &positionRect);
 	}
 	cClickableWidget::draw ();
 }
@@ -197,8 +197,8 @@ void cSlider::createSurface (eSliderType sliderType)
 	//}
 
 	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 
 	size.x () -= offset * 2;
 
@@ -207,16 +207,16 @@ void cSlider::createSurface (eSliderType sliderType)
 	SDL_Rect sourcePart = {201 + sourceBegin.w, 53, /*259 - 201 - sourceBegin.w - sourceEnd.w*/ 10, 3};
 
 	SDL_Rect destination = {offset, size.y () / 2 - (sourceBegin.h / 2), sourceBegin.w, sourceBegin.h};
-	SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &sourceBegin, surface, &destination);
+	SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceBegin, surface.get (), &destination);
 
 	SDL_Rect destinationEnd = {offset + size.x () - sourceEnd.w, size.y () / 2 - (sourceEnd.h / 2), sourceEnd.w, sourceEnd.h};
-	SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &sourceEnd, surface, &destinationEnd);
+	SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceEnd, surface.get (), &destinationEnd);
 
 	SDL_Rect destinationPart = {offset + sourceBegin.w, size.y () / 2 - (sourcePart.h / 2), sourcePart.w, sourcePart.h};
 	while (destinationPart.x < destinationEnd.x)
 	{
 		if (destinationPart.x + sourcePart.w > destinationEnd.x) sourcePart.w = destinationEnd.x - destinationPart.x;
-		SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &sourcePart, surface, &destinationPart);
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourcePart, surface.get (), &destinationPart);
 		destinationPart.x += sourcePart.w;
 	}
 }

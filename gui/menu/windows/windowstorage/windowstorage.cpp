@@ -46,7 +46,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_) :
 	if (!canStorePlanes)
 	{
 		AutoSurface surface (LoadPCX (GFXOD_STORAGE_GROUND));
-		SDL_BlitSurface (surface, NULL, background, NULL);
+		SDL_BlitSurface (surface.get (), NULL, background.get (), NULL);
 	}
 	setSurface (background.Release ());
 
@@ -173,7 +173,7 @@ void cWindowStorage::updateUnitsWidgets ()
 				unitNames[positionIndex]->setText (name);
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
-				SDL_BlitSurface (storedUnit.uiData->storage, NULL, surface, NULL);
+				SDL_BlitSurface (storedUnit.uiData->storage, NULL, surface.get (), NULL);
 				unitImages[positionIndex]->setImage (surface.Release ());
 
 				unitDetails[positionIndex]->setUnit (&storedUnit);
@@ -193,12 +193,12 @@ void cWindowStorage::updateUnitsWidgets ()
 				unitNames[positionIndex]->setText ("");
 
 				SDL_Surface* srcSurface;
-				if (canStoreShips) srcSurface = GraphicsData.gfx_edock;
-				else if (canStorePlanes) srcSurface = GraphicsData.gfx_ehangar;
-				else srcSurface = GraphicsData.gfx_edepot;
+				if (canStoreShips) srcSurface = GraphicsData.gfx_edock.get ();
+				else if (canStorePlanes) srcSurface = GraphicsData.gfx_ehangar.get ();
+				else srcSurface = GraphicsData.gfx_edepot.get ();
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth (), 0, 0, 0, 0));
-				SDL_BlitSurface (srcSurface, NULL, surface, NULL);
+				SDL_BlitSurface (srcSurface, NULL, surface.get (), NULL);
 				unitImages[positionIndex]->setImage (surface.Release ());
 
 				unitDetails[positionIndex]->setUnit (nullptr);

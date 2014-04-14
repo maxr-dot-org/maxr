@@ -29,8 +29,8 @@
 cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),
 	animationTimer (std::move (animationTimer_)),
-	openStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelOpen) == 0 ? 800 : getSoundLength (SoundData.SNDPanelOpen) * 0.95))),
-	closeStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelClose) == 0 ? 800 : getSoundLength (SoundData.SNDPanelClose) * 0.95))),
+	openStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelOpen.get ()) == 0 ? 800 : getSoundLength (SoundData.SNDPanelOpen.get ()) * 0.95))),
+	closeStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelClose.get ()) == 0 ? 800 : getSoundLength (SoundData.SNDPanelClose.get ()) * 0.95))),
 	percentClosed (percentClosed_)
 {
 	percentClosed = std::max (0., percentClosed);
@@ -44,7 +44,7 @@ cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<c
 //------------------------------------------------------------------------------
 void cHudPanels::open ()
 {
-	PlayFX (SoundData.SNDPanelOpen);
+	PlayFX (SoundData.SNDPanelOpen.get ());
 
 	signalConnectionManager.connect (animationTimer->triggered10ms, std::bind (&cHudPanels::doOpenStep, this));
 }
@@ -52,7 +52,7 @@ void cHudPanels::open ()
 //------------------------------------------------------------------------------
 void cHudPanels::close ()
 {
-	PlayFX (SoundData.SNDPanelClose);
+	PlayFX (SoundData.SNDPanelClose.get ());
 
 	signalConnectionManager.connect (animationTimer->triggered10ms, std::bind (&cHudPanels::doCloseStep, this));
 }
@@ -68,8 +68,8 @@ void cHudPanels::draw ()
 	top.y -= offset;
 	bottom.y += offset;
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, cVideo::buffer, &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom, NULL, cVideo::buffer, &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), NULL, cVideo::buffer, &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), NULL, cVideo::buffer, &bottom);
 }
 
 //------------------------------------------------------------------------------

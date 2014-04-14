@@ -1191,7 +1191,7 @@ void cSavegame::generateMoveJobs (cServer& server)
 			delete MoveJob;
 			MoveJobsLoad[i]->vehicle->ServerMoveJob = NULL;
 		}
-		else server.addActiveMoveJob (MoveJob);
+		else server.addActiveMoveJob (*MoveJob);
 		delete MoveJobsLoad[i];
 	}
 }

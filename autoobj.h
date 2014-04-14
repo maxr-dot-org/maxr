@@ -17,7 +17,7 @@ public:
 	T* Release()
 	{
 		T* const p = p_;
-		p_ = 0;
+		p_ = NULL;
 		return p;
 	}
 
@@ -28,8 +28,14 @@ public:
 	}
 
 	T* operator ->() const { return p_; }
+	T& operator *() const { return *p_; }
 
-	operator T* () const { return p_; }
+	bool operator == (const T* rhs) const { return p_ == rhs; }
+	bool operator != (const T* rhs) const { return p_ != rhs; }
+
+	bool operator !() const { return p_ == NULL; }
+
+	T* get() const { return p_; }
 
 private:
 	T* p_;

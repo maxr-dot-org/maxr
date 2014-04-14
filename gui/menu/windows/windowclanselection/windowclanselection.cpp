@@ -54,7 +54,7 @@ cWindowClanSelection::cWindowClanSelection () :
 
 			auto image = LoadPCX (clanLogoPaths[index].c_str ());
 			SDL_SetColorKey (image, SDL_TRUE, 0xFF00FF);
-			clanImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image, SoundData.SNDHudButton));
+			clanImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (88 + 154 * column - (image ? (image->w / 2) : 0), 48 + 150 * row), image, SoundData.SNDHudButton.get()));
 			signalConnectionManager.connect (clanImages[index]->clicked, std::bind (&cWindowClanSelection::clanClicked, this, clanImages[index]));
 
 			clanTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (37 + 155 * column, 144 + 150 * row), getPosition () + cPosition (135 + 155 * column, 144 + 10 + 150 * row)), cClanData::instance ().getClan (index)->getName (), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));

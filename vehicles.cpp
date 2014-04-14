@@ -199,9 +199,9 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	SDL_Rect tmp = dest;
 	if (isUnitBuildingABuilding () && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding ()))
 	{
-		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, BigBetonAlpha);
-		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
-		SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
+		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), BigBetonAlpha);
+		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
+		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), NULL, surface, &tmp);
 	}
 
 	// draw shadow
@@ -213,15 +213,15 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	src.y = 0;
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	blitWithPreScale (uiData->build_org, uiData->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
+	SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	blitWithPreScale (uiData->build_org, uiData->build, &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
 	src.y = 0;
 	tmp = dest;
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, 254);
-	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get (), 254);
+	SDL_BlitSurface (GraphicsData.gfx_tmp.get (), &src, surface, &tmp);
 }
 
 void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
@@ -238,15 +238,15 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	src.y = 0;
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	blitWithPreScale (uiData->clear_small_org, uiData->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
+	SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	blitWithPreScale (uiData->clear_small_org, uiData->clear_small, &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
 	src.y = 0;
 	tmp = dest;
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, 254);
-	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get (), 254);
+	SDL_BlitSurface (GraphicsData.gfx_tmp.get (), &src, surface, &tmp);
 }
 
 void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
@@ -280,7 +280,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
 {
 	// draw player color
-	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
+	SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
 
 	// read the size:
 	SDL_Rect src;
@@ -293,18 +293,18 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 		src.w = src.h = tmp.h = tmp.w = (int) (uiData->img_org[dir]->h * zoomFactor);
 		tmp.x = WalkFrame * tmp.w;
 		tmp.y = 0;
-		blitWithPreScale (uiData->img_org[dir], uiData->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, zoomFactor);
+		blitWithPreScale (uiData->img_org[dir], uiData->img[dir], &tmp, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
 	}
 	else
-		blitWithPreScale (uiData->img_org[dir], uiData->img[dir], NULL, GraphicsData.gfx_tmp, NULL, zoomFactor);
+		blitWithPreScale (uiData->img_org[dir], uiData->img[dir], NULL, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
 
 	// draw the vehicle
 	src.x = 0;
 	src.y = 0;
 	SDL_Rect tmp = dest;
 
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, alpha);
-	blittAlphaSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get (), alpha);
+	blittAlphaSurface (GraphicsData.gfx_tmp.get (), &src, surface, &tmp);
 }
 
 void cVehicle::render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
@@ -736,7 +736,7 @@ void cVehicle::makeReport ()
 		else if (data.speedCur == 0)
 		{
 			// no more movement
-			PlayVoice (VoiceData.VOINoSpeed);
+			PlayVoice (VoiceData.VOINoSpeed.get ());
 		}
 		else if (isUnitBuildingABuilding ())
 		{
@@ -750,7 +750,7 @@ void cVehicle::makeReport ()
 		else if (isUnitClearing ())
 		{
 			// removing dirt
-			PlayVoice (VoiceData.VOIClearing);
+			PlayVoice (VoiceData.VOIClearing.get ());
 		}
 		else if (data.canAttack && data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
 		{
@@ -765,7 +765,7 @@ void cVehicle::makeReport ()
 		else if (isSentryActive())
 		{
 			// on sentry:
-			PlayVoice (VoiceData.VOISentry);
+			PlayVoice (VoiceData.VOISentry.get ());
 		}
 		else if (isUnitClearingMines ())
 		{
@@ -773,7 +773,7 @@ void cVehicle::makeReport ()
 		}
 		else if (isUnitLayingMines ())
 		{
-			PlayVoice (VoiceData.VOILayingMines);
+			PlayVoice (VoiceData.VOILayingMines.get ());
 		}
 		else
 		{
@@ -1268,7 +1268,7 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 	if (destUnit == 0)
 		return 1;
 
-	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
+	const int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
 	int destTurn, srcLevel;
 
 	if (destUnit->isAVehicle())

@@ -593,17 +593,17 @@ void cGameMapWidget::drawTerrain ()
 		{
 			if (!cSettings::getInstance ().shouldDoPrescale () && (terrain.shw->w != zoomedTileSize.x () || terrain.shw->h != zoomedTileSize.y ()))
 			{
-				scaleSurface (terrain.shw_org, terrain.shw, zoomedTileSize.x (), zoomedTileSize.y ());
+				scaleSurface (terrain.shw_org.get (), terrain.shw.get (), zoomedTileSize.x (), zoomedTileSize.y ());
 			}
-			SDL_BlitSurface (terrain.shw, nullptr, cVideo::buffer, &drawDestination);
+			SDL_BlitSurface (terrain.shw.get (), nullptr, cVideo::buffer, &drawDestination);
 		}
 		else
 		{
 			if (!cSettings::getInstance ().shouldDoPrescale () && (terrain.sf->w != zoomedTileSize.x () || terrain.sf->h != zoomedTileSize.y ()))
 			{
-				scaleSurface (terrain.sf_org, terrain.sf, zoomedTileSize.x (), zoomedTileSize.y ());
+				scaleSurface (terrain.sf_org.get (), terrain.sf.get (), zoomedTileSize.x (), zoomedTileSize.y ());
 			}
-			SDL_BlitSurface (terrain.sf, nullptr, cVideo::buffer, &drawDestination);
+			SDL_BlitSurface (terrain.sf.get (), nullptr, cVideo::buffer, &drawDestination);
 		}
 	}
 }
@@ -884,8 +884,8 @@ void cGameMapWidget::drawResources ()
 		{
 			src.x = 0;
 			tmp = drawDestination;
-			if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x () || ResourceData.res_metal->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-			SDL_BlitSurface (ResourceData.res_metal, &src, cVideo::buffer, &tmp);
+			if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x () || ResourceData.res_metal->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_metal_org.get (), ResourceData.res_metal.get (), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
+			SDL_BlitSurface (ResourceData.res_metal.get (), &src, cVideo::buffer, &tmp);
 		}
 		else
 		{
@@ -893,18 +893,18 @@ void cGameMapWidget::drawResources ()
 			tmp = drawDestination;
 			if (resource.typ == RES_METAL)
 			{
-				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x () || ResourceData.res_metal->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-				SDL_BlitSurface (ResourceData.res_metal, &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * zoomedTileSize.x () || ResourceData.res_metal->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_metal_org.get (), ResourceData.res_metal.get (), ResourceData.res_metal_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
+				SDL_BlitSurface (ResourceData.res_metal.get (), &src, cVideo::buffer, &tmp);
 			}
 			else if (resource.typ == RES_OIL)
 			{
-				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * zoomedTileSize.x () || ResourceData.res_oil->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-				SDL_BlitSurface (ResourceData.res_oil, &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * zoomedTileSize.x () || ResourceData.res_oil->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_oil_org.get (), ResourceData.res_oil.get (), ResourceData.res_oil_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
+				SDL_BlitSurface (ResourceData.res_oil.get (), &src, cVideo::buffer, &tmp);
 			}
 			else // Gold
 			{
-				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * zoomedTileSize.x () || ResourceData.res_gold->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
-				SDL_BlitSurface (ResourceData.res_gold, &src, cVideo::buffer, &tmp);
+				if (!cSettings::getInstance ().shouldDoPrescale () && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * zoomedTileSize.x () || ResourceData.res_gold->h != zoomedTileSize.y ())) scaleSurface (ResourceData.res_gold_org.get (), ResourceData.res_gold.get (), ResourceData.res_gold_org->w / 64 * zoomedTileSize.x (), zoomedTileSize.y ());
+				SDL_BlitSurface (ResourceData.res_gold.get (), &src, cVideo::buffer, &tmp);
 			}
 		}
 	}
@@ -971,17 +971,17 @@ void cGameMapWidget::drawUnitCircles ()
 		{
 			if (selectedVehicle->data.isBig)
 			{
-				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), selectedVehicle->data.scan * zoomedTileSize.x (), SCAN_COLOR, cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), selectedVehicle->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.scan * zoomedTileSize.x (), SCAN_COLOR, cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x () +zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, cVideo::buffer);
-			else drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.range * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, cVideo::buffer);
+			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x () +zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			else drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.range * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
@@ -993,26 +993,26 @@ void cGameMapWidget::drawUnitCircles ()
 			{
 				drawCircle (screenPosition. x() + zoomedTileSize.x (),
 							screenPosition. y() + zoomedTileSize.y (),
-							selectedBuilding->data.scan * zoomedTileSize.x (), SCAN_COLOR, cVideo::buffer);
+							selectedBuilding->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
 				drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
 							screenPosition. y() + zoomedTileSize.y () / 2,
-							selectedBuilding->data.scan * zoomedTileSize.x (), SCAN_COLOR, cVideo::buffer);
+							selectedBuilding->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
 						screenPosition. y() + zoomedTileSize.y () / 2,
-						selectedBuilding->data.range * zoomedTileSize.x () + 2, RANGE_GROUND_COLOR, cVideo::buffer);
+						selectedBuilding->data.range * zoomedTileSize.x () + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_AIR))
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
 						screenPosition. y() + zoomedTileSize.y () / 2,
-						selectedBuilding->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, cVideo::buffer);
+						selectedBuilding->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		}
 	}
 
@@ -1096,8 +1096,8 @@ void cGameMapWidget::drawExitPoint (const cPosition& position)
 	src.w = zoomedTileSize.x ();
 	src.h = zoomedTileSize.y ();
 
-	CHECK_SCALING (GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, getZoomFactor());
-	SDL_BlitSurface (GraphicsData.gfx_exitpoints, &src, cVideo::buffer, &drawDestination);
+	CHECK_SCALING (*GraphicsData.gfx_exitpoints, *GraphicsData.gfx_exitpoints_org, getZoomFactor());
+	SDL_BlitSurface (GraphicsData.gfx_exitpoints.get (), &src, cVideo::buffer, &drawDestination);
 }
 
 //------------------------------------------------------------------------------
@@ -1127,8 +1127,8 @@ void cGameMapWidget::drawBuildBand ()
 			SDL_Rect dest;
 			dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * destination.x ();
 			dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * destination.y ();
-			CHECK_SCALING (GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, getZoomFactor ());
-			SDL_BlitSurface (GraphicsData.gfx_band_big, NULL, cVideo::buffer, &dest);
+			CHECK_SCALING (*GraphicsData.gfx_band_big, *GraphicsData.gfx_band_big_org, getZoomFactor ());
+			SDL_BlitSurface (GraphicsData.gfx_band_big.get (), NULL, cVideo::buffer, &dest);
 		}
 		else if (mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion)
 		{
@@ -1138,8 +1138,8 @@ void cGameMapWidget::drawBuildBand ()
 				SDL_Rect dest;
 				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mouseTilePosition.x ();
 				dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * mouseTilePosition.y ();
-				CHECK_SCALING (GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, getZoomFactor ());
-				SDL_BlitSurface (GraphicsData.gfx_band_small, NULL, cVideo::buffer, &dest);
+				CHECK_SCALING (*GraphicsData.gfx_band_small, *GraphicsData.gfx_band_small_org, getZoomFactor ());
+				SDL_BlitSurface (GraphicsData.gfx_band_small.get (), NULL, cVideo::buffer, &dest);
 			}
 		}
 	}
@@ -1169,16 +1169,16 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 		if (shouldDrawScan)
 		{
 			if (unit->data.isBig)
-				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), unit->data.scan * zoomedTileSize.x (), SCAN_COLOR, cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), unit->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			else
-				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, unit->data.scan * zoomedTileSize.x (), SCAN_COLOR, cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, unit->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_GROUND))
 			drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2,
-						unit->data.range * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, cVideo::buffer);
+						unit->data.range * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_AIR))
 			drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2,
-						unit->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, cVideo::buffer);
+						unit->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		//if (ammoChecked () && unit->data.canAttack)
 		//	drawMunBar (*unit, screenPos);
 		//if (hitsChecked ())
@@ -1211,7 +1211,7 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 		dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
 		dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * my;
 
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()], NULL, cVideo::buffer, &dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), NULL, cVideo::buffer, &dest);
 
 		if (mx < vehicle.BandX)
 			mx++;
@@ -1227,7 +1227,7 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
 	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * my;
 
-	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()], NULL, cVideo::buffer, &dest);
+	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), NULL, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -1547,13 +1547,13 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				if (!selectedVehicle->moving)
 				{
 					toggleUnitContextMenu (selectedVehicle);
-					PlayFX (SoundData.SNDHudButton);
+					PlayFX (SoundData.SNDHudButton.get ());
 				}
 			}
 			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 			{
 				toggleUnitContextMenu (selectedBuilding);
-				PlayFX (SoundData.SNDHudButton);
+				PlayFX (SoundData.SNDHudButton.get ());
 			}
 		}
 

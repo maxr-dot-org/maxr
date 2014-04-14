@@ -302,13 +302,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 	{
 		if (data.isBig)
 		{
-			CHECK_SCALING (UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_big_shw, &src, surface, &tmp);
+			CHECK_SCALING (*UnitsData.dirt_big_shw, *UnitsData.dirt_big_shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsData.dirt_big_shw.get (), &src, surface, &tmp);
 		}
 		else
 		{
-			CHECK_SCALING (UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, zoomFactor);
-			SDL_BlitSurface (UnitsData.dirt_small_shw, &src, surface, &tmp);
+			CHECK_SCALING (*UnitsData.dirt_small_shw, *UnitsData.dirt_small_shw_org, zoomFactor);
+			SDL_BlitSurface (UnitsData.dirt_small_shw.get (), &src, surface, &tmp);
 		}
 	}
 
@@ -317,13 +317,13 @@ void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	if (data.isBig)
 	{
-		CHECK_SCALING (UnitsData.dirt_big, UnitsData.dirt_big_org, zoomFactor);
-		SDL_BlitSurface (UnitsData.dirt_big, &src, surface, &tmp);
+		CHECK_SCALING (*UnitsData.dirt_big, *UnitsData.dirt_big_org, zoomFactor);
+		SDL_BlitSurface (UnitsData.dirt_big.get (), &src, surface, &tmp);
 	}
 	else
 	{
-		CHECK_SCALING (UnitsData.dirt_small, UnitsData.dirt_small_org, zoomFactor);
-		SDL_BlitSurface (UnitsData.dirt_small, &src, surface, &tmp);
+		CHECK_SCALING (*UnitsData.dirt_small, *UnitsData.dirt_small_org, zoomFactor);
+		SDL_BlitSurface (UnitsData.dirt_small.get (), &src, surface, &tmp);
 	}
 }
 
@@ -332,18 +332,18 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	SDL_Rect tmp = dest;
 	if (data.isBig)
 	{
-		CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
+		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, StartUp);
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), StartUp);
 		else
-			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton, 254);
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), 254);
 
-		SDL_BlitSurface (GraphicsData.gfx_big_beton, NULL, surface, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), NULL, surface, &tmp);
 	}
 	else
 	{
-		CHECK_SCALING (UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, zoomFactor);
+		CHECK_SCALING (*UnitsData.ptr_small_beton, *UnitsData.ptr_small_beton_org, zoomFactor);
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
 			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, StartUp);
 		else
@@ -372,21 +372,21 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 
 	// blit the players color and building graphic
-	if (data.hasPlayerColor) SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
-	else SDL_FillRect (GraphicsData.gfx_tmp, NULL, 0xFFFF00FF);
+	if (data.hasPlayerColor) SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	else SDL_FillRect (GraphicsData.gfx_tmp.get (), NULL, 0xFFFF00FF);
 
 	if (data.hasFrames)
 	{
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
-		CHECK_SCALING (uiData->img, uiData->img_org, zoomFactor);
-		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp, NULL);
+		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
+		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp.get (), NULL);
 
 		src.x = 0;
 	}
 	else if (data.hasClanLogos)
 	{
-		CHECK_SCALING (uiData->img, uiData->img_org, zoomFactor);
+		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
 		src.x = 0;
 		src.y = 0;
 		src.w = (int) (128 * zoomFactor);
@@ -394,12 +394,12 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		// select clan image
 		if (owner->getClan() != -1)
 			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
-		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp, NULL);
+		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp.get (), NULL);
 	}
 	else
 	{
-		CHECK_SCALING (uiData->img, uiData->img_org, zoomFactor);
-		SDL_BlitSurface (uiData->img, NULL, GraphicsData.gfx_tmp, NULL);
+		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
+		SDL_BlitSurface (uiData->img, NULL, GraphicsData.gfx_tmp.get (), NULL);
 	}
 
 	// draw the building
@@ -408,8 +408,8 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	src.x = 0;
 	src.y = 0;
 
-	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp, alpha);
-	SDL_BlitSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
+	SDL_SetSurfaceAlphaMod (GraphicsData.gfx_tmp.get (), alpha);
+	SDL_BlitSurface (GraphicsData.gfx_tmp.get (), &src, surface, &tmp);
 }
 
 
@@ -446,7 +446,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 		else
 			SDL_SetSurfaceAlphaMod (uiData->shw, 50);
 
-		CHECK_SCALING (uiData->shw, uiData->shw_org, zoomFactor);
+		CHECK_SCALING (*uiData->shw, *uiData->shw_org, zoomFactor);
 		blittAlphaSurface (uiData->shw, NULL, surface, &tmp);
 	}
 
@@ -527,8 +527,8 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 {
 	SDL_Rect src, temp;
 
-	CHECK_SCALING (UnitsData.ptr_connector, UnitsData.ptr_connector_org, zoomFactor);
-	CHECK_SCALING (UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, zoomFactor);
+	CHECK_SCALING (*UnitsData.ptr_connector, *UnitsData.ptr_connector_org, zoomFactor);
+	CHECK_SCALING (*UnitsData.ptr_connector_shw, *UnitsData.ptr_connector_shw_org, zoomFactor);
 
 	if (StartUp) SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, StartUp);
 	else SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, 254);
@@ -1167,7 +1167,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 			SDL_FillRect (sf, &mark, color);
 		}
 
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, sf, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, sf, &dest);
 
 		dest.x += offx;
 	}

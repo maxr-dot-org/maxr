@@ -50,7 +50,7 @@ cWindowStart::cWindowStart () :
 	signalConnectionManager.connect (licenceButton->clicked, std::bind (&cWindowStart::licenceClicked, this));
 	addChild (std::move (licenceButton));
 
-	auto exitButton = std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit"));
+	auto exitButton = std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton.get (), lngPack.i18n ("Text~Others~Exit"));
 	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
 	addChild (std::move (exitButton));
 }

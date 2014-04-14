@@ -45,7 +45,7 @@ cWindowMapSelection::cWindowMapSelection () :
 		{
 			const auto index = row * mapColumns + column;
 
-			mapImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, SoundData.SNDHudButton));
+			mapImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, SoundData.SNDHudButton.get ()));
 			signalConnectionManager.connect (mapImages[index]->clicked, std::bind (&cWindowMapSelection::mapClicked, this, mapImages[index]));
 
 			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (6 + 158 * column, 48 + 198 * row), getPosition () + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -159,7 +159,7 @@ void cWindowMapSelection::updateMaps ()
 
 			if (selectedMapIndex == static_cast<int>(mapIndex))
 			{
-				SDL_FillRect (imageSurface, NULL, selectedColor);
+				SDL_FillRect (imageSurface.get (), NULL, selectedColor);
 
 				if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
@@ -173,7 +173,7 @@ void cWindowMapSelection::updateMaps ()
 			}
 			else
 			{
-				SDL_FillRect (imageSurface, NULL, unselectedColor);
+				SDL_FillRect (imageSurface.get (), NULL, unselectedColor);
 
 				if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
@@ -186,9 +186,9 @@ void cWindowMapSelection::updateMaps ()
 				else mapName = mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
 			}
 			SDL_Rect dest = {4, 4, mapWinSize, mapWinSize};
-			SDL_BlitSurface (mapSurface, NULL, imageSurface, &dest);
+			SDL_BlitSurface (mapSurface.get (), NULL, imageSurface.get (), &dest);
 
-			mapImages[i]->setImage (imageSurface);
+			mapImages[i]->setImage (imageSurface.get ());
 			mapTitles[i]->setText (mapName);
 		}
 		else

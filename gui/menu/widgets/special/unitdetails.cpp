@@ -40,8 +40,8 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 	const cPosition size (250, 170);
 	surface = SDL_CreateRGBSurface (0, size.x (), size.y(), Video.getColDepth (), 0, 0, 0, 0);
 
-	SDL_FillRect (surface, NULL, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	resize (size);
 }
@@ -49,12 +49,12 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 //------------------------------------------------------------------------------
 void cUnitDetails::draw ()
 {
-	if (surface)
+	if (surface != nullptr)
 	{
 		reset ();
 
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 	}
 
 	cWidget::draw ();
@@ -104,7 +104,7 @@ void cUnitDetails::drawRow (size_t index, eUnitDataSymbolType symbolType, int am
 	if (index != 0)
 	{
 		SDL_Rect dest = {0, rowHeight * index - 3, surface->w, 1};
-		SDL_FillRect (surface, &dest, 0xFFFC0000);
+		SDL_FillRect (surface.get (), &dest, 0xFFFC0000);
 	}
 
 	amountLabels[index]->show ();
@@ -124,8 +124,8 @@ void cUnitDetails::reset ()
 
 	size_t rowIndex = 0;
 
-	SDL_FillRect (surface, NULL, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	if (unitObjectCurrentData->canAttack)
 	{
@@ -271,7 +271,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 	for (int i = 0; i != value1; ++i)
 	{
 		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &srcRect, surface, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, surface.get (), &dest);
 
 		dest.x += offX;
 	}
@@ -280,7 +280,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 	dest.x += srcSize.x () + 3;
 	SDL_Rect mark = {Sint16 (dest.x - srcSize.x () / 2), dest.y, 1, srcSize.y()};
 
-	SDL_FillRect (surface, &mark, 0xFFFC0000);
+	SDL_FillRect (surface.get (), &mark, 0xFFFC0000);
 
 	if (symbolType == eUnitDataSymbolType::Metal)
 	{
@@ -289,7 +289,7 @@ void cUnitDetails::drawBigSymbols (eUnitDataSymbolType symbolType, const cPositi
 	for (int i = value1; i != value2; ++i)
 	{
 		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &srcRect, surface, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, surface.get (), &dest);
 
 		dest.x += offX;
 	}

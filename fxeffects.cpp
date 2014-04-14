@@ -98,7 +98,7 @@ void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 {
 	if (pImages == NULL) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], zoom);
+	CHECK_SCALING (*images[1], *images[0], zoom);
 
 	SDL_Rect src;
 	src.x = (int) (images[0]->w * zoom * dir / 8);
@@ -107,7 +107,7 @@ void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 	src.h = images[1]->h;
 	SDL_Rect dest = {destination.x(), destination.y(), 0, 0};
 
-	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (images[1].get (), &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ void cFxExplo::draw (float zoom, const cPosition& destination) const
 {
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], zoom);
+	CHECK_SCALING (*images[1], *images[0], zoom);
 
 	const int frame = tick * frames / length;
 
@@ -164,7 +164,7 @@ void cFxExplo::draw (float zoom, const cPosition& destination) const
 	src.h = images[1]->h;
 	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / (frames * 2)) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
 
-	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (images[1].get (), &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ cFxAbsorb::cFxAbsorb (const cPosition& position_) :
 
 void cFxAbsorb::playSound () const
 {
-	PlayFX (SoundData.SNDAbsorb);
+	PlayFX (SoundData.SNDAbsorb.get ());
 }
 
 //------------------------------------------------------------------------------
@@ -266,13 +266,13 @@ void cFxFade::draw (float zoom, const cPosition& destination) const
 {
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], zoom);
+	CHECK_SCALING (*images[1], *images[0], zoom);
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetSurfaceAlphaMod (images[1], alpha);
+	SDL_SetSurfaceAlphaMod (images[1].get (), alpha);
 
 	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / 2) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
-	SDL_BlitSurface (images[1], NULL, cVideo::buffer, &dest);
+	SDL_BlitSurface (images[1].get (), NULL, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -307,10 +307,10 @@ void cFxTracks::draw (float zoom, const cPosition& destination) const
 {
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], zoom);
+	CHECK_SCALING (*images[1], *images[0], zoom);
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetSurfaceAlphaMod (images[1], alpha);
+	SDL_SetSurfaceAlphaMod (images[1].get (), alpha);
 
 	SDL_Rect src;
 	src.y = 0;
@@ -319,7 +319,7 @@ void cFxTracks::draw (float zoom, const cPosition& destination) const
 	src.h = images[1]->h;
 	SDL_Rect dest = {destination.x (), destination.y (), 0, 0};
 
-	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (images[1].get (), &src, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ void cFxRocket::draw (float zoom, const cPosition& destination) const
 	if (!pImages) return;
 	if (tick >= length) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], zoom);
+	CHECK_SCALING (*images[1], *images[0], zoom);
 
 	SDL_Rect src;
 	src.x = dir * images[1]->w / 8;
@@ -364,7 +364,7 @@ void cFxRocket::draw (float zoom, const cPosition& destination) const
 	src.w = images[1]->w / 8;
 	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / 16) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
 
-	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (images[1].get (), &src, cVideo::buffer, &dest);
 }
 
 void cFxRocket::run()
@@ -428,7 +428,7 @@ void cFxDarkSmoke::draw (float zoom, const cPosition& destination) const
 	//if (!client.getActivePlayer().ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
 	if (!pImages) return;
 	AutoSurface (&images) [2] (*pImages);
-	CHECK_SCALING (images[1], images[0], zoom);
+	CHECK_SCALING (*images[1], *images[0], zoom);
 
 	const int frame = tick * frames / length;
 
@@ -440,6 +440,6 @@ void cFxDarkSmoke::draw (float zoom, const cPosition& destination) const
 	SDL_Rect dest = {destination.x () + static_cast<int>((tick * dx) * zoom), destination.y () + static_cast<int>((tick * dy) * zoom), 0, 0};
 
 	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
-	SDL_SetSurfaceAlphaMod (images[1], alpha);
-	SDL_BlitSurface (images[1], &src, cVideo::buffer, &dest);
+	SDL_SetSurfaceAlphaMod (images[1].get (), alpha);
+	SDL_BlitSurface (images[1].get (), &src, cVideo::buffer, &dest);
 }

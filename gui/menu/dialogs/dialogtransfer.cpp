@@ -125,23 +125,23 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 	const auto zoom = (float)unitImageWidth / (unit.data.isBig ? cStaticMap::tilePixelWidth*2 : cStaticMap::tilePixelWidth);
 
 	AutoSurface unitImageSurface(SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_FillRect (unitImageSurface, NULL, 0xFF00FF);
-	SDL_SetColorKey (unitImageSurface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (unitImageSurface.get (), NULL, 0xFF00FF);
+	SDL_SetColorKey (unitImageSurface.get (), SDL_TRUE, 0xFF00FF);
 
 	SDL_Rect dest = {0, 0, 0, 0};
 
 	if (unit.isABuilding ())
 	{
 		const auto& building = static_cast<const cBuilding&>(unit);
-		building.render (0, unitImageSurface, dest, zoom, false, false);
+		building.render (0, unitImageSurface.get (), dest, zoom, false, false);
 	}
 	else if (unit.isAVehicle ())
 	{
 		const auto& vehicle = static_cast<const cVehicle&>(unit);
-		vehicle.render (nullptr, 0, nullptr, unitImageSurface, dest, zoom, false);
+		vehicle.render (nullptr, 0, nullptr, unitImageSurface.get (), dest, zoom, false);
 	}
 
-	image.setImage (unitImageSurface);
+	image.setImage (unitImageSurface.get ());
 }
 
 //------------------------------------------------------------------------------
@@ -237,9 +237,9 @@ void cNewDialogTransfer::transferValueChanged ()
 		const Sint16 x = arrowImage->getPosition ().x () - getPosition ().x (); // 140
 		const Sint16 y = arrowImage->getPosition ().y () - getPosition ().y (); //  77
 		SDL_Rect src = {x, y, w, h};
-		SDL_BlitSurface (getSurface(), &src, arrowSurface, NULL);
-		FlipSurfaceHorizontally (arrowSurface);
+		SDL_BlitSurface (getSurface (), &src, arrowSurface.get (), NULL);
+		FlipSurfaceHorizontally (arrowSurface.get ());
 
-		arrowImage->setImage (arrowSurface);
+		arrowImage->setImage (arrowSurface.get ());
 	}
 }

@@ -212,13 +212,13 @@ void cNewGameGUI::setDynamicMap (const cMap* dynamicMap_)
 	{
 		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit& unit)
 		{
-			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace);
-			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace);
+			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace.get ());
+			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace.get ());
 		});
 		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit& unit)
 		{
-			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMineClear);
-			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMineClear);
+			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMineClear.get ());
+			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMineClear.get ());
 		});
 		//dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ });
 	}
@@ -648,7 +648,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 
 		//if (&storedVehicle == getSelectedUnit ()) deselectUnit ();
 
-		PlayFX (SoundData.SNDLoad);
+		PlayFX (SoundData.SNDLoad.get ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitActivated, [&](const cUnit&, const cUnit&) // storing, stored
@@ -658,7 +658,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 		//	gameGUI->mouseInputMode = normalInput;
 		//}
 
-		PlayFX (SoundData.SNDActivate);
+		PlayFX (SoundData.SNDActivate.get ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitHasStolenSuccessfully, [&](const cUnit&)
@@ -668,7 +668,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.unitHasDisabledSuccessfully, [&](const cUnit&)
 	{
-		PlayVoice (VoiceData.VOIUnitDisabled);
+		PlayVoice (VoiceData.VOIUnitDisabled.get ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitStealDisableFailed, [&](const cUnit&)
@@ -678,31 +678,31 @@ void cNewGameGUI::connectToClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.unitSuppliedWithAmmo, [&](const cUnit&)
 	{
-		PlayFX (SoundData.SNDReload);
-		PlayVoice (VoiceData.VOIReammo);
+		PlayFX (SoundData.SNDReload.get ());
+		PlayVoice (VoiceData.VOIReammo.get ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitRepaired, [&](const cUnit&)
 	{
-		PlayFX (SoundData.SNDRepair);
+		PlayFX (SoundData.SNDRepair.get ());
 		PlayRandomVoice (VoiceData.VOIRepaired);
 	});
 
 	clientSignalConnectionManager.connect (client.unitDisabled, [&](const cUnit& unit)
 	{
-		PlayVoice (VoiceData.VOIUnitDisabled);
+		PlayVoice (VoiceData.VOIUnitDisabled.get ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitStolen, [&](const cUnit& unit)
 	{
-		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
+		PlayVoice (VoiceData.VOIUnitStolenByEnemy.get ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitDetected, [&](const cUnit& unit)
 	{
 		if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
 		{
-			PlayVoice (VoiceData.VOISubDetected);
+			PlayVoice (VoiceData.VOISubDetected.get ());
 		}
 		else
 		{
@@ -1025,7 +1025,7 @@ void cNewGameGUI::showFilesWindow ()
 		{
 			game->save (saveNumber, name);
 
-			PlayVoice (VoiceData.VOISaved);
+			PlayVoice (VoiceData.VOISaved.get ());
 
 			loadSaveWindow->update ();
 		}
@@ -1342,11 +1342,11 @@ void cNewGameGUI::updateSelectedUnitIdleSound ()
 
 		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player != vehicle.owner))
 		{
-			startSelectedUnitSound (SoundData.SNDBuilding);
+			startSelectedUnitSound (SoundData.SNDBuilding.get ());
 		}
 		else if (vehicle.isUnitClearing ())
 		{
-			startSelectedUnitSound (SoundData.SNDClearing);
+			startSelectedUnitSound (SoundData.SNDClearing.get ());
 		}
 		else if (water && vehicle.data.factorSea > 0)
 		{

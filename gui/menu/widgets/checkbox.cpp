@@ -59,7 +59,7 @@ void cCheckBox::draw ()
 	auto position = getArea ().toSdlRect ();
 	int textDestx = -1;
 	int textDesty = -1;
-	if (surface)
+	if (surface != nullptr)
 	{
 		switch (textAnchor)
 		{
@@ -79,7 +79,7 @@ void cCheckBox::draw ()
 	default:
 	case eCheckBoxType::Standard:
 	case eCheckBoxType::Round:
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 		font->showText (textDestx, textDesty, text, fontType);
 		break;
 	case eCheckBoxType::Tank:
@@ -87,7 +87,7 @@ void cCheckBox::draw ()
 	case eCheckBoxType::Ship:
 	case eCheckBoxType::Building:
 	case eCheckBoxType::Tnt:
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 		break;
 	case eCheckBoxType::TextOnly:
 		font->showText (position.x, position.y, text, fontType);
@@ -103,7 +103,7 @@ void cCheckBox::draw ()
 		}
 		break;
 	case eCheckBoxType::Angular:
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 		if (checked) font->showTextCentered (position.x + position.w / 2, position.y + 5, text, fontType);
 		else font->showTextCentered (position.x + position.w / 2, position.y + 4, text, fontType);
 		break;
@@ -119,13 +119,13 @@ void cCheckBox::draw ()
 	case eCheckBoxType::HudIndex_21:
 	case eCheckBoxType::HudIndex_22:
 		if (textDesty != 6 && textDesty != 7) textDesty = 5;
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 		if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, FONT_LATIN_SMALL_GREEN);
 		else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, FONT_LATIN_SMALL_RED);
 		font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
 		break;
 	case eCheckBoxType::UnitContextMenu:
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 		font->showTextCentered (position.x + position.w / 2, position.y + (position.h / 2 - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2) + 1, text, FONT_LATIN_SMALL_WHITE);
 		break;
 	}
@@ -321,18 +321,18 @@ void cCheckBox::renewSurface ()
 	if (src.w > 0)
 	{
 		surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0);
-		SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
-		SDL_FillRect (surface, NULL, 0xFF00FF);
+		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 
 		SDL_Surface* srcSurface = nullptr;
 
-		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers) srcSurface = GraphicsData.gfx_hud_stuff;
-		else if (type == eCheckBoxType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu;
-		else srcSurface = GraphicsData.gfx_menu_stuff;
+		if (type >= eCheckBoxType::HudIndex_00 && type <= eCheckBoxType::HudPlayers) srcSurface = GraphicsData.gfx_hud_stuff.get ();
+		else if (type == eCheckBoxType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu.get ();
+		else srcSurface = GraphicsData.gfx_menu_stuff.get ();
 
 		assert (srcSurface != nullptr);
 
-		SDL_BlitSurface (srcSurface, &src, surface, NULL);
+		SDL_BlitSurface (srcSurface, &src, surface.get (), NULL);
 	}
 
 	if (textLimitWidth != -1) text = font->shortenStringToSize (text, textLimitWidth, fontType);

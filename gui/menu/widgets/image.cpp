@@ -37,10 +37,10 @@ void cImage::setImage (SDL_Surface* image_)
 	{
 		image = SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth (), 0, 0, 0, 0);
 
-		SDL_FillRect (image, NULL, 0xFF00FF);
-		SDL_SetColorKey (image, SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (image.get (), NULL, 0xFF00FF);
+		SDL_SetColorKey (image.get (), SDL_TRUE, 0xFF00FF);
 
-		SDL_BlitSurface (image_, NULL, image, NULL);
+		SDL_BlitSurface (image_, NULL, image.get (), NULL);
 
 		resize (cPosition (image->w, image->h));
 	}
@@ -54,10 +54,10 @@ void cImage::setImage (SDL_Surface* image_)
 //------------------------------------------------------------------------------
 void cImage::draw ()
 {
-	if (image)
+	if (image != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (image, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (image.get (), NULL, cVideo::buffer, &position);
 	}
 
 	cClickableWidget::draw ();
@@ -117,7 +117,7 @@ bool cImage::isAt (const cPosition& position) const
 
 	if (!disabledAtTransparent) return true;
 
-	auto color = getPixel (image, position - getPosition ());
+	auto color = getPixel (image.get (), position - getPosition ());
 
 	if (color == 0xFF00FF) return false;
 

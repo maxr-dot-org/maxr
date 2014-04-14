@@ -306,7 +306,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 			clear();
 			return false;
 		}
-		copySrfToTerData (surface, iNum);
+		copySrfToTerData (*surface, iNum);
 	}
 
 	// Load map data
@@ -391,39 +391,39 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	const int MAPWINSIZE = 112;
 	if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
 	{
-		mapSurface = scaleSurface (mapSurface, NULL, MAPWINSIZE, MAPWINSIZE);
+		mapSurface = scaleSurface (mapSurface.get (), NULL, MAPWINSIZE, MAPWINSIZE);
 	}
 
 	if (mapSize != NULL) *mapSize = size;
 	return mapSurface.Release();
 }
 
-void cStaticMap::copySrfToTerData (SDL_Surface* surface, int iNum)
+void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
 {
 	//before the surfaces are copied, the colortable of both surfaces has to be equal
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrains
 	terrains[iNum].sf_org = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetPaletteColors (terrains[iNum].sf_org->format->palette, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrains[iNum].sf_org, NULL);
+	SDL_SetPaletteColors (terrains[iNum].sf_org->format->palette, surface.format->palette->colors, 0, 256);
+	SDL_BlitSurface (&surface, NULL, terrains[iNum].sf_org.get (), NULL);
 
 	terrains[iNum].sf = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetPaletteColors (terrains[iNum].sf->format->palette, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrains[iNum].sf, NULL);
+	SDL_SetPaletteColors (terrains[iNum].sf->format->palette, surface.format->palette->colors, 0, 256);
+	SDL_BlitSurface (&surface, NULL, terrains[iNum].sf.get (), NULL);
 
 	//copy the terrains with fog
 	terrains[iNum].shw_org = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrains[iNum].shw_org, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrains[iNum].shw_org, NULL);
+	SDL_SetColors (terrains[iNum].shw_org.get (), surface.format->palette->colors, 0, 256);
+	SDL_BlitSurface (&surface, NULL, terrains[iNum].shw_org.get (), NULL);
 
 	terrains[iNum].shw = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrains[iNum].shw, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrains[iNum].shw, NULL);
+	SDL_SetColors (terrains[iNum].shw.get (), surface.format->palette->colors, 0, 256);
+	SDL_BlitSurface (&surface, NULL, terrains[iNum].shw.get (), NULL);
 
 	//now set the palette for the fog terrains
-	SDL_SetColors (terrains[iNum].shw_org, palette_shw, 0, 256);
-	SDL_SetColors (terrains[iNum].shw, palette_shw, 0, 256);
+	SDL_SetColors (terrains[iNum].shw_org.get (), palette_shw, 0, 256);
+	SDL_SetColors (terrains[iNum].shw.get (), palette_shw, 0, 256);
 }
 
 void cStaticMap::scaleSurfaces (int pixelSize)
@@ -431,8 +431,8 @@ void cStaticMap::scaleSurfaces (int pixelSize)
 	for (size_t i = 0; i != terrainCount; ++i)
 	{
 		sTerrain& t = terrains[i];
-		scaleSurface (t.sf_org, t.sf, pixelSize, pixelSize);
-		scaleSurface (t.shw_org, t.shw, pixelSize, pixelSize);
+		scaleSurface (t.sf_org.get (), t.sf.get (), pixelSize, pixelSize);
+		scaleSurface (t.shw_org.get (), t.shw.get (), pixelSize, pixelSize);
 	}
 }
 
@@ -458,9 +458,9 @@ void cStaticMap::generateNextAnimationFrame()
 	//set the new palette for all terrain surfaces
 	for (size_t i = 0; i != terrainCount; ++i)
 	{
-		SDL_SetColors (terrains[i].sf, palette + 96, 96, 127);
+		SDL_SetColors (terrains[i].sf.get (), palette + 96, 96, 127);
 		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
-		SDL_SetColors (terrains[i].shw, palette_shw + 96, 96, 127);
+		SDL_SetColors (terrains[i].shw.get (), palette_shw + 96, 96, 127);
 		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
 	}
 }

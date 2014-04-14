@@ -110,7 +110,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added
 	*/
-	void addActiveMoveJob (cClientMoveJob* MJob);
+	void addActiveMoveJob (cClientMoveJob& MJob);
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath

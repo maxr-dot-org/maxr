@@ -120,10 +120,10 @@ void cLineEdit::finishEditingInternal ()
 //------------------------------------------------------------------------------
 void cLineEdit::draw ()
 {
-	if (surface)
+	if (surface != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 	}
 
 	const auto offsetRect = getTextDrawOffset ();

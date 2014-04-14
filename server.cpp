@@ -500,7 +500,7 @@ void cServer::handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 		return;
 	}
 
-	addActiveMoveJob (MoveJob);
+	addActiveMoveJob (*MoveJob);
 	Log.write (" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 	// send the movejob to all players who can see this unit
 	const cVehicle& vehicle = *MoveJob->Vehicle;
@@ -849,7 +849,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle == NULL) return;
 	if (!Vehicle->isUnitBuildingABuilding ()) return;
-	stopVehicleBuilding (Vehicle);
+	stopVehicleBuilding (*Vehicle);
 }
 
 //------------------------------------------------------------------------------
@@ -1543,19 +1543,20 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_RECON_SUCCESS);
 
-	cPlayer* Player = NULL;
+	cPlayer* player = nullptr;
 	const int playerNum = message.popInt16();
 	// remove the player from the disconnected list
 	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
 	{
 		if (DisconnectedPlayerList[i]->getNr() == playerNum)
 		{
-			Player = DisconnectedPlayerList[i];
+			player = DisconnectedPlayerList[i];
 			DisconnectedPlayerList.erase (DisconnectedPlayerList.begin() + i);
 			break;
 		}
 	}
-	resyncPlayer (Player);
+	if (player == nullptr) return;
+	resyncPlayer (*player);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (isTurnBasedGame()) sendWaitFor (*this, iActiveTurnPlayerNr);
@@ -1672,7 +1673,7 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQUEST_RESYNC);
 
 	cPlayer* player = getPlayerFromNumber (message.popChar());
-	if (player) resyncPlayer (player, true);
+	if (player) resyncPlayer (*player, true);
 }
 
 //------------------------------------------------------------------------------
@@ -1911,9 +1912,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			if (destVehicle)
 			{
 				// change the owner
-				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (destVehicle);
+				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (*destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
-				changeUnitOwner (destVehicle, srcVehicle->owner);
+				changeUnitOwner (*destVehicle, *srcVehicle->owner);
 			}
 		}
 		else
@@ -1936,7 +1937,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destVehicle->data.speedCur = 0;
 				destVehicle->data.setShots(0);
 
-				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (destVehicle);
+				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (*destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 			}
 			else if (destBuilding)
@@ -3305,9 +3306,9 @@ void cServer::checkDeadline()
 }
 
 //------------------------------------------------------------------------------
-void cServer::addActiveMoveJob (cServerMoveJob* MoveJob)
+void cServer::addActiveMoveJob (cServerMoveJob& MoveJob)
 {
-	ActiveMJobs.push_back (MoveJob);
+	ActiveMJobs.push_back (&MoveJob);
 }
 
 //------------------------------------------------------------------------------
@@ -3710,7 +3711,7 @@ void cServer::deletePlayer (cPlayer* Player)
 }
 
 //------------------------------------------------------------------------------
-void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
+void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 {
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	if (firstDelete)
@@ -3718,94 +3719,94 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		for (size_t i = 0; i != PlayerList.size(); ++i)
 		{
 			cPlayer* UnitPlayer = PlayerList[i];
-			if (UnitPlayer == Player) continue;
+			if (UnitPlayer == &player) continue;
 
 			for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
 			{
-				Remove (Vehicle->seenByPlayerList, Player);
+				Remove (Vehicle->seenByPlayerList, &player);
 			}
 
 			for (cBuilding* Building = UnitPlayer->BuildingList; Building; Building = Building->next)
 			{
-				Remove (Building->seenByPlayerList, Player);
+				Remove (Building->seenByPlayerList, &player);
 			}
 		}
 
 		for (cBuilding* Building = neutralBuildings; Building; Building = Building->next)
 		{
-			Remove (Building->seenByPlayerList, Player);
+			Remove (Building->seenByPlayerList, &player);
 		}
-		sendDeleteEverything (*this, Player->getNr());
+		sendDeleteEverything (*this, player.getNr ());
 	}
 
-	sendGameTime (*this, *Player, gameTimer.gameTime);
+	sendGameTime (*this, player, gameTimer.gameTime);
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
 		sendClansToClients (*this, PlayerList);
 	}
-	sendTurn (*this, iTurn, lastTurnEnd, *Player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), Player);
-	sendResources (*this, *Player);
+	sendTurn (*this, iTurn, lastTurnEnd, player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), &player);
+	sendResources (*this, player);
 
 	// send all units to the client
-	for (cVehicle* Vehicle = Player->VehicleList; Vehicle; Vehicle = Vehicle->next)
+	for (cVehicle* Vehicle = player.VehicleList; Vehicle; Vehicle = Vehicle->next)
 	{
-		if (!Vehicle->isUnitLoaded ()) resyncVehicle (*Vehicle, *Player);
+		if (!Vehicle->isUnitLoaded ()) resyncVehicle (*Vehicle, player);
 	}
 
-	for (cBuilding* Building = Player->BuildingList; Building; Building = Building->next)
+	for (cBuilding* Building = player.BuildingList; Building; Building = Building->next)
 	{
-		sendAddUnit (*this, Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->getNr(), true);
+		sendAddUnit (*this, Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, player.getNr (), true);
 		for (size_t i = 0; i != Building->storedUnits.size(); ++i)
 		{
 			cVehicle& storedVehicle = *Building->storedUnits[i];
-			resyncVehicle (storedVehicle, *Player);
-			sendStoreVehicle (*this, Building->iID, false, storedVehicle.iID, Player->getNr());
+			resyncVehicle (storedVehicle, player);
+			sendStoreVehicle (*this, Building->iID, false, storedVehicle.iID, player.getNr ());
 		}
-		sendUnitData (*this, *Building, Player->getNr());
+		sendUnitData (*this, *Building, player.getNr ());
 		if (Building->data.canMineMaxRes > 0) sendProduceValues (*this, *Building);
 		if (!Building->BuildList.empty()) sendBuildList (*this, *Building);
 	}
 	// send all subbases
-	for (size_t i = 0; i != Player->base.SubBases.size(); ++i)
+	for (size_t i = 0; i != player.base.SubBases.size (); ++i)
 	{
-		sendSubbaseValues (*this, *Player->base.SubBases[i], Player->getNr());
+		sendSubbaseValues (*this, *player.base.SubBases[i], player.getNr ());
 	}
 	// refresh enemy units
-	Player->doScan();
+	player.doScan ();
 	checkPlayerUnits();
 	// send upgrades
 	for (size_t i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
-		if (Player->VehicleData[i].getVersion () > 0
-			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan()).buildCosts)
-			sendUnitUpgrades (*this, Player->VehicleData[i], Player->getNr());
+		if (player.VehicleData[i].getVersion () > 0
+			|| player.VehicleData[i].buildCosts != UnitsData.getVehicle (i, player.getClan ()).buildCosts)
+			sendUnitUpgrades (*this, player.VehicleData[i], player.getNr ());
 	}
 	for (size_t i = 0; i != UnitsData.getNrBuildings(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
-		if (Player->BuildingData[i].getVersion () > 0
-			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan()).buildCosts)
-			sendUnitUpgrades (*this, Player->BuildingData[i], Player->getNr());
+		if (player.BuildingData[i].getVersion () > 0
+			|| player.BuildingData[i].buildCosts != UnitsData.getBuilding (i, player.getClan ()).buildCosts)
+			sendUnitUpgrades (*this, player.BuildingData[i], player.getNr ());
 	}
 	// send credits
-	sendCredits (*this, Player->Credits, Player->getNr());
+	sendCredits (*this, player.Credits, player.getNr ());
 	// send research
-	sendResearchLevel (*this, Player->researchLevel, Player->getNr());
-	sendRefreshResearchCount (*this, Player->getNr());
+	sendResearchLevel (*this, player.researchLevel, player.getNr ());
+	sendRefreshResearchCount (*this, player.getNr ());
 
 	// send all players' score histories & eco-counts
 	for (size_t i = 0; i != PlayerList.size(); ++i)
 	{
 		cPlayer& subj = *PlayerList[i];
 		for (int t = 1; t <= iTurn; ++t)
-			sendScore (*this, subj, t, Player);
-		sendNumEcos (*this, subj, Player);
+			sendScore (*this, subj, t, &player);
+		sendNumEcos (*this, subj, &player);
 	}
 
-	sendGameSettings (*this, *Player);
+	sendGameSettings (*this, player);
 
 	// send attackJobs
 	for (size_t i = 0; i != AJobs.size(); ++i)
@@ -3813,15 +3814,15 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		cServerAttackJob& ajob = *AJobs[i];
 		for (size_t ajobClient = 0; ajobClient != ajob.executingClients.size(); ++ajobClient)
 		{
-			if (ajob.executingClients[ajobClient] == Player)
+			if (ajob.executingClients[ajobClient] == &player)
 			{
-				ajob.sendFireCommand (Player);
+				ajob.sendFireCommand (&player);
 			}
 		}
 	}
 
 	// send Hud setting
-	sendHudSettings (*this, *Player);
+	sendHudSettings (*this, player);
 
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
@@ -3860,77 +3861,77 @@ bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* ve
 		sendMoveJobServer (*this, *MoveJob, vehicle->seenByPlayerList[i]->getNr());
 	}
 
-	addActiveMoveJob (MoveJob);
+	addActiveMoveJob (*MoveJob);
 	return true;
 }
 
 //------------------------------------------------------------------------------
-void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
+void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 {
-	if (vehicle->owner && casualtiesTracker != NULL)
-		casualtiesTracker->logCasualty (vehicle->data.ID, vehicle->owner->getNr());
+	if (vehicle.owner && casualtiesTracker != NULL)
+		casualtiesTracker->logCasualty (vehicle.data.ID, vehicle.owner->getNr());
 
 	// delete vehicle in the list of the old player
-	cPlayer* oldOwner = vehicle->owner;
+	cPlayer* oldOwner = vehicle.owner;
 
-	remove_from_intrusivelist (oldOwner->VehicleList, *vehicle);
+	remove_from_intrusivelist (oldOwner->VehicleList, vehicle);
 	// add the vehicle to the list of the new player
-	vehicle->owner = newOwner;
-	newOwner->addUnitToList (*vehicle);
+	vehicle.owner = &newOwner;
+	newOwner.addUnitToList (vehicle);
 
 	//the vehicle is fully operational for the new owner
-	if (vehicle->isDisabled())
+	if (vehicle.isDisabled())
 	{
-		vehicle->data.speedCur = vehicle->lastSpeed;
-		vehicle->data.setShots(vehicle->lastShots);
+		vehicle.data.speedCur = vehicle.lastSpeed;
+		vehicle.data.setShots(vehicle.lastShots);
 	}
-	vehicle->setDisabledTurns (0);
+	vehicle.setDisabledTurns (0);
 
 	// delete the unit on the clients and add it with new owner again
-	sendDeleteUnit (*this, *vehicle, oldOwner->getNr());
-	for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
+	sendDeleteUnit (*this, vehicle, oldOwner->getNr());
+	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 	{
-		sendDeleteUnit (*this, *vehicle, vehicle->seenByPlayerList[i]->getNr());
+		sendDeleteUnit (*this, vehicle, vehicle.seenByPlayerList[i]->getNr());
 	}
-	vehicle->seenByPlayerList.clear();
-	vehicle->detectedByPlayerList.clear();
-	sendAddUnit (*this, vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->getNr(), false);
-	sendUnitData (*this, *vehicle, vehicle->owner->getNr());
-	sendSpecificUnitData (*this, *vehicle);
+	vehicle.seenByPlayerList.clear();
+	vehicle.detectedByPlayerList.clear();
+	sendAddUnit (*this, vehicle.PosX, vehicle.PosY, vehicle.iID, true, vehicle.data.ID, vehicle.owner->getNr(), false);
+	sendUnitData (*this, vehicle, vehicle.owner->getNr());
+	sendSpecificUnitData (*this, vehicle);
 
 	oldOwner->doScan();
-	newOwner->doScan();
+	newOwner.doScan();
 	checkPlayerUnits();
 
 	// let the unit work for his new owner
-	if (vehicle->data.canSurvey)
+	if (vehicle.data.canSurvey)
 	{
-		sendVehicleResources (*this, *vehicle);
-		vehicle->doSurvey (*this);
+		sendVehicleResources (*this, vehicle);
+		vehicle.doSurvey (*this);
 	}
-	vehicle->makeDetection (*this);
+	vehicle.makeDetection (*this);
 }
 
 //------------------------------------------------------------------------------
-void cServer::stopVehicleBuilding (cVehicle* vehicle)
+void cServer::stopVehicleBuilding (cVehicle& vehicle)
 {
-	if (!vehicle->isUnitBuildingABuilding ()) return;
+	if (!vehicle.isUnitBuildingABuilding ()) return;
 
-	int iPos = Map->getOffset (vehicle->PosX, vehicle->PosY);
+	int iPos = Map->getOffset (vehicle.PosX, vehicle.PosY);
 
-	vehicle->setBuildingABuilding(false);
-	vehicle->BuildPath = false;
+	vehicle.setBuildingABuilding(false);
+	vehicle.BuildPath = false;
 
-	if (vehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
+	if (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
-		Map->moveVehicle (*vehicle, vehicle->BuildBigSavedPos % Map->getSize(), vehicle->BuildBigSavedPos / Map->getSize());
-		iPos = vehicle->BuildBigSavedPos;
-		vehicle->owner->doScan();
+		Map->moveVehicle (vehicle, vehicle.BuildBigSavedPos % Map->getSize(), vehicle.BuildBigSavedPos / Map->getSize());
+		iPos = vehicle.BuildBigSavedPos;
+		vehicle.owner->doScan();
 	}
-	sendStopBuild (*this, vehicle->iID, iPos, vehicle->owner->getNr());
-	for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
+	sendStopBuild (*this, vehicle.iID, iPos, vehicle.owner->getNr());
+	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 	{
-		sendStopBuild (*this, vehicle->iID, iPos, vehicle->seenByPlayerList[i]->getNr());
+		sendStopBuild (*this, vehicle.iID, iPos, vehicle.seenByPlayerList[i]->getNr());
 	}
 }
 

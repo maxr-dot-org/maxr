@@ -402,7 +402,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					pX = (cellW * cols) + pCol;
 					pY = (cellH * rows) + pRow;
 
-					if (getPixel32 (pX, pY, surface) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
+					if (getPixel32 (pX, pY, surface.get ()) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
 					{
 						// offset
 						Rect.x = pX;
@@ -419,7 +419,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					pX = (cellW * cols) + pCol_w;
 					pY = (cellH * rows) + pRow_w;
 
-					if (getPixel32 (pX, pY, surface) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
+					if (getPixel32 (pX, pY, surface.get ()) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
 					{
 						Rect.w = (pX - Rect.x) + 1;
 						pCol_w = -1; // break loop
@@ -442,23 +442,23 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			switch (fonttype)
 			{
 				case FONT_LATIN_SMALL_RED:
-					SDL_SetColorKey (surface, SDL_TRUE, 0xf0d8b8);
-					SDL_FillRect (chars[unicodeplace], NULL, 0xe60000);
+					SDL_SetColorKey (surface.get (), SDL_TRUE, 0xf0d8b8);
+					SDL_FillRect (chars[unicodeplace].get (), NULL, 0xe60000);
 					break;
 				case FONT_LATIN_SMALL_GREEN:
-					SDL_SetColorKey (surface, SDL_TRUE, 0xf0d8b8);
-					SDL_FillRect (chars[unicodeplace], NULL, 0x04ae04);
+					SDL_SetColorKey (surface.get (), SDL_TRUE, 0xf0d8b8);
+					SDL_FillRect (chars[unicodeplace].get (), NULL, 0x04ae04);
 					break;
 				case FONT_LATIN_SMALL_YELLOW:
-					SDL_SetColorKey (surface, SDL_TRUE, 0xf0d8b8);
-					SDL_FillRect (chars[unicodeplace], NULL, 0xdbde00);
+					SDL_SetColorKey (surface.get (), SDL_TRUE, 0xf0d8b8);
+					SDL_FillRect (chars[unicodeplace].get (), NULL, 0xdbde00);
 					break;
 				default:
-					SDL_FillRect (chars[unicodeplace], NULL, 0xFF00FF);
+					SDL_FillRect (chars[unicodeplace].get (), NULL, 0xFF00FF);
 					break;
 			}
-			SDL_BlitSurface (surface, &Rect, chars[unicodeplace], NULL);
-			SDL_SetColorKey (chars[unicodeplace], SDL_TRUE, 0xFF00FF);
+			SDL_BlitSurface (surface.get (), &Rect, chars[unicodeplace].get (), NULL);
+			SDL_SetColorKey (chars[unicodeplace].get (), SDL_TRUE, 0xFF00FF);
 
 			// goto next character
 			currentChar++;
@@ -595,7 +595,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 		// is space?
 		if (*p == ' ')
 		{
-			if (chars['a']) offX += chars['a']->w;
+			if (chars['a'].get ()) offX += chars['a']->w;
 			p++;
 		} //is new line?
 		else if (*p == '\n')
@@ -617,7 +617,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 			if (chars[uni] != NULL)
 			{
 				SDL_Rect rTmp = {Sint16 (offX), Sint16 (offY), 16, 16};
-				SDL_BlitSurface (chars[uni], NULL, surface, &rTmp);
+				SDL_BlitSurface (chars[uni].get (), NULL, surface, &rTmp);
 
 				// move one px forward for space between signs
 				offX += chars[uni]->w + iSpace;
@@ -797,7 +797,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 		if (*p == ' ')
 		{
 			// we will use the wight of the 'a' for spaces
-			if (chars['a']) rTmp.w += chars['a']->w;
+			if (chars['a'].get ()) rTmp.w += chars['a']->w;
 			p++;
 		} // is new line?
 		else if (*p == '\n')

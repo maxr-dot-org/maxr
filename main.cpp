@@ -672,10 +672,10 @@ void cUnitsData::scaleSurfaces (float zoom)
 		buildingUIs[i].scaleSurfaces (zoom);
 	}
 
-	if (dirt_small_org && dirt_small) scaleSurface (dirt_small_org, dirt_small, (int) (dirt_small_org->w * zoom), (int) (dirt_small_org->h * zoom));
-	if (dirt_small_shw_org && dirt_small_shw) scaleSurface (dirt_small_shw_org, dirt_small_shw, (int) (dirt_small_shw_org->w * zoom), (int) (dirt_small_shw_org->h * zoom));
-	if (dirt_big_org && dirt_big) scaleSurface (dirt_big_org, dirt_big, (int) (dirt_big_org->w * zoom), (int) (dirt_big_org->h * zoom));
-	if (dirt_big_shw_org && dirt_big_shw) scaleSurface (dirt_big_shw_org, dirt_big_shw, (int) (dirt_big_shw_org->w * zoom), (int) (dirt_big_shw_org->h * zoom));
+	if (dirt_small_org != nullptr && dirt_small != nullptr) scaleSurface (dirt_small_org.get (), dirt_small.get (), (int)(dirt_small_org->w * zoom), (int)(dirt_small_org->h * zoom));
+	if (dirt_small_shw_org != nullptr && dirt_small_shw != nullptr) scaleSurface (dirt_small_shw_org.get (), dirt_small_shw.get (), (int)(dirt_small_shw_org->w * zoom), (int)(dirt_small_shw_org->h * zoom));
+	if (dirt_big_org != nullptr && dirt_big != nullptr) scaleSurface (dirt_big_org.get (), dirt_big.get (), (int)(dirt_big_org->w * zoom), (int)(dirt_big_org->h * zoom));
+	if (dirt_big_shw_org != nullptr && dirt_big_shw != nullptr) scaleSurface (dirt_big_shw_org.get (), dirt_big_shw.get (), (int)(dirt_big_shw_org->w * zoom), (int)(dirt_big_shw_org->h * zoom));
 }
 
 //------------------------------------------------------------------------------

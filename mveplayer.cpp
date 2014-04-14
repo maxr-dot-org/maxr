@@ -383,7 +383,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 				memcpy (frame_buf->pixels, frame_hot, screen_mvebuffer_size);
 
 				// TODO: [SDL2] replace SDL_CreateTextureFromSurface ?
-				sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, frame_buf);
+				sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, frame_buf.get());
 				//SDL_UpdateTexture(sdlTexture, NULL, frame_buf->pixels, frame_buf->pitch);
 
 				SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
@@ -506,7 +506,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 												 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 												 dwidth, dheight,
 												 SDL_WINDOW_OPENGL);
-					SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)));
+					SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)).get());
 				}
 				sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
 				//sdlTexture = SDL_CreateTexture(sdlRenderer,

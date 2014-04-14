@@ -43,8 +43,8 @@ cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area) :
 
 	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
 
-	SDL_FillRect (surface, nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 }
 
 //------------------------------------------------------------------------------
@@ -57,12 +57,12 @@ void cUnitDetailsHud::setUnit (const cUnit* unit_, const cPlayer* player_)
 //------------------------------------------------------------------------------
 void cUnitDetailsHud::draw ()
 {
-	if (surface)
+	if (surface != nullptr)
 	{
 		reset ();
 
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
 	}
 
 	cWidget::draw ();
@@ -71,8 +71,8 @@ void cUnitDetailsHud::draw ()
 //------------------------------------------------------------------------------
 void cUnitDetailsHud::reset ()
 {
-	SDL_FillRect (surface, nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	for (int i = 0; i < maxRows; ++i)
 	{
@@ -211,7 +211,7 @@ void cUnitDetailsHud::drawRow (size_t index, eUnitDataSymbolType symbolType, int
 	amountLabels[index]->setText (iToStr (amount) + "/" + iToStr (maximalAmount));
 
 	nameLabels[index]->setText (name);
-	drawSmallSymbols (surface, rowHeight, symbolType, cPosition (80, rowHeight * index), amount, maximalAmount);
+	drawSmallSymbols (surface.get (), rowHeight, symbolType, cPosition (80, rowHeight * index), amount, maximalAmount);
 }
 
 //------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ void cUnitDetailsHud::drawSmallSymbols (SDL_Surface* destination, int rowHeight,
 		}
 
 		auto srcRect = src.toSdlRect ();
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &srcRect, destination, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, destination, &dest);
 
 		dest.x += offX;
 		value1 -= step;

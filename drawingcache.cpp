@@ -83,7 +83,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	surface = SDL_CreateRGBSurface (0, width, height, 32,
 									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
-	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
@@ -112,7 +112,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
 	surface = SDL_CreateRGBSurface (0, width, height, 32,
 									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
-	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 cDrawingCache::cDrawingCache (std::shared_ptr<cAnimationTimer> animationTimer_) :
@@ -177,7 +177,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 		//cache hit!
 		cacheHits++;
 		//entry.lastUsed = gameGUI->getFrame();
-		return entry.surface;
+		return entry.surface.get ();
 	}
 
 	//cache miss!
@@ -241,7 +241,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		//cache hit!
 		cacheHits++;
 		//entry.lastUsed = gameGUI->getFrame();
-		return entry.surface;
+		return entry.surface.get ();
 	}
 
 	//cache miss!
@@ -261,7 +261,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 		//set properties of the cached image
 		entry.init (building, zoom);
 
-		return entry.surface;
+		return entry.surface.get ();
 	}
 
 	//try to find an old entry to reuse
@@ -275,7 +275,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 		//set properties of the cached image
 		entry.init (building, zoom);
 
-		return entry.surface;
+		return entry.surface.get ();
 	}
 
 	//there are no old entries in the cache.
@@ -295,7 +295,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 		entry.init (vehicle, map, player, animationTimer->getAnimationTime (), zoom);
 
 		cacheSize++;
-		return entry.surface;
+		return entry.surface.get ();
 	}
 
 	//try to find an old entry to reuse
@@ -308,7 +308,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 
 		//set properties of the cached image
 		entry.init (vehicle, map, player, animationTimer->getAnimationTime (), zoom);
-		return entry.surface;
+		return entry.surface.get ();
 	}
 
 	//there are no old entries in the cache.

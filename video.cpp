@@ -252,7 +252,7 @@ void cVideo::initSplash()
 								  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 								  getSplashW(), getSplashH(),
 								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
-	SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)));
+	SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)).get());
 	SDL_SetWindowFullscreen (sdlWindow, !getWindowMode());
 	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
 
@@ -260,7 +260,7 @@ void cVideo::initSplash()
 								   0, 0, 0, 0);
 	if (font != NULL) font->setTargetSurface (buffer);
 
-	SDL_BlitSurface (splash, NULL, buffer, NULL);
+	SDL_BlitSurface (splash.get(), NULL, buffer, NULL);
 
 	sdlTexture = SDL_CreateTexture (sdlRenderer,
 									SDL_PIXELFORMAT_ARGB8888,
@@ -419,7 +419,7 @@ void cVideo::applyShadow (const SDL_Rect* rect)
 	if (rect == NULL) rect = &fullscreen;
 	SDL_Rect src = { rect->x, rect->y, rect->w, rect->h };
 	SDL_Rect dest = { rect->x, rect->y, 0, 0 };
-	SDL_BlitSurface (GraphicsData.gfx_shadow, &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_shadow.get(), &src, cVideo::buffer, &dest);
 }
 
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
@@ -701,7 +701,7 @@ drawline:
 	return surface;
 }
 
-static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
+static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface& sf)
 {
 	if (x2 < x1)
 	{
@@ -713,22 +713,22 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 	int dir = 1;
 	if (dy < 0) {dy = -dy; dir = -1;}
 	int error = 0;
-	Uint32* ptr = static_cast<Uint32*> (sf->pixels);
+	Uint32* ptr = static_cast<Uint32*> (sf.pixels);
 	if (dx > dy)
 	{
 		for (; x1 != x2; x1++, error += dy)
 		{
 			if (error > dx) {error -= dx; y1 += dir;}
-			if (x1 < sf->w && x1 >= 0 && y1 >= 0 && y1 < sf->h)
-				ptr[x1 + y1 * sf->w] = color;
+			if (x1 < sf.w && x1 >= 0 && y1 >= 0 && y1 < sf.h)
+				ptr[x1 + y1 * sf.w] = color;
 		}
 		return;
 	}
 	for (; y1 != y2; y1 += dir, error += dx)
 	{
 		if (error > dy) {error -= dy; x1++;}
-		if (x1 < sf->w && x1 >= 0 && y1 >= 0 && y1 < sf->h)
-			ptr[x1 + y1 * sf->w] = color;
+		if (x1 < sf.w && x1 >= 0 && y1 >= 0 && y1 < sf.h)
+			ptr[x1 + y1 * sf.w] = color;
 	}
 }
 
@@ -749,30 +749,30 @@ SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, 
 	p2y = Round (p2y * fak);
 	p3x = Round (p3x * fak);
 	p3y = Round (p3y * fak);
-	line (p1x, p1y, p2x, p2y, color, sf);
-	line (p2x, p2y, p3x, p3y, color, sf);
-	line (p3x, p3y, p1x, p1y, color, sf);
+	line (p1x, p1y, p2x, p2y, color, *sf);
+	line (p2x, p2y, p3x, p3y, color, *sf);
+	line (p3x, p3y, p1x, p1y, color, *sf);
 
 	SDL_UnlockSurface (sf);
 	return sf;
 }
 
-static void setPixel (SDL_Surface* surface, int x, int y, int iColor)
+static void setPixel (SDL_Surface& surface, int x, int y, int iColor)
 {
 	// check the surface size
-	if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) return;
+	if (x < 0 || x >= surface.w || y < 0 || y >= surface.h) return;
 	// check the clip rect
-	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w ||
-		y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
+	if (x < surface.clip_rect.x || x >= surface.clip_rect.x + surface.clip_rect.w ||
+		y < surface.clip_rect.y || y >= surface.clip_rect.y + surface.clip_rect.h) return;
 
-	static_cast<Uint32*> (surface->pixels) [x + y * surface->w] = iColor;
+	static_cast<Uint32*> (surface.pixels) [x + y * surface.w] = iColor;
 }
 
-void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
+void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface& surface)
 {
 	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() ||
 		iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;
-	SDL_LockSurface (surface);
+	SDL_LockSurface (&surface);
 
 	int d = 0;
 	int xx = 0;
@@ -802,5 +802,5 @@ void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
 		setPixel (surface, iX - yy, iY - xx, iColor);
 		setPixel (surface, iX - xx, iY - yy, iColor);
 	}
-	SDL_UnlockSurface (surface);
+	SDL_UnlockSurface (&surface);
 }

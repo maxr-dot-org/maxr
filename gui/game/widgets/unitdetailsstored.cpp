@@ -43,8 +43,8 @@ cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
 
 	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
 
-	SDL_FillRect (surface, nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 }
 
 //------------------------------------------------------------------------------
@@ -66,10 +66,10 @@ void cUnitDetailsStored::setUnit (const cUnit* unit_)
 //------------------------------------------------------------------------------
 void cUnitDetailsStored::draw ()
 {
-	if (surface)
+	if (surface != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
 	}
 
 	cWidget::draw ();
@@ -78,8 +78,8 @@ void cUnitDetailsStored::draw ()
 //------------------------------------------------------------------------------
 void cUnitDetailsStored::reset ()
 {
-	SDL_FillRect (surface, nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	for (int i = 0; i < maxRows; ++i)
 	{
@@ -113,5 +113,5 @@ void cUnitDetailsStored::drawRow (size_t index, eUnitDataSymbolType symbolType, 
 	amountLabels[index]->setText (iToStr (amount) + "/" + iToStr (maximalAmount));
 
 	nameLabels[index]->setText (name);
-	cUnitDetailsHud::drawSmallSymbols (surface, rowHeight, symbolType, cPosition (65, 4 + rowHeight * index), amount, maximalAmount);
+	cUnitDetailsHud::drawSmallSymbols (surface.get (), rowHeight, symbolType, cPosition (65, 4 + rowHeight * index), amount, maximalAmount);
 }

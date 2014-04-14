@@ -83,9 +83,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	playersList->setEndMargin (cPosition (10, 10));
 	playersList->setItemDistance (cPosition (0, 4));
 
-	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu));
+	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu.get ()));
 	signalConnectionManager.connect (prevColorButton->clicked, [&]() { localPlayer->setToPrevColorIndex (); });
-	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu));
+	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu.get ()));
 	signalConnectionManager.connect (nextColorButton->clicked, [&]() { localPlayer->setToNextColorIndex (); });
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 
@@ -153,7 +153,7 @@ void cWindowNetworkLobby::updateMap ()
 	AutoSurface surface (cStaticMap::loadMapPreview (staticMap->getName ()));
 	if (surface != nullptr)
 	{
-		mapImage->setImage (surface);
+		mapImage->setImage (surface.get ());
 	}
 
 	auto mapName = staticMap->getName ();
@@ -177,8 +177,8 @@ void cWindowNetworkLobby::updatePlayerColor ()
 {
 	SDL_Rect src = {0, 0, 83, 10};
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (OtherData.colors[localPlayer->getColorIndex ()], &src, colorSurface, NULL);
-	colorImage->setImage (colorSurface);
+	SDL_BlitSurface (OtherData.colors[localPlayer->getColorIndex ()].get (), &src, colorSurface.get (), NULL);
+	colorImage->setImage (colorSurface.get ());
 }
 
 //------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
 	{
 		signalConnectionManager.connect (item->readyClicked, [player, this]()
 		{
-			PlayFX (SoundData.SNDHudButton);
+			PlayFX (SoundData.SNDHudButton.get ());
 			handleWantPlayerReadyChange (player);
 		});
 	}

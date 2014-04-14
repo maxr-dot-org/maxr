@@ -38,7 +38,7 @@ cGameMessageListViewItem::cGameMessageListViewItem (int width, const std::string
 	{
 		const auto size = getSize ();
 		redShadow = SDL_CreateRGBSurface (0, size.x (), size. y(), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-		SDL_FillRect (redShadow, nullptr, SDL_MapRGBA (redShadow->format, 0xFF, 0, 0, 50));
+		SDL_FillRect (redShadow.get (), nullptr, SDL_MapRGBA (redShadow->format, 0xFF, 0, 0, 50));
 	}
 
 	creationTime = std::chrono::steady_clock::now ();
@@ -57,7 +57,7 @@ void cGameMessageListViewItem::draw ()
 	{
 		auto rect = getArea ().toSdlRect ();
 
-		if (redShadow) SDL_BlitSurface (redShadow, nullptr, Video.buffer, &rect);
+		if (redShadow != nullptr) SDL_BlitSurface (redShadow.get (), nullptr, Video.buffer, &rect);
 		else Video.applyShadow (&rect);
 	}
 

@@ -70,10 +70,10 @@ void cWindowHangar::initialize ()
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 
-	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu));
+	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu.get ()));
 	signalConnectionManager.connect (selectionListUpButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
 
-	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu));
+	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu.get ()));
 	signalConnectionManager.connect (selectionListDownButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
 
 

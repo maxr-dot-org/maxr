@@ -52,7 +52,7 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 //------------------------------------------------------------------------------
 void cResourceBar::draw ()
 {
-	if (surface && (maxValue - minValue) > 0)
+	if (surface != nullptr && (maxValue - minValue) > 0)
 	{
 		const bool horizontal = orientation == eOrientationType::Horizontal;
 
@@ -73,7 +73,7 @@ void cResourceBar::draw ()
 			src.x = 0;
 		}
 
-		SDL_BlitSurface (surface, &src, cVideo::buffer, &dest);
+		SDL_BlitSurface (surface.get(), &src, cVideo::buffer, &dest);
 	}
 
 	cClickableWidget::draw ();
@@ -313,9 +313,9 @@ void cResourceBar::createSurface (eResourceBarType type)
 
 	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
 
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 
 	SDL_Rect src = {srcPosition.x (), srcPosition.y (), size.x (), size.y ()};
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, surface.get (), NULL);
 }

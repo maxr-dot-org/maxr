@@ -39,10 +39,10 @@ cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType slide
 //------------------------------------------------------------------------------
 void cSliderHandle::draw ()
 {
-	if (surface)
+	if (surface != nullptr)
 	{
 		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface, NULL, cVideo::buffer, &positionRect);
+		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &positionRect);
 	}
 
 	cWidget::draw ();
@@ -79,11 +79,11 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 	auto srcRect = src.toSdlRect ();
 
 	surface = SDL_CreateRGBSurface (0, size.x (), size.y(), Video.getColDepth (), 0, 0, 0, 0);
-	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 
-	if (sliderHandleType == eSliderHandleType::HudZoom) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &srcRect, surface, NULL);
-	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &srcRect, surface, NULL);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	if (sliderHandleType == eSliderHandleType::HudZoom) SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &srcRect, surface.get (), NULL);
+	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &srcRect, surface.get (), NULL);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	resize (size);
 }

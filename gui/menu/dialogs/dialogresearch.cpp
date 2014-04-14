@@ -75,11 +75,11 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 		auto src = themeImageSrcs[i];
 
 		AutoSurface image (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-		SDL_FillRect (image, NULL, 0x00FF00FF);
-		SDL_SetColorKey (image, SDL_TRUE, 0x00FF00FF);
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, image, nullptr);
+		SDL_FillRect (image.get (), NULL, 0x00FF00FF);
+		SDL_SetColorKey (image.get (), SDL_TRUE, 0x00FF00FF);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, image.get (), nullptr);
 
-		addChild (std::make_unique<cImage> (getPosition () + cPosition (172 - src.w / 2, 78 - src.h / 2 + 28 * i), image));
+		addChild (std::make_unique<cImage> (getPosition () + cPosition (172 - src.w / 2, 78 - src.h / 2 + 28 * i), image.get()));
 
 		researchCenterCountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (24, 72 + 28 * i), getPosition () + cPosition (24 + 38, 72 + 28 * i + 10)), "0", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 

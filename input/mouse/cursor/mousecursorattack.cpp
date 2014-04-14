@@ -60,7 +60,7 @@ cMouseCursorAttack::cMouseCursorAttack (int currentHealthPercent_, int newHealth
 SDL_Surface* cMouseCursorAttack::getSurface () const
 {
 	if (surface == nullptr) generateSurface ();
-	return surface;
+	return surface.get ();
 }
 
 //------------------------------------------------------------------------------
@@ -79,20 +79,20 @@ bool cMouseCursorAttack::equal (const cMouseCursor& other) const
 //------------------------------------------------------------------------------
 void cMouseCursorAttack::generateSurface () const
 {
-	SDL_Surface* sourceSurface = GraphicsData.gfx_Cattack;
+	SDL_Surface* sourceSurface = GraphicsData.gfx_Cattack.get ();
 	surface = SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth (), 0, 0, 0, 0);
 
-	SDL_FillRect (surface, nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
-	SDL_BlitSurface (sourceSurface, nullptr, surface, nullptr);
+	SDL_BlitSurface (sourceSurface, nullptr, surface.get (), nullptr);
 
 	const int barWidth = 35;
 
 	if (currentHealthPercent < 0 || currentHealthPercent > 100 || newHealthPercent < 0 || newHealthPercent > 100)
 	{
 		SDL_Rect rect = {1, 29, barWidth, 3};
-		SDL_FillRect (surface, &rect, 0);
+		SDL_FillRect (surface.get (), &rect, 0);
 	}
 	else
 	{
@@ -100,16 +100,16 @@ void cMouseCursorAttack::generateSurface () const
 		const auto newHealthWidth = static_cast<int>(newHealthPercent / 100. * barWidth);
 
 		SDL_Rect rect = {1, 29, newHealthWidth, 3};
-		SDL_FillRect (surface, &rect, 0x00FF00);
+		SDL_FillRect (surface.get (), &rect, 0x00FF00);
 
 		rect.x += rect.w;
 		rect.w = currentHealthWidth - newHealthWidth;
 
-		SDL_FillRect (surface, &rect, 0xFF0000);
+		SDL_FillRect (surface.get (), &rect, 0xFF0000);
 
 		rect.x += rect.w;
 		rect.w = barWidth - currentHealthWidth;
 
-		SDL_FillRect (surface, &rect, 0);
+		SDL_FillRect (surface.get (), &rect, 0);
 	}
 }

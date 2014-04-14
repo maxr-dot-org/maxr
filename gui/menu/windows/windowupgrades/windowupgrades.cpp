@@ -69,10 +69,10 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player) :
 	//
 	for (size_t i = 0; i < maxUpgradeButtons; ++i)
 	{
-		upgradeDecreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu));
+		upgradeDecreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu.get ()));
 		signalConnectionManager.connect (upgradeDecreaseButton[i]->clicked, std::bind (&cWindowUpgrades::upgradeDecreaseClicked, this, i));
 
-		upgradeIncreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu));
+		upgradeIncreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu.get ()));
 		signalConnectionManager.connect (upgradeIncreaseButton[i]->clicked, std::bind (&cWindowUpgrades::upgradeIncreaseClicked, this, i));
 
 		upgradeCostLabel[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (283 + 40, 293 + 2 + 19 * i), getPosition () + cPosition (283 + 40 + 40, 293 + 2 + 19 * i + 10)), ""));

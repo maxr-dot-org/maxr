@@ -41,7 +41,7 @@ enum class eResourceBarType
 class cResourceBar : public cClickableWidget
 {
 public:
-	cResourceBar (const cBox<cPosition>& area, int minValue, int maxValue, eResourceBarType type, eOrientationType orientation, sSOUND* clickSound = SoundData.SNDObjectMenu);
+	cResourceBar (const cBox<cPosition>& area, int minValue, int maxValue, eResourceBarType type, eOrientationType orientation, sSOUND* clickSound = SoundData.SNDObjectMenu.get ());
 
 	void setType (eResourceBarType type);
 	void setStepSize (int stepSize);

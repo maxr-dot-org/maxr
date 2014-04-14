@@ -1966,12 +1966,12 @@ void cClient::handleTurnTime()
 	}
 }
 
-void cClient::addActiveMoveJob (cClientMoveJob* MoveJob)
+void cClient::addActiveMoveJob (cClientMoveJob& MoveJob)
 {
-	MoveJob->bSuspended = false;
-	if (MoveJob->Vehicle) MoveJob->Vehicle->MoveJobActive = true;
-	if (Contains (ActiveMJobs, MoveJob)) return;
-	ActiveMJobs.push_back (MoveJob);
+	MoveJob.bSuspended = false;
+	if (MoveJob.Vehicle) MoveJob.Vehicle->MoveJobActive = true;
+	if (Contains (ActiveMJobs, &MoveJob)) return;
+	ActiveMJobs.push_back (&MoveJob);
 }
 
 void cClient::handleMoveJobs()

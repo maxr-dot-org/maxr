@@ -165,7 +165,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		SDL_Rect tmp = dest;
 		SDL_SetSurfaceAlphaMod (building.uiData->eff, building.EffectAlpha);
 
-		CHECK_SCALING (building.uiData->eff, building.uiData->eff_org, zoomFactor);
+		CHECK_SCALING (*building.uiData->eff, *building.uiData->eff_org, zoomFactor);
 		SDL_BlitSurface (building.uiData->eff, NULL, cVideo::buffer, &tmp);
 
 		if (animationFlags.is100ms ())
@@ -541,7 +541,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			return;
 		dest.x = destination.x + destination.w / 2 - 12;
 		dest.y = destination.y + destination.h / 2 - 12;
-		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, cVideo::buffer, &dest);
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &disabledSymbol, cVideo::buffer, &dest);
 	}
 	else
 	{
@@ -558,7 +558,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 				dest.x -= destination.w / 4;
 
 			SDL_Rect destCopy = dest;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, cVideo::buffer, &destCopy);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &speedSymbol, cVideo::buffer, &destCopy);
 		}
 
 		dest.x = destination.x + destination.w / 2 - 4;
@@ -566,7 +566,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		{
 			if (unit.data.speedCur)
 				dest.x += destination.w / 4;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, cVideo::buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &shotsSymbol, cVideo::buffer, &dest);
 		}
 	}
 }

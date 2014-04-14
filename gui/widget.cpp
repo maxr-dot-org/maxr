@@ -209,10 +209,10 @@ void cWidget::draw ()
 {
 	if (isHidden ()) return;
 
-	if (frameSurface)
+	if (frameSurface != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (frameSurface, NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (frameSurface.get (), NULL, cVideo::buffer, &position);
 	}
 
 	for (auto i = children.begin (); i != children.end (); ++i)
@@ -366,12 +366,12 @@ void cWidget::createFrameSurface ()
 
 		frameSurface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
 		if (!frameSurface) return; // can happen when for some reason the size is invalid (e.g. negative)
-		SDL_SetColorKey (frameSurface, SDL_TRUE, 0xFF00FF);
-		SDL_FillRect (frameSurface, NULL, 0xFF00FF);
+		SDL_SetColorKey (frameSurface.get (), SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (frameSurface.get (), NULL, 0xFF00FF);
 
 		const auto color = SDL_MapRGB (frameSurface->format, 0xff, 0, 0);
 
-		drawRectangle (frameSurface, cBox<cPosition>(cPosition(0,0), size), color);
+		drawRectangle (frameSurface.get (), cBox<cPosition> (cPosition (0, 0), size), color);
 	}
 }
 

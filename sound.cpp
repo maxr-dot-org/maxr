@@ -100,7 +100,7 @@ void PlayVoice (sSOUND* snd)
 
 template <int N> void PlayRandomVoice (AutoSound (&snds) [N])
 {
-	PlayVoice (snds[random (N)]);
+	PlayVoice (snds[random (N)].get ());
 }
 
 // Instanciate used versions
@@ -121,7 +121,7 @@ void PlayFX (sSOUND* snd)
 template <int N>
 void PlayRandomFX (AutoSound (&snds) [N])
 {
-	PlayFX (snds[random (N)]);
+	PlayFX (snds[random (N)].get ());
 }
 
 // Instanciate used versions

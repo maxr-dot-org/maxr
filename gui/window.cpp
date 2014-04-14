@@ -75,7 +75,7 @@ void cWindow::draw ()
 	}
 
 	SDL_Rect position = getArea().toSdlRect ();
-	if (surface) SDL_BlitSurface (surface, NULL, cVideo::buffer, &position);
+	if (surface != nullptr) SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
 
 	hasBeenDrawnOnce = true;
 
@@ -151,7 +151,7 @@ cKeyboard* cWindow::getActiveKeyboard () const
 //------------------------------------------------------------------------------
 SDL_Surface* cWindow::getSurface ()
 {
-	return surface;
+	return surface.get ();
 }
 
 //------------------------------------------------------------------------------
