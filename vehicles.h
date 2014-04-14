@@ -197,7 +197,8 @@ public:
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath
 	*/
-	bool canDoCommandoAction (int x, int y, const cMap& map, bool steal) const;
+	bool canDoCommandoAction (const cPosition& position, const cMap& map, bool steal) const;
+	bool canDoCommandoAction (const cUnit* unit, bool steal) const;
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath

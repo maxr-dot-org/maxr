@@ -69,5 +69,5 @@ bool cMouseModeSteal::canExecuteAction (const cMap& map, const cPosition& mapPos
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	return selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition.x (), mapPosition.y (), map, true);
+	return selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition, map, true);
 }

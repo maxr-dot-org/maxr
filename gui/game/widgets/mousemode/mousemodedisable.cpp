@@ -72,7 +72,5 @@ bool cMouseModeDisable::canExecuteAction (const cMap& map, const cPosition& mapP
 	const auto& field = map.getField (mapPosition);
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	return (selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition.x (), mapPosition.y (), map, false) &&
-			(!field.getVehicle () || field.getVehicle ()->isDisabled () == false) &&
-			(!field.getBuilding () || field.getBuilding ()->isDisabled () == false));
+	return selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition, map, false);
 }

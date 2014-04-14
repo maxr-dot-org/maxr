@@ -143,21 +143,14 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
-	
-	// Infiltrators: auto-action
-	// no disable vs. disabled building
-	if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition.x (), mapPosition.y (), map, false) && field.getBuilding () && field.getBuilding ()->isDisabled ())
-	{
-		return eActionType::None;
-	}
-	// vehicle can be disabled, and if it is ...
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition.x (), mapPosition.y (), map, false) && (!field.getVehicle () || !field.getVehicle ()->isDisabled ()))
+
+	// Infiltrators: auto selected disable vs. vehicle/building
+	if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, map, false))
 	{
 		return eActionType::Disable;
 	}
-	// ... disabled (the) vehicle can be stolen
-	// (without selecting the 'steal' from menu)
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition.x (), mapPosition.y (), map, true))
+	// Infiltrators: auto selected steal vs. vehicle/building
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, map, true))
 	{
 		return eActionType::Steal;
 	}

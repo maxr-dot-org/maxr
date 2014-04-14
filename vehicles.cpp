@@ -1194,29 +1194,42 @@ bool cVehicle::clearMine (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
-/** Checks if the target is on a neighbour field and if it can be stolen or disabled */
+/** Checks if the target is on a neighbor field and if it can be stolen or disabled */
 //-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction (int x, int y, const cMap& map, bool steal) const
+bool cVehicle::canDoCommandoAction (const cPosition& position, const cMap& map, bool steal) const
 {
-	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
-		return false;
+	const auto& field = map.getField (position);
 
-	if (isNextTo (x, y) == false || data.getShots () == 0)
-		return false;
+	const cUnit* unit = field.getPlane ();
+	if (canDoCommandoAction (unit, steal)) return true;
 
-	int off = map.getOffset (x, y);
-	const cUnit* vehicle  = map.fields[off].getVehicle();
-	const cUnit* building = map.fields[off].getBuilding();
-	const cUnit* unit = vehicle ? vehicle : building;
+	unit = field.getVehicle ();
+	if (canDoCommandoAction (unit, steal)) return true;
 
+	unit = field.getBuilding ();
+	if (canDoCommandoAction (unit, steal)) return true;
+
+	return false;
+}
+
+bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
+{
 	if (unit == NULL) return false;
 
-	if (unit->isABuilding() && unit->owner == 0) return false;   // rubble
+	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
+		return false;
+	if (data.getShots() == 0) return false;
+
+	if (unit->isNextTo (PosX, PosY) == false)
+		return false;
+
+	if (steal == false && unit->isDisabled ()) return false;
+	if (unit->isABuilding () && unit->owner == 0) return false;   // rubble
 	if (steal && unit->data.canBeCaptured == false) return false;
 	if (steal == false && unit->data.canBeDisabled == false) return false;
-	if (steal && unit->storedUnits.empty() == false) return false;
+	if (steal && unit->storedUnits.empty () == false) return false;
 	if (unit->owner == owner) return false;
-	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
+	if (unit->isAVehicle () && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
 	return true;
 }

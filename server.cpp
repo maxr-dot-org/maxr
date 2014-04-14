@@ -1896,10 +1896,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (destUnit == NULL) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->PosX, destUnit->PosY, *Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY + 1, *Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY, *Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, *Map, steal)))) return;
+	if (! ((destUnit && srcVehicle->canDoCommandoAction (cPosition(destUnit->PosX, destUnit->PosY), *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (cPosition(destBuilding->PosX, destBuilding->PosY + 1), *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (cPosition(destBuilding->PosX + 1, destBuilding->PosY), *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (cPosition(destBuilding->PosX + 1, destBuilding->PosY + 1), *Map, steal)))) return;
 
 	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);

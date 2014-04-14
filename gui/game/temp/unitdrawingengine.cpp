@@ -267,7 +267,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	const auto animationFlags = animationTimer->getAnimationFlags ();
 
 	// make landing and take off of planes
-	if (vehicle.data.factorAir > 0 && animationFlags.is50ms())
+	if (vehicle.data.factorAir > 0 && animationFlags.is50ms () && !vehicle.isDisabled ())
 	{
 		// FIXME: remove the the landing animation from the drawing code
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
