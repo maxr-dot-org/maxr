@@ -21,13 +21,12 @@
 #define game_gameH
 
 #include <memory>
+#include "../utility/runnable.h"
 
-class cGame : protected std::enable_shared_from_this<cGame>
+class cGame : public cRunnable, protected std::enable_shared_from_this<cGame>
 {
 public:
 	virtual ~cGame () {}
-
-	virtual void run () = 0;
 
 	virtual void save (int saveNumber, const std::string& saveName) = 0;
 };

@@ -41,6 +41,8 @@ public:
 
 	cSignal<void ()> done;
 
+	std::string getSelectedMapName () const;
+
 	bool loadSelectedMap (cStaticMap& staticMap);
 private:
 	cSignalConnectionManager signalConnectionManager;

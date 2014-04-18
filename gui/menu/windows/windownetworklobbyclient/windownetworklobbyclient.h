@@ -21,6 +21,7 @@
 #define gui_menu_windows_windownetworklobbyclient_windownetworklobbyclientH
 
 #include "../windownetworklobby/windownetworklobby.h"
+#include "../../../../utility/signal/signal.h"
 #include "../../../../utility/signal/signalconnectionmanager.h"
 
 class cWindowNetworkLobbyClient : public cWindowNetworkLobby
@@ -28,6 +29,7 @@ class cWindowNetworkLobbyClient : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyClient ();
 
+	cSignal<void ()> triggeredConnect;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

@@ -25,9 +25,9 @@
 #include "widget.h"
 #include "../maxrconfig.h"
 #include "../autosurface.h"
+#include "../utility/signal/signal.h"
 
 class cMouseCursor;
-class cNetMessage;
 
 /**
  * Different methods what to do with the background
@@ -122,7 +122,10 @@ public:
 	 */
 	virtual void handleRemoved (cApplication& application);
 
-	virtual bool handleNetMessage (cNetMessage& message);
+	/**
+	 * Triggered when @ref handleRemoved is called.
+	 */
+	cSignal<void ()> terminated;
 protected:
 	virtual cMouse* getActiveMouse () const MAXR_OVERRIDE_FUNCTION;
 	virtual cKeyboard* getActiveKeyboard () const MAXR_OVERRIDE_FUNCTION;

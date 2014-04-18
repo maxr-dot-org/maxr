@@ -17,32 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_windows_windowmultiplayerH
-#define gui_menu_windows_windowmultiplayerH
+#ifndef utility_runnableH
+#define utility_runnableH
 
-#include "windowmain.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-
-class cMenuControllerMultiplayerHost;
-class cMenuControllerMultiplayerClient;
-
-class cWindowMultiPlayer : public cWindowMain
+class cRunnable
 {
 public:
-	cWindowMultiPlayer ();
-	~cWindowMultiPlayer ();
-
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	void tcpHostClicked ();
-	void tcpClientClicked ();
-	void newHotSeatClicked ();
-	void loadHotSeatClicked ();
-	void backClicked ();
-
-	std::shared_ptr<cMenuControllerMultiplayerHost> multiplayerHostController;
-	std::shared_ptr<cMenuControllerMultiplayerClient> multiplayerClientController;
+	virtual void run () = 0;
 };
 
-#endif // gui_menu_windows_windowmultiplayerH
+#endif // utility_runnableH

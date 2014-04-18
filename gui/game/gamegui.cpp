@@ -949,14 +949,6 @@ void cNewGameGUI::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::handleRemoved (cApplication& application)
-{
-	cWindow::handleRemoved (application);
-
-	terminated ();
-}
-
-//------------------------------------------------------------------------------
 std::unique_ptr<cMouseCursor> cNewGameGUI::getDefaultCursor () const
 {
 	return nullptr;
@@ -1016,16 +1008,13 @@ void cNewGameGUI::showFilesWindow ()
 		// loading games while game is running is not yet implemented
 		application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
 	});
-	loadSaveWindow->save.connect ([loadSaveWindow, application](int saveNumber, const std::string& name)
+	loadSaveWindow->save.connect ([this, loadSaveWindow, application](int saveNumber, const std::string& name)
 	{
-		const auto& game = application->getGame ();
-		if (!game) return;
-
 		try
 		{
-			game->save (saveNumber, name);
+			triggeredSave ();
 
-			PlayVoice (VoiceData.VOISaved.get ());
+			//PlayVoice (VoiceData.VOISaved.get ());
 
 			loadSaveWindow->update ();
 		}

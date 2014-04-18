@@ -51,9 +51,9 @@ void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const sPlay
 
 void sendRequestIdentification (cTCP& network, const sPlayer& player);
 
-void sendPlayerList (cTCP& network, const std::vector<sPlayer*>& players);
+void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>& players);
 
-void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::string& saveGameString, const sPlayer* player = NULL);
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const sPlayer* player = NULL);
 
 void sendIdentification (cTCP& network, const sPlayer& player);
 

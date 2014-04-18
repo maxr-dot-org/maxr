@@ -68,9 +68,8 @@ public:
 	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-	virtual void handleRemoved (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
-	cSignal<void ()> terminated;
+	cSignal<void (int saveNumber, const std::string& name)> triggeredSave;
 protected:
 
 	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;

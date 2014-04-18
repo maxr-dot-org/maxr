@@ -25,7 +25,6 @@
 #include <vector>
 #include <memory>
 
-#include "../network.h"
 #include "../utility/concurrentqueue.h"
 #include "../utility/signal/signalconnectionmanager.h"
 #include "../input/mouse/mousebuttontype.h"
@@ -35,9 +34,9 @@ class cKeyboard;
 class cWidget;
 class cWindow;
 class cPosition;
-class cGame;
+class cRunnable;
 
-class cApplication : public INetMessageReceiver
+class cApplication
 {
 public:
 	cApplication ();
@@ -47,6 +46,18 @@ public:
 
 	template<typename WindowType>
 	WindowType* show (std::shared_ptr<WindowType> window, bool centered = true);
+
+	/**
+	 * Marks all windows to be closed that are above the passed one
+	 * on the window stack.
+	 *
+	 * If the passed window is not an the applications window stack
+	 * all windows will be marked to be closed.
+	 *
+	 * @param window The reference window to search for.
+	 *               This window will not be marked to be closed.
+	 */
+	void closeTill (const cWindow& window);
 
 	void registerMouse (cMouse& mouse);
 	void registerKeyboard (cKeyboard& keyboard);
@@ -58,16 +69,13 @@ public:
 	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
 
-	void setGame (std::shared_ptr<cGame> game);
-	const std::shared_ptr<cGame>& getGame () const;
+	void addRunnable (std::weak_ptr<cRunnable> runnable);
+	void removeRunnable (const cRunnable& runnable);
 
 	cMouse* getActiveMouse ();
 	cKeyboard* getActiveKeyboard ();
-
-	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 private:
 	std::vector<std::shared_ptr<cWindow>> modalWindows;
-	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 
 	bool terminate;
 
@@ -80,7 +88,7 @@ private:
 	cWidget* mouseFocusWidget;
 	//cWidget* underMouseWidget;
 
-	std::shared_ptr<cGame> game;
+	std::vector<std::weak_ptr<cRunnable>> runnables;
 
 	void center (cWindow& window);
 
@@ -100,8 +108,6 @@ private:
 	void textEntered (cKeyboard& keyboard, const char* text);
 
 	void assignKeyFocus (cWidget* widget);
-
-	void handleNetMessage (cNetMessage& message);
 };
 
 //------------------------------------------------------------------------------

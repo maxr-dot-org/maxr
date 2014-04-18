@@ -26,6 +26,7 @@
 
 #include "networkhostgame.h"
 #include "../../../maxrconfig.h"
+#include "../../../utility/signal/signal.h"
 #include "../../../utility/signal/signalconnectionmanager.h"
 #include "../../../utility/position.h"
 
@@ -60,6 +61,15 @@ public:
 	void setLocalPlayerUnitUpgrades (std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
 
 	void setLocalPlayerLandingPosition (const cPosition& landingPosition);
+
+	const std::shared_ptr<cGameSettings>& getGameSettings ();
+	const std::shared_ptr<cStaticMap>& getStaticMap ();
+	const std::vector<std::shared_ptr<sPlayer>>& getPlayers ();
+	const std::shared_ptr<sPlayer>& getLocalPlayer ();
+
+	int getLocalPlayerClan () const;
+
+	cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

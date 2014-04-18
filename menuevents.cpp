@@ -28,12 +28,31 @@
 
 using namespace std;
 
+namespace {
+
+//------------------------------------------------------------------------------
+void sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player = nullptr, int fromPlayerNr = -1)
+{
+	// Attention: The playernumber will only be the real player number
+	// when it is passed to this function explicitly.
+	// Otherwise it is only -1!
+	message->iPlayerNr = fromPlayerNr;
+
+	if (player == NULL) network.send (message->iLength, message->serialize ());
+	else network.sendTo (player->getSocketIndex (), message->iLength, message->serialize ());
+
+	Log.write ("Menu: --> " + message->getTypeAsString () + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
+	delete message;
+}
+
+}
+
 void sendMenuChatMessage (cTCP& network, const string& chatMsg, const sPlayer* player, int fromPlayerNr, bool translationText)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_CHAT);
 	message->pushString (chatMsg);
 	message->pushBool (translationText);
-	//cMenu::sendMessage (network, message, player, fromPlayerNr);
+	sendMessage (network, message, player, fromPlayerNr);
 }
 
 void sendRequestIdentification (cTCP& network, const sPlayer& player)
@@ -41,10 +60,10 @@ void sendRequestIdentification (cTCP& network, const sPlayer& player)
 	cNetMessage* message = new cNetMessage (MU_MSG_REQ_IDENTIFIKATION);
 	message->pushInt16 (player.getNr());
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
-	//cMenu::sendMessage (network, message, &player);
+	sendMessage (network, message, &player);
 }
 
-void sendPlayerList (cTCP& network, const std::vector<sPlayer*>& players)
+void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>& players)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);
 
@@ -57,14 +76,14 @@ void sendPlayerList (cTCP& network, const std::vector<sPlayer*>& players)
 		message->pushString (player.getName());
 	}
 	message->pushInt16 ((int) players.size());
-	//cMenu::sendMessage (network, message);
+	sendMessage (network, message);
 }
 
-void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, const string& saveGameString, const sPlayer* player)
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const sPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
-	message->pushString (saveGameString);
+	message->pushInt32 (saveGameNumber);
 
 	if (map)
 	{
@@ -80,7 +99,7 @@ void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* se
 	}
 	message->pushBool (settings != NULL);
 
-	//cMenu::sendMessage (network, message, player);
+	sendMessage (network, message, player);
 }
 
 void sendIdentification (cTCP& network, const sPlayer& player)
@@ -91,7 +110,7 @@ void sendIdentification (cTCP& network, const sPlayer& player)
 	message->pushString (player.getName());
 	message->pushInt16 (player.getColorIndex());
 	message->pushInt16 (player.getNr());
-	//cMenu::sendMessage (network, message);
+	sendMessage (network, message);
 }
 
 void sendGameIdentification (cTCP& network, const sPlayer& player, int socket)
@@ -99,7 +118,7 @@ void sendGameIdentification (cTCP& network, const sPlayer& player, int socket)
 	cNetMessage* message = new cNetMessage (GAME_EV_IDENTIFICATION);
 	message->pushInt16 (socket);
 	message->pushString (player.getName());
-	//cMenu::sendMessage (network, message);
+	sendMessage (network, message);
 }
 
 void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
@@ -107,6 +126,6 @@ void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
 	cNetMessage* msg = new cNetMessage (MU_MSG_REQUEST_MAP);
 	msg->pushString (mapName);
 	msg->pushInt16 (playerNr);
-	//cMenu::sendMessage (network, msg);
+	sendMessage (network, msg);
 }
 

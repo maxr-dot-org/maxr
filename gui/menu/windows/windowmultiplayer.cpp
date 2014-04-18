@@ -20,23 +20,12 @@
 #include <functional>
 
 #include "windowmultiplayer.h"
-#include "windowgamesettings/gamesettings.h"
-#include "windowgamesettings/windowgamesettings.h"
-#include "windowclanselection/windowclanselection.h"
-#include "windowlandingunitselection/windowlandingunitselection.h"
-#include "windowlandingpositionselection/windowlandingpositionselection.h"
-#include "windownetworklobbyhost/windownetworklobbyhost.h"
-#include "windownetworklobbyclient/windownetworklobbyclient.h"
 #include "../widgets/pushbutton.h"
+#include "../../control/menucontrollermultiplayerhost.h"
+#include "../../control/menucontrollermultiplayerclient.h"
 #include "../../application.h"
 #include "../../../main.h"
-#include "../../../log.h"
-#include "../../../player.h"
-#include "../../../network.h"
-#include "../../../menus.h"
-#include "../../../game/network/host/networkhostgamenew.h"
-#include "../../../game/network/host/networkhostgamesaved.h"
-#include "../../../game/logic/landingpositionmanager.h"
+#include "../../../netmessage.h"
 
 //------------------------------------------------------------------------------
 cWindowMultiPlayer::cWindowMultiPlayer () :
@@ -66,9 +55,6 @@ cWindowMultiPlayer::cWindowMultiPlayer () :
 cWindowMultiPlayer::~cWindowMultiPlayer ()
 {}
 
-// FIXME: remove
-std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings);
-
 //------------------------------------------------------------------------------
 void cWindowMultiPlayer::tcpHostClicked ()
 {
@@ -76,123 +62,8 @@ void cWindowMultiPlayer::tcpHostClicked ()
 
 	if (!application) return;
 
-	auto windowNetworkLobby = getActiveApplication ()->show (std::make_shared<cWindowNetworkLobbyHost> ());
-	windowNetworkLobby->start.connect ([windowNetworkLobby, application]()
-	{
-		if ((!windowNetworkLobby->getGameSettings () || !windowNetworkLobby->getStaticMap ()) && windowNetworkLobby->getSaveGameNumber () == -1)
-		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
-			return;
-		}
-
-		auto players = windowNetworkLobby->getPlayers ();
-		auto notReadyPlayerIter = std::find_if (players.begin (), players.end (), [ ](const std::shared_ptr<sPlayer>& player) { return !player->isReady (); });
-
-		if (notReadyPlayerIter != players.end ())
-		{
-			windowNetworkLobby->addInfoEntry ((*notReadyPlayerIter)->getName () + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
-			return;
-		}
-
-		if (windowNetworkLobby->getNetwork ().getConnectionStatus () == 0)
-		{
-			windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Server_Not_Running"));
-			return;
-		}
-
-		if (windowNetworkLobby->getSaveGameNumber () != -1)
-		{
-			//auto game = std::make_shared<cNetworkHostGameSaved> ();
-			// run save game
-			windowNetworkLobby->close ();
-		}
-		else
-		{
-			auto gameSettings = windowNetworkLobby->getGameSettings ();
-			auto staticMap = windowNetworkLobby->getStaticMap ();
-
-			auto players = windowNetworkLobby->getPlayers ();
-			auto localPlayer = windowNetworkLobby->getLocalPlayer ();
-
-			auto game = std::make_shared<cNetworkHostGameNew> ();
-			game->setPlayers (players, *localPlayer);
-			game->setGameSettings (gameSettings);
-			game->setStaticMap (staticMap);
-
-			if (gameSettings->getClansEnabled ())
-			{
-				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> ());
-
-				windowClanSelection->done.connect ([=]()
-				{
-					game->setLocalPlayerClan (windowClanSelection->getSelectedClan ());
-
-					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan (), *gameSettings);
-
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
-
-					windowLandingUnitSelection->done.connect ([=]()
-					{
-						game->setLocalPlayerLandingUnits (windowLandingUnitSelection->getLandingUnits ());
-						game->setLocalPlayerUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
-
-						auto landingPositionManager = std::make_shared<cLandingPositionManager>(players);
-
-						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
-
-						windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
-						{
-							landingPositionManager->setLandingPosition (*localPlayer, landingPosition);
-						});
-
-						landingPositionManager->allPositionsValid.connect ([=]()
-						{
-							game->setLocalPlayerLandingPosition (windowLandingPositionSelection->getSelectedPosition());
-
-							game->start (*application);
-
-							windowLandingPositionSelection->close ();
-							windowLandingUnitSelection->close ();
-							windowClanSelection->close ();
-							windowNetworkLobby->close ();
-						});
-					});
-				});
-			}
-			else
-			{
-				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings);
-
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, -1, initialLandingUnits, gameSettings->getStartCredits ()));
-
-				windowLandingUnitSelection->done.connect ([=]()
-				{
-					game->setLocalPlayerLandingUnits (windowLandingUnitSelection->getLandingUnits ());
-					game->setLocalPlayerUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
-
-					auto landingPositionManager = std::make_shared<cLandingPositionManager> (players);
-
-					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
-
-					windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
-					{
-						landingPositionManager->setLandingPosition (*localPlayer, landingPosition);
-					});
-
-					landingPositionManager->allPositionsValid.connect ([=]()
-					{
-						game->setLocalPlayerLandingPosition (windowLandingPositionSelection->getSelectedPosition ());
-
-						game->start (*application);
-
-						windowLandingPositionSelection->close ();
-						windowLandingUnitSelection->close ();
-						windowNetworkLobby->close ();
-					});
-				});
-			}
-		}
-	});
+	multiplayerHostController = std::make_shared<cMenuControllerMultiplayerHost>();
+	multiplayerHostController->start (*application);
 }
 
 //------------------------------------------------------------------------------
@@ -202,7 +73,8 @@ void cWindowMultiPlayer::tcpClientClicked ()
 
 	if (!application) return;
 
-	auto windowNetworkLobby = getActiveApplication ()->show (std::make_shared<cWindowNetworkLobbyClient> ());
+	multiplayerClientController = std::make_shared<cMenuControllerMultiplayerClient> ();
+	multiplayerClientController->start (*application);
 }
 
 //------------------------------------------------------------------------------

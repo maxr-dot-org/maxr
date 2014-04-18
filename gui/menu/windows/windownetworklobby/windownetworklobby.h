@@ -23,6 +23,7 @@
 #include <memory>
 
 #include "../../../window.h"
+#include "../../../../utility/signal/signal.h"
 #include "../../../../utility/signal/signalconnectionmanager.h"
 
 class cLabel;
@@ -45,8 +46,12 @@ public:
 	void addInfoEntry (const std::string& message);
 
 	void addPlayer (const std::shared_ptr<sPlayer>& player);
+	void removePlayer (const sPlayer& player);
+	void removeNonLocalPlayers ();
 
-	cTCP& getNetwork ();
+	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
+	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);
+	void setSaveGame (int saveGameNumber);
 
 	const std::shared_ptr<cStaticMap>& getStaticMap () const;
 	const std::shared_ptr<cGameSettings>& getGameSettings () const;
@@ -54,17 +59,17 @@ public:
 
 	const std::shared_ptr<sPlayer>& getLocalPlayer () const;
 	std::vector<std::shared_ptr<sPlayer>> getPlayers () const;
-protected:
-	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
-	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);
-	void setSaveGame (int saveGameNumber);
 
 	unsigned short getPort () const;
 	const std::string& getIp () const;
 
+	const std::string& getChatMessage () const;
+
 	void disablePortEdit ();
 	void disableIpEdit ();
 
+	cSignal<void ()> wantLocalPlayerReadyChange;
+	cSignal<void ()> triggeredChatMessage;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
@@ -85,10 +90,7 @@ private:
 
 	std::shared_ptr<sPlayer> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;
-	std::string triedLoadMapName;
 	std::shared_ptr<cGameSettings> gameSettings;
-
-	std::shared_ptr<cTCP> network;
 
 	int saveGameNumber;
 	std::string saveGameName;
@@ -97,8 +99,6 @@ private:
 	void updateSettingsText ();
 	void updateMap ();
 	void updatePlayerColor ();
-
-	void handleWantPlayerReadyChange (const std::shared_ptr<sPlayer>& player);
 
 	void triggerChatMessage (bool refocusChatLine);
 };

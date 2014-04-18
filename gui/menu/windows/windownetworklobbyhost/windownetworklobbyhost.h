@@ -29,7 +29,12 @@ class cWindowNetworkLobbyHost : public cWindowNetworkLobby
 public:
 	cWindowNetworkLobbyHost ();
 
-	cSignal<void ()> start;
+	cSignal<void ()> triggeredSelectMap;
+	cSignal<void ()> triggeredSelectSettings;
+	cSignal<void ()> triggeredSelectSaveGame;
+
+	cSignal<void ()> triggeredStartGame;
+	cSignal<void ()> triggeredStartHost;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

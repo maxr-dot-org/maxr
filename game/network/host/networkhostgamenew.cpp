@@ -79,13 +79,17 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	gameGui->centerAt (localPlayerLandingPosition);
 
+	using namespace std::placeholders;
+	signalConnectionManager.connect (gameGui->triggeredSave, std::bind (&cNetworkHostGameNew::save, this, _1, _2));
+
 	application.show (gameGui);
 
-	application.setGame (shared_from_this ());
+	application.addRunnable (shared_from_this ());
 
 	signalConnectionManager.connect (gameGui->terminated, [&]()
 	{
-		application.setGame (nullptr);
+		application.removeRunnable (*this);
+		terminated ();
 	});
 }
 
@@ -132,4 +136,34 @@ void cNetworkHostGameNew::setLocalPlayerUnitUpgrades (std::vector<std::pair<sID,
 void cNetworkHostGameNew::setLocalPlayerLandingPosition (const cPosition& landingPosition_)
 {
 	localPlayerLandingPosition = landingPosition_;
+}
+
+//------------------------------------------------------------------------------
+const std::shared_ptr<cGameSettings>& cNetworkHostGameNew::getGameSettings ()
+{
+	return gameSettings;
+}
+
+//------------------------------------------------------------------------------
+const std::shared_ptr<cStaticMap>& cNetworkHostGameNew::getStaticMap ()
+{
+	return staticMap;
+}
+
+//------------------------------------------------------------------------------
+const std::vector<std::shared_ptr<sPlayer>>& cNetworkHostGameNew::getPlayers ()
+{
+	return players;
+}
+
+//------------------------------------------------------------------------------
+const std::shared_ptr<sPlayer>& cNetworkHostGameNew::getLocalPlayer ()
+{
+	return players[localPlayerIndex];
+}
+
+//------------------------------------------------------------------------------
+int cNetworkHostGameNew::getLocalPlayerClan () const
+{
+	return localPlayerClan;
 }

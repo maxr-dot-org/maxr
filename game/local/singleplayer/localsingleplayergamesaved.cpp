@@ -81,13 +81,16 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 
 	gameGui->connectToClient (*client);
 
+	using namespace std::placeholders;
+	signalConnectionManager.connect (gameGui->triggeredSave, std::bind (&cLocalSingleplayerGameSaved::save, this, _1, _2));
+
 	application.show (gameGui);
 
-	application.setGame (shared_from_this ());
+	application.addRunnable (shared_from_this ());
 
 	signalConnectionManager.connect (gameGui->terminated, [&]()
 	{
-		application.setGame (nullptr);
+		application.removeRunnable (*this);
 	});
 }
 

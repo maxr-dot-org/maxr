@@ -18,17 +18,9 @@
  ***************************************************************************/
 
 #include "windownetworklobbyhost.h"
-#include "../windowgamesettings/gamesettings.h"
-#include "../windowgamesettings/windowgamesettings.h"
-#include "../windowmapselection/windowmapselection.h"
-#include "../windowload/windowload.h"
-#include "../../dialogs/dialogok.h"
 #include "../../widgets/pushbutton.h"
-#include "../../../application.h"
 #include "../../../../main.h"
-#include "../../../../map.h"
-#include "../../../../network.h"
-#include "../../../../log.h"
+#include "../../../../player.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost () :
@@ -53,80 +45,29 @@ cWindowNetworkLobbyHost::cWindowNetworkLobbyHost () :
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyHost::handleMapClicked ()
 {
-	if (!getActiveApplication ()) return;
-
-	auto application = getActiveApplication ();
-
-	auto windowMapSelection = application->show (std::make_shared<cWindowMapSelection> ());
-	windowMapSelection->done.connect ([&, application, windowMapSelection]()
-	{
-		auto staticMap = std::make_shared<cStaticMap>();
-		if (windowMapSelection->loadSelectedMap (*staticMap))
-		{
-			setStaticMap (std::move (staticMap));
-			windowMapSelection->close ();
-		}
-		else
-		{
-			application->show (std::make_shared<cDialogOk> ("Error while loading map!")); // TODO: translate
-		}
-	});
+	triggeredSelectMap ();
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyHost::handleSettingsClicked ()
 {
-	if (!getActiveApplication ()) return;
-
-	auto application = getActiveApplication ();
-
-	auto windowGameSettings = application->show (std::make_shared<cWindowGameSettings> ());
-
-	if (getGameSettings ())	windowGameSettings->applySettings (*getGameSettings ());
-	else windowGameSettings->applySettings (cGameSettings());
-
-	windowGameSettings->done.connect ([&, windowGameSettings]()
-	{
-		setGameSettings (std::make_unique<cGameSettings> (windowGameSettings->getGameSettings ()));
-		windowGameSettings->close ();
-	});
+	triggeredSelectSettings ();
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyHost::handleLoadClicked ()
 {
-	if (!getActiveApplication ()) return;
-
-	auto application = getActiveApplication ();
-
-	auto windowLoad = application->show (std::make_shared<cWindowLoad> ());
-	windowLoad->load.connect ([&, windowLoad](int saveGameNumber)
-	{
-		setSaveGame (saveGameNumber);
-		windowLoad->close ();
-	});
+	triggeredSelectSaveGame ();
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyHost::handleStartClicked ()
 {
-	if (getNetwork ().getConnectionStatus () != 0) return;
-
-	if (getNetwork ().create (getPort ()))
-	{
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
-		Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
-	}
-	else
-	{
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + ": "  + iToStr (getPort ()) + ")");
-		Log.write ("Game open (Port: " + iToStr (getPort ()) + ")", cLog::eLOG_TYPE_INFO);
-		disablePortEdit ();
-	}
+	triggeredStartHost ();
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyHost::handleOkClicked ()
 {
-	start ();
+	triggeredStartGame ();
 }

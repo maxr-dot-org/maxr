@@ -34,12 +34,12 @@
 #include "../../../../video.h"
 #include "../../../../savegame.h"
 #include "../../../../network.h"
+#include "../../../../menuevents.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
 	localPlayer (std::make_shared<sPlayer> (cSettings::getInstance ().getPlayerName (), cSettings::getInstance ().getPlayerColor (), 0, MAX_CLIENTS)),
-	network (std::make_shared<cTCP> ()),
 	saveGameNumber (-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 11), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -180,25 +180,12 @@ void cWindowNetworkLobby::updatePlayerColor ()
 	SDL_BlitSurface (OtherData.colors[localPlayer->getColorIndex ()].get (), &src, colorSurface.get (), NULL);
 	colorImage->setImage (colorSurface.get ());
 }
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobby::handleWantPlayerReadyChange (const std::shared_ptr<sPlayer>& player)
-{
-	if (player->getNr () != localPlayer->getNr ()) return;
-	if (!staticMap && !triedLoadMapName.empty ())
-	{
-		if (!player->isReady ()) addInfoEntry (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", triedLoadMapName));
-		player->setReady (false);
-	}
-	else player->setReady (!player->isReady ());
-}
-
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::triggerChatMessage (bool refocusChatLine)
 {
 	if (!chatLineEdit->getText ().empty ())
 	{
-		addChatEntry (localPlayer->getName (), chatLineEdit->getText ());
+		triggeredChatMessage ();
 		chatLineEdit->setText ("");
 	}
 	if (refocusChatLine)
@@ -234,8 +221,41 @@ void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
 		signalConnectionManager.connect (item->readyClicked, [player, this]()
 		{
 			PlayFX (SoundData.SNDHudButton.get ());
-			handleWantPlayerReadyChange (player);
+			wantLocalPlayerReadyChange ();
 		});
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::removePlayer (const sPlayer& player)
+{
+	if (&player == localPlayer.get()) return; // do never remove the local player
+
+	for (size_t i = 0; i < playersList->getItemsCount(); ++i)
+	{
+		auto& item = playersList->getItem (i);
+		if (item.getPlayer ().get() == &player)
+		{
+			playersList->removeItem (item);
+			break;
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::removeNonLocalPlayers ()
+{
+	for (size_t i = 0; i < playersList->getItemsCount (); ++i)
+	{
+		auto& item = playersList->getItem (i);
+		if (item.getPlayer ().get () != localPlayer.get ())
+		{
+			playersList->removeItem (item);
+		}
+		else
+		{
+			++i;
+		}
 	}
 }
 
@@ -264,6 +284,8 @@ void cWindowNetworkLobby::setGameSettings (std::unique_ptr<cGameSettings> gameSe
 void cWindowNetworkLobby::setSaveGame (int saveGameNumber_)
 {
 	saveGameNumber = saveGameNumber_;
+
+	if (saveGameNumber < 0) return;
 
 	cSavegame saveGame(saveGameNumber_);
 
@@ -318,12 +340,6 @@ std::vector<std::shared_ptr<sPlayer>> cWindowNetworkLobby::getPlayers () const
 }
 
 //------------------------------------------------------------------------------
-cTCP& cWindowNetworkLobby::getNetwork ()
-{
-	return *network;
-}
-
-//------------------------------------------------------------------------------
 unsigned short cWindowNetworkLobby::getPort () const
 {
 	return atoi (portLineEdit->getText ().c_str());
@@ -333,6 +349,12 @@ unsigned short cWindowNetworkLobby::getPort () const
 const std::string& cWindowNetworkLobby::getIp () const
 {
 	return ipLineEdit->getText ();
+}
+
+//------------------------------------------------------------------------------
+const std::string& cWindowNetworkLobby::getChatMessage () const
+{
+	return chatLineEdit->getText ();
 }
 
 //------------------------------------------------------------------------------
@@ -346,3 +368,13 @@ void cWindowNetworkLobby::disableIpEdit ()
 {
 	ipLineEdit->disable ();
 }
+
+////------------------------------------------------------------------------------
+//void cLandingMenu::handleNetMessage (cNetMessage& message)
+//{
+//	switch (message.iType)
+//	{
+//	case MU_MSG_RESELECT_LANDING: handleNetMessage_MU_MSG_RESELECT_LANDING (message); break;
+//	case MU_MSG_ALL_LANDED: landData->landingState = LANDING_POSITION_OK; end = true; break;
+//	}
+//}

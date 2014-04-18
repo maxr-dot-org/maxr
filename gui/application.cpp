@@ -28,6 +28,7 @@
 #include "../unifonts.h"
 #include "../netmessage.h"
 #include "../game/game.h"
+#include "../utility/runnable.h"
 
 #include "widget.h"
 #include "window.h"
@@ -99,12 +100,19 @@ void cApplication::execute ()
 	{
 		cEventManager::getInstance ().run ();
 
-		if (game) game->run ();
-
-		std::unique_ptr<cNetMessage> message;
-		while (messageQueue.try_pop (message))
+		// TODO: long term task: remove this.
+		//       Instead: - make things thread save and run single tasks in extra threads
+		for (auto i = runnables.begin(); i != runnables.end ();)
 		{
-			handleNetMessage (*message);
+			if (i->expired ())
+			{
+				i = runnables.erase (i);
+			}
+			else
+			{
+				i->lock ()->run ();
+				++i;
+			}
 		}
 
 		const auto activeWindow = getActiveWindow ();
@@ -144,6 +152,17 @@ void cApplication::execute ()
 				frameCounter.frameDrawn ();
 			}
 		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cApplication::closeTill (const cWindow& window)
+{
+	for (auto i = modalWindows.rbegin (); i != modalWindows.rend (); ++i)
+	{
+		if (i->get () == &window) break;
+
+		(*i)->close ();
 	}
 }
 
@@ -211,15 +230,25 @@ cKeyboard* cApplication::getActiveKeyboard ()
 }
 
 //------------------------------------------------------------------------------
-void cApplication::setGame (std::shared_ptr<cGame> game_)
+void cApplication::addRunnable (std::weak_ptr<cRunnable> runnable)
 {
-	game = game_;
+	runnables.push_back (std::move (runnable));
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cGame>& cApplication::getGame () const
+void cApplication::removeRunnable (const cRunnable& runnable)
 {
-	return game;
+	for (auto i = runnables.begin (); i != runnables.end ();)
+	{
+		if (i->expired () || i->lock ().get () == &runnable)
+		{
+			i = runnables.erase (i);
+		}
+		else
+		{
+			++i;
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -388,21 +417,4 @@ void cApplication::assignKeyFocus (cWidget* widget)
 	}
 	if (keyFocusWidget && keyFocusWidget != widget) keyFocusWidget->handleLooseKeyFocus (*this);
 	keyFocusWidget = widget;
-}
-
-//------------------------------------------------------------------------------
-void cApplication::pushEvent (std::unique_ptr<cNetMessage> message)
-{
-	messageQueue.push (std::move (message));
-}
-
-//------------------------------------------------------------------------------
-void cApplication::handleNetMessage (cNetMessage& message)
-{
-	for (auto iter = modalWindows.rbegin (); iter != modalWindows.rend (); ++iter)
-	{
-		if (*iter == nullptr) continue;
-
-		if ((*iter)->handleNetMessage (message)) break;
-	}
 }

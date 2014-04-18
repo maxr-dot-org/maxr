@@ -226,6 +226,14 @@ void cWindowMapSelection::loadMaps ()
 }
 
 //------------------------------------------------------------------------------
+std::string cWindowMapSelection::getSelectedMapName () const
+{
+	if (selectedMapIndex < 0 || selectedMapIndex >= static_cast<int>(maps.size ())) return "";
+
+	return maps[selectedMapIndex];
+}
+
+//------------------------------------------------------------------------------
 bool cWindowMapSelection::loadSelectedMap (cStaticMap& staticMap)
 {
 	if (selectedMapIndex < 0 || selectedMapIndex >= static_cast<int>(maps.size ())) return false;

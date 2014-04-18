@@ -23,6 +23,9 @@
 #include "../../../../main.h"
 #include "../../../../network.h"
 #include "../../../../log.h"
+#include "../../../../player.h"
+#include "../../../../netmessage.h"
+#include "../../../../menuevents.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyClient::cWindowNetworkLobbyClient () :
@@ -35,23 +38,62 @@ cWindowNetworkLobbyClient::cWindowNetworkLobbyClient () :
 //------------------------------------------------------------------------------
 void cWindowNetworkLobbyClient::handleConnectClicked ()
 {
-	// Connect only if there isn't a connection yet
-	if (getNetwork ().getConnectionStatus () != 0) return;
+	triggeredConnect ();
+}
+/*
+//------------------------------------------------------------------------------
+bool cWindowNetworkLobbyClient::handleNetMessage (cNetMessage& message)
+{
+	Log.write ("Menu: <-- " + message.getTypeAsString () + ", Hexdump: " + message.getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 
-	addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + getIp() + ":" + iToStr (getPort()));    // e.g. Connecting to 127.0.0.1:55800
-	Log.write (("Connecting to " + getIp () + ":" + iToStr (getPort ())), cLog::eLOG_TYPE_INFO);
-
-	// FIXME: make this non blocking!
-	if (getNetwork ().connect (getIp (), getPort ()) == -1)
+	switch (message.iType)
 	{
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect") + getIp () + ":" + iToStr (getPort ()));
-		Log.write ("Error on connecting " + getIp () + ":" + iToStr (getPort ()), cLog::eLOG_TYPE_WARNING);
+	case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); return true;
+	//case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); return true;
+	case MU_MSG_REQ_IDENTIFIKATION: handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (message); return true;
+	//case MU_MSG_PLAYERLIST: handleNetMessage_MU_MSG_PLAYERLIST (message); return true;
+	//case MU_MSG_OPTINS: handleNetMessage_MU_MSG_OPTINS (message); return true;
+	//case MU_MSG_START_MAP_DOWNLOAD: initMapDownload (message); return true;
+	//case MU_MSG_MAP_DOWNLOAD_DATA: receiveMapData (message); return true;
+	//case MU_MSG_CANCELED_MAP_DOWNLOAD: canceledMapDownload (message); return true;
+	//case MU_MSG_FINISHED_MAP_DOWNLOAD: finishedMapDownload (message); return true;
+	//case MU_MSG_GO: handleNetMessage_MU_MSG_GO (message); return true;
+	//case GAME_EV_REQ_RECON_IDENT: handleNetMessage_GAME_EV_REQ_RECON_IDENT (message); return true;
+	//case GAME_EV_RECONNECT_ANSWER: handleNetMessage_GAME_EV_RECONNECT_ANSWER (message); return true;
+	default: break;
 	}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyClient::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_CHAT);
+
+	auto players = getPlayers ();
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<sPlayer>& player){ return player->getNr () == message.iPlayerNr; });
+	if (iter == players.end ()) return;
+
+	const auto& player = **iter;
+
+	bool translationText = message.popBool ();
+	auto chatText = message.popString ();
+	if (translationText) addInfoEntry (lngPack.i18n (chatText));
 	else
 	{
-		addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connected"));
-		Log.write ("Connected", cLog::eLOG_TYPE_INFO);
-		disablePortEdit ();
-		disableIpEdit ();
+		addChatEntry (player.getName (), chatText);
+		PlayFX (SoundData.SNDChat.get ());
 	}
 }
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyClient::handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_REQ_IDENTIFIKATION);
+
+	Log.write ("game version of server is: " + message.popString (), cLog::eLOG_TYPE_NET_DEBUG);
+	getLocalPlayer()->setNr (message.popInt16 ());
+	sendIdentification (getNetwork(), *getLocalPlayer ());
+}
+*/

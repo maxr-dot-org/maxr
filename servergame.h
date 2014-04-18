@@ -82,7 +82,7 @@ protected:
 
 	void terminateServer();
 
-	std::vector<sPlayer*> menuPlayers;
+	std::vector<std::shared_ptr<sPlayer>> menuPlayers;
 
 private:
 	void configRessources (std::vector<std::string>& tokens, sPlayer* senderPlayer);
