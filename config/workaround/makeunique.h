@@ -33,6 +33,12 @@ namespace std {
 
 #if MAXR_NO_VARIADIC_TEMPLATES
 
+template<class T>
+inline typename enable_if<!is_array<T>::value, unique_ptr<T>>::type make_unique()
+{
+	return unique_ptr<T>(new T());
+}
+
 template<class T, class A1>
 inline typename enable_if<!is_array<T>::value, unique_ptr<T>>::type make_unique(A1&& arg1)
 {

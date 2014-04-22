@@ -74,7 +74,7 @@ public:
 			
 			const auto framesSinceLastCheck = frames - lastFrames;
 
-			framesPerSecond = static_cast<unsigned int>(std::round((double)framesSinceLastCheck / passedSeconds));
+			framesPerSecond = static_cast<unsigned int>(Round((float)framesSinceLastCheck / passedSeconds));
 
 			lastFrames = frames;
 			lastCheckTime = now;

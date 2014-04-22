@@ -212,7 +212,9 @@ SDL_Rect cBox<PointType>::toSdlRect () const
 	static_assert(std::is_same<typename PointType::value_type, int>::value, "Converting to SDL_Rect not support if point scalar value is other than int."); // NOTE: we may could allow all non-narrowing casts here (e.g. short to int).
 
 	const auto diff = getSize();
-	return SDL_Rect{minCorner[0], minCorner[1], diff[0], diff[1]};
+
+    SDL_Rect result = {minCorner[0], minCorner[1], diff[0], diff[1]};
+    return result;
 }
 
 //------------------------------------------------------------------------------

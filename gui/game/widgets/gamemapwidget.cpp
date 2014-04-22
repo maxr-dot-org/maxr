@@ -540,7 +540,7 @@ cPosition cGameMapWidget::computeMaximalPixelOffset () const
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::zoomSize (const cPosition& size, float zoomFactor) const
 {
-	return cPosition ((int)std::round (size.x () * zoomFactor), (int)std::round (size.y () * zoomFactor));
+	return cPosition (Round (size.x () * zoomFactor), Round (size.y () * zoomFactor));
 }
 
 //------------------------------------------------------------------------------

@@ -82,10 +82,11 @@ private:
 
 #if MAXR_NO_VARIADIC_TEMPLATES
 
-#include "signal_novariadic/signal_0.h"
-#include "signal_novariadic/signal_1.h"
-#include "signal_novariadic/signal_2.h"
-#include "signal_novariadic/signal_3.h"
+#include "novariadic/signal_0.h"
+#include "novariadic/signal_1.h"
+#include "novariadic/signal_2.h"
+#include "novariadic/signal_3.h"
+#include "novariadic/signal_4.h"
 
 #else
 

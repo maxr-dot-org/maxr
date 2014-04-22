@@ -19,6 +19,7 @@
 
 #include <cassert>
 
+#include "maxrconfig.h"
 #include "network.h"
 #include "log.h"
 #include "main.h"

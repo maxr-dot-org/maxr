@@ -27,8 +27,6 @@
 
 #include "functiontraits.h"
 
-namespace detail {
-
 #if MAXR_NO_VARIADIC_TEMPLATES
 
 template<typename F>
@@ -74,6 +72,8 @@ typename sFunctionTraits<F>::result_type invoke (const std::function<F>& func, c
 }
 
 #else
+
+namespace detail {
 
 template<int ...>
 struct sequence {};

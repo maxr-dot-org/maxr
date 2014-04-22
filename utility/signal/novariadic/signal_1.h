@@ -20,94 +20,95 @@
 #ifndef utility_signal_novariadic_signal_1H
 #define utility_signal_novariadic_signal_1H
 
-template<typename R, typename Arg1>
-class cSignal<R(Arg1)> : public cSignalBase
+template<typename R, typename Arg1, typename ResultCombinerType>
+class cSignal<R (Arg1), ResultCombinerType> : public cSignalBase
 {
-	static_assert(std::is_same<R, void>::value, "Only functions returning void are allowed!");
+    typedef cSlot<R (Arg1)> SlotType;
+	typedef std::list<SlotType> SlotsContainerType;
+    typedef std::tuple<Arg1> ArgumentsContainerType;
+	typedef sSignalCallIterator<R, ArgumentsContainerType, typename SlotsContainerType::const_iterator> CallIteratorType;
 
-	typedef std::function<R(Arg1)> StoredFunctionType;
 public:
-	cSignal() :
-		nextIdentifer(0)
-	{}
+	typedef typename ResultCombinerType::result_type result_type;
+
+    cSignal () :
+        nextIdentifer (0),
+        isInvoking (false)
+    {
+        thisReference = std::make_shared<cSignalReference> (*this);
+    }
 
 	template<typename F>
-	cSignalConnection connect(F&& f)
-	{
-		cSignalConnection connection(nextIdentifer++, *this);
+    cSignalConnection connect (F&& f)
+    {
+        cSignalConnection connection (nextIdentifer++, std::weak_ptr<cSignalReference> (thisReference));
+        assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
 
-		auto func = StoredFunctionType(std::forward<F>(f));
-		slots.push_back(std::make_pair(connection, func));
+        assert (!isInvoking); // FIXME: can lead to endless loop! fix this and remove the assert
 
-		return connection;
-	}
+        auto slotFunction = typename SlotType::function_type (std::forward<F> (f));
+        slots.emplace_back (connection, std::move (slotFunction));
 
-	template<typename F>
-	void disconnect(const F& f)
-	{
-		typedef typename std::conditional<std::is_function<F>::value, typename std::add_pointer<F>::type, F>::type test_type;
+        return connection;
+    }
 
-		typedef typename std::conditional
-		<
-			std::is_pointer<test_type>::value,
-			typename std::conditional
-			<
-				std::is_function<typename std::remove_pointer<test_type>::type>::value,
-				std::true_type,
-				std::false_type
-			>::type,
-			std::false_type
-		>::type should_deref;
+    virtual void disconnect (const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION
+    {
+        for (auto& slot : slots)
+        {
+            if (slot.connection == connection)
+            {
+                slot.disconnected = true;
+            }
+        }
+    }
 
-		for(auto slot = slots.begin(); slot < slots.end();)
-		{
-			bool erase = false;
+    template<typename Args21>
+    result_type operator()(Args21&& arg1)
+    {
+        cleanUpConnections ();
 
-			test_type* target = slot->second.target<test_type>();
-			if(target != nullptr)
-			{
-				auto& t1 = conditionalDeref(target, should_deref());
-				auto& t2 = conditionalDeref(&f, should_deref());
-				erase = (*t1 == *t2);
-			}
+        auto arguments = ArgumentsContainerType (std::forward<Args21> (arg1));
 
-			if(erase)
-			{
-				slot = slots.erase(slot);
-			}
-			else
-			{
-				++slot;
-			}
-		}
-	}
+        auto wasInvoking = isInvoking;
+        isInvoking = true;
+        auto resetter = makeScopedOperation ([&](){ isInvoking = wasInvoking; });
 
-	virtual void disconnect(const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION
-	{
-		for(auto slot = slots.begin(); slot < slots.end();)
-		{
-			if(slot->first == connection)
-			{
-				slot = slots.erase(slot);
-			}
-			else
-			{
-				++slot;
-			}
-		}
-	}
+        CallIteratorType begin (arguments, slots.begin (), slots.end ());
+        CallIteratorType end (arguments, slots.end (), slots.end ());
 
-	void operator()(Arg1 arg1)
-	{
-		for(size_t i = 0; i < slots.size(); ++i)
-		{
-			slots[i].second(arg1);
-		}
-	}
+        if (slots.begin () != slots.end () && slots.begin ()->disconnected) ++begin; // skips all disconnected slots in the beginning
+
+        return ResultCombinerType () (begin, end);
+    }
 private:
-	std::vector<std::pair<cSignalConnection, StoredFunctionType>> slots;
+	cSignal (const cSignal& other) MAXR_DELETE_FUNCTION;
+	cSignal& operator=(const cSignal& other) MAXR_DELETE_FUNCTION;
+
+	SlotsContainerType slots;
 
 	unsigned int nextIdentifer;
+
+	bool isInvoking;
+
+    void cleanUpConnections ()
+    {
+        if (isInvoking) return; // it is not safe to clean up yet
+
+        for (auto i = slots.begin (); i != slots.end ();)
+        {
+            if (i->disconnected)
+            {
+                i = slots.erase (i);
+            }
+            else
+            {
+                ++i;
+            }
+        }
+    }
+
+	std::shared_ptr<cSignalReference> thisReference;
 };
 
 #endif // utility_signal_novariadic_signal_1H
