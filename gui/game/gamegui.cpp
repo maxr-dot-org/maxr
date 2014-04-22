@@ -1012,7 +1012,7 @@ void cNewGameGUI::showFilesWindow ()
 	{
 		try
 		{
-            triggeredSave (saveNumber, name);
+			triggeredSave (saveNumber, name);
 
 			//PlayVoice (VoiceData.VOISaved.get ());
 

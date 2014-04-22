@@ -27,11 +27,103 @@
  *
  * NOTE: maybe we should name this 'function_traits' to be more consistent with
  *       the standard libraries traits names.
-
+ *
  * @tparam F 
  */
 template<typename F>
 struct sFunctionTraits;
+
+#if MAXR_NO_VARIADIC_TEMPLATES
+
+template<typename R>
+struct sFunctionTraits<R (*)()> : public sFunctionTraits<R ()>
+{};
+
+template<typename R>
+struct sFunctionTraits<R ()>
+{
+	typedef R result_type;
+
+	static const size_t arity = 0;
+};
+
+template<typename R, typename Arg1>
+struct sFunctionTraits<R (*)(Arg1)> : public sFunctionTraits<R (Arg1)>
+{};
+
+template<typename R, typename Arg1>
+struct sFunctionTraits<R (Arg1)>
+{
+	typedef R result_type;
+
+	static const size_t arity = 1;
+
+	template<size_t N>
+	struct argument
+	{
+		static_assert(N < arity, "Invalid argument index.");
+		typedef typename std::tuple_element<N, std::tuple<Arg1>>::type type;
+	};
+};
+
+template<typename R, typename Arg1, typename Arg2>
+struct sFunctionTraits<R (*)(Arg1, Arg2)> : public sFunctionTraits<R (Arg1, Arg2)>
+{};
+
+template<typename R, typename Arg1, typename Arg2>
+struct sFunctionTraits<R (Arg1, Arg2)>
+{
+	typedef R result_type;
+
+	static const size_t arity = 2;
+
+	template<size_t N>
+	struct argument
+	{
+		static_assert(N < arity, "Invalid argument index.");
+		typedef typename std::tuple_element<N, std::tuple<Arg1, Arg2>>::type type;
+	};
+};
+
+template<typename R, typename Arg1, typename Arg2, typename Arg3>
+struct sFunctionTraits<R (*)(Arg1, Arg2, Arg3)> : public sFunctionTraits<R (Arg1, Arg2, Arg3)>
+{};
+
+template<typename R, typename Arg1, typename Arg2, typename Arg3>
+struct sFunctionTraits<R (Arg1, Arg2, Arg3)>
+{
+	typedef R result_type;
+
+	static const size_t arity = 3;
+
+	template<size_t N>
+	struct argument
+	{
+		static_assert(N < arity, "Invalid argument index.");
+		typedef typename std::tuple_element<N, std::tuple<Arg1, Arg2, Arg3>>::type type;
+	};
+};
+
+template<typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+struct sFunctionTraits<R (*)(Arg1, Arg2, Arg3, Arg4)> : public sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
+{};
+
+template<typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+struct sFunctionTraits<R (Arg1, Arg2, Arg3, Arg4)>
+{
+	typedef R result_type;
+
+	static const size_t arity = 4;
+
+	template<size_t N>
+	struct argument
+	{
+		static_assert(N < arity, "Invalid argument index.");
+		typedef typename std::tuple_element<N, std::tuple<Arg1, Arg2, Arg3, Arg4>>::type type;
+	};
+};
+
+#else
 
 template<typename R, typename... Args>
 struct sFunctionTraits<R (*)(Args...)> : public sFunctionTraits<R (Args...)>
@@ -51,5 +143,7 @@ struct sFunctionTraits<R (Args...)>
         typedef typename std::tuple_element<N, std::tuple<Args...>>::type type;
     };
 };
+
+#endif // MAXR_NO_VARIADIC_TEMPLATES
 
 #endif // utility_functiontraitsH
