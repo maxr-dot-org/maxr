@@ -144,7 +144,7 @@ public:
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
 	int ditherX, ditherY; // Dithering für Flugzeuge
 	cPosition bandPosition; // X,Y Position für das Band
-	int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
+	cPosition buildBigSavedPosition; // last position before building has started
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	int StartUp;      // Zähler für die Startupannimation

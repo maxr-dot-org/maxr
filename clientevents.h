@@ -164,10 +164,10 @@ void sendMoveJobResume (const cClient& client, int unitId);
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.
 *@param targetPosition the position, where the player has aimed
 *@param aggressor ID of the aggressor, if it is a vehicle. Offset os the aggressor if it is a building
-*@param isVehicle true if aggressor is a vehicle, false otherwise
 *@author Eiko
 */
-void sendWantAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressor, bool isVehicle);
+void sendWantVehicleAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressorID);
+void sendWantBuildingAttack (const cClient& client, int targetID, const cPosition& targetPosition, const cPosition& aggressorPosition);
 
 /**
 * sends whether a minelayer is laying or clearing mines

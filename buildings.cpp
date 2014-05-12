@@ -465,7 +465,6 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 //--------------------------------------------------------------------------
 void cBuilding::updateNeighbours (const cMap& map)
 {
-	int iPosOff = map.getOffset (getPosition());
 	if (!data.isBig)
 	{
 		owner->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);

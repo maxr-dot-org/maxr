@@ -173,8 +173,7 @@ void cServerAttackJob::lockTarget(const cPosition& position)
 		if (target->isAVehicle())
 		{
 			cVehicle* v = static_cast<cVehicle*> (target);
-			message->pushChar (v->getMovementOffset().x());
-			message->pushChar (v->getMovementOffset().y());
+			message->pushPosition (v->getMovementOffset());
 			message->pushInt32 (v->iID);
 		}
 		else
@@ -182,7 +181,7 @@ void cServerAttackJob::lockTarget(const cPosition& position)
 			// ID 0 for 'no vehicle'
 			message->pushInt32 (0);
 		}
-		message->pushInt32 (map.getOffset(targetPosition));
+		message->pushPosition (targetPosition);
 		message->pushBool (isAir);
 
 		server->sendNetMessage (message, player->getNr());
@@ -290,7 +289,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 	message->pushInt16 (unit->data.getShots());
 	message->pushChar (unit->dir);
 	if (isMuzzleTypeRocket())
-		message->pushInt32 (player->getOffset(targetPosition));
+		message->pushPosition (targetPosition);
 
 	if (player->canSeeAnyAreaUnder (*unit))
 		message->pushInt32 (unit->iID);
@@ -298,7 +297,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 	{
 		// when the aggressor is out of sight,
 		// send the position and muzzle type to the client
-		message->pushInt32 (player->getOffset(aggressorPosition));
+		message->pushPosition (aggressorPosition);
 		message->pushChar (unit->data.muzzleType);
 		message->pushInt32 (0);
 	}
@@ -481,7 +480,7 @@ void cServerAttackJob::sendAttackJobImpact (const cPosition& position, int remai
 			continue;
 
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_IMPACT));
-		message->pushInt32 (player->getOffset(position));
+		message->pushPosition (position);
 		message->pushInt16 (remainingHP);
 		message->pushInt16 (id);
 
@@ -497,9 +496,8 @@ void cServerAttackJob::sendAttackJobImpact (const cPosition& position, int remai
 void cClientAttackJob::lockTarget (cClient& client, cNetMessage& message)
 {
 	const bool bIsAir = message.popBool();
-	const int offset = message.popInt32();
+	const auto position = message.popPosition();
 	cMap& map = *client.getMap();
-    const cPosition position(offset % map.getSize().x(), offset / map.getSize().x());
 	const int ID = message.popInt32();
 	if (ID != 0)
 	{
@@ -520,15 +518,12 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage& message)
             map.moveVehicle(*vehicle, position);
 			vehicle->owner->doScan();
 
-			cPosition newOffset;
-			newOffset.y() = message.popChar();
-			newOffset.x() = message.popChar();
-			vehicle->setMovementOffset(newOffset);
+			vehicle->setMovementOffset (message.popPosition());
 		}
 	}
 	if (!bIsAir)
 	{
-		const auto& buildings = map[offset].getBuildings();
+		const auto& buildings = map.getField (position).getBuildings ();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
 			(*it)->setIsBeeinAttacked(true);
@@ -598,9 +593,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 			state = FINISHED;
 			return;
 		}
-		const auto aggressorOffset = message.popInt32();
-		aggressorPosition.x () = aggressorOffset % client->getMap ()->getSize ().x ();
-		aggressorPosition.y () = aggressorOffset / client->getMap ()->getSize ().x ();
+		aggressorPosition = message.popPosition ();
 	}
 	else
 	{
@@ -620,9 +613,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 
 	if (iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET || iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER || iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO)
 	{
-		const auto targetOffset = message.popInt32 ();
-		targetPosition.x () = targetOffset % client->getMap ()->getSize ().x ();
-		targetPosition.y () = targetOffset / client->getMap ()->getSize ().x ();
+		aggressorPosition = message.popPosition ();
 	}
 	iFireDir = message.popChar();
 

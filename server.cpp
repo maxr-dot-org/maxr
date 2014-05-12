@@ -595,8 +595,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	}
 
 	// find target offset
-	const int targetOffset = message.popInt32();
-	cPosition targetPosition(targetOffset % Map->getSize().x(), targetOffset / Map->getSize().y());
+	auto targetPosition = message.popPosition ();
 	if (Map->isValidPosition (targetPosition) == false)
 	{
 		Log.write (" Server: Invalid target position!", cLog::eLOG_TYPE_NET_WARNING);
@@ -747,7 +746,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 			sendBuildAnswer (*this, false, *Vehicle);
 			return;
 		}
-		Vehicle->BuildBigSavedPos = Map->getOffset (Vehicle->getPosition());
+		Vehicle->buildBigSavedPosition = Vehicle->getPosition();
 
 		// set vehicle to build position
 		Map->moveVehicleBig (*Vehicle, buildPosition);
@@ -1439,7 +1438,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 			return;
 		}
 
-		Vehicle->BuildBigSavedPos = Map->getOffset(Vehicle->getPosition());
+		Vehicle->buildBigSavedPosition = Vehicle->getPosition();
 		Map->moveVehicleBig (*Vehicle, building->getPosition());
 	}
 
@@ -1475,13 +1474,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 
 		if (Vehicle->data.isBig)
 		{
-			const cPosition buildBigSavedPos (Vehicle->BuildBigSavedPos % Map->getSize ().x (), Vehicle->BuildBigSavedPos / Map->getSize ().x ());
-			Map->moveVehicle (*Vehicle, buildBigSavedPos);
+			Map->moveVehicle (*Vehicle, Vehicle->buildBigSavedPosition);
 			Vehicle->owner->doScan();
-			sendStopClear (*this, *Vehicle, buildBigSavedPos, Vehicle->owner->getNr ());
+			sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, Vehicle->owner->getNr ());
 			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 			{
-				sendStopClear (*this, *Vehicle, buildBigSavedPos, Vehicle->seenByPlayerList[i]->getNr ());
+				sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, Vehicle->seenByPlayerList[i]->getNr ());
 			}
 		}
 		else
@@ -3910,21 +3908,21 @@ void cServer::stopVehicleBuilding (cVehicle& vehicle)
 {
 	if (!vehicle.isUnitBuildingABuilding ()) return;
 
-	int iPos = Map->getOffset (vehicle.getPosition());
-
 	vehicle.setBuildingABuilding(false);
 	vehicle.BuildPath = false;
 
+	auto position = vehicle.getPosition ();
+
 	if (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
-		Map->moveVehicle (vehicle, cPosition(vehicle.BuildBigSavedPos % Map->getSize().x(), vehicle.BuildBigSavedPos / Map->getSize().x()));
-		iPos = vehicle.BuildBigSavedPos;
+		Map->moveVehicle (vehicle, vehicle.buildBigSavedPosition);
+		position = vehicle.buildBigSavedPosition;
 		vehicle.owner->doScan();
 	}
-	sendStopBuild (*this, vehicle.iID, iPos, vehicle.owner->getNr());
+	sendStopBuild (*this, vehicle.iID, position, vehicle.owner->getNr ());
 	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 	{
-		sendStopBuild (*this, vehicle.iID, iPos, vehicle.seenByPlayerList[i]->getNr());
+		sendStopBuild (*this, vehicle.iID, position, vehicle.seenByPlayerList[i]->getNr ());
 	}
 }
 

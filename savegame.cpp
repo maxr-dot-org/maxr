@@ -742,7 +742,12 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		}
 		vehicle->setBuildTurns (element->IntAttribute ("turns"));
 		vehicle->setBuildCosts (element->IntAttribute ("costs"));
-		element->QueryIntAttribute ("savedpos", &vehicle->BuildBigSavedPos);
+
+		// use offset because of backward compatibility
+		int buildBigSavedPosOffset;
+		element->QueryIntAttribute ("savedpos", &buildBigSavedPosOffset);
+		vehicle->buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
+		vehicle->buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
 
 		if (element->Attribute ("path"))
 		{
@@ -757,7 +762,11 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	{
 		vehicle->setClearing (true);
 		vehicle->setClearingTurns (element->IntAttribute ("turns"));
-		element->QueryIntAttribute ("savedpos", &vehicle->BuildBigSavedPos);
+		// use offset because of backward compatibility
+		int buildBigSavedPosOffset;
+		element->QueryIntAttribute ("savedpos", &buildBigSavedPosOffset);
+		vehicle->buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
+		vehicle->buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
 	}
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Movejob"))
@@ -1481,7 +1490,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 		element->SetAttribute ("type_id", vehicle.getBuildingType ().getText ().c_str ());
 		element->SetAttribute ("turns", iToStr (vehicle.getBuildTurns()).c_str());
 		element->SetAttribute ("costs", iToStr (vehicle.getBuildCosts()).c_str());
-		if (vehicle.data.isBig) element->SetAttribute ("savedpos", iToStr (vehicle.BuildBigSavedPos).c_str());
+		if (vehicle.data.isBig) element->SetAttribute ("savedpos", iToStr (vehicle.buildBigSavedPosition.x () + vehicle.buildBigSavedPosition.y () * server.Map->getSize().x()).c_str ());
 
 		if (vehicle.BuildPath)
 		{
@@ -1492,7 +1501,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 			element->SetAttribute ("endy", iToStr (vehicle.bandPosition.y()).c_str());
 		}
 	}
-	if (vehicle.isUnitClearing ()) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.getClearingTurns()), "savedpos", iToStr (vehicle.BuildBigSavedPos));
+	if (vehicle.isUnitClearing ()) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.getClearingTurns ()), "savedpos", iToStr (vehicle.buildBigSavedPosition.x () + vehicle.buildBigSavedPosition.y () * server.Map->getSize ().x ()));
 	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->destination.x()), "desty", iToStr (vehicle.ServerMoveJob->destination.y()));
 
 	// write from which players this unit has been detected

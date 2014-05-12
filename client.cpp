@@ -774,8 +774,8 @@ void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message)
 
 	const int id = message.popInt16();
 	const int remainingHP = message.popInt16();
-	const int offset = message.popInt32();
-	cClientAttackJob::makeImpact (*this, cPosition(offset % Map->getSize().x(), offset / Map->getSize().x()), remainingHP, id);
+	const auto position = message.popPosition();
+	cClientAttackJob::makeImpact (*this, position, remainingHP, id);
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
@@ -879,8 +879,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 		return;
 	}
 
-	const int iNewPosOffset = message.popInt32();
-	const cPosition newPosition(iNewPosOffset % getMap()->getSize().x(), iNewPosOffset / getMap()->getSize().x());
+	const auto newPosition = message.popPosition();
 
 	if (Vehicle->data.isBig)
 	{

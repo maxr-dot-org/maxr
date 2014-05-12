@@ -220,7 +220,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle);
 * sends that a vehicle has to stop building
 *@author alzi alias DoctorDeath
 */
-void sendStopBuild (cServer& server, int iVehicleID, int iNewPos, int iPlayer);
+void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, int iPlayer);
 /**
 * send the values if a subbase.
 *@author alzi alias DoctorDeath

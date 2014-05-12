@@ -504,10 +504,10 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void sendStopBuild (cServer& server, int iVehicleID, int iNewPos, int iPlayer)
+void sendStopBuild (cServer& server, int iVehicleID, const cPosition& newPosition, int iPlayer)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_STOP_BUILD));
-	message->pushInt32 (iNewPos);
+	message->pushPosition (newPosition);
 	message->pushInt16 (iVehicleID);
 	server.sendNetMessage (message, iPlayer);
 }

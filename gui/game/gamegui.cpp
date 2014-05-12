@@ -529,7 +529,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 				if (target && target->isAVehicle ()) targetId = target->iID;
 
 				Log.write (" Client: want to attack " + iToStr (position.x ()) + ":" + iToStr (position.y ()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-				sendWantAttack (client, targetId, position, vehicle.iID, true);
+				sendWantVehicleAttack (client, targetId, position, vehicle.iID);
 			}
 			else if (target)
 			{
@@ -555,8 +555,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 			cUnit* target = selectTarget (position, building.data.canAttack, map);
 			if (target && target->isAVehicle ()) targetId = target->iID;
 
-			const int offset = map.getOffset (building.getPosition());
-			sendWantAttack (client, targetId, position, offset, false);
+			sendWantBuildingAttack (client, targetId, position, building.getPosition ());
 		}
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredSteal, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)

@@ -75,7 +75,7 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	StartUp = 0;
 	FlightHigh = 0;
 	WalkFrame = 0;
-	BuildBigSavedPos = 0;
+	buildBigSavedPosition = 0;
 	data.setHitpoints(data.hitpointsMax);
 	data.setAmmo(data.ammoMax);
 	ClientMoveJob = NULL;
@@ -459,12 +459,11 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	cBuilding* Rubble = map.getField(getPosition()).getRubble();
 	if (data.isBig)
 	{
-		cPosition buildBigSavedPos (BuildBigSavedPos % map.getSize ().x (), BuildBigSavedPos / map.getSize ().x ());
-		map.moveVehicle (*this, buildBigSavedPos);
-		sendStopClear (server, *this, buildBigSavedPos, owner->getNr ());
+		map.moveVehicle (*this, buildBigSavedPosition);
+		sendStopClear (server, *this, buildBigSavedPosition, owner->getNr ());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
-			sendStopClear (server, *this, buildBigSavedPos, seenByPlayerList[i]->getNr ());
+			sendStopClear (server, *this, buildBigSavedPosition, seenByPlayerList[i]->getNr ());
 		}
 	}
 	else
