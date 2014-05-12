@@ -59,5 +59,5 @@ bool cMouseModeSupplyAmmo::canExecuteAction (const cMap& map, const cPosition& m
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	return selectedVehicle && selectedVehicle->canSupply (map, mapPosition.x (), mapPosition.y (), SUPPLY_TYPE_REARM);
+	return selectedVehicle && selectedVehicle->canSupply (map, mapPosition, SUPPLY_TYPE_REARM);
 }

@@ -276,8 +276,7 @@ void sendMoveJob (const cClient& client, sWaypoint* path, int vehicleID)
 	while (waypoint)
 	{
 		message->pushInt16 (waypoint->Costs);
-		message->pushInt16 (waypoint->position.x());
-		message->pushInt16 (waypoint->position.y());
+		message->pushPosition (waypoint->position);
 
 		if (message->iLength > PACKAGE_LENGTH - 19)
 		{
@@ -317,11 +316,11 @@ void sendMoveJobResume (const cClient& client, int unitId)
 	client.sendNetMessage (message);
 }
 
-void sendWantAttack (const cClient& client, int targetID, int targetOffset, int aggressor, bool isVehicle)
+void sendWantAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressor, bool isVehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_ATTACK);
 	message->pushInt32 (targetID);
-	message->pushInt32 (targetOffset);
+	message->pushPosition (targetPosition);
 	message->pushInt32 (aggressor);
 	message->pushBool (isVehicle);
 	client.sendNetMessage (message);
@@ -336,12 +335,12 @@ void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle)
 	client.sendNetMessage (message);
 }
 
-void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff)
+void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, const cPosition& buildPosition, bool bBuildPath, const cPosition& pathEndPosition)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_BUILD);
-	message->pushInt32 (iPathOff);
+	message->pushPosition (pathEndPosition);
 	message->pushBool (bBuildPath);
-	message->pushInt32 (iBuildOff);
+	message->pushPosition (buildPosition);
 	message->pushInt16 (iBuildSpeed);
 	message->pushID (buildingTypeID);
 	message->pushInt16 (iVehicleID);
@@ -390,11 +389,10 @@ void sendWantBuildList (const cClient& client, const cBuilding& building, const 
 	client.sendNetMessage (message);
 }
 
-void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, int iX, int iY)
+void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, const cPosition& position)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_EXIT_FIN_VEH);
-	message->pushInt16 (iY);
-	message->pushInt16 (iX);
+	message->pushPosition (position);
 	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);
 }

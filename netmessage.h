@@ -24,6 +24,7 @@
 #include "network.h"
 
 struct sID;
+class cPosition;
 
 enum eNetStatusMsg
 {
@@ -160,6 +161,9 @@ public:
 
 	void pushID (const sID& id);
 	sID popID();
+
+	void pushPosition (const cPosition& position);
+	cPosition popPosition ();
 
 	/** returns the string representation of iType
 	* this is only for better readability of the netlog

@@ -150,22 +150,16 @@ bool cUnit::isInRange (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-bool cUnit::isNextTo (int x, int y) const
+bool cUnit::isNextTo (const cPosition& position) const
 {
-	if(x + 1 < position.x() || y + 1 < position.y())
+	if (position.x () + 1 < this->position.x () || position.y () + 1 < this->position.y ())
 		return false;
 
 	const int size = data.isBig ? 2 : 1;
 
-	if(x - size > position.x() || y - size > position.y())
+	if (position.x () - size > this->position.x () || position.y () - size > this->position.y ())
 		return false;
 	return true;
-}
-
-//------------------------------------------------------------------------------
-bool cUnit::isNextTo (const cPosition& position) const
-{
-	return isNextTo (position.x (), position.y ());
 }
 
 //------------------------------------------------------------------------------
@@ -287,7 +281,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 	if (attacking) return false;
 	if (isBeeingAttacked ()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
-	if (map.isValidPos (position) == false) return false;
+	if (map.isValidPosition (position) == false) return false;
 	if (checkRange && isInRange (position) == false) return false;
 
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (position) == false)
@@ -298,7 +292,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;
 
-	if (owner->ScanMap[owner->getOffset(position)] == false && !forceAttack)
+	if (!owner->canSeeAt(position) && !forceAttack)
 		return false;
 
 	if (forceAttack)

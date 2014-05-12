@@ -61,6 +61,6 @@ bool cMouseModeLoad::canExecuteAction (const cMap& map, const cPosition& mapPosi
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
-	return (selectedVehicle && selectedVehicle->canLoad (mapPosition.x (), mapPosition.y (), map, false)) ||
-		(selectedBuilding && selectedBuilding->canLoad (mapPosition.x (), mapPosition.y (), map, false));
+	return (selectedVehicle && selectedVehicle->canLoad (mapPosition, map, false)) ||
+		(selectedBuilding && selectedBuilding->canLoad (mapPosition, map, false));
 }

@@ -1104,10 +1104,10 @@ cBase::~cBase()
 	}
 }
 
-sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
+sSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& building)
 {
-	if (map->isValidOffset (iOff) == false) return NULL;
-	cBuilding* b = map->fields[iOff].getBuilding();
+	if (map->isValidPosition (position) == false) return NULL;
+	cBuilding* b = map->getField (position).getBuilding ();
 
 	if (b && b->owner == building.owner && b->SubBase)
 	{
@@ -1127,22 +1127,22 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	if (building->data.isBig)
 	{
 		// big building
-		if (sSubBase* SubBase = checkNeighbour (pos - map->getSize(),         *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos - map->getSize() + 1,     *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos + 2,                      *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos + 2 + map->getSize(),     *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos + map->getSize() * 2,     *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos + map->getSize() * 2 + 1, *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos - 1,                      *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* SubBase = checkNeighbour (pos - 1 + map->getSize(),     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, -1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (1, -1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (2, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (2, 1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, 2), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (1, 2), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (-1, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (-1, 1), *building)) NeighbourList.push_back (SubBase);
 	}
 	else
 	{
 		// small building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->getSize(), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 1             , *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->getSize(), *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1             , *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, -1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (1, 0), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (0, 1), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (building->getPosition () + cPosition (-1, 0), *building)) NeighbourList.push_back (SubBase);
 	}
 	building->CheckNeighbours (*map);
 

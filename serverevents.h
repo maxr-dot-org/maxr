@@ -112,14 +112,13 @@ void sendAllLanded (cServer& server);
 /**
 * Sends an event to a player that a new unit has to be added
 *@author alzi alias DoctorDeath
-*@param iPosX The X position of the unit
-*@param iPosY The Y position of the unit
+*@param position The position of the unit
 *@param bVehicle True if the unit is an vehicle
 *@param iUnitNum The typ number of the unit
 *@param iPlayer The player who should receive this event and get the new unit
 *@param bInit True if this is called by game initialisation
 */
-void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap = true);
+void sendAddUnit (cServer& server, const cPosition& position, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap = true);
 /**
 * Sends an event to a player that a unit has to be deleted
 *@param unit unit that has to be deleted
@@ -267,12 +266,12 @@ void sendDetectionState (cServer& server, const cVehicle& vehicle);
 * sends whether and how the unit has to clean the field
 *@author alzi alias DoctorDeath
 */
-void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, int bigoffset, int iPlayer);
+void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, const cPosition& bigPosition, int iPlayer);
 /**
 * sends that a unit has to stop clearing
 *@author alzi alias DoctorDeath
 */
-void sendStopClear (cServer& server, const cVehicle& vehicle, int bigoffset, int iPlayer);
+void sendStopClear (cServer& server, const cVehicle& vehicle, const cPosition& bigPosition, int iPlayer);
 /**
 * sends that the player has to set his hole ScanMap to 1
 *@author alzi alias DoctorDeath
@@ -317,7 +316,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& player);
 void sendHudSettings (cServer& server, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, int player);
-void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, int x, int y, int player);
+void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, int player);
 void sendDeleteEverything (cServer& server, int player);
 void sendUnitUpgrades (cServer& server, const sUnitData& Data, int player);
 void sendCredits (cServer& server, int newCredits, int player);

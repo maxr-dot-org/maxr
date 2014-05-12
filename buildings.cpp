@@ -468,21 +468,21 @@ void cBuilding::updateNeighbours (const cMap& map)
 	int iPosOff = map.getOffset (getPosition());
 	if (!data.isBig)
 	{
-		owner->base.checkNeighbour (iPosOff - map.getSize(), *this);
-		owner->base.checkNeighbour (iPosOff + 1, *this);
-		owner->base.checkNeighbour (iPosOff + map.getSize(), *this);
-		owner->base.checkNeighbour (iPosOff - 1, *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (1, 0), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (0, 1), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
 	}
 	else
 	{
-		owner->base.checkNeighbour (iPosOff - map.getSize(), *this);
-		owner->base.checkNeighbour (iPosOff - map.getSize() + 1, *this);
-		owner->base.checkNeighbour (iPosOff + 2, *this);
-		owner->base.checkNeighbour (iPosOff + 2 + map.getSize(), *this);
-		owner->base.checkNeighbour (iPosOff + map.getSize() * 2, *this);
-		owner->base.checkNeighbour (iPosOff + map.getSize() * 2 + 1, *this);
-		owner->base.checkNeighbour (iPosOff - 1, *this);
-		owner->base.checkNeighbour (iPosOff - 1 + map.getSize(), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (1, -1), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (2, 0), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (2, 1), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (0, 2), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (1, 2), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
+		owner->base.checkNeighbour (getPosition () + cPosition (-1, 1), *this);
 	}
 	CheckNeighbours (map);
 }
@@ -493,9 +493,9 @@ void cBuilding::updateNeighbours (const cMap& map)
 void cBuilding::CheckNeighbours (const cMap& map)
 {
 #define CHECK_NEIGHBOUR(x, y, m) \
-	if (map.isValidPos (x, y)) \
+	if (map.isValidPosition (cPosition(x, y))) \
 	{ \
-		const cBuilding* b = map.fields[map.getOffset (x, y)].getTopBuilding(); \
+		const cBuilding* b = map.getField(cPosition(x, y)).getTopBuilding(); \
 		if (b && b->owner == owner && b->data.connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
@@ -957,13 +957,12 @@ bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const sUn
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (int x, int y, const cMap& map, bool checkPosition) const
+bool cBuilding::canLoad (const cPosition& position, const cMap& map, bool checkPosition) const
 {
-	if (map.isValidPos (x, y) == false) return false;
-	const int offset = map.getOffset (x, y);
+	if (map.isValidPosition (position) == false) return false;
 
-	if (canLoad (map.fields[offset].getPlane(), checkPosition)) return true;
-	else return canLoad (map.fields[offset].getVehicle(), checkPosition);
+	if (canLoad (map.getField(position).getPlane(), checkPosition)) return true;
+	else return canLoad (map.getField(position).getVehicle(), checkPosition);
 }
 
 //--------------------------------------------------------------------------
@@ -1178,12 +1177,12 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 
 void cBuilding::CheckRessourceProd (const cServer& server)
 {
-	int pos = server.Map->getOffset (getPosition());
+	auto position = getPosition ();
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	const sResources* res = &server.Map->getResource (pos);
+	const sResources* res = &server.Map->getResource (position);
 
 	switch (res->typ)
 	{
@@ -1192,8 +1191,8 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
-	pos++;
-	res = &server.Map->getResource (pos);
+	position.x()++;
+	res = &server.Map->getResource (position);
 	switch (res->typ)
 	{
 		case RES_METAL: MaxMetalProd += res->value; break;
@@ -1201,8 +1200,8 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
-	pos += server.Map->getSize();
-	res = &server.Map->getResource (pos);
+	position.y()++;
+	res = &server.Map->getResource (position);
 	switch (res->typ)
 	{
 		case RES_METAL: MaxMetalProd += res->value; break;
@@ -1210,8 +1209,8 @@ void cBuilding::CheckRessourceProd (const cServer& server)
 		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
-	pos--;
-	res = &server.Map->getResource (pos);
+	position.x()--;
+	res = &server.Map->getResource (position);
 	switch (res->typ)
 	{
 		case RES_METAL: MaxMetalProd += res->value; break;
@@ -1331,13 +1330,12 @@ void cBuilding::makeDetection (cServer& server)
 
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
-		int offset = server.Map->getOffset (getPosition());
 		std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];
 			if (player == owner) continue;
-			if (player->hasMineDetection (offset))
+			if (player->hasMineDetection (getPosition ()))
 			{
 				setDetectedByPlayer (server, player);
 			}

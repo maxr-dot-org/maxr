@@ -517,8 +517,8 @@ float cGameMapWidget::computeMinimalZoomFactor () const
 	//
 	//   zoom = size_x / (map_x * tile_x)
 
-	auto xZoom = (float)getSize ().x () / (staticMap->getSizeNew ().x () * cStaticMap::tilePixelWidth);
-	auto yZoom = (float)getSize ().y () / (staticMap->getSizeNew ().y () * cStaticMap::tilePixelHeight);
+	auto xZoom = (float)getSize ().x () / (staticMap->getSize ().x () * cStaticMap::tilePixelWidth);
+	auto yZoom = (float)getSize ().y () / (staticMap->getSize ().y () * cStaticMap::tilePixelHeight);
 
 	// then we try to fix if round would have rounded up:
 
@@ -531,8 +531,8 @@ float cGameMapWidget::computeMinimalZoomFactor () const
 //------------------------------------------------------------------------------
 cPosition cGameMapWidget::computeMaximalPixelOffset () const
 {
-	const auto x = staticMap->getSizeNew(). x () * cStaticMap::tilePixelWidth - (int)(getSize ().x () / getZoomFactor ());
-	const auto y = staticMap->getSizeNew(). y () * cStaticMap::tilePixelHeight - (int)(getSize ().y () / getZoomFactor ());
+	const auto x = staticMap->getSize(). x () * cStaticMap::tilePixelWidth - (int)(getSize ().x () / getZoomFactor ());
+	const auto y = staticMap->getSize(). y () * cStaticMap::tilePixelHeight - (int)(getSize ().y () / getZoomFactor ());
 
 	return cPosition (x, y);
 }
@@ -571,8 +571,8 @@ std::pair<cPosition, cPosition> cGameMapWidget::computeTileDrawingRange () const
 	startTile.x () = std::max (0, startTile.x ());
 	startTile.y () = std::max (0, startTile.y ());
 
-	endTile.x () = std::min (staticMap->getSizeNew ().x (), endTile.x ());
-	endTile.y () = std::min (staticMap->getSizeNew ().y (), endTile.y ());
+	endTile.x () = std::min (staticMap->getSize ().x (), endTile.x ());
+	endTile.y () = std::min (staticMap->getSize ().y (), endTile.y ());
 
 	return std::make_pair(startTile, endTile);
 }
@@ -1323,7 +1323,7 @@ cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition) co
 	const auto x = (int)((pixelPosition.x () - getPosition ().x () + pixelOffset.x () * getZoomFactor ()) / zoomedTileSize.x ());
 	const auto y = (int)((pixelPosition.y () - getPosition ().y () + pixelOffset.y () * getZoomFactor ()) / zoomedTileSize.y ());
 
-	const cPosition tilePosition (std::min (x, staticMap->getSizeNew ().x ()-1), std::min(y, staticMap->getSizeNew ().y ()-1));
+	const cPosition tilePosition (std::min (x, staticMap->getSize ().x ()-1), std::min(y, staticMap->getSize ().y ()-1));
 
 	return tilePosition;
 }

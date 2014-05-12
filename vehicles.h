@@ -170,14 +170,14 @@ public:
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
+	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
 	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
 #define SUPPLY_TYPE_REARM 0
 #define SUPPLY_TYPE_REPAIR 1
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (const cMap& map, int x, int y, int supplyType) const;
+	bool canSupply (const cMap& map, const cPosition& position, int supplyType) const;
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	bool canSupply (const cUnit* unit, int supplyType) const;
 	void calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<int, 3>& turboBuildCosts, int buildCosts) const;

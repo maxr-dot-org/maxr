@@ -141,13 +141,14 @@ public:
 	int getLandingPosY() const { return landingPosY; }
 
 	void initMaps (cMap& map);
+	const cPosition& getMapSize () const;
 	void doScan();
 	void revealMap();
+	void revealPosition (const cPosition& position);
 	void revealResource();
-	unsigned int getMapSize() const { return mapSize; }
-	unsigned int getOffset (int x, int y) const { return x + y * mapSize; }
-	unsigned int getOffset (const cPosition& pos) const { return getOffset (pos.x (), pos.y ()); }
+	unsigned int getOffset (const cPosition& pos) const { return pos.x () + pos.y () * mapSize.x (); }
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
+	bool canSeeAt (const cPosition& position) const;
 
 	cVehicle* addVehicle (const cPosition& position, const sID& id, unsigned int uid);
 	cBuilding* addBuilding (const cPosition& position, const sID& id, unsigned int uid);
@@ -175,14 +176,13 @@ public:
 
 	void addUnitToList (cUnit& addedUnit);
 
-	void exploreResource (int offset) { ResourceMap[offset] = 1; }
-	bool hasResourceExplored (int offset) const { return ResourceMap[offset] != 0; }
+	void exploreResource (const cPosition& pos) { ResourceMap[getOffset (pos)] = 1; }
 	bool hasResourceExplored (const cPosition& pos) const { return ResourceMap[getOffset (pos)] != 0; }
-	bool hasSentriesAir (int offset) const { return SentriesMapAir[offset] != 0; }
-	bool hasSentriesGround (int offset) const { return SentriesMapGround[offset] != 0; }
-	bool hasLandDetection (int offset) const { return DetectLandMap[offset] != 0; }
-	bool hasMineDetection (int offset) const { return DetectMinesMap[offset] != 0; }
-	bool hasSeaDetection (int offset) const { return DetectSeaMap[offset] != 0; }
+	bool hasSentriesAir (const cPosition& pos) const { return SentriesMapAir[getOffset (pos)] != 0; }
+	bool hasSentriesGround (const cPosition& pos) const { return SentriesMapGround[getOffset (pos)] != 0; }
+	bool hasLandDetection (const cPosition& pos) const { return DetectLandMap[getOffset (pos)] != 0; }
+	bool hasMineDetection (const cPosition& pos) const { return DetectMinesMap[getOffset (pos)] != 0; }
+	bool hasSeaDetection (const cPosition& pos) const { return DetectSeaMap[getOffset (pos)] != 0; }
 
 	void doResearch (cServer& server);  ///< proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end
@@ -191,8 +191,6 @@ public:
 	void refreshSentryGround();
 
 	bool mayHaveOffensiveUnit() const;
-
-	bool canSeeAt (const cPosition& position) const;
 
 	mutable cSignal<void (const sSavedReportMessage&)> reportAdded;
 private:
@@ -204,7 +202,7 @@ private:
 	* @param iRadius radius of the circle
 	* @param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle (const cPosition& position, int iRadius, std::vector<char>& map, int mapsize);
+	void drawSpecialCircle (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize);
 	/**
 	* draws a big circle on the map for the fog
 	* @author alzi alias DoctorDeath
@@ -213,7 +211,7 @@ private:
 	* @param iRadius radius of the circle
 	* @param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig(const cPosition& position, int iRadius, std::vector<char>& map, int mapsize);
+	void drawSpecialCircleBig (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize);
 
 	cBuilding* getNextBuilding (cBuilding* start);
 	cBuilding* getNextMiningStation (cBuilding* start);
@@ -234,10 +232,9 @@ public:
 private:
 	int landingPosX;
 	int landingPosY;
-	int mapSize; // Width (and Height) of the map.
-public:
-	std::vector<char> ScanMap;            // seen Map tile.
+	cPosition mapSize; // Width and Height of the map.
 private:
+	std::vector<char> ScanMap;            // seen Map tile.
 	std::vector<char> ResourceMap;        // Map with explored resources.
 	std::vector<char> SentriesMapAir;     /**< the covered air area */
 	std::vector<char> SentriesMapGround;  /**< the covered ground area */

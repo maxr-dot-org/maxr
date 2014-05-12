@@ -271,12 +271,12 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (buildBuildingTriggered, [&](const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (destination), false, 0);
+		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, destination, false, cPosition(0, 0));
 		buildPositionSelectionConnectionManager.disconnectAll ();
 	});
 	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&](const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (vehicle.getPosition()), true, client.getMap ()->getOffset (destination));
+		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, vehicle.getPosition(), true, destination);
 		buildPositionSelectionConnectionManager.disconnectAll ();
 	});
 	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&](const cBuilding& building, const std::vector<sBuildList>& buildList, int buildSpeed, bool repeat)
@@ -418,7 +418,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredExitFinishedUnit, [&](const cBuilding& building, const cPosition& position)
 	{
-		sendWantExitFinishedVehicle (client, building, position.x (), position.y ());
+		sendWantExitFinishedVehicle (client, building, position);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredLoadAt, [&](const cUnit& unit, const cPosition& position)
 	{
@@ -529,7 +529,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 				if (target && target->isAVehicle ()) targetId = target->iID;
 
 				Log.write (" Client: want to attack " + iToStr (position.x ()) + ":" + iToStr (position.y ()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-				sendWantAttack (client, targetId, client.getMap ()->getOffset (position.x (), position.y ()), vehicle.iID, true);
+				sendWantAttack (client, targetId, position, vehicle.iID, true);
 			}
 			else if (target)
 			{
@@ -556,7 +556,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 			if (target && target->isAVehicle ()) targetId = target->iID;
 
 			const int offset = map.getOffset (building.getPosition());
-			sendWantAttack (client, targetId, map.getOffset (position.x (), position.y ()), offset, false);
+			sendWantAttack (client, targetId, position, offset, false);
 		}
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredSteal, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
@@ -1229,12 +1229,12 @@ void cNewGameGUI::showStorageWindow (const cUnit& unit)
 				bool activated = false;
 				for(int ypos = unit.getPosition().y() - 1, poscount = 0; ypos <= unit.getPosition().y() + (unit.data.isBig ? 2 : 1); ypos++)
 				{
-					if (ypos < 0 || ypos >= dynamicMap->getSize ()) continue;
+					if (ypos < 0 || ypos >= dynamicMap->getSize ().y()) continue;
 					for(int xpos = unit.getPosition().x() - 1; xpos <= unit.getPosition().x() + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
 					{
 						if (hasCheckedPlace[poscount]) continue;
 
-						if (xpos < 0 || xpos >= dynamicMap->getSize ()) continue;
+						if (xpos < 0 || xpos >= dynamicMap->getSize ().x()) continue;
 
 						if(((ypos == unit.getPosition().y() && unit.data.factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.data.isBig)) &&
 						   ((xpos == unit.getPosition().x() && unit.data.factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.data.isBig))) continue;

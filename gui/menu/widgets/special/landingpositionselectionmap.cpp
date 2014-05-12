@@ -82,9 +82,9 @@ bool cLandingPositionSelectionMap::handleMouseMoved (cApplication& application, 
 //------------------------------------------------------------------------------
 const sTerrain* cLandingPositionSelectionMap::getMapTile (const cPosition& position, cPosition& tilePosition)
 {
-	tilePosition = (position - getPosition ()) * map->getSizeNew () / getSize ();
+	tilePosition = (position - getPosition ()) * map->getSize () / getSize ();
 
-	return &map->getTerrain (tilePosition.x (), tilePosition.y ());
+	return &map->getTerrain (tilePosition);
 }
 
 //------------------------------------------------------------------------------

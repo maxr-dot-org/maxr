@@ -209,17 +209,17 @@ float cAutoMJob::CalcFactor(const cPosition& position, const std::vector<cAutoMJ
 
 	// calculate the number of fields which would be surveyed by this move
 	float NrSurvFields = 0;
-	const int minx = std::max(position.x() - 1, 0);
-	const int maxx = std::min(position.x() + 1, map.getSize() - 1);
-	const int miny = std::max(position.y() - 1, 0);
-	const int maxy = std::min(position.y() + 1, map.getSize() - 1);
+	const int minx = std::max (position.x () - 1, 0);
+	const int maxx = std::min (position.x () + 1, map.getSize ().x ()- 1);
+	const int miny = std::max (position.y () - 1, 0);
+	const int maxy = std::min (position.y () + 1, map.getSize ().y () - 1);
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			const int iPos = map.getOffset (x, y);
+            const cPosition position(x, y);
 
-			if (!vehicle->owner->hasResourceExplored (iPos)) //&& !map.isBlocked(iPos))
+            if (!vehicle->owner->hasResourceExplored (position)) //&& !map.isBlocked(position))
 			{
 				NrSurvFields++;
 			}
@@ -231,11 +231,11 @@ float cAutoMJob::CalcFactor(const cPosition& position, const std::vector<cAutoMJ
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
-		{
-			const int iPos = map.getOffset (x, y);
+        {
+            const cPosition position (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-			if (vehicle->owner->hasResourceExplored (iPos) && map.getResource (iPos).typ != 0)
+            if (vehicle->owner->hasResourceExplored (position) && map.getResource (position).typ != 0)
 			{
 				NrResFound++;
 			}
@@ -264,15 +264,16 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 	float minValue = 0;
 	const cMap& map = *client->getMap();
 
-	for (int x = 0; x < map.getSize(); ++x)
+	for (int x = 0; x < map.getSize().x(); ++x)
 	{
-		for (int y = 0; y < map.getSize(); ++y)
+		for (int y = 0; y < map.getSize().y(); ++y)
 		{
 			const cPosition currentPosition(x, y);
+
 			// if field is not passable/walkable or
 			// if it's already has been explored, continue
-			if (!map.possiblePlace (*vehicle,cPosition(x, y))) continue;
-			if(vehicle->owner->hasResourceExplored(map.getOffset(currentPosition))) continue;
+            if (!map.possiblePlace (*vehicle, currentPosition)) continue;
+			if(vehicle->owner->hasResourceExplored(currentPosition)) continue;
 
 			// calculate the distance to other surveyors
 			const float distancesSurv = calcScoreDistToOtherSurveyor(jobs, currentPosition, EXP2);

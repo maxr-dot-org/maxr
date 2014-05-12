@@ -192,11 +192,10 @@ void cServerAttackJob::lockTarget(const cPosition& position)
 //--------------------------------------------------------------------------
 void cServerAttackJob::lockTargetCluster()
 {
-	const int mapSize = server->Map->getSize();
-	const int minx = std::max (targetPosition.x() - 2, 0);
-	const int maxx = std::min (targetPosition.x() + 2, mapSize - 1);
-	const int miny = std::max (targetPosition.y() - 2, 0);
-	const int maxy = std::min (targetPosition.y() + 2, mapSize - 1);
+	const int minx = std::max (targetPosition.x () - 2, 0);
+	const int maxx = std::min (targetPosition.x () + 2, server->Map->getSize ().x () - 1);
+	const int miny = std::max (targetPosition.y () - 2, 0);
+	const int maxy = std::min (targetPosition.y () + 2, server->Map->getSize ().y () - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
@@ -229,8 +228,6 @@ void cServerAttackJob::sendFireCommand()
 	server->checkPlayerUnits();
 
 	//calculate fire direction
-	const int mapSize = server->Map->getSize();
-
 	float dx = (float) (targetPosition.x() - aggressorPosition.x());
 	float dy = (float) - (targetPosition.y() - aggressorPosition.y());
 	float r = sqrtf (dx * dx + dy * dy);
@@ -271,7 +268,7 @@ void cServerAttackJob::sendFireCommand()
 		cPlayer* player = playerList[i];
 
 		if (player->canSeeAnyAreaUnder (*unit)
-			|| (player->ScanMap[player->getOffset(targetPosition)] && isMuzzleTypeRocket()))
+			|| (player->canSeeAt(targetPosition) && isMuzzleTypeRocket()))
 		{
 			sendFireCommand (player);
 			executingClients.push_back (player);
@@ -345,7 +342,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 void cServerAttackJob::makeImpact(const cPosition& position)
 {
 	cMap& map = *server->Map;
-	if (map.isValidPos (position) == false) return;
+	if (map.isValidPosition (position) == false) return;
 
 	cUnit* target = selectTarget (position, attackMode, map);
 
@@ -384,7 +381,7 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 				cPlayer* player = playerList[i];
 				if (target->owner == player)
 					continue;
-				if (!player->ScanMap[player->getOffset(position)])
+				if (!player->canSeeAt(position))
 					continue;
 				target->setDetectedByPlayer (*server, player);
 			}
@@ -401,8 +398,7 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 
 	// workaround
 	// make sure, the owner gets the impact message
-	if (owner)
-		owner->ScanMap[owner->getOffset(position)] = 1;
+	if (owner) owner->revealPosition(position);
 
 	sendAttackJobImpact (position, remainingHP, id);
 
@@ -445,7 +441,6 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 //--------------------------------------------------------------------------
 void cServerAttackJob::makeImpactCluster()
 {
-	const int mapSize = server->Map->getSize();
 	const int clusterDamage = damage;
 
 	//full damage
@@ -482,7 +477,7 @@ void cServerAttackJob::sendAttackJobImpact (const cPosition& position, int remai
 		const cPlayer* player = playerList[i];
 
 		// target in sight?
-		if (player->ScanMap[player->getOffset(position)] == 0)
+		if (!player->canSeeAt(position))
 			continue;
 
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_IMPACT));
@@ -504,7 +499,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage& message)
 	const bool bIsAir = message.popBool();
 	const int offset = message.popInt32();
 	cMap& map = *client.getMap();
-    const cPosition position(offset % map.getSize(), offset / map.getSize());
+    const cPosition position(offset % map.getSize().x(), offset / map.getSize().x());
 	const int ID = message.popInt32();
 	if (ID != 0)
 	{
@@ -579,7 +574,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 	wait = 0;
 	length = 0;
 	this->iID = message.popInt16();
-	iTargetOffset = -1;
+	targetPosition = -1;
 	unit = NULL;
 
 	// check for duplicate jobs
@@ -603,7 +598,9 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 			state = FINISHED;
 			return;
 		}
-		iAgressorOffset = message.popInt32();
+		const auto aggressorOffset = message.popInt32();
+		aggressorPosition.x () = aggressorOffset % client->getMap ()->getSize ().x ();
+		aggressorPosition.y () = aggressorOffset / client->getMap ()->getSize ().x ();
 	}
 	else
 	{
@@ -618,12 +615,14 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 		}
 
 		iMuzzleType = unit->data.muzzleType;
-		iAgressorOffset = client->getMap()->getOffset (unit->getPosition());
+		aggressorPosition = unit->getPosition();
 	}
 
 	if (iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET || iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER || iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO)
 	{
-		iTargetOffset = message.popInt32();
+		const auto targetOffset = message.popInt32 ();
+		targetPosition.x () = targetOffset % client->getMap ()->getSize ().x ();
+		targetPosition.y () = targetOffset / client->getMap ()->getSize ().x ();
 	}
 	iFireDir = message.popChar();
 
@@ -749,8 +748,6 @@ void cClientAttackJob::playMuzzle (cClient& client)
 				return;
 			}
 
-			const cPosition aggressorPosition(iAgressorOffset % map.getSize(), iAgressorOffset / map.getSize());
-			const cPosition targetPosition(iTargetOffset % map.getSize(), iTargetOffset / map.getSize());
 			auto rocket = std::make_shared<cFxRocket>(aggressorPosition * 64 + 32, targetPosition * 64 + 32, iFireDir, false);
 			length = rocket->getLength() / 5;
 			client.addFx (std::move(rocket));
@@ -819,11 +816,7 @@ void cClientAttackJob::playMuzzle (cClient& client)
 				return;
 			}
 
-			int PosX = iAgressorOffset % map.getSize();
-			int PosY = iAgressorOffset / map.getSize();
-			int endX = iTargetOffset % map.getSize();
-			int endY = iTargetOffset / map.getSize();
-			auto rocket = std::make_shared<cFxRocket> (cPosition (PosX * 64 + 32, PosY * 64 + 32), cPosition (endX * 64 + 32, endY * 64 + 32), iFireDir, true);
+			auto rocket = std::make_shared<cFxRocket> (aggressorPosition * 64 + 32, targetPosition * 64 + 32, iFireDir, false);
 			length = rocket->getLength() / 5;
 			client.addFx (std::move(rocket));
 
@@ -852,10 +845,10 @@ void cClientAttackJob::sendFinishMessage (cClient& client)
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP, int id)
+void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, int remainingHP, int id)
 {
 	cMap& map = *client.getMap();
-	if (map.isValidOffset (offset) == false)
+	if (map.isValidPosition (position) == false)
 	{
 		Log.write (" Client: Invalid offset", cLog::eLOG_TYPE_NET_ERROR);
 		return;
@@ -928,12 +921,9 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 		}
 	}
 
-	const int x = offset % map.getSize();
-	const int y = offset / map.getSize();
-
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
-		client.addFx (std::make_shared<cFxHit> (cPosition (x * 64 + offX + 32, y * 64 + offY + 32)));
+		client.addFx (std::make_shared<cFxHit> (position * 64 + 32));
 	}
 
 	if (ownUnit)
@@ -950,7 +940,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 			message = name + " " + lngPack.i18n ("Text~Comp~Attacked");
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
-		const sSavedReportMessage& report = client.getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, cPosition(x, y));
+		const sSavedReportMessage& report = client.getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, position);
 	}
 
 	// clean up
@@ -958,7 +948,7 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 	if (!isAir)
 	{
-		const auto& buildings = map[offset].getBuildings();
+		const auto& buildings = map.getField(position).getBuildings();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
 			(*it)->setIsBeeinAttacked(false);

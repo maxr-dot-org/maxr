@@ -184,7 +184,7 @@ public:
 	void CheckRessourceProd (const cServer& server);
 	void calcTurboBuild (std::array<int, 3>& turboBuildRounds, std::array<int, 3>& turboBuildCosts, int vehicleCosts, int remainingMetal = -1) const;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;
-	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
+	bool canLoad (const cPosition& position, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
 	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);

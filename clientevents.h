@@ -162,12 +162,12 @@ void sendMoveJobResume (const cClient& client, int unitId);
 * sends all necessary information to identify aggressor
 * and target of an attack to the server
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.
-*@param targetOffset the offset, where the player has aimed
+*@param targetPosition the position, where the player has aimed
 *@param aggressor ID of the aggressor, if it is a vehicle. Offset os the aggressor if it is a building
 *@param isVehicle true if aggressor is a vehicle, false otherwise
 *@author Eiko
 */
-void sendWantAttack (const cClient& client, int targetID, int targetOffset, int aggressor, bool isVehicle);
+void sendWantAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressor, bool isVehicle);
 
 /**
 * sends whether a minelayer is laying or clearing mines
@@ -185,7 +185,7 @@ void sendMineLayerStatus (const cClient& client, const cVehicle& vehicle);
 *@param bBuildPath true if the vehicle is building in path
 *@param iPathOff offset were the path will end
 */
-void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff);
+void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, const cPosition& buildPosition, bool bBuildPath, const cPosition& pathEndPosition);
 /**
 * sends that a vehicle wants to leave the building lot
 *@author alzi alias DoctorDeath
@@ -220,7 +220,7 @@ void sendWantBuildList (const cClient& client, const cBuilding& building, const 
 * sends that the client wants to exit the finished vehicle
 *@author alzi alias DoctorDeath
 */
-void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, int iX, int iY);
+void sendWantExitFinishedVehicle (const cClient& client, const cBuilding& building, const cPosition& position);
 /**
 * sends that the client wants to change the produce values in the minemanager of a building
 *@author alzi alias DoctorDeath

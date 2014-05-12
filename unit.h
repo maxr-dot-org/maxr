@@ -61,7 +61,6 @@ public:
 	int calcHealth (int damage) const;
 	bool isInRange (const cPosition& position) const;
 	/// checks whether the coordinates are next to the unit
-	bool isNextTo (int x, int y) const;
 	bool isNextTo (const cPosition& position) const;
 	bool isDisabled() const { return turnsDisabled > 0; }
 	bool isAbove(const cPosition& position) const;

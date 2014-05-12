@@ -114,7 +114,7 @@ void cWindowNetworkLobby::updateSettingsText ()
 	if (staticMap != nullptr)
 	{
 		text += lngPack.i18n ("Text~Title~Map") + ": " + staticMap->getName ();
-		text += " (" + iToStr (staticMap->getSizeNew ().x ()) + "x" + iToStr (staticMap->getSizeNew ().y ()) + ")\n";
+		text += " (" + iToStr (staticMap->getSize ().x ()) + "x" + iToStr (staticMap->getSize ().y ()) + ")\n";
 	}
 	else if (saveGameNumber == -1) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
 
@@ -157,7 +157,7 @@ void cWindowNetworkLobby::updateMap ()
 	}
 
 	auto mapName = staticMap->getName ();
-	const auto size = staticMap->getSizeNew ();
+	const auto size = staticMap->getSize ();
 
 	if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size.x ()) + "x" + iToStr (size.y ()) + ")<") > 140)
 	{

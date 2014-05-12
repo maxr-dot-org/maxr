@@ -346,6 +346,20 @@ sID cNetMessage::popID()
 	return id;
 }
 
+void cNetMessage::pushPosition (const cPosition& position)
+{
+	pushInt32 (position.x());
+	pushInt32 (position.y());
+}
+
+cPosition cNetMessage::popPosition ()
+{
+	cPosition position;
+	position.y () = popInt32 ();
+	position.x () = popInt32 ();
+	return position;
+}
+
 string cNetMessage::getTypeAsString() const
 {
 	//find the string representation of the message type for

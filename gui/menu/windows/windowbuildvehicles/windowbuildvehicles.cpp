@@ -128,10 +128,11 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 			else if (j == 5 || j == 7) x += 3;
 			else x++;
 
-			if (map.isValidPos (x, y) == false) continue;
+			const cPosition position (x, y);
 
-			int off = map.getOffset (x, y);
-			const auto& buildings = map.fields[off].getBuildings ();
+			if (map.isValidPosition (position) == false) continue;
+
+			const auto& buildings = map.getField (position).getBuildings ();
 			auto b_it = buildings.begin ();
 			auto b_end = buildings.end ();
 

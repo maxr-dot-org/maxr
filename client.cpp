@@ -327,9 +327,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 		return;
 	}
 	const sID UnitID = message.popID();
-	cPosition position;
-	position.y() = message.popInt16();
-	position.x() = message.popInt16();
+	const auto position = message.popPosition();
 	unsigned int ID = message.popInt16();
 	cBuilding* AddedBuilding = Player->addBuilding(position, UnitID, ID);
 
@@ -349,10 +347,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	const sID UnitID = message.popID();
-	cPosition position;
-	position.y() = message.popInt16();
-	position.x() = message.popInt16();
+	const sID UnitID = message.popID ();
+	const auto position = message.popPosition ();
 	const unsigned int ID = message.popInt16();
 	const bool bAddToMap = message.popBool();
 
@@ -391,10 +387,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	const sID UnitID = message.popID();
-	cPosition position;
-	position.y() = message.popInt16();
-	position.x() = message.popInt16();
+	const sID UnitID = message.popID ();
+	const auto position = message.popPosition ();
 	const int dir = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
@@ -415,10 +409,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	const sID UnitID = message.popID();
-	cPosition position;
-	position.y() = message.popInt16();
-	position.x() = message.popInt16();
+	const sID UnitID = message.popID ();
+	const auto position = message.popPosition ();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
 	cBuilding* AddedBuilding = Player->addBuilding (position, UnitID, ID);
@@ -531,8 +523,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	cPlayer* Player = getPlayerFromNumber (message.popInt16());
 	(void) Player;  // TODO use me
 	const int iID = message.popInt16();
-	const bool bVehicle = message.popBool();
-	const cPosition position(message.popInt16(), message.popInt16());
+	const bool bVehicle = message.popBool ();
+	const auto position = message.popPosition ();
 
 	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (position.x()) + ", YPos: " + iToStr (position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle* Vehicle = NULL;
@@ -674,8 +666,7 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	Vehicle->dir = message.popInt16();
 	Vehicle->setBuildingType (message.popID ());
 	Vehicle->BuildPath = message.popBool();
-	Vehicle->bandPosition.x() = message.popInt16();
-	Vehicle->bandPosition.y() = message.popInt16();
+	Vehicle->bandPosition = message.popPosition();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
@@ -718,13 +709,10 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	assert (message.iType == GAME_EV_MOVE_JOB_SERVER);
 
 	const int iVehicleID = message.popInt32();
-	const int iSrcOff = message.popInt32();
-	const int iDestOff = message.popInt32();
+	const auto srcPosition = message.popPosition ();
+	const auto destPosition = message.popPosition ();
 	const int iSavedSpeed = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (iVehicleID);
-
-	const cPosition srcPosition(iSrcOff % getMap()->getSizeNew().x(), iSrcOff / getMap()->getSizeNew().x());
-	const cPosition destPosition(iDestOff % getMap()->getSizeNew().x(), iDestOff / getMap()->getSizeNew().x());
 
 	if (Vehicle == NULL)
 	{
@@ -787,7 +775,7 @@ void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message)
 	const int id = message.popInt16();
 	const int remainingHP = message.popInt16();
 	const int offset = message.popInt32();
-	cClientAttackJob::makeImpact (*this, offset, remainingHP, id);
+	cClientAttackJob::makeImpact (*this, cPosition(offset % Map->getSize().x(), offset / Map->getSize().x()), remainingHP, id);
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
@@ -797,10 +785,11 @@ void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
 	{
-		const int iOff = message.popInt32();
-		ActivePlayer->exploreResource (iOff);
+		const auto position = message.popPosition();
 
-		sResources& res = getMap()->getResource (iOff);
+		ActivePlayer->exploreResource (position);
+
+		sResources& res = getMap ()->getResource (position);
 		res.typ = (unsigned char) message.popInt16();
 		res.value = (unsigned char) message.popInt16();
 	}
@@ -843,9 +832,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (Vehicle->isUnitBuildingABuilding ()) Log.write (" Client: Vehicle is already building", cLog::eLOG_TYPE_NET_ERROR);
 
-	const int iBuildX = message.popInt16();
-	const int iBuildY = message.popInt16();
-	const cPosition buildPosition(iBuildX, iBuildY);
+	const auto buildPosition = message.popPosition ();
 	const bool buildBig = message.popBool();
 	const auto oldPosition = Vehicle->getPosition();
 
@@ -867,8 +854,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 		Vehicle->setBuildingType (message.popID());
 		Vehicle->setBuildTurns (message.popInt16 ());
 		Vehicle->BuildPath = message.popBool();
-		Vehicle->bandPosition.x() = message.popInt16();
-		Vehicle->bandPosition.y() = message.popInt16();
+		Vehicle->bandPosition = message.popPosition();
 	}
 
 	Vehicle->setBuildingABuilding(true);
@@ -894,7 +880,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	}
 
 	const int iNewPosOffset = message.popInt32();
-	const cPosition newPosition(iNewPosOffset % getMap()->getSize(), iNewPosOffset / getMap()->getSize());
+	const cPosition newPosition(iNewPosOffset % getMap()->getSize().x(), iNewPosOffset / getMap()->getSize().x());
 
 	if (Vehicle->data.isBig)
 	{
@@ -1126,10 +1112,9 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	rubble->data.isBig = big;
 	rubble->RubbleTyp = typ;
 	rubble->RubbleValue = value;
-	const auto newX = message.popInt16();
-	const auto newY = message.popInt16();
+	const auto position = message.popPosition ();
 
-	rubble->setPosition(cPosition(newX, newY));
+	rubble->setPosition (position);
 
 	getMap()->addBuilding (*rubble, rubble->getPosition());
 }
@@ -1175,15 +1160,14 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			const auto orgiginalPosition = Vehicle->getPosition();
 
 			Vehicle->setClearingTurns(message.popInt16());
-			const int bigoffset = message.popInt16();
-			const cPosition bigPosition(bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
-			if (bigoffset >= 0)
+			const auto bigPosition = message.popPosition ();
+			if (bigPosition.x () >= 0 && bigPosition.y() >= 0)
 			{
 				getMap()->moveVehicleBig (*Vehicle, bigPosition);
 				Vehicle->owner->doScan();
 			}
 			Vehicle->setClearing(true);
-			addJob(new cStartBuildJob(*Vehicle, orgiginalPosition, (bigoffset > 0)));
+			addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x () >= 0 && bigPosition.y () >= 0)));
 
 			unitStartedClearing (*Vehicle);
 		}
@@ -1212,9 +1196,8 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 		return;
 	}
 
-	const int bigoffset = message.popInt16();
-	const cPosition bigPosition(bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
-	if (bigoffset >= 0)
+	const auto bigPosition = message.popPosition ();
+	if (bigPosition.x () >= 0 && bigPosition.y () >= 0)
 	{
 		getMap()->moveVehicle(*Vehicle, bigPosition);
 		Vehicle->owner->doScan();
@@ -1371,9 +1354,8 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
 		if (!StoringVehicle) return;
 
-		const int x = message.popInt16();
-		const int y = message.popInt16();
-		StoringVehicle->exitVehicleTo (*StoredVehicle, cPosition(x, y), *getMap());
+		const auto position = message.popPosition ();
+		StoringVehicle->exitVehicleTo (*StoredVehicle, position, *getMap ());
 		unitActivated (*StoringVehicle, *StoredVehicle);
 	}
 	else
@@ -1381,9 +1363,8 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		cBuilding* StoringBuilding = getBuildingFromID (message.popInt16());
 		if (!StoringBuilding) return;
 
-		const int x = message.popInt16();
-		const int y = message.popInt16();
-		StoringBuilding->exitVehicleTo (*StoredVehicle, cPosition(x, y), *getMap ());
+		const auto position = message.popPosition ();
+		StoringBuilding->exitVehicleTo (*StoredVehicle, position, *getMap ());
 		unitActivated (*StoringBuilding, *StoredVehicle);
 	}
 }

@@ -125,19 +125,9 @@ cStaticMap::~cStaticMap()
 	delete [] terrains;
 }
 
-const sTerrain& cStaticMap::getTerrain (int offset) const
-{
-	return terrains[Kacheln[offset]];
-}
-
-const sTerrain& cStaticMap::getTerrain (int x, int y) const
-{
-	return getTerrain (getOffset (x, y));
-}
-
 const sTerrain& cStaticMap::getTerrain (const cPosition& position) const
 {
-	return getTerrain (getOffset (position.x (), position.y ()));
+	return terrains[Kacheln[getOffset (position)]];
 }
 
 bool cStaticMap::isBlocked (const cPosition& position) const
@@ -155,9 +145,9 @@ bool cStaticMap::isWater (const cPosition& position) const
 	return getTerrain(position).water;
 }
 
-bool cStaticMap::isValidPos (int x, int y) const
+bool cStaticMap::isValidPosition (const cPosition& position) const
 {
-	return 0 <= x && x < size && 0 <= y && y < size;
+	return 0 <= position.x () && position.x () < size && 0 <= position.y () && position.y () < size;
 }
 
 void cStaticMap::clear()
@@ -475,7 +465,7 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 			const int terrainy = std::min ((y * size) / mapSurface->h, size - 1);
 			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
 
-			const sTerrain& t = this->getTerrain (terrainx, terrainy);
+			const sTerrain& t = this->getTerrain (cPosition(terrainx, terrainy));
 			unsigned int ColorNr = * (static_cast<const unsigned char*> (t.sf_org->pixels) + (offsetx + offsety * 64));
 
 			unsigned char* pixel = reinterpret_cast<unsigned char*> (&static_cast<Uint32*> (mapSurface->pixels) [x + y * mapSurface->w]);
@@ -492,9 +482,9 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
 	staticMap (std::move(staticMap_))
 {
-	const int size = staticMap->getSize();
-	fields = new cMapField[size * size];
-	Resources.resize (size * size);
+	const int size = staticMap->getSize ().x () * staticMap->getSize ().y ();
+	fields = new cMapField[size];
+	Resources.resize (size);
 
 	resSpots = NULL;
 	resSpotTypes = NULL;
@@ -514,12 +504,12 @@ cMapField& cMap::operator[] (unsigned int offset) const
 
 cMapField& cMap::getField (const cPosition& position)
 {
-	return fields[getOffset (position.x (), position.y ())];
+	return fields[getOffset (position)];
 }
 
 const cMapField& cMap::getField (const cPosition& position) const
 {
-	return fields[getOffset (position.x (), position.y ())];
+	return fields[getOffset (position)];
 }
 
 bool cMap::isWaterOrCoast(const cPosition& position) const
@@ -528,17 +518,12 @@ bool cMap::isWaterOrCoast(const cPosition& position) const
 	return terrainType.water | terrainType.coast;
 }
 
-bool cMap::isValidOffset (int offset) const
-{
-	return 0 <= offset && offset < getSize() * getSize();
-}
-
 // Platziert die Ressourcen für einen Spieler.
 void cMap::placeRessourcesAddPlayer (int x, int y, eGameSettingsResourceDensity desity)
 {
 	if (resSpots == NULL)
 	{
-		resSpotCount = (int)(getSize () * getSize () * 0.003f * (1.5f + getResourceDensityFactor (desity)));
+		resSpotCount = (int)(getSize ().x () * getSize ().y () * 0.003f * (1.5f + getResourceDensityFactor (desity)));
 		resCurrentSpotCount = 0;
 		resSpots = new T_2<int>[resSpotCount];
 		resSpotTypes = new int[resSpotCount];
@@ -617,8 +602,8 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 	{
 		T_2<int> pos;
 
-		pos.x = 2 + random (getSize() - 4);
-		pos.y = 2 + random (getSize() - 4);
+		pos.x = 2 + random (getSize().x() - 4);
+		pos.y = 2 + random (getSize().y() - 4);
 		resSpots[resCurrentSpotCount] = pos;
 		resCurrentSpotCount++;
 	}
@@ -633,11 +618,11 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 				if (i == j) continue;
 
 				int diffx1 = resSpots[i].x - resSpots[j].x;
-				int diffx2 = diffx1 + (getSize() - 4);
-				int diffx3 = diffx1 - (getSize() - 4);
+				int diffx2 = diffx1 + (getSize().x() - 4);
+				int diffx3 = diffx1 - (getSize().x() - 4);
 				int diffy1 = resSpots[i].y - resSpots[j].y;
-				int diffy2 = diffy1 + (getSize() - 4);
-				int diffy3 = diffy1 - (getSize() - 4);
+				int diffy2 = diffy1 + (getSize().y() - 4);
+				int diffy3 = diffy1 - (getSize().y() - 4);
 				if (abs (diffx2) < abs (diffx1)) diffx1 = diffx2;
 				if (abs (diffx3) < abs (diffx1)) diffx1 = diffx3;
 				if (abs (diffy2) < abs (diffy1)) diffy1 = diffy2;
@@ -652,10 +637,10 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 
 			}
 			resSpots[i] += T_2<int> (Round (d.x), Round (d.y));
-			if (resSpots[i].x < 2) resSpots[i].x += getSize() - 4;
-			if (resSpots[i].y < 2) resSpots[i].y += getSize() - 4;
-			if (resSpots[i].x > getSize() - 3) resSpots[i].x -= getSize() - 4;
-			if (resSpots[i].y > getSize() - 3) resSpots[i].y -= getSize() - 4;
+			if (resSpots[i].x < 2) resSpots[i].x += getSize().x() - 4;
+			if (resSpots[i].y < 2) resSpots[i].y += getSize().y() - 4;
+			if (resSpots[i].x > getSize().x() - 3) resSpots[i].x -= getSize().x() - 4;
+			if (resSpots[i].y > getSize().y() - 3) resSpots[i].y -= getSize().y() - 4;
 
 		}
 	}
@@ -692,9 +677,9 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 		T_2<int> p;
 		bool hasGold = random (100) < 40;
 		const int minx = std::max (pos.x - 1, 0);
-		const int maxx = std::min (pos.x + 1, getSize() - 1);
+		const int maxx = std::min (pos.x + 1, getSize().x() - 1);
 		const int miny = std::max (pos.y - 1, 0);
-		const int maxy = std::min (pos.y + 1, getSize() - 1);
+		const int maxy = std::min (pos.y + 1, getSize().y() - 1);
 		for (p.y = miny; p.y <= maxy; ++p.y)
 		{
 			for (p.x = minx; p.x <= maxx; ++p.x)
@@ -702,7 +687,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 				T_2<int> absPos = p;
 				int type = (absPos.y % 2) * 2 + (absPos.x % 2);
 
-				int index = getOffset (absPos.x, absPos.y);
+				int index = getOffset (cPosition(absPos.x, absPos.y));
 				if (type != RES_NONE &&
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
 					!isBlocked (cPosition(absPos.x, absPos.y)))
@@ -807,23 +792,18 @@ void cMap::addVehicle(cVehicle& vehicle, const cPosition& position)
 
 void cMap::deleteBuilding (const cBuilding& building)
 {
-	int offset = getOffset (building.getPosition());
-
-	std::vector<cBuilding*>* buildings = &fields[offset].buildings;
+	std::vector<cBuilding*>* buildings = &getField (building.getPosition ()).buildings;
 	Remove (*buildings, &building);
 
 	if (building.data.isBig)
 	{
-		offset++;
-		buildings = &fields[offset].buildings;
+		buildings = &getField (building.getPosition () + cPosition(1, 0)).buildings;
 		Remove (*buildings, &building);
 
-		offset += getSize();
-		buildings = &fields[offset].buildings;
+		buildings = &getField (building.getPosition () + cPosition (1, 1)).buildings;
 		Remove (*buildings, &building);
 
-		offset--;
-		buildings = &fields[offset].buildings;
+		buildings = &getField (building.getPosition () + cPosition (0, 1)).buildings;
 		Remove (*buildings, &building);
 	}
 	removedUnit (building);
@@ -831,30 +811,25 @@ void cMap::deleteBuilding (const cBuilding& building)
 
 void cMap::deleteVehicle (const cVehicle& vehicle)
 {
-	int offset = getOffset (vehicle.getPosition());
-
 	if (vehicle.data.factorAir > 0)
 	{
-		std::vector<cVehicle*>& planes = fields[offset].planes;
+		std::vector<cVehicle*>& planes = getField (vehicle.getPosition ()).planes;
 		Remove (planes, &vehicle);
 	}
 	else
 	{
-		std::vector<cVehicle*>* vehicles = &fields[offset].vehicles;
+		std::vector<cVehicle*>* vehicles = &getField (vehicle.getPosition ()).vehicles;
 		Remove (*vehicles, &vehicle);
 
 		if (vehicle.data.isBig)
 		{
-			offset++;
-			vehicles = &fields[offset].vehicles;
+			vehicles = &getField (vehicle.getPosition () + cPosition(1, 0)).vehicles;
 			Remove (*vehicles, &vehicle);
 
-			offset += getSize();
-			vehicles = &fields[offset].vehicles;
+			vehicles = &getField (vehicle.getPosition () + cPosition (1, 1)).vehicles;
 			Remove (*vehicles, &vehicle);
 
-			offset--;
-			vehicles = &fields[offset].vehicles;
+			vehicles = &getField (vehicle.getPosition () + cPosition (0, 1)).vehicles;
 			Remove (*vehicles, &vehicle);
 		}
 	}
@@ -863,37 +838,33 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 
 void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height)
 {
-	int oldOffset = getOffset (vehicle.getPosition());
-	int newOffset = getOffset (position);
+	const auto oldPosition = vehicle.getPosition();
 
 	vehicle.setPosition(position);
 
 	if (vehicle.data.factorAir > 0)
 	{
-		std::vector<cVehicle*>& planes = fields[oldOffset].planes;
+		std::vector<cVehicle*>& planes = getField(oldPosition).planes;
 		Remove (planes, &vehicle);
-		height = std::min<int> (this->fields[newOffset].planes.size(), height);
-		fields[newOffset].planes.insert (fields[newOffset].planes.begin() + height, &vehicle);
+		height = std::min<int> (getField(position).planes.size(), height);
+		getField (position).planes.insert (getField (position).planes.begin () + height, &vehicle);
 	}
 	else
 	{
-		std::vector<cVehicle*>& vehicles = fields[oldOffset].vehicles;
+		std::vector<cVehicle*>& vehicles = getField (oldPosition).vehicles;
 		Remove (vehicles, &vehicle);
 
 		//check, whether the vehicle is centered on 4 map fields
 		if (vehicle.data.isBig)
 		{
-			oldOffset++;
-			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
-			oldOffset += getSize();
-			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
-			oldOffset--;
-			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
+			getField (oldPosition + cPosition (1, 0)).vehicles.erase (getField (oldPosition + cPosition (1, 0)).vehicles.begin ());
+			getField (oldPosition + cPosition (1, 1)).vehicles.erase (getField (oldPosition + cPosition (1, 1)).vehicles.begin ());
+			getField (oldPosition + cPosition (0, 1)).vehicles.erase (getField (oldPosition + cPosition (0, 1)).vehicles.begin ());
 
 			vehicle.data.isBig = false;
 		}
 
-		fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
+		getField (position).vehicles.insert (getField (position).vehicles.begin (), &vehicle);
 	}
 	movedVehicle (vehicle);
 }
@@ -908,20 +879,16 @@ void cMap::moveVehicleBig(cVehicle& vehicle, const cPosition& position)
 		moveVehicle (vehicle, position);
 	}
 
-	int oldOffset = getOffset (vehicle.getPosition());
-	int newOffset = getOffset(position);
+	const auto oldPosition = vehicle.getPosition();
 
-	fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
+	getField (oldPosition).vehicles.erase (getField (oldPosition).vehicles.begin ());
 
 	vehicle.setPosition(position);
 
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
-	newOffset++;
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
-	newOffset += getSize();
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
-	newOffset--;
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
+	getField (position).vehicles.insert (getField (position).vehicles.begin (), &vehicle);
+	getField (position + cPosition (1, 0)).vehicles.insert (getField (position + cPosition (1, 0)).vehicles.begin (), &vehicle);
+	getField (position + cPosition (1, 1)).vehicles.insert (getField (position + cPosition (1, 1)).vehicles.begin (), &vehicle);
+	getField (position + cPosition (0, 1)).vehicles.insert (getField (position + cPosition (0, 1)).vehicles.begin (), &vehicle);
 
 	vehicle.data.isBig = true;
 
@@ -935,7 +902,7 @@ bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bo
 
 bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer) const
 {
-	if (isValidPos (position) == false) return false;
+	if (isValidPosition (position) == false) return false;
 
 	const std::vector<cBuilding*>& buildings = getField(position).getBuildings();
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
@@ -946,7 +913,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 
 	if (vehicleData.factorAir > 0)
 	{
-		if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return true;
+		if (checkPlayer && player && !player->canSeeAt(position)) return true;
 		//only one plane per field for now
 		if (getField(position).planes.size() >= MAX_PLANES_PER_FIELD) return false;
 	}
@@ -957,7 +924,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 		if ((isWater (position) && vehicleData.factorSea == 0) ||
 			(isCoast (position) && vehicleData.factorCoast == 0))
 		{
-			if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return false;
+			if (checkPlayer && player && !player->canSeeAt(position)) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if (b_it == b_end) return false;
@@ -971,7 +938,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
 			return false;
 
-		if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return true;
+		if (checkPlayer && player && !player->canSeeAt(position)) return true;
 
 		if (getField(position).vehicles.empty() == false) return false;
 		if (b_it != b_end)
@@ -997,7 +964,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 			(*b_it)->data.explodesOnContact && (*b_it)->isDetectedByPlayer (player))
 			return false;
 
-		if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return true;
+		if (checkPlayer && player && !player->canSeeAt(position)) return true;
 
 		if (getField(position).vehicles.empty() == false) return false;
 
@@ -1021,13 +988,13 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 // can't place it too near to the map border
 bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle) const
 {
-	if (position.x() < margin || position.x() >= getSize() - margin || position.y() < margin || position.y() >= getSize() - margin) return false;
+	if (position.x() < margin || position.x() >= getSize().x() - margin || position.y() < margin || position.y() >= getSize().y() - margin) return false;
 	return possiblePlaceBuilding (buildingData, position, vehicle);
 }
 
 bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle) const
 {
-	if (!isValidPos (position)) return false;
+	if (!isValidPosition (position)) return false;
 	if (isBlocked (position)) return false;
 	const cMapField& field = getField(position);
 
@@ -1092,7 +1059,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 }
 void cMap::reset()
 {
-	for (int i = 0; i < getSize() * getSize(); i++)
+	for (int i = 0; i < getSize().x() * getSize().y(); i++)
 	{
 		fields[i].buildings.clear();
 		fields[i].vehicles.clear();

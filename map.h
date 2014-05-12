@@ -119,19 +119,15 @@ public:
 	bool isValid() const;
 
 	const std::string& getName() const { return filename; }
-	int getSize () const { return size; }
-	cPosition getSizeNew () const { return cPosition (size, size); }
-	int getOffset (int x, int y) const { return y * size + x; }
-	int getOffset (const cPosition& pos) const { return getOffset (pos.x (), pos.y ()); }
+	cPosition getSize () const { return cPosition (size, size); }
+    int getOffset (const cPosition& pos) const { return pos.y() * size + pos.x(); }
 
-	bool isValidPos (int x, int y) const;
+	bool isValidPosition (const cPosition& position) const;
 
 	bool isBlocked (const cPosition& position) const;
 	bool isCoast (const cPosition& position) const;
 	bool isWater (const cPosition& position) const;
 
-	const sTerrain& getTerrain (int offset) const;
-	const sTerrain& getTerrain (int x, int y) const;
 	const sTerrain& getTerrain (const cPosition& position) const;
 
 	SDL_Surface* createBigSurface (int sizex, int sizey) const;
@@ -141,7 +137,7 @@ public:
 private:
 	static SDL_Surface* loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
-private:
+
 	std::string filename;   // Name of the current map
 	int size;
 	unsigned int terrainCount;
@@ -159,13 +155,9 @@ public:
 	~cMap();
 
 	const std::string& getName() const { return staticMap->getName(); }
-	int getSize() const { return staticMap->getSize(); }
-	cPosition getSizeNew() const { return staticMap->getSizeNew(); }
-	int getOffset (int x, int y) const { return staticMap->getOffset (x, y); }
+	cPosition getSize() const { return staticMap->getSize(); }
 	int getOffset (const cPosition& pos) const { return staticMap->getOffset (pos); }
-	bool isValidPos (int x, int y) const { return staticMap->isValidPos (x, y); }
-	bool isValidPos (const cPosition& pos) const { return staticMap->isValidPos (pos.x(), pos.y()); }
-	bool isValidOffset (int offset) const;
+	bool isValidPosition (const cPosition& pos) const { return staticMap->isValidPosition (pos); }
 
 	bool isBlocked(const cPosition& position) const { return staticMap->isBlocked(position); }
 	bool isCoast(const cPosition& position) const { return staticMap->isCoast(position); }
@@ -173,10 +165,8 @@ public:
 
 	bool isWaterOrCoast (const cPosition& position) const;
 
-	const sResources& getResource (int offset) const { return Resources[offset]; }
-	const sResources& getResource (int x, int y) const { return Resources[getOffset (x, y)]; }
-	const sResources& getResource (const cPosition& position) const { return getResource (position.x (), position.y ()); }
-	sResources& getResource (int offset) { return Resources[offset]; }
+    const sResources& getResource (const cPosition& position) const { return Resources[getOffset (position)]; }
+    sResources& getResource (const cPosition& position) { return Resources[getOffset (position)]; }
 	void assignRessources (const cMap& rhs);
 
 	/**

@@ -90,8 +90,8 @@ private:
 	cUnit* unit;
 	int iFireDir;
 	int iMuzzleType;
-	int iAgressorOffset;
-	int iTargetOffset;
+	cPosition aggressorPosition;
+	cPosition targetPosition;
 	int wait;
 	int length;
 
@@ -104,7 +104,7 @@ public:
 	*/
 	static void lockTarget (cClient& client, cNetMessage& message);
 	static void handleAttackJobs (cClient& client);
-	static void makeImpact (cClient& client, int offset, int remainingHP, int id);
+	static void makeImpact (cClient& client, const cPosition& position, int remainingHP, int id);
 public:
 
 	cClientAttackJob (cClient* client, cNetMessage& message);

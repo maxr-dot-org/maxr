@@ -64,10 +64,10 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& m
 	{
 		for (int y = box.getMinCorner ().y (); y <= box.getMaxCorner ().y (); ++y)
 		{
-			const int offset = map.getOffset (x, y);
+			const cPosition position (x, y);
 
-			cVehicle* vehicle = map[offset].getVehicle ();
-			if (!vehicle ||vehicle->owner != &player) vehicle = map[offset].getPlane ();
+			cVehicle* vehicle = map.getField (position).getVehicle ();
+			if (!vehicle ||vehicle->owner != &player) vehicle = map.getField (position).getPlane ();
 
 			if (vehicle && vehicle->owner == &player && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing() && !vehicle->moving)
 			{

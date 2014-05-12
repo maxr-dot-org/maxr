@@ -102,14 +102,14 @@ bool cMiniMapWidget::updateOffset ()
 	offset.x () = std::min (mapViewWindow.getMinCorner ().x (), offset.x ());
 	offset.y () = std::min (mapViewWindow.getMinCorner ().y (), offset.y ());
 
-	const cPosition displaySize = staticMap->getSizeNew () / zoomFactor;
+	const cPosition displaySize = staticMap->getSize () / zoomFactor;
 	const cPosition endDisplay = offset + displaySize;
 
 	offset.x () = std::max (std::max (mapViewWindow.getMaxCorner ().x (), endDisplay.x ()) - displaySize.x (), offset.x ());
 	offset.y () = std::max (std::max (mapViewWindow.getMaxCorner ().y (), endDisplay.y ()) - displaySize.y (), offset.y ());
 
-	offset.x () = std::min (staticMap->getSizeNew ().x () - displaySize.x (), offset.x ());
-	offset.y () = std::min (staticMap->getSizeNew ().y () - displaySize.y (), offset.y ());
+	offset.x () = std::min (staticMap->getSize ().x () - displaySize.x (), offset.x ());
+	offset.y () = std::min (staticMap->getSize ().y () - displaySize.y (), offset.y ());
 
 	offset.x () = std::max (0, offset.x ());
 	offset.y () = std::max (0, offset.y ());
@@ -129,7 +129,7 @@ cPosition cMiniMapWidget::computeMapPosition (const cPosition& screenPosition)
 
 	const cPosition screenOffset = screenPosition - getPosition ();
 
-	const cPosition displaySize = staticMap->getSizeNew () / zoomFactor;
+	const cPosition displaySize = staticMap->getSize () / zoomFactor;
 
 	cPosition mapPosition;
 
@@ -209,20 +209,20 @@ void cMiniMapWidget::drawLandscape ()
 	for (int miniMapX = 0; miniMapX < getSize ().x (); ++miniMapX)
 	{
 		// calculate the field on the map
-		int terrainx = (miniMapX * staticMap->getSizeNew(). x ()) / (getSize ().x () * zoomFactor) + offset.x ();
-		terrainx = std::min (terrainx, staticMap->getSizeNew(). x () - 1);
+		int terrainx = (miniMapX * staticMap->getSize(). x ()) / (getSize ().x () * zoomFactor) + offset.x ();
+		terrainx = std::min (terrainx, staticMap->getSize(). x () - 1);
 
 		// calculate the position within the terrain graphic
 		// (for better rendering of maps < getSize())
-		const int offsetx = ((miniMapX * staticMap->getSizeNew(). x ()) % (getSize ().x () * zoomFactor)) * 64 / (getSize ().x () * zoomFactor);
+		const int offsetx = ((miniMapX * staticMap->getSize(). x ()) % (getSize ().x () * zoomFactor)) * 64 / (getSize ().x () * zoomFactor);
 
 		for (int miniMapY = 0; miniMapY < getSize ().y (); ++miniMapY)
 		{
-			int terrainy = (miniMapY * staticMap->getSizeNew(). y ()) / (getSize ().y () * zoomFactor) + offset.y ();
-			terrainy = std::min (terrainy, staticMap->getSizeNew(). y () - 1);
-			const int offsety = ((miniMapY * staticMap->getSizeNew(). y ()) % (getSize ().y () * zoomFactor)) * 64 / (getSize ().y () * zoomFactor);
+			int terrainy = (miniMapY * staticMap->getSize(). y ()) / (getSize ().y () * zoomFactor) + offset.y ();
+			terrainy = std::min (terrainy, staticMap->getSize(). y () - 1);
+			const int offsety = ((miniMapY * staticMap->getSize(). y ()) % (getSize ().y () * zoomFactor)) * 64 / (getSize ().y () * zoomFactor);
 
-			const auto& terrain = staticMap->getTerrain (terrainx, terrainy);
+			const auto& terrain = staticMap->getTerrain (cPosition(terrainx, terrainy));
 			const auto* terrainPixels = reinterpret_cast<const Uint8*> (terrain.sf_org->pixels);
 			const auto index = terrainPixels[offsetx + offsety * 64];
 			const auto sdlcolor = terrain.sf_org->format->palette->colors[index];
@@ -242,10 +242,10 @@ void cMiniMapWidget::drawFog ()
 
 	for (int miniMapX = 0; miniMapX < getSize ().x (); ++miniMapX)
 	{
-		const auto terrainX = (miniMapX * staticMap->getSizeNew(). x()) / (getSize ().x () * zoomFactor) + offset.x ();
+		const auto terrainX = (miniMapX * staticMap->getSize(). x()) / (getSize ().x () * zoomFactor) + offset.x ();
 		for (int miniMapY = 0; miniMapY < getSize ().y (); ++miniMapY)
 		{
-			const auto terrainY = (miniMapY * staticMap->getSizeNew(). y ()) / (getSize ().y () * zoomFactor) +  offset.y ();
+			const auto terrainY = (miniMapY * staticMap->getSize(). y ()) / (getSize ().y () * zoomFactor) +  offset.y ();
 
 			if (player->canSeeAt (cPosition (terrainX, terrainY))) continue;
 
@@ -269,22 +269,25 @@ void cMiniMapWidget::drawUnits ()
 
 	// the size of the rect, that is drawn for each unit
 	SDL_Rect rect;
-	rect.w = std::max (2, getSize ().x () * zoomFactor / staticMap->getSizeNew(). x ());
-	rect.h = std::max (2, getSize ().y () * zoomFactor / staticMap->getSizeNew(). y ());
+	rect.w = std::max (2, getSize ().x () * zoomFactor / staticMap->getSize(). x ());
+	rect.h = std::max (2, getSize ().y () * zoomFactor / staticMap->getSize(). y ());
 
-	for (int mapx = 0; mapx < staticMap->getSizeNew(). x (); ++mapx)
+	for (int mapx = 0; mapx < staticMap->getSize(). x (); ++mapx)
 	{
-		rect.x = ((mapx - offset.x ()) * getSize().x () * zoomFactor) / staticMap->getSizeNew(). x ();
+		rect.x = ((mapx - offset.x ()) * getSize().x () * zoomFactor) / staticMap->getSize(). x ();
+
 		if (rect.x < 0 || rect.x >= getSize ().x ()) continue;
-		for (int mapy = 0; mapy < staticMap->getSizeNew(). y (); ++mapy)
+
+		for (int mapy = 0; mapy < staticMap->getSize(). y (); ++mapy)
 		{
-			rect.y = ((mapy - offset.y ()) * getSize ().y () * zoomFactor) / staticMap->getSizeNew(). y ();
+			const cPosition mapPosition (mapx, mapy);
+
+			rect.y = ((mapy - offset.y ()) * getSize ().y () * zoomFactor) / staticMap->getSize(). y ();
 			if (rect.y < 0 || rect.y >= getSize ().y ()) continue;
 
-			if (player && !player->canSeeAt (cPosition (mapx, mapy))) continue;
+			if (player && !player->canSeeAt (mapPosition)) continue;
 
-			const int offset = dynamicMap->getOffset (mapx, mapy);
-			cMapField& field = (*dynamicMap)[offset];
+			const cMapField& field = dynamicMap->getField (mapPosition);
 
 			// draw building
 			const cBuilding* building = field.getBuilding ();
@@ -328,8 +331,8 @@ void cMiniMapWidget::renewViewWindowSurface ()
 	SDL_FillRect (viewWindowSurface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (viewWindowSurface.get (), SDL_TRUE, 0xFF00FF);
 
-	const cPosition start = (mapViewWindow.getMinCorner () - offset) * getSize () * zoomFactor / staticMap->getSizeNew ();
-	const cPosition end = (mapViewWindow.getMaxCorner () - offset) * getSize () * zoomFactor / staticMap->getSizeNew ();
+	const cPosition start = (mapViewWindow.getMinCorner () - offset) * getSize () * zoomFactor / staticMap->getSize ();
+	const cPosition end = (mapViewWindow.getMaxCorner () - offset) * getSize () * zoomFactor / staticMap->getSize ();
 
 	Uint32* minimap = static_cast<Uint32*> (viewWindowSurface->pixels);
 	for (int y = start.y (); y <= end.y (); ++y)

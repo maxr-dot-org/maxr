@@ -127,9 +127,9 @@ cPathCalculator::~cPathCalculator()
 sWaypoint* cPathCalculator::calcPath()
 {
 	// generate open and closed list
-	nodesHeap.resize (Map->getSize() * Map->getSize() + 1, NULL);
-	openList.resize (Map->getSize() * Map->getSize() + 1, NULL);
-	closedList.resize (Map->getSize() * Map->getSize() + 1, NULL);
+	nodesHeap.resize (Map->getSize ().x() * Map->getSize ().y() + 1, NULL);
+	openList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, NULL);
+	closedList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, NULL);
 
 	// generate startnode
 	sPathNode* StartNode = allocNode();
@@ -200,9 +200,9 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 {
 	// add all nearby nodes
 	const int minx = std::max(ParentNode->position.x() - 1, 0);
-	const int maxx = std::min(ParentNode->position.x() + 1, Map->getSize() - 1);
+	const int maxx = std::min(ParentNode->position.x() + 1, Map->getSize().y() - 1);
 	const int miny = std::max(ParentNode->position.y() - 1, 0);
-	const int maxy = std::min(ParentNode->position.y() + 1, Map->getSize() - 1);
+	const int maxy = std::min(ParentNode->position.y() + 1, Map->getSize().y() - 1);
 
 	for (int y = miny; y <= maxy; ++y)
 	{
@@ -538,8 +538,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 	while (iCount < iReceivedCount)
 	{
 		sWaypoint* waypoint = new sWaypoint;
-		waypoint->position.y() = message.popInt16();
-		waypoint->position.x() = message.popInt16();
+		waypoint->position = message.popPosition();
 		waypoint->Costs = message.popInt16();
 
 		if (!dest) dest = waypoint;
@@ -908,8 +907,7 @@ bool cClientMoveJob::generateFromMessage (cNetMessage& message)
 	while (iCount < iReceivedCount)
 	{
 		sWaypoint* waypoint = new sWaypoint;
-		waypoint->position.y() = message.popInt16();
-		waypoint->position.x() = message.popInt16();
+		waypoint->position = message.popPosition();
 		waypoint->Costs = message.popInt16();
 
 		waypoint->next = Waypoints;

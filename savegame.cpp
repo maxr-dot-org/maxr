@@ -1210,12 +1210,15 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 string cSavegame::convertScanMapToString (const cPlayer& player) const
 {
 	string str = "";
-	const size_t size = Square (player.getMapSize());
+	const size_t size = player.getMapSize ().x () * player.getMapSize ().y();
 	str.reserve (size);
-	for (size_t i = 0; i != size; ++i)
+	for (int x = 0; x != player.getMapSize ().x(); ++x)
 	{
-		if (player.hasResourceExplored (i)) str += "1";
-		else str += "0";
+		for (int y = 0; y != player.getMapSize ().y (); ++y)
+		{
+			if (player.hasResourceExplored (cPosition(x, y))) str += "1";
+			else str += "0";
+		}
 	}
 	return str;
 }
@@ -1223,9 +1226,12 @@ string cSavegame::convertScanMapToString (const cPlayer& player) const
 //--------------------------------------------------------------------------
 void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 {
-	for (size_t i = 0; i != str.length(); ++i)
+	for (int x = 0; x != player.getMapSize ().x (); ++x)
 	{
-		if (!str.compare (i, 1, "1")) player.exploreResource (i);
+		for (int y = 0; y != player.getMapSize ().y (); ++y)
+		{
+			if (!str.compare (x + y * player.getMapSize ().y (), 1, "1")) player.exploreResource (cPosition (x, y));
+		}
 	}
 }
 

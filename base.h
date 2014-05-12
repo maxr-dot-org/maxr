@@ -27,6 +27,7 @@ class cMap;
 class cNetMessage;
 class cPlayer;
 class cServer;
+class cPosition;
 
 struct sSubBase
 {
@@ -244,7 +245,7 @@ public:
 	*@author eiko
 	*/
 	void refreshSubbases();
-	sSubBase* checkNeighbour (int iOff, const cBuilding& Building);
+	sSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building);
 
 public:
 	std::vector<sSubBase*> SubBases;
