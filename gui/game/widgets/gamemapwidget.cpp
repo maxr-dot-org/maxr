@@ -688,7 +688,7 @@ void cGameMapWidget::drawBaseUnits ()
 			{
 				// Draw big unit only once
 				// FIXME: bug when (x,y) is outside of the drawing screen.
-				if (building.PosX == i->x() && building.PosY == i->y())
+				if (building.getPosition() == *i)
 				{
 					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player);
 				}
@@ -715,7 +715,7 @@ void cGameMapWidget::drawTopBuildings ()
 		if (!player || !player->canSeeAnyAreaUnder (*building)) continue;
 		// make sure a big building is drawn only once
 		// FIXME: BUG: when PosX,PosY is outside of drawing screen
-		if (building->PosX != i->x() || building->PosY != i->y()) continue;
+		if (building->getPosition() != *i) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player);
@@ -787,7 +787,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 		{
 			// make sure a big vehicle is drawn only once
 			// FIXME: BUG: when PosX,PosY is outside of drawing screen
-			if (vehicle->PosX == i->x() && vehicle->PosY == i->y())
+			if (vehicle->getPosition() == *i)
 			{
 				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
 			}
@@ -1036,7 +1036,7 @@ void cGameMapWidget::drawExitPoints ()
 				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns() == 0)
 			) && !selectedVehicle->BuildPath)
 		{
-			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return dynamicMap->possiblePlace (*selectedVehicle, position.x (), position.y ()); });
+			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return dynamicMap->possiblePlace (*selectedVehicle, position); });
 		}
 		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->owner == player)
 		{
@@ -1121,7 +1121,7 @@ void cGameMapWidget::drawBuildBand ()
 			auto selectBuildPositionMode = static_cast<const cMouseModeSelectBuildPosition*>(mouseMode.get ());
 			bool validPosition;
 			cPosition destination;
-			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (*dynamicMap, cPosition (selectedVehicle->PosX, selectedVehicle->PosY), getMapTilePosition (mouse->getPosition ()));
+			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (*dynamicMap, selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition ()));
 			if (!validPosition) return;
 
 			SDL_Rect dest;
@@ -1133,7 +1133,7 @@ void cGameMapWidget::drawBuildBand ()
 		else if (mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion)
 		{
 			const auto mouseTilePosition = getMapTilePosition (mouse->getPosition ());
-			if (mouseTilePosition.x () == selectedVehicle->PosX || mouseTilePosition.y () == selectedVehicle->PosY)
+			if (mouseTilePosition.x () == selectedVehicle->getPosition().x() || mouseTilePosition.y () == selectedVehicle->getPosition().y())
 			{
 				SDL_Rect dest;
 				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mouseTilePosition.x ();
@@ -1189,23 +1189,23 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 {
-	if (!vehicle.BuildPath || (vehicle.BandX == vehicle.PosX && vehicle.BandY == vehicle.PosY) || mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion) return;
+	if (!vehicle.BuildPath || (vehicle.bandPosition == vehicle.getPosition()) || mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion) return;
 
 	const auto zoomedTileSize = getZoomedTileSize ();
 
-	int mx = vehicle.PosX;
-	int my = vehicle.PosY;
+	int mx = vehicle.getPosition().x();
+	int my = vehicle.getPosition().y();
 	int sp;
-	if (mx < vehicle.BandX)
+	if (mx < vehicle.bandPosition.x())
 		sp = 4;
-	else if (mx > vehicle.BandX)
+	else if (mx > vehicle.bandPosition.x())
 		sp = 3;
-	else if (my < vehicle.BandY)
+	else if (my < vehicle.bandPosition.y())
 		sp = 1;
 	else
 		sp = 6;
 
-	while (mx != vehicle.BandX || my != vehicle.BandY)
+	while (mx != vehicle.bandPosition.x() || my != vehicle.bandPosition.y())
 	{
 		SDL_Rect dest;
 		dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
@@ -1213,14 +1213,14 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 
 		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), NULL, cVideo::buffer, &dest);
 
-		if (mx < vehicle.BandX)
+		if (mx < vehicle.bandPosition.x())
 			mx++;
-		else if (mx > vehicle.BandX)
+		else if (mx > vehicle.bandPosition.x())
 			mx--;
 
-		if (my < vehicle.BandY)
+		if (my < vehicle.bandPosition.y())
 			my++;
-		else if (my > vehicle.BandY)
+		else if (my > vehicle.bandPosition.y())
 			my--;
 	}
 	SDL_Rect dest;
@@ -1254,8 +1254,8 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	else save = moveJob->iSavedSpeed;
 
 	SDL_Rect dest;
-	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * vehicle.PosX;
-	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * vehicle.PosY;
+	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * vehicle.getPosition().x();
+	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * vehicle.getPosition().y();
 	dest.w = zoomedTileSize.x ();
 	dest.h = zoomedTileSize.y ();
 	SDL_Rect ndest = dest;
@@ -1267,8 +1267,8 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 	{
 		if (wp->next)
 		{
-			ndest.x += mx = wp->next->X * zoomedTileSize.x () - wp->X * zoomedTileSize.x ();
-			ndest.y += my = wp->next->Y * zoomedTileSize.y () - wp->Y * zoomedTileSize.y ();
+			ndest.x += mx = wp->next->position.x() * zoomedTileSize.x () - wp->position.x() * zoomedTileSize.x ();
+			ndest.y += my = wp->next->position.y() * zoomedTileSize.y () - wp->position.y() * zoomedTileSize.y ();
 		}
 		else
 		{
@@ -1576,11 +1576,11 @@ cPosition cGameMapWidget::getScreenPosition (const cUnit& unit, bool movementOff
 {
 	cPosition position;
 
-	const int offsetX = movementOffset ? unit.getMovementOffsetX () : 0;
-	position.x() = getPosition ().x () - ((int)((pixelOffset.x () - offsetX) * getZoomFactor ())) + getZoomedTileSize ().x () * unit.PosX;
+	const int offsetX = movementOffset ? unit.getMovementOffset ().x() : 0;
+	position.x() = getPosition ().x () - ((int)((pixelOffset.x () - offsetX) * getZoomFactor ())) + getZoomedTileSize ().x () * unit.getPosition().x();
 
-	const int offsetY = movementOffset ? unit.getMovementOffsetY () : 0;
-	position.y() = getPosition ().y () - ((int)((pixelOffset.y () - offsetY) * getZoomFactor ())) + getZoomedTileSize ().y () * unit.PosY;
+	const int offsetY = movementOffset ? unit.getMovementOffset ().y() : 0;
+	position.y() = getPosition ().y () - ((int)((pixelOffset.y () - offsetY) * getZoomFactor ())) + getZoomedTileSize ().y () * unit.getPosition().y();
 
 	return position;
 }
@@ -1707,12 +1707,12 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 		(building.owner == player || (!player || player->canSeeAnyAreaUnder (building))))
 	{
 		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
-		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.PosX * 64 + building.DamageFXPointX, building.PosY * 64 + building.DamageFXPointY), intense, windDirection));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
 
 		if (building.data.isBig && intense > 50)
 		{
 			intense -= 50;
-			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.PosX * 64 + building.DamageFXPointX2, building.PosY * 64 + building.DamageFXPointY2), intense, windDirection));
+			addEffect (std::make_shared<cFxDarkSmoke> (cPosition (building.getPosition().x() * 64 + building.DamageFXPointX2, building.getPosition().y() * 64 + building.DamageFXPointY2), intense, windDirection));
 		}
 	}
 }
@@ -1724,7 +1724,7 @@ void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 		(vehicle.owner == player || (!player || player->canSeeAnyAreaUnder (vehicle))))
 	{
 		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
-		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.PosX * 64 + vehicle.DamageFXPointX + vehicle.OffX, vehicle.PosY * 64 + vehicle.DamageFXPointY + vehicle.OffY), intense, windDirection));
+		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));
 	}
 }
 

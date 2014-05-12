@@ -595,10 +595,11 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	}
 
 	// find target offset
-	int targetOffset = message.popInt32();
-	if (Map->isValidOffset (targetOffset) == false)
+	const int targetOffset = message.popInt32();
+	cPosition targetPosition(targetOffset % Map->getSize(), targetOffset / Map->getSize());
+	if (Map->isValidPos (targetPosition) == false)
 	{
-		Log.write (" Server: Invalid target offset!", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Server: Invalid target position!", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
@@ -611,24 +612,24 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 			Log.write (" Server: vehicle with ID " + iToStr (targetID) + " not found!", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		const int oldOffset = targetOffset;
+		const auto oldPosition = targetPosition;
 		// the target offset doesn't need to match the vehicle position,
 		// when it is big
 		if (!targetVehicle->data.isBig)
 		{
-			targetOffset = Map->getOffset (targetVehicle->PosX, targetVehicle->PosY);
+			targetPosition = targetVehicle->getPosition();
 		}
 		Log.write (" Server: attacking vehicle " + targetVehicle->getDisplayName() + ", " + iToStr (targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
-		if (oldOffset != targetOffset) Log.write (" Server: target offset changed from " + iToStr (oldOffset) + " to " + iToStr (targetOffset), cLog::eLOG_TYPE_NET_DEBUG);
+		if(oldPosition != targetPosition) Log.write(" Server: target offset changed from " + iToStr(oldPosition.x()) + "x" + iToStr(oldPosition.y()) + " to " + iToStr(targetPosition.x()) + "x" + iToStr(targetPosition.y()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	// check if attack is possible
-	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), *Map, true) == false)
+	if (attackingUnit->canAttackObjectAt (targetPosition, *Map, true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	AJobs.push_back (new cServerAttackJob (*this, attackingUnit, targetOffset, false));
+	AJobs.push_back(new cServerAttackJob(*this, attackingUnit, targetPosition, false));
 }
 
 //------------------------------------------------------------------------------
@@ -712,6 +713,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	const int iBuildSpeed = message.popInt16();
 	if (iBuildSpeed > 2 || iBuildSpeed < 0) return;
 	const int iBuildOff = message.popInt32();
+	const cPosition buildPosition(iBuildOff % Map->getSize(), iBuildOff / Map->getSize());
 
 	std::array<int, 3> iTurboBuildRounds;
 	std::array<int, 3> iTurboBuildCosts;
@@ -727,39 +729,36 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	}
 
 	if (Map->isValidOffset (iBuildOff) == false) return;
-	const int buildX = iBuildOff % Map->getSize();
-	const int buildY = iBuildOff / Map->getSize();
-	const int oldPosX = Vehicle->PosX;
-	const int oldPosY = Vehicle->PosY;
+	const auto oldPosition = Vehicle->getPosition();
 
 	if (Vehicle->data.canBuild != Data.buildAs) return;
 
 	if (Data.isBig)
 	{
-		sideStepStealthUnit (buildX    , buildY    , *Vehicle, iBuildOff);
-		sideStepStealthUnit (buildX + 1, buildY    , *Vehicle, iBuildOff);
-		sideStepStealthUnit (buildX    , buildY + 1, *Vehicle, iBuildOff);
-		sideStepStealthUnit (buildX + 1, buildY + 1, *Vehicle, iBuildOff);
+		sideStepStealthUnit (buildPosition,                   *Vehicle, buildPosition);
+		sideStepStealthUnit (buildPosition + cPosition(1, 0), *Vehicle, buildPosition);
+		sideStepStealthUnit (buildPosition + cPosition(0, 1), *Vehicle, buildPosition);
+		sideStepStealthUnit (buildPosition + cPosition(1, 1), *Vehicle, buildPosition);
 
-		if (! (Map->possiblePlaceBuilding (Data, buildX,     buildY    , Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildX + 1, buildY    , Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildX,     buildY + 1, Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildX + 1, buildY + 1, Vehicle)))
+		if (! (Map->possiblePlaceBuilding (Data, buildPosition,                   Vehicle) &&
+			   Map->possiblePlaceBuilding (Data, buildPosition + cPosition(1, 0), Vehicle) &&
+			   Map->possiblePlaceBuilding (Data, buildPosition + cPosition(0, 1), Vehicle) &&
+			   Map->possiblePlaceBuilding (Data, buildPosition + cPosition(1, 1), Vehicle)))
 		{
 			sendBuildAnswer (*this, false, *Vehicle);
 			return;
 		}
-		Vehicle->BuildBigSavedPos = Map->getOffset (Vehicle->PosX, Vehicle->PosY);
+		Vehicle->BuildBigSavedPos = Map->getOffset (Vehicle->getPosition());
 
 		// set vehicle to build position
-		Map->moveVehicleBig (*Vehicle, buildX, buildY);
+		Map->moveVehicleBig (*Vehicle, buildPosition);
 		Vehicle->owner->doScan();
 	}
 	else
 	{
-		if (iBuildOff != Map->getOffset (Vehicle->PosX, Vehicle->PosY)) return;
+		if (buildPosition != Vehicle->getPosition()) return;
 
-		if (!Map->possiblePlaceBuilding (Data, iBuildOff, Vehicle))
+		if (!Map->possiblePlaceBuilding (Data, buildPosition, Vehicle))
 		{
 			sendBuildAnswer (*this, false, *Vehicle);
 			return;
@@ -770,8 +769,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	const bool bBuildPath = message.popBool();
 	const int iPathOff = message.popInt32();
 	if (Map->isValidOffset (iPathOff) == false) return;
-	Vehicle->BandX = iPathOff % Map->getSize();
-	Vehicle->BandY = iPathOff / Map->getSize();
+	Vehicle->bandPosition.x() = iPathOff % Map->getSize();
+	Vehicle->bandPosition.y() = iPathOff / Map->getSize();
 
 	Vehicle->setBuildCosts (iTurboBuildCosts[iBuildSpeed]);
 	Vehicle->setBuildTurns (iTurboBuildRounds[iBuildSpeed]);
@@ -782,7 +781,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (*this, true, *Vehicle);
-	addJob (new cStartBuildJob (*Vehicle, oldPosX, oldPosY, Data.isBig));
+	addJob (new cStartBuildJob (*Vehicle, oldPosition, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
@@ -797,16 +796,17 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 
 	const int iEscapeX = message.popInt16();
 	const int iEscapeY = message.popInt16();
+	const cPosition escapePosition(iEscapeX, iEscapeY);
 
 	if (!Vehicle->isUnitBuildingABuilding () || Vehicle->getBuildTurns () > 0) return;
-	if (!Map->possiblePlace (*Vehicle, iEscapeX, iEscapeY))
+	if (!Map->possiblePlace (*Vehicle, escapePosition))
 	{
-		sideStepStealthUnit (iEscapeX, iEscapeY, *Vehicle);
+		sideStepStealthUnit(escapePosition, *Vehicle);
 	}
 
-	if (!Map->possiblePlace (*Vehicle, iEscapeX, iEscapeY)) return;
+	if (!Map->possiblePlace (*Vehicle, escapePosition)) return;
 
-	addBuilding (Vehicle->PosX, Vehicle->PosY, Vehicle->getBuildingType (), Vehicle->owner);
+	addBuilding (Vehicle->getPosition(), Vehicle->getBuildingType (), Vehicle->owner);
 
 	// end building
 	Vehicle->setBuildingABuilding(false);
@@ -815,11 +815,11 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	// set the vehicle to the border
 	if (Vehicle->getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
-		int x = Vehicle->PosX;
-		int y = Vehicle->PosY;
-		if (iEscapeX > Vehicle->PosX) x++;
-		if (iEscapeY > Vehicle->PosY) y++;
-		Map->moveVehicle (*Vehicle, x, y);
+		int x = Vehicle->getPosition().x();
+		int y = Vehicle->getPosition().y();
+		if (iEscapeX > Vehicle->getPosition().x()) x++;
+		if (iEscapeY > Vehicle->getPosition().y()) y++;
+		Map->moveVehicle (*Vehicle, cPosition(x, y));
 
 		// refresh SeenByPlayerLists
 		checkPlayerUnits();
@@ -835,7 +835,7 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 #endif
 
 	// drive away from the building lot
-	addMoveJob (Vehicle->PosX, Vehicle->PosY, iEscapeX, iEscapeY, Vehicle);
+	addMoveJob (Vehicle->getPosition(), escapePosition, Vehicle);
 	// begin the movement immediately,
 	// so no other unit can block the destination field
 	Vehicle->ServerMoveJob->checkMove();
@@ -975,8 +975,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	if (Building == NULL) return;
 
 	// check whether the building has water and land fields around it
-	int iX = Building->PosX - 2;
-	int iY = Building->PosY - 1;
+	int iX = Building->getPosition().x() - 2;
+	int iY = Building->getPosition().y() - 1;
 	bool bLand = false;
 	bool bWater = false;
 	for (int i = 0; i < 12; ++i)
@@ -1000,14 +1000,14 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		auto b_end = buildings.end ();
 		while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-		if (!Map->isWaterOrCoast (iX, iY) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
-		else if (Map->isWaterOrCoast (iX, iY) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+		if (!Map->isWaterOrCoast (cPosition(iX, iY)) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
+		else if (Map->isWaterOrCoast (cPosition(iX, iY)) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 		{
 			bLand = true;
 			bWater = true;
 			break;
 		}
-		else if (Map->isWaterOrCoast (iX, iY)) bWater = true;
+		else if (Map->isWaterOrCoast (cPosition(iX, iY))) bWater = true;
 	}
 
 	// reset building status
@@ -1090,22 +1090,23 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 
 	const int iX = message.popInt16();
 	const int iY = message.popInt16();
-	if (Map->isValidPos (iX, iY) == false) return;
+	const cPosition position(iX, iY);
+	if (Map->isValidPos (position) == false) return;
 	if (Building->BuildList.empty()) return;
 
 	sBuildList& BuildingListItem = Building->BuildList[0];
 	if (BuildingListItem.metall_remaining > 0) return;
 
-	if (!Building->isNextTo (iX, iY)) return;
+	if (!Building->isNextTo (position)) return;
 
 	const sUnitData& unitData = *BuildingListItem.type.getUnitDataOriginalVersion();
-	if (!Map->possiblePlaceVehicle (unitData, iX, iY, Building->owner))
+	if (!Map->possiblePlaceVehicle (unitData, position, Building->owner))
 	{
-		sideStepStealthUnit (iX, iY, unitData, Building->owner);
+		sideStepStealthUnit (position, unitData, Building->owner);
 	}
-	if (!Map->possiblePlaceVehicle (unitData, iX, iY, Building->owner)) return;
+	if (!Map->possiblePlaceVehicle (unitData, position, Building->owner)) return;
 
-	addVehicle (iX, iY, BuildingListItem.type, Building->owner, false);
+	addVehicle (position, BuildingListItem.type, Building->owner, false);
 
 	// start new buildjob
 	if (Building->RepeatBuild)
@@ -1415,8 +1416,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		return;
 	}
 
-	const int off = Map->getOffset (Vehicle->PosX, Vehicle->PosY);
-	cBuilding* building = (*Map) [off].getRubble();
+	cBuilding* building = Map->getField(Vehicle->getPosition()).getRubble();
 
 	if (!building)
 	{
@@ -1424,38 +1424,38 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		return;
 	}
 
-	int rubbleoffset = -1;
+	cPosition rubblePosition(-1, -1);
 	if (building->data.isBig)
 	{
-		rubbleoffset = Map->getOffset (building->PosX, building->PosY);
+		rubblePosition = building->getPosition();
 
-		sideStepStealthUnit (building->PosX    , building->PosY    , *Vehicle, rubbleoffset);
-		sideStepStealthUnit (building->PosX + 1, building->PosY    , *Vehicle, rubbleoffset);
-		sideStepStealthUnit (building->PosX    , building->PosY + 1, *Vehicle, rubbleoffset);
-		sideStepStealthUnit (building->PosX + 1, building->PosY + 1, *Vehicle, rubbleoffset);
+		sideStepStealthUnit (building->getPosition()                  , *Vehicle, rubblePosition);
+		sideStepStealthUnit (building->getPosition() + cPosition(1, 0), *Vehicle, rubblePosition);
+		sideStepStealthUnit (building->getPosition() + cPosition(0, 1), *Vehicle, rubblePosition);
+		sideStepStealthUnit (building->getPosition() + cPosition(1, 1), *Vehicle, rubblePosition);
 
-		if ((!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY) && rubbleoffset != off) ||
-			(!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY) && rubbleoffset + 1 != off) ||
-			(!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY + 1) && rubbleoffset + Map->getSize() != off) ||
-			(!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY + 1) && rubbleoffset + Map->getSize() + 1 != off))
+		if ((!Map->possiblePlace (*Vehicle, building->getPosition()                  ) && rubblePosition                   != Vehicle->getPosition()) ||
+			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition(1, 0)) && rubblePosition + cPosition(1, 0) != Vehicle->getPosition()) ||
+			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition(0, 1)) && rubblePosition + cPosition(0, 1) != Vehicle->getPosition()) ||
+			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition(1, 1)) && rubblePosition + cPosition(1, 1) != Vehicle->getPosition()))
 		{
 			sendClearAnswer (*this, 1, *Vehicle, 0, -1, Vehicle->owner->getNr());
 			return;
 		}
 
-		Vehicle->BuildBigSavedPos = off;
-		Map->moveVehicleBig (*Vehicle, building->PosX, building->PosY);
+		Vehicle->BuildBigSavedPos = Map->getOffset(Vehicle->getPosition());
+		Map->moveVehicleBig (*Vehicle, building->getPosition());
 	}
 
 	Vehicle->setClearing(true);
 	Vehicle->setClearingTurns(building->data.isBig ? 4 : 1);
 	Vehicle->owner->doScan();
-	addJob (new cStartBuildJob (*Vehicle, off % Map->getSize(), off / Map->getSize(), building->data.isBig));
+	addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
 
-	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns (), rubbleoffset, Vehicle->owner->getNr ());
+	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns (), Map->getOffset(rubblePosition), Vehicle->owner->getNr ());
 	for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 	{
-		sendClearAnswer (*this, 0, *Vehicle, 0, rubbleoffset, Vehicle->seenByPlayerList[i]->getNr());
+		sendClearAnswer (*this, 0, *Vehicle, 0, Map->getOffset(rubblePosition), Vehicle->seenByPlayerList[i]->getNr());
 	}
 }
 
@@ -1479,7 +1479,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 
 		if (Vehicle->data.isBig)
 		{
-			Map->moveVehicle (*Vehicle, Vehicle->BuildBigSavedPos % Map->getSize(), Vehicle->BuildBigSavedPos / Map->getSize());
+			Map->moveVehicle (*Vehicle, cPosition(Vehicle->BuildBigSavedPos % Map->getSize(), Vehicle->BuildBigSavedPos / Map->getSize()));
 			Vehicle->owner->doScan();
 			sendStopClear (*this, *Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->getNr());
 			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
@@ -1613,14 +1613,15 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		const int x = message.popInt16();
 		const int y = message.popInt16();
-		if (!StoringVehicle->isNextTo (x, y)) return;
+		const cPosition position(x, y);
+		if (!StoringVehicle->isNextTo (position)) return;
 
 		// sidestep stealth units if necessary
-		sideStepStealthUnit (x, y, *StoredVehicle);
+		sideStepStealthUnit (position, *StoredVehicle);
 
-		if (StoringVehicle->canExitTo (cPosition(x, y), *Map, StoredVehicle->data))
+		if (StoringVehicle->canExitTo (position, *Map, StoredVehicle->data))
 		{
-			StoringVehicle->exitVehicleTo (*StoredVehicle, Map->getOffset (x, y), *Map);
+			StoringVehicle->exitVehicleTo (*StoredVehicle, position, *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->getNr());
 			if (StoredVehicle->data.canSurvey)
@@ -1647,14 +1648,15 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		const int x = message.popInt16();
 		const int y = message.popInt16();
+		const cPosition position(x, y);
 		if (!StoringBuilding->isNextTo (x, y)) return;
 
 		// sidestep stealth units if necessary
-		sideStepStealthUnit (x, y, *StoredVehicle);
+		sideStepStealthUnit (position, *StoredVehicle);
 
-		if (StoringBuilding->canExitTo (cPosition(x, y), *Map, StoredVehicle->data))
+		if (StoringBuilding->canExitTo (position, *Map, StoredVehicle->data))
 		{
-			StoringBuilding->exitVehicleTo (*StoredVehicle, Map->getOffset (x, y), *Map);
+			StoringBuilding->exitVehicleTo (*StoredVehicle, position, *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->getNr());
 			if (StoredVehicle->data.canSurvey)
@@ -1897,10 +1899,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (destUnit == NULL) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
-	if (! ((destUnit && srcVehicle->canDoCommandoAction (cPosition(destUnit->PosX, destUnit->PosY), *Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (cPosition(destBuilding->PosX, destBuilding->PosY + 1), *Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (cPosition(destBuilding->PosX + 1, destBuilding->PosY), *Map, steal)) ||
-		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (cPosition(destBuilding->PosX + 1, destBuilding->PosY + 1), *Map, steal)))) return;
+	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->getPosition(), *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition(0, 1), *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition(1, 0), *Map, steal)) ||
+		   (destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destUnit->getPosition() + cPosition(1, 1), *Map, steal)))) return;
 
 	// check whether the action is successful or not
 	const int chance = srcVehicle->calcCommandoChance (destUnit, steal);
@@ -2266,9 +2268,9 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const s
 	{
 		for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
 		{
-			if (!Map->possiblePlaceVehicle (unitData, iX + offX, iY + offY, player)) continue;
+			if (!Map->possiblePlaceVehicle (unitData, cPosition(iX + offX, iY + offY), player)) continue;
 
-			return addVehicle (iX + offX, iY + offY, unitData.ID, player, true);
+			return addVehicle (cPosition(iX + offX, iY + offY), unitData.ID, player, true);
 		}
 	}
 	return NULL;
@@ -2309,15 +2311,15 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sL
 	// Find place for mine if bridgehead is fixed
 	if (bFixed)
 	{
-		if (Map->possiblePlaceBuilding (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), iX - 1, iY - 1 + 1) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1 + 1) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1 + 1))
+		if (Map->possiblePlaceBuilding (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), cPosition(iX - 1, iY - 1 + 1)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 1, iY - 1)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 2, iY - 1)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 2, iY - 1 + 1)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 1, iY - 1 + 1)))
 		{
 			// place buildings:
-			addBuilding (iX - 1,     iY - 1 + 1, UnitsData.specialIDSmallGen, Player, true);
-			addBuilding (iX - 1 + 1, iY - 1,     UnitsData.specialIDMine, Player, true);
+			addBuilding (cPosition(iX - 1,     iY - 1 + 1), UnitsData.specialIDSmallGen, Player, true);
+			addBuilding (cPosition(iX - 1 + 1, iY - 1),     UnitsData.specialIDMine, Player, true);
 		}
 		else
 		{
@@ -2357,11 +2359,11 @@ void cServer::correctLandingPos (int& iX, int& iY)
 		{
 			for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
 			{
-				if (Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), iX + offX, iY + offY + 1, margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + offX + 1, iY + offY    , margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + offX + 2, iY + offY    , margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + offX + 2, iY + offY + 1, margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + offX + 1, iY + offY + 1, margin))
+				if (Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), cPosition(iX + offX, iY + offY + 1), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 1, iY + offY    ), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 2, iY + offY    ), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 2, iY + offY + 1), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 1, iY + offY + 1), margin))
 				{
 					iX += offX + 1;
 					iY += offY + 1;
@@ -2393,14 +2395,14 @@ void cServer::startNewGame()
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int uid)
+cVehicle* cServer::addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int uid)
 {
 	// generate the vehicle:
-	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, id, uid ? uid : iNextUnitID);
+	cVehicle* AddedVehicle = Player->addVehicle(position, id, uid ? uid : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
-	if (bAddToMap) Map->addVehicle (*AddedVehicle, iPosX, iPosY);
+	if (bAddToMap) Map->addVehicle (*AddedVehicle, position);
 
 	// scan with surveyor:
 	if (AddedVehicle->data.canSurvey)
@@ -2419,7 +2421,7 @@ cVehicle* cServer::addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Pla
 		AddedVehicle->FlightHigh = 64;
 	}
 
-	sendAddUnit (*this, iPosX, iPosY, AddedVehicle->iID, true, id, Player->getNr(), bInit);
+	sendAddUnit(*this, position.x(), position.y(), AddedVehicle->iID, true, id, Player->getNr(), bInit);
 
 	// detection must be done, after the vehicle has been sent to clients
 	AddedVehicle->makeDetection (*this);
@@ -2427,20 +2429,19 @@ cVehicle* cServer::addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Pla
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit, unsigned int uid)
+cBuilding* cServer::addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit, unsigned int uid)
 {
 	// generate the building:
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, id, uid ? uid : iNextUnitID);
+	cBuilding* AddedBuilding = Player->addBuilding (position, id, uid ? uid : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
 	if (AddedBuilding->isSentryActive()) Player->addSentry (*AddedBuilding);
 
 	iNextUnitID++;
 
-	int iOff = Map->getOffset (iPosX, iPosY);
-	cBuilding* buildingToBeDeleted = Map->fields[iOff].getTopBuilding();
+	cBuilding* buildingToBeDeleted = Map->getField(position).getTopBuilding();
 
-	Map->addBuilding (*AddedBuilding, iPosX, iPosY);
-	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, id, Player->getNr(), bInit);
+	Map->addBuilding (*AddedBuilding, position);
+	sendAddUnit(*this, position.x(), position.y(), AddedBuilding->iID, false, id, Player->getNr(), bInit);
 
 	// integrate the building to the base:
 	Player->base.addBuilding (AddedBuilding, this);
@@ -2450,7 +2451,8 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 	{
 		if (AddedBuilding->data.isBig)
 		{
-			auto buildings = &Map->fields[iOff].getBuildings ();
+			auto bigPosition = position;
+			auto buildings = &Map->getField(bigPosition).getBuildings();
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
@@ -2460,8 +2462,8 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 					--i;
 				}
 			}
-			iOff++;
-			buildings = &Map->fields[iOff].getBuildings();
+			bigPosition.x()++;
+			buildings = &Map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
@@ -2470,8 +2472,8 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 					--i;
 				}
 			}
-			iOff += Map->getSize();
-			buildings = &Map->fields[iOff].getBuildings();
+			bigPosition.y()++;
+			buildings = &Map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
@@ -2480,8 +2482,8 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 					--i;
 				}
 			}
-			iOff--;
-			buildings = &Map->fields[iOff].getBuildings();
+			bigPosition.x()--;
+			buildings = &Map->getField(bigPosition).getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
 				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
@@ -2495,7 +2497,7 @@ cBuilding* cServer::addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* P
 		{
 			deleteUnit (buildingToBeDeleted);
 
-			const auto& buildings = Map->fields[iOff].getBuildings();
+			const auto& buildings = Map->getField(position).getBuildings();
 			for (size_t i = 0; i != buildings.size(); ++i)
 			{
 				if (buildings[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
@@ -3354,9 +3356,9 @@ void cServer::handleMoveJobs()
 			// continue path building
 			if (Vehicle && Vehicle->BuildPath)
 			{
-				if (Vehicle->data.storageResCur >= Vehicle->getBuildCostsStart () && Map->possiblePlaceBuilding (*Vehicle->getBuildingType ().getUnitDataOriginalVersion (), Vehicle->PosX, Vehicle->PosY, Vehicle))
+				if (Vehicle->data.storageResCur >= Vehicle->getBuildCostsStart () && Map->possiblePlaceBuilding (*Vehicle->getBuildingType ().getUnitDataOriginalVersion (), Vehicle->getPosition(), Vehicle))
 				{
-					addJob (new cStartBuildJob (*Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
+					addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), Vehicle->data.isBig));
 					Vehicle->setBuildingABuilding(true);
 					Vehicle->setBuildCosts(Vehicle->getBuildCostsStart());
 					Vehicle->setBuildTurns(Vehicle->getBuildTurnsStart ());
@@ -3456,12 +3458,10 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 //------------------------------------------------------------------------------
 void cServer::destroyUnit (cVehicle& vehicle)
 {
-	const int offset = Map->getOffset (vehicle.PosX, vehicle.PosY);
 	int value = 0;
 	int oldRubbleValue = 0;
 	bool bigRubble = false;
-	int rubblePosX = vehicle.PosX;
-	int rubblePosY = vehicle.PosY;
+	auto rubblePosition = vehicle.getPosition();
 
 	if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
 	{
@@ -3470,7 +3470,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 	}
 
 	//delete all buildings on the field, except connectors
-	auto buildings = & (*Map) [offset].getBuildings();
+	auto buildings = &Map->getField(vehicle.getPosition()).getBuildings();
 	auto b_it = buildings->begin();
 	if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 
@@ -3482,8 +3482,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 			oldRubbleValue += (*b_it)->RubbleValue;
 			if ((*b_it)->data.isBig)
 			{
-				rubblePosX = (*b_it)->PosX;
-				rubblePosY = (*b_it)->PosY;
+				rubblePosition = (*b_it)->getPosition();
 				bigRubble = true;
 			}
 		}
@@ -3497,7 +3496,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 	if (vehicle.data.isBig)
 	{
 		bigRubble = true;
-		buildings = & (*Map) [offset + 1].getBuildings();
+		buildings = &Map->getField(vehicle.getPosition() + cPosition(1, 0)).getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3508,7 +3507,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		buildings = & (*Map) [offset + Map->getSize()].getBuildings();
+		buildings = &Map->getField(vehicle.getPosition() + cPosition(0, 1)).getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3519,7 +3518,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		buildings = & (*Map) [offset + 1 + Map->getSize()].getBuildings();
+		buildings = &Map->getField(vehicle.getPosition() + cPosition(1, 1)).getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3540,7 +3539,7 @@ void cServer::destroyUnit (cVehicle& vehicle)
 	}
 
 	if (value > 0 || oldRubbleValue > 0)
-		addRubble (rubblePosX, rubblePosY, value / 2 + oldRubbleValue, bigRubble);
+		addRubble (rubblePosition, value / 2 + oldRubbleValue, bigRubble);
 
 	deleteUnit (&vehicle);
 }
@@ -3568,72 +3567,72 @@ int cServer::deleteBuildings (const std::vector<cBuilding*>& buildings)
 //------------------------------------------------------------------------------
 void cServer::destroyUnit (cBuilding& b)
 {
-	int offset = Map->getOffset (b.PosX, b.PosY);
+	auto position = b.getPosition();
 	int rubble = 0;
 	bool big = false;
 
-	cBuilding* topBuilding = Map->fields[offset].getTopBuilding();
+	cBuilding* topBuilding = Map->getField(position).getTopBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
 		big = true;
-		offset = Map->getOffset (topBuilding->PosX, topBuilding->PosY);
+		position = topBuilding->getPosition();
 
-		auto buildings = &Map->fields[offset + 1].getBuildings();
+		auto buildings = &Map->getField(position + cPosition(0, 1)).getBuildings();
 		rubble += deleteBuildings (*buildings);
 
-		buildings = &Map->fields[offset + Map->getSize()].getBuildings();
+		buildings = &Map->getField(position + cPosition(1, 0)).getBuildings();
 		rubble += deleteBuildings (*buildings);
 
-		buildings = &Map->fields[offset + Map->getSize() + 1].getBuildings();
+		buildings = &Map->getField(position + cPosition(1, 1)).getBuildings();
 		rubble += deleteBuildings (*buildings);
 	}
 
 	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
 
-	auto buildings = &Map->fields[offset].getBuildings();
+	auto buildings = &Map->getField(position).getBuildings();
 	rubble += deleteBuildings (*buildings);
 
 	if (surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2)
-		addRubble (offset % Map->getSize(), offset / Map->getSize(), rubble / 2, big);
+		addRubble (position, rubble / 2, big);
 }
 
 //------------------------------------------------------------------------------
-void cServer::addRubble (int x, int y, int value, bool big)
+void cServer::addRubble (const cPosition& position, int value, bool big)
 {
 	value = std::max (1, value);
 
-	if (Map->isWaterOrCoast (x, y))
+	if (Map->isWaterOrCoast (position))
 	{
 		if (big)
 		{
-			addRubble (x + 1, y    , value / 4, false);
-			addRubble (x    , y + 1, value / 4, false);
-			addRubble (x + 1, y + 1, value / 4, false);
+			addRubble (position + cPosition(1, 0), value / 4, false);
+			addRubble (position + cPosition(0, 1), value / 4, false);
+			addRubble (position + cPosition(1, 1), value / 4, false);
 		}
 		return;
 	}
 
-	if (big && Map->isWaterOrCoast (x + 1, y))
+	if(big && Map->isWaterOrCoast(position + cPosition(1, 0)))
 	{
-		addRubble (x    , y    , value / 4, false);
-		addRubble (x    , y + 1, value / 4, false);
-		addRubble (x + 1, y + 1, value / 4, false);
+		addRubble (position,                   value / 4, false);
+		addRubble (position + cPosition(0, 1), value / 4, false);
+		addRubble (position + cPosition(1, 1), value / 4, false);
 		return;
 	}
 
-	if (big && Map->isWaterOrCoast (x, y + 1))
+	if (big && Map->isWaterOrCoast (position + cPosition(0, 1)))
 	{
-		addRubble (x    , y    , value / 4, false);
-		addRubble (x + 1, y    , value / 4, false);
-		addRubble (x + 1, y + 1, value / 4, false);
+		addRubble (position,                   value / 4, false);
+		addRubble (position + cPosition(1, 0), value / 4, false);
+		addRubble (position + cPosition(1, 1), value / 4, false);
 		return;
 	}
 
-	if (big && Map->isWaterOrCoast (x + 1, y + 1))
+	if (big && Map->isWaterOrCoast (position + cPosition(1, 1)))
 	{
-		addRubble (x    , y    , value / 4, false);
-		addRubble (x + 1, y    , value / 4, false);
-		addRubble (x    , y + 1, value / 4, false);
+		addRubble (position,                   value / 4, false);
+		addRubble (position + cPosition(1, 0), value / 4, false);
+		addRubble (position + cPosition(0, 1), value / 4, false);
 		return;
 	}
 
@@ -3642,13 +3641,12 @@ void cServer::addRubble (int x, int y, int value, bool big)
 
 	iNextUnitID++;
 
-	rubble->PosX = x;
-	rubble->PosY = y;
+	rubble->setPosition(position);
 
 	rubble->data.isBig = big;
 	rubble->RubbleValue = value;
 
-	Map->addBuilding (*rubble, x, y);
+	Map->addBuilding (*rubble, position);
 
 	if (big)
 	{
@@ -3757,7 +3755,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 
 	for (cBuilding* Building = player.BuildingList; Building; Building = Building->next)
 	{
-		sendAddUnit (*this, Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, player.getNr (), true);
+		sendAddUnit (*this, Building->getPosition().x(), Building->getPosition().y(), Building->iID, false, Building->data.ID, player.getNr (), true);
 		for (size_t i = 0; i != Building->storedUnits.size(); ++i)
 		{
 			cVehicle& storedVehicle = *Building->storedUnits[i];
@@ -3830,7 +3828,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 //------------------------------------------------------------------------------
 void cServer::resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player)
 {
-	sendAddUnit (*this, Vehicle.PosX, Vehicle.PosY, Vehicle.iID, true, Vehicle.data.ID, Player.getNr (), true, !Vehicle.isUnitLoaded ());
+	sendAddUnit (*this, Vehicle.getPosition().x(), Vehicle.getPosition().y(), Vehicle.iID, true, Vehicle.data.ID, Player.getNr (), true, !Vehicle.isUnitLoaded ());
 	if (Vehicle.ServerMoveJob) sendMoveJobServer (*this, *Vehicle.ServerMoveJob, Player.getNr());
 	for (size_t i = 0; i != Vehicle.storedUnits.size(); ++i)
 	{
@@ -3845,9 +3843,9 @@ void cServer::resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player)
 }
 
 //------------------------------------------------------------------------------
-bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* vehicle)
+bool cServer::addMoveJob (const cPosition& source, const cPosition& destination, cVehicle* vehicle)
 {
-	cServerMoveJob* MoveJob = new cServerMoveJob (*this, srcX, srcY, destX, destY, vehicle);
+	cServerMoveJob* MoveJob = new cServerMoveJob (*this, source, destination, vehicle);
 	if (!MoveJob->calcPath())
 	{
 		delete MoveJob;
@@ -3895,7 +3893,7 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	}
 	vehicle.seenByPlayerList.clear();
 	vehicle.detectedByPlayerList.clear();
-	sendAddUnit (*this, vehicle.PosX, vehicle.PosY, vehicle.iID, true, vehicle.data.ID, vehicle.owner->getNr(), false);
+	sendAddUnit (*this, vehicle.getPosition().x(), vehicle.getPosition().y(), vehicle.iID, true, vehicle.data.ID, vehicle.owner->getNr(), false);
 	sendUnitData (*this, vehicle, vehicle.owner->getNr());
 	sendSpecificUnitData (*this, vehicle);
 
@@ -3917,14 +3915,14 @@ void cServer::stopVehicleBuilding (cVehicle& vehicle)
 {
 	if (!vehicle.isUnitBuildingABuilding ()) return;
 
-	int iPos = Map->getOffset (vehicle.PosX, vehicle.PosY);
+	int iPos = Map->getOffset (vehicle.getPosition());
 
 	vehicle.setBuildingABuilding(false);
 	vehicle.BuildPath = false;
 
 	if (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig)
 	{
-		Map->moveVehicle (vehicle, vehicle.BuildBigSavedPos % Map->getSize(), vehicle.BuildBigSavedPos / Map->getSize());
+		Map->moveVehicle (vehicle, cPosition(vehicle.BuildBigSavedPos % Map->getSize(), vehicle.BuildBigSavedPos / Map->getSize()));
 		iPos = vehicle.BuildBigSavedPos;
 		vehicle.owner->doScan();
 	}
@@ -3935,12 +3933,12 @@ void cServer::stopVehicleBuilding (cVehicle& vehicle)
 	}
 }
 
-void cServer::sideStepStealthUnit (int PosX, int PosY, const cVehicle& vehicle, int bigOffset)
+void cServer::sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset)
 {
-	sideStepStealthUnit (PosX, PosY, vehicle.data, vehicle.owner, bigOffset);
+	sideStepStealthUnit(position, vehicle.data, vehicle.owner, bigOffset);
 }
 
-void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset)
+void cServer::sideStepStealthUnit(const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset)
 {
 	// TODO: make sure, the stealth vehicle takes the direct diagonal move.
 	// Also when two straight moves would be shorter.
@@ -3948,7 +3946,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 	if (vehicleData.factorAir > 0) return;
 
 	// first look for an undetected stealth unit
-	cVehicle* stealthVehicle = Map->fields[Map->getOffset (PosX, PosY)].getVehicle();
+	cVehicle* stealthVehicle = Map->getField(position).getVehicle();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->owner == vehicleOwner) return;
 	if (stealthVehicle->data.isStealthOn == TERRAIN_NONE) return;
@@ -3961,35 +3959,35 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 	// found a stealth unit. Try to find a place where the unit can move
 	bool placeFound = false;
 	int minCosts = 99;
-	int bestX, bestY;
-	const int minx = std::max (PosX - 1, 0);
-	const int maxx = std::min (PosX + 1, Map->getSize() - 1);
-	const int miny = std::max (PosY - 1, 0);
-	const int maxy = std::min (PosY + 1, Map->getSize() - 1);
+	cPosition bestPosition;
+	const int minx = std::max (position.x() - 1, 0);
+	const int maxx = std::min (position.x() + 1, Map->getSize() - 1);
+	const int miny = std::max (position.y() - 1, 0);
+	const int maxy = std::min (position.y() + 1, Map->getSize() - 1);
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
 		{
-			if (x == PosX && y == PosY) continue;
+			const cPosition currentPosition(x, y);
+			if(currentPosition == position) continue;
 
 			// when a bigOffet was passed,
 			// for example a constructor needs space for a big building
 			// so not all directions are allowed for the side stepping
 			if (bigOffset != -1)
 			{
-				int off = Map->getOffset (x, y);
-				if (off == bigOffset ||
-					off == bigOffset + 1 ||
-					off == bigOffset + Map->getSize() ||
-					off == bigOffset + Map->getSize() + 1) continue;
+				if (currentPosition == bigOffset ||
+					currentPosition == bigOffset + cPosition(1, 0) ||
+					currentPosition == bigOffset + cPosition(0, 1) ||
+					currentPosition == bigOffset + cPosition(1, 1)) continue;
 			}
 
 			// check whether this field is a possible destination
-			if (!Map->possiblePlace (*stealthVehicle, x, y)) continue;
+			if (!Map->possiblePlace (*stealthVehicle, currentPosition)) continue;
 
 			// check costs of the move
-			cPathCalculator pathCalculator (0, 0, 0, 0, *Map, *stealthVehicle);
-			int costs = pathCalculator.calcNextCost (PosX, PosY, x, y);
+			cPathCalculator pathCalculator (cPosition(0, 0), cPosition(0, 0), *Map, *stealthVehicle);
+			int costs = pathCalculator.calcNextCost (position, currentPosition);
 			if (costs > stealthVehicle->data.speedCur) continue;
 
 			// check whether the vehicle would be detected
@@ -4002,7 +4000,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 					if (PlayerList[i] == stealthVehicle->owner) continue;
 					if (PlayerList[i]->hasLandDetection (Map->getOffset (x, y))) detectOnDest = true;
 				}
-				if (Map->isWater (x, y)) detectOnDest = true;
+				if (Map->isWater (currentPosition)) detectOnDest = true;
 			}
 			if (stealthVehicle->data.isStealthOn & TERRAIN_SEA)
 			{
@@ -4011,11 +4009,11 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 					if (PlayerList[i] == stealthVehicle->owner) continue;
 					if (PlayerList[i]->hasSeaDetection (Map->getOffset (x, y))) detectOnDest = true;
 				}
-				if (!Map->isWater (x, y)) detectOnDest = true;
+				if (!Map->isWater (currentPosition)) detectOnDest = true;
 
 				if (stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0)
 				{
-					cBuilding* b = Map->fields[Map->getOffset (x, y)].getBaseBuilding();
+					cBuilding* b = Map->getField(currentPosition).getBaseBuilding();
 					if (b && (b->data.surfacePosition == sUnitData::SURFACE_POS_BASE || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) detectOnDest = true;
 				}
 			}
@@ -4027,8 +4025,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 			{
 				// this is a good candidate for a destination
 				minCosts = costs;
-				bestX = x;
-				bestY = y;
+				bestPosition = currentPosition;
 				placeFound = true;
 			}
 		}
@@ -4036,7 +4033,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleD
 
 	if (placeFound)
 	{
-		addMoveJob (PosX, PosY, bestX, bestY, stealthVehicle);
+		addMoveJob (position, bestPosition, stealthVehicle);
 		// begin the movement immediately,
 		// so no other unit can block the destination field
 		stealthVehicle->ServerMoveJob->checkMove();

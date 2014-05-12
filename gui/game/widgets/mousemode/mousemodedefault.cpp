@@ -154,11 +154,11 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 	{
 		return eActionType::Steal;
 	}
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canAttackObjectAt (mapPosition.x (), mapPosition.y (), map, false, false))
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canAttackObjectAt (mapPosition, map, false, false))
 	{
 		return eActionType::Attack;
 	}
-	else if (selectedBuilding && selectedBuilding->owner == player && selectedBuilding->canAttackObjectAt (mapPosition.x (), mapPosition.y (), map))
+	else if (selectedBuilding && selectedBuilding->owner == player && selectedBuilding->canAttackObjectAt (mapPosition, map))
 	{
 		return eActionType::Attack;
 	}
@@ -224,7 +224,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 			{
 				return eActionType::None;
 			}
-			else if (map.possiblePlace (*selectedVehicle, mapPosition.x (), mapPosition.y (), true))
+			else if (map.possiblePlace (*selectedVehicle, mapPosition, true))
 			{
 				return eActionType::Move;
 			}
@@ -237,7 +237,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 		{
 			if (((selectedVehicle->isUnitBuildingABuilding () && selectedVehicle->getBuildTurns() == 0) ||
 				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns () == 0)) &&
-				map.possiblePlace (*selectedVehicle, mapPosition.x (), mapPosition.y ()) && selectedVehicle->isNextTo (mapPosition.x (), mapPosition.y ()))
+				map.possiblePlace (*selectedVehicle, mapPosition) && selectedVehicle->isNextTo (mapPosition))
 			{
 				return eActionType::Move;
 			}

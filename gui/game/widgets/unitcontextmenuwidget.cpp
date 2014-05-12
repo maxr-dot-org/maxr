@@ -109,7 +109,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Remove:
-		if (unit->data.canClearArea && dynamicMap && dynamicMap->getField(cPosition(unit->PosX, unit->PosY)).getRubble () && unit->isUnitClearing () == false)
+		if (unit->data.canClearArea && dynamicMap && dynamicMap->getField(unit->getPosition()).getRubble () && unit->isUnitClearing () == false)
 		{
 			auto button = addChild (std::make_unique<cPushButton> (nextButtonPosition, ePushButtonType::UnitContextMenu, SoundData.SNDObjectMenu.get (), lngPack.i18n ("Text~Others~Clear_7"), FONT_LATIN_SMALL_WHITE));
 			button->clicked.connect ([&](){ removeClicked (); });

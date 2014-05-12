@@ -78,14 +78,12 @@ void cJobContainer::onRemoveUnit (cUnit* unit)
 	}
 }
 
-cStartBuildJob::cStartBuildJob (cVehicle& vehicle_, int orgX_, int orgY_, bool big_) :
+cStartBuildJob::cStartBuildJob(cVehicle& vehicle_, const cPosition& org_, bool big_) :
 	cJob (vehicle_),
-	orgX (orgX_),
-	orgY (orgY_),
+	org (org_),
 	big (big_)
 {
-	vehicle_.OffX = (vehicle_.PosX < orgX ? 64 : 0);
-	vehicle_.OffY = (vehicle_.PosY < orgY ? 64 : 0);
+	vehicle_.setMovementOffset(cPosition(vehicle_.getPosition().x() < org.x() ? 64 : 0, vehicle_.getPosition().y() < org.y() ? 64 : 0));
 }
 
 void cStartBuildJob::run (const cGameTimer& gameTimer)
@@ -94,40 +92,39 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 	{
 		//cancel the job, if the vehicle is not building or clearing!
 		finished = true;
-		vehicle->OffX = 0;
-		vehicle->OffY = 0;
+		vehicle->setMovementOffset(cPosition(0, 0));
 	}
 
 	if (big)
 	{
-		int deltaX = (vehicle->PosX < orgX ? -1 : 1) * MOVE_SPEED;
-		int deltaY = (vehicle->PosY < orgY ? -1 : 1) * MOVE_SPEED;
+		int deltaX = (vehicle->getPosition().x() < org.x() ? -1 : 1) * MOVE_SPEED;
+		int deltaY = (vehicle->getPosition().y() < org.y() ? -1 : 1) * MOVE_SPEED;
 		int dir;
 		if (deltaX > 0 && deltaY > 0) dir = 3;
 		if (deltaX > 0 && deltaY < 0) dir = 1;
 		if (deltaX < 0 && deltaY > 0) dir = 5;
 		if (deltaX < 0 && deltaY < 0) dir = 7;
 
-		if (vehicle->OffX == 32)
+		if (vehicle->getMovementOffset().x() == 32)
 		{
 			if (!gameTimer.timer100ms) return;
 			vehicle->rotateTo (0);
 			if (vehicle->dir == 0)
 			{
 				finished = true;
-				vehicle->OffX = 0;
-				vehicle->OffY = 0;
+				vehicle->setMovementOffset(cPosition(0, 0));
 			}
 		}
 		else if (vehicle->dir == dir)
 		{
-			vehicle->OffX += deltaX;
-			vehicle->OffY += deltaY;
+			cPosition newOffset(vehicle->getMovementOffset());
+			newOffset.x() += deltaX;
+			newOffset.y() += deltaY;
+			vehicle->setMovementOffset(newOffset);
 
-			if ((vehicle->OffX > 32 && deltaX > 0) || (vehicle->OffX < 32 && deltaX < 0))
+			if ((vehicle->getMovementOffset().x() > 32 && deltaX > 0) || (vehicle->getMovementOffset().y() < 32 && deltaX < 0))
 			{
-				vehicle->OffX = 32;
-				vehicle->OffY = 32;
+				vehicle->setMovementOffset(cPosition(32, 32));
 			}
 		}
 		else

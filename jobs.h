@@ -24,8 +24,10 @@ class cGameTimer;
 class cJobContainer;
 class cUnit;
 class cVehicle;
+class cPosition;
 
 #include <vector>
+#include "utility/position.h"
 
 /**
 * little helper jobs for game time synchonous actions,
@@ -61,11 +63,10 @@ private:
 class cStartBuildJob : public cJob
 {
 private:
-	int orgX;
-	int orgY;
+	cPosition org;
 	bool big;
 public:
-	cStartBuildJob (cVehicle& vehicle_, int orgX_, int orgY_, bool big_);
+	cStartBuildJob (cVehicle& vehicle, const cPosition& org, bool big);
 	virtual void run (const cGameTimer& gameTimer);
 };
 

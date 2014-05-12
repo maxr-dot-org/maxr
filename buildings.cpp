@@ -465,7 +465,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 //--------------------------------------------------------------------------
 void cBuilding::updateNeighbours (const cMap& map)
 {
-	int iPosOff = map.getOffset (PosX, PosY);
+	int iPosOff = map.getOffset (getPosition());
 	if (!data.isBig)
 	{
 		owner->base.checkNeighbour (iPosOff - map.getSize(), *this);
@@ -502,21 +502,21 @@ void cBuilding::CheckNeighbours (const cMap& map)
 
 	if (!data.isBig)
 	{
-		CHECK_NEIGHBOUR (PosX    , PosY - 1, BaseN)
-		CHECK_NEIGHBOUR (PosX + 1, PosY    , BaseE)
-		CHECK_NEIGHBOUR (PosX    , PosY + 1, BaseS)
-		CHECK_NEIGHBOUR (PosX - 1, PosY    , BaseW)
+		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() - 1, BaseN)
+		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y()    , BaseE)
+		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() + 1, BaseS)
+		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y()    , BaseW)
 	}
 	else
 	{
-		CHECK_NEIGHBOUR (PosX    , PosY - 1, BaseN)
-		CHECK_NEIGHBOUR (PosX + 1, PosY - 1, BaseBN)
-		CHECK_NEIGHBOUR (PosX + 2, PosY    , BaseE)
-		CHECK_NEIGHBOUR (PosX + 2, PosY + 1, BaseBE)
-		CHECK_NEIGHBOUR (PosX    , PosY + 2, BaseS)
-		CHECK_NEIGHBOUR (PosX + 1, PosY + 2, BaseBS)
-		CHECK_NEIGHBOUR (PosX - 1, PosY    , BaseW)
-		CHECK_NEIGHBOUR (PosX - 1, PosY + 1, BaseBW)
+		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() - 1, BaseN)
+		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y() - 1, BaseBN)
+		CHECK_NEIGHBOUR (getPosition().x() + 2, getPosition().y()    , BaseE)
+		CHECK_NEIGHBOUR (getPosition().x() + 2, getPosition().y() + 1, BaseBE)
+		CHECK_NEIGHBOUR (getPosition().x()    , getPosition().y() + 2, BaseS)
+		CHECK_NEIGHBOUR (getPosition().x() + 1, getPosition().y() + 2, BaseBS)
+		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y()    , BaseW)
+		CHECK_NEIGHBOUR (getPosition().x() - 1, getPosition().y() + 1, BaseBW)
 	}
 }
 
@@ -950,7 +950,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 //--------------------------------------------------------------------------
 bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const sUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle (vehicleData, position.x (), position.y (), owner)) return false;
+	if (!map.possiblePlaceVehicle (vehicleData, position, owner)) return false;
 	if (!isNextTo (position)) return false;
 
 	return true;
@@ -977,7 +977,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (data.storageUnitsCur == data.storageUnitsMax) return false;
 
-	if (checkPosition && !isNextTo (Vehicle->PosX, Vehicle->PosY)) return false;
+	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
@@ -1011,16 +1011,15 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 
 //-----------------------------------------------------------------------
 // Unloads a vehicle
-void cBuilding::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
+void cBuilding::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap& map)
 {
 	Remove (storedUnits, &vehicle);
 
 	data.storageUnitsCur--;
 
-	map.addVehicle (vehicle, offset);
+	map.addVehicle(vehicle, position);
 
-	vehicle.PosX = offset % map.getSize();
-	vehicle.PosY = offset / map.getSize ();
+	vehicle.setPosition(position);
 
 	vehicle.setLoaded (false);
 
@@ -1179,7 +1178,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 
 void cBuilding::CheckRessourceProd (const cServer& server)
 {
-	int pos = server.Map->getOffset (PosX, PosY);
+	int pos = server.Map->getOffset (getPosition());
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -1332,7 +1331,7 @@ void cBuilding::makeDetection (cServer& server)
 
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
-		int offset = server.Map->getOffset (PosX, PosY);
+		int offset = server.Map->getOffset (getPosition());
 		std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{

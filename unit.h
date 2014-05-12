@@ -22,6 +22,7 @@
 #include <string>
 #include "unitdata.h"
 #include "utility/signal/signal.h"
+#include "utility/position.h"
 
 class cClient;
 class cGameGUI;
@@ -31,7 +32,6 @@ class cMapField;
 class cPlayer;
 class cServer;
 class cVehicle;
-class cPosition;
 template<typename T>
 class cBox;
 
@@ -49,18 +49,17 @@ public:
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const = 0;
 	virtual std::string getStatusStr (const cPlayer* player) const = 0;
 
-	virtual int getMovementOffsetX() const {return 0;}
-	virtual int getMovementOffsetY() const {return 0;}
+	virtual const cPosition& getMovementOffset() const { static const cPosition dummy(0, 0); return dummy; }
 
 	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
-	//const cPosition& getPosition () const;
-	//void setPosition (const cPosition& position);
+	const cPosition& getPosition () const;
+	void setPosition (cPosition position);
 
 	std::vector<cPosition> getAdjacentPositions () const;
 
 	int calcHealth (int damage) const;
-	bool isInRange (int x, int y) const;
+	bool isInRange (const cPosition& position) const;
 	/// checks whether the coordinates are next to the unit
 	bool isNextTo (int x, int y) const;
 	bool isNextTo (const cPosition& position) const;
@@ -84,7 +83,7 @@ public:
 	 *  ATTENTION: must not be called with forceAttack == false
 	 *             from the server thread!
 	 */
-	bool canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack = false, bool checkRange = true) const;
+	bool canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack = false, bool checkRange = true) const;
 
 	/** Upgrades the unit data of this unit to the current,
 	 * upgraded version of the player.
@@ -124,6 +123,8 @@ public:
 
 	virtual void executeStopCommand (const cClient& client) const = 0;
 
+	mutable cSignal<void ()> positionChanged;
+
 	mutable cSignal<void ()> renamed;
 	mutable cSignal<void ()> statusChanged;
 
@@ -147,8 +148,6 @@ public:
 public: // TODO: make protected/private and make getters/setters
 	sUnitData data; ///< basic data of the unit
 	const unsigned int iID; ///< the identification number of this unit
-	int PosX;
-	int PosY;
 	int dir; // ?Frame of the unit/current direction the unit is facing?
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
@@ -167,6 +166,8 @@ protected:
 	cBox<cPosition> getArea() const;
 
 private:
+    cPosition position;
+
 	bool isOriginalName; // indicates whether the name has been changed by the player or not
 	std::string name;    // name of the building
 

@@ -82,8 +82,8 @@ void sendAddRubble (cServer& server, const cBuilding& building, int iPlayer)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ADD_RUBBLE));
 
-	message->pushInt16 (building.PosX);
-	message->pushInt16 (building.PosY);
+	message->pushInt16 (building.getPosition().x());
+	message->pushInt16 (building.getPosition().y());
 	message->pushInt16 (building.iID);
 	message->pushInt16 (building.RubbleValue);
 	message->pushInt16 (building.RubbleTyp);
@@ -125,8 +125,8 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iClient)
 	message->pushInt16 (unit.iID);
 	if (unit.isAVehicle())
 		message->pushInt16 (unit.dir);
-	message->pushInt16 (unit.PosX);
-	message->pushInt16 (unit.PosY);
+	message->pushInt16 (unit.getPosition().x());
+	message->pushInt16 (unit.getPosition().y());
 	message->pushID (unit.data.ID);
 	message->pushInt16 (unit.owner->getNr());
 
@@ -229,8 +229,8 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 		message->pushBool (unit.data.isBig);
 
 	// Data for identifying the unit by the client
-	message->pushInt16 (unit.PosX);
-	message->pushInt16 (unit.PosY);
+	message->pushInt16 (unit.getPosition().x());
+	message->pushInt16 (unit.getPosition().y());
 	message->pushBool (unit.isAVehicle());
 	message->pushInt16 (unit.iID);
 	message->pushInt16 (unit.owner->getNr());
@@ -242,8 +242,8 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SPECIFIC_UNIT_DATA));
-	message->pushInt16 (vehicle.BandY);
-	message->pushInt16 (vehicle.BandX);
+	message->pushInt16 (vehicle.bandPosition.y());
+	message->pushInt16 (vehicle.bandPosition.x());
 	message->pushBool (vehicle.BuildPath);
 	message->pushID (vehicle.getBuildingType ());
 	message->pushInt16 (vehicle.dir);
@@ -326,8 +326,8 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, int iPla
 	while (waypoint)
 	{
 		message->pushInt16 (waypoint->Costs);
-		message->pushInt16 (waypoint->X);
-		message->pushInt16 (waypoint->Y);
+		message->pushInt16 (waypoint->position.x());
+		message->pushInt16 (waypoint->position.y());
 
 		if (message->iLength > PACKAGE_LENGTH - 19)
 		{
@@ -341,8 +341,8 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, int iPla
 
 	message->pushInt16 (iCount);
 	message->pushInt16 (moveJob.iSavedSpeed);
-	message->pushInt32 (moveJob.Map->getOffset (moveJob.DestX, moveJob.DestY));
-	message->pushInt32 (moveJob.Map->getOffset (moveJob.SrcX, moveJob.SrcY));
+	message->pushInt32 (moveJob.Map->getOffset (moveJob.destination));
+	message->pushInt32 (moveJob.Map->getOffset (moveJob.source));
 	message->pushInt32 (moveJob.Vehicle->iID);
 
 	server.sendNetMessage (message, iPlayer);
@@ -356,10 +356,10 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 	const cMap& map = *server.Map;
 	// TODO: only send new scaned resources
 
-	const int minx = std::max (vehicle.PosX - 1, 0);
-	const int maxx = std::min (vehicle.PosX + 1, map.getSize() - 1);
-	const int miny = std::max (vehicle.PosY - 1, 0);
-	const int maxy = std::min (vehicle.PosY + 1, map.getSize() - 1);
+	const int minx = std::max (vehicle.getPosition().x() - 1, 0);
+	const int maxx = std::min (vehicle.getPosition().x() + 1, map.getSize() - 1);
+	const int miny = std::max (vehicle.getPosition().y() - 1, 0);
+	const int maxy = std::min (vehicle.getPosition().y() + 1, map.getSize() - 1);
 	for (int y = miny; y <= maxy; ++y)
 	{
 		for (int x = minx; x <= maxx; ++x)
@@ -478,14 +478,14 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_BUILD_ANSWER));
 	if (bOK)
 	{
-		message->pushInt16 (vehicle.BandY);
-		message->pushInt16 (vehicle.BandX);
+		message->pushInt16 (vehicle.bandPosition.y());
+		message->pushInt16 (vehicle.bandPosition.x());
 		message->pushBool (vehicle.BuildPath);
 		message->pushInt16 (vehicle.getBuildTurns ());
 		message->pushID (vehicle.getBuildingType ());
 		message->pushBool (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig);
-		message->pushInt16 (vehicle.PosY);
-		message->pushInt16 (vehicle.PosX);
+		message->pushInt16 (vehicle.getPosition().y());
+		message->pushInt16 (vehicle.getPosition().x());
 	}
 
 	message->pushInt16 (vehicle.iID);
@@ -499,8 +499,8 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		if (bOK)
 		{
 			message->pushBool (vehicle.getBuildingType ().getUnitDataOriginalVersion ()->isBig);
-			message->pushInt16 (vehicle.PosY);
-			message->pushInt16 (vehicle.PosX);
+			message->pushInt16 (vehicle.getPosition().y());
+			message->pushInt16 (vehicle.getPosition().x());
 		}
 		message->pushInt16 (vehicle.iID);
 		message->pushBool (bOK);

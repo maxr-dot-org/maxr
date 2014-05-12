@@ -187,7 +187,7 @@ public:
 	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
-	void exitVehicleTo (cVehicle& vehicle, int offset, cMap& map);
+	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
 
 	/**
 	* returns whether this player has detected this unit or not

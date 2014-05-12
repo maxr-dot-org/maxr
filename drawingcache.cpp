@@ -45,12 +45,12 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	else
 		frame = animationTime % 4;
 
-	water = map.isWaterOrCoast (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+	water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField(vehicle.getPosition()).getBaseBuilding();
 
-	bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY);
+	bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
-	cBuilding* building = map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+	cBuilding* building = map.getField(vehicle.getPosition()).getBaseBuilding();
 	if (vehicle.data.factorGround > 0 && building
 		&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -214,7 +214,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 
 		if (entry.zoom != zoom) continue;
 
-		bool water = map.isWaterOrCoast (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+		bool water = map.isWaterOrCoast (vehicle.getPosition()) && !map.getField(vehicle.getPosition()).getBaseBuilding();
 		if (vehicle.isUnitBuildingABuilding ())
 		{
 			if (water != entry.water) continue;
@@ -223,8 +223,8 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		//check the stealth flag
 		bool stealth = false;
 
-		bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY);
-		const cBuilding* building = map.fields [map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+		bool isOnWaterAndNotCoast = map.isWater (vehicle.getPosition());
+		const cBuilding* building = map.getField(vehicle.getPosition()).getBaseBuilding();
 		if (vehicle.data.factorGround > 0 && building
 			&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE

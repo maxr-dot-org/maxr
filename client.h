@@ -46,6 +46,7 @@ class cStaticMap;
 class cTCP;
 class sPlayer;
 class cGameSettings;
+class cPosition;
 struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -103,8 +104,8 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob (cVehicle& vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group = NULL);
-	void startGroupMove (const std::vector<cVehicle*>& group_, int mainDestX, int mainDestY);
+	int addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = NULL);
+	void startGroupMove(const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
 	/**
 	* adds a new movejob
 	*@author alzi alias DoctorDeath
@@ -235,8 +236,8 @@ private:
 	*@param addedBuilding Building which should be added.
 	*@param bInit true if this is an initialisation call.
 	*/
-	void addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit = false, bool bAddToMap = true);
-	void addUnit (int iPosX, int iPosY, cBuilding& addedBuilding, bool bInit = false);
+	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool bInit = false, bool bAddToMap = true);
+	void addUnit (const cPosition& position, cBuilding& addedBuilding, bool bInit = false);
 
 	/**
 	* handles all active movejobs

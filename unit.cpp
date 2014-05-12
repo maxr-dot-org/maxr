@@ -38,8 +38,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
-	, PosX (0)
-	, PosY (0)
+	, position (0,0)
 	, dir (0)
 	, turnsDisabled (0)
 	, sentryActive (false)
@@ -80,11 +79,23 @@ cUnit::~cUnit()
 }
 
 //------------------------------------------------------------------------------
+const cPosition& cUnit::getPosition() const
+{
+	return position;
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setPosition(cPosition position_)
+{
+	std::swap(position, position_);
+	if(position != position_) positionChanged();
+}
+
+//------------------------------------------------------------------------------
 std::vector<cPosition> cUnit::getAdjacentPositions () const
 {
 	std::vector<cPosition> adjacentPositions;
 
-	const cPosition position(PosX, PosY);
 	if (data.isBig)
 	{
 		adjacentPositions.push_back (position + cPosition (-1, -1));
@@ -131,23 +142,22 @@ int cUnit::calcHealth (int damage) const
 //------------------------------------------------------------------------------
 /** Checks if the target is in range */
 //------------------------------------------------------------------------------
-bool cUnit::isInRange (int x, int y) const
+bool cUnit::isInRange (const cPosition& position) const
 {
-	x -= PosX;
-	y -= PosY;
+	const auto distanceSquared = (position - this->position).l2NormSquared();
 
-	return (Square (x) + Square (y)) <= Square (data.range);
+	return distanceSquared <= Square(data.range);
 }
 
 //------------------------------------------------------------------------------
 bool cUnit::isNextTo (int x, int y) const
 {
-	if (x + 1 < PosX || y + 1 < PosY)
+	if(x + 1 < position.x() || y + 1 < position.y())
 		return false;
 
 	const int size = data.isBig ? 2 : 1;
 
-	if (x - size > PosX || y - size > PosY)
+	if(x - size > position.x() || y - size > position.y())
 		return false;
 	return true;
 }
@@ -167,7 +177,7 @@ bool cUnit::isAbove(const cPosition& position) const
 //------------------------------------------------------------------------------
 cBox<cPosition> cUnit::getArea() const
 {
-	return cBox<cPosition>(cPosition(PosX, PosY), cPosition(data.isBig ? PosX + 1 : PosX, data.isBig ? PosY + 1 : PosY));
+	return cBox<cPosition>(position, position + (data.isBig ? cPosition(1, 1) : cPosition(0, 0)));
 }
 
 // http://rosettacode.org/wiki/Roman_numerals/Encode#C.2B.2B
@@ -269,7 +279,7 @@ void cUnit::rotateTo (int newDir)
 //------------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //------------------------------------------------------------------------------
-bool cUnit::canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack, bool checkRange) const
+bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool forceAttack, bool checkRange) const
 {
 	if (data.canAttack == false) return false;
 	if (data.getShots () <= 0) return false;
@@ -277,19 +287,18 @@ bool cUnit::canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack, 
 	if (attacking) return false;
 	if (isBeeingAttacked ()) return false;
 	if (isAVehicle() && static_cast<const cVehicle*> (this)->isUnitLoaded()) return false;
-	if (map.isValidPos (x, y) == false) return false;
-	if (checkRange && isInRange (x, y) == false) return false;
-	const int off = map.getOffset (x, y);
+	if (map.isValidPos (position) == false) return false;
+	if (checkRange && isInRange (position) == false) return false;
 
-	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (x, y) == false)
+	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (position) == false)
 		return false;
 
-	const cUnit* target = selectTarget (x, y, data.canAttack, map);
+	const cUnit* target = selectTarget (position, data.canAttack, map);
 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;
 
-	if (owner->ScanMap[off] == false && !forceAttack)
+	if (owner->ScanMap[owner->getOffset(position)] == false && !forceAttack)
 		return false;
 
 	if (forceAttack)
@@ -300,7 +309,7 @@ bool cUnit::canAttackObjectAt (int x, int y, const cMap& map, bool forceAttack, 
 
 	// do not fire on e.g. platforms, connectors etc.
 	// see ticket #436 on bug tracker
-	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map.possiblePlace (*static_cast<const cVehicle*> (this), x, y))
+	if (target->isABuilding() && isAVehicle() && data.factorAir == 0 && map.possiblePlace (*static_cast<const cVehicle*> (this), position))
 		return false;
 
 	if (target->owner == owner)

@@ -131,9 +131,9 @@ public:
 
 	cVehicle* next; ///< "next"-pointer for the double linked list
 	cVehicle* prev; ///< "prev"-pointer for the double linked list
-	int OffX, OffY;  // Offset während der Bewegung
-	virtual int getMovementOffsetX() const {return OffX;}
-	virtual int getMovementOffsetY() const {return OffY;}
+	
+	virtual const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
+	void setMovementOffset(const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
 	const sVehicleUIData* uiData;
 	cServerMoveJob* ServerMoveJob;
@@ -143,7 +143,7 @@ public:
 	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
 	int ditherX, ditherY; // Dithering für Flugzeuge
-	int BandX, BandY; // X,Y Position für das Band
+	cPosition bandPosition; // X,Y Position für das Band
 	int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
@@ -173,7 +173,7 @@ public:
 	bool canLoad (int x, int y, const cMap& map, bool checkPosition = true) const;
 	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle& vehicle, cMap& map);
-	void exitVehicleTo (cVehicle& vehicle, int offset, cMap& map);
+	void exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map);
 #define SUPPLY_TYPE_REARM 0
 #define SUPPLY_TYPE_REPAIR 1
 	/// supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
@@ -338,6 +338,8 @@ private:
 	std::vector<cPlayer*> calcDetectedByPlayer (cServer& server) const;
 	/// list of players, that detected this vehicle in this turn
 	std::vector<cPlayer*> detectedInThisTurnByPlayerList;
+
+	cPosition tileMovementOffset;  // offset within tile during movement
 
 	bool loaded;
 

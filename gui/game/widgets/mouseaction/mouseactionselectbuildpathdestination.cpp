@@ -33,8 +33,8 @@ bool cMouseActionSelectBuildPathDestination::executeLeftClick (cGameMapWidget& g
 	if (!selectedVehicle) return false;
 
 	cPosition destination;
-	if (mapPosition.x () == selectedVehicle->PosX || mapPosition.y () == selectedVehicle->PosY) destination = mapPosition;
-	else destination = cPosition (selectedVehicle->PosX, selectedVehicle->PosY);
+	if (mapPosition.x () == selectedVehicle->getPosition().x() || mapPosition.y () == selectedVehicle->getPosition().y()) destination = mapPosition;
+	else destination = cPosition (selectedVehicle->getPosition());
 
 	gameMapWidget.selectedBuildPathDestination (*selectedVehicle, destination);
 

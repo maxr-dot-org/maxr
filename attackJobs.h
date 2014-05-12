@@ -20,6 +20,7 @@
 #define attackjobsH
 
 #include <vector>
+#include "utility/position.h"
 
 class cBuilding;
 class cClient;
@@ -34,13 +35,13 @@ class cVehicle;
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-cUnit* selectTarget (int x, int y, char attackMode, const cMap& map);
+cUnit* selectTarget (const cPosition& position, char attackMode, const cMap& map);
 
 //--------------------------------------------------------------------------
 class cServerAttackJob
 {
 public:
-	cServerAttackJob (cServer& server_, cUnit* _unit, int targetOff, bool sentry);
+	cServerAttackJob (cServer& server_, cUnit* _unit, const cPosition& targetPosition, bool sentry);
 	~cServerAttackJob();
 
 	void sendFireCommand (cPlayer* player);
@@ -51,12 +52,12 @@ private:
 	/** syncronizes positions of target, locks target and suspents move job if necessary
 	* @author Eiko
 	*/
-	void lockTarget (int offset);
+	void lockTarget (const cPosition& position);
 	void lockTargetCluster();
 	void sendFireCommand();
-	void makeImpact (int x, int y);
+	void makeImpact (const cPosition& position);
 	void makeImpactCluster();
-	void sendAttackJobImpact (int offset, int remainingHP, int id);
+	void sendAttackJobImpact (const cPosition& position, int remainingHP, int id);
 
 	bool isMuzzleTypeRocket() const;
 
@@ -70,10 +71,10 @@ private:
 	static int iNextID;
 	cServer* server;
 	bool sentryFire;
-	int iAgressorOff;
+	cPosition aggressorPosition;
 	int iMuzzleType;
 	bool bMuzzlePlayed;
-	int iTargetOff;
+	cPosition targetPosition;
 	int damage;
 	char attackMode;
 	/** these lists are only used to sort out duplicate targets,

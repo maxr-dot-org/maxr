@@ -276,8 +276,8 @@ void sendMoveJob (const cClient& client, sWaypoint* path, int vehicleID)
 	while (waypoint)
 	{
 		message->pushInt16 (waypoint->Costs);
-		message->pushInt16 (waypoint->X);
-		message->pushInt16 (waypoint->Y);
+		message->pushInt16 (waypoint->position.x());
+		message->pushInt16 (waypoint->position.y());
 
 		if (message->iLength > PACKAGE_LENGTH - 19)
 		{

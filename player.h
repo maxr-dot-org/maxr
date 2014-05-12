@@ -149,8 +149,8 @@ public:
 	unsigned int getOffset (const cPosition& pos) const { return getOffset (pos.x (), pos.y ()); }
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 
-	cVehicle* addVehicle (int posx, int posy, const sID& id, unsigned int uid);
-	cBuilding* addBuilding (int posx, int posy, const sID& id, unsigned int uid);
+	cVehicle* addVehicle (const cPosition& position, const sID& id, unsigned int uid);
+	cBuilding* addBuilding (const cPosition& position, const sID& id, unsigned int uid);
 
 	cUnit* getNextUnit (cUnit* start);
 	cUnit* getPrevUnit (cUnit* start);
@@ -168,7 +168,7 @@ public:
 	void setScore (int score, int turn);
 	void clearDone();
 
-	const sSavedReportMessage& addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1);
+	const sSavedReportMessage& addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), const cPosition& position = cPosition(-1, -1), int colorNr = -1);
 
 	void setClan (int newClan);
 	int getClan() const { return clan; }
@@ -204,7 +204,7 @@ private:
 	* @param iRadius radius of the circle
 	* @param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize);
+	void drawSpecialCircle (const cPosition& position, int iRadius, std::vector<char>& map, int mapsize);
 	/**
 	* draws a big circle on the map for the fog
 	* @author alzi alias DoctorDeath
@@ -213,7 +213,7 @@ private:
 	* @param iRadius radius of the circle
 	* @param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize);
+	void drawSpecialCircleBig(const cPosition& position, int iRadius, std::vector<char>& map, int mapsize);
 
 	cBuilding* getNextBuilding (cBuilding* start);
 	cBuilding* getNextMiningStation (cBuilding* start);

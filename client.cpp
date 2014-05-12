@@ -190,13 +190,13 @@ void cClient::sendNetMessage (cNetMessage* message_) const
 	}
 }
 
-int cClient::addMoveJob (cVehicle& vehicle, int DestX, int DestY, const std::vector<cVehicle*>* group)
+int cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group)
 {
-	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle.PosX, vehicle.PosY, DestX, DestY, vehicle, group);
+	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle.getPosition(), destination, vehicle, group);
 	if (path)
 	{
 		sendMoveJob (*this, path, vehicle.iID);
-		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle.iID) + ", SrcX: " + iToStr (vehicle.PosX) + ", SrcY: " + iToStr (vehicle.PosY) + ", DestX: " + iToStr (DestX) + ", DestY: " + iToStr (DestY), cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle.iID) + ", SrcX: " + iToStr (vehicle.getPosition().x()) + ", SrcY: " + iToStr (vehicle.getPosition().y()) + ", DestX: " + iToStr (destination.x()) + ", DestY: " + iToStr (destination.y()), cLog::eLOG_TYPE_NET_DEBUG);
 		return 1;
 	}
 	else
@@ -206,10 +206,9 @@ int cClient::addMoveJob (cVehicle& vehicle, int DestX, int DestY, const std::vec
 	}
 }
 
-void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDestX, int mainDestY)
+void cClient::startGroupMove(const std::vector<cVehicle*>& group_, const cPosition& mainDestination)
 {
-	const int mainPosX = group_[0]->PosX;
-	const int mainPosY = group_[0]->PosY;
+	const auto& mainPosition = group_[0]->getPosition();
 
 	// copy the selected-units-list
 	std::vector<cVehicle*> group = group_;
@@ -228,9 +227,8 @@ void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDest
 		for (unsigned int i = 0; i < group.size(); i++)
 		{
 			cVehicle* vehicle = group[i];
-			const int deltaX = vehicle->PosX - mainDestX + vehicle->PosX - mainPosX;
-			const int deltaY = vehicle->PosY - mainDestY + vehicle->PosY - mainPosY;
-			const int waySquareLength = Square (deltaX) + Square (deltaY);
+			const auto delta = vehicle->getPosition() + mainDestination + vehicle->getPosition() - mainPosition;
+			const int waySquareLength = delta.l2NormSquared();
 
 			if (waySquareLength < shortestWaySquareLength)
 			{
@@ -241,9 +239,8 @@ void cClient::startGroupMove (const std::vector<cVehicle*>& group_, int mainDest
 		cVehicle& vehicle = *group[shortestWayVehNum];
 		// add the movejob to the destination of the unit.
 		// the formation of the vehicle group will stay as destination formation.
-		const int destX = mainDestX + vehicle.PosX - mainPosX;
-		const int destY = mainDestY + vehicle.PosY - mainPosY;
-		addMoveJob (vehicle, destX, destY, &group_);
+		auto destination = mainDestination + vehicle.getPosition() - mainPosition;
+		addMoveJob(vehicle, destination, &group_);
 		// delete the unit from the copyed list
 		group.erase (group.begin() + shortestWayVehNum);
 	}
@@ -330,12 +327,13 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 		return;
 	}
 	const sID UnitID = message.popID();
-	const int PosY = message.popInt16();
-	const int PosX = message.popInt16();
+	cPosition position;
+	position.y() = message.popInt16();
+	position.x() = message.popInt16();
 	unsigned int ID = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID, ID);
+	cBuilding* AddedBuilding = Player->addBuilding(position, UnitID, ID);
 
-	addUnit (PosX, PosY, *AddedBuilding, Init);
+	addUnit(position, *AddedBuilding, Init);
 
 	Player->base.addBuilding (AddedBuilding, NULL);
 }
@@ -352,13 +350,14 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 		return;
 	}
 	const sID UnitID = message.popID();
-	const int PosY = message.popInt16();
-	const int PosX = message.popInt16();
+	cPosition position;
+	position.y() = message.popInt16();
+	position.x() = message.popInt16();
 	const unsigned int ID = message.popInt16();
 	const bool bAddToMap = message.popBool();
 
-	cVehicle* AddedVehicle = Player->addVehicle (PosX, PosY, UnitID, ID);
-	addUnit (PosX, PosY, *AddedVehicle, Init, bAddToMap);
+	cVehicle* AddedVehicle = Player->addVehicle(position, UnitID, ID);
+	addUnit(position, *AddedVehicle, Init, bAddToMap);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
@@ -393,16 +392,17 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 		return;
 	}
 	const sID UnitID = message.popID();
-	const int iPosY = message.popInt16();
-	const int iPosX = message.popInt16();
+	cPosition position;
+	position.y() = message.popInt16();
+	position.x() = message.popInt16();
 	const int dir = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
-	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, UnitID, ID);
+	cVehicle* AddedVehicle = Player->addVehicle (position, UnitID, ID);
 
 	AddedVehicle->dir = dir;
 	AddedVehicle->data.setVersion(version);
-	addUnit (iPosX, iPosY, *AddedVehicle, false);
+	addUnit (position, *AddedVehicle, false);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
@@ -416,14 +416,15 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 		return;
 	}
 	const sID UnitID = message.popID();
-	const int iPosY = message.popInt16();
-	const int iPosX = message.popInt16();
+	cPosition position;
+	position.y() = message.popInt16();
+	position.x() = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID, ID);
+	cBuilding* AddedBuilding = Player->addBuilding (position, UnitID, ID);
 
 	AddedBuilding->data.setVersion(version);
-	addUnit (iPosX, iPosY, *AddedBuilding, false);
+	addUnit (position, *AddedBuilding, false);
 
 	if (AddedBuilding->data.connectsToBase)
 	{
@@ -531,10 +532,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	(void) Player;  // TODO use me
 	const int iID = message.popInt16();
 	const bool bVehicle = message.popBool();
-	const int iPosY = message.popInt16();
-	const int iPosX = message.popInt16();
+	const cPosition position(message.popInt16(), message.popInt16());
 
-	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (iPosX) + ", YPos: " + iToStr (iPosY), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (position.x()) + ", YPos: " + iToStr (position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle* Vehicle = NULL;
 	sUnitData* Data = NULL;
 	bool bWasBuilding = false;
@@ -550,7 +550,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			// TODO: Request sync of vehicle
 			return;
 		}
-		if (Vehicle->PosX != iPosX || Vehicle->PosY != iPosY || Vehicle->data.isBig != bBig)
+		if (Vehicle->getPosition() != position || Vehicle->data.isBig != bBig)
 		{
 			// if the vehicle is moving it is normal that
 			// the positions may not be the same,
@@ -559,13 +559,13 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			// so the log message will just be a debug one
 			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
 			if (Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing () || Vehicle->moving) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
-			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->PosX) + " Y" + iToStr (Vehicle->PosY) + "; SHOULD: X" + iToStr (iPosX) + " Y" + iToStr (iPosY) + "]", iLogType);
+			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->getPosition().x()) + " Y" + iToStr (Vehicle->getPosition().y()) + "; SHOULD: X" + iToStr (position.x()) + " Y" + iToStr (position.y()) + "]", iLogType);
 
 			// set to server position if vehicle is not moving
 			if (!Vehicle->MoveJobActive)
 			{
-				getMap()->moveVehicle (*Vehicle, iPosX, iPosY);
-				if (bBig) getMap()->moveVehicleBig (*Vehicle, iPosX, iPosY);
+				getMap()->moveVehicle (*Vehicle, position);
+				if (bBig) getMap()->moveVehicleBig (*Vehicle, position);
 				Vehicle->owner->doScan();
 			}
 		}
@@ -589,7 +589,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			if (Vehicle->isDisabled())
 			{
 				const std::string msg = Vehicle->getDisplayName () + " " + lngPack.i18n ("Text~Comp~Disabled");
-				ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+				ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->getPosition());
 				unitDisabled (*Vehicle);
 			}
 			Vehicle->owner->doScan();
@@ -621,7 +621,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			if (Building->isDisabled())
 			{
 				const std::string msg = Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled");
-				ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
+				ActivePlayer->addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->getPosition());
 				unitDisabled (*Building);
 			}
 			Building->owner->doScan();
@@ -674,8 +674,8 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	Vehicle->dir = message.popInt16();
 	Vehicle->setBuildingType (message.popID ());
 	Vehicle->BuildPath = message.popBool();
-	Vehicle->BandX = message.popInt16();
-	Vehicle->BandY = message.popInt16();
+	Vehicle->bandPosition.x() = message.popInt16();
+	Vehicle->bandPosition.y() = message.popInt16();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
@@ -723,14 +723,17 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	const int iSavedSpeed = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (iVehicleID);
 
+	const cPosition srcPosition(iSrcOff % getMap()->getSizeNew().x(), iSrcOff / getMap()->getSizeNew().x());
+	const cPosition destPosition(iDestOff % getMap()->getSizeNew().x(), iDestOff / getMap()->getSizeNew().x());
+
 	if (Vehicle == NULL)
 	{
-		Log.write (" Client: Can't find vehicle with id " + iToStr (iVehicleID) + " for movejob from " + iToStr (iSrcOff % getMap()->getSize()) + "x" + iToStr (iSrcOff / getMap()->getSize()) + " to " + iToStr (iDestOff % getMap()->getSize()) + "x" + iToStr (iDestOff / getMap()->getSize()), cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't find vehicle with id " + iToStr (iVehicleID) + " for movejob from " + iToStr (srcPosition.x()) + "x" + iToStr (srcPosition.y()) + " to " + iToStr (destPosition.x()) + "x" + iToStr (destPosition.y()), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: request sync of vehicle
 		return;
 	}
 
-	cClientMoveJob* MoveJob = new cClientMoveJob (*this, iSrcOff, iDestOff, Vehicle);
+	cClientMoveJob* MoveJob = new cClientMoveJob(*this, srcPosition, destPosition, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (message)) return;
 	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
@@ -826,16 +829,15 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 				const string msgString = lngPack.i18n ("Text~Comp~Producing_Err");
 				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			}
-			else if (Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY)
+			else if (Vehicle->bandPosition != Vehicle->getPosition())
 			{
 				const string msgString = lngPack.i18n ("Text~Comp~Path_interrupted");
-				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+				const sSavedReportMessage& report = ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->getPosition());
 			}
 		}
 		Vehicle->setBuildTurns(0);
 		Vehicle->BuildPath = false;
-		Vehicle->BandX = 0;
-		Vehicle->BandY = 0;
+		Vehicle->bandPosition = cPosition(0,0);
 		return;
 	}
 
@@ -843,20 +845,20 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	const int iBuildX = message.popInt16();
 	const int iBuildY = message.popInt16();
+	const cPosition buildPosition(iBuildX, iBuildY);
 	const bool buildBig = message.popBool();
-	const int oldPosX = Vehicle->PosX;
-	const int oldPosY = Vehicle->PosY;
+	const auto oldPosition = Vehicle->getPosition();
 
 	if (buildBig)
 	{
-		getMap()->moveVehicleBig (*Vehicle, iBuildX, iBuildY);
+		getMap()->moveVehicleBig(*Vehicle, buildPosition);
 		Vehicle->owner->doScan();
 
 		Vehicle->BigBetonAlpha = 10;
 	}
 	else
 	{
-		getMap()->moveVehicle (*Vehicle, iBuildX, iBuildY);
+		getMap()->moveVehicle(*Vehicle, buildPosition);
 		Vehicle->owner->doScan();
 	}
 
@@ -865,12 +867,12 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 		Vehicle->setBuildingType (message.popID());
 		Vehicle->setBuildTurns (message.popInt16 ());
 		Vehicle->BuildPath = message.popBool();
-		Vehicle->BandX = message.popInt16();
-		Vehicle->BandY = message.popInt16();
+		Vehicle->bandPosition.x() = message.popInt16();
+		Vehicle->bandPosition.y() = message.popInt16();
 	}
 
 	Vehicle->setBuildingABuilding(true);
-	addJob (new cStartBuildJob (*Vehicle, oldPosX, oldPosY, buildBig));
+	addJob (new cStartBuildJob (*Vehicle, oldPosition, buildBig));
 
 	unitStartedBuilding (*Vehicle);
 
@@ -891,11 +893,12 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 		return;
 	}
 
-	const int iNewPos = message.popInt32();
+	const int iNewPosOffset = message.popInt32();
+	const cPosition newPosition(iNewPosOffset % getMap()->getSize(), iNewPosOffset / getMap()->getSize());
 
 	if (Vehicle->data.isBig)
 	{
-		getMap()->moveVehicle (*Vehicle, iNewPos % getMap()->getSize(), iNewPos / getMap()->getSize());
+		getMap()->moveVehicle (*Vehicle, newPosition);
 		Vehicle->owner->doScan();
 	}
 
@@ -1123,10 +1126,12 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	rubble->data.isBig = big;
 	rubble->RubbleTyp = typ;
 	rubble->RubbleValue = value;
-	rubble->PosY = message.popInt16();
-	rubble->PosX = message.popInt16();
+	const auto newX = message.popInt16();
+	const auto newY = message.popInt16();
 
-	getMap()->addBuilding (*rubble, rubble->PosX, rubble->PosY);
+	rubble->setPosition(cPosition(newX, newY));
+
+	getMap()->addBuilding (*rubble, rubble->getPosition());
 }
 
 void cClient::HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message)
@@ -1167,18 +1172,18 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 				Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
 				break;
 			}
-			const int orgX = Vehicle->PosX;
-			const int orgY = Vehicle->PosY;
+			const auto orgiginalPosition = Vehicle->getPosition();
 
 			Vehicle->setClearingTurns(message.popInt16());
 			const int bigoffset = message.popInt16();
+			const cPosition bigPosition(bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
 			if (bigoffset >= 0)
 			{
-				getMap()->moveVehicleBig (*Vehicle, bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
+				getMap()->moveVehicleBig (*Vehicle, bigPosition);
 				Vehicle->owner->doScan();
 			}
 			Vehicle->setClearing(true);
-			addJob (new cStartBuildJob (*Vehicle, orgX, orgY, (bigoffset > 0)));
+			addJob(new cStartBuildJob(*Vehicle, orgiginalPosition, (bigoffset > 0)));
 
 			unitStartedClearing (*Vehicle);
 		}
@@ -1208,9 +1213,10 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	}
 
 	const int bigoffset = message.popInt16();
+	const cPosition bigPosition(bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
 	if (bigoffset >= 0)
 	{
-		getMap()->moveVehicle (*Vehicle, bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
+		getMap()->moveVehicle(*Vehicle, bigPosition);
 		Vehicle->owner->doScan();
 	}
 	Vehicle->setClearing(false);
@@ -1367,7 +1373,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 
 		const int x = message.popInt16();
 		const int y = message.popInt16();
-		StoringVehicle->exitVehicleTo (*StoredVehicle, getMap()->getOffset (x, y), *getMap());
+		StoringVehicle->exitVehicleTo (*StoredVehicle, cPosition(x, y), *getMap());
 		unitActivated (*StoringVehicle, *StoredVehicle);
 	}
 	else
@@ -1377,7 +1383,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 
 		const int x = message.popInt16();
 		const int y = message.popInt16();
-		StoringBuilding->exitVehicleTo (*StoredVehicle, getMap ()->getOffset (x, y), *getMap ());
+		StoringBuilding->exitVehicleTo (*StoredVehicle, cPosition(x, y), *getMap ());
 		unitActivated (*StoringBuilding, *StoredVehicle);
 	}
 }
@@ -1824,31 +1830,31 @@ int cClient::handleNetMessage (cNetMessage& message)
 	return 0;
 }
 
-void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit, bool bAddToMap)
+void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bInit, bool bAddToMap)
 {
 	// place the vehicle
-	if (bAddToMap) getMap()->addVehicle (addedVehicle, iPosX, iPosY);
+	if (bAddToMap) getMap()->addVehicle (addedVehicle, position);
 
 	if (!bInit) addedVehicle.StartUp = 10;
 
 	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
 		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", addedVehicle.getDisplayName ());
-		getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, addedVehicle.PosX, addedVehicle.PosY);
+		getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, addedVehicle.getPosition());
 		unitStolen (addedVehicle);
 	}
 	else if (addedVehicle.owner != ActivePlayer)
 	{
 		const string message = addedVehicle.getDisplayName () + " (" + addedVehicle.owner->getName () + ") " + lngPack.i18n ("Text~Comp~Detected");
-		getActivePlayer ().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, iPosX, iPosY);
+		getActivePlayer().addSavedReport(message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, position);
 		unitDetected (addedVehicle);
 	}
 }
 
-void cClient::addUnit (int iPosX, int iPosY, cBuilding& addedBuilding, bool bInit)
+void cClient::addUnit(const cPosition& position, cBuilding& addedBuilding, bool bInit)
 {
 	// place the building
-	getMap()->addBuilding (addedBuilding, iPosX, iPosY);
+	getMap()->addBuilding (addedBuilding, position);
 
 	if (!bInit) addedBuilding.StartUp = 10;
 }
@@ -2101,39 +2107,39 @@ void cClient::destroyUnit (cVehicle& vehicle)
 	// play explosion
 	if (vehicle.data.isBig)
 	{
-		addFx (std::make_shared<cFxExploBig> (cPosition (vehicle.PosX * 64 + 64, vehicle.PosY * 64 + 64), getMap ()->isWaterOrCoast (vehicle.PosX, vehicle.PosY)));
+		addFx (std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, getMap ()->isWaterOrCoast (vehicle.getPosition())));
 	}
 	else if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
 	{
-		addFx (std::make_shared<cFxExploAir> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
+		addFx(std::make_shared<cFxExploAir>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
-	else if (getMap()->isWaterOrCoast (vehicle.PosX, vehicle.PosY))
+	else if (getMap()->isWaterOrCoast (vehicle.getPosition()))
 	{
-		addFx (std::make_shared<cFxExploWater> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
+		addFx (std::make_shared<cFxExploWater> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
 	else
 	{
-		addFx (std::make_shared<cFxExploSmall> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
+		addFx (std::make_shared<cFxExploSmall> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
 
 	if (vehicle.data.hasCorpse)
 	{
 		// add corpse
-		addFx (std::make_shared<cFxCorpse> (cPosition (vehicle.PosX * 64 + vehicle.OffX + 32, vehicle.PosY * 64 + vehicle.OffY + 32)));
+		addFx (std::make_shared<cFxCorpse> (vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}
 }
 
 void cClient::destroyUnit (cBuilding& building)
 {
 	// play explosion animation
-	cBuilding* topBuilding = getMap()->fields[getMap()->getOffset (building.PosX, building.PosY)].getBuilding();
+	cBuilding* topBuilding = getMap()->getField(building.getPosition()).getBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
-		addFx (std::make_shared<cFxExploBig> (cPosition (topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64), getMap ()->isWaterOrCoast (topBuilding->PosX, topBuilding->PosY)));
+		addFx (std::make_shared<cFxExploBig> (topBuilding->getPosition() * 64 + 64, getMap ()->isWaterOrCoast (topBuilding->getPosition())));
 	}
 	else
 	{
-		addFx (std::make_shared<cFxExploSmall> (cPosition (building.PosX * 64 + 32, building.PosY * 64 + 32)));
+		addFx (std::make_shared<cFxExploSmall> (building.getPosition() * 64 + 32));
 	}
 }
 //------------------------------------------------------------------------------

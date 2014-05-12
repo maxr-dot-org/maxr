@@ -113,7 +113,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (hud->centerClicked, [&]()
 	{
 		const auto selectedUnit = gameMap->getUnitSelection ().getSelectedUnit ();
-		if (selectedUnit) gameMap->centerAt (cPosition (selectedUnit->PosX, selectedUnit->PosY));
+		if (selectedUnit) gameMap->centerAt (selectedUnit->getPosition());
 	});
 
 	signalConnectionManager.connect (hud->reportsClicked, std::bind (&cNewGameGUI::showReportsWindow, this));
@@ -276,7 +276,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (buildBuildingPathTriggered, [&](const cVehicle& vehicle, const cPosition& destination, const sID& unitId, int buildSpeed)
 	{
-		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (vehicle.PosX, vehicle.PosY), true, client.getMap ()->getOffset (destination));
+		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, client.getMap ()->getOffset (vehicle.getPosition()), true, client.getMap ()->getOffset (destination));
 		buildPositionSelectionConnectionManager.disconnectAll ();
 	});
 	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&](const cBuilding& building, const std::vector<sBuildList>& buildList, int buildSpeed, bool repeat)
@@ -406,11 +406,11 @@ void cNewGameGUI::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredMoveSingle, [&](cVehicle& vehicle, const cPosition& destination)
 	{
-		client.addMoveJob (vehicle, destination.x (), destination.y ());
+		client.addMoveJob (vehicle, destination);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredMoveGroup, [&](const std::vector<cVehicle*>& vehicles, const cPosition& destination)
 	{
-		client.startGroupMove (vehicles, destination.x (), destination.y ());
+		client.startGroupMove (vehicles, destination);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, size_t index, const cPosition& position)
 	{
@@ -430,10 +430,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 			const auto& vehicle = static_cast<const cVehicle&>(unit);
 			if (vehicle.data.factorAir > 0 && overVehicle)
 			{
-				if (overVehicle->PosX == vehicle.PosX && overVehicle->PosY == vehicle.PosY) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				if (overVehicle->getPosition() == vehicle.getPosition()) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (vehicle.PosX, vehicle.PosY, overVehicle->PosX, overVehicle->PosY, *client.getMap (), vehicle);
+					cPathCalculator pc (vehicle.getPosition(), overVehicle->getPosition(), *client.getMap (), vehicle);
 					sWaypoint* path = pc.calcPath ();
 					if (path)
 					{
@@ -448,10 +448,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 			}
 			else if (overVehicle)
 			{
-				if (vehicle.isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
+				if (vehicle.isNextTo (overVehicle->getPosition())) sendWantLoad (client, vehicle.iID, true, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, vehicle, *client.getMap (), *overVehicle, true);
+					cPathCalculator pc (overVehicle->getPosition(), vehicle, *client.getMap (), *overVehicle, true);
 					sWaypoint* path = pc.calcPath ();
 					if (path)
 					{
@@ -470,10 +470,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 			const auto& building = static_cast<const cBuilding&>(unit);
 			if (overVehicle && building.canLoad (overVehicle, false))
 			{
-				if (building.isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (client, building.iID, false, overVehicle->iID);
+				if (building.isNextTo (overVehicle->getPosition())) sendWantLoad (client, building.iID, false, overVehicle->iID);
 				else
 				{
-					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, building, *client.getMap (), *overVehicle, true);
+					cPathCalculator pc (overVehicle->getPosition(), building, *client.getMap (), *overVehicle, true);
 					sWaypoint* path = pc.calcPath ();
 					if (path)
 					{
@@ -488,10 +488,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 			}
 			else if (overPlane && building.canLoad (overPlane, false))
 			{
-				if (building.isNextTo (overPlane->PosX, overPlane->PosY)) sendWantLoad (client, building.iID, false, overPlane->iID);
+				if (building.isNextTo (overPlane->getPosition())) sendWantLoad (client, building.iID, false, overPlane->iID);
 				else
 				{
-					cPathCalculator pc (overPlane->PosX, overPlane->PosY, building, *client.getMap (), *overPlane, true);
+					cPathCalculator pc (overPlane->getPosition(), building, *client.getMap (), *overPlane, true);
 					sWaypoint* path = pc.calcPath ();
 					if (path)
 					{
@@ -520,9 +520,9 @@ void cNewGameGUI::connectToClient (cClient& client)
 		{
 			const auto& vehicle = static_cast<const cVehicle&>(unit);
 
-			cUnit* target = selectTarget (position.x (), position.y (), vehicle.data.canAttack, *client.getMap ());
+			cUnit* target = selectTarget (position, vehicle.data.canAttack, *client.getMap ());
 
-			if (vehicle.isInRange (position.x (), position.y ()))
+			if (vehicle.isInRange (position))
 			{
 				// find target ID
 				int targetId = 0;
@@ -533,7 +533,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 			}
 			else if (target)
 			{
-				cPathCalculator pc (vehicle.PosX, vehicle.PosY, *client.getMap (), vehicle, position.x (), position.y ());
+				cPathCalculator pc (vehicle.getPosition(), *client.getMap (), vehicle, position);
 				sWaypoint* path = pc.calcPath ();
 				if (path)
 				{
@@ -552,10 +552,10 @@ void cNewGameGUI::connectToClient (cClient& client)
 			const cMap& map = *client.getMap ();
 
 			int targetId = 0;
-			cUnit* target = selectTarget (position.x (), position.y (), building.data.canAttack, map);
+			cUnit* target = selectTarget (position, building.data.canAttack, map);
 			if (target && target->isAVehicle ()) targetId = target->iID;
 
-			const int offset = map.getOffset (building.PosX, building.PosY);
+			const int offset = map.getOffset (building.getPosition());
 			sendWantAttack (client, targetId, map.getOffset (position.x (), position.y ()), offset, false);
 		}
 	});
@@ -751,8 +751,8 @@ void cNewGameGUI::connectMoveJob (const cVehicle& vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && dynamicMap)
 			{
-				const auto building = dynamicMap->getField (cPosition (vehicle.PosX, vehicle.PosY)).getBaseBuilding ();
-				bool water = dynamicMap->isWater (vehicle.PosX, vehicle.PosY);
+				const auto building = dynamicMap->getField (vehicle.getPosition()).getBaseBuilding ();
+				bool water = dynamicMap->isWater (vehicle.getPosition());
 				if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 				stopSelectedUnitSound ();
@@ -777,8 +777,8 @@ void cNewGameGUI::connectMoveJob (const cVehicle& vehicle)
 			{
 				if (!vehicle.ClientMoveJob) return;
 				
-				bool wasWater = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->X, vehicle.ClientMoveJob->Waypoints->Y);
-				bool water = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->next->X, vehicle.ClientMoveJob->Waypoints->next->Y);
+				bool wasWater = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->position);
+				bool water = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->next->position);
 
 				if (wasWater != water)
 				{
@@ -1092,7 +1092,7 @@ void cNewGameGUI::showBuildBuildingsWindow (const cVehicle& vehicle)
 			}
 			else
 			{
-				buildBuildingTriggered (vehicle, cPosition (vehicle.PosX, vehicle.PosY), *buildWindow->getSelectedUnitId (), buildWindow->getSelectedBuildSpeed ());
+				buildBuildingTriggered (vehicle, vehicle.getPosition(), *buildWindow->getSelectedUnitId (), buildWindow->getSelectedBuildSpeed ());
 			}
 		}
 		buildWindow->close ();
@@ -1195,7 +1195,7 @@ void cNewGameGUI::showStorageWindow (const cUnit& unit)
 	{
 		if (unit.isAVehicle () && unit.data.factorAir > 0)
 		{
-			activateAtTriggered (unit, index, cPosition (unit.PosX, unit.PosY));
+			activateAtTriggered (unit, index, unit.getPosition());
 		}
 		else
 		{
@@ -1227,17 +1227,17 @@ void cNewGameGUI::showStorageWindow (const cUnit& unit)
 				const auto& storedUnit = *unit.storedUnits[i];
 
 				bool activated = false;
-				for (int ypos = unit.PosY - 1, poscount = 0; ypos <= unit.PosY + (unit.data.isBig ? 2 : 1); ypos++)
+				for(int ypos = unit.getPosition().y() - 1, poscount = 0; ypos <= unit.getPosition().y() + (unit.data.isBig ? 2 : 1); ypos++)
 				{
 					if (ypos < 0 || ypos >= dynamicMap->getSize ()) continue;
-					for (int xpos = unit.PosX - 1; xpos <= unit.PosX + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
+					for(int xpos = unit.getPosition().x() - 1; xpos <= unit.getPosition().x() + (unit.data.isBig ? 2 : 1); xpos++, poscount++)
 					{
 						if (hasCheckedPlace[poscount]) continue;
 
 						if (xpos < 0 || xpos >= dynamicMap->getSize ()) continue;
 
-						if (((ypos == unit.PosY && unit.data.factorAir == 0) || (ypos == unit.PosY + 1 && unit.data.isBig)) &&
-							((xpos == unit.PosX && unit.data.factorAir == 0) || (xpos == unit.PosX + 1 && unit.data.isBig))) continue;
+						if(((ypos == unit.getPosition().y() && unit.data.factorAir == 0) || (ypos == unit.getPosition().y() + 1 && unit.data.isBig)) &&
+						   ((xpos == unit.getPosition().x() && unit.data.factorAir == 0) || (xpos == unit.getPosition().x() + 1 && unit.data.isBig))) continue;
 
 						if (unit.canExitTo (cPosition (xpos, ypos), *dynamicMap, storedUnit.data))
 						{
@@ -1325,8 +1325,8 @@ void cNewGameGUI::updateSelectedUnitIdleSound ()
 	{
 		const auto& vehicle = static_cast<const cVehicle&>(*selectedUnit);
 
-		const cBuilding* building = dynamicMap ? dynamicMap->getField (cPosition (vehicle.PosX, vehicle.PosY)).getBaseBuilding () : nullptr;
-		bool water = staticMap->isWater (vehicle.PosX, vehicle.PosY);
+		const cBuilding* building = dynamicMap ? dynamicMap->getField (vehicle.getPosition()).getBaseBuilding () : nullptr;
+		bool water = staticMap->isWater (vehicle.getPosition());
 		if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player != vehicle.owner))
@@ -1357,8 +1357,8 @@ void cNewGameGUI::updateSelectedUnitMoveSound ()
 
 	const auto& vehicle = *selectedVehicle;
 
-	const auto building = dynamicMap->getField (cPosition (vehicle.PosX, vehicle.PosY)).getBaseBuilding ();
-	bool water = dynamicMap->isWater (vehicle.PosX, vehicle.PosY);
+	const auto building = dynamicMap->getField (vehicle.getPosition()).getBaseBuilding ();
+	bool water = dynamicMap->isWater (vehicle.getPosition());
 	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 	stopSelectedUnitSound ();
 

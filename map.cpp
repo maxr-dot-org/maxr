@@ -140,29 +140,24 @@ const sTerrain& cStaticMap::getTerrain (const cPosition& position) const
 	return getTerrain (getOffset (position.x (), position.y ()));
 }
 
-bool cStaticMap::isBlocked (int offset) const
+bool cStaticMap::isBlocked (const cPosition& position) const
 {
-	return terrains[Kacheln[offset]].blocked;
+	return getTerrain(position).blocked;
 }
 
-bool cStaticMap::isCoast (int offset) const
+bool cStaticMap::isCoast (const cPosition& position) const
 {
-	return terrains[Kacheln[offset]].coast;
+	return getTerrain(position).coast;
 }
 
-bool cStaticMap::isWater (int offset) const
+bool cStaticMap::isWater (const cPosition& position) const
 {
-	return terrains[Kacheln[offset]].water;
+	return getTerrain(position).water;
 }
 
 bool cStaticMap::isValidPos (int x, int y) const
 {
 	return 0 <= x && x < size && 0 <= y && y < size;
-}
-
-bool cStaticMap::isWater (int x, int y) const
-{
-	return isWater (getOffset (x, y));
 }
 
 void cStaticMap::clear()
@@ -527,9 +522,9 @@ const cMapField& cMap::getField (const cPosition& position) const
 	return fields[getOffset (position.x (), position.y ())];
 }
 
-bool cMap::isWaterOrCoast (int x, int y) const
+bool cMap::isWaterOrCoast(const cPosition& position) const
 {
-	const sTerrain& terrainType = staticMap->getTerrain (x, y);
+	const sTerrain& terrainType = staticMap->getTerrain (position);
 	return terrainType.water | terrainType.coast;
 }
 
@@ -710,7 +705,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 				int index = getOffset (absPos.x, absPos.y);
 				if (type != RES_NONE &&
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
-					!isBlocked (index))
+					!isBlocked (cPosition(absPos.x, absPos.y)))
 				{
 					Resources[index].typ = type;
 					if (i >= playerCount)
@@ -756,12 +751,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 	return 2; // other vehicles
 }
 
-void cMap::addBuilding (cBuilding& building, unsigned int x, unsigned int y)
-{
-	addBuilding (building, getOffset (x, y));
-}
-
-void cMap::addBuilding (cBuilding& building, unsigned int offset)
+void cMap::addBuilding(cBuilding& building, const cPosition& position)
 {
 	//big base building are not implemented
 	if (building.data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building.data.isBig && building.owner) return;
@@ -771,54 +761,53 @@ void cMap::addBuilding (cBuilding& building, unsigned int offset)
 
 	if (building.data.isBig)
 	{
+		auto& field = getField(position);
 		i = 0;
-		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
+		while (i < field.buildings.size() && cMap::getMapLevel (*field.buildings[i]) < mapLevel) i++;
+		field.buildings.insert (field.buildings.begin() + i, &building);
 
-		offset += 1;
+		auto& fieldEast = getField(position + cPosition(1,0));
 		i = 0;
-		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
+		while(i < fieldEast.buildings.size() && cMap::getMapLevel(*fieldEast.buildings[i]) < mapLevel) i++;
+		fieldEast.buildings.insert(fieldEast.buildings.begin() + i, &building);
 
-		offset += getSize();
+		auto& fieldSouth = getField(position + cPosition(0, 1));
 		i = 0;
-		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
+		while(i < fieldSouth.buildings.size() && cMap::getMapLevel(*fieldSouth.buildings[i]) < mapLevel) i++;
+		fieldSouth.buildings.insert(fieldSouth.buildings.begin() + i, &building);
 
-		offset -= 1;
+		auto& fieldSouthEast = getField(position + cPosition(1, 1));
 		i = 0;
-		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
+		while(i < fieldSouthEast.buildings.size() && cMap::getMapLevel(*fieldSouthEast.buildings[i]) < mapLevel) i++;
+		fieldSouthEast.buildings.insert(fieldSouthEast.buildings.begin() + i, &building);
 	}
 	else
 	{
-		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
+		auto& field = getField(position);
+
+		while (i < field.buildings.size() && cMap::getMapLevel (*field.buildings[i]) < mapLevel) i++;
+		field.buildings.insert (field.buildings.begin() + i, &building);
 	}
 	addedUnit (building);
 }
 
-void cMap::addVehicle (cVehicle& vehicle, unsigned int x, unsigned int y)
+void cMap::addVehicle(cVehicle& vehicle, const cPosition& position)
 {
-	addVehicle (vehicle, getOffset (x, y));
-}
-
-void cMap::addVehicle (cVehicle& vehicle, unsigned int offset)
-{
+	auto& field = getField(position);
 	if (vehicle.data.factorAir > 0)
 	{
-		fields[offset].planes.insert (fields[offset].planes.begin(), &vehicle);
+		field.planes.insert (field.planes.begin(), &vehicle);
 	}
 	else
 	{
-		fields[offset].vehicles.insert (fields[offset].vehicles.begin(), &vehicle);
+		field.vehicles.insert (field.vehicles.begin(), &vehicle);
 	}
 	addedUnit (vehicle);
 }
 
 void cMap::deleteBuilding (const cBuilding& building)
 {
-	int offset = getOffset (building.PosX, building.PosY);
+	int offset = getOffset (building.getPosition());
 
 	std::vector<cBuilding*>* buildings = &fields[offset].buildings;
 	Remove (*buildings, &building);
@@ -842,7 +831,7 @@ void cMap::deleteBuilding (const cBuilding& building)
 
 void cMap::deleteVehicle (const cVehicle& vehicle)
 {
-	int offset = getOffset (vehicle.PosX, vehicle.PosY);
+	int offset = getOffset (vehicle.getPosition());
 
 	if (vehicle.data.factorAir > 0)
 	{
@@ -872,13 +861,12 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 	removedUnit (vehicle);
 }
 
-void cMap::moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int height)
+void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height)
 {
-	int oldOffset = getOffset (vehicle.PosX, vehicle.PosY);
-	int newOffset = getOffset (x, y);
+	int oldOffset = getOffset (vehicle.getPosition());
+	int newOffset = getOffset (position);
 
-	vehicle.PosX = x;
-	vehicle.PosY = y;
+	vehicle.setPosition(position);
 
 	if (vehicle.data.factorAir > 0)
 	{
@@ -910,23 +898,22 @@ void cMap::moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int h
 	movedVehicle (vehicle);
 }
 
-void cMap::moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y)
+void cMap::moveVehicleBig(cVehicle& vehicle, const cPosition& position)
 {
 	if (vehicle.data.isBig)
 	{
 		Log.write ("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR);
 		//calling this function twice is always an error.
 		//nevertheless try to proceed by resetting the data.isBig flag
-		moveVehicle (vehicle, x, y);
+		moveVehicle (vehicle, position);
 	}
 
-	int oldOffset = getOffset (vehicle.PosX, vehicle.PosY);
-	int newOffset = getOffset (x, y);
+	int oldOffset = getOffset (vehicle.getPosition());
+	int newOffset = getOffset(position);
 
 	fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 
-	vehicle.PosX = x;
-	vehicle.PosY = y;
+	vehicle.setPosition(position);
 
 	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 	newOffset++;
@@ -941,17 +928,16 @@ void cMap::moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y)
 	movedVehicle (vehicle);
 }
 
-bool cMap::possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlayer) const
+bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer) const
 {
-	return possiblePlaceVehicle (vehicle.data, x, y, vehicle.owner, checkPlayer);
+	return possiblePlaceVehicle (vehicle.data, position, vehicle.owner, checkPlayer);
 }
 
-bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer) const
+bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer) const
 {
-	if (isValidPos (x, y) == false) return false;
-	int offset = getOffset (x, y);
+	if (isValidPos (position) == false) return false;
 
-	const std::vector<cBuilding*>& buildings = fields[offset].getBuildings();
+	const std::vector<cBuilding*>& buildings = getField(position).getBuildings();
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	std::vector<cBuilding*>::const_iterator b_end = buildings.end();
 
@@ -960,18 +946,18 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 
 	if (vehicleData.factorAir > 0)
 	{
-		if (checkPlayer && player && !player->ScanMap[offset]) return true;
+		if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return true;
 		//only one plane per field for now
-		if (fields[offset].planes.size() >= MAX_PLANES_PER_FIELD) return false;
+		if (getField(position).planes.size() >= MAX_PLANES_PER_FIELD) return false;
 	}
 	if (vehicleData.factorGround > 0)
 	{
-		if (isBlocked (offset)) return false;
+		if (isBlocked (position)) return false;
 
-		if ((isWater (offset) && vehicleData.factorSea == 0) ||
-			(isCoast (offset) && vehicleData.factorCoast == 0))
+		if ((isWater (position) && vehicleData.factorSea == 0) ||
+			(isCoast (position) && vehicleData.factorCoast == 0))
 		{
-			if (checkPlayer && player && !player->ScanMap[offset]) return false;
+			if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if (b_it == b_end) return false;
@@ -985,9 +971,9 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
 			return false;
 
-		if (checkPlayer && player && !player->ScanMap[offset]) return true;
+		if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return true;
 
-		if (fields[offset].vehicles.empty() == false) return false;
+		if (getField(position).vehicles.empty() == false) return false;
 		if (b_it != b_end)
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
@@ -1001,19 +987,19 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	}
 	else if (vehicleData.factorSea > 0)
 	{
-		if (isBlocked (offset)) return false;
+		if (isBlocked (position)) return false;
 
-		if (!isWater (offset) &&
-			(!isCoast (offset) || vehicleData.factorCoast == 0)) return false;
+		if (!isWater (position) &&
+			(!isCoast (position) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
 		if (player && b_it != b_end && (*b_it)->owner != player &&
 			(*b_it)->data.explodesOnContact && (*b_it)->isDetectedByPlayer (player))
 			return false;
 
-		if (checkPlayer && player && !player->ScanMap[offset]) return true;
+		if (checkPlayer && player && !player->ScanMap[player->getOffset(position)]) return true;
 
-		if (fields[offset].vehicles.empty() == false) return false;
+		if (getField(position).vehicles.empty() == false) return false;
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
 		if (b_it != b_end &&
@@ -1032,23 +1018,18 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	return true;
 }
 
-bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, const cVehicle* vehicle) const
-{
-	return possiblePlaceBuildingWithMargin (buildingData, x, y, 0, vehicle);
-}
-
 // can't place it too near to the map border
-bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, const cVehicle* vehicle) const
+bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle) const
 {
-	if (x < margin || x >= getSize() - margin || y < margin || y >= getSize() - margin) return false;
-	return possiblePlaceBuilding (buildingData, getOffset (x, y), vehicle);
+	if (position.x() < margin || position.x() >= getSize() - margin || position.y() < margin || position.y() >= getSize() - margin) return false;
+	return possiblePlaceBuilding (buildingData, position, vehicle);
 }
 
-bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle) const
+bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle) const
 {
-	if (isValidOffset (offset) == false) return false;
-	if (isBlocked (offset)) return false;
-	cMapField& field = fields[offset];
+	if (!isValidPos (position)) return false;
+	if (isBlocked (position)) return false;
+	const cMapField& field = getField(position);
 
 	// Check all buildings in this field for a building of the same type. This
 	// will prevent roads, connectors and water platforms from building on top
@@ -1063,8 +1044,8 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 	}
 
 	// Determine terrain type
-	bool water = isWater (offset);
-	bool coast = isCoast (offset);
+	bool water = isWater (position);
+	bool coast = isCoast (position);
 	bool ground = !water && !coast;
 
 	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)

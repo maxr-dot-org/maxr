@@ -226,14 +226,13 @@ public:
 	/**
 	* adds the unit to the map and player.
 	*@author alzi alias DoctorDeath
-	*@param iPosX The X were the unit should be added.
-	*@param iPosY The Y were the unit should be added.
+	*@param position The position were the unit should be added.
 	*@param id id of the unit which should be added.
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle* addVehicle (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
-	cBuilding* addBuilding (int iPosX, int iPosY, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
+	cVehicle* addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
+	cBuilding* addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
 	/**
 	* adds a report to the reportlist
@@ -252,14 +251,14 @@ public:
 	/**
 	* generates a new movejob
 	*/
-	bool addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* vehicle);
+	bool addMoveJob(const cPosition& source, const cPosition& destination, cVehicle* vehicle);
 	/**
 	* adds a new rubble object to the game
-	* @param x,y the position where the rubble is added
+	* @param position The position where the rubble is added
 	* @param value the amount of material in the rubble field
 	* @param big size of the rubble field
 	*/
-	void addRubble (int x, int y, int value, bool big);
+	void addRubble(const cPosition& position, int value, bool big);
 	/**
 	* deletes a rubble object from the game
 	* @param rubble pointer to the rubble object which will be deleted
@@ -276,8 +275,8 @@ public:
 
 	void kickPlayer (cPlayer* player);
 
-	void sideStepStealthUnit (int PosX, int PosY, const cVehicle& vehicle, int bigOffset = -1);
-	void sideStepStealthUnit (int PosX, int PosY, const sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1);
+	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition(-1,-1));
+	void sideStepStealthUnit (const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition(-1,-1));
 
 	void makeAdditionalSaveRequest (int saveNum);
 

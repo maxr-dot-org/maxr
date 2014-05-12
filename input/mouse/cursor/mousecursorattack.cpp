@@ -38,7 +38,7 @@ cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition
 	newHealthPercent (-1)
 {
 	const sUnitData& data = sourceUnit.data;
-	const cUnit* target = selectTarget (targetPosition.x (), targetPosition.y (), data.canAttack, map);
+	const cUnit* target = selectTarget (targetPosition, data.canAttack, map);
 
 	if (target && (target != &sourceUnit))
 	{

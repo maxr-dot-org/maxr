@@ -704,7 +704,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cVehicle* vehicle = server.addVehicle (x, y, ID, owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	cVehicle* vehicle = server.addVehicle (cPosition(x, y), ID, owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -716,7 +716,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	{
 		vehicle->setCommandoRank(element->FloatAttribute ("num"));
 	}
-	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, x, y);
+	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, cPosition(x, y));
 	if (unitNode->FirstChildElement ("Disabled")) vehicle->setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
 	if (unitNode->FirstChildElement ("LayMines")) vehicle->setLayMines(true);
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
@@ -749,8 +749,8 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			vehicle->BuildPath = true;
 			vehicle->setBuildTurnsStart (element->IntAttribute ("turnsstart"));
 			vehicle->setBuildCostsStart (element->IntAttribute ("costsstart"));
-			element->QueryIntAttribute ("endx", &vehicle->BandX);
-			element->QueryIntAttribute ("endy", &vehicle->BandY);
+			element->QueryIntAttribute ("endx", &vehicle->bandPosition.x());
+			element->QueryIntAttribute ("endy", &vehicle->bandPosition.y());
 		}
 	}
 	if (XMLElement* const element = unitNode->FirstChildElement ("Clearing"))
@@ -830,7 +830,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cBuilding* building = server.addBuilding (x, y, ID, owner, true, tmpinteger);
+	cBuilding* building = server.addBuilding (cPosition(x, y), ID, owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -917,7 +917,7 @@ void cSavegame::loadRubble (cServer& server, XMLElement* rubbleNode)
 
 	if (rubbleNode->FirstChildElement ("Big")) big = true;
 
-	server.addRubble (x, y, rubblevalue, big);
+	server.addRubble (cPosition(x, y), rubblevalue, big);
 }
 
 //--------------------------------------------------------------------------
@@ -1185,7 +1185,7 @@ void cSavegame::generateMoveJobs (cServer& server)
 {
 	for (unsigned int i = 0; i < MoveJobsLoad.size(); ++i)
 	{
-		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->PosX, MoveJobsLoad[i]->vehicle->PosY, MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY, MoveJobsLoad[i]->vehicle);
+		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->getPosition(), cPosition(MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY), MoveJobsLoad[i]->vehicle);
 		if (!MoveJob->calcPath())
 		{
 			delete MoveJob;
@@ -1449,7 +1449,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	addAttributeElement (unitNode, "Type", "string", vehicle.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (vehicle.iID));
 	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.owner->getNr()));
-	addAttributeElement (unitNode, "Position", "x", iToStr (vehicle.PosX), "y", iToStr (vehicle.PosY));
+	addAttributeElement (unitNode, "Position", "x", iToStr (vehicle.getPosition().x()), "y", iToStr (vehicle.getPosition().y()));
 	// add information whether the unitname isn't serverdefault,
 	// so that it would be readed when loading
 	// but is in the save to make him more readable
@@ -1482,12 +1482,12 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 			element->SetAttribute ("path", "1");
 			element->SetAttribute ("turnsstart", iToStr (vehicle.getBuildTurnsStart()).c_str());
 			element->SetAttribute ("costsstart", iToStr (vehicle.getBuildCostsStart()).c_str());
-			element->SetAttribute ("endx", iToStr (vehicle.BandX).c_str());
-			element->SetAttribute ("endy", iToStr (vehicle.BandY).c_str());
+			element->SetAttribute ("endx", iToStr (vehicle.bandPosition.x()).c_str());
+			element->SetAttribute ("endy", iToStr (vehicle.bandPosition.y()).c_str());
 		}
 	}
 	if (vehicle.isUnitClearing ()) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.getClearingTurns()), "savedpos", iToStr (vehicle.BuildBigSavedPos));
-	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->DestX), "desty", iToStr (vehicle.ServerMoveJob->DestY));
+	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->destination.x()), "desty", iToStr (vehicle.ServerMoveJob->destination.y()));
 
 	// write from which players this unit has been detected
 	if (vehicle.detectedByPlayerList.empty() == false)
@@ -1529,7 +1529,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	addAttributeElement (unitNode, "Type", "string", building.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (building.iID));
 	addAttributeElement (unitNode, "Owner", "num", iToStr (building.owner->getNr()));
-	addAttributeElement (unitNode, "Position", "x", iToStr (building.PosX), "y", iToStr (building.PosY));
+	addAttributeElement (unitNode, "Position", "x", iToStr (building.getPosition().x()), "y", iToStr (building.getPosition().y()));
 
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	addAttributeElement (unitNode, "Name", "string", building.isNameOriginal() ? building.data.name : building.getName(), "notDefault", building.isNameOriginal() ? "0" : "1");
@@ -1603,7 +1603,7 @@ void cSavegame::writeRubble (const cServer& server, const cBuilding& building, i
 	// add the rubble node
 	XMLElement* rubbleNode = addMainElement (unitsNode, "Rubble_" + iToStr (rubblenum));
 
-	addAttributeElement (rubbleNode, "Position", "x", iToStr (building.PosX), "y", iToStr (building.PosY));
+	addAttributeElement (rubbleNode, "Position", "x", iToStr (building.getPosition().x()), "y", iToStr (building.getPosition().y()));
 	addAttributeElement (rubbleNode, "RubbleValue", "num", iToStr (building.RubbleValue));
 	if (building.data.isBig) addMainElement (rubbleNode, "Big");
 }

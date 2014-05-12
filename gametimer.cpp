@@ -294,10 +294,10 @@ uint32_t calcClientChecksum (const cClient& client)
 			 vehicle = vehicle->next)
 		{
 			crc = calcCheckSum (vehicle->iID,  crc);
-			crc = calcCheckSum (vehicle->PosX, crc);
-			crc = calcCheckSum (vehicle->PosY, crc);
-			crc = calcCheckSum (vehicle->OffX, crc);
-			crc = calcCheckSum (vehicle->OffY, crc);
+			crc = calcCheckSum (vehicle->getPosition().x(), crc);
+			crc = calcCheckSum (vehicle->getPosition().y(), crc);
+			crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
+			crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
 			crc = calcCheckSum (vehicle->dir,  crc);
 		}
 	}
@@ -317,10 +317,10 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 			if (Contains (vehicle->seenByPlayerList, player) || vehicle->owner == player)
 			{
 				crc = calcCheckSum (vehicle->iID,  crc);
-				crc = calcCheckSum (vehicle->PosX, crc);
-				crc = calcCheckSum (vehicle->PosY, crc);
-				crc = calcCheckSum (vehicle->OffX, crc);
-				crc = calcCheckSum (vehicle->OffY, crc);
+				crc = calcCheckSum (vehicle->getPosition().x(), crc);
+				crc = calcCheckSum (vehicle->getPosition().y(), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
 				crc = calcCheckSum (vehicle->dir,  crc);
 			}
 		}
@@ -342,10 +342,8 @@ void compareGameData (const cClient& client, const cServer& server)
 		{
 			const cVehicle* serverVehicle = server.getVehicleFromID (clientVehicle->iID);
 
-			assert (clientVehicle->PosX == serverVehicle->PosX);
-			assert (clientVehicle->PosY == serverVehicle->PosY);
-			assert (clientVehicle->OffX == serverVehicle->OffX);
-			assert (clientVehicle->OffY == serverVehicle->OffY);
+			assert (clientVehicle->getPosition() == serverVehicle->getPosition());
+			assert (clientVehicle->getMovementOffset() == serverVehicle->getMovementOffset());
 			assert (clientVehicle->dir == serverVehicle->dir);
 		}
 	}

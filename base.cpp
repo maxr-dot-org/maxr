@@ -1120,7 +1120,7 @@ sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 void cBase::addBuilding (cBuilding* building, cServer* server)
 {
 	if (!building->data.connectsToBase) return;
-	int pos = map->getOffset (building->PosX, building->PosY);
+	int pos = map->getOffset (building->getPosition());
 	std::vector<sSubBase*> NeighbourList;
 
 	// check for neighbours

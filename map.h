@@ -126,10 +126,9 @@ public:
 
 	bool isValidPos (int x, int y) const;
 
-	bool isWater (int x, int y) const;
-	bool isBlocked (int offset) const;
-	bool isCoast (int offset) const;
-	bool isWater (int offset) const;
+	bool isBlocked (const cPosition& position) const;
+	bool isCoast (const cPosition& position) const;
+	bool isWater (const cPosition& position) const;
 
 	const sTerrain& getTerrain (int offset) const;
 	const sTerrain& getTerrain (int x, int y) const;
@@ -161,18 +160,18 @@ public:
 
 	const std::string& getName() const { return staticMap->getName(); }
 	int getSize() const { return staticMap->getSize(); }
+	cPosition getSizeNew() const { return staticMap->getSizeNew(); }
 	int getOffset (int x, int y) const { return staticMap->getOffset (x, y); }
 	int getOffset (const cPosition& pos) const { return staticMap->getOffset (pos); }
 	bool isValidPos (int x, int y) const { return staticMap->isValidPos (x, y); }
+	bool isValidPos (const cPosition& pos) const { return staticMap->isValidPos (pos.x(), pos.y()); }
 	bool isValidOffset (int offset) const;
 
-	bool isBlocked (int offset) const { return staticMap->isBlocked (offset); }
-	bool isBlocked (const cPosition& pos) const { return staticMap->isBlocked (getOffset(pos)); }
-	bool isCoast (int offset) const { return staticMap->isCoast (offset); }
-	bool isWater (int offset) const { return staticMap->isWater (offset); }
-	bool isCoast (int x, int y) const { return staticMap->isCoast (getOffset (x, y)); }
-	bool isWater (int x, int y) const { return staticMap->isWater (x, y); }
-	bool isWaterOrCoast (int x, int y) const;
+	bool isBlocked(const cPosition& position) const { return staticMap->isBlocked(position); }
+	bool isCoast(const cPosition& position) const { return staticMap->isCoast(position); }
+	bool isWater(const cPosition& position) const { return staticMap->isWater(position); }
+
+	bool isWaterOrCoast (const cPosition& position) const;
 
 	const sResources& getResource (int offset) const { return Resources[offset]; }
 	const sResources& getResource (int x, int y) const { return Resources[getOffset (x, y)]; }
@@ -206,22 +205,20 @@ public:
 	cMapField& getField (const cPosition& position);
 	const cMapField& getField (const cPosition& position) const;
 
-	void addBuilding (cBuilding& building, unsigned int x, unsigned int y);
-	void addBuilding (cBuilding& building, unsigned int offset);
-	void addVehicle (cVehicle& vehicle, unsigned int x, unsigned int y);
-	void addVehicle (cVehicle& vehicle, unsigned int offset);
+	void addBuilding (cBuilding& building, const cPosition& position);
+	void addVehicle (cVehicle& vehicle, const cPosition& position);
 
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
 	* @param height defines the flight hight, when more then one planes on a field. 0 means top/highest.
 	*/
-	void moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int height = 0);
+	void moveVehicle (cVehicle& vehicle, const cPosition& position, int height = 0);
 
 	/**
 	* places a vehicle on the 4 fields to the right and below the given position
 	*/
-	void moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y);
+	void moveVehicleBig (cVehicle& vehicle, const cPosition& position);
 
 	void deleteBuilding (const cBuilding& building);
 	void deleteVehicle (const cVehicle& vehicle);
@@ -233,17 +230,16 @@ public:
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlayer = false) const;
-	bool possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer = false) const;
+	bool possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer = false) const;
+	bool possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	* note, that the function can only check for map border overflows (with margin), if you pass xy coordinates instead of an offset
 	*/
-	bool possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, const cVehicle* vehicle = NULL) const;
-	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, const cVehicle* vehicle = NULL) const;
-	bool possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = NULL) const;
 
 	/**
 	* removes all units from the map structure

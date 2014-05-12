@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "utility/signal/signal.h"
+#include "utility/position.h"
 
 class cClient;
 class cMap;
@@ -46,7 +47,7 @@ enum MJOB_TYPES
 struct sWaypoint
 {
 	sWaypoint* next;
-	int X, Y;
+	cPosition position;
 	int Costs;
 };
 
@@ -54,7 +55,7 @@ struct sWaypoint
 struct sPathNode
 {
 	/* x and y coords */
-	int x, y;
+	cPosition position;
 	/* the difrent cost types */
 	int costF, costG, costH;
 	/* previous and next node of this one in the hole path */
@@ -78,22 +79,22 @@ class cPathDestHandler
 	const cVehicle* srcVehicle;
 
 	const cUnit* destUnit;
-	int destX, destY;
+	cPosition destination;
 public:
-	cPathDestHandler (ePathDestinationTypes type_, int destX, int destY, const cVehicle* srcVehicle_, const cUnit* destUnit_);
+	cPathDestHandler (ePathDestinationTypes type_, const cPosition& destination, const cVehicle* srcVehicle_, const cUnit* destUnit_);
 
-	bool hasReachedDestination (int x, int y) const;
-	int heuristicCost (int srcX, int srcY) const;
+	bool hasReachedDestination(const cPosition& position) const;
+	int heuristicCost(const cPosition& source) const;
 };
 
 class cPathCalculator
 {
-	void init (int ScrX, int ScrY, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
+	void init(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group);
 
 public:
-	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group = NULL);
-	cPathCalculator (int ScrX, int ScrY, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load);
-	cPathCalculator (int ScrX, int ScrY, const cMap& Map, const cVehicle& Vehicle, int attackX, int attackY);
+	cPathCalculator(const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group = NULL);
+	cPathCalculator(const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load);
+	cPathCalculator(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack);
 	~cPathCalculator();
 
 	/**
@@ -105,7 +106,7 @@ public:
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/
-	int calcNextCost (int srcX, int srcY, int destX, int destY) const;
+	int calcNextCost(const cPosition& source, const cPosition& destination) const;
 
 	/* the map on which the path will be calculated */
 	const cMap* Map;
@@ -114,7 +115,7 @@ public:
 	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
 	const std::vector<cVehicle*>* group;
 	/* source and destination coords */
-	int ScrX, ScrY;
+	cPosition source;
 	bool bPlane, bShip;
 	cPathDestHandler* destHandler;
 
@@ -190,14 +191,14 @@ class cServerMoveJob
 {
 	cServer* server;
 public:
-	cServerMoveJob (cServer& server_, int srcX_, int srcY_, int destX_, int destY_, cVehicle* Vehicle);
+	cServerMoveJob(cServer& server, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
 	~cServerMoveJob();
 
 	cMap* Map;
 	cVehicle* Vehicle;
 
-	int SrcX, SrcY;
-	int DestX, DestY;
+	cPosition source;
+	cPosition destination;
 	bool bFinished;
 	bool bEndForNow;
 	int iNextDir;
@@ -224,18 +225,18 @@ class cClientMoveJob
 {
 	cClient* client;
 
-	void init (int iSrcOff, cVehicle* Vehicle);
+	void init (const cPosition& source, cVehicle* Vehicle);
 public:
-	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, const cVehicle& vehicle, const std::vector<cVehicle*>* group = NULL);
+	static sWaypoint* calcPath(const cMap& map, const cPosition& source, const cPosition& destination, const cVehicle& vehicle, const std::vector<cVehicle*>* group = NULL);
 
-	cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle);
+	cClientMoveJob (cClient& client_, const cPosition& source, const cPosition& destination, cVehicle* Vehicle);
 	~cClientMoveJob();
 	cMap* Map;
 	cVehicle* Vehicle;
 	cEndMoveAction* endMoveAction;
 
-	int ScrX, ScrY;
-	int DestX, DestY;
+	cPosition source;
+	cPosition destination;
 	bool bFinished;
 	bool bEndForNow;
 	bool bSuspended;

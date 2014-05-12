@@ -68,10 +68,8 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	commandoRank (0)
 {
 	uiData = UnitsData.getVehicleUI (v.ID);
-	BandX = 0;
-	BandY = 0;
-	OffX = 0;
-	OffY = 0;
+	bandPosition = 0;
+	tileMovementOffset = 0;
 	ditherX = 0;
 	ditherY = 0;
 	StartUp = 0;
@@ -197,7 +195,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	assert ((isUnitBuildingABuilding () || (isUnitClearing () && data.isBig)) && job == NULL);
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
-	if (isUnitBuildingABuilding () && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding ()))
+	if (isUnitBuildingABuilding () && data.isBig && (!map.isWaterOrCoast (getPosition()) || map.getField(getPosition()).getBaseBuilding ()))
 	{
 		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), BigBetonAlpha);
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
@@ -251,7 +249,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 
 void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
 {
-	if (map.isWater (PosX, PosY) && (data.isStealthOn & TERRAIN_SEA)) return;
+	if (map.isWater (getPosition()) && (data.isStealthOn & TERRAIN_SEA)) return;
 
 	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetSurfaceAlphaMod (uiData->shw[dir], StartUp / 5);
 	else SDL_SetSurfaceAlphaMod (uiData->shw[dir], 50);
@@ -344,11 +342,11 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 		}
 		else
 		{
-			bool water = map->isWater (PosX, PosY);
+			bool water = map->isWater (getPosition());
 			// if the vehicle can also drive on land, we have to check,
 			// whether there is a brige, platform, etc.
 			// because the vehicle will drive on the bridge
-			cBuilding* building = map->fields[map->getOffset (PosX, PosY)].getBaseBuilding ();
+			cBuilding* building = map->getField(getPosition()).getBaseBuilding ();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
 			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == activePlayer) alpha = 100;
@@ -382,31 +380,30 @@ bool cVehicle::refreshData_Build (cServer& server)
 		// a) is something we can't move to
 		//  (in which case we cancel the path building)
 		// or b) doesn't have a building type that we're trying to build.
-		int  nextX       = PosX;
-		int  nextY       = PosY;
+		cPosition nextPosition(getPosition());
 		bool found_next  = false;
 
-		while (!found_next && (nextX != BandX || nextY != BandY))
+		while (!found_next && (nextPosition != bandPosition))
 		{
 			// Calculate the next position in the path.
-			if (PosX > BandX) nextX--;
-			if (PosX < BandX) nextX++;
-			if (PosY > BandY) nextY--;
-			if (PosY < BandY) nextY++;
+			if (getPosition().x() > bandPosition.x()) nextPosition.x()--;
+			if (getPosition().x() < bandPosition.x()) nextPosition.x()++;
+			if (getPosition().y() > bandPosition.y()) nextPosition.y()--;
+			if (getPosition().y() < bandPosition.y()) nextPosition.y()++;
 			// Can we move to this position?
 			// If not, we need to kill the path building now.
-			if (!map.possiblePlace (*this, nextX, nextY))
+			if (!map.possiblePlace (*this, nextPosition))
 			{
 				// Try sidestepping stealth units before giving up.
-				server.sideStepStealthUnit (nextX, nextY, *this);
-				if (!map.possiblePlace (*this, nextX, nextY))
+				server.sideStepStealthUnit (nextPosition, *this);
+				if (!map.possiblePlace (*this, nextPosition))
 				{
 					// We can't build along this path any more.
 					break;
 				}
 			}
 			// Can we build at this next position?
-			if (map.possiblePlaceBuilding (*getBuildingType ().getUnitDataOriginalVersion (), nextX, nextY))
+			if (map.possiblePlaceBuilding (*getBuildingType ().getUnitDataOriginalVersion (), nextPosition))
 			{
 				// We can build here.
 				found_next = true;
@@ -415,10 +412,10 @@ bool cVehicle::refreshData_Build (cServer& server)
 		}
 
 		// If we've found somewhere to move to, move there now.
-		if (found_next && server.addMoveJob (PosX, PosY, nextX, nextY, this))
+		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
 		{
 			setBuildingABuilding (false);
-			server.addBuilding (PosX, PosY, getBuildingType (), owner);
+			server.addBuilding (getPosition(), getBuildingType (), owner);
 			// Begin the movement immediately,
 			// so no other unit can block the destination field.
 			this->ServerMoveJob->checkMove();
@@ -428,7 +425,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		{
 			if (getBuildingType ().getUnitDataOriginalVersion ()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
 			{
-				server.addBuilding (PosX, PosY, getBuildingType (), owner);
+				server.addBuilding (getPosition(), getBuildingType (), owner);
 				setBuildingABuilding (false);
 			}
 			BuildPath = false;
@@ -442,7 +439,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (getBuildingType ().getUnitDataOriginalVersion ()->surfacePosition != data.surfacePosition)
 		{
 			setBuildingABuilding(false);
-			server.addBuilding (PosX, PosY, getBuildingType (), owner);
+			server.addBuilding (getPosition(), getBuildingType (), owner);
 		}
 	}
 	return true;
@@ -459,11 +456,11 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	if (getClearingTurns () != 0) return true;
 
 	setClearing(false);
-	cBuilding* Rubble = map.fields[map.getOffset (PosX, PosY)].getRubble();
+	cBuilding* Rubble = map.getField(getPosition()).getRubble();
 	if (data.isBig)
 	{
 		const int size = map.getSize();
-		map.moveVehicle (*this, BuildBigSavedPos % size, BuildBigSavedPos / size);
+		map.moveVehicle (*this, cPosition(BuildBigSavedPos % size, BuildBigSavedPos / size));
 		sendStopClear (server, *this, BuildBigSavedPos, owner->getNr());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
@@ -702,10 +699,10 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 void cVehicle::doSurvey (const cServer& server)
 {
 	const cMap& map = *server.Map;
-	const int minx = std::max (PosX - 1, 0);
-	const int maxx = std::min (PosX + 1, map.getSize() - 1);
-	const int miny = std::max (PosY - 1, 0);
-	const int maxy = std::min (PosY + 1, map.getSize() - 1);
+	const int minx = std::max (getPosition().x() - 1, 0);
+	const int maxx = std::min (getPosition().x() + 1, map.getSize() - 1);
+	const int miny = std::max (getPosition().y() - 1, 0);
+	const int maxy = std::min (getPosition().y() + 1, map.getSize() - 1);
 
 	for (int y = miny; y <= maxy; ++y)
 		for (int x = minx; x <= maxx; ++x)
@@ -845,12 +842,11 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, *server.Map);
+	const cUnit* target = selectTarget (getPosition(), opponentUnit->data.canAttack, *server.Map);
 	if (target != this) return false;
 
-	int iOff = server.Map->getOffset (PosX, PosY);
-	Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, iOff, true));
+	Log.write (" Server: " + reasonForLog + ": attacking position " + iToStr (getPosition().x()) + "x" + iToStr (getPosition().y()) + " Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, getPosition(), true));
 	if (ServerMoveJob != 0)
 		ServerMoveJob->bFinished = true;
 	return true;
@@ -859,7 +855,7 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 //-----------------------------------------------------------------------------
 bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (PosX, PosY, *server.Map, true))
+	if (sentryUnit != 0 && sentryUnit->isSentryActive() && sentryUnit->canAttackObjectAt (getPosition(), *server.Map, true))
 	{
 		if (makeAttackOnThis (server, sentryUnit, "sentry reaction"))
 			return true;
@@ -870,7 +866,7 @@ bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 //-----------------------------------------------------------------------------
 bool cVehicle::InSentryRange (cServer& server)
 {
-	int iOff = server.Map->getOffset (PosX, PosY);
+	int iOff = server.Map->getOffset (getPosition());
 	std::vector<cPlayer*>& playerList = server.PlayerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
@@ -910,11 +906,11 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 	bool otherUnitIsCheapBuilding = (otherUnit.isABuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2); //FIXME: isn't the check inverted?
 
 	if (otherUnitIsCheapBuilding == false
-		&& isInRange (otherUnit.PosX, otherUnit.PosY)
-		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, *server.Map, true, false))
+		&& isInRange (otherUnit.getPosition())
+		&& canAttackObjectAt (otherUnit.getPosition(), *server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, *server.Map);
+		cUnit* target = selectTarget (otherUnit.getPosition(), data.canAttack, *server.Map);
 		if (target == &otherUnit)
 			return true;
 	}
@@ -957,7 +953,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const
 {
 	if (opponentUnit->isSentryActive() == false && opponentUnit->isManualFireActive() == false
-		&& opponentUnit->canAttackObjectAt (PosX, PosY, *server.Map, true)
+		&& opponentUnit->canAttackObjectAt (getPosition(), *server.Map, true)
 		// Possible TODO: better handling of stealth units.
 		// e.g. do reaction fire, if already detected ?
 		&& (opponentUnit->isAVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
@@ -1023,8 +1019,8 @@ bool cVehicle::provokeReactionFire (cServer& server)
 //-----------------------------------------------------------------------------
 bool cVehicle::canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const
 {
-	if (!map.possiblePlaceVehicle (unitData, position.x (), position.y (), owner)) return false;
-	if (data.factorAir > 0 && (position.x () != PosX || position.y () != PosY)) return false;
+	if (!map.possiblePlaceVehicle (unitData, position, owner)) return false;
+	if (data.factorAir > 0 && (position != getPosition())) return false;
 	if (!isNextTo (position)) return false;
 
 	return true;
@@ -1047,9 +1043,9 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (data.storageUnitsCur >= data.storageUnitsMax) return false;
 
-	if (checkPosition && !isNextTo (Vehicle->PosX, Vehicle->PosY)) return false;
+	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 
-	if (checkPosition && data.factorAir > 0 && (Vehicle->PosX != PosX || Vehicle->PosY != PosY)) return false;
+	if (checkPosition && data.factorAir > 0 && (Vehicle->getPosition() != getPosition())) return false;
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
@@ -1084,16 +1080,15 @@ void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 //-----------------------------------------------------------------------------
 /** Exits a vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::exitVehicleTo (cVehicle& vehicle, int offset, cMap& map)
+void cVehicle::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap& map)
 {
 	Remove (storedUnits, &vehicle);
 
 	data.storageUnitsCur--;
 
-	map.addVehicle (vehicle, offset);
+	map.addVehicle (vehicle, position);
 
-	vehicle.PosX = offset % map.getSize();
-	vehicle.PosY = offset / map.getSize ();
+	vehicle.setPosition(position);
 
 	vehicle.setLoaded (false);
 	//vehicle.data.shotsCur = 0;
@@ -1125,7 +1120,7 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 	if (data.storageResCur <= 0)
 		return false;
 
-	if (unit->isNextTo (PosX, PosY) == false)
+	if (unit->isNextTo (getPosition()) == false)
 		return false;
 
 	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0)
@@ -1160,13 +1155,13 @@ bool cVehicle::layMine (cServer& server)
 	const cMap& map = *server.Map;
 	if (data.factorSea > 0 && data.factorGround == 0)
 	{
-		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addBuilding (PosX, PosY, UnitsData.specialIDSeaMine, owner, false);
+		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), getPosition(), this)) return false;
+		server.addBuilding (getPosition(), UnitsData.specialIDSeaMine, owner, false);
 	}
 	else
 	{
-		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addBuilding (PosX, PosY, UnitsData.specialIDLandMine, owner, false);
+		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), getPosition(), this)) return false;
+		server.addBuilding (getPosition(), UnitsData.specialIDLandMine, owner, false);
 	}
 	data.storageResCur--;
 
@@ -1179,7 +1174,7 @@ bool cVehicle::layMine (cServer& server)
 bool cVehicle::clearMine (cServer& server)
 {
 	const cMap& map = *server.Map;
-	cBuilding* Mine = map.fields[map.getOffset (PosX, PosY)].getMine();
+	cBuilding* Mine = map.getField(getPosition()).getMine();
 
 	if (!Mine || Mine->owner != owner || data.storageResCur >= data.storageResMax) return false;
 	if (Mine->data.factorGround > 0 && data.factorGround == 0) return false;
@@ -1220,7 +1215,7 @@ bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
 		return false;
 	if (data.getShots() == 0) return false;
 
-	if (unit->isNextTo (PosX, PosY) == false)
+	if (unit->isNextTo (getPosition()) == false)
 		return false;
 
 	if (steal == false && unit->isDisabled ()) return false;
@@ -1362,20 +1357,19 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 	if (data.isStealthOn != TERRAIN_NONE)  // the vehicle is a stealth vehicle
 	{
 		cMap& map = *server.Map;
-		int offset = map.getOffset (PosX, PosY);
 		std::vector<cPlayer*>& playerList = server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];
 			if (player == owner)
 				continue;
-			bool isOnWater = map.isWater (offset);
-			bool isOnCoast = map.isCoast (offset) && (isOnWater == false);
+			bool isOnWater = map.isWater (getPosition());
+			bool isOnCoast = map.isCoast (getPosition()) && (isOnWater == false);
 
 			// if the vehicle can also drive on land, we have to check,
 			// whether there is a brige, platform, etc.
 			// because the vehicle will drive on the bridge
-			const cBuilding* building = map.fields[offset].getBaseBuilding();
+			const cBuilding* building = map.getField(getPosition()).getBaseBuilding();
 			if (data.factorGround > 0 && building
 				&& (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
 					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
@@ -1386,14 +1380,14 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 			}
 
 			if ((data.isStealthOn & TERRAIN_GROUND)
-				&& (player->hasLandDetection (offset) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
+				&& (player->hasLandDetection (player->getOffset(getPosition())) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
 					|| isOnWater))
 			{
 				playersThatDetectThisVehicle.push_back (player);
 			}
 
 			if ((data.isStealthOn & TERRAIN_SEA)
-				&& (player->hasSeaDetection (offset) || isOnWater == false))
+				&& (player->hasSeaDetection (player->getOffset(getPosition())) || isOnWater == false))
 			{
 				playersThatDetectThisVehicle.push_back (player);
 			}
@@ -1414,10 +1408,10 @@ void cVehicle::makeDetection (cServer& server)
 	if (data.canDetectStealthOn == false) return;
 
 	cMap& map = *server.Map;
-	const int minx = std::max (PosX - data.scan, 0);
-	const int maxx = std::min (PosX + data.scan, map.getSize() - 1);
-	const int miny = std::max (PosY - data.scan, 0);
-	const int maxy = std::min (PosY + data.scan, map.getSize() - 1);
+	const int minx = std::max (getPosition().x() - data.scan, 0);
+	const int maxx = std::min (getPosition().x() + data.scan, map.getSize() - 1);
+	const int miny = std::max (getPosition().y() - data.scan, 0);
+	const int maxy = std::min (getPosition().y() + data.scan, map.getSize() - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
@@ -1611,7 +1605,7 @@ bool cVehicle::canLand (const cMap& map) const
 	if (moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking()) return false;     //vehicle busy?
 
 	// landing pad there?
-	const std::vector<cBuilding*>& buildings = map[map.getOffset (PosX, PosY)].getBuildings();
+	const std::vector<cBuilding*>& buildings = map.getField(getPosition()).getBuildings();
 	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
 	for (; b_it != buildings.end(); ++b_it)
 	{
@@ -1621,7 +1615,7 @@ bool cVehicle::canLand (const cMap& map) const
 	if (b_it == buildings.end()) return false;
 
 	// is the landing pad already occupied?
-	const std::vector<cVehicle*>& v = map[map.getOffset (PosX, PosY)].getPlanes();
+	const std::vector<cVehicle*>& v = map.getField(getPosition()).getPlanes();
 	for (std::vector<cVehicle*>::const_iterator it = v.begin(); it != v.end(); ++it)
 	{
 		const cVehicle& vehicle = **it;

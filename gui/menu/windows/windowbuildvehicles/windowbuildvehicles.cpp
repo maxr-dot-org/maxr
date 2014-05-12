@@ -115,8 +115,8 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 		sUnitData& unitData = building.owner->VehicleData[i];
 		bool land = false;
 		bool water = false;
-		int x = building.PosX - 2;
-		int y = building.PosY - 1;
+		int x = building.getPosition().x() - 2;
+		int y = building.getPosition().y() - 1;
 
 		for (int j = 0; j < 12; j++)
 		{
@@ -137,14 +137,14 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 
 			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-			if (!map.isWaterOrCoast (x, y) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
-			else if (map.isWaterOrCoast (x, y) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			if (!map.isWaterOrCoast (cPosition(x, y)) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
+			else if (map.isWaterOrCoast (cPosition(x, y)) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if (map.isWaterOrCoast (x, y)) water = true;
+			else if (map.isWaterOrCoast (cPosition(x, y))) water = true;
 		}
 
 		if (unitData.factorSea > 0 && unitData.factorGround == 0 && !water) continue;

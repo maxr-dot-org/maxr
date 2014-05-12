@@ -314,7 +314,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 		// max StartUp value for undetected stealth units is 100,
 		// because they stay half visible
-		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && map.isWater (vehicle.PosX, vehicle.PosY) && vehicle.detectedByPlayerList.empty () && vehicle.owner == player)
+		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && map.isWater (vehicle.getPosition()) && vehicle.detectedByPlayerList.empty () && vehicle.owner == player)
 		{
 			if (vehicle.StartUp > 100) vehicleNonConst.StartUp = 0;
 		}
@@ -332,8 +332,8 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// calculate screen position
-	int ox = (int)(vehicle.OffX * zoomFactor);
-	int oy = (int)(vehicle.OffY * zoomFactor);
+	int ox = (int)(vehicle.getMovementOffset().x() * zoomFactor);
+	int oy = (int)(vehicle.getMovementOffset().y() * zoomFactor);
 
 	destination.x += ox;
 	destination.y += oy;
