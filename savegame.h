@@ -21,6 +21,7 @@
 #include "defines.h"
 #include "tinyxml2.h"
 #include <vector>
+#include <memory>
 #include "utility/version.h"
 
 
@@ -190,7 +191,7 @@ private:
 	* loads a player
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* loadPlayer (tinyxml2::XMLElement* playerNode, cMap& map);
+	std::unique_ptr<cPlayer> loadPlayer (tinyxml2::XMLElement* playerNode, cMap& map);
 	/**
 	* loads the upgrade values of a unit in the players data
 	*@author alzi alias DoctorDeath

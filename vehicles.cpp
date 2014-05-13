@@ -460,18 +460,18 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	if (data.isBig)
 	{
 		map.moveVehicle (*this, buildBigSavedPosition);
-		sendStopClear (server, *this, buildBigSavedPosition, owner->getNr ());
+		sendStopClear (server, *this, buildBigSavedPosition, *owner);
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
-			sendStopClear (server, *this, buildBigSavedPosition, seenByPlayerList[i]->getNr ());
+			sendStopClear (server, *this, buildBigSavedPosition, *seenByPlayerList[i]);
 		}
 	}
 	else
 	{
-		sendStopClear (server, *this, cPosition(-1, -1), owner->getNr());
+		sendStopClear (server, *this, cPosition(-1, -1), *owner);
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
-			sendStopClear (server, *this, cPosition (-1, -1), seenByPlayerList[i]->getNr ());
+			sendStopClear (server, *this, cPosition (-1, -1), *seenByPlayerList[i]);
 		}
 	}
 	data.storageResCur += Rubble->RubbleValue;
@@ -870,28 +870,28 @@ bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 //-----------------------------------------------------------------------------
 bool cVehicle::InSentryRange (cServer& server)
 {
-	std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		cPlayer* Player = playerList[i];
+		cPlayer& player = *playerList[i];
 
-		if (Player == owner) continue;
+		if (&player == owner) continue;
 
 		// Don't attack undiscovered stealth units
-		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (Player)) continue;
+		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (&player)) continue;
 		// Don't attack units out of scan range
-		if (!Player->canSeeAnyAreaUnder (*this)) continue;
+		if (!player.canSeeAnyAreaUnder (*this)) continue;
 		// Check sentry type
-		if (data.factorAir > 0 && Player->hasSentriesAir (getPosition ()) == 0) continue;
+		if (data.factorAir > 0 && player.hasSentriesAir (getPosition ()) == 0) continue;
 		// Check sentry type
-		if (data.factorAir == 0 && Player->hasSentriesGround (getPosition ()) == 0) continue;
+		if (data.factorAir == 0 && player.hasSentriesGround (getPosition ()) == 0) continue;
 
-		for (cVehicle* vehicle = Player->VehicleList; vehicle; vehicle = vehicle->next)
+		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
 			if (makeSentryAttack (server, vehicle))
 				return true;
 		}
-		for (cBuilding* building = Player->BuildingList; building; building = building->next)
+		for (cBuilding* building = player.BuildingList; building; building = building->next)
 		{
 			if (makeSentryAttack (server, building))
 				return true;
@@ -996,24 +996,24 @@ bool cVehicle::provokeReactionFire (cServer& server)
 	if (data.canAttack == false || data.getShots () <= 0 || data.getAmmo () <= 0)
 		return false;
 
-	std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		cPlayer* player = playerList[i];
-		if (player == owner)
+		cPlayer& player = *playerList[i];
+		if (&player == owner)
 			continue;
 
-		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player))
+		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (&player))
 			continue;
 		// The vehicle can't be seen by the opposing player.
 		// No possibility for reaction fire.
-		if (player->canSeeAnyAreaUnder (*this) == false)
+		if (player.canSeeAnyAreaUnder (*this) == false)
 			continue;
 
-		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (server, player) == false)
+		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (server, &player) == false)
 			continue;
 
-		if (doReactionFire (server, player))
+		if (doReactionFire (server, &player))
 			return true;
 	}
 	return false;
@@ -1360,11 +1360,11 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 	if (data.isStealthOn != TERRAIN_NONE)  // the vehicle is a stealth vehicle
 	{
 		cMap& map = *server.Map;
-		std::vector<cPlayer*>& playerList = server.PlayerList;
+		const auto& playerList = server.playerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
-			cPlayer* player = playerList[i];
-			if (player == owner)
+			cPlayer& player = *playerList[i];
+			if (&player == owner)
 				continue;
 			bool isOnWater = map.isWater (getPosition());
 			bool isOnCoast = map.isCoast (getPosition()) && (isOnWater == false);
@@ -1383,16 +1383,16 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 			}
 
 			if ((data.isStealthOn & TERRAIN_GROUND)
-				&& (player->hasLandDetection (getPosition()) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
+				&& (player.hasLandDetection (getPosition()) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
 					|| isOnWater))
 			{
-				playersThatDetectThisVehicle.push_back (player);
+				playersThatDetectThisVehicle.push_back (&player);
 			}
 
 			if ((data.isStealthOn & TERRAIN_SEA)
-				&& (player->hasSeaDetection (getPosition()) || isOnWater == false))
+				&& (player.hasSeaDetection (getPosition()) || isOnWater == false))
 			{
-				playersThatDetectThisVehicle.push_back (player);
+				playersThatDetectThisVehicle.push_back (&player);
 			}
 		}
 	}

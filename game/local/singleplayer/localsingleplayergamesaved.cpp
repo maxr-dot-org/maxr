@@ -39,7 +39,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	auto staticMap = server->Map->staticMap;
 	client->setMap (staticMap);
 
-	const auto& serverPlayerList = server->PlayerList;
+	const auto& serverPlayerList = server->playerList;
 	if (serverPlayerList.empty ()) return;
 
 	const int player = 0;
@@ -66,7 +66,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size (); ++j)
 		{
-			sendSavedReport (*server, reportList[j], serverPlayerList[i]->getNr ());
+			sendSavedReport (*server, reportList[j], *serverPlayerList[i]);
 		}
 		reportList.clear ();
 	}

@@ -773,9 +773,9 @@ void cPlayer::doResearch (cServer& server)
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
 		for (size_t i = 0; i != upgradedUnitDatas.size(); ++i)
-			sendUnitUpgrades (server, *upgradedUnitDatas[i], getNr());
+			sendUnitUpgrades (server, *upgradedUnitDatas[i], *this);
 	}
-	sendResearchLevel (server, researchLevel, getNr());
+	sendResearchLevel (server, researchLevel, *this);
 }
 
 void cPlayer::accumulateScore (cServer& server)

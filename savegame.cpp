@@ -60,7 +60,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	writeCasualties (server);
 
 	int unitnum = 0;
-	const std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		const cPlayer& Player = *playerList[i];
@@ -183,7 +183,7 @@ bool cSavegame::load (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::recalcSubbases (cServer& server)
 {
-	std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		playerList[i]->base.refreshSubbases();
@@ -268,7 +268,7 @@ void cSavegame::loadGameInfo (cServer& server)
 	if (XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
 		gameSetting.setGameType(eGameSettingsGameType::Turns);
-		server.iActiveTurnPlayerNr = element->IntAttribute ("activeplayer");
+		server.activeTurnPlayer = &server.getPlayerFromNumber(element->IntAttribute ("activeplayer"));
 	}
 
 	if (version < cVersion (0, 4))
@@ -421,7 +421,7 @@ bool cSavegame::loadMap (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::loadPlayers (cServer& server)
 {
-	std::vector<cPlayer*>& players = server.PlayerList;
+	auto& players = server.playerList;
 
 	XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	if (playersNode == NULL) return;
@@ -438,12 +438,12 @@ void cSavegame::loadPlayers (cServer& server)
 }
 
 //--------------------------------------------------------------------------
-cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
+std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 {
 	const string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 	const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
 	const int color  = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
-	cPlayer* Player = new cPlayer (sPlayer (name, color, number));
+	auto Player = std::make_unique<cPlayer> (sPlayer (name, color, number));
 	Player->initMaps (map);
 
 	const XMLElement* landingPosNode = playerNode->FirstChildElement ("LandingPos");
@@ -550,7 +550,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 			loadResearchLevel (researchLevelNode, Player->researchLevel);
 		XMLElement* researchCentersWorkingOnAreaNode = researchNode->FirstChildElement ("CentersWorkingOnArea");
 		if (researchCentersWorkingOnAreaNode)
-			loadResearchCentersWorkingOnArea (researchCentersWorkingOnAreaNode, Player);
+			loadResearchCentersWorkingOnArea (researchCentersWorkingOnAreaNode, Player.get());
 	}
 
 	if (XMLElement* const subbasesNode = playerNode->FirstChildElement ("Subbases"))
@@ -574,7 +574,7 @@ cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
 			subbaseNode = subbasesNode->FirstChildElement (("Subbase_" + iToStr (subbasenum)).c_str());
 		}
 	}
-	return Player;
+	return std::move(Player);
 }
 
 //--------------------------------------------------------------------------
@@ -698,13 +698,13 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 {
 	int tmpinteger;
 	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
+	auto& owner = server.getPlayerFromNumber(tmpinteger);
 
 	int x, y;
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cVehicle* vehicle = server.addVehicle (cPosition(x, y), ID, owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	cVehicle* vehicle = server.addVehicle (cPosition(x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -722,7 +722,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
-		owner->addSentry (*vehicle);
+		owner.addSentry (*vehicle);
 	}
 	if (unitNode->FirstChildElement ("ManualFire")) vehicle->setManualFireActive(true);
 
@@ -792,11 +792,8 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			if (element->QueryIntAttribute ("ThisTurn", &wasDetectedThisTurnAttrib) != XML_NO_ERROR)
 				wasDetectedThisTurnAttrib = 1;
 			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
-			cPlayer* Player = server.getPlayerFromNumber (playerNum);
-			if (Player)
-			{
-				vehicle->setDetectedByPlayer (server, Player, wasDetectedThisTurn);
-			}
+			cPlayer& Player = server.getPlayerFromNumber (playerNum);
+			vehicle->setDetectedByPlayer (server, &Player, wasDetectedThisTurn);
 			playerNodeNum++;
 		}
 	}
@@ -833,13 +830,13 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 {
 	int tmpinteger;
 	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
+	auto& owner = server.getPlayerFromNumber(tmpinteger);
 
 	int x, y;
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cBuilding* building = server.addBuilding (cPosition(x, y), ID, owner, true, tmpinteger);
+	cBuilding* building = server.addBuilding (cPosition(x, y), ID, &owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -855,12 +852,12 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	{
 		if (!building->isSentryActive())
 		{
-			owner->addSentry (*building);
+			owner.addSentry (*building);
 		}
 	}
 	else if (building->isSentryActive ())
 	{
-		owner->deleteSentry (*building);
+		owner.deleteSentry (*building);
 	}
 	if (unitNode->FirstChildElement ("ManualFire")) building->setManualFireActive(true);
 	if (unitNode->FirstChildElement ("HasBeenAttacked")) building->setHasBeenAttacked(true);
@@ -904,11 +901,8 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 		{
 			int playerNum;
 			element->QueryIntAttribute ("nr", &playerNum);
-			cPlayer* Player = server.getPlayerFromNumber (playerNum);
-			if (Player)
-			{
-				building->setDetectedByPlayer (server, Player);
-			}
+			auto& player = server.getPlayerFromNumber (playerNum);
+			building->setDetectedByPlayer (server, &player);
 			playerNodeNum++;
 		}
 	}
@@ -1272,7 +1266,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 	XMLElement* gameinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
 	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.iTurn));
-	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.iActiveTurnPlayerNr));
+	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.activeTurnPlayer->getNr()));
 
 	const auto& gameSetting = *server.getGameSettings();
 

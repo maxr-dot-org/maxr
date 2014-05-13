@@ -240,7 +240,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 
 	int newWaitingForPlayer = -1;
 
-	std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer& player = *playerList[i];
@@ -270,16 +270,16 @@ void cGameTimerServer::run (cServer& server)
 	gameTime++;
 	handleTimer();
 	server.doGameActions();
-	const std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (size_t i = 0; i < playerList.size(); i++)
 	{
-		const cPlayer* player = playerList[i];
+		const auto& player = *playerList[i];
 		AutoPtr<cNetMessage> message (new cNetMessage (NET_GAME_TIME_SERVER));
 
 		message->pushInt32 (gameTime);
-		const uint32_t checkSum = calcServerChecksum (server, player);
+		const uint32_t checkSum = calcServerChecksum (server, &player);
 		message->pushInt32 (checkSum);
-		server.sendNetMessage (message, player->getNr());
+		server.sendNetMessage (message, &player);
 	}
 }
 
@@ -307,7 +307,7 @@ uint32_t calcClientChecksum (const cClient& client)
 uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 {
 	uint32_t crc = 0;
-	const std::vector<cPlayer*>& playerList = server.PlayerList;
+	const auto& playerList = server.playerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		for (const cVehicle* vehicle = playerList[i]->VehicleList;

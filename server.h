@@ -20,6 +20,8 @@
 #define serverH
 
 #include <vector>
+#include <map>
+#include <set>
 
 #include <SDL.h>
 
@@ -100,12 +102,9 @@ public:
 
 	void setGameSettings (const cGameSettings& gameSettings);
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
-	void addPlayer (cPlayer* player);
+	void addPlayer (std::unique_ptr<cPlayer> player);
 	void setDeadline (int iDeadline);
 	void stop();
-
-	void changeStateToInitGame();
-	void cancelStateInitGame();
 
 	/** the type of the current game */
 	eGameTypes getGameType() const;
@@ -153,7 +152,7 @@ public:
 	*@param iNum The number of the player.
 	*@return The wanted player.
 	*/
-	cPlayer* getPlayerFromNumber (int iNum);
+	cPlayer& getPlayerFromNumber (int number);
 	/**
 	* returns the player identified by playerID
 	*@author eiko
@@ -187,10 +186,10 @@ public:
 	* PlayerNum -1 means all players
 	*@author alzi alias DoctorDeath
 	*@param message The message to be send.
-	*@param iPlayerNum Number of player who should receive this event.
+	*@param player The player who should receive this event. Null will send the message to all players.
 	*/
 	// TODO: change AutoPtr to std::unique_ptr
-	void sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum = -1);
+	void sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* player = nullptr);
 
 	/**
 	* runs the server. Should only be called by the ServerThread!
@@ -289,24 +288,23 @@ public:
 private:
 	void startNewGame ();
 
-	void placeInitialResources (std::vector<cPosition>& landData);
+	void placeInitialResources ();
 
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath
-	*@param iX The X coordinate to land.
-	*@param iY The Y coordinate to land.
+	*@param landingPosition The coordinates where to land.
 	*@param Player The Player who wants to land.
 	*@param landingUnits List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed);
-	void makeLanding (const std::vector<cPosition>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
+	void makeLanding (const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, bool isFixed);
+	//void makeLanding (const std::vector<cPosition>& landPos, const std::vector<std::vector<sLandingUnit>*>& landingUnits);
 	void makeLanding();
 	/**
 	 *
 	 */
-	void correctLandingPos (int& iX, int& iY);
+	void correctLandingPos (cPosition& landingPosition);
 
 
 	void defeatLoserPlayers();
@@ -374,13 +372,13 @@ private:
 	*@return NULL if the vehicle could not be landed,
 	*        else a pointer to the vehicle.
 	*/
-	cVehicle* landVehicle (int iX, int iY, int iWidth, int iHeight, const sUnitData& unitData, cPlayer* player);
+	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player);
 
 	/**
 	* handles the pressed end of a player
 	*@author alzi alias DoctorDeath
 	*/
-	void handleEnd (int iPlayerNum);
+	void handleEnd (const cPlayer& player);
 	/**
 	* executes everything for a turnend
 	*@author alzi alias DoctorDeath
@@ -401,11 +399,11 @@ private:
 	/**
 	* checks whether some units are moving and restarts remaining movements
 	*@author alzi alias DoctorDeath
-	*@param iPlayer The player who will receive the messages
-	*       when the turn can't be finished now; -1 for all players
+	*@param player The player who will receive the messages
+	*       when the turn can't be finished now; nullptr for all players
 	*@return true if there were found some moving units
 	*/
-	bool checkEndActions (int iPlayer);
+	bool checkEndActions (const cPlayer* player);
 
 	/**
 	* checks whether the deadline has run down
@@ -457,9 +455,9 @@ private:
 	/** local clients if any. */
 	std::vector<cClient*> localClients;
 
-	std::vector<cPosition> landingPositions;
-	std::vector<bool> playerReadyToStart;
-	std::vector<std::vector<sLandingUnit> > landingUnits;
+	std::map<const cPlayer*, cPosition> playerLandingPositions;
+	std::set<const cPlayer*> readyToStartPlayers;
+	std::map<const cPlayer*, std::vector<sLandingUnit>> playerLandingUnits;
 
 	/** controls the timesynchoneous actions on server and client */
 	cGameTimerServer gameTimer;
@@ -478,9 +476,9 @@ private:
 	/** list with buildings without owner, e.g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** number of active player in turn based multiplayer game */
-	int iActiveTurnPlayerNr;
+	cPlayer* activeTurnPlayer;
 	/** a list with the numbers of all players who have ended their turn */
-	std::vector<cPlayer*> PlayerEndList;
+	std::vector<const cPlayer*> PlayerEndList;
 	/** number of current turn */
 	int iTurn;
 	/** gametime when the deadline has been initialised*/
@@ -515,10 +513,11 @@ public:
 	std::vector<cServerAttackJob*> AJobs;
 	/** List with all active movejobs */
 	std::vector<cServerMoveJob*> ActiveMJobs;
-	/** List with all players */
-	std::vector<cPlayer*> PlayerList;
 	/** state of the server */
 	eServerState serverState;
+
+	/** List with all players */
+	std::vector<std::unique_ptr<cPlayer>> playerList;
 };
 
 #endif

@@ -161,13 +161,13 @@ void cServerAttackJob::lockTarget(const cPosition& position)
 	if (target && target->data.isBig)
 		targetPosition = target->getPosition();
 
-	const std::vector<cPlayer*>& playerList = server->PlayerList;
+	const auto& playerList = server->playerList;
 	for (unsigned int i = 0; i  < playerList.size(); i++)
 	{
-		const cPlayer* player = playerList[i];
+		const cPlayer& player = *playerList[i];
 
 		// target in sight?
-		if (!player->canSeeAnyAreaUnder (*target)) continue;
+		if (!player.canSeeAnyAreaUnder (*target)) continue;
 
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET));
 		if (target->isAVehicle())
@@ -184,7 +184,7 @@ void cServerAttackJob::lockTarget(const cPosition& position)
 		message->pushPosition (targetPosition);
 		message->pushBool (isAir);
 
-		server->sendNetMessage (message, player->getNr());
+		server->sendNetMessage (message, &player);
 	}
 }
 
@@ -214,15 +214,15 @@ void cServerAttackJob::sendFireCommand()
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
-	std::vector<cPlayer*>& playerList = server->PlayerList;
+	const auto& playerList = server->playerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		cPlayer* player = playerList[i];
+		cPlayer& player = *playerList[i];
 
-		if (player->canSeeAnyAreaUnder (*unit) == false) continue;
-		if (unit->owner == player) continue;
+		if (player.canSeeAnyAreaUnder (*unit) == false) continue;
+		if (unit->owner == &player) continue;
 
-		unit->setDetectedByPlayer (*server, player);
+		unit->setDetectedByPlayer (*server, &player);
 	}
 	server->checkPlayerUnits();
 
@@ -264,13 +264,13 @@ void cServerAttackJob::sendFireCommand()
 	// send the fire message to all clients who can see the attack
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		cPlayer* player = playerList[i];
+		cPlayer& player = *playerList[i];
 
-		if (player->canSeeAnyAreaUnder (*unit)
-			|| (player->canSeeAt(targetPosition) && isMuzzleTypeRocket()))
+		if (player.canSeeAnyAreaUnder (*unit)
+			|| (player.canSeeAt(targetPosition) && isMuzzleTypeRocket()))
 		{
-			sendFireCommand (player);
-			executingClients.push_back (player);
+			sendFireCommand (&player);
+			executingClients.push_back (&player);
 		}
 	}
 }
@@ -303,7 +303,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 	}
 	message->pushInt16 (iID);
 
-	server->sendNetMessage (message, player->getNr());
+	server->sendNetMessage (message, player);
 }
 
 //--------------------------------------------------------------------------
@@ -374,15 +374,15 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 		// if taget is a stealth unit, make it visible on all clients
 		if (target->data.isStealthOn != TERRAIN_NONE)
 		{
-			const std::vector<cPlayer*>& playerList = server->PlayerList;
+			const auto& playerList = server->playerList;
 			for (unsigned int i = 0; i < playerList.size(); i++)
 			{
-				cPlayer* player = playerList[i];
-				if (target->owner == player)
+				cPlayer& player = *playerList[i];
+				if (target->owner == &player)
 					continue;
-				if (!player->canSeeAt(position))
+				if (!player.canSeeAt(position))
 					continue;
-				target->setDetectedByPlayer (*server, player);
+				target->setDetectedByPlayer (*server, &player);
 			}
 			server->checkPlayerUnits();
 		}
@@ -470,13 +470,13 @@ void cServerAttackJob::makeImpactCluster()
 //--------------------------------------------------------------------------
 void cServerAttackJob::sendAttackJobImpact (const cPosition& position, int remainingHP, int id)
 {
-	const std::vector<cPlayer*>& playerList = server->PlayerList;
+	const auto& playerList = server->playerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		const cPlayer* player = playerList[i];
+		const cPlayer& player = *playerList[i];
 
 		// target in sight?
-		if (!player->canSeeAt(position))
+		if (!player.canSeeAt(position))
 			continue;
 
 		AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_ATTACKJOB_IMPACT));
@@ -484,7 +484,7 @@ void cServerAttackJob::sendAttackJobImpact (const cPosition& position, int remai
 		message->pushInt16 (remainingHP);
 		message->pushInt16 (id);
 
-		server->sendNetMessage (message, player->getNr());
+		server->sendNetMessage (message, &player);
 	}
 }
 

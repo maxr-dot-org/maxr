@@ -67,8 +67,8 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	auto player = createPlayer ();
 
-	server->addPlayer (new cPlayer (player));
-	server->changeStateToInitGame ();
+	server->addPlayer (std::make_unique<cPlayer> (player));
+	//server->changeStateToInitGame ();
 
 	std::vector<sPlayer> players;
 	players.push_back (player);

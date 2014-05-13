@@ -180,7 +180,7 @@ public:
 	*/
 	void setResourcesFromString (const std::string& str);
 
-	void placeRessourcesAddPlayer (int x, int y, eGameSettingsResourceDensity desity);
+	void placeRessourcesAddPlayer (const cPosition& position, eGameSettingsResourceDensity desity);
 	void placeRessources (eGameSettingsResourceAmount metal, eGameSettingsResourceAmount oil, eGameSettingsResourceAmount gold);
 
 	int getResourceDensityFactor (eGameSettingsResourceDensity desity) const;

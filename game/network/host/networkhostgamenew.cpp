@@ -45,7 +45,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 	std::vector<sPlayer> clientPlayers;
 	for (size_t i = 0; i < players.size (); ++i)
 	{
-		server->addPlayer (new cPlayer(*players[i]));
+		server->addPlayer (std::make_unique<cPlayer>(*players[i]));
 		clientPlayers.push_back (*players[i]);
 	}
 	localClient->setPlayers (clientPlayers, localPlayerIndex);
@@ -56,7 +56,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 	server->setGameSettings (*gameSettings);
 	localClient->setGameSetting (*gameSettings);
 
-	server->changeStateToInitGame ();
+	//server->changeStateToInitGame ();
 
 	auto& clientPlayer = localClient->getActivePlayer ();
 	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);

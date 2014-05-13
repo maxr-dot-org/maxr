@@ -68,8 +68,8 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 {
 	bExit = false;
 	openMapDefeat = true;
-	neutralBuildings = NULL;
-	iActiveTurnPlayerNr = 0;
+	neutralBuildings = nullptr;
+	activeTurnPlayer = nullptr;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iNextUnitID = 1;
@@ -94,9 +94,9 @@ cServer::~cServer()
 	// disconnect clients
 	if (network)
 	{
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			network->close (PlayerList[i]->getSocketNum());
+			network->close (playerList[i]->getSocketNum());
 		}
 	}
 
@@ -105,10 +105,6 @@ cServer::~cServer()
 		delete AJobs[i];
 	}
 
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-	{
-		delete PlayerList[i];
-	}
 	while (neutralBuildings)
 	{
 		cBuilding* nextBuilding = neutralBuildings->next;
@@ -121,52 +117,25 @@ cServer::~cServer()
 void cServer::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
 	Map = new cMap (staticMap);
+
+	for (size_t i = 0; i < playerList.size (); ++i)
+	{
+		playerList[i]->initMaps (*Map);
+	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::addPlayer (cPlayer* player)
+void cServer::addPlayer (std::unique_ptr<cPlayer> player)
 {
-	PlayerList.push_back (player);
+	if(Map != nullptr) player->initMaps (*Map);
+
+	playerList.push_back (std::move(player));
 }
 
 //------------------------------------------------------------------------------
 void cServer::setGameSettings (const cGameSettings& gameSettings_)
 {
 	gameSetting = new cGameSettings (gameSettings_);
-}
-
-//------------------------------------------------------------------------------
-void cServer::changeStateToInitGame()
-{
-	assert (serverState == SERVER_STATE_ROOM);
-	assert (gameSetting != NULL);
-	assert (Map != NULL);
-	assert (!PlayerList.empty());
-
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-	{
-		PlayerList[i]->initMaps (*Map);
-	}
-	landingPositions.clear();
-	landingPositions.resize (PlayerList.size());
-	landingUnits.clear();
-	landingUnits.resize (PlayerList.size ());
-	playerReadyToStart.resize (PlayerList.size (), false);
-
-	serverState = SERVER_STATE_INITGAME;
-}
-
-//------------------------------------------------------------------------------
-void cServer::cancelStateInitGame()
-{
-	assert (serverState == SERVER_STATE_INITGAME);
-
-	serverState = SERVER_STATE_ROOM;
-	for (size_t i = 0, size = PlayerList.size(); i != size; ++i)
-	{
-		delete PlayerList[i];
-	}
-	PlayerList.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -212,19 +181,21 @@ void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 }
 
 //------------------------------------------------------------------------------
-void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
+void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* player)
 {
-	message->iPlayerNr = iPlayerNum;
+	const auto playerNumber = player != nullptr ? player->getNr () : -1;
+
+	message->iPlayerNr = playerNumber;
 	message->serialize();
 	if (message->iType != NET_GAME_TIME_SERVER)
 	{
-		Log.write ("Server: --> Player " + iToStr (iPlayerNum) + " "
+		Log.write ("Server: --> Player " + iToStr (playerNumber) + " "
 				   + message->getTypeAsString ()
 				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
 				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	if (iPlayerNum == -1)
+	if (player == nullptr)
 	{
 		if (network)
 			network->send (message->iLength, message->data);
@@ -233,19 +204,11 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
 		return;
 	}
 
-	cPlayer* Player = getPlayerFromNumber (iPlayerNum);
-
-	if (Player == NULL)
-	{
-		// player not found
-		Log.write ("Server: Can't send message. Player " + iToStr (iPlayerNum) + " not found.", cLog::eLOG_TYPE_NET_WARNING);
-		return;
-	}
-	if (Player->isLocal())
+	if (player->isLocal())
 	{
 		for (size_t i = 0; i != localClients.size(); ++i)
 		{
-			if (localClients[i]->getActivePlayer().getNr() == iPlayerNum)
+			if (localClients[i]->getActivePlayer().getNr() == player->getNr())
 			{
 				localClients[i]->pushEvent (std::unique_ptr<cNetMessage>(message.Release()));
 				break;
@@ -255,7 +218,7 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, int iPlayerNum)
 	// on all other sockets the netMessage will be send over TCP/IP
 	else
 	{
-		if (network) network->sendTo (Player->getSocketNum(), message->iLength, message->serialize());
+		if (network) network->sendTo (player->getSocketNum(), message->iLength, message->serialize());
 	}
 }
 
@@ -309,9 +272,11 @@ void cServer::handleNetMessage_MU_MSG_CLAN (cNetMessage& message)
 	assert (message.iType == MU_MSG_CLAN);
 	assert (serverState == SERVER_STATE_INITGAME);
 
-	unsigned int playerNr = message.popInt16();
-	int clanNr = message.popInt16();  // -1 = no clan
-	PlayerList[playerNr]->setClan (clanNr);
+	unsigned int playerNr = message.popInt16 ();
+	int clanNr = message.popInt16 ();  // -1 = no clan
+
+	auto& player = getPlayerFromNumber (playerNr);
+	player.setClan (clanNr);
 }
 
 //------------------------------------------------------------------------------
@@ -321,8 +286,9 @@ void cServer::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message)
 	assert (serverState == SERVER_STATE_INITGAME);
 
 	unsigned int playerNr = message.popInt16();
+	auto& player = getPlayerFromNumber (playerNr);
 
-	std::vector<sLandingUnit>& playerLandingUnits = landingUnits[playerNr];
+	auto& landingUnits = playerLandingUnits[&player];
 
 	int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
@@ -330,7 +296,7 @@ void cServer::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage& message)
 		sLandingUnit unit;
 		unit.cargo = message.popInt16();
 		unit.unitID = message.popID();
-		playerLandingUnits.push_back (unit);
+		landingUnits.push_back (unit);
 	}
 }
 
@@ -342,11 +308,13 @@ void cServer::handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message)
 
 	// TODO: check that it is possible (gold...)
 	const int playerNr = message.popInt16();
+	auto& player = getPlayerFromNumber (playerNr);
+
 	const int count = message.popInt16();
 	for (int i = 0; i < count; i++)
 	{
 		const sID ID = message.popID();
-		sUnitData& unitData = *PlayerList[playerNr]->getUnitDataCurrentVersion (ID);
+		sUnitData& unitData = *player.getUnitDataCurrentVersion (ID);
 
 		unitData.damage = message.popInt16();
 		unitData.shotsMax = message.popInt16();
@@ -369,7 +337,9 @@ void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
 	int playerNr = message.popChar();
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	landingPositions[playerNr] = message.popPosition();
+	auto& player = getPlayerFromNumber (playerNr);
+
+	playerLandingPositions[&player] = message.popPosition ();
 }
 
 //------------------------------------------------------------------------------
@@ -381,12 +351,11 @@ void cServer::handleNetMessage_MU_MSG_READY_TO_START (cNetMessage& message)
 	int playerNr = message.popChar ();
 	Log.write ("Server: received ready to start from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	playerReadyToStart[playerNr] = true;
+	auto& player = getPlayerFromNumber (playerNr);
 
-	for (size_t i = 0; i < playerReadyToStart.size (); ++i)
-	{
-		if (!playerReadyToStart[i]) return;
-	}
+	readyToStartPlayers.insert (&player);
+
+	if (readyToStartPlayers.size () < playerList.size ()) return;
 
 	startNewGame ();
 }
@@ -404,8 +373,8 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 	}
 	else // a client disconnected. Useful for play with DEDICATED_SERVER
 	{
-		const cPlayer* player = getPlayerFromNumber (message.iPlayerNr);
-		if (player != NULL) iSocketNumber = player->getSocketNum();
+		const auto& player = getPlayerFromNumber (message.iPlayerNr);
+		iSocketNumber = player.getSocketNum();
 	}
 	if (iSocketNumber == -1)
 		return;
@@ -413,16 +382,16 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 	cPlayer* Player = NULL;
 	// resort socket numbers of the players
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		if (PlayerList[i]->getSocketNum() == iSocketNumber)
+		if (playerList[i]->getSocketNum () == iSocketNumber)
 		{
-			Player = PlayerList[i];
+			Player = playerList[i].get();
 			break;
 		}
 	}
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-		PlayerList[i]->onSocketIndexDisconnected (iSocketNumber);
+	for (size_t i = 0; i != playerList.size (); ++i)
+		playerList[i]->onSocketIndexDisconnected (iSocketNumber);
 
 	if (Player)
 	{
@@ -431,7 +400,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 		// because it's expected client behaviour
 		if (DEDICATED_SERVER == false)
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-		sendChatMessageToClient (*this, "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->getName());
+		sendChatMessageToClient (*this, "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, nullptr, Player->getName());
 
 		DisconnectedPlayerList.push_back (Player);
 
@@ -444,7 +413,7 @@ void cServer::handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CHAT_CLIENT);
 
-	sendChatMessageToClient (*this, message.popString(), USER_MESSAGE);
+	sendChatMessageToClient (*this, message.popString(), USER_MESSAGE, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -452,12 +421,13 @@ void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_TO_END_TURN);
 
+	auto& player = getPlayerFromNumber (message.iPlayerNr);
+
 	if (isTurnBasedGame())
 	{
-		const cPlayer* Player = getPlayerFromNumber (message.iPlayerNr);
-		if (PlayerList[iActiveTurnPlayerNr] != Player) return;
+		if (activeTurnPlayer->getNr() != message.iPlayerNr) return;
 	}
-	handleEnd (message.iPlayerNr);
+	handleEnd (player);
 }
 
 //------------------------------------------------------------------------------
@@ -501,10 +471,10 @@ void cServer::handleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 	Log.write (" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 	// send the movejob to all players who can see this unit
 	const cVehicle& vehicle = *MoveJob->Vehicle;
-	sendMoveJobServer (*this, *MoveJob, vehicle.owner->getNr());
+	sendMoveJobServer (*this, *MoveJob, *vehicle.owner);
 	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 	{
-		sendMoveJobServer (*this, *MoveJob, vehicle.seenByPlayerList[i]->getNr());
+		sendMoveJobServer (*this, *MoveJob, *vehicle.seenByPlayerList[i]);
 	}
 }
 
@@ -527,10 +497,9 @@ void cServer::handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 	const int vehicleId = message.popInt32();
 	if (vehicleId == 0) // All vehicles
 	{
-		cPlayer* player = getPlayerFromNumber (message.iPlayerNr);
-		if (!player) return;
+		auto& player = getPlayerFromNumber (message.iPlayerNr);
 
-		for (cVehicle* vehicle = player->VehicleList; vehicle; vehicle = vehicle->next)
+		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
 			if (vehicle->ServerMoveJob && !vehicle->moving)
 				vehicle->ServerMoveJob->resume();
@@ -682,10 +651,10 @@ void cServer::handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 
 	if (result)
 	{
-		sendUnitData (*this, *Vehicle, Vehicle->owner->getNr());
+		sendUnitData (*this, *Vehicle, *Vehicle->owner);
 		for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 		{
-			sendUnitData (*this, *Vehicle, Vehicle->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[i]);
 		}
 	}
 }
@@ -881,8 +850,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 
 			DestBuilding->data.storageResCur += iTranfer;
 			SrcBuilding->data.storageResCur -= iTranfer;
-			sendUnitData (*this, *DestBuilding, DestBuilding->owner->getNr());
-			sendUnitData (*this, *SrcBuilding, SrcBuilding->owner->getNr());
+			sendUnitData (*this, *DestBuilding, *DestBuilding->owner);
+			sendUnitData (*this, *SrcBuilding, *SrcBuilding->owner);
 		}
 		else
 		{
@@ -911,9 +880,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 				break;
 			}
 			if (bBreakSwitch) return;
-			sendSubbaseValues (*this, *SrcBuilding->SubBase, SrcBuilding->owner->getNr());
+			sendSubbaseValues (*this, *SrcBuilding->SubBase, *SrcBuilding->owner);
 			DestVehicle->data.storageResCur += iTranfer;
-			sendUnitData (*this, *DestVehicle, DestVehicle->owner->getNr());
+			sendUnitData (*this, *DestVehicle, *DestVehicle->owner);
 		}
 	}
 	else
@@ -945,7 +914,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 				break;
 			}
 			if (bBreakSwitch) return;
-			sendSubbaseValues (*this, *DestBuilding->SubBase, DestBuilding->owner->getNr());
+			sendSubbaseValues (*this, *DestBuilding->SubBase, *DestBuilding->owner);
 		}
 		else
 		{
@@ -953,10 +922,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 			if (DestVehicle->data.storeResType != iType) return;
 			if (DestVehicle->data.storageResCur + iTranfer > DestVehicle->data.storageResMax || DestVehicle->data.storageResCur + iTranfer < 0) return;
 			DestVehicle->data.storageResCur += iTranfer;
-			sendUnitData (*this, *DestVehicle, DestVehicle->owner->getNr());
+			sendUnitData (*this, *DestVehicle, *DestVehicle->owner);
 		}
 		SrcVehicle->data.storageResCur -= iTranfer;
-		sendUnitData (*this, *SrcVehicle, SrcVehicle->owner->getNr());
+		sendUnitData (*this, *SrcVehicle, *SrcVehicle->owner);
 	}
 }
 
@@ -1147,7 +1116,7 @@ void cServer::handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 	subBase.setGoldProd (iGoldProd);
 	subBase.setOilProd (iOilProd);
 
-	sendSubbaseValues (*this, subBase, Building->owner->getNr());
+	sendSubbaseValues (*this, subBase, *Building->owner);
 }
 
 //------------------------------------------------------------------------------
@@ -1166,9 +1135,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Vehicle->owner->deleteSentry (*Vehicle);
 		}
 
-		sendUnitData (*this, *Vehicle, Vehicle->owner->getNr());
+		sendUnitData (*this, *Vehicle, *Vehicle->owner);
 		for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *Vehicle, Vehicle->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[i]);
 	}
 	else // building
 	{
@@ -1181,9 +1150,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Building->owner->deleteSentry (*Building);
 		}
 
-		sendUnitData (*this, *Building, Building->owner->getNr());
+		sendUnitData (*this, *Building, *Building->owner);
 		for (size_t i = 0; i != Building->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *Building, Building->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *Building, *Building->seenByPlayerList[i]);
 	}
 }
 
@@ -1207,10 +1176,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			vehicle->setManualFireActive(false);
 		}
 
-		sendUnitData (*this, *vehicle, vehicle->owner->getNr());
+		sendUnitData (*this, *vehicle, *vehicle->owner);
 		for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
 		{
-			sendUnitData (*this, *vehicle, vehicle->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[i]);
 		}
 	}
 	else // building
@@ -1228,10 +1197,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			building->setManualFireActive (false);
 		}
 
-		sendUnitData (*this, *building, building->owner->getNr());
+		sendUnitData (*this, *building, *building->owner);
 		for (size_t i = 0; i != building->seenByPlayerList.size(); ++i)
 		{
-			sendUnitData (*this, *building, building->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *building, *building->seenByPlayerList[i]);
 		}
 	}
 }
@@ -1293,7 +1262,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		}
 		// the changed values aren't interesting for enemy players,
 		// so only send the new data to the owner
-		sendUnitData (*this, *SrcVehicle, SrcVehicle->owner->getNr());
+		sendUnitData (*this, *SrcVehicle, *SrcVehicle->owner);
 	}
 	else
 	{
@@ -1320,7 +1289,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		}
 		// the changed values aren't interesting for enemy players,
 		// so only send the new data to the owner
-		sendUnitData (*this, *SrcBuilding, SrcBuilding->owner->getNr());
+		sendUnitData (*this, *SrcBuilding, *SrcBuilding->owner);
 	}
 
 	// repair or reload the destination unit
@@ -1329,22 +1298,22 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(DestVehicle->data.ammoMax);
 		else DestVehicle->data.setHitpoints(iValue);
 
-		sendSupply (*this, DestVehicle->iID, true, iValue, iType, DestVehicle->owner->getNr());
+		sendSupply (*this, DestVehicle->iID, true, iValue, iType, *DestVehicle->owner);
 
 		// send unitdata to the players who are not the owner
 		for (size_t i = 0; i != DestVehicle->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *DestVehicle, DestVehicle->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *DestVehicle, *DestVehicle->seenByPlayerList[i]);
 	}
 	else
 	{
 		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo(DestBuilding->data.ammoMax);
 		else DestBuilding->data.setHitpoints(iValue);
 
-		sendSupply (*this, DestBuilding->iID, false, iValue, iType, DestBuilding->owner->getNr());
+		sendSupply (*this, DestBuilding->iID, false, iValue, iType, *DestBuilding->owner);
 
 		// send unitdata to the players who are not the owner
 		for (size_t i = 0; i != DestBuilding->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *DestBuilding, DestBuilding->seenByPlayerList[i]->getNr());
+			sendUnitData (*this, *DestBuilding, *DestBuilding->seenByPlayerList[i]);
 	}
 }
 
@@ -1391,7 +1360,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 			storingBuilding->SubBase->addMetal (*this, -totalCosts);
 		for (size_t i = 0; i != upgradedVehicles.size(); ++i)
 			upgradedVehicles[i]->upgradeToCurrentVersion();
-		sendUpgradeVehicles (*this, upgradedVehicles, totalCosts, storingBuilding->iID, storingBuilding->owner->getNr());
+		sendUpgradeVehicles (*this, upgradedVehicles, totalCosts, storingBuilding->iID, *storingBuilding->owner);
 	}
 }
 
@@ -1412,7 +1381,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	if (!building)
 	{
-		sendClearAnswer (*this, 2, *Vehicle, 0, cPosition(-1, -1), Vehicle->owner->getNr());
+		sendClearAnswer (*this, 2, *Vehicle, 0, cPosition(-1, -1), Vehicle->owner);
 		return;
 	}
 
@@ -1431,7 +1400,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition(0, 1)) && rubblePosition + cPosition(0, 1) != Vehicle->getPosition()) ||
 			(!Map->possiblePlace (*Vehicle, building->getPosition() + cPosition(1, 1)) && rubblePosition + cPosition(1, 1) != Vehicle->getPosition()))
 		{
-			sendClearAnswer (*this, 1, *Vehicle, 0, cPosition (-1, -1), Vehicle->owner->getNr ());
+			sendClearAnswer (*this, 1, *Vehicle, 0, cPosition (-1, -1), Vehicle->owner);
 			return;
 		}
 
@@ -1444,10 +1413,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	Vehicle->owner->doScan();
 	addJob (new cStartBuildJob (*Vehicle, Vehicle->getPosition(), building->data.isBig));
 
-	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns (), rubblePosition, Vehicle->owner->getNr ());
+	sendClearAnswer (*this, 0, *Vehicle, Vehicle->getClearingTurns (), rubblePosition, Vehicle->owner);
 	for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 	{
-		sendClearAnswer (*this, 0, *Vehicle, 0, rubblePosition, Vehicle->seenByPlayerList[i]->getNr());
+		sendClearAnswer (*this, 0, *Vehicle, 0, rubblePosition, Vehicle->seenByPlayerList[i]);
 	}
 }
 
@@ -1473,18 +1442,18 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		{
 			Map->moveVehicle (*Vehicle, Vehicle->buildBigSavedPosition);
 			Vehicle->owner->doScan();
-			sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, Vehicle->owner->getNr ());
+			sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, *Vehicle->owner);
 			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 			{
-				sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, Vehicle->seenByPlayerList[i]->getNr ());
+				sendStopClear (*this, *Vehicle, Vehicle->buildBigSavedPosition, *Vehicle->seenByPlayerList[i]);
 			}
 		}
 		else
 		{
-			sendStopClear (*this, *Vehicle, cPosition(-1, -1), Vehicle->owner->getNr());
+			sendStopClear (*this, *Vehicle, cPosition(-1, -1), *Vehicle->owner);
 			for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
 			{
-				sendStopClear (*this, *Vehicle, cPosition (-1, -1), Vehicle->seenByPlayerList[i]->getNr ());
+				sendStopClear (*this, *Vehicle, cPosition (-1, -1), *Vehicle->seenByPlayerList[i]);
 			}
 		}
 	}
@@ -1497,8 +1466,8 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 
 	if (DisconnectedPlayerList.empty()) return;
 	// only server player can abort the waiting
-	cPlayer* LocalPlayer = getPlayerFromNumber (message.iPlayerNr);
-	if (LocalPlayer->isLocal() == false) return;
+	auto& LocalPlayer = getPlayerFromNumber (message.iPlayerNr);
+	if (LocalPlayer.isLocal() == false) return;
 
 	// delete disconnected players
 	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
@@ -1507,7 +1476,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	}
 	DisconnectedPlayerList.clear();
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame()) sendWaitFor (*this, iActiveTurnPlayerNr);
+	if (isTurnBasedGame ()) sendWaitFor (*this, activeTurnPlayer->getNr(), nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1551,7 +1520,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 	resyncPlayer (*player);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame()) sendWaitFor (*this, iActiveTurnPlayerNr);
+	if (isTurnBasedGame ()) sendWaitFor (*this, activeTurnPlayer->getNr(), nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1572,7 +1541,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 			StoringVehicle->storeVehicle (*StoredVehicle, *Map);
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->getNr());
+			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, *StoringVehicle->owner);
 		}
 	}
 	else
@@ -1585,7 +1554,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 			StoringBuilding->storeVehicle (*StoredVehicle, *Map);
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->getNr());
+			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, *StoringBuilding->owner);
 		}
 	}
 }
@@ -1614,7 +1583,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		{
 			StoringVehicle->exitVehicleTo (*StoredVehicle, position, *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, position, StoringVehicle->owner->getNr());
+			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, position, *StoringVehicle->owner);
 			if (StoredVehicle->data.canSurvey)
 			{
 				sendVehicleResources (*this, *StoredVehicle);
@@ -1648,7 +1617,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		{
 			StoringBuilding->exitVehicleTo (*StoredVehicle, position, *Map);
 			// vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, position, StoringBuilding->owner->getNr ());
+			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, position, *StoringBuilding->owner);
 			if (StoredVehicle->data.canSurvey)
 			{
 				sendVehicleResources (*this, *StoredVehicle);
@@ -1664,8 +1633,8 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_RESYNC);
 
-	cPlayer* player = getPlayerFromNumber (message.popChar());
-	if (player) resyncPlayer (*player, true);
+	auto& player = getPlayerFromNumber (message.popChar());
+	resyncPlayer (player, true);
 }
 
 //------------------------------------------------------------------------------
@@ -1674,9 +1643,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_BUY_UPGRADES);
 
 	const int iPlayerNr = message.popInt16();
-	cPlayer* player = getPlayerFromNumber (iPlayerNr);
-	if (player == 0)
-		return;
+	auto& player = getPlayerFromNumber (iPlayerNr);
 
 	bool updateCredits = false;
 
@@ -1695,12 +1662,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 		int newMaxSpeed = 0;
 		if (ID.isAVehicle()) newMaxSpeed = message.popInt16();
 
-		sUnitData* upgradedUnit = player->getUnitDataCurrentVersion (ID);
+		sUnitData* upgradedUnit = player.getUnitDataCurrentVersion (ID);
 		if (upgradedUnit == 0)
 			continue; // skip this upgrade, because there is no such unitData
 
-		const int costs = getUpgradeCosts (ID, *player, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
-		if (costs <= player->Credits)
+		const int costs = getUpgradeCosts (ID, player, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
+		if (costs <= player.Credits)
 		{
 			// update the unitData of the player and send an ack-msg
 			// for this upgrade to the player
@@ -1714,14 +1681,14 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 			if (ID.isAVehicle()) upgradedUnit->speedMax = newMaxSpeed;
 			upgradedUnit->setVersion(upgradedUnit->getVersion() + 1);
 
-			player->Credits -= costs;
+			player.Credits -= costs;
 			updateCredits = true;
 
-			sendUnitUpgrades (*this, *upgradedUnit, iPlayerNr);
+			sendUnitUpgrades (*this, *upgradedUnit, player);
 		}
 	}
 	if (updateCredits)
-		sendCredits (*this, player->Credits, iPlayerNr);
+		sendCredits (*this, player.Credits, player);
 }
 
 //------------------------------------------------------------------------------
@@ -1789,7 +1756,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 
 			upgradedBuildings[i]->upgradeToCurrentVersion();
 		}
-		sendUpgradeBuildings (*this, upgradedBuildings, totalCosts, player->getNr());
+		sendUpgradeBuildings (*this, upgradedBuildings, totalCosts, *player);
 		if (scanNecessary)
 			player->doScan();
 		if (refreshSentry)
@@ -1806,9 +1773,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 	assert (message.iType == GAME_EV_WANT_RESEARCH_CHANGE);
 
 	const int iPlayerNr = message.popInt16();
-	cPlayer* player = getPlayerFromNumber (iPlayerNr);
-	if (player == 0)
-		return;
+	auto& player = getPlayerFromNumber (iPlayerNr);
 	int newUsedResearch = 0;
 	int newResearchSettings[cResearch::kNrResearchAreas];
 	for (int area = cResearch::kNrResearchAreas - 1; area >= 0; --area)
@@ -1816,7 +1781,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 		newResearchSettings[area] = message.popInt16();
 		newUsedResearch += newResearchSettings[area];
 	}
-	if (newUsedResearch > player->workingResearchCenterCount)
+	if (newUsedResearch > player.workingResearchCenterCount)
 		return; // can't turn on research centers automatically!
 
 	// needed, if newUsedResearch < player->ResearchCount
@@ -1825,7 +1790,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 	std::vector<int> newAreasForResearchCenters;
 
 	bool error = false;
-	cBuilding* curBuilding = player->BuildingList;
+	cBuilding* curBuilding = player.BuildingList;
 	for (int newArea = 0; newArea != cResearch::kNrResearchAreas; ++newArea)
 	{
 		int centersToAssign = newResearchSettings[newArea];
@@ -1859,9 +1824,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 
 	for (size_t i = 0; i != researchCentersToChangeArea.size(); ++i)
 		researchCentersToChangeArea[i]->researchArea = newAreasForResearchCenters[i];
-	player->refreshResearchCentersWorkingOnArea();
+	player.refreshResearchCentersWorkingOnArea();
 
-	sendResearchSettings (*this, researchCentersToChangeArea, newAreasForResearchCenters, iPlayerNr);
+	sendResearchSettings (*this, researchCentersToChangeArea, newAreasForResearchCenters, player);
 }
 
 //------------------------------------------------------------------------------
@@ -1942,10 +1907,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destBuilding->ServerStopWork (*this, true);
 				sendDoStopWork (*this, *destBuilding);
 			}
-			sendUnitData (*this, *destUnit, destUnit->owner->getNr());
+			sendUnitData (*this, *destUnit, *destUnit->owner);
 			for (size_t i = 0; i != destUnit->seenByPlayerList.size(); ++i)
 			{
-				sendUnitData (*this, *destUnit, destUnit->seenByPlayerList[i]->getNr());
+				sendUnitData (*this, *destUnit, *destUnit->seenByPlayerList[i]);
 			}
 			destUnit->owner->doScan();
 			checkPlayerUnits();
@@ -1959,20 +1924,20 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		// and let enemy units fire on him
 		// TODO: uncover the infiltrator for all players,
 		// or only for the owner of the target unit? --eiko
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			cPlayer* player = PlayerList[i];
-			if (player == srcVehicle->owner) continue;
-			if (!player->canSeeAnyAreaUnder (*srcVehicle)) continue;
+			auto& player = *playerList[i];
+			if (&player == srcVehicle->owner) continue;
+			if (!player.canSeeAnyAreaUnder (*srcVehicle)) continue;
 
-			srcVehicle->setDetectedByPlayer (*this, player);
+			srcVehicle->setDetectedByPlayer (*this, &player);
 		}
 		checkPlayerUnits();
 		srcVehicle->InSentryRange (*this);
 	}
 	srcVehicle->data.setShots(srcVehicle->data.getShots()-1);
-	sendUnitData (*this, *srcVehicle, srcVehicle->owner->getNr());
-	sendCommandoAnswer (*this, success, steal, *srcVehicle, srcVehicle->owner->getNr());
+	sendUnitData (*this, *srcVehicle, *srcVehicle->owner);
+	sendCommandoAnswer (*this, success, steal, *srcVehicle, *srcVehicle->owner);
 }
 
 //------------------------------------------------------------------------------
@@ -1982,25 +1947,24 @@ void cServer::handleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 
 	const int msgSaveingID = message.popInt16();
 	if (msgSaveingID != savingID) return;
-	cPlayer* player = getPlayerFromNumber (message.popInt16());
-	if (player == NULL) return;
+	cPlayer& player = getPlayerFromNumber (message.popInt16());
 
-	player->savedHud->selUnitID = message.popInt16();
-	player->savedHud->offX = message.popInt16();
-	player->savedHud->offY = message.popInt16();
-	player->savedHud->zoom = message.popFloat();
-	player->savedHud->colorsChecked = message.popBool();
-	player->savedHud->gridChecked = message.popBool();
-	player->savedHud->ammoChecked = message.popBool();
-	player->savedHud->fogChecked = message.popBool();
-	player->savedHud->twoXChecked = message.popBool();
-	player->savedHud->rangeChecked = message.popBool();
-	player->savedHud->scanChecked = message.popBool();
-	player->savedHud->statusChecked = message.popBool();
-	player->savedHud->surveyChecked = message.popBool();
-	player->savedHud->lockChecked = message.popBool();
-	player->savedHud->hitsChecked = message.popBool();
-	player->savedHud->tntChecked = message.popBool();
+	player.savedHud->selUnitID = message.popInt16();
+	player.savedHud->offX = message.popInt16();
+	player.savedHud->offY = message.popInt16();
+	player.savedHud->zoom = message.popFloat();
+	player.savedHud->colorsChecked = message.popBool();
+	player.savedHud->gridChecked = message.popBool();
+	player.savedHud->ammoChecked = message.popBool();
+	player.savedHud->fogChecked = message.popBool();
+	player.savedHud->twoXChecked = message.popBool();
+	player.savedHud->rangeChecked = message.popBool();
+	player.savedHud->scanChecked = message.popBool();
+	player.savedHud->statusChecked = message.popBool();
+	player.savedHud->surveyChecked = message.popBool();
+	player.savedHud->lockChecked = message.popBool();
+	player.savedHud->hitsChecked = message.popBool();
+	player.savedHud->tntChecked = message.popBool();
 }
 
 //------------------------------------------------------------------------------
@@ -2010,13 +1974,12 @@ void cServer::handleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 
 	const int msgSaveingID = message.popInt16();
 	if (msgSaveingID != savingID) return;
-	cPlayer* player = getPlayerFromNumber (message.popInt16());
-	if (player == NULL) return;
+	auto& player = getPlayerFromNumber (message.popInt16());
 
 	sSavedReportMessage savedReport;
 	savedReport.popFrom (message);
 
-	player->savedReportsList.push_back (savedReport);
+	player.savedReportsList.push_back (savedReport);
 }
 
 //------------------------------------------------------------------------------
@@ -2026,11 +1989,10 @@ void cServer::handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
 
 	const int msgSaveingID = message.popInt16();
 	if (msgSaveingID != savingID) return;
-	cPlayer* player = getPlayerFromNumber (message.popInt16());
-	if (player == NULL) return;
+	auto& player = getPlayerFromNumber (message.popInt16());
 
 	cSavegame savegame (savingIndex);
-	savegame.writeAdditionalInfo (*player->savedHud, player->savedReportsList, player);
+	savegame.writeAdditionalInfo (*player.savedHud, player.savedReportsList, &player);
 }
 
 //------------------------------------------------------------------------------
@@ -2038,7 +2000,9 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& m
 {
 	assert (message.iType == GAME_EV_REQUEST_CASUALTIES_REPORT);
 
-	sendCasualtiesReport (*this, message.iPlayerNr);
+	auto& player = getPlayerFromNumber (message.iPlayerNr);
+
+	sendCasualtiesReport (*this, player);
 }
 
 //------------------------------------------------------------------------------
@@ -2065,8 +2029,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 
 	unit->changeName (message.popString());
 	for (size_t i = 0; i != unit->seenByPlayerList.size(); ++i)
-		sendUnitData (*this, *unit, i);
-	sendUnitData (*this, *unit, unit->owner->getNr());
+		sendUnitData (*this, *unit, *unit->seenByPlayerList[i]);
+	sendUnitData (*this, *unit, *unit->owner);
 }
 
 //------------------------------------------------------------------------------
@@ -2241,79 +2205,78 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 }
 
 //------------------------------------------------------------------------------
-void cServer::placeInitialResources (std::vector<cPosition>& landData)
+void cServer::placeInitialResources ()
 {
-	for (size_t i = 0; i != landData.size(); ++i)
+	for (auto i = playerLandingPositions.begin (); i != playerLandingPositions.end (); ++i)
 	{
-		correctLandingPos (landData[i].x (), landData[i].y ());
-		Map->placeRessourcesAddPlayer (landData[i].x (), landData[i].y (), gameSetting->getResourceDensity ());
+		auto& landingPosition = i->second;
+		correctLandingPos (landingPosition);
+		Map->placeRessourcesAddPlayer (landingPosition, gameSetting->getResourceDensity ());
 	}
 	Map->placeRessources (gameSetting->getMetalAmount(), gameSetting->getOilAmount(), gameSetting->getGoldAmount());
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, const sUnitData& unitData, cPlayer* player)
+cVehicle* cServer::landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player)
 {
 	for (int offY = -iHeight / 2; offY < iHeight / 2; ++offY)
 	{
 		for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
 		{
-			if (!Map->possiblePlaceVehicle (unitData, cPosition(iX + offX, iY + offY), player)) continue;
+			if (!Map->possiblePlaceVehicle (unitData, landingPosition + cPosition (offX, offY), &player)) continue;
 
-			return addVehicle (cPosition(iX + offX, iY + offY), unitData.ID, player, true);
+			return addVehicle (landingPosition + cPosition (offX, offY), unitData.ID, &player, true);
 		}
 	}
 	return NULL;
 }
 
 //------------------------------------------------------------------------------
-void cServer::makeLanding (const std::vector<cPosition>& landPos,
-						   const std::vector<std::vector<sLandingUnit>*>& landingUnits)
-{
-	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-	{
-		const int x = landPos[i].x ();
-		const int y = landPos[i].y ();
-		cPlayer* player = PlayerList[i];
-
-		makeLanding (x, y, player, *landingUnits[i], fixed);
-	}
-}
+//void cServer::makeLanding (const std::vector<cPosition>& landPos,
+//						   const std::vector<std::vector<sLandingUnit>*>& landingUnits)
+//{
+//	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
+//	for (size_t i = 0; i != playerList.size(); ++i)
+//	{
+//		const int x = landPos[i].x ();
+//		const int y = landPos[i].y ();
+//		auto& player = *playerList[i];
+//
+//		makeLanding (x, y, &player, *landingUnits[i], fixed);
+//	}
+//}
 
 //------------------------------------------------------------------------------
 void cServer::makeLanding()
 {
 	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		const int x = landingPositions[i].x ();
-		const int y = landingPositions[i].y ();
-		cPlayer* player = PlayerList[i];
+		auto& player = *playerList[i];
 
-		makeLanding (x, y, player, landingUnits[i], fixed);
+		makeLanding (playerLandingPositions.at(&player), player, playerLandingUnits.at(&player), fixed);
 	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sLandingUnit>& landingUnits, bool bFixed)
+void cServer::makeLanding (const cPosition& landingPosition, cPlayer& player, const std::vector<sLandingUnit>& landingUnits, bool isFixed)
 {
 	// Find place for mine if bridgehead is fixed
-	if (bFixed)
+	if (isFixed)
 	{
-		if (Map->possiblePlaceBuilding (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), cPosition(iX - 1, iY - 1 + 1)) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 1, iY - 1)) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 2, iY - 1)) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 2, iY - 1 + 1)) &&
-			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX - 1 + 1, iY - 1 + 1)))
+		if (Map->possiblePlaceBuilding (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion (), landingPosition + cPosition (-1, 0)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (0, -1)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (1, -1)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (1, 0)) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (0, 0)))
 		{
 			// place buildings:
-			addBuilding (cPosition(iX - 1,     iY - 1 + 1), UnitsData.specialIDSmallGen, Player, true);
-			addBuilding (cPosition(iX - 1 + 1, iY - 1),     UnitsData.specialIDMine, Player, true);
+			addBuilding (landingPosition + cPosition (-1, 0), UnitsData.specialIDSmallGen, &player, true);
+			addBuilding (landingPosition + cPosition (0, -1), UnitsData.specialIDMine, &player, true);
 		}
 		else
 		{
-			Log.write ("couldn't place player start mine: " + Player->getName(), cLog::eLOG_TYPE_ERROR);
+			Log.write ("couldn't place player start mine: " + player.getName(), cLog::eLOG_TYPE_ERROR);
 		}
 	}
 
@@ -2322,23 +2285,23 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, const std::vector<sL
 	for (size_t i = 0; i != landingUnits.size(); ++i)
 	{
 		const sLandingUnit& Landing = landingUnits[i];
-		cVehicle* Vehicle = landVehicle (iX, iY, iWidth, iHeight, *Landing.unitID.getUnitDataOriginalVersion (Player), Player);
+		cVehicle* Vehicle = landVehicle (landingPosition, iWidth, iHeight, *Landing.unitID.getUnitDataOriginalVersion (&player), player);
 		while (!Vehicle)
 		{
 			iWidth += 2;
 			iHeight += 2;
-			Vehicle = landVehicle (iX, iY, iWidth, iHeight, *Landing.unitID.getUnitDataOriginalVersion (Player), Player);
+			Vehicle = landVehicle (landingPosition, iWidth, iHeight, *Landing.unitID.getUnitDataOriginalVersion (&player), player);
 		}
 		if (Landing.cargo && Vehicle)
 		{
 			Vehicle->data.storageResCur = Landing.cargo;
-			sendUnitData (*this, *Vehicle, Vehicle->owner->getNr());
+			sendUnitData (*this, *Vehicle, *Vehicle->owner);
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::correctLandingPos (int& iX, int& iY)
+void cServer::correctLandingPos (cPosition& landingPosition)
 {
 	int iWidth = 2;
 	int iHeight = 2;
@@ -2349,14 +2312,14 @@ void cServer::correctLandingPos (int& iX, int& iY)
 		{
 			for (int offX = -iWidth / 2; offX < iWidth / 2; ++offX)
 			{
-				if (Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), cPosition(iX + offX, iY + offY + 1), margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 1, iY + offY    ), margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 2, iY + offY    ), margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 2, iY + offY + 1), margin) &&
-					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), cPosition(iX + offX + 1, iY + offY + 1), margin))
+				if (Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion (), landingPosition + cPosition (offX, offY + 1), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (offX + 1, offY), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (offX + 2, offY), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (offX + 2, offY + 1), margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion (), landingPosition + cPosition (offX + 1, offY + 1), margin))
 				{
-					iX += offX + 1;
-					iY += offY + 1;
+					landingPosition.x() += offX + 1;
+					landingPosition.y() += offY + 1;
 					return;
 				}
 			}
@@ -2371,14 +2334,14 @@ void cServer::startNewGame()
 {
 	assert (serverState == SERVER_STATE_INITGAME);
 	// send victory conditions to clients
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-		sendGameSettings (*this, *PlayerList[i]);
+	for (size_t i = 0; i != playerList.size(); ++i)
+		sendGameSettings (*this, *playerList[i]);
 	// send clan info to clients
 	if (gameSetting->getClansEnabled())
-		sendClansToClients (*this, PlayerList);
+		sendClansToClients (*this, playerList);
 
 	// place resources
-	placeInitialResources (landingPositions);
+	placeInitialResources ();
 	// make the landing
 	makeLanding();
 	serverState = SERVER_STATE_INGAME;
@@ -2411,7 +2374,7 @@ cVehicle* cServer::addVehicle (const cPosition& position, const sID& id, cPlayer
 		AddedVehicle->FlightHigh = 64;
 	}
 
-	sendAddUnit(*this, position, AddedVehicle->iID, true, id, Player->getNr(), bInit);
+	sendAddUnit(*this, position, AddedVehicle->iID, true, id, *Player, bInit);
 
 	// detection must be done, after the vehicle has been sent to clients
 	AddedVehicle->makeDetection (*this);
@@ -2431,7 +2394,7 @@ cBuilding* cServer::addBuilding (const cPosition& position, const sID& id, cPlay
 	cBuilding* buildingToBeDeleted = Map->getField(position).getTopBuilding();
 
 	Map->addBuilding (*AddedBuilding, position);
-	sendAddUnit(*this, position, AddedBuilding->iID, false, id, Player->getNr(), bInit);
+	sendAddUnit(*this, position, AddedBuilding->iID, false, id, *Player, bInit);
 
 	// integrate the building to the base:
 	Player->base.addBuilding (AddedBuilding, this);
@@ -2572,7 +2535,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		Map->deleteVehicle (*static_cast<cVehicle*> (unit));
 
 	if (notifyClient)
-		sendDeleteUnit (*this, *unit, -1);
+		sendDeleteUnit (*this, *unit, nullptr);
 
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
 		unit->owner->base.deleteBuilding (static_cast<cBuilding*> (unit), this);
@@ -2598,18 +2561,18 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 		if (Contains (seenByPlayers, &MapPlayer) == false)
 		{
 			seenByPlayers.push_back (&MapPlayer);
-			sendAddEnemyUnit (*this, vehicle, MapPlayer.getNr());
-			sendUnitData (*this, vehicle, MapPlayer.getNr());
+			sendAddEnemyUnit (*this, vehicle, MapPlayer);
+			sendUnitData (*this, vehicle, MapPlayer);
 			if (vehicle.ServerMoveJob)
 			{
-				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer.getNr());
+				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer);
 				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.moving)
 				{
 					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.getNr()), cLog::eLOG_TYPE_NET_DEBUG);
 					AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_NEXT_MOVE));
 					message->pushChar (MJOB_OK);
 					message->pushInt16 (vehicle.iID);
-					sendNetMessage (message, MapPlayer.getNr());
+					sendNetMessage (message, &MapPlayer);
 				}
 			}
 		}
@@ -2621,7 +2584,7 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 		if (it != seenByPlayers.end())
 		{
 			seenByPlayers.erase (it);
-			sendDeleteUnit (*this, vehicle, MapPlayer.getNr());
+			sendDeleteUnit (*this, vehicle, &MapPlayer);
 		}
 	}
 }
@@ -2639,8 +2602,8 @@ void cServer::checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer)
 		if (Contains (seenByPlayers, &MapPlayer) == false)
 		{
 			seenByPlayers.push_back (&MapPlayer);
-			sendAddEnemyUnit (*this, building, MapPlayer.getNr());
-			sendUnitData (*this, building, MapPlayer.getNr());
+			sendAddEnemyUnit (*this, building, MapPlayer);
+			sendUnitData (*this, building, MapPlayer);
 		}
 	}
 	else
@@ -2650,7 +2613,7 @@ void cServer::checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer)
 		if (it != seenByPlayers.end())
 		{
 			seenByPlayers.erase (it);
-			sendDeleteUnit (*this, building, MapPlayer.getNr());
+			sendDeleteUnit (*this, building, &MapPlayer);
 		}
 	}
 }
@@ -2665,7 +2628,7 @@ void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
 		if (Contains (seenByPlayers, &MapPlayer) == false)
 		{
 			seenByPlayers.push_back (&MapPlayer);
-			sendAddRubble (*this, building, MapPlayer.getNr());
+			sendAddRubble (*this, building, MapPlayer);
 		}
 	}
 	else
@@ -2675,7 +2638,7 @@ void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
 		if (it != seenByPlayers.end())
 		{
 			seenByPlayers.erase (it);
-			sendDeleteUnit (*this, building, MapPlayer.getNr());
+			sendDeleteUnit (*this, building, &MapPlayer);
 		}
 	}
 }
@@ -2683,26 +2646,26 @@ void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
 //------------------------------------------------------------------------------
 void cServer::checkPlayerUnits()
 {
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		// The player whos unit is it
-		cPlayer* UnitPlayer = PlayerList[i];
-		for (cVehicle* NextVehicle = UnitPlayer->VehicleList;
+		cPlayer& UnitPlayer = *playerList[i];
+		for (cVehicle* NextVehicle = UnitPlayer.VehicleList;
 			 NextVehicle != NULL;
 			 NextVehicle = NextVehicle->next)
 		{
-			for (size_t j = 0; j != PlayerList.size(); ++j)
+			for (size_t j = 0; j != playerList.size (); ++j)
 			{
-				checkPlayerUnits (*NextVehicle, *PlayerList[j]);
+				checkPlayerUnits (*NextVehicle, *playerList[j]);
 			}
 		}
-		for (cBuilding* NextBuilding = UnitPlayer->BuildingList;
+		for (cBuilding* NextBuilding = UnitPlayer.BuildingList;
 			 NextBuilding != NULL;
 			 NextBuilding = NextBuilding->next)
 		{
-			for (size_t j = 0; j != PlayerList.size(); ++j)
+			for (size_t j = 0; j != playerList.size (); ++j)
 			{
-				checkPlayerUnits (*NextBuilding, *PlayerList[j]);
+				checkPlayerUnits (*NextBuilding, *playerList[j]);
 			}
 		}
 	}
@@ -2710,9 +2673,9 @@ void cServer::checkPlayerUnits()
 	//check the neutral objects
 	for (cBuilding* building = neutralBuildings; building != NULL; building = building->next)
 	{
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			checkPlayerRubbles (*building, *PlayerList[i]);
+			checkPlayerRubbles (*building, *playerList[i]);
 		}
 	}
 }
@@ -2734,9 +2697,9 @@ void cServer::kickPlayer (cPlayer* player)
 	// close the socket
 	const int socketIndex = player->getSocketNum();
 	if (network) network->close (socketIndex);
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		PlayerList[i]->onSocketIndexDisconnected (socketIndex);
+		playerList[i]->onSocketIndexDisconnected (socketIndex);
 	}
 	deletePlayer (player);
 }
@@ -2744,9 +2707,9 @@ void cServer::kickPlayer (cPlayer* player)
 //------------------------------------------------------------------------------
 void cServer::markAllPlayersAsDisconnected()
 {
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer* player = PlayerList[i];
+		cPlayer* player = playerList[i].get();
 		if (Contains (DisconnectedPlayerList, player) == false)
 			DisconnectedPlayerList.push_back (player);
 		player->revealMap();
@@ -2754,14 +2717,16 @@ void cServer::markAllPlayersAsDisconnected()
 }
 
 //------------------------------------------------------------------------------
-cPlayer* cServer::getPlayerFromNumber (int iNum)
+cPlayer& cServer::getPlayerFromNumber (int playerNumber)
 {
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-	{
-		cPlayer* p = PlayerList[i];
-		if (p->getNr() == iNum) return p;
-	}
-	return NULL;
+	auto iter = std::find_if (playerList.begin (), playerList.end (), [playerNumber](const std::unique_ptr<cPlayer>& player){ return player->getNr () == playerNumber; });
+	if (iter == playerList.end ()) throw std::runtime_error ("Could not find player with number '" + iToStr(playerNumber) + "'");
+
+	auto& player = *iter;
+
+	assert (player != nullptr);
+
+	return *player;
 }
 
 //------------------------------------------------------------------------------
@@ -2771,28 +2736,25 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 	const int playerNr = atoi (playerID.c_str());
 	if (playerNr != 0 || playerID[0] == '0')
 	{
-		return getPlayerFromNumber (playerNr);
+		return &getPlayerFromNumber (playerNr);
 	}
 
 	// try to find player by name
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-	{
-		if (PlayerList[i]->getName() == playerID) return PlayerList[i];
-	}
-	return NULL;
+	auto iter = std::find_if (playerList.begin (), playerList.end (), [&playerID](const std::unique_ptr<cPlayer>& player){ return player->getName () == playerID; });
+	return iter == playerList.end () ? nullptr : iter->get ();
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleEnd (int iPlayerNum)
+void cServer::handleEnd (const cPlayer& player)
 {
 	const eGameTypes gameType = getGameType();
 
 	if (gameType == GAME_TYPE_SINGLE)
 	{
-		sendTurnFinished (*this, iPlayerNum, -1);
-		if (checkEndActions (iPlayerNum))
+		sendTurnFinished (*this, player.getNr(), -1);
+		if (checkEndActions (&player))
 		{
-			iWantPlayerEndNum = iPlayerNum;
+			iWantPlayerEndNum = player.getNr();
 			return;
 		}
 		iTurn++;
@@ -2801,70 +2763,78 @@ void cServer::handleEnd (int iPlayerNum)
 	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
 	{
 		const bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && isTurnBasedGame());
-		if (checkEndActions (iPlayerNum))
+		if (checkEndActions (&player))
 		{
-			iWantPlayerEndNum = iPlayerNum;
+			iWantPlayerEndNum = player.getNr();
 			return;
 		}
-		iActiveTurnPlayerNr++;
-		if (iActiveTurnPlayerNr >= (int) PlayerList.size())
+
+		// select next player
+		auto nextPlayerIter = std::find_if (playerList.begin (), playerList.end (), [this](const std::unique_ptr<cPlayer>& player){return player.get() == activeTurnPlayer; });
+		assert (nextPlayerIter != playerList.end ());
+		++nextPlayerIter;
+
+		if (nextPlayerIter == playerList.end ())
 		{
-			iActiveTurnPlayerNr = 0;
+			activeTurnPlayer = playerList.front ().get ();
+
 			makeTurnEnd();
 			iTurn++;
 
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
-				sendMakeTurnEnd (*this, true, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), iPlayerNum);
+				sendMakeTurnEnd (*this, true, bWaitForPlayer, activeTurnPlayer->getNr (), player);
 			}
 			else
 			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
+				for (size_t i = 0; i != playerList.size (); ++i)
 				{
-					sendMakeTurnEnd (*this, true, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), PlayerList[i]->getNr());
+					sendMakeTurnEnd (*this, true, bWaitForPlayer, activeTurnPlayer->getNr (), *playerList[i]);
 				}
 			}
 		}
 		else
 		{
+			activeTurnPlayer = nextPlayerIter->get ();
+
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
-				sendMakeTurnEnd (*this, false, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), iPlayerNum);
+				sendMakeTurnEnd (*this, false, bWaitForPlayer, activeTurnPlayer->getNr (), player);
 				// TODO: in hotseat:
 				// maybe send information to client about the next player
 			}
 			else
 			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
+				for (size_t i = 0; i != playerList.size (); ++i)
 				{
-					sendMakeTurnEnd (*this, false, bWaitForPlayer, PlayerList[iActiveTurnPlayerNr]->getNr(), i);
+					sendMakeTurnEnd (*this, false, bWaitForPlayer, activeTurnPlayer->getNr (), *playerList[i]);
 				}
 			}
 		}
 		// send report to next player
-		sendTurnReport (*this, *PlayerList[iActiveTurnPlayerNr]);
+		sendTurnReport (*this, *activeTurnPlayer);
 	}
 	else // it's a simultaneous TCP/IP multiplayer game
 	{
 		// defeated player are ignored when they hit the end button
-		if (getPlayerFromNumber (iPlayerNum)->isDefeated) return;
+		if (player.isDefeated) return;
 
 		// check whether this player has already finished his turn
 		for (size_t i = 0; i != PlayerEndList.size(); ++i)
 		{
-			if (PlayerEndList[i]->getNr() == iPlayerNum) return;
+			if (PlayerEndList[i]->getNr() == player.getNr()) return;
 		}
-		PlayerEndList.push_back (getPlayerFromNumber (iPlayerNum));
+		PlayerEndList.push_back (&player);
 		const bool firstTimeEnded = PlayerEndList.size() == 1;
 
 		// make sure that all defeated players are added to the endlist
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			cPlayer* player = PlayerList[i];
-			if (player->isDefeated)
+			auto& currentPlayer = *playerList[i];
+			if (currentPlayer.isDefeated)
 			{
-				if (Contains (PlayerEndList, player) == false)
-					PlayerEndList.push_back (player);
+				if (Contains (PlayerEndList, &currentPlayer) == false)
+					PlayerEndList.push_back (&currentPlayer);
 			}
 		}
 
@@ -2875,21 +2845,21 @@ void cServer::handleEnd (int iPlayerNum)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				sendTurnFinished (*this, iPlayerNum, 100 * gameSetting->getTurnDeadline());
+				sendTurnFinished (*this, player.getNr(), 100 * gameSetting->getTurnDeadline());
 				iDeadlineStartTime = gameTimer.gameTime;
 			}
 			else
 			{
-				sendTurnFinished (*this, iPlayerNum, -1);
+				sendTurnFinished (*this, player.getNr (), -1);
 			}
 		}
 
-		if (PlayerEndList.size() >= PlayerList.size())
+		if (PlayerEndList.size() >= playerList.size())
 		{
 			iDeadlineStartTime = 0;
-			if (checkEndActions (-1))
+			if (checkEndActions (nullptr))
 			{
-				iWantPlayerEndNum = iPlayerNum;
+				iWantPlayerEndNum = player.getNr ();
 				return;
 			}
 
@@ -2912,21 +2882,21 @@ void cServer::handleWantEnd()
 	// and we can start the new turn simultaneously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			cPlayer& player = *PlayerList[i];
+			cPlayer& player = *playerList[i];
 			if (!isPlayerDisconnected (player) && gameTimer.getReceivedTime (i) <= lastTurnEnd)
 				return;
 		}
 
 		// send reports to all players
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			sendMakeTurnEnd (*this, true, false, -1, i);
+			sendMakeTurnEnd (*this, true, false, -1, *playerList[i]);
 		}
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			sendTurnReport (*this, *PlayerList[i]);
+			sendTurnReport (*this, *playerList[i]);
 		}
 
 		// begin the new turn
@@ -2943,12 +2913,12 @@ void cServer::handleWantEnd()
 				break;
 			}
 		}
-		handleEnd (iWantPlayerEndNum);
+		handleEnd (getPlayerFromNumber(iWantPlayerEndNum));
 	}
 }
 
 //------------------------------------------------------------------------------
-bool cServer::checkEndActions (int iPlayer)
+bool cServer::checkEndActions (const cPlayer* player)
 {
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 
@@ -2959,9 +2929,9 @@ bool cServer::checkEndActions (int iPlayer)
 	}
 	else
 	{
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			for (cVehicle* NextVehicle = PlayerList[i]->VehicleList;
+			for (cVehicle* NextVehicle = playerList[i]->VehicleList;
 				 NextVehicle != NULL;
 				 NextVehicle = NextVehicle->next)
 			{
@@ -2976,20 +2946,20 @@ bool cServer::checkEndActions (int iPlayer)
 	}
 	if (!sMessage.empty())
 	{
-		if (iPlayer != -1)
+		if (player != nullptr)
 		{
 			if (iWantPlayerEndNum == -1)
 			{
-				sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, iPlayer);
+				sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, player);
 			}
 		}
 		else
 		{
 			if (iWantPlayerEndNum == -1)
 			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
+				for (size_t i = 0; i != playerList.size(); ++i)
 				{
-					sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, PlayerList[i]->getNr());
+					sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, playerList[i].get());
 				}
 			}
 		}
@@ -3007,9 +2977,9 @@ void cServer::makeTurnEnd()
 	lastTurnEnd = gameTimer.gameTime;
 
 	// reload all buildings
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 		for (cBuilding* Building = player.BuildingList;
 			 Building;
 			 Building = Building->next)
@@ -3029,17 +2999,17 @@ void cServer::makeTurnEnd()
 			{
 				for (size_t k = 0; k != Building->seenByPlayerList.size(); ++k)
 				{
-					sendUnitData (*this, *Building, Building->seenByPlayerList[k]->getNr());
+					sendUnitData (*this, *Building, *Building->seenByPlayerList[k]);
 				}
-				sendUnitData (*this, *Building, Building->owner->getNr());
+				sendUnitData (*this, *Building, *Building->owner);
 			}
 		}
 	}
 
 	// reload all vehicles
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 		for (cVehicle* Vehicle = player.VehicleList;
 			 Vehicle;
 			 Vehicle = Vehicle->next)
@@ -3058,18 +3028,18 @@ void cServer::makeTurnEnd()
 			{
 				for (size_t k = 0; k != Vehicle->seenByPlayerList.size(); ++k)
 				{
-					sendUnitData (*this, *Vehicle, Vehicle->seenByPlayerList[k]->getNr());
+					sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[k]);
 				}
-				sendUnitData (*this, *Vehicle, Vehicle->owner->getNr());
+				sendUnitData (*this, *Vehicle, *Vehicle->owner);
 			}
 			if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->bEndForNow = false;
 		}
 	}
 
 	// hide stealth units
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 		player.doScan(); // make sure the detection maps are up to date
 
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
@@ -3080,25 +3050,25 @@ void cServer::makeTurnEnd()
 	}
 
 	// produce resources
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		PlayerList[i]->base.handleTurnend (*this);
+		playerList[i]->base.handleTurnend (*this);
 	}
 
 	// do research:
-	for (size_t i = 0; i != PlayerList.size(); ++i)
-		PlayerList[i]->doResearch (*this);
+	for (size_t i = 0; i != playerList.size (); ++i)
+		playerList[i]->doResearch (*this);
 
 	// eco-spheres:
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		PlayerList[i]->accumulateScore (*this);
+		playerList[i]->accumulateScore (*this);
 	}
 
 	// Gun'em down:
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 
 		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -3138,9 +3108,9 @@ bool cServer::isVictoryConditionMet() const
 			return iTurn >= static_cast<int>(gameSetting->getVictoryTurns());
 		case eGameSettingsVictoryCondition::Points:
 		{
-			for (size_t i = 0; i != PlayerList.size(); ++i)
+			for (size_t i = 0; i != playerList.size (); ++i)
 			{
-				const cPlayer& player = *PlayerList[i];
+				const cPlayer& player = *playerList[i];
 				if (player.isDefeated) continue;
 				if (player.getScore (iTurn) >= static_cast<int>(gameSetting->getVictoryPoints ())) return true;
 			}
@@ -3149,9 +3119,9 @@ bool cServer::isVictoryConditionMet() const
 		case eGameSettingsVictoryCondition::Death:
 		{
 			int nbActivePlayer = 0;
-			for (size_t i = 0; i != PlayerList.size(); ++i)
+			for (size_t i = 0; i != playerList.size (); ++i)
 			{
-				const cPlayer& player = *PlayerList[i];
+				const cPlayer& player = *playerList[i];
 				if (player.isDefeated) continue;
 				++nbActivePlayer;
 				if (nbActivePlayer >= 2) return false;
@@ -3166,9 +3136,9 @@ bool cServer::isVictoryConditionMet() const
 //------------------------------------------------------------------------------
 void cServer::defeatLoserPlayers()
 {
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 		if (player.isDefeated) continue;
 		if (player.mayHaveOffensiveUnit()) continue;
 
@@ -3178,7 +3148,7 @@ void cServer::defeatLoserPlayers()
 
 			player.revealMap();
 		checkPlayerUnits();
-		sendNoFog (*this, player.getNr());
+		sendNoFog (*this, player);
 	}
 }
 
@@ -3191,9 +3161,9 @@ void cServer::checkDefeats()
 	std::set<cPlayer*> winners;
 	int best_score = -1;
 
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 		if (player.isDefeated) continue;
 		const int score = player.getScore (iTurn);
 
@@ -3208,9 +3178,9 @@ void cServer::checkDefeats()
 	}
 
 	// anyone who hasn't won has lost.
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer& player = *PlayerList[i];
+		cPlayer& player = *playerList[i];
 
 		if (player.isDefeated) continue;
 		if (winners.find (&player) != winners.end()) continue;
@@ -3222,7 +3192,7 @@ void cServer::checkDefeats()
 		{
 			player.revealMap();
 			checkPlayerUnits();
-			sendNoFog (*this, player.getNr());
+			sendNoFog (*this, player);
 		}
 	}
 
@@ -3232,8 +3202,8 @@ void cServer::checkDefeats()
 	// i.e. first player to get ahead in score wins.
 	if (winners.size() > 1)
 	{
-		for (size_t i = 0; i != PlayerList.size(); ++i)
-			sendChatMessageToClient (*this, "Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, i);
+		for (size_t i = 0; i != playerList.size (); ++i)
+			sendChatMessageToClient (*this, "Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, playerList[i].get());
 	}
 	// TODO: send win message to the winner.
 }
@@ -3241,12 +3211,12 @@ void cServer::checkDefeats()
 //------------------------------------------------------------------------------
 void cServer::addReport (sID id, int iPlayerNum)
 {
-	cPlayer* player = getPlayerFromNumber (iPlayerNum);
+	cPlayer& player = getPlayerFromNumber (iPlayerNum);
 	if (id.isAVehicle())
 	{
-		for (size_t i = 0; i != player->ReportVehicles.size(); ++i)
+		for (size_t i = 0; i != player.ReportVehicles.size(); ++i)
 		{
-			sTurnstartReport& report = *player->ReportVehicles[i];
+			sTurnstartReport& report = *player.ReportVehicles[i];
 			if (report.Type == id)
 			{
 				report.iAnz++;
@@ -3256,13 +3226,13 @@ void cServer::addReport (sID id, int iPlayerNum)
 		sTurnstartReport* report = new sTurnstartReport;
 		report->Type = id;
 		report->iAnz = 1;
-		player->ReportVehicles.push_back (report);
+		player.ReportVehicles.push_back (report);
 	}
 	else
 	{
-		for (size_t i = 0; i != player->ReportBuildings.size(); ++i)
+		for (size_t i = 0; i != player.ReportBuildings.size(); ++i)
 		{
-			sTurnstartReport* report = player->ReportBuildings[i];
+			sTurnstartReport* report = player.ReportBuildings[i];
 			if (report->Type == id)
 			{
 				report->iAnz++;
@@ -3272,7 +3242,7 @@ void cServer::addReport (sID id, int iPlayerNum)
 		sTurnstartReport* report = new sTurnstartReport;
 		report->Type = id;
 		report->iAnz = 1;
-		player->ReportBuildings.push_back (report);
+		player.ReportBuildings.push_back (report);
 	}
 }
 
@@ -3284,7 +3254,7 @@ void cServer::checkDeadline()
 
 	if (gameTimer.gameTime <= iDeadlineStartTime + gameSetting->getTurnDeadline () * 100) return;
 
-	if (checkEndActions (-1))
+	if (checkEndActions (nullptr))
 	{
 		iWantPlayerEndNum = -2;
 		return;
@@ -3416,9 +3386,9 @@ cUnit* cServer::getUnitFromID (unsigned int iID) const
 //------------------------------------------------------------------------------
 cVehicle* cServer::getVehicleFromID (unsigned int iID) const
 {
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		for (cVehicle* vehicle = PlayerList[i]->VehicleList;
+		for (cVehicle* vehicle = playerList[i]->VehicleList;
 			 vehicle != 0;
 			 vehicle = vehicle->next)
 		{
@@ -3432,9 +3402,9 @@ cVehicle* cServer::getVehicleFromID (unsigned int iID) const
 //------------------------------------------------------------------------------
 cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 {
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		for (cBuilding* building = PlayerList[i]->BuildingList;
+		for (cBuilding* building = playerList[i]->BuildingList;
 			 building != 0;
 			 building = building->next)
 		{
@@ -3654,7 +3624,7 @@ void cServer::deleteRubble (cBuilding* rubble)
 	Map->deleteBuilding (*rubble);
 
 	remove_from_intrusivelist (neutralBuildings, *rubble);
-	sendDeleteUnit (*this, *rubble, -1);
+	sendDeleteUnit (*this, *rubble, nullptr);
 
 	delete rubble;
 }
@@ -3675,9 +3645,9 @@ void cServer::deletePlayer (cPlayer* Player)
 	}
 
 	// remove the player of all detected by player lists
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer* UnitPlayer = PlayerList[i];
+		cPlayer* UnitPlayer = playerList[i].get();
 		if (UnitPlayer == Player) continue;
 
 		for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
@@ -3686,13 +3656,12 @@ void cServer::deletePlayer (cPlayer* Player)
 		}
 	}
 	// delete the player
-	sendDeletePlayer (*this, *Player);
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	sendDeletePlayer (*this, *Player, nullptr);
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		if (Player == PlayerList[i])
+		if (Player == playerList[i].get())
 		{
-			PlayerList.erase (PlayerList.begin() + i);
-			delete Player;
+			playerList.erase (playerList.begin () + i);
 			break;
 		}
 	}
@@ -3704,9 +3673,9 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	if (firstDelete)
 	{
-		for (size_t i = 0; i != PlayerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			cPlayer* UnitPlayer = PlayerList[i];
+			cPlayer* UnitPlayer = playerList[i].get();
 			if (UnitPlayer == &player) continue;
 
 			for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
@@ -3724,14 +3693,14 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 		{
 			Remove (Building->seenByPlayerList, &player);
 		}
-		sendDeleteEverything (*this, player.getNr ());
+		sendDeleteEverything (*this, player);
 	}
 
 	sendGameTime (*this, player, gameTimer.gameTime);
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
-		sendClansToClients (*this, PlayerList);
+		sendClansToClients (*this, playerList);
 	}
 	sendTurn (*this, iTurn, lastTurnEnd, player);
 	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), &player);
@@ -3745,21 +3714,21 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 
 	for (cBuilding* Building = player.BuildingList; Building; Building = Building->next)
 	{
-		sendAddUnit (*this, Building->getPosition(), Building->iID, false, Building->data.ID, player.getNr (), true);
+		sendAddUnit (*this, Building->getPosition(), Building->iID, false, Building->data.ID, player, true);
 		for (size_t i = 0; i != Building->storedUnits.size(); ++i)
 		{
 			cVehicle& storedVehicle = *Building->storedUnits[i];
 			resyncVehicle (storedVehicle, player);
-			sendStoreVehicle (*this, Building->iID, false, storedVehicle.iID, player.getNr ());
+			sendStoreVehicle (*this, Building->iID, false, storedVehicle.iID, player);
 		}
-		sendUnitData (*this, *Building, player.getNr ());
+		sendUnitData (*this, *Building, player);
 		if (Building->data.canMineMaxRes > 0) sendProduceValues (*this, *Building);
 		if (!Building->BuildList.empty()) sendBuildList (*this, *Building);
 	}
 	// send all subbases
 	for (size_t i = 0; i != player.base.SubBases.size (); ++i)
 	{
-		sendSubbaseValues (*this, *player.base.SubBases[i], player.getNr ());
+		sendSubbaseValues (*this, *player.base.SubBases[i], player);
 	}
 	// refresh enemy units
 	player.doScan ();
@@ -3770,25 +3739,25 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 		// if only costs were researched, the version is not incremented
 		if (player.VehicleData[i].getVersion () > 0
 			|| player.VehicleData[i].buildCosts != UnitsData.getVehicle (i, player.getClan ()).buildCosts)
-			sendUnitUpgrades (*this, player.VehicleData[i], player.getNr ());
+			sendUnitUpgrades (*this, player.VehicleData[i], player);
 	}
 	for (size_t i = 0; i != UnitsData.getNrBuildings(); ++i)
 	{
 		// if only costs were researched, the version is not incremented
 		if (player.BuildingData[i].getVersion () > 0
 			|| player.BuildingData[i].buildCosts != UnitsData.getBuilding (i, player.getClan ()).buildCosts)
-			sendUnitUpgrades (*this, player.BuildingData[i], player.getNr ());
+			sendUnitUpgrades (*this, player.BuildingData[i], player);
 	}
 	// send credits
-	sendCredits (*this, player.Credits, player.getNr ());
+	sendCredits (*this, player.Credits, player);
 	// send research
-	sendResearchLevel (*this, player.researchLevel, player.getNr ());
-	sendRefreshResearchCount (*this, player.getNr ());
+	sendResearchLevel (*this, player.researchLevel, player);
+	sendRefreshResearchCount (*this, player);
 
 	// send all players' score histories & eco-counts
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		cPlayer& subj = *PlayerList[i];
+		cPlayer& subj = *playerList[i];
 		for (int t = 1; t <= iTurn; ++t)
 			sendScore (*this, subj, t, &player);
 		sendNumEcos (*this, subj, &player);
@@ -3818,15 +3787,15 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 //------------------------------------------------------------------------------
 void cServer::resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player)
 {
-	sendAddUnit (*this, Vehicle.getPosition(), Vehicle.iID, true, Vehicle.data.ID, Player.getNr (), true, !Vehicle.isUnitLoaded ());
-	if (Vehicle.ServerMoveJob) sendMoveJobServer (*this, *Vehicle.ServerMoveJob, Player.getNr());
+	sendAddUnit (*this, Vehicle.getPosition(), Vehicle.iID, true, Vehicle.data.ID, Player, true, !Vehicle.isUnitLoaded ());
+	if (Vehicle.ServerMoveJob) sendMoveJobServer (*this, *Vehicle.ServerMoveJob, Player);
 	for (size_t i = 0; i != Vehicle.storedUnits.size(); ++i)
 	{
 		const cVehicle& storedVehicle = *Vehicle.storedUnits[i];
 		resyncVehicle (storedVehicle, Player);
-		sendStoreVehicle (*this, Vehicle.iID, true, storedVehicle.iID, Player.getNr());
+		sendStoreVehicle (*this, Vehicle.iID, true, storedVehicle.iID, Player);
 	}
-	sendUnitData (*this, Vehicle, Player.getNr());
+	sendUnitData (*this, Vehicle, Player);
 	sendSpecificUnitData (*this, Vehicle);
 	if (Vehicle.hasAutoMoveJob) sendSetAutomoving (*this, Vehicle);
 	if (Vehicle.detectedByPlayerList.empty() == false) sendDetectionState (*this, Vehicle);
@@ -3843,10 +3812,10 @@ bool cServer::addMoveJob (const cPosition& source, const cPosition& destination,
 		return false;
 	}
 
-	sendMoveJobServer (*this, *MoveJob, vehicle->owner->getNr());
+	sendMoveJobServer (*this, *MoveJob, *vehicle->owner);
 	for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
 	{
-		sendMoveJobServer (*this, *MoveJob, vehicle->seenByPlayerList[i]->getNr());
+		sendMoveJobServer (*this, *MoveJob, *vehicle->seenByPlayerList[i]);
 	}
 
 	addActiveMoveJob (*MoveJob);
@@ -3876,15 +3845,15 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	vehicle.setDisabledTurns (0);
 
 	// delete the unit on the clients and add it with new owner again
-	sendDeleteUnit (*this, vehicle, oldOwner->getNr());
+	sendDeleteUnit (*this, vehicle, oldOwner);
 	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 	{
-		sendDeleteUnit (*this, vehicle, vehicle.seenByPlayerList[i]->getNr());
+		sendDeleteUnit (*this, vehicle, vehicle.seenByPlayerList[i]);
 	}
 	vehicle.seenByPlayerList.clear();
 	vehicle.detectedByPlayerList.clear();
-	sendAddUnit (*this, vehicle.getPosition(), vehicle.iID, true, vehicle.data.ID, vehicle.owner->getNr(), false);
-	sendUnitData (*this, vehicle, vehicle.owner->getNr());
+	sendAddUnit (*this, vehicle.getPosition(), vehicle.iID, true, vehicle.data.ID, *vehicle.owner, false);
+	sendUnitData (*this, vehicle, *vehicle.owner);
 	sendSpecificUnitData (*this, vehicle);
 
 	oldOwner->doScan();
@@ -3916,10 +3885,10 @@ void cServer::stopVehicleBuilding (cVehicle& vehicle)
 		position = vehicle.buildBigSavedPosition;
 		vehicle.owner->doScan();
 	}
-	sendStopBuild (*this, vehicle.iID, position, vehicle.owner->getNr ());
+	sendStopBuild (*this, vehicle.iID, position, *vehicle.owner);
 	for (size_t i = 0; i != vehicle.seenByPlayerList.size(); ++i)
 	{
-		sendStopBuild (*this, vehicle.iID, position, vehicle.seenByPlayerList[i]->getNr ());
+		sendStopBuild (*this, vehicle.iID, position, *vehicle.seenByPlayerList[i]);
 	}
 }
 
@@ -3985,19 +3954,19 @@ void cServer::sideStepStealthUnit(const cPosition& position, const sUnitData& ve
 			bool detectOnDest = false;
 			if (stealthVehicle->data.isStealthOn & TERRAIN_GROUND)
 			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
+				for (size_t i = 0; i != playerList.size (); ++i)
 				{
-					if (PlayerList[i] == stealthVehicle->owner) continue;
-					if (PlayerList[i]->hasLandDetection (currentPosition)) detectOnDest = true;
+					if (playerList[i].get() == stealthVehicle->owner) continue;
+					if (playerList[i]->hasLandDetection (currentPosition)) detectOnDest = true;
 				}
 				if (Map->isWater (currentPosition)) detectOnDest = true;
 			}
 			if (stealthVehicle->data.isStealthOn & TERRAIN_SEA)
 			{
-				for (size_t i = 0; i != PlayerList.size(); ++i)
+				for (size_t i = 0; i != playerList.size (); ++i)
 				{
-					if (PlayerList[i] == stealthVehicle->owner) continue;
-					if (PlayerList[i]->hasSeaDetection (currentPosition)) detectOnDest = true;
+					if (playerList[i].get() == stealthVehicle->owner) continue;
+					if (playerList[i]->hasSeaDetection (currentPosition)) detectOnDest = true;
 				}
 				if (!Map->isWater (currentPosition)) detectOnDest = true;
 

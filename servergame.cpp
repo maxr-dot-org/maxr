@@ -276,12 +276,12 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 					// copy playerlist for server
 					for (size_t i = 0; i != menuPlayers.size(); ++i)
 					{
-						server->addPlayer (new cPlayer (*menuPlayers[i]));
+						server->addPlayer (std::make_unique<cPlayer> (*menuPlayers[i]));
 					}
 
 					server->setMap (map);
 					server->setGameSettings (settings);
-					server->changeStateToInitGame();
+					//server->changeStateToInitGame();
 					//sendGo (*server);
 				}
 				else
@@ -430,9 +430,9 @@ std::string cServerGame::getGameState() const
 	std::stringstream result;
 	result << "GameState: ";
 
-	if (server == NULL || server->serverState == SERVER_STATE_ROOM)
-		result << "Game is open for new players" << endl;
-	else if (server->serverState == SERVER_STATE_INITGAME)
+	//if (server == NULL || server->serverState == SERVER_STATE_ROOM)
+	//	result << "Game is open for new players" << endl;
+	/*else*/ if (server->serverState == SERVER_STATE_INITGAME)
 		result << "Game has started, players are setting up" << endl;
 	else if (server->serverState == SERVER_STATE_INGAME)
 		result << "Game is active" << endl;
@@ -442,11 +442,11 @@ std::string cServerGame::getGameState() const
 		result << "Turn: " << server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if (server != NULL && server->PlayerList.empty() == false)
+	if (server != NULL && server->playerList.empty() == false)
 	{
-		for (size_t i = 0; i != server->PlayerList.size(); ++i)
+		for (size_t i = 0; i != server->playerList.size(); ++i)
 		{
-			const cPlayer& player = *server->PlayerList[i];
+			const cPlayer& player = *server->playerList[i];
 			result << " " << player.getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
@@ -463,9 +463,8 @@ int cServerGame::getSocketForPlayerNr (int playerNr) const
 {
 	if (server != NULL)
 	{
-		const cPlayer* player = server->getPlayerFromNumber (playerNr);
-		if (player != 0)
-			return player->getSocketNum();
+		const cPlayer& player = server->getPlayerFromNumber (playerNr);
+		return player.getSocketNum();
 	}
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{

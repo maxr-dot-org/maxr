@@ -649,7 +649,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (isDisabled())
 	{
-		sendChatMessageToClient (server, "Text~Comp~Building_Disabled", SERVER_ERROR_MESSAGE, owner->getNr());
+		sendChatMessageToClient (server, "Text~Comp~Building_Disabled", SERVER_ERROR_MESSAGE, owner);
 		return;
 	}
 
@@ -657,7 +657,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	if (data.needsHumans)
 		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
 		{
-			sendChatMessageToClient (server, "Text~Comp~Team_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
+			sendChatMessageToClient (server, "Text~Comp~Team_Insufficient", SERVER_ERROR_MESSAGE, owner);
 			return;
 		}
 
@@ -666,7 +666,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
-			sendChatMessageToClient (server, "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
+			sendChatMessageToClient (server, "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner);
 			return;
 		}
 	}
@@ -676,7 +676,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->MetalNeed + min (MetalPerRound, BuildList[0].metall_remaining) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
-			sendChatMessageToClient (server, "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
+			sendChatMessageToClient (server, "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner);
 			return;
 		}
 	}
@@ -688,7 +688,7 @@ void cBuilding::ServerStartWork (cServer& server)
 		// (current production + reserves)
 		if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getMaxOilProd())
 		{
-			sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
+			sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner);
 			return;
 		}
 		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getOilProd ())
@@ -708,11 +708,11 @@ void cBuilding::ServerStartWork (cServer& server)
 			SubBase->setGoldProd (gold);
 			SubBase->setMetalProd (metal);
 
-			sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->getNr(), iToStr (missingOil));
+			sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner, iToStr (missingOil));
 			if (SubBase->getMetalProd() < metal)
-				sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner->getNr(), iToStr (metal - SubBase->getMetalProd()));
+				sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner, iToStr (metal - SubBase->getMetalProd()));
 			if (SubBase->getGoldProd() < gold)
-				sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner->getNr(), iToStr (gold - SubBase->getGoldProd()));
+				sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner, iToStr (gold - SubBase->getGoldProd()));
 		}
 	}
 
@@ -762,10 +762,10 @@ void cBuilding::ServerStartWork (cServer& server)
 					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 				}
 
-				sendChatMessageToClient (server, "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
+				sendChatMessageToClient (server, "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner);
 				return;
 			}
-			sendChatMessageToClient (server, "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->getNr());
+			sendChatMessageToClient (server, "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner);
 		}
 	}
 
@@ -798,7 +798,7 @@ void cBuilding::ServerStartWork (cServer& server)
 		sendNumEcos (server, *owner);
 	}
 
-	sendSubbaseValues (server, *SubBase, owner->getNr());
+	sendSubbaseValues (server, *SubBase, *owner);
 	sendDoStartWork (server, *this);
 }
 
@@ -831,7 +831,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	{
 		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
 		{
-			sendChatMessageToClient (server, "Text~Comp~Energy_IsNeeded", SERVER_ERROR_MESSAGE, owner->getNr());
+			sendChatMessageToClient (server, "Text~Comp~Energy_IsNeeded", SERVER_ERROR_MESSAGE, owner);
 			return;
 		}
 
@@ -884,7 +884,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 		sendNumEcos (server, *owner);
 	}
 
-	sendSubbaseValues (server, *SubBase, owner->getNr());
+	sendSubbaseValues (server, *SubBase, *owner);
 	sendDoStopWork (server, *this);
 }
 
@@ -1329,14 +1329,14 @@ void cBuilding::makeDetection (cServer& server)
 
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
-		std::vector<cPlayer*>& playerList = server.PlayerList;
+		auto& playerList = server.playerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
-			cPlayer* player = playerList[i];
-			if (player == owner) continue;
-			if (player->hasMineDetection (getPosition ()))
+			auto& player = *playerList[i];
+			if (&player == owner) continue;
+			if (player.hasMineDetection (getPosition ()))
 			{
-				setDetectedByPlayer (server, player);
+				setDetectedByPlayer (server, &player);
 			}
 		}
 	}

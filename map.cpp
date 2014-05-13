@@ -519,7 +519,7 @@ bool cMap::isWaterOrCoast(const cPosition& position) const
 }
 
 // Platziert die Ressourcen für einen Spieler.
-void cMap::placeRessourcesAddPlayer (int x, int y, eGameSettingsResourceDensity desity)
+void cMap::placeRessourcesAddPlayer (const cPosition& position, eGameSettingsResourceDensity desity)
 {
 	if (resSpots == NULL)
 	{
@@ -529,7 +529,7 @@ void cMap::placeRessourcesAddPlayer (int x, int y, eGameSettingsResourceDensity 
 		resSpotTypes = new int[resSpotCount];
 	}
 	resSpotTypes[resCurrentSpotCount] = RES_METAL;
-	resSpots[resCurrentSpotCount] = T_2<int> ((x & ~1) + (RES_METAL % 2), (y & ~1) + ((RES_METAL / 2) % 2));
+	resSpots[resCurrentSpotCount] = T_2<int> ((position.x () & ~1) + (RES_METAL % 2), (position.y() & ~1) + ((RES_METAL / 2) % 2));
 	resCurrentSpotCount++;
 }
 
