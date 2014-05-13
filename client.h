@@ -193,6 +193,8 @@ public:
 	mutable cSignal<void ()> startedTurnEndProcess;
 	mutable cSignal<void ()> finishedTurnEndProcess;
 
+	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
+
 	mutable cSignal<void (const cUnit&)> unitStartedWorking;
 	mutable cSignal<void (const cUnit&)> unitStoppedWorking;
 

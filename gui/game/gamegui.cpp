@@ -28,6 +28,7 @@
 #include "widgets/unitcontextmenuwidget.h"
 #include "widgets/gamemessagelistview.h"
 #include "widgets/hudpanels.h"
+#include "../menu/widgets/label.h"
 
 #include "temp/animationtimer.h"
 
@@ -85,6 +86,14 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
 
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition (), getSize ().y (), animationTimer));
+
+	primiaryInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition ().x () - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG))), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
+	primiaryInfoLabel->disable ();
+	primiaryInfoLabel->hide ();
+
+	additionalInfoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (FONT_LATIN_BIG)), cPosition (getEndPosition ().x () - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG) + font->getFontHeight (FONT_LATIN_NORMAL))), "", FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal)  | eAlignmentType::Top));
+	additionalInfoLabel->disable ();
+	additionalInfoLabel->hide ();
 
 	signalConnectionManager.connect (hudPanels->opened, [&]()
 	{
@@ -586,6 +595,50 @@ void cNewGameGUI::connectToClient (cClient& client)
 		hud->unlockEndButton ();
 	});
 
+	clientSignalConnectionManager.connect (client.freezeModeChanged, [&](eFreezeMode mode)
+	{
+		const int playerNumber = client.getFreezeInfoPlayerNumber ();
+		const cPlayer* player = client.getPlayerFromNumber (playerNumber);
+
+		if (mode == FREEZE_WAIT_FOR_OTHERS)
+		{
+			if (client.getFreezeMode (FREEZE_WAIT_FOR_OTHERS)) hud->lockEndButton ();
+			else hud->unlockEndButton ();
+		}
+
+		if (client.getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
+		{
+			// TODO: Fix message
+			const std::string& name = player ? player->getName () : "other players";
+			setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", name), "");
+		}
+		else if (client.getFreezeMode (FREEZE_PAUSE))
+		{
+			setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
+		}
+		else if (client.getFreezeMode (FREEZE_WAIT_FOR_SERVER))
+		{
+			setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"), "");
+		}
+		else if (client.getFreezeMode (FREEZE_WAIT_FOR_RECONNECT))
+		{
+			std::string s = client.getServer () ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "";
+			setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), s);
+		}
+		else if (client.getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
+		{
+			setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->getName ()), "");
+		}
+		else if (client.getFreezeMode (FREEZE_WAIT_FOR_TURNEND))
+		{
+			setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
+		}
+		else
+		{
+			setInfoTexts ("", "");
+		}
+	});
+
 	clientSignalConnectionManager.connect (client.unitStartedWorking, [&](const cUnit& unit)
 	{
 		if (&unit == gameMap->getUnitSelection ().getSelectedUnit ())
@@ -798,6 +851,18 @@ void cNewGameGUI::disconnectCurrentClient ()
 void cNewGameGUI::centerAt (const cPosition& position)
 {
 	gameMap->centerAt (position);
+}
+
+//------------------------------------------------------------------------------
+void cNewGameGUI::setInfoTexts (const std::string& primiaryText, const std::string& additionalText)
+{
+	primiaryInfoLabel->setText (primiaryText);
+	if (primiaryText.empty ()) primiaryInfoLabel->hide ();
+	else primiaryInfoLabel->show ();
+
+	additionalInfoLabel->setText (additionalText);
+	if (additionalText.empty ()) additionalInfoLabel->hide ();
+	else additionalInfoLabel->show ();
 }
 
 //------------------------------------------------------------------------------

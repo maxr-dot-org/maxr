@@ -33,6 +33,7 @@ class cHud;
 class cGameMapWidget;
 class cMiniMapWidget;
 class cGameMessageListView;
+class cLabel;
 class cStaticMap;
 class cMap;
 class cPlayer;
@@ -57,6 +58,8 @@ public:
 	void disconnectCurrentClient ();
 
 	void centerAt (const cPosition& position);
+
+	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -93,6 +96,9 @@ private:
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 	cGameMessageListView* messageList;
+
+	cLabel* primiaryInfoLabel;
+	cLabel* additionalInfoLabel;
 
 	cPosition mouseScrollDirection;
 

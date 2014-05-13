@@ -438,8 +438,6 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 	if (nextPlayerNum != ActivePlayer->getNr())
 	{
 		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
-		//FIXME: gameGUI
-		//gameGUI->setEndButtonLock (true);
 	}
 }
 
@@ -476,8 +474,6 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 		else
 		{
 			disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-			//FIXME: gameGUI
-			//gameGUI->setEndButtonLock (false);
 		}
 	}
 	else if (iNextPlayerNum != -1)
@@ -2166,15 +2162,13 @@ void cClient::runJobs()
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
 	freezeModes.enable (mode, playerNumber);
-	//FIXME: gameGUI
-	//gameGUI->updateInfoTexts();
+	freezeModeChanged ();
 }
 
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
 	freezeModes.disable (mode);
-	//FIXME: gameGUI
-	//gameGUI->updateInfoTexts();
+	freezeModeChanged ();
 }
 
 bool cClient::isFreezed() const
