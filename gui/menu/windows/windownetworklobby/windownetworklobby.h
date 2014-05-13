@@ -70,6 +70,9 @@ public:
 
 	cSignal<void ()> wantLocalPlayerReadyChange;
 	cSignal<void ()> triggeredChatMessage;
+	cSignal<void ()> staticMapChanged;
+	cSignal<void ()> gameSettingsChanged;
+	cSignal<void ()> saveGameChanged;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

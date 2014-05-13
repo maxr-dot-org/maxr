@@ -31,16 +31,18 @@ class cApplication;
 class cWindowNetworkLobbyHost;
 class cNetworkHostGameNew;
 class cNetMessage;
+class sPlayer;
+class cLandingPositionManager;
 
 class cTCP;
 
 class cMenuControllerMultiplayerHost : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerHost>
 {
 public:
-	cMenuControllerMultiplayerHost ();
+	cMenuControllerMultiplayerHost (cApplication& application);
 	~cMenuControllerMultiplayerHost ();
 
-	void start (cApplication& application);
+	void start ();
 
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 
@@ -50,9 +52,15 @@ private:
 
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 
+	std::shared_ptr<cTCP> network;
+
+	cApplication& application;
+
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
 
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cLandingPositionManager> landingPositionManager;
+
+	std::shared_ptr<cNetworkHostGameNew> newGame;
 
 	int nextPlayerNumber;
 
@@ -65,16 +73,20 @@ private:
 	void handleWantLocalPlayerReadyChange ();
 	void handleChatMessageTriggered ();
 
+	void handleLocalPlayerAttributesChanged ();
+
 	void startHost ();
 
-	void checkGameStart (cApplication& application);
+	void checkTakenPlayerAttributes (sPlayer& player);
 
-	void startGamePreparation (cApplication& application);
+	void checkGameStart ();
 
-	void startClanSelection (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
-	void startLandingUnitSelection (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
-	void startLandingPositionSelection (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
-	void startGame (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
+	void startGamePreparation ();
+
+	void startClanSelection ();
+	void startLandingUnitSelection ();
+	void startLandingPositionSelection ();
+	void startGame ();
 
 	void handleNetMessage (cNetMessage& message);
 
@@ -84,6 +96,7 @@ private:
 	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message);
 	void handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage& message);
 	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message);
+	void handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message);
 };
 
 #endif // gui_control_menucontrollermultiplayerhostH

@@ -17,34 +17,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "localsingleplayergame.h"
+#include "networkclientgame.h"
 #include "../../../client.h"
-#include "../../../server.h"
 #include "../../../savegame.h"
 #include "../../../loaddata.h"
 
 //------------------------------------------------------------------------------
-cLocalSingleplayerGame::~cLocalSingleplayerGame ()
+cNetworkClientGame::~cNetworkClientGame ()
+{}
+
+//------------------------------------------------------------------------------
+void cNetworkClientGame::run ()
 {
-	if (server)
-	{
-		server->stop ();
-		reloadUnitValues ();
-	}
+	if (localClient) localClient->gameTimer.run ();
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGame::run ()
+void cNetworkClientGame::save (int saveNumber, const std::string& saveName)
 {
-	if (client) client->gameTimer.run ();
+	throw std::runtime_error (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
 }
 
 //------------------------------------------------------------------------------
-void cLocalSingleplayerGame::save (int saveNumber, const std::string& saveName)
+void cNetworkClientGame::setNetwork (std::shared_ptr<cTCP> network_)
 {
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	cSavegame savegame (saveNumber);
-	savegame.save (*server, saveName);
-	server->makeAdditionalSaveRequest (saveNumber);
+	network = network_;
 }

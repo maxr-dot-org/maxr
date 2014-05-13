@@ -19,6 +19,7 @@
 
 #include "windowlandingpositionselection.h"
 #include "../../widgets/image.h"
+#include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/special/landingpositionselectionmap.h"
 #include "../../../game/hud.h"
@@ -32,6 +33,7 @@
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap) :
 	cWindow (nullptr),
 	lastSelectedPosition (0, 0),
+	selectionAllowed (true),
 	firstActivate (true)
 {
 	using namespace std::placeholders;
@@ -44,8 +46,12 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 
 	auto hudImage = addChild (std::move (hudImageOwned));
 
-	auto backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition ().y () - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
+	backButton = addChild (std::make_unique<cPushButton> (cPosition (35, hudImage->getEndPosition ().y () - 40), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowLandingPositionSelection::backClicked, this));
+
+	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::Center)));
+	infoLabel->setWordWrap (true);
+	infoLabel->disable ();
 
 	signalConnectionManager.connect (selectedPosition, [&](const cPosition& position){ lastSelectedPosition = position; });
 
@@ -63,6 +69,51 @@ const cPosition& cWindowLandingPositionSelection::getSelectedPosition () const
 }
 
 //------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionState state)
+{
+	if (state == eLandingPositionState::Clear || state == eLandingPositionState::Confirmed) lockBack ();
+	else unlockBack ();
+
+	if (state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose) allowSelection ();
+	else disallowSelection ();
+
+	if (state == eLandingPositionState::Warning) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Warning"));
+	else if (state == eLandingPositionState::TooClose) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::setInfoMessage (const std::string& message)
+{
+	infoLabel->setText (message);
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::allowSelection ()
+{
+	selectionAllowed = true;
+	handleMouseMoved (*getActiveApplication(), *getActiveMouse(), getActiveMouse()->getPosition());
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::disallowSelection ()
+{
+	selectionAllowed = false;
+	handleMouseMoved (*getActiveApplication (), *getActiveMouse (), getActiveMouse ()->getPosition ());
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::lockBack ()
+{
+	backButton->lock ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::unlockBack ()
+{
+	backButton->unlock ();
+}
+
+//------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application)
 {
 	if (firstActivate) PlayRandomVoice (VoiceData.VOILanding);
@@ -73,7 +124,11 @@ void cWindowLandingPositionSelection::handleActivated (cApplication& application
 //------------------------------------------------------------------------------
 bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	if (map->isAt (mouse.getPosition ()))
+	if (!selectionAllowed)
+	{
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
+	}
+	else if (map->isAt (mouse.getPosition ()))
 	{
 		return map->handleMouseMoved (application, mouse, offset);
 	}
@@ -111,5 +166,7 @@ void cWindowLandingPositionSelection::backClicked ()
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::mapClicked (const cPosition& tilePosition)
 {
+	if (!selectionAllowed) return;
+
 	selectedPosition (tilePosition);
 }

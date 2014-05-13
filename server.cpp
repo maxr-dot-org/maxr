@@ -64,7 +64,7 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
 	casualtiesTracker (new cCasualtiesTracker()),
-	serverState (SERVER_STATE_ROOM)
+	serverState (SERVER_STATE_INITGAME)
 {
 	bExit = false;
 	openMapDefeat = true;
@@ -369,10 +369,7 @@ void cServer::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage& message)
 	int playerNr = message.popChar();
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	auto& position = landingPositions[playerNr];
-
-	position.x () = message.popInt16 ();
-	position.y () = message.popInt16 ();
+	landingPositions[playerNr] = message.popPosition();
 }
 
 //------------------------------------------------------------------------------

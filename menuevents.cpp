@@ -25,6 +25,7 @@
 #include "player.h"
 #include "serverevents.h"
 #include "map.h"
+#include "utility/tounderlyingtype.h"
 
 using namespace std;
 
@@ -38,7 +39,7 @@ void sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player = n
 	// Otherwise it is only -1!
 	message->iPlayerNr = fromPlayerNr;
 
-	if (player == NULL) network.send (message->iLength, message->serialize ());
+	if (player == nullptr) network.send (message->iLength, message->serialize ());
 	else network.sendTo (player->getSocketIndex (), message->iLength, message->serialize ());
 
 	Log.write ("Menu: --> " + message->getTypeAsString () + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
@@ -129,3 +130,35 @@ void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
 	sendMessage (network, msg);
 }
 
+//------------------------------------------------------------------------------
+void sendGo (cTCP& network)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_GO);
+	sendMessage (network, msg);
+}
+
+//------------------------------------------------------------------------------
+void sendLandingState (cTCP& network, eLandingPositionState state, const sPlayer& player)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_LANDING_STATE);
+	msg->pushInt32 (toUnderlyingType (state));
+
+	sendMessage (network, msg, &player);
+}
+
+//------------------------------------------------------------------------------
+void sendAllLanded (cTCP& network)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_ALL_LANDED);
+	sendMessage (network, msg);
+}
+
+//------------------------------------------------------------------------------
+void sendLandingPosition (cTCP& network, const cPosition& position, const sPlayer& player)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_LANDING_POSITION);
+	msg->pushPosition (position);
+	msg->pushInt32 (player.getNr ());
+
+	sendMessage (network, msg);
+}

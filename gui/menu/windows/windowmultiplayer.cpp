@@ -62,8 +62,8 @@ void cWindowMultiPlayer::tcpHostClicked ()
 
 	if (!application) return;
 
-	multiplayerHostController = std::make_shared<cMenuControllerMultiplayerHost>();
-	multiplayerHostController->start (*application);
+	multiplayerHostController = std::make_shared<cMenuControllerMultiplayerHost> (*application);
+	multiplayerHostController->start ();
 }
 
 //------------------------------------------------------------------------------
@@ -73,8 +73,8 @@ void cWindowMultiPlayer::tcpClientClicked ()
 
 	if (!application) return;
 
-	multiplayerClientController = std::make_shared<cMenuControllerMultiplayerClient> ();
-	multiplayerClientController->start (*application);
+	multiplayerClientController = std::make_shared<cMenuControllerMultiplayerClient> (*application);
+	multiplayerClientController->start ();
 }
 
 //------------------------------------------------------------------------------

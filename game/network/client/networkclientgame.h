@@ -17,34 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "localsingleplayergame.h"
-#include "../../../client.h"
-#include "../../../server.h"
-#include "../../../savegame.h"
-#include "../../../loaddata.h"
+#ifndef game_network_client_networkclientgameH
+#define game_network_client_networkclientgameH
 
-//------------------------------------------------------------------------------
-cLocalSingleplayerGame::~cLocalSingleplayerGame ()
+#include <memory>
+#include <string>
+
+#include "../../game.h"
+#include "../../../maxrconfig.h"
+
+class cClient;
+class cTCP;
+
+class cNetworkClientGame : public cGame
 {
-	if (server)
-	{
-		server->stop ();
-		reloadUnitValues ();
-	}
-}
+public:
+	~cNetworkClientGame ();
 
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGame::run ()
-{
-	if (client) client->gameTimer.run ();
-}
+	virtual void run () MAXR_OVERRIDE_FUNCTION;
 
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
+	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 
-	cSavegame savegame (saveNumber);
-	savegame.save (*server, saveName);
-	server->makeAdditionalSaveRequest (saveNumber);
-}
+	void setNetwork (std::shared_ptr<cTCP> network);
+protected:
+	std::shared_ptr<cTCP> network;
+
+	std::unique_ptr<cClient> localClient;
+};
+
+#endif // game_network_client_networkclientgameH

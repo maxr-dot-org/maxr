@@ -29,7 +29,8 @@
 
 class cApplication;
 class cWindowNetworkLobbyClient;
-class cNetworkHostGameNew;
+class cWindowLandingPositionSelection;
+class cNetworkClientGameNew;
 class cNetMessage;
 
 class cTCP;
@@ -37,7 +38,9 @@ class cTCP;
 class cMenuControllerMultiplayerClient : public INetMessageReceiver, public cRunnable, public std::enable_shared_from_this<cMenuControllerMultiplayerClient>
 {
 public:
-	void start (cApplication& application);
+	cMenuControllerMultiplayerClient (cApplication& application);
+
+	void start ();
 
 	virtual void pushEvent (std::unique_ptr<cNetMessage> message) MAXR_OVERRIDE_FUNCTION;
 
@@ -47,12 +50,20 @@ private:
 
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> messageQueue;
 
+	std::shared_ptr<cTCP> network;
+
+	cApplication& application;
+
 	std::shared_ptr<cWindowNetworkLobbyClient> windowNetworkLobby;
 
-	std::shared_ptr<cTCP> network;
+	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
+
+	std::shared_ptr<cNetworkClientGameNew> newGame;
 
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;
+
+	void reset ();
 
 	void handleWantLocalPlayerReadyChange ();
 	void handleChatMessageTriggered ();
@@ -60,12 +71,12 @@ private:
 
 	void connect ();
 
-	void startGamePreparation (cApplication& application);
+	void startGamePreparation ();
 
-	//void startClanSelection (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
-	//void startLandingUnitSelection (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
-	//void startLandingPositionSelection (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
-	//void startGame (cApplication& application, const std::shared_ptr<cNetworkHostGameNew>& game);
+	void startClanSelection ();
+	void startLandingUnitSelection ();
+	void startLandingPositionSelection ();
+	void startGame ();
 
 	void handleNetMessage (cNetMessage& message);
 
@@ -74,6 +85,9 @@ private:
 	void handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage& message);
 	void handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage& message);
 	void handleNetMessage_MU_MSG_OPTINS (cNetMessage& message);
+	void handleNetMessage_MU_MSG_GO (cNetMessage& message);
+	void handleNetMessage_MU_MSG_LANDING_STATE (cNetMessage& message);
+	void handleNetMessage_MU_MSG_ALL_LANDED (cNetMessage& message);
 	//void initMapDownload (cNetMessage& message);
 	//void receiveMapData (cNetMessage& message);
 	//void canceledMapDownload (cNetMessage& message);

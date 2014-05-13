@@ -225,8 +225,7 @@ void sendLandingCoords (const cClient& client, const cPosition& coords)
 {
 	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_COORDS);
-	message->pushInt16 (coords.y ());
-	message->pushInt16 (coords.x ());
+	message->pushPosition (coords);
 	message->pushChar (client.getActivePlayer().getNr());
 
 	client.sendNetMessage (message);

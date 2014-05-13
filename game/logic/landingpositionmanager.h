@@ -23,35 +23,11 @@
 #include <vector>
 #include <memory>
 
+#include "landingpositionstate.h"
 #include "../../utility/position.h"
 #include "../../utility/signal/signal.h"
 
 class sPlayer;
-
-enum class eLandingPositionState
-{
-	/**
-	 * waiting for new landing position state
-	 */
-	Waiting,
-	/**
-	 * there are no other players near the position
-	 */
-	Clear,
-	/**
-	 * there are players within the warning distance
-	 */
-	Warning,
-	/**
-	 * the position is too close to another player
-	 */
-	TooClose,
-	/**
-	 * warnings about nearby players will be ignored,
-	 * because the player has confirmed his position
-	 */
-	Confirmed
-};
 
 class cLandingPositionManager
 {

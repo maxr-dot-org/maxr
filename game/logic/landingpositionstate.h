@@ -17,34 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "localsingleplayergame.h"
-#include "../../../client.h"
-#include "../../../server.h"
-#include "../../../savegame.h"
-#include "../../../loaddata.h"
+#ifndef game_logic_landingpositionstateH
+#define game_logic_landingpositionstateH
 
-//------------------------------------------------------------------------------
-cLocalSingleplayerGame::~cLocalSingleplayerGame ()
+enum class eLandingPositionState
 {
-	if (server)
-	{
-		server->stop ();
-		reloadUnitValues ();
-	}
-}
+	/**
+	 * waiting for new landing position state
+	 */
+	Waiting,
+	/**
+	 * there are no other players near the position
+	 */
+	Clear,
+	/**
+	 * there are players within the warning distance
+	 */
+	Warning,
+	/**
+	 * the position is too close to another player
+	 */
+	TooClose,
+	/**
+	 * warnings about nearby players will be ignored,
+	 * because the player has confirmed his position
+	 */
+	Confirmed
+};
 
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGame::run ()
-{
-	if (client) client->gameTimer.run ();
-}
-
-//------------------------------------------------------------------------------
-void cLocalSingleplayerGame::save (int saveNumber, const std::string& saveName)
-{
-	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
-
-	cSavegame savegame (saveNumber);
-	savegame.save (*server, saveName);
-	server->makeAdditionalSaveRequest (saveNumber);
-}
+#endif // game_logic_landingpositionstateH

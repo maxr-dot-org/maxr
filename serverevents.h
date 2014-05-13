@@ -96,19 +96,6 @@ enum SERVER_EVENT_TYPES
 	NET_GAME_TIME_CLIENT,			//reports the current gametime of the client to server
 };
 
-
-void sendGo (cServer& server);
-
-/*
-* Send the landing state.
-*/
-//void sendReselectLanding (cServer& server, eLandingState state, int iPlayer);
-
-/*
-* All player has landed, game can start.
-*/
-void sendAllLanded (cServer& server);
-
 /**
 * Sends an event to a player that a new unit has to be added
 *@author alzi alias DoctorDeath

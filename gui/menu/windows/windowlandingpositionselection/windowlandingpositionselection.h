@@ -25,8 +25,10 @@
 #include "../../../window.h"
 #include "../../../../utility/signal/signalconnectionmanager.h"
 #include "../../../../utility/signal/signal.h"
+#include "../../../../game/logic/landingpositionstate.h"
 
-class cImage;
+class cPushButton;
+class cLabel;
 class cPosition;
 class cLandingPositionSelectionMap;
 class cStaticMap;
@@ -42,6 +44,16 @@ public:
 
 	const cPosition& getSelectedPosition () const;
 
+	void applyReselectionState (eLandingPositionState state);
+
+	void setInfoMessage (const std::string& message);
+
+	void allowSelection ();
+	void disallowSelection ();
+
+	void lockBack ();
+	void unlockBack ();
+
 	cSignal<void (const cPosition&)> selectedPosition;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
@@ -50,7 +62,12 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	bool selectionAllowed;
+
 	bool firstActivate;
+
+	cPushButton* backButton;
+	cLabel* infoLabel;
 
 	cLandingPositionSelectionMap* map;
 

@@ -19,14 +19,17 @@
 #ifndef menueventsH
 #define menueventsH
 
-#include "network.h"
-
 #include <string>
 #include <vector>
 
+#include "game/logic/landingpositionstate.h"
+#include "network.h"
+
+class cTCP;
 class cStaticMap;
 class sPlayer;
 class cGameSettings;
+class cPosition;
 
 enum eMenuMessages
 {
@@ -43,7 +46,8 @@ enum eMenuMessages
 	MU_MSG_REQUEST_MAP,           // a player wants to download a map from the server
 	// Game Preparation
 	MU_MSG_GO,                  // host wants to start the game/preparation
-	MU_MSG_RESELECT_LANDING,    // informs a client that the player has to reselect the landing site
+	MU_MSG_LANDING_STATE,       // informs a client about the state of the landing position selection he is currently in
+	MU_MSG_LANDING_POSITION,	// landing position during landing position selection
 	MU_MSG_ALL_LANDED,          // all players have selected there landing points and clients can start game
 };
 
@@ -60,5 +64,13 @@ void sendIdentification (cTCP& network, const sPlayer& player);
 void sendGameIdentification (cTCP& network, const sPlayer& player, int socket);
 
 void sendRequestMap (cTCP& network, const std::string& mapName, int playerNr);
+
+void sendGo (cTCP& network);
+
+void sendLandingState (cTCP& network, eLandingPositionState state, const sPlayer& player);
+
+void sendAllLanded (cTCP& network);
+
+void sendLandingPosition (cTCP& network, const cPosition& position, const sPlayer& player);
 
 #endif // menueventsH

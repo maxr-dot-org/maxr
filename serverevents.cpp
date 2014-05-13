@@ -34,30 +34,6 @@
 #include "vehicles.h"
 #include "gui/menu/windows/windowgamesettings/gamesettings.h"
 
-
-//------------------------------------------------------------------------------
-void sendGo (cServer& server)
-{
-	AutoPtr<cNetMessage> message (new cNetMessage (MU_MSG_GO));
-	server.sendNetMessage (message);
-}
-
-//------------------------------------------------------------------------------
-//void sendReselectLanding (cServer& server, eLandingState state, int iPlayer)
-//{
-//	AutoPtr<cNetMessage> message (new cNetMessage (MU_MSG_RESELECT_LANDING));
-//	message->pushChar (state);
-//
-//	server.sendNetMessage (message, iPlayer);
-//}
-
-//------------------------------------------------------------------------------
-void sendAllLanded (cServer& server)
-{
-	AutoPtr<cNetMessage> message (new cNetMessage (MU_MSG_ALL_LANDED));
-	server.sendNetMessage (message);
-}
-
 //------------------------------------------------------------------------------
 void sendAddUnit (cServer& server, const cPosition& position, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap)
 {

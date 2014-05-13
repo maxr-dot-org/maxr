@@ -55,7 +55,6 @@ enum eGameTypes
 
 enum eServerState
 {
-	SERVER_STATE_ROOM,     // Choose players, options and map.
 	SERVER_STATE_INITGAME, // Choose clan, initial units and land position.
 	SERVER_STATE_INGAME,   // Game is running
 };

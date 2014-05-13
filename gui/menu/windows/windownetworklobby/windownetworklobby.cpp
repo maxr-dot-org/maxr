@@ -245,7 +245,7 @@ void cWindowNetworkLobby::removePlayer (const sPlayer& player)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::removeNonLocalPlayers ()
 {
-	for (size_t i = 0; i < playersList->getItemsCount (); ++i)
+	for (size_t i = 0; i < playersList->getItemsCount ();)
 	{
 		auto& item = playersList->getItem (i);
 		if (item.getPlayer ().get () != localPlayer.get ())
@@ -268,6 +268,7 @@ void cWindowNetworkLobby::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
 
 	updateMap ();
 	updateSettingsText ();
+	staticMapChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -278,6 +279,7 @@ void cWindowNetworkLobby::setGameSettings (std::unique_ptr<cGameSettings> gameSe
 	saveGameNumber = -1;
 
 	updateSettingsText ();
+	gameSettingsChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -285,22 +287,24 @@ void cWindowNetworkLobby::setSaveGame (int saveGameNumber_)
 {
 	saveGameNumber = saveGameNumber_;
 
-	if (saveGameNumber < 0) return;
-
-	cSavegame saveGame(saveGameNumber_);
-
-	saveGame.loadHeader (&saveGameName, nullptr, nullptr);
-	saveGamePlayers = saveGame.getPlayerNames ();
-
-	staticMap = std::make_shared<cStaticMap> ();
-	if (!staticMap->loadMap (saveGame.getMapName ()))
+	if (saveGameNumber >= 0)
 	{
-		// error dialog
-		staticMap = nullptr;
+		cSavegame saveGame (saveGameNumber_);
+
+		saveGame.loadHeader (&saveGameName, nullptr, nullptr);
+		saveGamePlayers = saveGame.getPlayerNames ();
+
+		staticMap = std::make_shared<cStaticMap> ();
+		if (!staticMap->loadMap (saveGame.getMapName ()))
+		{
+			// error dialog
+			staticMap = nullptr;
+		}
 	}
 
 	updateMap ();
 	updateSettingsText ();
+	saveGameChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -368,13 +372,3 @@ void cWindowNetworkLobby::disableIpEdit ()
 {
 	ipLineEdit->disable ();
 }
-
-////------------------------------------------------------------------------------
-//void cLandingMenu::handleNetMessage (cNetMessage& message)
-//{
-//	switch (message.iType)
-//	{
-//	case MU_MSG_RESELECT_LANDING: handleNetMessage_MU_MSG_RESELECT_LANDING (message); break;
-//	case MU_MSG_ALL_LANDED: landData->landingState = LANDING_POSITION_OK; end = true; break;
-//	}
-//}

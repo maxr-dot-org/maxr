@@ -23,6 +23,7 @@
 #include <SDL.h>
 
 #include <vector>
+#include <list>
 #include <memory>
 
 #include "../utility/concurrentqueue.h"
@@ -88,7 +89,7 @@ private:
 	cWidget* mouseFocusWidget;
 	//cWidget* underMouseWidget;
 
-	std::vector<std::weak_ptr<cRunnable>> runnables;
+	std::list<std::weak_ptr<cRunnable>> runnables;
 
 	void center (cWindow& window);
 
