@@ -28,6 +28,7 @@
 #include "../../../../game/logic/landingpositionstate.h"
 
 class cPushButton;
+class cImage;
 class cLabel;
 class cPosition;
 class cLandingPositionSelectionMap;
@@ -39,7 +40,7 @@ struct sTerrain;
 class cWindowLandingPositionSelection : public cWindow
 {
 public:
-	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> map);
+	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap);
 	~cWindowLandingPositionSelection ();
 
 	const cPosition& getSelectedPosition () const;
@@ -62,14 +63,17 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
+	std::shared_ptr<cStaticMap> staticMap;
+
 	bool selectionAllowed;
 
 	bool firstActivate;
 
 	cPushButton* backButton;
 	cLabel* infoLabel;
+	cImage* circlesImage;
 
-	cLandingPositionSelectionMap* map;
+	cLandingPositionSelectionMap* mapWidget;
 
 	cPosition lastSelectedPosition;
 
@@ -77,6 +81,7 @@ private:
 
 	void backClicked ();
 	void mapClicked (const cPosition& tilePosition);
+	void updateLandingPositionCircles (const cPosition& tilePosition);
 };
 
 #endif // gui_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH

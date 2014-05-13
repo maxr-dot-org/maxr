@@ -17,48 +17,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_logic_landingpositionmanagerH
-#define game_logic_landingpositionmanagerH
+#ifndef game_network_client_networkclientgamereconnectionH
+#define game_network_client_networkclientgamereconnectionH
 
-#include <vector>
 #include <memory>
+#include <vector>
+#include <utility>
 
-#include "landingpositionstate.h"
-#include "../../utility/position.h"
-#include "../../utility/signal/signal.h"
+#include "networkclientgame.h"
+#include "../../../maxrconfig.h"
+#include "../../../utility/signal/signal.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+#include "../../../utility/position.h"
 
+class cApplication;
+class cStaticMap;
 class sPlayer;
 
-class cLandingPositionManager
+class cNetworkClientGameReconnection : public cNetworkClientGame
 {
-	struct sLandingPositionData
-	{
-		sLandingPositionData (std::shared_ptr<sPlayer> player);
-
-		cPosition landingPosition;
-		cPosition lastLandingPosition;
-
-		eLandingPositionState state;
-
-		std::shared_ptr<sPlayer> player;
-	};
 public:
-	static const double warningDistance;
-	static const double tooCloseDistance;
+	cNetworkClientGameReconnection ();
 
-	cLandingPositionManager (const std::vector<std::shared_ptr<sPlayer>>& players);
+	void start (cApplication& application);
 
-	void setLandingPosition (const sPlayer& player, const cPosition& landingPosition);
+	void setPlayers (std::vector<std::shared_ptr<sPlayer>> players, const sPlayer& localPlayer);
 
-	cSignal<void (const sPlayer&, eLandingPositionState)> landingPositionStateChanged;
-	cSignal<void ()> allPositionsValid;
+	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
+	const std::shared_ptr<cStaticMap>& getStaticMap ();
+	const std::vector<std::shared_ptr<sPlayer>>& getPlayers ();
+	const std::shared_ptr<sPlayer>& getLocalPlayer ();
+
+	cSignal<void ()> terminated;
 private:
-	std::vector<sLandingPositionData> landingPositions;
+	cSignalConnectionManager signalConnectionManager;
 
-	sLandingPositionData& getLandingPositionData (const sPlayer& player);
+	size_t localPlayerIndex;
+	std::vector<std::shared_ptr<sPlayer>> players;
 
-	void checkPlayerState (const sPlayer& player);
+	std::shared_ptr<cStaticMap> staticMap;
 };
 
-#endif // game_logic_landingpositionmanagerH
+#endif // game_network_client_networkclientgamereconnectionH

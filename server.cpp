@@ -98,6 +98,7 @@ cServer::~cServer()
 		{
 			network->close (playerList[i]->getSocketNum());
 		}
+		network->setMessageReceiver (nullptr);
 	}
 
 	for (size_t i = 0; i != AJobs.size(); ++i)

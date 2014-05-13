@@ -31,6 +31,7 @@ class cApplication;
 class cWindowNetworkLobbyClient;
 class cWindowLandingPositionSelection;
 class cNetworkClientGameNew;
+class cNetworkClientGameReconnection;
 class cNetMessage;
 
 class cTCP;
@@ -59,6 +60,7 @@ private:
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
 
 	std::shared_ptr<cNetworkClientGameNew> newGame;
+	std::shared_ptr<cNetworkClientGameReconnection> reconnectionGame;
 
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;
@@ -92,8 +94,8 @@ private:
 	//void receiveMapData (cNetMessage& message);
 	//void canceledMapDownload (cNetMessage& message);
 	//void finishedMapDownload (cNetMessage& message);
-	//void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage& message);
-	//void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage& message);
+	void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage& message);
+	void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage& message);
 };
 
 #endif // gui_control_menucontrollermultiplayerclientH

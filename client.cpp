@@ -74,6 +74,8 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 
 cClient::~cClient()
 {
+	if (network != nullptr) network->setMessageReceiver (nullptr);
+
 	gameTimer.stop();
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)

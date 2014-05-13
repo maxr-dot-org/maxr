@@ -26,12 +26,15 @@
 #include "../../../../sound.h"
 #include "../../../../video.h"
 #include "../../../../main.h"
+#include "../../../../map.h"
 #include "../../../../input/mouse/mouse.h"
 #include "../../../../input/mouse/cursor/mousecursorsimple.h"
+#include "../../../../game/logic/landingpositionmanager.h"
 
 //------------------------------------------------------------------------------
-cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap) :
+cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_) :
 	cWindow (nullptr),
+	staticMap (std::move(staticMap_)),
 	lastSelectedPosition (0, 0),
 	selectionAllowed (true),
 	firstActivate (true)
@@ -41,8 +44,11 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface ());
 	hudImageOwned->disableAtTransparent ();
 
-	map = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (180, 18), hudImageOwned->getEndPosition () - cPosition (12, 14)), std::move (staticMap)));
-	signalConnectionManager.connect (map->clickedTile, std::bind (&cWindowLandingPositionSelection::mapClicked, this, _1));
+	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap));
+	signalConnectionManager.connect (mapWidget->clickedTile, std::bind (&cWindowLandingPositionSelection::mapClicked, this, _1));
+
+	circlesImage = addChild (std::make_unique<cImage> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight)));
+	circlesImage->disable ();
 
 	auto hudImage = addChild (std::move (hudImageOwned));
 
@@ -128,9 +134,9 @@ bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& applicatio
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 	}
-	else if (map->isAt (mouse.getPosition ()))
+	else if (mapWidget->isAt (mouse.getPosition ()))
 	{
-		return map->handleMouseMoved (application, mouse, offset);
+		return mapWidget->handleMouseMoved (application, mouse, offset);
 	}
 	else
 	{
@@ -168,5 +174,26 @@ void cWindowLandingPositionSelection::mapClicked (const cPosition& tilePosition)
 {
 	if (!selectionAllowed) return;
 
+	updateLandingPositionCircles (tilePosition);
+
 	selectedPosition (tilePosition);
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosition& tilePosition)
+{
+	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize ().x (), mapWidget->getSize ().y(), Video.getColDepth (), 0, 0, 0, 0));
+	SDL_FillRect (circleSurface.get (), NULL, 0xFF00FF);
+	SDL_SetColorKey (circleSurface.get (), SDL_TRUE, 0xFF00FF);
+
+	const cPosition pixelPosition = tilePosition * mapWidget->getSize () / staticMap->getSize ();
+
+	// for non 4:3 screen resolutions, the size of the circles is
+	// only correct in x dimension, because I don't draw an ellipse
+	const int warningRadius = (cLandingPositionManager::warningDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ();
+	const int tooCloseRadius = (cLandingPositionManager::tooCloseDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ();
+	drawCircle (pixelPosition.x (), pixelPosition.y(), warningRadius, SCAN_COLOR, *circleSurface);
+	drawCircle (pixelPosition.x (), pixelPosition.y(), tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
+
+	circlesImage->setImage (circleSurface.get());
 }
