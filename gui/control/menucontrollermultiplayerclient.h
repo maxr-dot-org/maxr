@@ -32,6 +32,7 @@ class cWindowNetworkLobbyClient;
 class cWindowLandingPositionSelection;
 class cNetworkClientGameNew;
 class cNetworkClientGameReconnection;
+class cNetworkClientGameSaved;
 class cNetMessage;
 
 class cTCP;
@@ -61,6 +62,7 @@ private:
 
 	std::shared_ptr<cNetworkClientGameNew> newGame;
 	std::shared_ptr<cNetworkClientGameReconnection> reconnectionGame;
+	std::shared_ptr<cNetworkClientGameSaved> savedGame;
 
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;
@@ -73,18 +75,21 @@ private:
 
 	void connect ();
 
+	void startSavedGame ();
+
 	void startGamePreparation ();
 
 	void startClanSelection ();
 	void startLandingUnitSelection ();
 	void startLandingPositionSelection ();
-	void startGame ();
+	void startNewGame ();
 
 	void handleNetMessage (cNetMessage& message);
 
 	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
 	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
 	void handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage& message);
+	void handleNetMessage_MU_MSG_PLAYER_NUMBER (cNetMessage& message);
 	void handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage& message);
 	void handleNetMessage_MU_MSG_OPTINS (cNetMessage& message);
 	void handleNetMessage_MU_MSG_GO (cNetMessage& message);

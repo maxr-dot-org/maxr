@@ -28,6 +28,8 @@
 class cResearch;
 class cMap;
 class cPlayer;
+class sPlayer;
+class cGameSettings;
 class cVehicle;
 class cBuilding;
 class cServer;
@@ -79,8 +81,10 @@ public:
 
 	/* loads the header of a savefile and returns some values to the pointers */
 	void loadHeader (std::string* name, std::string* type, std::string* time);
-	std::string getMapName() const;
-	std::string getPlayerNames() const;
+
+	std::string loadMapName();
+	std::vector<sPlayer> loadPlayers();
+	cGameSettings loadGameSettings ();
 
 	/**
 	* ---
@@ -106,6 +110,7 @@ private:
 	/* list with loaded subbases */
 	std::vector<sSubBaseLoad*> SubBasesLoad;
 
+	bool loadFile ();
 	/**
 	* writes the saveheader
 	*@author alzi alias DoctorDeath

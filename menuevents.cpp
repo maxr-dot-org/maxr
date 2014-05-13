@@ -64,6 +64,13 @@ void sendRequestIdentification (cTCP& network, const sPlayer& player)
 	sendMessage (network, message, &player);
 }
 
+void sendPlayerNumber (cTCP& network, const sPlayer& player)
+{
+	cNetMessage* message = new cNetMessage (MU_MSG_PLAYER_NUMBER);
+	message->pushInt16 (player.getNr ());
+	sendMessage (network, message, &player);
+}
+
 void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>& players)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);

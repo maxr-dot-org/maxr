@@ -370,6 +370,7 @@ string cNetMessage::getTypeAsString() const
 		case TCP_ACCEPT: return "TCP_ACCEPT";
 		case MU_MSG_CHAT: return "MU_MSG_CHAT";
 		case MU_MSG_REQ_IDENTIFIKATION: return "MU_MSG_REQ_IDENTIFIKATION";
+		case MU_MSG_PLAYER_NUMBER: return "MU_MSG_PLAYER_NUMBER";
 		case MU_MSG_IDENTIFIKATION: return "MU_MSG_IDENTIFIKATION";
 		case MU_MSG_PLAYERLIST: return "MU_MSG_PLAYERLIST";
 		case MU_MSG_OPTINS: return "MU_MSG_OPTINS";

@@ -109,7 +109,12 @@ void cWindowNetworkLobby::updateSettingsText ()
 
 	if (saveGameNumber != -1)
 	{
-		text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameName +  "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n" + saveGamePlayers + "\n";
+		text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameName +  "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n";
+		for (size_t i = 0; i < saveGamePlayers.size (); ++i)
+		{
+			text += saveGamePlayers[i].getName() + "\n";
+		}
+		text += "\n";
 	}
 	if (staticMap != nullptr)
 	{
@@ -292,10 +297,10 @@ void cWindowNetworkLobby::setSaveGame (int saveGameNumber_)
 		cSavegame saveGame (saveGameNumber_);
 
 		saveGame.loadHeader (&saveGameName, nullptr, nullptr);
-		saveGamePlayers = saveGame.getPlayerNames ();
+		saveGamePlayers = saveGame.loadPlayers ();
 
 		staticMap = std::make_shared<cStaticMap> ();
-		if (!staticMap->loadMap (saveGame.getMapName ()))
+		if (!staticMap->loadMap (saveGame.loadMapName ()))
 		{
 			// error dialog
 			staticMap = nullptr;

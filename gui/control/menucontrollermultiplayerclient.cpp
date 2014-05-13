@@ -28,6 +28,7 @@
 #include "../menu/dialogs/dialogyesno.h"
 #include "../../game/network/client/networkclientgamenew.h"
 #include "../../game/network/client/networkclientgamereconnection.h"
+#include "../../game/network/client/networkclientgamesaved.h"
 #include "../../main.h"
 #include "../../map.h"
 #include "../../player.h"
@@ -81,6 +82,7 @@ void cMenuControllerMultiplayerClient::reset ()
 	windowLandingPositionSelection = nullptr;
 	newGame = nullptr;
 	reconnectionGame = nullptr;
+	savedGame = nullptr;
 	application.removeRunnable (*this);
 }
 
@@ -175,6 +177,21 @@ void cMenuControllerMultiplayerClient::connect ()
 }
 
 //------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::startSavedGame ()
+{
+	if (!network || !windowNetworkLobby || !windowNetworkLobby->getStaticMap () || !windowNetworkLobby->getGameSettings()) return;
+
+	savedGame = std::make_shared<cNetworkClientGameSaved> ();
+
+	savedGame->setNetwork (network);
+	savedGame->setStaticMap (windowNetworkLobby->getStaticMap());
+	savedGame->setGameSettings (windowNetworkLobby->getGameSettings());
+	savedGame->setPlayers (windowNetworkLobby->getPlayers (), *windowNetworkLobby->getLocalPlayer());
+
+	savedGame->start (application);
+}
+
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::startGamePreparation ()
 {
 	const auto& staticMap = windowNetworkLobby->getStaticMap ();
@@ -249,7 +266,7 @@ void cMenuControllerMultiplayerClient::startLandingPositionSelection ()
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerClient::startGame ()
+void cMenuControllerMultiplayerClient::startNewGame ()
 {
 	if (!newGame) return;
 
@@ -273,6 +290,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage& message)
 	case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
 	case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
 	case MU_MSG_REQ_IDENTIFIKATION: handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (message); break;
+	case MU_MSG_PLAYER_NUMBER: handleNetMessage_MU_MSG_PLAYER_NUMBER (message); break;
 	case MU_MSG_PLAYERLIST: handleNetMessage_MU_MSG_PLAYERLIST (message); break;
 	case MU_MSG_OPTINS: handleNetMessage_MU_MSG_OPTINS (message); break;
 		//case MU_MSG_START_MAP_DOWNLOAD: initMapDownload (message); break;
@@ -334,6 +352,16 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_REQ_IDENTIFIKATIO
 	Log.write ("game version of server is: " + message.popString (), cLog::eLOG_TYPE_NET_DEBUG);
 	windowNetworkLobby->getLocalPlayer ()->setNr (message.popInt16 ());
 	sendIdentification (*network, *windowNetworkLobby->getLocalPlayer ());
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_NUMBER (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_PLAYER_NUMBER);
+
+	if (!network || !windowNetworkLobby) return;
+
+	windowNetworkLobby->getLocalPlayer ()->setNr (message.popInt16 ());
 }
 
 //------------------------------------------------------------------------------
@@ -458,7 +486,14 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_GO (cNetMessage& 
 
 	//saveOptions ();
 
-	startGamePreparation ();
+	if (windowNetworkLobby->getSaveGameNumber () != -1)
+	{
+		startSavedGame ();
+	}
+	else
+	{
+		startGamePreparation ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -480,7 +515,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_ALL_LANDED (cNetM
 
 	if (!newGame) return;
 
-	startGame ();
+	startNewGame ();
 }
 
 //------------------------------------------------------------------------------

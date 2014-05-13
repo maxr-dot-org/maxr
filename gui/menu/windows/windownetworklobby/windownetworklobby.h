@@ -97,7 +97,7 @@ private:
 
 	int saveGameNumber;
 	std::string saveGameName;
-	std::string saveGamePlayers;
+	std::vector<sPlayer> saveGamePlayers;
 
 	void updateSettingsText ();
 	void updateMap ();

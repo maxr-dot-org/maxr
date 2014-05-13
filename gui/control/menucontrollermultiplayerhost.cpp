@@ -30,6 +30,7 @@
 #include "../menu/windows/windowload/windowload.h"
 #include "../menu/dialogs/dialogok.h"
 #include "../../game/network/host/networkhostgamenew.h"
+#include "../../game/network/host/networkhostgamesaved.h"
 #include "../../game/logic/landingpositionmanager.h"
 #include "../../main.h"
 #include "../../map.h"
@@ -39,6 +40,9 @@
 #include "../../log.h"
 #include "../../menuevents.h"
 #include "../../netmessage.h"
+#include "../../savegame.h"
+#include "../../client.h"
+#include "../../server.h"
 
 // FIXME: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
@@ -70,12 +74,7 @@ void cMenuControllerMultiplayerHost::start ()
 	application.show (windowNetworkLobby);
 	application.addRunnable (shared_from_this ());
 
-	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]()
-	{
-		network = nullptr;
-		windowNetworkLobby = nullptr;
-		application.removeRunnable (*this);
-	});
+	signalConnectionManager.connect (windowNetworkLobby->terminated, std::bind (&cMenuControllerMultiplayerHost::reset, this));
 
 	signalConnectionManager.connect (windowNetworkLobby->wantLocalPlayerReadyChange, std::bind (&cMenuControllerMultiplayerHost::handleWantLocalPlayerReadyChange, this));
 	signalConnectionManager.connect (windowNetworkLobby->triggeredChatMessage, std::bind (&cMenuControllerMultiplayerHost::handleChatMessageTriggered, this));
@@ -94,6 +93,16 @@ void cMenuControllerMultiplayerHost::start ()
 	signalConnectionManager.connect (windowNetworkLobby->staticMapChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber (), nullptr); });
 	signalConnectionManager.connect (windowNetworkLobby->gameSettingsChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber (), nullptr); });
 	signalConnectionManager.connect (windowNetworkLobby->saveGameChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber (), nullptr); });
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerHost::reset ()
+{
+	network = nullptr;
+	windowNetworkLobby = nullptr;
+	newGame = nullptr;
+	savedGame = nullptr;
+	application.removeRunnable (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -265,15 +274,91 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 
 	if (windowNetworkLobby->getSaveGameNumber () != -1)
 	{
-		//auto game = std::make_shared<cNetworkHostGameSaved> ();
-		// run save game
-		windowNetworkLobby->close ();
+		cSavegame savegame (windowNetworkLobby->getSaveGameNumber());
+		auto savegamePlayers = savegame.loadPlayers ();
+
+		auto menuPlayers = windowNetworkLobby->getPlayers ();
+
+		// check whether all necessary players are connected
+		for (size_t i = 0; i < savegamePlayers.size (); ++i)
+		{
+			auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [&](const std::shared_ptr<sPlayer>& player) { return player->getName () == savegamePlayers[i].getName (); });
+			if (iter == menuPlayers.end ())
+			{
+				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
+				return;
+			}
+		}
+
+		// disconnect or update menu players
+		for (auto i = menuPlayers.begin(); i < menuPlayers.end ();)
+		{
+			auto menuPlayer = *i;
+			auto iter = std::find_if (savegamePlayers.begin (), savegamePlayers.end (), [&](const sPlayer& player) { return player.getName () == menuPlayer->getName (); });
+			
+			if (iter == savegamePlayers.end ())
+			{
+				// the player does not belong to the save game: disconnect him
+				sendMenuChatMessage (*network, "Text~Multiplayer~Disconnect_Not_In_Save", menuPlayer.get(), -1, true);
+				const int socketIndex = menuPlayer->getSocketIndex ();
+				network->close (socketIndex);
+				for (size_t k = 0; k != menuPlayers.size (); ++k)
+				{
+					menuPlayers[k]->onSocketIndexDisconnected (socketIndex);
+				}
+				i = menuPlayers.erase (i);
+			}
+			else
+			{
+				auto& savegamePlayer = *iter;
+				menuPlayer->setNr (savegamePlayer.getNr());
+				menuPlayer->setColorIndex (savegamePlayer.getColorIndex ());
+				sendPlayerNumber (*network, *menuPlayer);
+				++i;
+			}
+		}
+
+		sendPlayerList (*network, menuPlayers);
+
+		auto staticMap = windowNetworkLobby->getStaticMap ();
+		assert (staticMap != nullptr);
+
+		auto gameSettings = std::make_shared<cGameSettings> (savegame.loadGameSettings());
+
+		for (size_t i = 0; i < menuPlayers.size (); ++i)
+		{
+			sendGameData (*network, staticMap.get(), gameSettings.get(), windowNetworkLobby->getSaveGameNumber (), menuPlayers[i].get ());
+		}
+
+		sendGo (*network);
+
+		startSavedGame ();
 	}
 	else
 	{
 		sendGo (*network);
 		startGamePreparation ();
 	}
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerHost::startSavedGame ()
+{
+	if (!windowNetworkLobby || windowNetworkLobby->getSaveGameNumber () == -1) return;
+
+	savedGame = std::make_shared<cNetworkHostGameSaved> ();
+
+	savedGame->setNetwork (network);
+	savedGame->setSaveGameNumber (windowNetworkLobby->getSaveGameNumber());
+
+	savedGame->start (application);
+
+	signalConnectionManager.connect (savedGame->terminated, [&]()
+	{
+		application.closeTill (*windowNetworkLobby);
+		windowNetworkLobby->close ();
+		windowNetworkLobby = nullptr;
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -366,12 +451,12 @@ void cMenuControllerMultiplayerHost::startLandingPositionSelection ()
 
 		newGame->setLocalPlayerLandingPosition (windowLandingPositionSelection->getSelectedPosition ());
 
-		startGame ();
+		startNewGame ();
 	});
 }
 
 //------------------------------------------------------------------------------
-void cMenuControllerMultiplayerHost::startGame ()
+void cMenuControllerMultiplayerHost::startNewGame ()
 {
 	if (!newGame) return;
 

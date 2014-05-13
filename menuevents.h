@@ -35,6 +35,7 @@ enum eMenuMessages
 {
 	MU_MSG_CHAT = FIRST_MENU_MESSAGE,	// simple text message
 	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identification of this player
+	MU_MSG_PLAYER_NUMBER,		// host assigns a new player number to a player
 	MU_MSG_IDENTIFIKATION,		// player send his identification
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
@@ -54,6 +55,8 @@ enum eMenuMessages
 void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const sPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false);
 
 void sendRequestIdentification (cTCP& network, const sPlayer& player);
+
+void sendPlayerNumber (cTCP& network, const sPlayer& player);
 
 void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>& players);
 

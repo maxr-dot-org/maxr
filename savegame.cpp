@@ -112,15 +112,25 @@ int cSavegame::save (const cServer& server, const string& saveName)
 }
 
 //--------------------------------------------------------------------------
+bool cSavegame::loadFile ()
+{
+	if (!SaveFile.RootElement ())
+	{
+		string fileName = cSettings::getInstance ().getSavesPath () + PATH_DELIMITER + "Save" + numberstr + ".xml";
+		if (SaveFile.LoadFile (fileName.c_str ()) != 0)
+		{
+			return false;
+		}
+		if (!SaveFile.RootElement ()) return false;
+		loadedXMLFileName = fileName;
+	}
+	else return true;
+}
+
+//--------------------------------------------------------------------------
 bool cSavegame::load (cServer& server)
 {
-	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
-	if (SaveFile.LoadFile (fileName.c_str()) != 0)
-	{
-		return false;
-	}
-	if (!SaveFile.RootElement()) return false;
-	loadedXMLFileName = fileName;
+	if (!loadFile ()) return false;
 
 	auto versionString = SaveFile.RootElement()->Attribute ("version");
 
@@ -209,17 +219,7 @@ void cSavegame::recalcSubbases (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::loadHeader (string* name, string* type, string* time)
 {
-	const string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
-	if (fileName != loadedXMLFileName)
-	{
-		loadedXMLFileName.clear();
-		if (SaveFile.LoadFile (fileName.c_str()) != 0)
-		{
-			return;
-		}
-	}
-	if (!SaveFile.RootElement()) return;
-	loadedXMLFileName = fileName;
+	if (!loadFile ()) return;
 
 	const XMLElement* headerNode = SaveFile.RootElement()->FirstChildElement ("Header");
 
@@ -229,46 +229,55 @@ void cSavegame::loadHeader (string* name, string* type, string* time)
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::getMapName() const
+string cSavegame::loadMapName()
 {
+	if (!loadFile ()) return "";
+
 	const XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode != NULL) return mapNode->FirstChildElement ("Name")->Attribute ("string");
 	else return "";
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::getPlayerNames() const
+std::vector<sPlayer> cSavegame::loadPlayers ()
 {
+	std::vector<sPlayer> playerNames;
+
+	if (!loadFile ()) return playerNames;
+
 	const XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 
-	if (playersNode == NULL) return "";
-
-	const XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
-	string playernames = "";
-	int playernum = 0;
-	while (playerNode)
+	if (playersNode != nullptr)
 	{
-		playernames += ((string) playerNode->FirstChildElement ("Name")->Attribute ("string")) + "\n";
-		playernum++;
-		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
+		const XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
+		int playernum = 0;
+		while (playerNode)
+		{
+			const auto name = playerNode->FirstChildElement ("Name")->Attribute ("string");
+			const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
+			const int color = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
+
+			playerNames.push_back(sPlayer(name, color, number));
+			playernum++;
+			playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str ());
+		}
 	}
-	return playernames;
+	return playerNames;
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadGameInfo (cServer& server)
+cGameSettings cSavegame::loadGameSettings ()
 {
-	XMLElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
-	if (!gameInfoNode) return;
+	if (!loadFile ()) return cGameSettings();
 
-	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
+	XMLElement* gameInfoNode = SaveFile.RootElement ()->FirstChildElement ("Game");
+	if (!gameInfoNode) return cGameSettings ();
 
 	cGameSettings gameSetting;
 
 	if (XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
-		gameSetting.setGameType(eGameSettingsGameType::Turns);
-		server.activeTurnPlayer = &server.getPlayerFromNumber(element->IntAttribute ("activeplayer"));
+		gameSetting.setGameType (eGameSettingsGameType::Turns);
 	}
 
 	if (version < cVersion (0, 4))
@@ -281,13 +290,13 @@ void cSavegame::loadGameInfo (cServer& server)
 
 		if (turnLimit != 0)
 		{
-			gameSetting.setVictoryCondition(eGameSettingsVictoryCondition::Turns);
-			gameSetting.setVictoryTurns(turnLimit);
+			gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Turns);
+			gameSetting.setVictoryTurns (turnLimit);
 		}
 		else if (scoreLimit != 0)
 		{
 			gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Points);
-			gameSetting.setVictoryPoints(scoreLimit);
+			gameSetting.setVictoryPoints (scoreLimit);
 		}
 		else
 		{
@@ -295,7 +304,7 @@ void cSavegame::loadGameInfo (cServer& server)
 		}
 #endif
 
-		auto intToResourceAmount = [](int value) -> eGameSettingsResourceAmount
+		auto intToResourceAmount = [ ](int value) -> eGameSettingsResourceAmount
 		{
 			switch (value)
 			{
@@ -339,9 +348,9 @@ void cSavegame::loadGameInfo (cServer& server)
 				break;
 			}
 		}
-		if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits(e->IntAttribute ("num"));
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits (e->IntAttribute ("num"));
 		if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.setBridgeheadType (e->IntAttribute ("num") == 0 ? eGameSettingsBridgeheadType::Mobile : eGameSettingsBridgeheadType::Definite);
-		if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.setClansEnabled(e->IntAttribute ("num") == 0);
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("Clan")) gameSetting.setClansEnabled (e->IntAttribute ("num") == 0);
 
 		if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryType"))
 		{
@@ -350,11 +359,11 @@ void cSavegame::loadGameInfo (cServer& server)
 			{
 			case 0:
 				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Turns);
-				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryTurns(e->IntAttribute ("num"));
+				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryTurns (e->IntAttribute ("num"));
 				break;
 			case 1:
 				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Points);
-				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryPoints(e->IntAttribute ("num"));
+				if (XMLElement* e = gameInfoNode->FirstChildElement ("Duration")) gameSetting.setVictoryPoints (e->IntAttribute ("num"));
 				break;
 			case 2:
 				gameSetting.setVictoryCondition (eGameSettingsVictoryCondition::Death);
@@ -362,13 +371,13 @@ void cSavegame::loadGameInfo (cServer& server)
 			}
 		}
 
-		if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadLine")) gameSetting.setTurnDeadline(e->IntAttribute ("num"));
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadLine")) gameSetting.setTurnDeadline (e->IntAttribute ("num"));
 	}
 	else
 	{
 		try
 		{
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("Metal")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString(e->Attribute ("string")));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("Metal")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString (e->Attribute ("string")));
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("Oil")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString (e->Attribute ("string")));
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("Gold")) gameSetting.setMetalAmount (gameSettingsResourceAmountFromString (e->Attribute ("string")));
 
@@ -376,9 +385,9 @@ void cSavegame::loadGameInfo (cServer& server)
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("BridgeHead")) gameSetting.setBridgeheadType (gameSettingsBridgeheadTypeFromString (e->Attribute ("string")));
 
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits(e->IntAttribute ("num"));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("Credits")) gameSetting.setStartCredits (e->IntAttribute ("num"));
 
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("ClansEnabled")) gameSetting.setClansEnabled(e->BoolAttribute ("bool"));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("ClansEnabled")) gameSetting.setClansEnabled (e->BoolAttribute ("bool"));
 
 			if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryCondition")) gameSetting.setVictoryCondition (gameSettingsVictoryConditionFromString (e->Attribute ("string")));
 			if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)
@@ -397,7 +406,25 @@ void cSavegame::loadGameInfo (cServer& server)
 			// FIXME: handle exception!
 		}
 	}
-	server.gameSetting = new cGameSettings (gameSetting);
+
+	return gameSetting;
+}
+
+//--------------------------------------------------------------------------
+void cSavegame::loadGameInfo (cServer& server)
+{
+	XMLElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
+	if (!gameInfoNode) return;
+
+	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
+
+	server.gameSetting = new cGameSettings (loadGameSettings());
+
+	if (server.gameSetting->getGameType () == eGameSettingsGameType::Turns)
+	{
+		XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns");
+		server.activeTurnPlayer = &server.getPlayerFromNumber (element->IntAttribute ("activeplayer"));
+	}
 }
 
 //--------------------------------------------------------------------------

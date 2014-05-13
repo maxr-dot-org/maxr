@@ -30,6 +30,7 @@
 class cApplication;
 class cWindowNetworkLobbyHost;
 class cNetworkHostGameNew;
+class cNetworkHostGameSaved;
 class cNetMessage;
 class sPlayer;
 class cLandingPositionManager;
@@ -61,10 +62,13 @@ private:
 	std::shared_ptr<cLandingPositionManager> landingPositionManager;
 
 	std::shared_ptr<cNetworkHostGameNew> newGame;
+	std::shared_ptr<cNetworkHostGameSaved> savedGame;
 
 	int nextPlayerNumber;
 
 	std::string triedLoadMapName;
+
+	void reset ();
 
 	void handleSelectMap (cApplication& application);
 	void handleSelectSettings (cApplication& application);
@@ -81,12 +85,14 @@ private:
 
 	void checkGameStart ();
 
+	void startSavedGame ();
+
 	void startGamePreparation ();
 
 	void startClanSelection ();
 	void startLandingUnitSelection ();
 	void startLandingPositionSelection ();
-	void startGame ();
+	void startNewGame ();
 
 	void handleNetMessage (cNetMessage& message);
 
