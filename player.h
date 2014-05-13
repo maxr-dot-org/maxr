@@ -33,7 +33,6 @@
 #include "utility/signal/signal.h"
 
 class cBuilding;
-class cGameGUI;
 class cHud;
 class cMapField;
 class cUnit;

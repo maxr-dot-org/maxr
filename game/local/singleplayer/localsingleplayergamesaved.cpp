@@ -74,7 +74,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	// start game
 	server->serverState = SERVER_STATE_INGAME;
 
-	auto gameGui = std::make_shared<cNewGameGUI> (staticMap);
+	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (client->getMap ());
 	gameGui->setPlayer (&client->getActivePlayer ());

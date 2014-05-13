@@ -27,7 +27,6 @@
 
 class cPlayer;
 class cVehicle;
-class cGameGUI;
 class cBuilding;
 class cAnimationTimer;
 class cMap;

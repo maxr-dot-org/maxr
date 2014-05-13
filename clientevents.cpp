@@ -550,7 +550,7 @@ void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, in
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_HUD_INFO);
 	//FIXME: gameGUI
-	//const cGameGUI& gameGUI = client.getGameGUI();
+	//const cGameGui& gameGUI = client.getGameGUI();
 	//message->pushBool (gameGUI.tntChecked());
 	//message->pushBool (gameGUI.hitsChecked());
 	//message->pushBool (gameGUI.lockChecked());

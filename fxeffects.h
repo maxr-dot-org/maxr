@@ -8,8 +8,6 @@
 #include "autosurface.h"
 #include "utility/position.h"
 
-class cGameGUI;
-
 class cFx
 {
 protected:

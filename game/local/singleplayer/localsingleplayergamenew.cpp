@@ -86,7 +86,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	sendReadyToStart (*client);
 
-	auto gameGui = std::make_shared<cNewGameGUI> (staticMap);
+	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (client->getMap ());
 	gameGui->setPlayer (&client->getActivePlayer ());

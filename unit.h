@@ -25,7 +25,6 @@
 #include "utility/position.h"
 
 class cClient;
-class cGameGUI;
 class cJob;
 class cMap;
 class cMapField;

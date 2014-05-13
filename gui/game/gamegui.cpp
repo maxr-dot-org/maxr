@@ -62,7 +62,7 @@
 #include "../../input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
+cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	cWindow (nullptr),
 	animationTimer (std::make_shared<cAnimationTimer>()),
 	staticMap (std::move (staticMap_)),
@@ -103,8 +103,8 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect (hud->preferencesClicked, std::bind (&cNewGameGUI::showPreferencesDialog, this));
-	signalConnectionManager.connect (hud->filesClicked, std::bind (&cNewGameGUI::showFilesWindow, this));
+	signalConnectionManager.connect (hud->preferencesClicked, std::bind (&cGameGui::showPreferencesDialog, this));
+	signalConnectionManager.connect (hud->filesClicked, std::bind (&cGameGui::showFilesWindow, this));
 
 	signalConnectionManager.connect (hud->zoomChanged, [&](){ gameMap->setZoomFactor (hud->getZoomFactor (), true); });
 
@@ -125,21 +125,21 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 		if (selectedUnit) gameMap->centerAt (selectedUnit->getPosition());
 	});
 
-	signalConnectionManager.connect (hud->reportsClicked, std::bind (&cNewGameGUI::showReportsWindow, this));
+	signalConnectionManager.connect (hud->reportsClicked, std::bind (&cGameGui::showReportsWindow, this));
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [&](){ miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly ()); });
 
-	signalConnectionManager.connect (gameMap->scrolled, std::bind(&cNewGameGUI::resetMiniMapViewWindow, this));
-	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cNewGameGUI::resetMiniMapViewWindow, this));
-	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudCoordinates, this, _1));
-	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cNewGameGUI::updateHudUnitName, this, _1));
+	signalConnectionManager.connect (gameMap->scrolled, std::bind(&cGameGui::resetMiniMapViewWindow, this));
+	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cGameGui::resetMiniMapViewWindow, this));
+	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudCoordinates, this, _1));
+	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudUnitName, this, _1));
 
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
-	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cNewGameGUI::updateSelectedUnitIdleSound, this));
+	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
 
-	signalConnectionManager.connect (gameMap->triggeredUnitHelp, std::bind (&cNewGameGUI::showUnitHelpWindow, this, _1));
-	signalConnectionManager.connect (gameMap->triggeredTransfer, std::bind (&cNewGameGUI::showUnitTransferDialog, this, _1, _2));
+	signalConnectionManager.connect (gameMap->triggeredUnitHelp, std::bind (&cGameGui::showUnitHelpWindow, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredTransfer, std::bind (&cGameGui::showUnitTransferDialog, this, _1, _2));
 	signalConnectionManager.connect (gameMap->triggeredBuild, [&](const cUnit& unit)
 	{
 		if (unit.isAVehicle ())
@@ -151,11 +151,11 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 			showBuildVehiclesWindow (static_cast<const cBuilding&>(unit));
 		}
 	});
-	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, std::bind (&cNewGameGUI::showResourceDistributionDialog, this, _1));
-	signalConnectionManager.connect (gameMap->triggeredResearchMenu, std::bind (&cNewGameGUI::showResearchDialog, this, _1));
-	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, std::bind (&cNewGameGUI::showUpgradesWindow, this, _1));
-	signalConnectionManager.connect (gameMap->triggeredActivate, std::bind (&cNewGameGUI::showStorageWindow, this, _1));
-	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, std::bind (&cNewGameGUI::showSelfDestroyDialog, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredResourceDistribution, std::bind (&cGameGui::showResourceDistributionDialog, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredResearchMenu, std::bind (&cGameGui::showResearchDialog, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredUpgradesMenu, std::bind (&cGameGui::showUpgradesWindow, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredActivate, std::bind (&cGameGui::showStorageWindow, this, _1));
+	signalConnectionManager.connect (gameMap->triggeredSelfDestruction, std::bind (&cGameGui::showSelfDestroyDialog, this, _1));
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
 
@@ -178,7 +178,7 @@ cNewGameGUI::cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap_) :
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::updateHudCoordinates (const cPosition& tilePosition)
+void cGameGui::updateHudCoordinates (const cPosition& tilePosition)
 {
 	std::stringstream coordsString;
 	coordsString << std::setw (3) << std::setfill ('0') << tilePosition.x () << "-" << std::setw (3) << std::setfill ('0') << tilePosition.y ();
@@ -186,7 +186,7 @@ void cNewGameGUI::updateHudCoordinates (const cPosition& tilePosition)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::updateHudUnitName (const cPosition& tilePosition)
+void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 {
 	std::string unitNameString;
 	if (dynamicMap && (!player || player->canSeeAt (tilePosition)))
@@ -209,7 +209,7 @@ void cNewGameGUI::updateHudUnitName (const cPosition& tilePosition)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::setDynamicMap (const cMap* dynamicMap_)
+void cGameGui::setDynamicMap (const cMap* dynamicMap_)
 {
 	dynamicMap = dynamicMap_;
 	gameMap->setDynamicMap (dynamicMap);
@@ -234,7 +234,7 @@ void cNewGameGUI::setDynamicMap (const cMap* dynamicMap_)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::setPlayer (const cPlayer* player_)
+void cGameGui::setPlayer (const cPlayer* player_)
 {
 	player = player_;
 	gameMap->setPlayer (player);
@@ -264,7 +264,7 @@ void cNewGameGUI::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::connectToClient (cClient& client)
+void cGameGui::connectToClient (cClient& client)
 {
 	hud->setTurnNumberText (iToStr (client.getTurn ()));
 
@@ -783,7 +783,7 @@ void cNewGameGUI::connectToClient (cClient& client)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::connectMoveJob (const cVehicle& vehicle)
+void cGameGui::connectMoveJob (const cVehicle& vehicle)
 {
 	moveJobSignalConnectionManager.disconnectAll ();
 
@@ -842,19 +842,19 @@ void cNewGameGUI::connectMoveJob (const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::disconnectCurrentClient ()
+void cGameGui::disconnectCurrentClient ()
 {
 	clientSignalConnectionManager.disconnectAll ();
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::centerAt (const cPosition& position)
+void cGameGui::centerAt (const cPosition& position)
 {
 	gameMap->centerAt (position);
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::setInfoTexts (const std::string& primiaryText, const std::string& additionalText)
+void cGameGui::setInfoTexts (const std::string& primiaryText, const std::string& additionalText)
 {
 	primiaryInfoLabel->setText (primiaryText);
 	if (primiaryText.empty ()) primiaryInfoLabel->hide ();
@@ -866,7 +866,7 @@ void cNewGameGUI::setInfoTexts (const std::string& primiaryText, const std::stri
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::draw ()
+void cGameGui::draw ()
 {
 	animationTimer->updateAnimationFlags (); // TODO: remove this
 
@@ -874,7 +874,7 @@ void cNewGameGUI::draw ()
 }
 
 //------------------------------------------------------------------------------
-bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
+bool cGameGui::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	const auto currentMousePosition = mouse.getPosition ();
 	const auto mouseLastPosition = currentMousePosition - offset;
@@ -906,7 +906,7 @@ bool cNewGameGUI::handleMouseMoved (cApplication& application, cMouse& mouse, co
 }
 
 //------------------------------------------------------------------------------
-bool cNewGameGUI::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
+bool cGameGui::handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount)
 {
 	const auto oldZoomFactor = gameMap->getZoomFactor ();
 	bool consumed = false;
@@ -942,7 +942,7 @@ bool cNewGameGUI::handleMouseWheelMoved (cApplication& application, cMouse& mous
 }
 
 //------------------------------------------------------------------------------
-bool cNewGameGUI::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
+bool cGameGui::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
 {
 	if (key == KeysList.KeyScroll1)
 	{
@@ -988,13 +988,13 @@ bool cNewGameGUI::handleKeyPressed (cApplication& application, cKeyboard& keyboa
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::handleLooseMouseFocus (cApplication& application)
+void cGameGui::handleLooseMouseFocus (cApplication& application)
 {
 
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::handleActivated (cApplication& application)
+void cGameGui::handleActivated (cApplication& application)
 {
 	cWindow::handleActivated (application);
 
@@ -1013,19 +1013,19 @@ void cNewGameGUI::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseCursor> cNewGameGUI::getDefaultCursor () const
+std::unique_ptr<cMouseCursor> cGameGui::getDefaultCursor () const
 {
 	return nullptr;
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::startOpenPanel ()
+void cGameGui::startOpenPanel ()
 {
 	hudPanels->open ();
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::startClosePanel ()
+void cGameGui::startClosePanel ()
 {
 	hudPanels->show ();
 	hudPanels->enable ();
@@ -1034,7 +1034,7 @@ void cNewGameGUI::startClosePanel ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::exit ()
+void cGameGui::exit ()
 {
 	panelSignalConnectionManager.disconnectAll ();
 
@@ -1046,13 +1046,13 @@ void cNewGameGUI::exit ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::resetMiniMapViewWindow ()
+void cGameGui::resetMiniMapViewWindow ()
 {
 	miniMap->setViewWindow (gameMap->getDisplayedMapArea ());
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showFilesWindow ()
+void cGameGui::showFilesWindow ()
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1090,7 +1090,7 @@ void cNewGameGUI::showFilesWindow ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showPreferencesDialog ()
+void cGameGui::showPreferencesDialog ()
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1099,7 +1099,7 @@ void cNewGameGUI::showPreferencesDialog ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showReportsWindow ()
+void cGameGui::showReportsWindow ()
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1108,7 +1108,7 @@ void cNewGameGUI::showReportsWindow ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showUnitHelpWindow (const cUnit& unit)
+void cGameGui::showUnitHelpWindow (const cUnit& unit)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1117,7 +1117,7 @@ void cNewGameGUI::showUnitHelpWindow (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit)
+void cGameGui::showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1131,7 +1131,7 @@ void cNewGameGUI::showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& 
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showBuildBuildingsWindow (const cVehicle& vehicle)
+void cGameGui::showBuildBuildingsWindow (const cVehicle& vehicle)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1180,7 +1180,7 @@ void cNewGameGUI::showBuildBuildingsWindow (const cVehicle& vehicle)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showBuildVehiclesWindow (const cBuilding& building)
+void cGameGui::showBuildVehiclesWindow (const cBuilding& building)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1197,7 +1197,7 @@ void cNewGameGUI::showBuildVehiclesWindow (const cBuilding& building)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showResourceDistributionDialog (const cUnit& unit)
+void cGameGui::showResourceDistributionDialog (const cUnit& unit)
 {
 	if (!unit.isABuilding ()) return;
 
@@ -1215,7 +1215,7 @@ void cNewGameGUI::showResourceDistributionDialog (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showResearchDialog (const cUnit& unit)
+void cGameGui::showResearchDialog (const cUnit& unit)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1232,7 +1232,7 @@ void cNewGameGUI::showResearchDialog (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showUpgradesWindow (const cUnit& unit)
+void cGameGui::showUpgradesWindow (const cUnit& unit)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1249,7 +1249,7 @@ void cNewGameGUI::showUpgradesWindow (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showStorageWindow (const cUnit& unit)
+void cGameGui::showStorageWindow (const cUnit& unit)
 {
 	auto application = getActiveApplication ();
 	if (!application) return;
@@ -1360,13 +1360,13 @@ void cNewGameGUI::showStorageWindow (const cUnit& unit)
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::showSelfDestroyDialog (const cUnit& unit)
+void cGameGui::showSelfDestroyDialog (const cUnit& unit)
 {
 	//building->executeSelfDestroyCommand (*this);
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::updateSelectedUnitIdleSound ()
+void cGameGui::updateSelectedUnitIdleSound ()
 {
 	auto selectedUnit = gameMap->getUnitSelection().getSelectedUnit ();
 	if (selectedUnit == nullptr)
@@ -1413,7 +1413,7 @@ void cNewGameGUI::updateSelectedUnitIdleSound ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::updateSelectedUnitMoveSound ()
+void cGameGui::updateSelectedUnitMoveSound ()
 {
 	auto selectedVehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
 	if (!selectedVehicle) return;
@@ -1441,14 +1441,14 @@ void cNewGameGUI::updateSelectedUnitMoveSound ()
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::startSelectedUnitSound (sSOUND* sound)
+void cGameGui::startSelectedUnitSound (sSOUND* sound)
 {
 	stopSelectedUnitSound ();
 	selectedUnitSoundStream = PlayFXLoop (sound);
 }
 
 //------------------------------------------------------------------------------
-void cNewGameGUI::stopSelectedUnitSound ()
+void cGameGui::stopSelectedUnitSound ()
 {
 	if (selectedUnitSoundStream != -1) StopFXLoop (selectedUnitSoundStream);
 	selectedUnitSoundStream = -1;

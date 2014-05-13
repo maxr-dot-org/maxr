@@ -62,7 +62,7 @@ void cNetworkClientGameNew::start (cApplication& application)
 
 	sendReadyToStart (*localClient);
 
-	auto gameGui = std::make_shared<cNewGameGUI> (staticMap);
+	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (localClient->getMap ());
 	gameGui->setPlayer (&localClient->getActivePlayer ());

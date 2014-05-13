@@ -45,7 +45,7 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 
 	sendReconnectionSuccess (*localClient);
 
-	auto gameGui = std::make_shared<cNewGameGUI> (staticMap);
+	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (localClient->getMap ());
 	gameGui->setPlayer (&localClient->getActivePlayer ());

@@ -46,10 +46,10 @@ class cHudPanels;
 struct sID;
 struct sBuildList;
 
-class cNewGameGUI : public cWindow
+class cGameGui : public cWindow
 {
 public:
-	cNewGameGUI (std::shared_ptr<const cStaticMap> staticMap);
+	explicit cGameGui (std::shared_ptr<const cStaticMap> staticMap);
 
 	void setDynamicMap (const cMap* dynamicMap);
 	void setPlayer (const cPlayer* player);
