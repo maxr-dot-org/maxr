@@ -92,9 +92,9 @@ cDebugOutput::cDebugOutput() :
 	debugTraceServer = false;
 	debugTraceClient = false;
 	debugPlayers = false;
-	showFPS = true;
+	showFPS = false;
 	debugCache = false;
-	debugSync = true;
+	debugSync = false;
 }
 
 void cDebugOutput::setClient (cClient* client_)
