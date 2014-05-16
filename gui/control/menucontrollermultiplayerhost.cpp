@@ -101,7 +101,6 @@ void cMenuControllerMultiplayerHost::reset ()
 	network = nullptr;
 	windowNetworkLobby = nullptr;
 	newGame = nullptr;
-	savedGame = nullptr;
 	application.removeRunnable (*this);
 }
 
@@ -346,10 +345,11 @@ void cMenuControllerMultiplayerHost::startSavedGame ()
 {
 	if (!windowNetworkLobby || windowNetworkLobby->getSaveGameNumber () == -1) return;
 
-	savedGame = std::make_shared<cNetworkHostGameSaved> ();
+	auto savedGame = std::make_shared<cNetworkHostGameSaved> ();
 
 	savedGame->setNetwork (network);
-	savedGame->setSaveGameNumber (windowNetworkLobby->getSaveGameNumber());
+    savedGame->setSaveGameNumber (windowNetworkLobby->getSaveGameNumber ());
+    savedGame->setPlayers (windowNetworkLobby->getPlayers (), *windowNetworkLobby->getLocalPlayer());
 
 	savedGame->start (application);
 
@@ -504,7 +504,9 @@ void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage& message)
 	case MU_MSG_REQUEST_MAP: handleNetMessage_MU_MSG_REQUEST_MAP (message); break;
 	case MU_MSG_FINISHED_MAP_DOWNLOAD: handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (message); break;
 	case MU_MSG_LANDING_POSITION: handleNetMessage_MU_MSG_LANDING_POSITION (message); break;
-	default: break;
+    default:
+        Log.write ("Host Menu Controller: Can not handle message type " + message.getTypeAsString (), cLog::eLOG_TYPE_NET_ERROR); 
+        break;
 	}
 }
 

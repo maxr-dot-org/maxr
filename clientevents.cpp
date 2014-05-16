@@ -239,10 +239,11 @@ void sendReadyToStart (const cClient& client)
 	client.sendNetMessage (message);
 }
 
-void sendChatMessageToServer (const cClient& client, const string& sMsg)
+void sendChatMessageToServer (const cClient& client, const cPlayer& player, const string& msg)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_CHAT_CLIENT);
-	message->pushString (sMsg);
+    message->pushString (msg);
+    message->pushChar (player.getNr());
 	client.sendNetMessage (message);
 }
 

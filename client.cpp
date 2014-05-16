@@ -2180,3 +2180,10 @@ bool cClient::getFreezeMode (eFreezeMode mode) const
 {
 	return freezeModes.isEnable (mode);
 }
+
+void cClient::handleChatMessage (const std::string& message)
+{
+    if (message.empty ()) return;
+
+    sendChatMessageToServer (*this, getActivePlayer (), message);
+}

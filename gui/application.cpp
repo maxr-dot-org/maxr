@@ -102,17 +102,9 @@ void cApplication::execute ()
 
 		// TODO: long term task: remove this.
 		//       Instead: - make things thread save and run single tasks in extra threads
-		for (auto i = runnables.begin(); i != runnables.end ();)
+		for (auto i = runnables.begin(); i != runnables.end (); ++i)
 		{
-			if (i->expired ())
-			{
-				i = runnables.erase (i);
-			}
-			else
-			{
-				i->lock ()->run ();
-				++i;
-			}
+			(*i)->run ();
 		}
 
 		const auto activeWindow = getActiveWindow ();
@@ -230,18 +222,20 @@ cKeyboard* cApplication::getActiveKeyboard ()
 }
 
 //------------------------------------------------------------------------------
-void cApplication::addRunnable (std::weak_ptr<cRunnable> runnable)
+void cApplication::addRunnable (std::shared_ptr<cRunnable> runnable)
 {
 	runnables.push_back (std::move (runnable));
 }
 
 //------------------------------------------------------------------------------
-void cApplication::removeRunnable (const cRunnable& runnable)
+std::shared_ptr<cRunnable> cApplication::removeRunnable (const cRunnable& runnable)
 {
+    std::shared_ptr<cRunnable> result;
 	for (auto i = runnables.begin (); i != runnables.end ();)
 	{
-		if (i->expired () || i->lock ().get () == &runnable)
+		if (i->get () == &runnable)
 		{
+            result = std::move (*i);
 			i = runnables.erase (i);
 		}
 		else
@@ -249,6 +243,7 @@ void cApplication::removeRunnable (const cRunnable& runnable)
 			++i;
 		}
 	}
+    return result;
 }
 
 //------------------------------------------------------------------------------

@@ -30,7 +30,6 @@
 class cApplication;
 class cWindowNetworkLobbyHost;
 class cNetworkHostGameNew;
-class cNetworkHostGameSaved;
 class cNetMessage;
 class sPlayer;
 class cLandingPositionManager;
@@ -62,7 +61,6 @@ private:
 	std::shared_ptr<cLandingPositionManager> landingPositionManager;
 
 	std::shared_ptr<cNetworkHostGameNew> newGame;
-	std::shared_ptr<cNetworkHostGameSaved> savedGame;
 
 	int nextPlayerNumber;
 

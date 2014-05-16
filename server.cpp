@@ -185,12 +185,13 @@ void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
 void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* player)
 {
 	const auto playerNumber = player != nullptr ? player->getNr () : -1;
+    const auto playerName = player != nullptr ? player->getName () : "all players";
 
 	message->iPlayerNr = playerNumber;
 	message->serialize();
 	if (message->iType != NET_GAME_TIME_SERVER)
 	{
-		Log.write ("Server: --> Player " + iToStr (playerNumber) + " "
+        Log.write ("Server: --> " + playerName + " (" + iToStr(playerNumber) + ") "
 				   + message->getTypeAsString ()
 				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
 				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
@@ -413,6 +414,8 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 void cServer::handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CHAT_CLIENT);
+
+    const auto& player = getPlayerFromNumber(message.popChar ());
 
 	sendChatMessageToClient (*this, message.popString(), USER_MESSAGE, nullptr);
 }

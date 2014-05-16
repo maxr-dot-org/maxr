@@ -81,8 +81,6 @@ void cMenuControllerMultiplayerClient::reset ()
 	windowNetworkLobby = nullptr;
 	windowLandingPositionSelection = nullptr;
 	newGame = nullptr;
-	reconnectionGame = nullptr;
-	savedGame = nullptr;
 	application.removeRunnable (*this);
 }
 
@@ -181,7 +179,7 @@ void cMenuControllerMultiplayerClient::startSavedGame ()
 {
 	if (!network || !windowNetworkLobby || !windowNetworkLobby->getStaticMap () || !windowNetworkLobby->getGameSettings()) return;
 
-	savedGame = std::make_shared<cNetworkClientGameSaved> ();
+	auto savedGame = std::make_shared<cNetworkClientGameSaved> ();
 
 	savedGame->setNetwork (network);
 	savedGame->setStaticMap (windowNetworkLobby->getStaticMap());
@@ -302,7 +300,9 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage& message)
 	case MU_MSG_ALL_LANDED: handleNetMessage_MU_MSG_ALL_LANDED (message); break;
 	case GAME_EV_REQ_RECON_IDENT: handleNetMessage_GAME_EV_REQ_RECON_IDENT (message); break;
 	case GAME_EV_RECONNECT_ANSWER: handleNetMessage_GAME_EV_RECONNECT_ANSWER (message); break;
-	default: break;
+    default:
+        Log.write ("Client Menu Controller: Can not handle message type " + message.getTypeAsString (), cLog::eLOG_TYPE_NET_ERROR);
+        break;
 	}
 }
 
@@ -558,7 +558,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 		auto staticMap = std::make_shared<cStaticMap> ();
 		if (!staticMap->loadMap (mapName)) return; // TODO: error message
 
-		reconnectionGame = std::make_shared<cNetworkClientGameReconnection> ();
+		auto reconnectionGame = std::make_shared<cNetworkClientGameReconnection> ();
 
 		int playerCount = message.popInt16 ();
 

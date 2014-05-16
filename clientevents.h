@@ -121,7 +121,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessageToServer (const cClient& client, const std::string& sMsg);
+void sendChatMessageToServer (const cClient& client, const cPlayer& player, const std::string& message);
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath

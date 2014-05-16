@@ -17,39 +17,53 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#ifndef gui_game_widgets_chatboxH
+#define gui_game_widgets_chatboxH
 
 #include <memory>
-#include <vector>
 
-#include "networkhostgame.h"
+#include "../../widget.h"
+
 #include "../../../utility/signal/signal.h"
 #include "../../../utility/signal/signalconnectionmanager.h"
 
-class cApplication;
-class sPlayer;
+class cPosition;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+template<typename T>
+class cBox;
+
+class cLineEdit;
+
+template<typename T> class cListView;
+class cLobbyChatBoxListViewItem;
+class cChatBoxPlayerListViewItem;
+
+class cPlayer;
+
+class cChatBox : public cWidget
 {
 public:
-	void start (cApplication& application);
+    cChatBox (const cBox<cPosition>& area);
 
-	void setSaveGameNumber (int saveGameNumber);
+    virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-    void setPlayers (std::vector<std::shared_ptr<sPlayer>> players, const sPlayer& localPlayer);
+    void clearPlayers ();
 
-    const std::vector<std::shared_ptr<sPlayer>>& getPlayers ();
-    const std::shared_ptr<sPlayer>& getLocalPlayer ();
+    void addPlayer (const cPlayer& player);
 
-	cSignal<void ()> terminated;
+    void addChatMessage (const cPlayer& player, const std::string& message);
+
+    cSignal<void (const std::string)> commandEntered;
 private:
-	cSignalConnectionManager signalConnectionManager;
+    cSignalConnectionManager signalConnectionManager;
 
-    size_t localPlayerIndex;
-    std::vector<std::shared_ptr<sPlayer>> players;
+    cLineEdit* chatLineEdit;
 
-	int saveGameNumber;
+    cListView<cLobbyChatBoxListViewItem>* chatList;
+
+    cListView<cChatBoxPlayerListViewItem>* playersList;
+
+    void sendCommand ();
 };
 
-#endif // game_network_host_networkhostgamesavedH
+#endif // gui_game_widgets_chatboxH

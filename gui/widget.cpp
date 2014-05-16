@@ -201,7 +201,7 @@ cWidget* cWidget::getChildAt (const cPosition& position) const
 //------------------------------------------------------------------------------
 bool cWidget::isAt (const cPosition& position) const
 {
-	return area.withinOrTouches (position);
+	return !isHidden() && area.withinOrTouches (position);
 }
 
 //------------------------------------------------------------------------------

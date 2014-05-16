@@ -33,6 +33,7 @@ class cHud;
 class cGameMapWidget;
 class cMiniMapWidget;
 class cGameMessageListView;
+class cChatBox;
 class cLabel;
 class cStaticMap;
 class cMap;
@@ -53,6 +54,7 @@ public:
 
 	void setDynamicMap (const cMap* dynamicMap);
 	void setPlayer (const cPlayer* player);
+    void setPlayers (const std::vector<const cPlayer*>& players);
 
 	void connectToClient (cClient& client);
 	void disconnectCurrentClient ();
@@ -96,6 +98,7 @@ private:
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 	cGameMessageListView* messageList;
+    cChatBox* chatBox;
 
 	cLabel* primiaryInfoLabel;
 	cLabel* additionalInfoLabel;
@@ -116,6 +119,8 @@ private:
 	void showFilesWindow ();
 	void showPreferencesDialog ();
 	void showReportsWindow ();
+
+    void toggleChatBox ();
 
 	void showUnitHelpWindow (const cUnit& unit);
 	void showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit);
@@ -138,6 +143,8 @@ private:
 
 	void connectMoveJob (const cVehicle& vehicle);
 
+    void handleChatCommand (const std::string& command);
+
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
@@ -149,7 +156,8 @@ private:
 	cSignal<void (const cUnit&)> upgradeAllTriggered;
 	cSignal<void (const cBuilding&, int, int, int)> changeResourceDistributionTriggered;
 	cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
-	cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
+    cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
+    cSignal<void (const std::string&)> chatCommandTriggered;
 };
 
 #endif // gui_game_gameguiH

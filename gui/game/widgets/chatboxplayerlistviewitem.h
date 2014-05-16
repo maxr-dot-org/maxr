@@ -17,39 +17,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#ifndef gui_menu_widgets_special_lobbyplayerlistviewitemH
+#define gui_menu_widgets_special_lobbyplayerlistviewitemH
 
 #include <memory>
-#include <vector>
 
-#include "networkhostgame.h"
+#include "../../menu/widgets/abstractlistviewitem.h"
+#include "../../../main.h"
 #include "../../../utility/signal/signal.h"
 #include "../../../utility/signal/signalconnectionmanager.h"
 
-class cApplication;
-class sPlayer;
+class cImage;
+class cLabel;
+class cPlayer;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+class cChatBoxPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-	void start (cApplication& application);
+    cChatBoxPlayerListViewItem (const cPlayer& player, int width);
 
-	void setSaveGameNumber (int saveGameNumber);
+    const cPlayer& getPlayer () const;
 
-    void setPlayers (std::vector<std::shared_ptr<sPlayer>> players, const sPlayer& localPlayer);
-
-    const std::vector<std::shared_ptr<sPlayer>>& getPlayers ();
-    const std::shared_ptr<sPlayer>& getLocalPlayer ();
-
-	cSignal<void ()> terminated;
+	cSignal<void ()> readyClicked;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-    size_t localPlayerIndex;
-    std::vector<std::shared_ptr<sPlayer>> players;
+	cLabel* nameLabel;
+	cImage* colorImage;
+	cImage* readyImage;
 
-	int saveGameNumber;
+    const cPlayer* player;
+
+	void updatePlayerName ();
+	void updatePlayerColor ();
+	void updatePlayerReady ();
 };
 
-#endif // game_network_host_networkhostgamesavedH
+#endif // gui_menu_widgets_special_lobbyplayerlistviewitemH

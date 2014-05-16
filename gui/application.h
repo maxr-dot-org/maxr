@@ -70,8 +70,8 @@ public:
 	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
 
-	void addRunnable (std::weak_ptr<cRunnable> runnable);
-	void removeRunnable (const cRunnable& runnable);
+	void addRunnable (std::shared_ptr<cRunnable> runnable);
+    std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
 
 	cMouse* getActiveMouse ();
 	cKeyboard* getActiveKeyboard ();
@@ -89,7 +89,7 @@ private:
 	cWidget* mouseFocusWidget;
 	//cWidget* underMouseWidget;
 
-	std::list<std::weak_ptr<cRunnable>> runnables;
+	std::list<std::shared_ptr<cRunnable>> runnables;
 
 	void center (cWindow& window);
 

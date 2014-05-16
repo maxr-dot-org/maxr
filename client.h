@@ -177,7 +177,9 @@ public:
 	unsigned int getRemainingTimeInSecond() const;
 	unsigned int getElapsedTimeInSecond() const;
 
-	void deletePlayer (cPlayer* player);
+    void deletePlayer (cPlayer* player);
+
+    void handleChatMessage (const std::string& message);
 
 	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
 	const cMap* getMap() const { return Map.get(); }

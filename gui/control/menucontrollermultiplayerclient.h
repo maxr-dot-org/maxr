@@ -31,8 +31,6 @@ class cApplication;
 class cWindowNetworkLobbyClient;
 class cWindowLandingPositionSelection;
 class cNetworkClientGameNew;
-class cNetworkClientGameReconnection;
-class cNetworkClientGameSaved;
 class cNetMessage;
 
 class cTCP;
@@ -61,8 +59,6 @@ private:
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
 
 	std::shared_ptr<cNetworkClientGameNew> newGame;
-	std::shared_ptr<cNetworkClientGameReconnection> reconnectionGame;
-	std::shared_ptr<cNetworkClientGameSaved> savedGame;
 
 	std::string triedLoadMapName;
 	std::string lastRequestedMapName;
