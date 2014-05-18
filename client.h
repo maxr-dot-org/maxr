@@ -258,7 +258,6 @@ private:
 	void runJobs();
 
 	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message);

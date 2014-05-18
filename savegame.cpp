@@ -33,6 +33,7 @@
 #include "vehicles.h"
 #include "gui/menu/windows/windowgamesettings/gamesettings.h"
 #include "utility/tounderlyingtype.h"
+#include "game/data//report/savedreport.h"
 #include <ctime>
 
 using namespace std;
@@ -122,9 +123,10 @@ bool cSavegame::loadFile ()
 			return false;
 		}
 		if (!SaveFile.RootElement ()) return false;
+
 		loadedXMLFileName = fileName;
 	}
-	else return true;
+	return true;
 }
 
 //--------------------------------------------------------------------------
@@ -531,15 +533,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 		while (reportElement)
 		{
 			if (reportElement->Parent() != reportsNode) break;
-			sSavedReportMessage savedReport;
-			savedReport.message = reportElement->Attribute ("msg");
-			const int tmpInt = reportElement->IntAttribute ("type");
-			savedReport.type = (sSavedReportMessage::eReportTypes) tmpInt;
-			savedReport.xPos = reportElement->IntAttribute ("xPos");
-			savedReport.yPos = reportElement->IntAttribute ("yPos");
-			savedReport.unitID.generate (reportElement->Attribute ("id"));
-			savedReport.colorNr = reportElement->IntAttribute ("colorNr");
-			Player->savedReportsList.push_back (savedReport);
+			Player->savedReportsList.push_back (cSavedReport::createFrom (*reportElement));
 			reportElement = reportElement->NextSiblingElement();
 		}
 	}
@@ -1768,7 +1762,7 @@ void cSavegame::writeStandardUnitValues (const sUnitData& Data, int unitnum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sSavedReportMessage>& list, const cPlayer* player)
+void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player)
 {
 	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml"; //TODO: private method load()
 	if (SaveFile.LoadFile (fileName.c_str()) != 0) return;
@@ -1814,12 +1808,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 	for (size_t i = 0; i != list.size(); ++i)
 	{
 		XMLElement* reportElement = addMainElement (reportsNode, "Report");
-		reportElement->SetAttribute ("msg", list[i].message.c_str());
-		reportElement->SetAttribute ("type", iToStr (list[i].type).c_str());
-		reportElement->SetAttribute ("xPos", iToStr (list[i].xPos).c_str());
-		reportElement->SetAttribute ("yPos", iToStr (list[i].yPos).c_str());
-		reportElement->SetAttribute ("id", list[i].unitID.getText().c_str());
-		reportElement->SetAttribute ("colorNr", iToStr (list[i].colorNr).c_str());
+		list[i]->pushInto (*reportElement);
 	}
 	list.clear();
 

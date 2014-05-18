@@ -63,6 +63,8 @@
 #include "../../game/game.h"
 #include "../../input/mouse/mouse.h"
 #include "../../input/mouse/cursor/mousecursorsimple.h"
+#include "../../game/data/report/savedreportsimple.h"
+#include "../../game/data/report/savedreportchat.h"
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
@@ -108,7 +110,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	using namespace std::placeholders;
 
-    signalConnectionManager.connect (chatBox->commandEntered, std::bind (&cGameGui::handleChatCommand, this, _1));
+	signalConnectionManager.connect (chatBox->commandEntered, std::bind (&cGameGui::handleChatCommand, this, _1));
 
 	signalConnectionManager.connect (hud->preferencesClicked, std::bind (&cGameGui::showPreferencesDialog, this));
 	signalConnectionManager.connect (hud->filesClicked, std::bind (&cGameGui::showFilesWindow, this));
@@ -253,20 +255,31 @@ void cGameGui::setPlayer (const cPlayer* player_)
 
 	if (player != nullptr)
 	{
-		playerSignalConnectionManager.connect (player->reportAdded, [&](const sSavedReportMessage& report)
+		playerSignalConnectionManager.connect (player->reportAdded, [&](const cSavedReport& report)
 		{
-			const bool alert = false; // TODO: implement alerts (displayed with red background)
-			if (report.xPos == -1 || report.yPos == -1)
+			if (report.getType () == eSavedReportType::Chat)
 			{
-				messageList->addMessage (report.getFullMessage (), alert);
+				auto& savedChatReport = static_cast<const cSavedReportChat&>(report);
+				auto player = chatBox->getPlayerFromNumber (savedChatReport.getPlayerNumber ());
+				
+				if (player)
+				{
+					chatBox->addChatMessage (*player, savedChatReport.getText ());
+				}
+				else // should never happen!
+				{
+					messageList->addMessage (savedChatReport.getMessage (), false);
+				}
 			}
 			else
 			{
-				messageList->addMessage (report.getFullMessage () + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")", alert);
-				// TODO: save position for jump!
+				messageList->addMessage (report.getMessage (), report.isAlert ());
+
+				//	messageList->addMessage (report.getFullMessage () + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")", alert);
+				//	// TODO: save position for jump!
 			}
 
-			if (cSettings::getInstance ().isDebug ()) Log.write (report.getFullMessage (), cLog::eLOG_TYPE_DEBUG);
+			if (cSettings::getInstance ().isDebug ()) Log.write (report.getMessage (), cLog::eLOG_TYPE_DEBUG);
 		});
 	}
 }
@@ -274,11 +287,11 @@ void cGameGui::setPlayer (const cPlayer* player_)
 //------------------------------------------------------------------------------
 void cGameGui::setPlayers (const std::vector<const cPlayer*>& players)
 {
-    chatBox->clearPlayers ();
-    for (size_t i = 0; i < players.size (); ++i)
-    {
-        chatBox->addPlayer (*players[i]);
-    }
+	chatBox->clearPlayers ();
+	for (size_t i = 0; i < players.size (); ++i)
+	{
+		chatBox->addPlayer (*players[i]);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -343,218 +356,218 @@ void cGameGui::connectToClient (cClient& client)
 	{
 		if (!player) return;
 		sendTakenUpgrades (client, unitUpgrades);
-    });
-    clientSignalConnectionManager.connect (chatCommandTriggered, [&](const std::string& command)
-    {
-        // TODO: where should this code go?!
-        if (command[0] == '/')
-        {
-            auto server = client.getServer ();
-            if (command.compare (0, 6, "/kick ") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                if (command.length () <= 6)
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
-                cPlayer* player = server->getPlayerFromString (command.substr (6, command.length ()));
+	});
+	clientSignalConnectionManager.connect (chatCommandTriggered, [&](const std::string& command)
+	{
+		// TODO: where should this code go?!
+		if (command[0] == '/')
+		{
+			auto server = client.getServer ();
+			if (command.compare (0, 6, "/kick ") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				if (command.length () <= 6)
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
+				cPlayer* player = server->getPlayerFromString (command.substr (6, command.length ()));
 
-                // server can not be kicked
-                if (!player || player->getNr () == 0)
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
+				// server can not be kicked
+				if (!player || player->getNr () == 0)
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
 
-                server->kickPlayer (player);
-            }
-            else if (command.compare (0, 9, "/credits ") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                if (command.length () <= 9)
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
-                const auto playerStr = command.substr (9, command.find_first_of (" ", 9) - 9);
-                const auto creditsStr = command.substr (command.find_first_of (" ", 9) + 1, command.length ());
+				server->kickPlayer (player);
+			}
+			else if (command.compare (0, 9, "/credits ") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				if (command.length () <= 9)
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
+				const auto playerStr = command.substr (9, command.find_first_of (" ", 9) - 9);
+				const auto creditsStr = command.substr (command.find_first_of (" ", 9) + 1, command.length ());
 
-                cPlayer* player = server->getPlayerFromString (playerStr);
+				cPlayer* player = server->getPlayerFromString (playerStr);
 
-                if (!player)
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
-                const int credits = atoi (creditsStr.c_str ());
+				if (!player)
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
+				const int credits = atoi (creditsStr.c_str ());
 
-                player->Credits = credits;
+				player->Credits = credits;
 
-                sendCredits (*server, credits, *player);
-            }
-            else if (command.compare (0, 12, "/disconnect ") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                if (command.length () <= 12)
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
-                cPlayer* player = server->getPlayerFromString (command.substr (12, command.length ()));
+				sendCredits (*server, credits, *player);
+			}
+			else if (command.compare (0, 12, "/disconnect ") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				if (command.length () <= 12)
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
+				cPlayer* player = server->getPlayerFromString (command.substr (12, command.length ()));
 
-                // server cannot be disconnected
-                // can not disconnect local players
-                if (!player || player->getNr () == 0 || player->isLocal ())
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
+				// server cannot be disconnected
+				// can not disconnect local players
+				if (!player || player->getNr () == 0 || player->isLocal ())
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
 
-                auto message = std::make_unique<cNetMessage> (TCP_CLOSE);
-                message->pushInt16 (player->getSocketNum ());
-                server->pushEvent (std::move(message));
-            }
-            else if (command.compare (0, 9, "/deadline") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                if (command.length () <= 9)
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
+				auto message = std::make_unique<cNetMessage> (TCP_CLOSE);
+				message->pushInt16 (player->getSocketNum ());
+				server->pushEvent (std::move (message));
+			}
+			else if (command.compare (0, 9, "/deadline") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				if (command.length () <= 9)
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
 
-                const int i = atoi (command.substr (9, command.length ()).c_str ());
-                if (i == 0 && command[10] != '0')
-                {
-                    messageList->addMessage ("Wrong parameter", false);
-                    return;
-                }
+				const int i = atoi (command.substr (9, command.length ()).c_str ());
+				if (i == 0 && command[10] != '0')
+				{
+					messageList->addMessage ("Wrong parameter", false);
+					return;
+				}
 
-                server->setDeadline (i);
-                Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
-            }
-            else if (command.compare (0, 7, "/resync") == 0)
-            {
-                if (command.length () > 7)
-                {
-                    if (!server)
-                    {
-                        messageList->addMessage ("Command can only be used by Host", false);
-                        return;
-                    }
-                    cPlayer* player = client.getPlayerFromString (command.substr (7, 8));
-                    if (!player)
-                    {
-                        messageList->addMessage ("Wrong parameter", false);
-                        return;
-                    }
-                    sendRequestResync (client, player->getNr ());
-                }
-                else
-                {
-                    if (server)
-                    {
-                        const auto& playerList = server->playerList;
-                        for (unsigned int i = 0; i < playerList.size (); i++)
-                        {
-                            sendRequestResync (client, playerList[i]->getNr ());
-                        }
-                    }
-                    else
-                    {
-                        sendRequestResync (client, client.getActivePlayer ().getNr ());
-                    }
-                }
-            }
-            else if (command.compare (0, 5, "/mark") == 0)
-            {
-                std::string cmdArg (command);
-                cmdArg.erase (0, 5);
-                cNetMessage* message = new cNetMessage (GAME_EV_WANT_MARK_LOG);
-                message->pushString (cmdArg);
-                client.sendNetMessage (message);
-            }
-            else if (command.compare (0, 7, "/color ") == 0)
-            {
-                int cl = 0;
-                sscanf (command.c_str (), "/color %d", &cl);
-                cl %= 8;
-                client.getActivePlayer().setColor (cl);
-            }
-            else if (command.compare (0, 8, "/fog off") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                cPlayer* serverPlayer = 0;
-                if (command.length () > 8)
-                {
-                    serverPlayer = server->getPlayerFromString (command.substr (9));
-                }
-                else
-                {
-                    serverPlayer = &server->getPlayerFromNumber (client.getActivePlayer ().getNr ());
-                }
-                if (serverPlayer)
-                {
-                    sendChatMessageToClient (*server, "Server entered command: '" + command + "'", USER_MESSAGE, nullptr);
-                    serverPlayer->revealMap ();
-                    sendRevealMap (*server, *serverPlayer);
-                }
-            }
-            else if (command.compare ("/survey") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                client.getMap ()->assignRessources (*server->Map);
-                client.getActivePlayer().revealResource ();
-            }
-            else if (command.compare (0, 6, "/pause") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                server->enableFreezeMode (FREEZE_PAUSE);
-            }
-            else if (command.compare (0, 7, "/resume") == 0)
-            {
-                if (!server)
-                {
-                    messageList->addMessage ("Command can only be used by Host", false);
-                    return;
-                }
-                server->disableFreezeMode (FREEZE_PAUSE);
-            }
-        }
-        else
-        {
-            client.handleChatMessage (command);
-        }
-    });
+				server->setDeadline (i);
+				Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
+			}
+			else if (command.compare (0, 7, "/resync") == 0)
+			{
+				if (command.length () > 7)
+				{
+					if (!server)
+					{
+						messageList->addMessage ("Command can only be used by Host", false);
+						return;
+					}
+					cPlayer* player = client.getPlayerFromString (command.substr (7, 8));
+					if (!player)
+					{
+						messageList->addMessage ("Wrong parameter", false);
+						return;
+					}
+					sendRequestResync (client, player->getNr ());
+				}
+				else
+				{
+					if (server)
+					{
+						const auto& playerList = server->playerList;
+						for (unsigned int i = 0; i < playerList.size (); i++)
+						{
+							sendRequestResync (client, playerList[i]->getNr ());
+						}
+					}
+					else
+					{
+						sendRequestResync (client, client.getActivePlayer ().getNr ());
+					}
+				}
+			}
+			else if (command.compare (0, 5, "/mark") == 0)
+			{
+				std::string cmdArg (command);
+				cmdArg.erase (0, 5);
+				cNetMessage* message = new cNetMessage (GAME_EV_WANT_MARK_LOG);
+				message->pushString (cmdArg);
+				client.sendNetMessage (message);
+			}
+			else if (command.compare (0, 7, "/color ") == 0)
+			{
+				int cl = 0;
+				sscanf (command.c_str (), "/color %d", &cl);
+				cl %= 8;
+				client.getActivePlayer ().setColor (cl);
+			}
+			else if (command.compare (0, 8, "/fog off") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				cPlayer* serverPlayer = 0;
+				if (command.length () > 8)
+				{
+					serverPlayer = server->getPlayerFromString (command.substr (9));
+				}
+				else
+				{
+					serverPlayer = &server->getPlayerFromNumber (client.getActivePlayer ().getNr ());
+				}
+				if (serverPlayer)
+				{
+					sendSavedReport (*server, cSavedReportSimple ("Server entered command: '" + command + "'"), nullptr);
+					serverPlayer->revealMap ();
+					sendRevealMap (*server, *serverPlayer);
+				}
+			}
+			else if (command.compare ("/survey") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				client.getMap ()->assignRessources (*server->Map);
+				client.getActivePlayer ().revealResource ();
+			}
+			else if (command.compare (0, 6, "/pause") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				server->enableFreezeMode (FREEZE_PAUSE);
+			}
+			else if (command.compare (0, 7, "/resume") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host", false);
+					return;
+				}
+				server->disableFreezeMode (FREEZE_PAUSE);
+			}
+		}
+		else
+		{
+			client.handleChatMessage (command);
+		}
+	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
 		client.handleEnd ();
@@ -562,7 +575,7 @@ void cGameGui::connectToClient (cClient& client)
 	clientSignalConnectionManager.connect (hud->triggeredRenameUnit, [&](const cUnit& unit, const std::string& name)
 	{
 		sendWantChangeUnitName (client, name, unit.iID);
-    });
+	});
 	clientSignalConnectionManager.connect (gameMap->triggeredStartWork, [&](const cUnit& unit)
 	{
 		sendWantStartWork (client, unit);
@@ -626,14 +639,14 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				auto vehicle = client.getVehicleFromID (unit.iID);
 				if (!vehicle) return;
-				vehicle->setMarkedAsDone(true);
+				vehicle->setMarkedAsDone (true);
 				sendMoveJobResume (client, vehicle->iID);
 			}
 			else if (unit.data.ID.isABuilding ())
 			{
 				auto building = client.getBuildingFromID (unit.iID);
 				if (!building) return;
-				building->setMarkedAsDone(true);
+				building->setMarkedAsDone (true);
 			}
 		}
 	});
@@ -1708,52 +1721,52 @@ void cGameGui::stopSelectedUnitSound ()
 //------------------------------------------------------------------------------
 void cGameGui::handleChatCommand (const std::string& command)
 {
-    if (command.empty ()) return;
+	if (command.empty ()) return;
 
-    if (command[0] == '/')
-    {
-        //if (command.compare ("/fps on") == 0) { debugOutput.showFPS = true; }
-        //else if (command.compare ("/fps off") == 0) { debugOutput.showFPS = false; }
-        //else if (command.compare ("/base client") == 0) { debugOutput.debugBaseClient = true; debugOutput.debugBaseServer = false; }
-        //else if (command.compare ("/base server") == 0) { if (server) debugOutput.debugBaseServer = true; debugOutput.debugBaseClient = false; }
-        //else if (command.compare ("/base off") == 0) { debugOutput.debugBaseServer = false; debugOutput.debugBaseClient = false; }
-        //else if (command.compare ("/sentry server") == 0) { if (server) debugOutput.debugSentry = true; }
-        //else if (command.compare ("/sentry off") == 0) { debugOutput.debugSentry = false; }
-        //else if (command.compare ("/fx on") == 0) { debugOutput.debugFX = true; }
-        //else if (command.compare ("/fx off") == 0) { debugOutput.debugFX = false; }
-        //else if (command.compare ("/trace server") == 0) { if (server) debugOutput.debugTraceServer = true; debugOutput.debugTraceClient = false; }
-        //else if (command.compare ("/trace client") == 0) { debugOutput.debugTraceClient = true; debugOutput.debugTraceServer = false; }
-        //else if (command.compare ("/trace off") == 0) { debugOutput.debugTraceServer = false; debugOutput.debugTraceClient = false; }
-        //else if (command.compare ("/ajobs on") == 0) { debugOutput.debugAjobs = true; }
-        //else if (command.compare ("/ajobs off") == 0) { debugOutput.debugAjobs = false; }
-        //else if (command.compare ("/players on") == 0) { debugOutput.debugPlayers = true; }
-        //else if (command.compare ("/players off") == 0) { debugOutput.debugPlayers = false; }
-        //else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
-        //else if (command.compare (0, 12, "/cache size ") == 0)
-        //{
-        //    int size = atoi (command.substr (12, command.length ()).c_str ());
-        //    // since atoi is too stupid to report an error,
-        //    // do an extra check, when the number is 0
-        //    if (size == 0 && command[12] != '0')
-        //    {
-        //        messageList->addMessage ("Wrong parameter");
-        //        return;
-        //    }
-        //    getDCache ()->setMaxCacheSize (size);
-        //}
-        //else if (command.compare ("/cache flush") == 0)
-        //{
-        //    getDCache ()->flush ();
-        //}
-        //else if (command.compare ("/cache debug on") == 0)
-        //{
-        //    debugOutput.debugCache = true;
-        //}
-        //else if (command.compare ("/cache debug off") == 0)
-        //{
-        //    debugOutput.debugCache = false;
-        //}
-    }
+	if (command[0] == '/')
+	{
+		//if (command.compare ("/fps on") == 0) { debugOutput.showFPS = true; }
+		//else if (command.compare ("/fps off") == 0) { debugOutput.showFPS = false; }
+		//else if (command.compare ("/base client") == 0) { debugOutput.debugBaseClient = true; debugOutput.debugBaseServer = false; }
+		//else if (command.compare ("/base server") == 0) { if (server) debugOutput.debugBaseServer = true; debugOutput.debugBaseClient = false; }
+		//else if (command.compare ("/base off") == 0) { debugOutput.debugBaseServer = false; debugOutput.debugBaseClient = false; }
+		//else if (command.compare ("/sentry server") == 0) { if (server) debugOutput.debugSentry = true; }
+		//else if (command.compare ("/sentry off") == 0) { debugOutput.debugSentry = false; }
+		//else if (command.compare ("/fx on") == 0) { debugOutput.debugFX = true; }
+		//else if (command.compare ("/fx off") == 0) { debugOutput.debugFX = false; }
+		//else if (command.compare ("/trace server") == 0) { if (server) debugOutput.debugTraceServer = true; debugOutput.debugTraceClient = false; }
+		//else if (command.compare ("/trace client") == 0) { debugOutput.debugTraceClient = true; debugOutput.debugTraceServer = false; }
+		//else if (command.compare ("/trace off") == 0) { debugOutput.debugTraceServer = false; debugOutput.debugTraceClient = false; }
+		//else if (command.compare ("/ajobs on") == 0) { debugOutput.debugAjobs = true; }
+		//else if (command.compare ("/ajobs off") == 0) { debugOutput.debugAjobs = false; }
+		//else if (command.compare ("/players on") == 0) { debugOutput.debugPlayers = true; }
+		//else if (command.compare ("/players off") == 0) { debugOutput.debugPlayers = false; }
+		//else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
+		//else if (command.compare (0, 12, "/cache size ") == 0)
+		//{
+		//    int size = atoi (command.substr (12, command.length ()).c_str ());
+		//    // since atoi is too stupid to report an error,
+		//    // do an extra check, when the number is 0
+		//    if (size == 0 && command[12] != '0')
+		//    {
+		//        messageList->addMessage ("Wrong parameter");
+		//        return;
+		//    }
+		//    getDCache ()->setMaxCacheSize (size);
+		//}
+		//else if (command.compare ("/cache flush") == 0)
+		//{
+		//    getDCache ()->flush ();
+		//}
+		//else if (command.compare ("/cache debug on") == 0)
+		//{
+		//    debugOutput.debugCache = true;
+		//}
+		//else if (command.compare ("/cache debug off") == 0)
+		//{
+		//    debugOutput.debugCache = false;
+		//}
+	}
 
-    chatCommandTriggered (command);
+	chatCommandTriggered (command);
 }

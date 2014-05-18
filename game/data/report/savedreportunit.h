@@ -17,55 +17,37 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef game_data_reports_savedreportunitH
+#define game_data_reports_savedreportunitH
 
-#include <memory>
+#include "../../../maxrconfig.h"
 
-#include "../../widget.h"
+#include "savedreport.h"
+#include "../../../main.h" // sID
+#include "../../../utility/position.h"
 
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
+class cUnit;
 
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+class cSavedReportUnit : public cSavedReport
 {
 public:
-    cChatBox (const cBox<cPosition>& area);
+	cSavedReportUnit (const cUnit& unit, std::string text);
+	explicit cSavedReportUnit (cNetMessage& message);
+	explicit cSavedReportUnit (const tinyxml2::XMLElement& element);
 
-    virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
 
-    void clearPlayers ();
+	virtual std::string getMessage () const MAXR_OVERRIDE_FUNCTION;
 
-	void addPlayer (const cPlayer& player);
+	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
 
-	const cPlayer* getPlayerFromNumber (int playerNumber);
+	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
+	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
-    void addChatMessage (const cPlayer& player, const std::string& message);
-
-    cSignal<void (const std::string)> commandEntered;
 private:
-    cSignalConnectionManager signalConnectionManager;
-
-    cLineEdit* chatLineEdit;
-
-    cListView<cLobbyChatBoxListViewItem>* chatList;
-
-    cListView<cChatBoxPlayerListViewItem>* playersList;
-
-    void sendCommand ();
+	sID unitId;
+	cPosition position;
+	std::string text;
 };
 
-#endif // gui_game_widgets_chatboxH
+#endif // game_data_reports_savedreportunitH

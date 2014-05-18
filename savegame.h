@@ -34,11 +34,11 @@ class cVehicle;
 class cBuilding;
 class cServer;
 class cTCP;
+class cSavedReport;
 struct sResources;
 struct sUnitData;
 struct sID;
 struct sHudStateContainer;
-struct sSavedReportMessage;
 
 //
 // 0.1 - ?
@@ -90,7 +90,7 @@ public:
 	* ---
 	*@author alzi alias DoctorDeath
 	*/
-	void writeAdditionalInfo (sHudStateContainer hudState, std::vector<sSavedReportMessage>& list, const cPlayer* player);
+	void writeAdditionalInfo (sHudStateContainer hudState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player);
 
 	//--------------------------------------------------------------------------
 private:

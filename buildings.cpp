@@ -37,6 +37,7 @@
 #include "vehicles.h"
 #include "video.h"
 #include "unifonts.h"
+#include "game/data/report/savedreporttranslated.h"
 
 using namespace std;
 
@@ -649,7 +650,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (isDisabled())
 	{
-		sendChatMessageToClient (server, "Text~Comp~Building_Disabled", SERVER_ERROR_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Building_Disabled", true), owner);
 		return;
 	}
 
@@ -657,7 +658,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	if (data.needsHumans)
 		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
 		{
-			sendChatMessageToClient (server, "Text~Comp~Team_Insufficient", SERVER_ERROR_MESSAGE, owner);
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Team_Insufficient", true), owner);
 			return;
 		}
 
@@ -666,7 +667,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
-			sendChatMessageToClient (server, "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner);
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Gold_Insufficient", true), owner);
 			return;
 		}
 	}
@@ -676,7 +677,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->MetalNeed + min (MetalPerRound, BuildList[0].metall_remaining) > SubBase->getMetalProd() + SubBase->getMetal())
 		{
-			sendChatMessageToClient (server, "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner);
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Metal_Insufficient", true), owner);
 			return;
 		}
 	}
@@ -688,7 +689,7 @@ void cBuilding::ServerStartWork (cServer& server)
 		// (current production + reserves)
 		if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getMaxOilProd())
 		{
-			sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner);
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Fuel_Insufficient", true), owner);
 			return;
 		}
 		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getOilProd ())
@@ -708,11 +709,11 @@ void cBuilding::ServerStartWork (cServer& server)
 			SubBase->setGoldProd (gold);
 			SubBase->setMetalProd (metal);
 
-			sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner, iToStr (missingOil));
-			if (SubBase->getMetalProd() < metal)
-				sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner, iToStr (metal - SubBase->getMetalProd()));
-			if (SubBase->getGoldProd() < gold)
-				sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner, iToStr (gold - SubBase->getGoldProd()));
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Fuel_Increased", iToStr (missingOil)), owner);
+			if (SubBase->getMetalProd () < metal)
+				sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Metal_Decreased", iToStr (metal - SubBase->getMetalProd ())), owner);
+			if (SubBase->getGoldProd () < gold)
+				sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Gold_Decreased", iToStr (gold - SubBase->getGoldProd ())), owner);
 		}
 	}
 
@@ -762,10 +763,10 @@ void cBuilding::ServerStartWork (cServer& server)
 					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 				}
 
-				sendChatMessageToClient (server, "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner);
+				sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_Insufficient", true), owner);
 				return;
 			}
-			sendChatMessageToClient (server, "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner);
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_ToLow"), owner);
 		}
 	}
 
@@ -831,7 +832,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	{
 		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
 		{
-			sendChatMessageToClient (server, "Text~Comp~Energy_IsNeeded", SERVER_ERROR_MESSAGE, owner);
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_IsNeeded", true), owner);
 			return;
 		}
 

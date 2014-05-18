@@ -17,55 +17,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef game_data_reports_savedreportH
+#define game_data_reports_savedreportH
 
+#include <string>
 #include <memory>
 
-#include "../../widget.h"
+#include "../../../tinyxml2.h"
 
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
+class cNetMessage;
 
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+enum class eSavedReportType
 {
-public:
-    cChatBox (const cBox<cPosition>& area);
-
-    virtual void draw () MAXR_OVERRIDE_FUNCTION;
-
-    void clearPlayers ();
-
-	void addPlayer (const cPlayer& player);
-
-	const cPlayer* getPlayerFromNumber (int playerNumber);
-
-    void addChatMessage (const cPlayer& player, const std::string& message);
-
-    cSignal<void (const std::string)> commandEntered;
-private:
-    cSignalConnectionManager signalConnectionManager;
-
-    cLineEdit* chatLineEdit;
-
-    cListView<cLobbyChatBoxListViewItem>* chatList;
-
-    cListView<cChatBoxPlayerListViewItem>* playersList;
-
-    void sendCommand ();
+	Chat,
+	Unit,
+	Simple,
+	Translated
 };
 
-#endif // gui_game_widgets_chatboxH
+class cSavedReport
+{
+public:
+	virtual ~cSavedReport () {}
+
+	virtual eSavedReportType getType () const = 0;
+
+	virtual std::string getMessage () const = 0;
+
+	virtual bool isAlert () const = 0;
+
+	virtual void pushInto (cNetMessage& message) const;
+	virtual void pushInto (tinyxml2::XMLElement& element) const;
+
+	static std::unique_ptr<cSavedReport> createFrom (cNetMessage& message);
+	static std::unique_ptr<cSavedReport> createFrom (const tinyxml2::XMLElement& element);
+};
+
+#endif // game_data_reports_savedreportH

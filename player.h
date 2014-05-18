@@ -43,26 +43,7 @@ struct sHudStateContainer;
 struct sTurnstartReport;
 struct sUnitData;
 
-struct sSavedReportMessage
-{
-	enum eReportTypes
-	{
-		REPORT_TYPE_COMP,
-		REPORT_TYPE_UNIT,
-		REPORT_TYPE_CHAT
-	};
-public:
-	std::string getFullMessage() const { if (xPos == -1) return message; else return "[" + iToStr (xPos) + "," + iToStr (yPos) + "] " + message; }
-
-	void pushInto (cNetMessage& message) const;
-	void popFrom (cNetMessage& message);
-public:
-	std::string message;
-	eReportTypes type;
-	sID unitID;
-	int xPos, yPos;
-	int colorNr;
-};
+class cSavedReport;
 
 typedef std::vector<int> PointsHistory;
 
@@ -168,7 +149,7 @@ public:
 	void setScore (int score, int turn);
 	void clearDone();
 
-	const sSavedReportMessage& addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), const cPosition& position = cPosition(-1, -1), int colorNr = -1);
+	void addSavedReport (std::unique_ptr<cSavedReport> savedReport);
 
 	void setClan (int newClan);
 	int getClan() const { return clan; }
@@ -191,7 +172,7 @@ public:
 
 	bool mayHaveOffensiveUnit() const;
 
-	mutable cSignal<void (const sSavedReportMessage&)> reportAdded;
+	mutable cSignal<void (const cSavedReport&)> reportAdded;
 private:
 	/**
 	* draws a circle on the map for the fog
@@ -249,7 +230,7 @@ public:
 	AutoPtr<sHudStateContainer> savedHud;
 	std::vector<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
-	std::vector<sSavedReportMessage> savedReportsList;
+	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
 	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
 	std::vector<cUnit*> LockList;  // List of locked units.
 	bool bFinishedTurn;     // true when player send his turn end

@@ -26,11 +26,11 @@
 #include "serverevents.h"
 #include "upgradecalculator.h"
 
-struct sSavedReportMessage;
 struct sBuildList;
 class cUnit;
 class cClient;
 class cPosition;
+class cSavedReport;
 
 enum CLIENT_EVENT_TYPES
 {
@@ -42,7 +42,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_ADD_ENEM_BUILDING,		// adds a enemy building with current data
 	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
 	GAME_EV_PLAYER_CLANS,			// data about the clans of the players
-	GAME_EV_CHAT_SERVER,			// a chat message from server to client
 	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
@@ -278,7 +277,7 @@ void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings, int ownerNr);
 void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID);
-void sendSaveReportInfo (const cClient& client, const sSavedReportMessage& savedReport, int ownerNr, int savingID);
+void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID);
 void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID);
 
 void sendWantSelfDestroy (const cClient& client, const cBuilding& building);

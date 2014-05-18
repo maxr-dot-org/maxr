@@ -28,6 +28,7 @@
 #include "player.h"
 #include "vehicles.h"
 #include "utility/position.h"
+#include "game/data/report/savedreport.h"
 
 using namespace std;
 
@@ -573,7 +574,7 @@ void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, in
 	//client.sendNetMessage (message);
 }
 
-void sendSaveReportInfo (const cClient& client, const sSavedReportMessage& savedReport, int ownerNr, int savingID)
+void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_REPORT_INFO);
 	savedReport.pushInto (*message);

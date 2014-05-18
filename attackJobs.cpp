@@ -35,6 +35,7 @@
 #include "settings.h"
 #include "vehicles.h"
 #include "sound.h"
+#include "game/data/report/savedreportunit.h"
 
 using namespace std;
 
@@ -629,10 +630,8 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 	const bool sentryReaction = message.popBool();
 	if (sentryReaction && unit && unit->owner == &client->getActivePlayer())
 	{
-		const auto& unitPosition = unit->getPosition();
 		const string name = unit->getDisplayName();
-		const sID id = unit->data.ID;
-		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport(lngPack.i18n("Text~Comp~AttackingEnemy", name), sSavedReportMessage::REPORT_TYPE_UNIT, id, unitPosition);
+		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*unit, lngPack.i18n ("Text~Comp~AttackingEnemy", name)));
 		//FIXME: gameGUI
 		//PlayRandomVoice (VoiceData.VOIAttackingEnemy);
 	}
@@ -848,6 +847,8 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 	cVehicle* targetVehicle = client.getVehicleFromID (id);
 	cBuilding* targetBuilding = client.getBuildingFromID (id);
 
+	cUnit* targetUnit = nullptr;
+
 	bool playImpact = false;
 	bool ownUnit = false;
 	bool destroyed = false;
@@ -855,7 +856,6 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 	string name;
 	int offX = 0;
 	int offY = 0;
-	sID unitID;
 
 	// no target found
 	if (!targetBuilding && !targetVehicle)
@@ -864,10 +864,9 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 	}
 	else
 	{
-
 		if (targetVehicle)
 		{
-			unitID = targetVehicle->data.ID;
+			targetUnit = targetVehicle;
 			isAir = (targetVehicle->data.factorAir > 0);
 			targetVehicle->data.setHitpoints(remainingHP);
 
@@ -891,7 +890,7 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 		}
 		else
 		{
-			unitID = targetBuilding->data.ID;
+			targetUnit = targetBuilding;
 			targetBuilding->data.setHitpoints(remainingHP);
 
 			Log.write (" Client: building '" + targetBuilding->getDisplayName () + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
@@ -931,7 +930,8 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 			message = name + " " + lngPack.i18n ("Text~Comp~Attacked");
 			PlayRandomVoice (VoiceData.VOIAttackingUs);
 		}
-		const sSavedReportMessage& report = client.getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, unitID, position);
+		assert (targetUnit != nullptr);
+		client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*targetUnit, message));
 	}
 
 	// clean up

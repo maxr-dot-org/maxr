@@ -33,6 +33,7 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 #include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
 void sendAddUnit (cServer& server, const cPosition& position, int id, bool isVehicle, sID unitID, const cPlayer& player, bool isInit, bool shouldAddToMap)
@@ -219,16 +220,6 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 	message->pushInt16 (vehicle.dir);
 	message->pushInt16 (vehicle.iID);
 	server.sendNetMessage (message, vehicle.owner);
-}
-
-//------------------------------------------------------------------------------
-void sendChatMessageToClient (cServer& server, const std::string& message, int iType, const cPlayer* receiver, const std::string& inserttext)
-{
-	AutoPtr<cNetMessage> newMessage (new cNetMessage (GAME_EV_CHAT_SERVER));
-	newMessage->pushString (inserttext);
-	newMessage->pushString (message);
-	newMessage->pushChar (iType);
-	server.sendNetMessage (newMessage, receiver);
 }
 
 //------------------------------------------------------------------------------
@@ -962,12 +953,12 @@ void sendRequestSaveInfo (cServer& server, int saveingID)
 }
 
 //------------------------------------------------------------------------------
-void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, const cPlayer& receiver)
+void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SAVED_REPORT));
 
 	savedReport.pushInto (*message);
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (message, receiver);
 }
 
 //------------------------------------------------------------------------------

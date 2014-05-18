@@ -30,6 +30,7 @@
 #include "player.h"
 #include "vehicles.h"
 #include "map.h"
+#include "game/data/report/savedreportunit.h"
 
 using namespace std;
 
@@ -296,7 +297,7 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 	if (minValue == 0)
 	{
 		const string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
-		const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->getPosition());
+		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*vehicle, message));
 		//FIXME: gameGUI
 		//client->getGameGUI().addCoords (report);
 		finished = true;
@@ -310,7 +311,7 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 		else
 		{
 			const string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
-			const sSavedReportMessage& report = client->getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->getPosition());
+			client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*vehicle, message));
 			finished = true;
 		}
 	}

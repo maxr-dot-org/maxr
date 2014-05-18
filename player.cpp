@@ -28,30 +28,9 @@
 #include "server.h"
 #include "serverevents.h"
 #include "vehicles.h"
+#include "game/data/report/savedreport.h"
 
 using namespace std;
-
-//------------------------------------------------------------------------------
-void sSavedReportMessage::pushInto (cNetMessage& message) const
-{
-	message.pushInt16 (colorNr);
-	message.pushID (unitID);
-	message.pushInt16 (yPos);
-	message.pushInt16 (xPos);
-	message.pushInt16 (type);
-	message.pushString (this->message);
-}
-
-//------------------------------------------------------------------------------
-void sSavedReportMessage::popFrom (cNetMessage& message)
-{
-	this->message = message.popString();
-	type = static_cast<sSavedReportMessage::eReportTypes> (message.popInt16());
-	xPos = message.popInt16();
-	yPos = message.popInt16();
-	unitID = message.popID();
-	colorNr = message.popInt16();
-}
 
 //------------------------------------------------------------------------------
 sPlayer::sPlayer (const string& name_, unsigned int colorIndex_, int nr_, int socketIndex_) :
@@ -1134,19 +1113,11 @@ void cPlayer::drawSpecialCircleBig (const cPosition& position, int iRadius, std:
 }
 
 //------------------------------------------------------------------------------
-const sSavedReportMessage& cPlayer::addSavedReport (const string& message, sSavedReportMessage::eReportTypes type, sID unitID, const cPosition& position, int colorNr)
+void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport)
 {
-	sSavedReportMessage savedReport;
-	savedReport.message = message;
-	savedReport.type = type;
-	savedReport.xPos = position.x();
-	savedReport.yPos = position.y();
-	savedReport.unitID = unitID;
-	savedReport.colorNr = colorNr;
+	if (savedReport == nullptr) return;
 
-	savedReportsList.push_back (savedReport);
+	savedReportsList.push_back (std::move (savedReport));
 
-	reportAdded (savedReport);
-
-	return savedReportsList.back();
+	reportAdded (*savedReportsList.back ());
 }

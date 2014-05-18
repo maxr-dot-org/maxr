@@ -32,7 +32,7 @@ class cMap;
 class cNetMessage;
 class cResearch;
 class cUnit;
-struct sSavedReportMessage;
+class cSavedReport;
 struct sSubBase;
 
 enum SERVER_EVENT_TYPES
@@ -155,16 +155,6 @@ void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cP
 void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver);
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
-
-/**
-* sends a text message to one or all client
-*@author Eiko
-*@param message the message to be send
-*@param iType spezifies if this is an error message,
-*       info message from the Server or a text message from an other player
-*@param receiver The player who should receive the message or nullptr for broadcast
-*/
-void sendChatMessageToClient (cServer& server, const std::string& message, int iType, const cPlayer* receiver, const std::string& inserttext = "");
 
 /**
 * sends all necessary information to all clients to start the building
@@ -320,7 +310,7 @@ void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 */
 void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehicle& srcUnit, const cPlayer& receiver);
 void sendRequestSaveInfo (cServer& server, const int saveingID);
-void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, const cPlayer& receiver);
+void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cPlayer* receiver);
 
 void sendCasualtiesReport (cServer& server, const cPlayer& receiver);
 

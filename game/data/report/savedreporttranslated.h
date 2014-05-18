@@ -17,55 +17,35 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef game_data_reports_savedreporttranslatedH
+#define game_data_reports_savedreporttranslatedH
 
-#include <memory>
+#include "../../../maxrconfig.h"
 
-#include "../../widget.h"
+#include "savedreport.h"
 
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+class cSavedReportTranslated : public cSavedReport
 {
 public:
-    cChatBox (const cBox<cPosition>& area);
+	cSavedReportTranslated (std::string translationText, bool isAlert = false);
+	cSavedReportTranslated (std::string translationText, std::string insertText, bool isAlert = false);
+	explicit cSavedReportTranslated (cNetMessage& message);
+	explicit cSavedReportTranslated (const tinyxml2::XMLElement& element);
 
-    virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
 
-    void clearPlayers ();
+	virtual std::string getMessage () const MAXR_OVERRIDE_FUNCTION;
 
-	void addPlayer (const cPlayer& player);
+	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
 
-	const cPlayer* getPlayerFromNumber (int playerNumber);
+	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
+	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
-    void addChatMessage (const cPlayer& player, const std::string& message);
-
-    cSignal<void (const std::string)> commandEntered;
 private:
-    cSignalConnectionManager signalConnectionManager;
+	std::string translationText;
+	std::string insertText;
 
-    cLineEdit* chatLineEdit;
-
-    cListView<cLobbyChatBoxListViewItem>* chatList;
-
-    cListView<cChatBoxPlayerListViewItem>* playersList;
-
-    void sendCommand ();
+	bool alert;
 };
 
-#endif // gui_game_widgets_chatboxH
+#endif // game_data_reports_savedreporttranslatedH

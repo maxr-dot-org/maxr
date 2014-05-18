@@ -44,6 +44,9 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 #include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "game/data/report/savedreport.h"
+#include "game/data/report/savedreporttranslated.h"
+#include "game/data/report/savedreportchat.h"
 
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
@@ -402,7 +405,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 		// because it's expected client behaviour
 		if (DEDICATED_SERVER == false)
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-		sendChatMessageToClient (*this, "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, nullptr, Player->getName());
+		sendSavedReport (*this, cSavedReportTranslated ("Text~Multiplayer~Lost_Connection", Player->getName ()), nullptr);
 
 		DisconnectedPlayerList.push_back (Player);
 
@@ -417,7 +420,7 @@ void cServer::handleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 
     const auto& player = getPlayerFromNumber(message.popChar ());
 
-	sendChatMessageToClient (*this, message.popString(), USER_MESSAGE, nullptr);
+	sendSavedReport (*this, cSavedReportChat (player, message.popString()), nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1980,10 +1983,7 @@ void cServer::handleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 	if (msgSaveingID != savingID) return;
 	auto& player = getPlayerFromNumber (message.popInt16());
 
-	sSavedReportMessage savedReport;
-	savedReport.popFrom (message);
-
-	player.savedReportsList.push_back (savedReport);
+	player.savedReportsList.push_back (cSavedReport::createFrom (message));
 }
 
 //------------------------------------------------------------------------------
@@ -2954,7 +2954,7 @@ bool cServer::checkEndActions (const cPlayer* player)
 		{
 			if (iWantPlayerEndNum == -1)
 			{
-				sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, player);
+				sendSavedReport (*this, cSavedReportTranslated (sMessage), player);
 			}
 		}
 		else
@@ -2963,7 +2963,7 @@ bool cServer::checkEndActions (const cPlayer* player)
 			{
 				for (size_t i = 0; i != playerList.size(); ++i)
 				{
-					sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, playerList[i].get());
+					sendSavedReport (*this, cSavedReportTranslated (sMessage), playerList[i].get ());
 				}
 			}
 		}
@@ -3207,7 +3207,7 @@ void cServer::checkDefeats()
 	if (winners.size() > 1)
 	{
 		for (size_t i = 0; i != playerList.size (); ++i)
-			sendChatMessageToClient (*this, "Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, playerList[i].get());
+			sendSavedReport (*this, cSavedReportTranslated ("Text~Comp~SuddenDeath"), playerList[i].get ());
 	}
 	// TODO: send win message to the winner.
 }

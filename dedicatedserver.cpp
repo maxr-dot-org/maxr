@@ -427,9 +427,9 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 				{
 					if (tokens[0].compare ("games") == 0)
 					{
-						sendChatMessage (getGamesString(),
-										 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
-										 senderSocket);
+						//sendChatMessage (getGamesString(),
+						//				 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
+						//				 senderSocket);
 						return true;
 					}
 					else if (tokens[0].compare ("maps") == 0)
@@ -439,9 +439,9 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 					}
 					else if (tokens[0].compare ("help") == 0)
 					{
-						sendChatMessage (getServerHelpString(),
-										 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
-										 senderSocket);
+						//sendChatMessage (getServerHelpString(),
+						//				 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
+						//				 senderSocket);
 						return true;
 					}
 				}
@@ -461,13 +461,13 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 	while (getline (ss, line))
 	{
 		cNetMessage* msg = new cNetMessage (type);
-		if (msg->getType() == GAME_EV_CHAT_SERVER)
-		{
-			msg->pushString ("");
-			msg->pushString (line);
-			msg->pushChar (SERVER_INFO_MESSAGE);
-		}
-		else
+		//if (msg->getType() == GAME_EV_CHAT_SERVER)
+		//{
+		//	msg->pushString ("");
+		//	msg->pushString (line);
+		//	msg->pushChar (SERVER_INFO_MESSAGE);
+		//}
+		//else
 		{
 			msg->pushString (line);
 			msg->pushBool (false);

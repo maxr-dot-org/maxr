@@ -26,6 +26,7 @@
 #include "../../../player.h"
 #include "../../../clientevents.h"
 #include "../../../savegame.h"
+#include "../../data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
 void cNetworkHostGameSaved::start (cApplication& application)
@@ -76,10 +77,10 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)
 	{
 		sendHudSettings (*server, *serverPlayerList[i]);
-		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
+		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size (); ++j)
 		{
-			sendSavedReport (*server, reportList[j], *serverPlayerList[i]);
+			sendSavedReport (*server, *reportList[j], serverPlayerList[i].get());
 		}
 		reportList.clear ();
 	}

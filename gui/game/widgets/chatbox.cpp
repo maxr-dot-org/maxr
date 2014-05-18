@@ -79,11 +79,26 @@ void cChatBox::addPlayer (const cPlayer& player)
 }
 
 //------------------------------------------------------------------------------
-void cChatBox::addChatMessage (const cPlayer& player, const std::string& message)
+const cPlayer* cChatBox::getPlayerFromNumber (int playerNumber)
 {
-    chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (player.getName(), message, chatList->getSize ().x () - chatList->getBeginMargin ().x () - chatList->getEndMargin ().x ()));
+	for (size_t i = 0; i < playersList->getItemsCount (); ++i)
+	{
+		if (playersList->getItem (i).getPlayer ().getNr () == playerNumber)
+		{
+			return &playersList->getItem (i).getPlayer ();
+		}
+	}
+	return nullptr;
 }
 
+//------------------------------------------------------------------------------
+void cChatBox::addChatMessage (const cPlayer& player, const std::string& message)
+{
+    auto newItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (player.getName(), message, chatList->getSize ().x () - chatList->getBeginMargin ().x () - chatList->getEndMargin ().x ()));
+	chatList->scroolToItem (newItem);
+}
+
+//------------------------------------------------------------------------------
 void cChatBox::sendCommand ()
 {
     commandEntered (chatLineEdit->getText ());

@@ -28,6 +28,7 @@
 #include "player.h"
 #include "server.h"
 #include "serverevents.h"
+#include "game/data/report/savedreporttranslated.h"
 
 using namespace std;
 
@@ -402,7 +403,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int value)
 	if (neededFuel > getOil() + getMaxOilProd())
 	{
 		// not possible to produce enough fuel
-		sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Fuel_Insufficient", true), owner);
 		return false;
 	}
 
@@ -667,11 +668,11 @@ bool sSubBase::checkOil (cServer& server)
 		setGoldProd (gold);
 		setMetalProd (metal);
 
-		sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner, iToStr (missingOil));
-		if (getMetalProd() < metal)
-			sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner, iToStr (metal - MetalProd));
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Fuel_Increased", iToStr (missingOil)), owner);
+		if (getMetalProd () < metal)
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Metal_Decreased", iToStr (metal - MetalProd)), owner);
 		if (getGoldProd() < gold)
-			sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner, iToStr (gold - GoldProd));
+			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Gold_Decreased", iToStr (gold - GoldProd)), owner);
 	}
 
 	// stop unneeded buildings
@@ -755,13 +756,13 @@ bool sSubBase::checkEnergy (cServer& server)
 void sSubBase::prepareTurnend (cServer& server)
 {
 	if (checkMetalConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Metal_Low"), owner);
 
 	if (checkHumanConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Team_Low", SERVER_INFO_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Team_Low"), owner);
 
 	if (checkGoldConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Gold_Low"), owner);
 
 	// there is a loop around checkOil/checkEnergy,
 	// because a lack of energy can lead to less fuel,
@@ -784,17 +785,19 @@ void sSubBase::prepareTurnend (cServer& server)
 			energyMissing = true;
 		}
 	}
-	if (oilMissing) sendChatMessageToClient (server, "Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner);
-	if (energyMissing) sendChatMessageToClient (server, "Text~Comp~Energy_Low", SERVER_INFO_MESSAGE, owner);
+	if (oilMissing)
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Fuel_Low"), owner);
+	if (energyMissing)
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_Low"), owner);
 
 	// recheck metal and gold,
 	// because metal and gold producers could have been shut down,
 	// due to a lack of energy
 	if (checkMetalConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Metal_Low"), owner);
 
 	if (checkGoldConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner);
+		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Gold_Low"), owner);
 }
 
 void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
