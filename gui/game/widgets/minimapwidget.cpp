@@ -44,9 +44,9 @@ cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::setDynamicMap (const cMap* dynamicMap_)
+void cMiniMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
-	dynamicMap = dynamicMap_;
+	dynamicMap = std::move(dynamicMap_);
 
 	dynamicMapSignalConnectionManager.disconnectAll ();
 
@@ -59,9 +59,9 @@ void cMiniMapWidget::setDynamicMap (const cMap* dynamicMap_)
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::setPlayer (const cPlayer* player_)
+void cMiniMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
-	player = player_;
+	player = std::move(player_);
 }
 
 //------------------------------------------------------------------------------

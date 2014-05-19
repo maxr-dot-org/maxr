@@ -44,8 +44,8 @@ class cGameMapWidget : public cClickableWidget
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer);
 
-	void setDynamicMap (const cMap* dynamicMap);
-	void setPlayer (const cPlayer* player);
+	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
+	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setUnitSelection (const cUnitSelection* unitSelection);
 
 	void setZoomFactor (float zoomFactor, bool center);
@@ -160,8 +160,8 @@ private:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
 	std::shared_ptr<const cStaticMap> staticMap;
-	const cMap* dynamicMap; // may be null
-	const cPlayer* player; // may be null
+	std::shared_ptr<const cMap> dynamicMap; // may be null
+	std::shared_ptr<const cPlayer> player; // may be null
 
 	cUnitDrawingEngine unitDrawingEngine;
 

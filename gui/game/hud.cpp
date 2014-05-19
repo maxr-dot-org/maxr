@@ -141,10 +141,10 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 }
 
 //------------------------------------------------------------------------------
-void cHud::setPlayer (const cPlayer* player_)
+void cHud::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
-	player = player_;
-	unitRenameWidget->setPlayer (player_);
+	player = std::move(player_);
+	unitRenameWidget->setPlayer (player.get());
 }
 
 //------------------------------------------------------------------------------
@@ -395,5 +395,5 @@ void cHud::setActiveUnit (const cUnit* unit)
 {
 	unitRenameWidget->setUnit (unit);
 	unitVideo->setUnit (unit);
-	unitDetails->setUnit (unit, player);
+	unitDetails->setUnit (unit, player.get());
 }

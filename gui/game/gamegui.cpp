@@ -219,9 +219,9 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setDynamicMap (const cMap* dynamicMap_)
+void cGameGui::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
-	dynamicMap = dynamicMap_;
+	dynamicMap = std::move(dynamicMap_);
 	gameMap->setDynamicMap (dynamicMap);
 	miniMap->setDynamicMap (dynamicMap);
 
@@ -244,9 +244,9 @@ void cGameGui::setDynamicMap (const cMap* dynamicMap_)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setPlayer (const cPlayer* player_)
+void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
-	player = player_;
+	player = std::move(player_);
 	gameMap->setPlayer (player);
 	miniMap->setPlayer (player);
 	hud->setPlayer (player);
@@ -285,7 +285,7 @@ void cGameGui::setPlayer (const cPlayer* player_)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setPlayers (const std::vector<const cPlayer*>& players)
+void cGameGui::setPlayers (const std::vector<std::shared_ptr<const cPlayer>>& players)
 {
 	chatBox->clearPlayers ();
 	for (size_t i = 0; i < players.size (); ++i)
@@ -633,7 +633,7 @@ void cGameGui::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredUnitDone, [&](const cUnit& unit)
 	{
-		if (unit.owner == player)
+		if (unit.owner == player.get())
 		{
 			if (unit.data.ID.isAVehicle ())
 			{
@@ -1484,7 +1484,7 @@ void cGameGui::showResearchDialog (const cUnit& unit)
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	if (unit.owner != player) return;
+	if (unit.owner != player.get()) return;
 	if (!player) return;
 
 	auto researchDialog = application->show (std::make_shared<cDialogResearch> (*player));
@@ -1501,7 +1501,7 @@ void cGameGui::showUpgradesWindow (const cUnit& unit)
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	if (unit.owner != player) return;
+	if (unit.owner != player.get()) return;
 	if (!player) return;
 
 	auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> (*player));
@@ -1657,7 +1657,7 @@ void cGameGui::updateSelectedUnitIdleSound ()
 		bool water = staticMap->isWater (vehicle.getPosition());
 		if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player != vehicle.owner))
+		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player.get() != vehicle.owner))
 		{
 			startSelectedUnitSound (SoundData.SNDBuilding.get ());
 		}

@@ -91,13 +91,17 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (localClient->getMap ());
-    gameGui->setPlayer (&localClient->getActivePlayer ());
 
-    std::vector<const cPlayer*> guiPlayers;
-    for (size_t i = 0; i < localClient->getPlayerList ().size (); ++i)
-    {
-        guiPlayers.push_back (localClient->getPlayerList ()[i]);
-    }
+	std::vector<std::shared_ptr<const cPlayer>> guiPlayers;
+	for (size_t i = 0; i < localClient->getPlayerList ().size (); ++i)
+	{
+		const auto& player = localClient->getPlayerList ()[i];
+		guiPlayers.push_back (player);
+		if (player.get () == &localClient->getActivePlayer ())
+		{
+			gameGui->setPlayer (player);
+		}
+	}
     gameGui->setPlayers (guiPlayers);
 
 	gameGui->connectToClient (*localClient);

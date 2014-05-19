@@ -102,15 +102,21 @@ public:
 
 	const std::string& getName() const { return splayer.getName(); }
 	void setName (const std::string& name) { splayer.setName (name); }
+
 	unsigned int getColor() const { return splayer.getColorIndex(); }
 	void setColor (unsigned int index) { return splayer.setColorIndex (index); }
+
 	SDL_Surface* getColorSurface() const { return splayer.getColorSurface(); }
+
 	int getNr() const { return splayer.getNr(); }
+
 	int getSocketNum() const { return splayer.getSocketIndex(); }
 	void setSocketIndex (int index) { splayer.setSocketIndex (index); }
+
+	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex); }
+
 	void setLocal() { splayer.setLocal(); }
 	bool isLocal() const { return splayer.isLocal(); }
-	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex);}
 
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& id);
@@ -132,6 +138,8 @@ public:
 
 	cVehicle* addVehicle (const cPosition& position, const sID& id, unsigned int uid);
 	cBuilding* addBuilding (const cPosition& position, const sID& id, unsigned int uid);
+
+	void deleteAllUnits ();
 
 	cUnit* getNextUnit (cUnit* start);
 	cUnit* getPrevUnit (cUnit* start);

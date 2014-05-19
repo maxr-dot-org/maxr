@@ -48,7 +48,7 @@ public:
 
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
-	void setPlayer (const cPlayer* player);
+	void setPlayer (std::shared_ptr<const cPlayer> player);
 
 	static SDL_Surface* generateSurface ();
 
@@ -116,7 +116,7 @@ protected:
 private:
 	AutoSurface surface;
 
-	const cPlayer* player;
+	std::shared_ptr<const cPlayer> player;
 
 	cSignalConnectionManager signalConnectionManager;
 

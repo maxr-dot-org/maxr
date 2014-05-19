@@ -286,7 +286,7 @@ void cGameTimerServer::run (cServer& server)
 uint32_t calcClientChecksum (const cClient& client)
 {
 	uint32_t crc = 0;
-	const std::vector<cPlayer*>& players = client.getPlayerList();
+	const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
 		for (const cVehicle* vehicle = players[i]->VehicleList;
@@ -331,10 +331,10 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 void compareGameData (const cClient& client, const cServer& server)
 {
 #if !defined (NDEBUG)
-	const std::vector<cPlayer*>& players = client.getPlayerList();
+	const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		const cPlayer* clientPlayer = players[i];
+		const auto& clientPlayer = players[i];
 
 		for (const cVehicle* clientVehicle = clientPlayer->VehicleList;
 			 clientVehicle;

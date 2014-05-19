@@ -78,13 +78,17 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (client->getMap ());
-    gameGui->setPlayer (&client->getActivePlayer ());
 
-    std::vector<const cPlayer*> guiPlayers;
-    for (size_t i = 0; i < client->getPlayerList ().size(); ++i)
-    {
-        guiPlayers.push_back (client->getPlayerList ()[i]);
-    }
+	std::vector<std::shared_ptr<const cPlayer>> guiPlayers;
+	for (size_t i = 0; i < client->getPlayerList ().size (); ++i)
+	{
+		const auto& player = client->getPlayerList ()[i];
+		guiPlayers.push_back (player);
+		if (player.get () == &client->getActivePlayer ())
+		{
+			gameGui->setPlayer (player);
+		}
+	}
     gameGui->setPlayers (guiPlayers);
 
 	gameGui->connectToClient (*client);

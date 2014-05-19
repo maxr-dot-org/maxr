@@ -182,12 +182,16 @@ public:
     void handleChatMessage (const std::string& message);
 
 	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
-	const cMap* getMap() const { return Map.get(); }
-	cMap* getMap() { return Map.get(); }
-	const std::vector<cPlayer*>& getPlayerList() const { return PlayerList; }
-	std::vector<cPlayer*>& getPlayerList() { return PlayerList; }
+
+	std::shared_ptr<const cMap> getMap() const { return Map; }
+	const std::shared_ptr<cMap>& getMap() { return Map; }
+
+	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
+	std::vector<std::shared_ptr<cPlayer>>& getPlayerList () { return playerList; }
+
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
+
 	void setGameSetting (const cGameSettings& gameSetting_);
 	const cGameSettings* getGameSetting () const { return gameSetting.get (); }
 
@@ -326,9 +330,9 @@ private:
 	std::shared_ptr<cTCP> network;
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
 	/** the map */
-	AutoPtr<cMap> Map;
+	std::shared_ptr<cMap> Map;
 	/** List with all players */
-	std::vector<cPlayer*> PlayerList;
+	std::vector<std::shared_ptr<cPlayer>> playerList;
 	/** the active Player */
 	cPlayer* ActivePlayer;
 

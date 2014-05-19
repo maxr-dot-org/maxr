@@ -92,15 +92,19 @@ cClient::~cClient()
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+
+	// since currently the vehicles do own movejobs and other stuff that
+	// have non owning references to the client, we delete all units in the players
+	// and hopefully eliminate all those references by doing so...
+	for (size_t i = 0; i < playerList.size (); ++i)
 	{
-		delete PlayerList[i];
+		playerList[i]->deleteAllUnits ();
 	}
 }
 
 void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 {
-	Map = new cMap (staticMap);
+	Map = std::make_shared<cMap>(staticMap);
 	initPlayersWithMap();
 }
 
@@ -124,30 +128,30 @@ void cClient::setPlayers (const std::vector<sPlayer>& splayers, size_t activePla
 
 	for (size_t i = 0, size = splayers.size(); i != size; ++i)
 	{
-		PlayerList.push_back(new cPlayer(splayers[i]));
+		playerList.push_back(std::make_shared<cPlayer>(splayers[i]));
 	}
 
-	ActivePlayer = PlayerList[activePlayerIndex];
+	ActivePlayer = playerList[activePlayerIndex].get();
 
-	std::sort(PlayerList.begin(), PlayerList.end(), LessByNr());
+	//std::sort(PlayerList.begin(), PlayerList.end(), LessByNr());
 
 	initPlayersWithMap();
 }
 
 void cClient::initPlayersWithMap()
 {
-	if (PlayerList.empty() || Map == NULL) return;
+	if (playerList.empty() || Map == NULL) return;
 
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		PlayerList[i]->initMaps (*Map);
+		playerList[i]->initMaps (*Map);
 	}
 
 	// generate subbase for enemy players
-	for (size_t i = 0; i != PlayerList.size(); ++i)
+	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		if (PlayerList[i] == ActivePlayer) continue;
-		PlayerList[i]->base.SubBases.push_back (new sSubBase (PlayerList[i]));
+		if (playerList[i].get() == ActivePlayer) continue;
+		playerList[i]->base.SubBases.push_back (new sSubBase (playerList[i].get()));
 	}
 }
 
@@ -1857,9 +1861,9 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	}
 
 	// try to find plyer by name
-	for (unsigned int i = 0; i < PlayerList.size(); i++)
+	for (unsigned int i = 0; i < playerList.size (); i++)
 	{
-		if (PlayerList[i]->getName() == playerID) return PlayerList[i];
+		if (playerList[i]->getName () == playerID) return playerList[i].get();
 	}
 	return NULL;
 }

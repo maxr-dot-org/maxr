@@ -52,9 +52,9 @@ class cGameGui : public cWindow
 public:
 	explicit cGameGui (std::shared_ptr<const cStaticMap> staticMap);
 
-	void setDynamicMap (const cMap* dynamicMap);
-	void setPlayer (const cPlayer* player);
-    void setPlayers (const std::vector<const cPlayer*>& players);
+	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
+	void setPlayer (std::shared_ptr<const cPlayer> player);
+	void setPlayers (const std::vector<std::shared_ptr<const cPlayer>>& players);
 
 	void connectToClient (cClient& client);
 	void disconnectCurrentClient ();
@@ -90,8 +90,8 @@ private:
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
 	std::shared_ptr<const cStaticMap> staticMap;
-	const cMap* dynamicMap;
-	const cPlayer* player;
+	std::shared_ptr<const cMap> dynamicMap;
+	std::shared_ptr<const cPlayer> player;
 
 	cHud* hud;
 	cHudPanels* hudPanels;

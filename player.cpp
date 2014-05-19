@@ -203,31 +203,7 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 //------------------------------------------------------------------------------
 cPlayer::~cPlayer()
 {
-	// Erst alle geladenen Vehicles lˆschen:
-
-	for (cVehicle* ptr = VehicleList; ptr; ptr = ptr->next)
-	{
-		ptr->deleteStoredUnits();
-	}
-	// Jetzt alle Vehicles lˆschen:
-	while (VehicleList)
-	{
-		cVehicle* ptr = VehicleList->next;
-		VehicleList->setSentryActive(false);
-		delete VehicleList;
-		VehicleList = ptr;
-	}
-	while (BuildingList)
-	{
-		cBuilding* ptr = BuildingList->next;
-		BuildingList->setSentryActive (false);
-
-		// Stored Vehicles are already deleted; just clear the list
-		BuildingList->storedUnits.clear();
-
-		delete BuildingList;
-		BuildingList = ptr;
-	}
+	deleteAllUnits ();
 
 	for (size_t i = 0; i != ReportVehicles.size(); ++i)
 	{
@@ -392,6 +368,35 @@ cBuilding* cPlayer::addBuilding (const cPosition& position, const sID& id, unsig
 		else drawSpecialCircle (Building->getPosition(), Building->data.scan, ScanMap, mapSize);
 	}
 	return Building;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::deleteAllUnits ()
+{
+	// first delete all stored vehicles
+	for (cVehicle* ptr = VehicleList; ptr; ptr = ptr->next)
+	{
+		ptr->deleteStoredUnits ();
+	}
+	// now delete all other vehicles
+	while (VehicleList)
+	{
+		cVehicle* ptr = VehicleList->next;
+		VehicleList->setSentryActive (false);
+		delete VehicleList;
+		VehicleList = ptr;
+	}
+	while (BuildingList)
+	{
+		cBuilding* ptr = BuildingList->next;
+		BuildingList->setSentryActive (false);
+
+		// Stored Vehicles are already deleted; just clear the list
+		BuildingList->storedUnits.clear ();
+
+		delete BuildingList;
+		BuildingList = ptr;
+	}
 }
 
 //------------------------------------------------------------------------------

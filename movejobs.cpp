@@ -862,7 +862,7 @@ cClientMoveJob::cClientMoveJob (cClient& client_, const cPosition& source_, cons
 
 void cClientMoveJob::init(const cPosition& source_, cVehicle* Vehicle)
 {
-	Map = client->getMap();
+	Map = client->getMap().get();
 	this->Vehicle = Vehicle;
 	source = source_;
 	this->bPlane = (Vehicle->data.factorAir > 0);

@@ -29,10 +29,11 @@ class cNetMessage;
 
 enum class eSavedReportType
 {
-	Chat,
-	Unit,
-	Simple,
-	Translated
+	// fixed numbers for chat backward-compatibility
+	Simple     = 0,
+	Unit       = 1,
+	Chat       = 2,
+	Translated = 3
 };
 
 class cSavedReport

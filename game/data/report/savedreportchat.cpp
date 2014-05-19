@@ -41,8 +41,9 @@ cSavedReportChat::cSavedReportChat (cNetMessage& message)
 cSavedReportChat::cSavedReportChat (const tinyxml2::XMLElement& element)
 {
 	text = element.Attribute ("msg");
-	playerName = element.Attribute ("playername");
-	playerNumber = element.IntAttribute ("playernumber");
+	if (auto value = element.Attribute ("playername")) playerName = value;
+	playerNumber = 0;
+	element.QueryIntAttribute ("playernumber", &playerNumber);
 }
 
 //------------------------------------------------------------------------------

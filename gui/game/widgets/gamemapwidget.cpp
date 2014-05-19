@@ -157,9 +157,9 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setDynamicMap (const cMap* dynamicMap_)
+void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
-	dynamicMap = dynamicMap_;
+	dynamicMap = std::move(dynamicMap_);
 
 	dynamicMapSignalConnectionManager.disconnectAll ();
 
@@ -179,9 +179,9 @@ void cGameMapWidget::setDynamicMap (const cMap* dynamicMap_)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::setPlayer (const cPlayer* player_)
+void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
-	player = player_;
+	player = std::move(player_);
 }
 
 //------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ void cGameMapWidget::draw ()
 	drawPlanes ();
 
 	auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->data.canSurvey))
+	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->owner == player.get() && selectedVehicle->data.canSurvey))
 	{
 		drawResources ();
 	}
@@ -364,7 +364,7 @@ void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 	}
 	else
 	{
-		unitMenu->setUnit (unit, mouseMode->getType (), player, dynamicMap);
+		unitMenu->setUnit (unit, mouseMode->getType (), player.get (), dynamicMap.get ());
 		unitMenu->enable ();
 		unitMenu->show ();
 		updateUnitMenuPosition ();
@@ -690,7 +690,7 @@ void cGameMapWidget::drawBaseUnits ()
 				// FIXME: bug when (x,y) is outside of the drawing screen.
 				if (building.getPosition() == *i)
 				{
-					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor(), &unitSelection, player);
+					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 				}
 			}
 		}
@@ -718,7 +718,7 @@ void cGameMapWidget::drawTopBuildings ()
 		if (building->getPosition() != *i) continue;
 
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player);
+		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 
 		//if (debugOutput.debugBaseClient && building->SubBase)
 		//	drawTopBuildings_DebugBaseClient (*building, drawDestination);
@@ -744,7 +744,7 @@ void cGameMapWidget::drawShips ()
 		if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
 		}
 	}
 }
@@ -770,7 +770,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 			}
 		}
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
@@ -778,7 +778,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
-				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player);
+				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 			}
 		}
 
@@ -789,7 +789,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			// FIXME: BUG: when PosX,PosY is outside of drawing screen
 			if (vehicle->getPosition() == *i)
 			{
-				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
+				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
 			}
 		}
 	}
@@ -812,7 +812,7 @@ void cGameMapWidget::drawVehicles ()
 		if (vehicle->data.factorGround != 0 && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing ())
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
+			unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
 		}
 	}
 }
@@ -834,7 +834,7 @@ void cGameMapWidget::drawConnectors ()
 		if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
 		{
 			auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player);
+			unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 		}
 	}
 }
@@ -857,7 +857,7 @@ void cGameMapWidget::drawPlanes ()
 		for (auto it = planes.rbegin (); it != planes.rend (); ++it)
 		{
 			auto& plane = **it;
-			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player);
+			unitDrawingEngine.drawUnit (plane, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
 		}
 	}
 }
@@ -1030,7 +1030,7 @@ void cGameMapWidget::drawExitPoints ()
 
 	if (selectedVehicle && selectedVehicle->isDisabled () == false)
 	{
-		if (dynamicMap && selectedVehicle->owner == player &&
+		if (dynamicMap && selectedVehicle->owner == player.get () &&
 			(
 				(selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) ||
 				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns() == 0)
@@ -1038,7 +1038,7 @@ void cGameMapWidget::drawExitPoints ()
 		{
 			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return dynamicMap->possiblePlace (*selectedVehicle, position); });
 		}
-		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->owner == player)
+		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->owner == player.get ())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get());
 			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
@@ -1050,12 +1050,12 @@ void cGameMapWidget::drawExitPoints ()
 		if (selectedBuilding->BuildList.empty () == false &&
 			!selectedBuilding->isUnitWorking () &&
 			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
-			selectedBuilding->owner == player)
+			selectedBuilding->owner == player.get ())
 		{
 			auto unitToExit = selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ();
 			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
 		}
-		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->owner == player)
+		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->owner == player.get ())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get ());
 			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex ()]->data;
@@ -1235,7 +1235,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 {
 	auto moveJob = vehicle.ClientMoveJob;
 
-	if (!moveJob || !moveJob->Waypoints || vehicle.owner != player)
+	if (!moveJob || !moveJob->Waypoints || vehicle.owner != player.get ())
 	{
 		drawBuildPath (vehicle);
 		return;
@@ -1528,7 +1528,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		auto oldSelectedUnitForLock = selectedUnit;
 		bool consumed = false;
 
-		auto action = mouseMode->getMouseAction (*dynamicMap, tilePosition, unitSelection, player);
+		auto action = mouseMode->getMouseAction (*dynamicMap, tilePosition, unitSelection, player.get ());
 		if (action && (changeAllowed || !action->doesChangeState()))
 		{
 			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection);
@@ -1561,7 +1561,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		// if the selection has changed
 		if (player && lockActive)
 		{
-			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != player)
+			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != player.get ())
 			{
 				triggeredToggleUnitLock (tilePosition);
 			}
@@ -1650,7 +1650,7 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 	}
 	else
 	{
-		mouseMode->setCursor (mouse, *dynamicMap, getMapTilePosition (mouse.getPosition ()), unitSelection, player);
+		mouseMode->setCursor (mouse, *dynamicMap, getMapTilePosition (mouse.getPosition ()), unitSelection, player.get ());
 	}
 }
 
@@ -1704,7 +1704,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 {
 	if (building.data.hasDamageEffect &&
 		building.data.getHitpoints () < building.data.hitpointsMax &&
-		(building.owner == player || (!player || player->canSeeAnyAreaUnder (building))))
+		(building.owner == player.get () || (!player || player->canSeeAnyAreaUnder (building))))
 	{
 		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
@@ -1721,7 +1721,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 {
 	if (vehicle.data.getHitpoints () < vehicle.data.hitpointsMax &&
-		(vehicle.owner == player || (!player || player->canSeeAnyAreaUnder (vehicle))))
+		(vehicle.owner == player.get () || (!player || player->canSeeAnyAreaUnder (vehicle))))
 	{
 		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));
