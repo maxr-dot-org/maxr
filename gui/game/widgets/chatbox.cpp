@@ -29,53 +29,55 @@
 //------------------------------------------------------------------------------
 cChatBox::cChatBox (const cBox<cPosition>& area)
 {
-    setArea (area);
+	setArea (area);
 
-    chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition (), cPosition (getEndPosition ().x () - 162, getEndPosition ().y () - 16))));
-    chatList->disableSelectable ();
-    chatList->setBeginMargin (cPosition (2, 2));
-    chatList->setEndMargin (cPosition (2, 2));
+	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition (), cPosition (getEndPosition ().x () - 162, getEndPosition ().y () - 16))));
+	chatList->disableSelectable ();
+	chatList->setBeginMargin (cPosition (2, 2));
+	chatList->setEndMargin (cPosition (2, 2));
 
-    chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (cPosition (getPosition ().x () + 2, getEndPosition ().y () - 12), cPosition (getEndPosition ().x () - 164, getEndPosition ().y () - 2))));
-    signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cChatBox::sendCommand, this));
+	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (cPosition (getPosition ().x () + 2, getEndPosition ().y () - 12), cPosition (getEndPosition ().x () - 164, getEndPosition ().y () - 2))));
+	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cChatBox::sendCommand, this));
 
-    playersList = addChild (std::make_unique<cListView<cChatBoxPlayerListViewItem>> (cBox<cPosition> (cPosition (getEndPosition ().x () - 158, getPosition ().y ()), getEndPosition ())));
-    playersList->disableSelectable ();
-    playersList->setBeginMargin (cPosition (2, 2));
-    playersList->setEndMargin (cPosition (2, 2));
-    playersList->setItemDistance (cPosition (0, 4));
+	playersList = addChild (std::make_unique<cListView<cChatBoxPlayerListViewItem>> (cBox<cPosition> (cPosition (getEndPosition ().x () - 158, getPosition ().y ()), getEndPosition ())));
+	playersList->disableSelectable ();
+	playersList->setBeginMargin (cPosition (2, 2));
+	playersList->setEndMargin (cPosition (2, 2));
+	playersList->setItemDistance (cPosition (0, 4));
+
+	createBackground ();
 }
 
 //------------------------------------------------------------------------------
 void cChatBox::draw ()
 {
-    auto area1 = chatList->getArea ();
-    auto rect1 = area1.toSdlRect ();
-    Video.applyShadow (&rect1);
+	auto application = getActiveApplication ();
 
-    auto area2 = chatLineEdit->getArea ();
-    area2.getMinCorner () -= 2;
-    area2.getMaxCorner () += 2;
-    auto rect2 = area2.toSdlRect ();
-    Video.applyShadow (&rect2);
+	const bool hasKeyFocus = application && (application->hasKeyFocus (*chatLineEdit) ||
+											 application->hasKeyFocus (*chatList) ||
+											 application->hasKeyFocus (*playersList));
 
-    auto area3 = playersList->getArea ();
-    auto rect3 = area3.toSdlRect ();
-    Video.applyShadow (&rect3);
+	auto background = hasKeyFocus ? focusBackground.get () : nonFocusBackground.get ();
 
-    cWidget::draw ();
+	if (background != nullptr)
+	{
+		auto positionRect = getArea ().toSdlRect ();
+		SDL_BlitSurface (background, NULL, cVideo::buffer, &positionRect);
+	}
+
+	cWidget::draw ();
 }
 
 //------------------------------------------------------------------------------
 void cChatBox::clearPlayers ()
 {
-    playersList->clearItems ();
+	playersList->clearItems ();
 }
 
 //------------------------------------------------------------------------------
 void cChatBox::addPlayer (const cPlayer& player)
 {
-    playersList->addItem (std::make_unique<cChatBoxPlayerListViewItem> (player, playersList->getSize ().x () - playersList->getBeginMargin ().x () - playersList->getEndMargin ().x ()));
+	playersList->addItem (std::make_unique<cChatBoxPlayerListViewItem> (player, playersList->getSize ().x () - playersList->getBeginMargin ().x () - playersList->getEndMargin ().x ()));
 }
 
 //------------------------------------------------------------------------------
@@ -94,13 +96,33 @@ const cPlayer* cChatBox::getPlayerFromNumber (int playerNumber)
 //------------------------------------------------------------------------------
 void cChatBox::addChatMessage (const cPlayer& player, const std::string& message)
 {
-    auto newItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (player.getName(), message, chatList->getSize ().x () - chatList->getBeginMargin ().x () - chatList->getEndMargin ().x ()));
+	auto newItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (player.getName (), message, chatList->getSize ().x () - chatList->getBeginMargin ().x () - chatList->getEndMargin ().x ()));
 	chatList->scroolToItem (newItem);
 }
 
 //------------------------------------------------------------------------------
 void cChatBox::sendCommand ()
 {
-    commandEntered (chatLineEdit->getText ());
-    chatLineEdit->setText ("");
+	commandEntered (chatLineEdit->getText ());
+	chatLineEdit->setText ("");
+}
+
+//------------------------------------------------------------------------------
+void cChatBox::createBackground ()
+{
+	const auto& size = getSize ();
+	nonFocusBackground = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	focusBackground = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+
+	SDL_Rect chatListBackgroundRect = {chatList->getPosition ().x () - getPosition ().x (), chatList->getPosition ().y () - getPosition ().y (), chatList->getSize ().x (), chatList->getSize ().y ()};
+	SDL_FillRect (nonFocusBackground.get (), &chatListBackgroundRect, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+	SDL_FillRect (focusBackground.get (), &chatListBackgroundRect, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 100));
+
+	SDL_Rect chatLineEditBackgroundRect = {chatLineEdit->getPosition ().x () - getPosition ().x () - 2, chatLineEdit->getPosition ().y () - getPosition ().y () - 2, chatLineEdit->getSize ().x () + 4, chatLineEdit->getSize ().y () + 4};
+	SDL_FillRect (nonFocusBackground.get (), &chatLineEditBackgroundRect, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+	SDL_FillRect (focusBackground.get (), &chatLineEditBackgroundRect, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 100));
+
+	SDL_Rect playerListBackgroundRect = {playersList->getPosition ().x () - getPosition ().x (), playersList->getPosition ().y () - getPosition ().y (), playersList->getSize ().x (), playersList->getSize ().y ()};
+	SDL_FillRect (nonFocusBackground.get (), &playerListBackgroundRect, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+	SDL_FillRect (focusBackground.get (), &playerListBackgroundRect, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 100));
 }

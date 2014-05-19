@@ -43,29 +43,34 @@ class cPlayer;
 class cChatBox : public cWidget
 {
 public:
-    cChatBox (const cBox<cPosition>& area);
+	cChatBox (const cBox<cPosition>& area);
 
-    virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-    void clearPlayers ();
+	void clearPlayers ();
 
 	void addPlayer (const cPlayer& player);
 
 	const cPlayer* getPlayerFromNumber (int playerNumber);
 
-    void addChatMessage (const cPlayer& player, const std::string& message);
+	void addChatMessage (const cPlayer& player, const std::string& message);
 
-    cSignal<void (const std::string)> commandEntered;
+	cSignal<void (const std::string)> commandEntered;
 private:
-    cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager signalConnectionManager;
 
-    cLineEdit* chatLineEdit;
+	AutoSurface nonFocusBackground;
+	AutoSurface focusBackground;
 
-    cListView<cLobbyChatBoxListViewItem>* chatList;
+	cLineEdit* chatLineEdit;
 
-    cListView<cChatBoxPlayerListViewItem>* playersList;
+	cListView<cLobbyChatBoxListViewItem>* chatList;
 
-    void sendCommand ();
+	cListView<cChatBoxPlayerListViewItem>* playersList;
+
+	void sendCommand ();
+
+	void createBackground ();
 };
 
 #endif // gui_game_widgets_chatboxH

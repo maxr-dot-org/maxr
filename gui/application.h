@@ -69,6 +69,7 @@ public:
 
 	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
+	bool hasKeyFocus (const cWidget& widget) const;
 
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
     std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);

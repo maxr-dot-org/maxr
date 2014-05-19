@@ -210,6 +210,12 @@ void cApplication::releaseKeyFocus (const cWidget& widget)
 }
 
 //------------------------------------------------------------------------------
+bool cApplication::hasKeyFocus (const cWidget& widget) const
+{
+	return keyFocusWidget == &widget;
+}
+
+//------------------------------------------------------------------------------
 cMouse* cApplication::getActiveMouse ()
 {
 	return activeMouse;
