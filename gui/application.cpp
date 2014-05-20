@@ -40,28 +40,7 @@ cApplication::cApplication () :
 	activeMouse (nullptr),
 	activeKeyboard (nullptr)
 	//underMouseWidget (nullptr)
-{
-	shortcuts.push_back (std::make_unique<cShortcut> (cKeySequence ("Ctrl+a")));
-
-	shortcuts.back ()->triggered.connect ([ ]()
-	{
-		int stop = 0;
-	});
-
-	shortcuts.push_back (std::make_unique<cShortcut> (cKeySequence ("Ctrl+a,b")));
-
-	shortcuts.back ()->triggered.connect ([ ]()
-	{
-		int stop = 0;
-	});
-
-	shortcuts.push_back (std::make_unique<cShortcut> (cKeySequence ("Ctrl+c,b")));
-
-	shortcuts.back ()->triggered.connect ([ ]()
-	{
-		int stop = 0;
-	});
-}
+{}
 
 //------------------------------------------------------------------------------
 cApplication::~cApplication ()
