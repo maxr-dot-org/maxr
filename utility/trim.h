@@ -17,62 +17,47 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef utility_trimH
+#define utility_trimH
 
-#include <memory>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>
 
-#include "../../widget.h"
-
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+static inline std::string& trim_left (std::string& s)
 {
-public:
-	cChatBox (const cBox<cPosition>& area);
+	s.erase (s.begin (), std::find_if (s.begin (), s.end (), std::not1 (std::ptr_fun<int, int> (std::isspace))));
+	return s;
+}
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+static inline std::string& trim_right (std::string& s)
+{
+	s.erase (std::find_if (s.rbegin (), s.rend (), std::not1 (std::ptr_fun<int, int> (std::isspace))).base (), s.end ());
+	return s;
+}
 
-	void clearPlayers ();
+static inline std::string& trim (std::string& s)
+{
+	return trim_left (trim_right (s));
+}
 
-	void addPlayer (const cPlayer& player);
+static inline std::string trim_left_copy (const std::string& s)
+{
+	auto s2 = s;
+	return trim_left(s2);
+}
 
-	const cPlayer* getPlayerFromNumber (int playerNumber);
+static inline std::string trim_right_copy (const std::string& s)
+{
+	auto s2 = s;
+	return trim_right (s2);
+}
 
-	void addChatMessage (const cPlayer& player, const std::string& message);
+static inline std::string trim_copy (const std::string& s)
+{
+	auto s2 = s;
+	return trim (s2);
+}
 
-	void focus ();
-
-	cSignal<void (const std::string)> commandEntered;
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	AutoSurface nonFocusBackground;
-	AutoSurface focusBackground;
-
-	cLineEdit* chatLineEdit;
-
-	cListView<cLobbyChatBoxListViewItem>* chatList;
-
-	cListView<cChatBoxPlayerListViewItem>* playersList;
-
-	void sendCommand ();
-
-	void createBackground ();
-};
-
-#endif // gui_game_widgets_chatboxH
+#endif // utility_trimH

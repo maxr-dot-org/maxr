@@ -101,6 +101,15 @@ void cChatBox::addChatMessage (const cPlayer& player, const std::string& message
 }
 
 //------------------------------------------------------------------------------
+void cChatBox::focus ()
+{
+	auto application = getActiveApplication ();
+	if (!application) return;
+
+	application->grapKeyFocus (*chatLineEdit);
+}
+
+//------------------------------------------------------------------------------
 void cChatBox::sendCommand ()
 {
 	commandEntered (chatLineEdit->getText ());

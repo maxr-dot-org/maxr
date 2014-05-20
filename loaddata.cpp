@@ -195,16 +195,18 @@ int LoadData (void* data)
 	// Load Keys
 	MakeLog (lngPack.i18n ("Text~Init~Keys"), 0, 3);
 
-	if (LoadKeys() != 1)
+	try
 	{
+		KeysList.loadFromFile ();
+		MakeLog ("", 1, 3);
+	}
+	catch (std::runtime_error& e)
+	{
+		// TODO: write the error to some log?!
 		MakeLog ("", -1, 3);
 		SDL_Delay (5000);
 		loadingState = LOAD_ERROR;
 		return -1;
-	}
-	else
-	{
-		MakeLog ("", 1, 3);
 	}
 	Log.mark();
 

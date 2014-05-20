@@ -31,11 +31,13 @@
 #include "../utility/position.h"
 #include "../autosurface.h"
 #include "../maxrconfig.h"
+#include "shortcut.h"
 
 class cMouse;
 class cKeyboard;
 class cApplication;
 class cWindow;
+class cShortcut;
 
 class cWidget
 {
@@ -98,6 +100,10 @@ public:
 
 	const cBox<cPosition>& getArea () const;
 	void setArea (const cBox<cPosition>& area);
+
+	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
+
+	const std::vector<std::unique_ptr<cShortcut>>& getShortcuts () const;
 
 	virtual cWidget* getChildAt (const cPosition& position) const;
 
@@ -175,6 +181,8 @@ private:
 	AutoSurface frameSurface;
 
 	std::vector<std::unique_ptr<cWidget>> children;
+
+	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 
 	void createFrameSurface ();
 };

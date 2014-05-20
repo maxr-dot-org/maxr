@@ -40,7 +40,28 @@ cApplication::cApplication () :
 	activeMouse (nullptr),
 	activeKeyboard (nullptr)
 	//underMouseWidget (nullptr)
-{}
+{
+	shortcuts.push_back (std::make_unique<cShortcut> (cKeySequence ("Ctrl+a")));
+
+	shortcuts.back ()->triggered.connect ([ ]()
+	{
+		int stop = 0;
+	});
+
+	shortcuts.push_back (std::make_unique<cShortcut> (cKeySequence ("Ctrl+a,b")));
+
+	shortcuts.back ()->triggered.connect ([ ]()
+	{
+		int stop = 0;
+	});
+
+	shortcuts.push_back (std::make_unique<cShortcut> (cKeySequence ("Ctrl+c,b")));
+
+	shortcuts.back ()->triggered.connect ([ ]()
+	{
+		int stop = 0;
+	});
+}
 
 //------------------------------------------------------------------------------
 cApplication::~cApplication ()
@@ -371,12 +392,43 @@ void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
 	auto widget = getKeyFocusWidget ();
-	if (!widget || !widget->handleKeyPressed (*this, keyboard, key))
+
+	// TODO: catch TAB event and may switch key focus widget
+
+	const bool isShortcutKey = cKeyCombination::isRepresentableKey (key);
+
+	if (isShortcutKey) currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers (), key));
+
+	if (widget)
 	{
-		auto window = getActiveWindow ();
-		if (window)
+		if (isShortcutKey)
 		{
-			window->handleKeyPressed (*this, keyboard, key);
+			const auto& widgetShortcuts = widget->getShortcuts ();
+			if (hitShortcuts (currentKeySequence, widgetShortcuts)) return;
+		}
+
+		if (widget->handleKeyPressed (*this, keyboard, key)) return;
+	}
+
+	auto window = getActiveWindow ();
+	if (window)
+	{
+		if (isShortcutKey)
+		{
+			const auto& windowShortcuts = window->getShortcuts ();
+			if (hitShortcuts (currentKeySequence, windowShortcuts)) return;
+		}
+
+		if (window->handleKeyPressed (*this, keyboard, key)) return;
+	}
+
+	if (isShortcutKey)
+	{
+		if (hitShortcuts (currentKeySequence, shortcuts)) return;
+
+		while (currentKeySequence.length () >= maximalShortcutSequenceLength)
+		{
+			currentKeySequence.removeFirst ();
 		}
 	}
 }
@@ -385,9 +437,6 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 void cApplication::keyReleased (cKeyboard& keyboard, SDL_Keycode key)
 {
 	auto widget = getKeyFocusWidget ();
-
-	// TODO: catch TAB event and may switch key focus widget
-
 	if (!widget || !widget->handleKeyReleased (*this, keyboard, key))
 	{
 		auto window = getActiveWindow ();
@@ -418,4 +467,45 @@ void cApplication::assignKeyFocus (cWidget* widget)
 	}
 	if (keyFocusWidget && keyFocusWidget != widget) keyFocusWidget->handleLooseKeyFocus (*this);
 	keyFocusWidget = widget;
+}
+
+//------------------------------------------------------------------------------
+cShortcut* cApplication::addShortcut (std::unique_ptr<cShortcut> shortcut)
+{
+	shortcuts.push_back (std::move (shortcut));
+	return shortcuts.back ().get ();
+}
+
+//------------------------------------------------------------------------------
+bool cApplication::hitShortcuts (cKeySequence& keySequence, const std::vector<std::unique_ptr<cShortcut>>& shortcuts)
+{
+	bool anyMatch = false;
+	for (size_t i = 0; i < shortcuts.size (); ++i)
+	{
+		const auto& shortcutSequence = shortcuts[i]->getKeySequence ();
+
+		if (shortcutSequence.length () > keySequence.length ()) continue;
+
+		bool match = true;
+		for (size_t j = 1; j <= shortcutSequence.length (); ++j)
+		{
+			if (keySequence[keySequence.length () - j] != shortcutSequence[shortcutSequence.length () - j])
+			{
+				match = false;
+				break;
+			}
+		}
+
+		if (match)
+		{
+			shortcuts[i]->triggered ();
+			anyMatch = true;
+		}
+	}
+
+	if (anyMatch)
+	{
+		keySequence.reset ();
+	}
+	return anyMatch;
 }

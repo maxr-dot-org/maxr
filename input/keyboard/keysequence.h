@@ -17,62 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef input_keyboard_keysequence_H
+#define input_keyboard_keysequence_H
 
-#include <memory>
+#include <string>
+#include <vector>
 
-#include "../../widget.h"
+#include "keycombination.h"
 
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+class cKeySequence
 {
 public:
-	cChatBox (const cBox<cPosition>& area);
+	cKeySequence ();
+	explicit cKeySequence (const std::string& sequence);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	void addKeyCombination (cKeyCombination keyCombination);
+	void removeFirst ();
 
-	void clearPlayers ();
+	size_t length () const;
+	const cKeyCombination& operator[](size_t index) const;
 
-	void addPlayer (const cPlayer& player);
+	void reset ();
 
-	const cPlayer* getPlayerFromNumber (int playerNumber);
-
-	void addChatMessage (const cPlayer& player, const std::string& message);
-
-	void focus ();
-
-	cSignal<void (const std::string)> commandEntered;
+	std::string toString () const;
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	AutoSurface nonFocusBackground;
-	AutoSurface focusBackground;
-
-	cLineEdit* chatLineEdit;
-
-	cListView<cLobbyChatBoxListViewItem>* chatList;
-
-	cListView<cChatBoxPlayerListViewItem>* playersList;
-
-	void sendCommand ();
-
-	void createBackground ();
+	std::vector<cKeyCombination> keySequence;
 };
 
-#endif // gui_game_widgets_chatboxH
+#endif input_keyboard_keysequence_H

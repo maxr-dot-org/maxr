@@ -17,77 +17,66 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "keys.h"
+#include "keysequence.h"
 
 //------------------------------------------------------------------------------
-cKeysList::cKeysList () :
-	keyExit("Esc"),
-	keyJumpToAction("F11"),
-	keyEndTurn("Return"),
-	keyChat("Tab"),
-	keyScroll8a("Up"),
-	//keyScroll8b(""),
-	keyScroll2a("Down"),
-	//keyScroll2b(""),
-	keyScroll6a("Right"),
-	//keyScroll6b(""),
-	keyScroll4a("Left"),
-	//keyScroll4b(""),
-	//keyScroll7(""),
-	//keyScroll9(""),
-	//keyScroll1(""),
-	//keyScroll3(""),
-	keyZoomIna("]"),
-	//keyZoomInb(""),
-	keyZoomOuta("/"),
-	//keyZoomOutb(""),
-	keyFog("N"),
-	keyGrid("G"),
-	keyScan("S"),
-	keyRange("R"),
-	keyAmmo("A"),
-	keyHitpoints("T"),
-	keyColors("F"),
-	keyStatus("P"),
-	keySurvey("H"),
-	keyCalcPath("Shift"),
-	keyCenterUnit("F"),
-	keyUnitDone("E"),
-	keyUnitDoneAndNext("Space"),
-	keyUnitNext("W"),
-	keyUnitPrev("Q"),
-	keyUnitMenuAttack("A"),
-	keyUnitMenuBuild("B"),
-	keyUnitMenuTransfer("X"),
-	keyUnitMenuAutomove("A"),
-	keyUnitMenuStart("S"),
-	keyUnitMenuStop("S"),
-	keyUnitMenuClear("C"),
-	keyUnitMenuSentry("S"),
-	keyUnitMenuManualFire("M"),
-	keyUnitMenuActivate("A"),
-	keyUnitMenuLoad("L"),
-	keyUnitMenuReload("R"),
-	keyUnitMenuRepair("R"),
-	keyUnitMenuLayMine("L"),
-	keyUnitMenuClearMine("C"),
-	keyUnitMenuDisable("D"),
-	keyUnitMenuSteal("S"),
-	keyUnitMenuInfo("H"),
-	keyUnitMenuDistribute("D"),
-	keyUnitMenuResearch("R"),
-	keyUnitMenuUpgrade("U"),
-	keyUnitMenuDestroy("D")
+cKeySequence::cKeySequence ()
 {}
 
 //------------------------------------------------------------------------------
-void cKeysList::loadFromFile ()
+cKeySequence::cKeySequence (const std::string& sequence)
 {
+	std::string::size_type start = 0;
+	while (true)
+	{
+		auto end = sequence.find (',', start);
 
+		addKeyCombination (cKeyCombination (sequence.substr (start, end - start)));
+
+		if (end == std::string::npos) break;
+
+		start += end + 1;
+	}
 }
 
 //------------------------------------------------------------------------------
-void cKeysList::saveToFile ()
+void cKeySequence::addKeyCombination (cKeyCombination keyCombination)
 {
+	keySequence.push_back (std::move(keyCombination));
+}
 
+//------------------------------------------------------------------------------
+void cKeySequence::removeFirst ()
+{
+	keySequence.erase (keySequence.begin ());
+}
+
+//------------------------------------------------------------------------------
+size_t cKeySequence::length () const
+{
+	return keySequence.size ();
+}
+
+//------------------------------------------------------------------------------
+const cKeyCombination& cKeySequence::operator[](size_t index) const
+{
+	return keySequence[index];
+}
+
+//------------------------------------------------------------------------------
+void cKeySequence::reset ()
+{
+	keySequence.clear ();
+}
+
+//------------------------------------------------------------------------------
+std::string cKeySequence::toString () const
+{
+	std::string result;
+	for (size_t i = 0; i < keySequence.size (); ++i)
+	{
+		if (i > 0) result += ",";
+		result += keySequence[i].toString ();
+	}
+	return result;
 }

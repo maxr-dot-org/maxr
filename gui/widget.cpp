@@ -177,6 +177,19 @@ void cWidget::setArea (const cBox<cPosition>& area_)
 }
 
 //------------------------------------------------------------------------------
+cShortcut* cWidget::addShortcut (std::unique_ptr<cShortcut> shortcut)
+{
+	shortcuts.push_back (std::move (shortcut));
+	return shortcuts.back ().get ();
+}
+
+//------------------------------------------------------------------------------
+const std::vector<std::unique_ptr<cShortcut>>& cWidget::getShortcuts () const
+{
+	return shortcuts;
+}
+
+//------------------------------------------------------------------------------
 cWidget* cWidget::getChildAt (const cPosition& position) const
 {
 	// reverse order because the last child is the one that will be drawn last and therefor

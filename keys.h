@@ -16,89 +16,83 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef keysH
-#define keysH
-#include <SDL.h>
-#include <string>
-#include "defines.h"
 
-#if 1 // TODO [SDL2]: use scancode or keycode ?
-typedef SDL_Keycode SDLKey;
-#endif
+#ifndef keys_H
+#define keys_H
+
+#include "defines.h"
+#include "input/keyboard/keysequence.h"
 
 // Globale Daten /////////////////////////////////////////////////////////////
 class cKeysList
 {
 public:
-	SDLKey KeyExit;
-	SDLKey KeyJumpToAction;
-	SDLKey KeyEndTurn;
-	SDLKey KeyChat;
-	SDLKey KeyScroll8a;
-	SDLKey KeyScroll8b;
-	SDLKey KeyScroll2a;
-	SDLKey KeyScroll2b;
-	SDLKey KeyScroll6a;
-	SDLKey KeyScroll6b;
-	SDLKey KeyScroll4a;
-	SDLKey KeyScroll4b;
-	SDLKey KeyScroll7;
-	SDLKey KeyScroll9;
-	SDLKey KeyScroll1;
-	SDLKey KeyScroll3;
-	SDLKey KeyZoomIna;
-	SDLKey KeyZoomInb;
-	SDLKey KeyZoomOuta;
-	SDLKey KeyZoomOutb;
-	SDLKey KeyFog;
-	SDLKey KeyGrid;
-	SDLKey KeyScan;
-	SDLKey KeyRange;
-	SDLKey KeyAmmo;
-	SDLKey KeyHitpoints;
-	SDLKey KeyColors;
-	SDLKey KeyStatus;
-	SDLKey KeySurvey;
-	SDLKey KeyCalcPath;
-	SDLKey KeyCenterUnit;
-	SDLKey KeyUnitDone;
-	SDLKey KeyUnitDoneAndNext;
-	SDLKey KeyUnitNext;
-	SDLKey KeyUnitPrev;
-	SDLKey KeyUnitMenuAttack;
-	SDLKey KeyUnitMenuBuild;
-	SDLKey KeyUnitMenuTransfer;
-	SDLKey KeyUnitMenuAutomove;
-	SDLKey KeyUnitMenuStart;
-	SDLKey KeyUnitMenuStop;
-	SDLKey KeyUnitMenuClear;
-	SDLKey KeyUnitMenuSentry;
-	SDLKey KeyUnitMenuManualFire;
-	SDLKey KeyUnitMenuActivate;
-	SDLKey KeyUnitMenuLoad;
-	SDLKey KeyUnitMenuReload;
-	SDLKey KeyUnitMenuRepair;
-	SDLKey KeyUnitMenuLayMine;
-	SDLKey KeyUnitMenuClearMine;
-	SDLKey KeyUnitMenuDisable;
-	SDLKey KeyUnitMenuSteal;
-	SDLKey KeyUnitMenuInfo;
-	SDLKey KeyUnitMenuDistribute;
-	SDLKey KeyUnitMenuResearch;
-	SDLKey KeyUnitMenuUpgrade;
-	SDLKey KeyUnitMenuDestroy;
+	cKeysList ();
+
+	void loadFromFile ();
+	void saveToFile ();
+
+	cKeySequence keyExit;
+	cKeySequence keyJumpToAction;
+	cKeySequence keyEndTurn;
+	cKeySequence keyChat;
+	cKeySequence keyScroll8a;
+	cKeySequence keyScroll8b;
+	cKeySequence keyScroll2a;
+	cKeySequence keyScroll2b;
+	cKeySequence keyScroll6a;
+	cKeySequence keyScroll6b;
+	cKeySequence keyScroll4a;
+	cKeySequence keyScroll4b;
+	cKeySequence keyScroll7;
+	cKeySequence keyScroll9;
+	cKeySequence keyScroll1;
+	cKeySequence keyScroll3;
+	cKeySequence keyZoomIna;
+	cKeySequence keyZoomInb;
+	cKeySequence keyZoomOuta;
+	cKeySequence keyZoomOutb;
+	cKeySequence keyFog;
+	cKeySequence keyGrid;
+	cKeySequence keyScan;
+	cKeySequence keyRange;
+	cKeySequence keyAmmo;
+	cKeySequence keyHitpoints;
+	cKeySequence keyColors;
+	cKeySequence keyStatus;
+	cKeySequence keySurvey;
+	cKeySequence keyCalcPath;
+	cKeySequence keyCenterUnit;
+	cKeySequence keyUnitDone;
+	cKeySequence keyUnitDoneAndNext;
+	cKeySequence keyUnitNext;
+	cKeySequence keyUnitPrev;
+	cKeySequence keyUnitMenuAttack;
+	cKeySequence keyUnitMenuBuild;
+	cKeySequence keyUnitMenuTransfer;
+	cKeySequence keyUnitMenuAutomove;
+	cKeySequence keyUnitMenuStart;
+	cKeySequence keyUnitMenuStop;
+	cKeySequence keyUnitMenuClear;
+	cKeySequence keyUnitMenuSentry;
+	cKeySequence keyUnitMenuManualFire;
+	cKeySequence keyUnitMenuActivate;
+	cKeySequence keyUnitMenuLoad;
+	cKeySequence keyUnitMenuReload;
+	cKeySequence keyUnitMenuRepair;
+	cKeySequence keyUnitMenuLayMine;
+	cKeySequence keyUnitMenuClearMine;
+	cKeySequence keyUnitMenuDisable;
+	cKeySequence keyUnitMenuSteal;
+	cKeySequence keyUnitMenuInfo;
+	cKeySequence keyUnitMenuDistribute;
+	cKeySequence keyUnitMenuResearch;
+	cKeySequence keyUnitMenuUpgrade;
+	cKeySequence keyUnitMenuDestroy;
+private:
 } EX KeysList;
 
 typedef enum {OldSchool, Modern} eMouseStyle;
 EX eMouseStyle MouseStyle;
 
-// Prototypen ////////////////////////////////////////////////////////////////
-int LoadKeys();
-const char* GetKeyString (SDLKey key);
-SDLKey GetKeyFromString (const std::string& key);
-/**
-* Generats a new keys.xml file
-*/
-void GenerateKeysXml();
-
-#endif
+#endif // keys_H

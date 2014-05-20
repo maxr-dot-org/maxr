@@ -17,62 +17,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef utility_iequalsH
+#define utility_iequalsH
 
-#include <memory>
+#include <string>
+#include <cctype>
 
-#include "../../widget.h"
-
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+/**
+ * Case insensitive string comparison.
+ * (very basic implementation; does not support Unicode encoded strings!)
+ */
+bool iequals (const std::string& a, const std::string& b)
 {
-public:
-	cChatBox (const cBox<cPosition>& area);
+	if (a.size () != b.size ()) return false;
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	for (size_t i = 0; i < a.size (); ++i)
+	{
+		if (std::tolower (a[i]) != std::tolower (b[i])) return false;
+	}
+	return true;
+}
 
-	void clearPlayers ();
-
-	void addPlayer (const cPlayer& player);
-
-	const cPlayer* getPlayerFromNumber (int playerNumber);
-
-	void addChatMessage (const cPlayer& player, const std::string& message);
-
-	void focus ();
-
-	cSignal<void (const std::string)> commandEntered;
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-	AutoSurface nonFocusBackground;
-	AutoSurface focusBackground;
-
-	cLineEdit* chatLineEdit;
-
-	cListView<cLobbyChatBoxListViewItem>* chatList;
-
-	cListView<cChatBoxPlayerListViewItem>* playersList;
-
-	void sendCommand ();
-
-	void createBackground ();
-};
-
-#endif // gui_game_widgets_chatboxH
+#endif // utility_iequalsH

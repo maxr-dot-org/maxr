@@ -17,62 +17,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef input_keyboard_keycombination_H
+#define input_keyboard_keycombination_H
 
-#include <memory>
+#include <string>
 
-#include "../../widget.h"
+#include <SDL.h>
 
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
+#include "keymodifiertype.h"
 
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+class cKeyCombination
 {
 public:
-	cChatBox (const cBox<cPosition>& area);
+	explicit cKeyCombination (const std::string& sequence);
+	cKeyCombination (KeyModifierFlags modifiers, SDL_Keycode key);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	std::string toString () const;
 
-	void clearPlayers ();
+	bool operator==(const cKeyCombination& other) const;
+	bool operator!=(const cKeyCombination& other) const;
 
-	void addPlayer (const cPlayer& player);
-
-	const cPlayer* getPlayerFromNumber (int playerNumber);
-
-	void addChatMessage (const cPlayer& player, const std::string& message);
-
-	void focus ();
-
-	cSignal<void (const std::string)> commandEntered;
+	static bool isRepresentableKey (SDL_Keycode key);
 private:
-	cSignalConnectionManager signalConnectionManager;
+	KeyModifierFlags modifiers;
+	SDL_Keycode key;
 
-	AutoSurface nonFocusBackground;
-	AutoSurface focusBackground;
-
-	cLineEdit* chatLineEdit;
-
-	cListView<cLobbyChatBoxListViewItem>* chatList;
-
-	cListView<cChatBoxPlayerListViewItem>* playersList;
-
-	void sendCommand ();
-
-	void createBackground ();
+	void addKey (const std::string& sequence);
 };
 
-#endif // gui_game_widgets_chatboxH
+#endif input_keyboard_keycombination_H

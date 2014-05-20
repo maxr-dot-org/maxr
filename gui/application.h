@@ -26,6 +26,7 @@
 #include <list>
 #include <memory>
 
+#include "../input/keyboard/keysequence.h"
 #include "../utility/concurrentqueue.h"
 #include "../utility/signal/signalconnectionmanager.h"
 #include "../input/mouse/mousebuttontype.h"
@@ -36,6 +37,7 @@ class cWidget;
 class cWindow;
 class cPosition;
 class cRunnable;
+class cShortcut;
 
 class cApplication
 {
@@ -74,14 +76,22 @@ public:
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
     std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
 
+	cShortcut* addShortcut (std::unique_ptr<cShortcut> shortcut);
+
 	cMouse* getActiveMouse ();
 	cKeyboard* getActiveKeyboard ();
 private:
+	static const size_t maximalShortcutSequenceLength = 4;
+
 	std::vector<std::shared_ptr<cWindow>> modalWindows;
 
 	bool terminate;
 
 	cSignalConnectionManager signalConnectionManager;
+
+	cKeySequence currentKeySequence;
+
+	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 
 	cMouse* activeMouse;
 	cKeyboard* activeKeyboard;
@@ -110,6 +120,8 @@ private:
 	void textEntered (cKeyboard& keyboard, const char* text);
 
 	void assignKeyFocus (cWidget* widget);
+
+	bool hitShortcuts (cKeySequence& shortcut, const std::vector<std::unique_ptr<cShortcut>>& shortcuts);
 };
 
 //------------------------------------------------------------------------------

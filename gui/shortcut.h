@@ -17,62 +17,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_game_widgets_chatboxH
-#define gui_game_widgets_chatboxH
+#ifndef gui_shortcut_H
+#define gui_shortcut_H
 
-#include <memory>
+#include "../utility/signal/signal.h"
+#include "../input/keyboard/keysequence.h"
 
-#include "../../widget.h"
-
-#include "../../../utility/signal/signal.h"
-#include "../../../utility/signal/signalconnectionmanager.h"
-
-class cPosition;
-
-template<typename T>
-class cBox;
-
-class cLineEdit;
-
-template<typename T> class cListView;
-class cLobbyChatBoxListViewItem;
-class cChatBoxPlayerListViewItem;
-
-class cPlayer;
-
-class cChatBox : public cWidget
+class cShortcut
 {
 public:
-	cChatBox (const cBox<cPosition>& area);
+	cShortcut (cKeySequence keySequence);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	const cKeySequence& getKeySequence () const;
 
-	void clearPlayers ();
-
-	void addPlayer (const cPlayer& player);
-
-	const cPlayer* getPlayerFromNumber (int playerNumber);
-
-	void addChatMessage (const cPlayer& player, const std::string& message);
-
-	void focus ();
-
-	cSignal<void (const std::string)> commandEntered;
+	cSignal<void ()> triggered;
 private:
-	cSignalConnectionManager signalConnectionManager;
-
-	AutoSurface nonFocusBackground;
-	AutoSurface focusBackground;
-
-	cLineEdit* chatLineEdit;
-
-	cListView<cLobbyChatBoxListViewItem>* chatList;
-
-	cListView<cChatBoxPlayerListViewItem>* playersList;
-
-	void sendCommand ();
-
-	void createBackground ();
+	cKeySequence keySequence;
 };
 
-#endif // gui_game_widgets_chatboxH
+#endif gui_shortcut_H

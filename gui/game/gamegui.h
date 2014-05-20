@@ -68,8 +68,6 @@ public:
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
-
 	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
@@ -144,6 +142,8 @@ private:
 	void connectMoveJob (const cVehicle& vehicle);
 
 	void handleChatCommand (const std::string& command);
+
+	void initShortcuts ();
 
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;

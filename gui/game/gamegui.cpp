@@ -185,6 +185,8 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	{
 		stopSelectedUnitSound ();
 	});
+
+	initShortcuts ();
 }
 
 //------------------------------------------------------------------------------
@@ -1190,52 +1192,6 @@ bool cGameGui::handleMouseWheelMoved (cApplication& application, cMouse& mouse, 
 }
 
 //------------------------------------------------------------------------------
-bool cGameGui::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
-{
-	if (key == KeysList.KeyScroll1)
-	{
-		gameMap->scroll (cPosition (-cSettings::getInstance ().getScrollSpeed (), -cSettings::getInstance ().getScrollSpeed ()));
-		return true;
-	}
-	if (key == KeysList.KeyScroll3)
-	{
-		gameMap->scroll (cPosition (+cSettings::getInstance ().getScrollSpeed (), -cSettings::getInstance ().getScrollSpeed ()));
-		return true;
-	}
-	if (key == KeysList.KeyScroll7)
-	{
-		gameMap->scroll (cPosition (-cSettings::getInstance ().getScrollSpeed (), +cSettings::getInstance ().getScrollSpeed ()));
-		return true;
-	}
-	if (key == KeysList.KeyScroll9)
-	{
-		gameMap->scroll (cPosition (+cSettings::getInstance ().getScrollSpeed (), +cSettings::getInstance ().getScrollSpeed ()));
-		return true;
-	}
-	if (key == KeysList.KeyScroll2a || key == KeysList.KeyScroll2b)
-	{
-		gameMap->scroll (cPosition (0, +cSettings::getInstance ().getScrollSpeed ()));
-		return true;
-	}
-	if (key == KeysList.KeyScroll4a || key == KeysList.KeyScroll4b)
-	{
-		gameMap->scroll (cPosition (-cSettings::getInstance ().getScrollSpeed (), 0));
-		return true;
-	}
-	if (key == KeysList.KeyScroll6a || key == KeysList.KeyScroll6b)
-	{
-		gameMap->scroll (cPosition (+cSettings::getInstance ().getScrollSpeed (), 0));
-		return true;
-	}
-	if (key == KeysList.KeyScroll8a || key == KeysList.KeyScroll8b)
-	{
-		gameMap->scroll (cPosition (0, -cSettings::getInstance ().getScrollSpeed ()));
-		return true;
-	}
-	return cWindow::handleKeyPressed(application, keyboard, key);
-}
-
-//------------------------------------------------------------------------------
 void cGameGui::handleLooseMouseFocus (cApplication& application)
 {
 
@@ -1769,4 +1725,64 @@ void cGameGui::handleChatCommand (const std::string& command)
 	}
 
 	chatCommandTriggered (command);
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::initShortcuts ()
+{
+	//auto scroll1Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll1));
+	//signalConnectionManager.connect (scroll1Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance ().getScrollSpeed (), -cSettings::getInstance ().getScrollSpeed ())));
+
+	//auto scroll3Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll3));
+	//signalConnectionManager.connect (scroll3Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance ().getScrollSpeed (), -cSettings::getInstance ().getScrollSpeed ())));
+
+	//auto scroll7Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll7));
+	//signalConnectionManager.connect (scroll7Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance ().getScrollSpeed (), +cSettings::getInstance ().getScrollSpeed ())));
+
+	//auto scroll9Shortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll9));
+	//signalConnectionManager.connect (scroll9Shortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance ().getScrollSpeed (), +cSettings::getInstance ().getScrollSpeed ())));
+
+
+	auto scroll2aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll2a));
+	signalConnectionManager.connect (scroll2aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, +cSettings::getInstance ().getScrollSpeed ())));
+	//auto scroll2bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll2b));
+	//signalConnectionManager.connect (scroll2bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, +cSettings::getInstance ().getScrollSpeed ())));
+
+	auto scroll4aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll4a));
+	signalConnectionManager.connect (scroll4aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance ().getScrollSpeed (), 0)));
+	//auto scroll4bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll4b));
+	//signalConnectionManager.connect (scroll4bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (-cSettings::getInstance ().getScrollSpeed (), 0)));
+
+	auto scroll6aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll6a));
+	signalConnectionManager.connect (scroll6aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance ().getScrollSpeed (), 0)));
+	//auto scroll6bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll6b));
+	//signalConnectionManager.connect (scroll6bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (+cSettings::getInstance ().getScrollSpeed (), 0)));
+
+	auto scroll8aShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll8a));
+	signalConnectionManager.connect (scroll8aShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, -cSettings::getInstance ().getScrollSpeed ())));
+	//auto scroll8bShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyScroll8b));
+	//signalConnectionManager.connect (scroll8bShortcut->triggered, std::bind (&cGameMapWidget::scroll, gameMap, cPosition (0, -cSettings::getInstance ().getScrollSpeed ())));
+
+
+	auto exitShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyExit));
+	signalConnectionManager.connect (exitShortcut->triggered, [&]()
+	{
+		auto application = getActiveApplication ();
+
+		if (!application) return;
+
+		auto yesNoDialog = application->show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
+		signalConnectionManager.connect (yesNoDialog->yesClicked, [&]()
+		{
+			exit ();
+		});
+	});
+
+	auto chatShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyChat));
+	signalConnectionManager.connect (chatShortcut->triggered, [&]()
+	{
+		chatBox->show ();
+		chatBox->enable ();
+		chatBox->focus ();
+	});
 }
