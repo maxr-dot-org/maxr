@@ -30,6 +30,9 @@ class cKeySequence
 public:
 	cKeySequence ();
 	explicit cKeySequence (const std::string& sequence);
+	explicit cKeySequence (cKeyCombination keyCombination);
+	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2);
+	cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2, cKeyCombination keyCombination3);
 
 	void addKeyCombination (cKeyCombination keyCombination);
 	void removeFirst ();

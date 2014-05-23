@@ -96,7 +96,7 @@ cWindowResourceDistribution::cWindowResourceDistribution (const sSubBase& subBas
 	}
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (514, 430), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Done")));
-	doneButton->addClickShortcut (cKeySequence ("Return"));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, [&](){ done (); });
 
 	setBarLabels ();

@@ -24,6 +24,7 @@
 
 enum class eKeyModifierType
 {
+	None		= 0,
 	ShiftLeft	= (1 << 0),
 	ShiftRight	= (1 << 1),
 	CtrlLeft	= (1 << 2),

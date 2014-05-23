@@ -26,6 +26,10 @@ cKeySequence::cKeySequence ()
 //------------------------------------------------------------------------------
 cKeySequence::cKeySequence (const std::string& sequence)
 {
+	// FIXME: make the parser more intelligent:
+	//        e.g. it should be able to parse the following commands successfully:
+	//         - "Ctrl++" meaning the combination of the control and the plus key at the same time
+	//         - "a,," meaning first the a key and then the colon key.
 	std::string::size_type start = 0;
 	while (true)
 	{
@@ -37,6 +41,27 @@ cKeySequence::cKeySequence (const std::string& sequence)
 
 		start += end + 1;
 	}
+}
+
+//------------------------------------------------------------------------------
+cKeySequence::cKeySequence (cKeyCombination keyCombination)
+{
+	addKeyCombination (keyCombination);
+}
+
+//------------------------------------------------------------------------------
+cKeySequence::cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2)
+{
+	addKeyCombination (keyCombination1);
+	addKeyCombination (keyCombination2);
+}
+
+//------------------------------------------------------------------------------
+cKeySequence::cKeySequence (cKeyCombination keyCombination1, cKeyCombination keyCombination2, cKeyCombination keyCombination3)
+{
+	addKeyCombination (keyCombination1);
+	addKeyCombination (keyCombination2);
+	addKeyCombination (keyCombination3);
 }
 
 //------------------------------------------------------------------------------

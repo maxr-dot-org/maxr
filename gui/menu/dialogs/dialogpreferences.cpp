@@ -83,11 +83,11 @@ cDialogPreferences::cDialogPreferences () :
 	windowCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (25, 294 + 20 * 2), lngPack.i18n ("Text~Settings~Window")));
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (208, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
-	doneButton->addClickShortcut (cKeySequence ("Return"));
+	doneButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (doneButton->clicked, std::bind (&cDialogPreferences::doneClicked, this));
 
 	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (118, 383), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
-	cancelButton->addClickShortcut (cKeySequence ("Esc"));
+	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogPreferences::cancelClicked, this));
 
 	loadValues ();

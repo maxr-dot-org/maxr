@@ -78,11 +78,11 @@ void cWindowHangar::initialize ()
 
 
 	okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
-	okButton->addClickShortcut (cKeySequence ("Return"));
+	okButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_RETURN)));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowHangar::okClicked, this));
 
 	backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (349, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Back"), FONT_LATIN_NORMAL));
-	backButton->addClickShortcut (cKeySequence ("Esc"));
+	backButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (backButton->clicked, std::bind (&cWindowHangar::backClicked, this));
 }
 
