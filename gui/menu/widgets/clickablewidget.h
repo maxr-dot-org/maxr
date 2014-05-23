@@ -24,6 +24,9 @@
 
 #include "../../../maxrconfig.h"
 #include "../../widget.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+
+class cKeySequence;
 
 class cClickableWidget : public cWidget
 {
@@ -31,6 +34,8 @@ public:
 	cClickableWidget ();
 	explicit cClickableWidget (const cPosition& position);
 	explicit cClickableWidget (const cBox<cPosition>& area);
+
+	void addClickShortcut (cKeySequence keySequence, eMouseButtonType button = eMouseButtonType::Left);
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 
@@ -54,6 +59,8 @@ protected:
 
 	virtual bool acceptButton (eMouseButtonType button) const;
 private:
+	cSignalConnectionManager signalConnectionManager;
+
 	std::map<eMouseButtonType, bool> startedClickWithin;
 
 	bool& getStartedClickWithin (eMouseButtonType button);

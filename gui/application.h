@@ -121,7 +121,7 @@ private:
 
 	void assignKeyFocus (cWidget* widget);
 
-	bool hitShortcuts (cKeySequence& shortcut, const std::vector<std::unique_ptr<cShortcut>>& shortcuts);
+	bool hitShortcuts (cKeySequence& shortcut);
 };
 
 //------------------------------------------------------------------------------

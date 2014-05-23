@@ -32,8 +32,8 @@ cDialogOk::cDialogOk (const std::string& text) :
 	textLabel->setWordWrap (true);
 
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (111, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~OK"), FONT_LATIN_NORMAL));
+	okButton->addClickShortcut (cKeySequence ("Return"));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cDialogOk::okClicked, this));
-	// FIXME: add hot key RETURN to button
 }
 
 //------------------------------------------------------------------------------

@@ -403,3 +403,45 @@ void cWidget::drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectan
 	line_v.x += size.x () - 1;
 	SDL_FillRect (surface, &line_v, color);
 }
+
+//------------------------------------------------------------------------------
+bool cWidget::hitShortcuts (cKeySequence& keySequence)
+{
+	bool anyMatch = false;
+	for (size_t i = 0; i < shortcuts.size (); ++i)
+	{
+		const auto& shortcutSequence = shortcuts[i]->getKeySequence ();
+
+		if (shortcutSequence.length () > keySequence.length ()) continue;
+
+		bool match = true;
+		for (size_t j = 1; j <= shortcutSequence.length (); ++j)
+		{
+			if (keySequence[keySequence.length () - j] != shortcutSequence[shortcutSequence.length () - j])
+			{
+				match = false;
+				break;
+			}
+		}
+
+		if (match)
+		{
+			shortcuts[i]->triggered ();
+			anyMatch = true;
+		}
+	}
+
+	if (anyMatch)
+	{
+		keySequence.reset ();
+		return true;
+	}
+	else
+	{
+		for (size_t i = 0; i < children.size (); ++i)
+		{
+			if (children[i]->hitShortcuts (keySequence)) return true;
+		}
+	}
+	return false;
+}

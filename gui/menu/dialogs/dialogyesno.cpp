@@ -32,20 +32,20 @@ cDialogYesNo::cDialogYesNo (const std::string& text) :
 	textLabel->setWordWrap (true);
 
 	auto yesButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (155, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Yes"), FONT_LATIN_NORMAL));
+	yesButton->addClickShortcut (cKeySequence ("Return"));
 	signalConnectionManager.connect (yesButton->clicked, [&]()
 	{
 		yesClicked ();
 		close ();
 	});
-	// FIXME: add hot key RETURN to button
 
 	auto noButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (67, 185), ePushButtonType::Angular, lngPack.i18n ("Text~Others~No"), FONT_LATIN_NORMAL));
+	noButton->addClickShortcut (cKeySequence ("Esc"));
 	signalConnectionManager.connect (noButton->clicked, [&]()
 	{
 		noClicked ();
 		close ();
 	});
-	// FIXME: add hot key ESCAPE to button
 }
 
 //------------------------------------------------------------------------------

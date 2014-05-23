@@ -154,6 +154,226 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu->stealToggled.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->infoClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitMenu->doneClicked.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
+
+	auto attackShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAttack));
+	attackShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canAttack && unit->data.getShots ())
+		{
+			toggleMouseInputMode (eMouseModeType::Attack);
+		}
+	});
+
+	auto buildShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuBuild));
+	buildShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canBuild.empty () == false && unit->isUnitBuildingABuilding () == false)
+		{
+			triggeredBuild (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto transferShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuTransfer));
+	transferShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.storeResType != sUnitData::STORE_RES_NONE && unit->isUnitBuildingABuilding () == false && unit->isUnitClearing () == false)
+		{
+			toggleMouseInputMode (eMouseModeType::Transfer);
+		}
+	});
+
+	auto automoveShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuAutomove));
+	automoveShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canSurvey)
+		{
+			triggeredAutoMoveJob (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto startShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStart));
+	startShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canWork && unit->buildingCanBeStarted ())
+		{
+			triggeredStartWork (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto stopShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuStop));
+	stopShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->canBeStoppedViaUnitMenu ())
+		{
+			triggeredStopWork (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto clearShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClear));
+	clearShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canClearArea && dynamicMap && dynamicMap->getField (unit->getPosition ()).getRubble () && unit->isUnitClearing () == false)
+		{
+			triggeredStartClear (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto sentryShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSentry));
+	sentryShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && (unit->isSentryActive () || unit->data.canAttack || (!unit->isABuilding () && !unit->canBeStoppedViaUnitMenu ())))
+		{
+			triggeredSentry (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto manualFireShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuManualFire));
+	manualFireShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && (unit->isManualFireActive () || unit->data.canAttack))
+		{
+			triggeredManualFire (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto activateShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuActivate));
+	activateShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.storageUnitsMax > 0)
+		{
+			triggeredActivate (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto loadShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLoad));
+	loadShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.storageUnitsMax > 0)
+		{
+			toggleMouseInputMode (eMouseModeType::Load);
+		}
+	});
+
+	auto relaodShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuReload));
+	relaodShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRearm && unit->data.storageResCur >= 1)
+		{
+			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
+		}
+	});
+
+	auto repairShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuRepair));
+	repairShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRepair && unit->data.storageResCur >= 1)
+		{
+			toggleMouseInputMode (eMouseModeType::Repair);
+		}
+	});
+
+	auto layMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuLayMine));
+	layMineShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.storageResCur > 0)
+		{
+			triggeredLayMines (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto clearMineShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuClearMine));
+	clearMineShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.storageResCur < unit->data.storageResMax)
+		{
+			triggeredCollectMines (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto disableShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDisable));
+	disableShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canDisable && unit->data.getShots ())
+		{
+			toggleMouseInputMode (eMouseModeType::Disable);
+		}
+	});
+
+	auto stealShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuSteal));
+	stealShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canCapture && unit->data.getShots ())
+		{
+			toggleMouseInputMode (eMouseModeType::Steal);
+		}
+	});
+
+	auto infoShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuInfo));
+	infoShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit)
+		{
+			triggeredUnitHelp (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto distributeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDistribute));
+	distributeShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canMineMaxRes > 0 && unit->isUnitWorking ())
+		{
+			triggeredResourceDistribution (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto researchShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuResearch));
+	researchShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canResearch && unit->isUnitWorking ())
+		{
+			triggeredResearchMenu (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto upgradeShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuUpgrade));
+	upgradeShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.convertsGold)
+		{
+			triggeredUpgradesMenu (*unitSelection.getSelectedUnit ());
+		}
+	});
+
+	auto destroyShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitMenuDestroy));
+	destroyShortcut->triggered.connect ([this]()
+	{
+		auto unit = unitSelection.getSelectedUnit ();
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canSelfDestroy)
+		{
+			triggeredSelfDestruction (*unitSelection.getSelectedUnit ());
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

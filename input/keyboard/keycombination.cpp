@@ -126,6 +126,23 @@ static const struct
 	{SDLK_LEFT, "Left"},
 	{SDLK_DOWN, "Down"},
 	{SDLK_UP, "Up"},
+
+	{SDLK_KP_0, "KP0"},
+	{SDLK_KP_1, "KP1"},
+	{SDLK_KP_2, "KP2"},
+	{SDLK_KP_3, "KP3"},
+	{SDLK_KP_4, "KP4"},
+	{SDLK_KP_5, "KP5"},
+	{SDLK_KP_6, "KP6"},
+	{SDLK_KP_7, "KP7"},
+	{SDLK_KP_8, "KP8"},
+	{SDLK_KP_9, "KP9"},
+	{SDLK_KP_DIVIDE, "KPDiv"},
+	{SDLK_KP_MULTIPLY, "KPMult"},
+	{SDLK_KP_MINUS, "KPMinus"},
+	{SDLK_KP_PLUS, "KPPlus"},
+	{SDLK_KP_ENTER, "KPEnter"},
+	{SDLK_KP_PERIOD, "KPPeriod"}
 };
 
 //------------------------------------------------------------------------------

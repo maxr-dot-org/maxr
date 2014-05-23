@@ -57,9 +57,11 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	signalConnectionManager.connect (decreaseButton->clicked, [&](){ resourceBar->decrease (1); });
 
 	auto doneButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (159, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	doneButton->addClickShortcut (cKeySequence ("Return"));
 	signalConnectionManager.connect (doneButton->clicked, [&](){ done (); });
 
 	auto cancelButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (71, 200), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Cancel"), FONT_LATIN_NORMAL));
+	cancelButton->addClickShortcut (cKeySequence ("Esc"));
 	signalConnectionManager.connect (cancelButton->clicked, [&](){ close (); });
 
 	initUnitImage (*sourceUnitImage, sourceUnit);

@@ -45,6 +45,21 @@ cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
 {}
 
 //------------------------------------------------------------------------------
+void cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseButtonType button)
+{
+	auto shortcut = addShortcut (std::make_unique<cShortcut>(keySequence));
+	signalConnectionManager.connect (shortcut->triggered, [button,this]()
+	{
+		auto application = getActiveApplication ();
+		auto mouse = getActiveMouse ();
+
+		if (!application || !mouse) return;
+
+		this->handleClicked (*application, *mouse, button);
+	});
+}
+
+//------------------------------------------------------------------------------
 bool cClickableWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	if (!application.hasMouseFocus (*this)) return false;

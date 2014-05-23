@@ -58,8 +58,8 @@ public:
 	virtual bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 	virtual void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
-	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key);
-	virtual bool handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text);
+	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
+	virtual bool handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void ()> escapePressed;
 	cSignal<void ()> returnPressed;

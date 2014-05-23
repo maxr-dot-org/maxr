@@ -82,6 +82,11 @@ public:
 
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
+	virtual bool handleGetKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleLooseKeyFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
+
 	virtual void handleMoved (const cPosition& offset);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
@@ -106,6 +111,8 @@ private:
 
 	bool selectable;
 
+	bool hasKeyFocus;
+
 	void updateItems ();
 };
 
@@ -119,7 +126,8 @@ cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSele
 	itemDistance (0, 3),
 	beginDisplayItem (0),
 	endDisplayItem (0),
-	selectable (true)
+	selectable (true),
+	hasKeyFocus (false)
 {
 	assert (!allowMultiSelection); // multi selection not yet implemented
 }
@@ -305,6 +313,76 @@ bool cListView<ItemType>::handleMouseWheelMoved (cApplication& application, cMou
 	{
 		scrollDown ();
 		return true;
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+bool cListView<ItemType>::handleGetKeyFocus (cApplication& application)
+{
+	if (!isEnabled()) return false;
+
+	hasKeyFocus = true;
+
+	return true;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::handleLooseKeyFocus (cApplication& application)
+{
+	hasKeyFocus = false;
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key)
+{
+	if (!hasKeyFocus) return false;
+
+	switch (key)
+	{
+	//case SDLK_ESC:
+	//	return true;
+	case SDLK_UP:
+		if (selectable)
+		{
+			if (selectedItems.size () == 1)
+			{
+				for (size_t i = 0; i < items.size (); ++i)
+				{
+					if (selectedItems[0] == items[i].get() && i != 0)
+					{
+						setSelectedItem (items[i-1].get ());
+						scroolToItem (items[i-1].get ());
+						break;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	case SDLK_DOWN:
+		if (selectable)
+		{
+			if (selectedItems.size () == 1)
+			{
+				for (size_t i = 0; i < items.size (); ++i)
+				{
+					if (selectedItems[0] == items[i].get () && i != items.size ()-1)
+					{
+						setSelectedItem (items[i+1].get ());
+						scroolToItem (items[i+1].get ());
+						break;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	default:
+		return false;
 	}
 	return false;
 }

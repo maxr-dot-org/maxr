@@ -131,6 +131,8 @@ public:
 
 	virtual void handleMoved (const cPosition& offset);
 
+	virtual bool hitShortcuts (cKeySequence& keySequence);
+
 protected:
 	/**
 	 * Adds a new child

@@ -382,8 +382,7 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 	{
 		if (isShortcutKey)
 		{
-			const auto& widgetShortcuts = widget->getShortcuts ();
-			if (hitShortcuts (currentKeySequence, widgetShortcuts)) return;
+			if (widget->hitShortcuts (currentKeySequence)) return;
 		}
 
 		if (widget->handleKeyPressed (*this, keyboard, key)) return;
@@ -394,8 +393,7 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 	{
 		if (isShortcutKey)
 		{
-			const auto& windowShortcuts = window->getShortcuts ();
-			if (hitShortcuts (currentKeySequence, windowShortcuts)) return;
+			if (window->hitShortcuts (currentKeySequence)) return;
 		}
 
 		if (window->handleKeyPressed (*this, keyboard, key)) return;
@@ -403,7 +401,7 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 
 	if (isShortcutKey)
 	{
-		if (hitShortcuts (currentKeySequence, shortcuts)) return;
+		if (hitShortcuts (currentKeySequence)) return;
 
 		while (currentKeySequence.length () >= maximalShortcutSequenceLength)
 		{
@@ -456,8 +454,10 @@ cShortcut* cApplication::addShortcut (std::unique_ptr<cShortcut> shortcut)
 }
 
 //------------------------------------------------------------------------------
-bool cApplication::hitShortcuts (cKeySequence& keySequence, const std::vector<std::unique_ptr<cShortcut>>& shortcuts)
+bool cApplication::hitShortcuts (cKeySequence& keySequence)
 {
+	// TODO: remove code duplication with cWidget::hitShortcuts
+
 	bool anyMatch = false;
 	for (size_t i = 0; i < shortcuts.size (); ++i)
 	{

@@ -40,6 +40,7 @@ cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owne
 	auto unitDetails = addChild (std::make_unique<cUnitDetails> (getPosition () + cPosition (16, 297)));
 
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (447, 452), ePushButtonType::Angular, lngPack.i18n ("Text~Others~Done"), FONT_LATIN_NORMAL));
+	okButton->addClickShortcut (cKeySequence ("Return"));
 	signalConnectionManager.connect (okButton->clicked, [&](){ close (); });
 
 	if (unitData.ID.isAVehicle ())
