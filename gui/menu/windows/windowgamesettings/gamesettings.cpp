@@ -26,6 +26,13 @@
 #include "../../../../main.h"
 
 //------------------------------------------------------------------------------
+static std::string tolower(std::string s)
+{
+	std::transform (s.begin(), s.end(), s.begin(), static_cast<int(&)(int)> (std::tolower));
+	return s;
+}
+
+//------------------------------------------------------------------------------
 std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount, bool translated)
 {
 	if (translated)
@@ -63,8 +70,7 @@ std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amou
 //------------------------------------------------------------------------------
 eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string)
 {
-	auto lowerCaseString = string;
-	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+	auto lowerCaseString = tolower(string);
 
 	if (lowerCaseString.compare ("limited") == 0) return eGameSettingsResourceAmount::Limited;
 	else if (lowerCaseString.compare ("normal") == 0) return eGameSettingsResourceAmount::Normal;
@@ -111,8 +117,7 @@ std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity de
 //------------------------------------------------------------------------------
 eGameSettingsResourceDensity gameSettingsResourceDensityFromString (const std::string& string)
 {
-	auto lowerCaseString = string;
-	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+	auto lowerCaseString = tolower(string);
 
 	if (lowerCaseString.compare ("sparse") == 0) return eGameSettingsResourceDensity::Sparse;
 	else if (lowerCaseString.compare ("normal") == 0) return eGameSettingsResourceDensity::Normal;
@@ -151,8 +156,7 @@ std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type
 //------------------------------------------------------------------------------
 eGameSettingsBridgeheadType gameSettingsBridgeheadTypeFromString (const std::string& string)
 {
-	auto lowerCaseString = string;
-	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+	auto lowerCaseString = tolower(string);
 
 	if (lowerCaseString.compare ("definite") == 0) return eGameSettingsBridgeheadType::Definite;
 	else if (lowerCaseString.compare ("mobile") == 0) return eGameSettingsBridgeheadType::Mobile;
@@ -193,8 +197,7 @@ std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool trans
 //------------------------------------------------------------------------------
 eGameSettingsGameType gameSettingsGameTypeString (const std::string& string)
 {
-	auto lowerCaseString = string;
-	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+	auto lowerCaseString = tolower(string);
 
 	if (lowerCaseString.compare ("simultaneous") == 0) return eGameSettingsGameType::Simultaneous;
 	else if (lowerCaseString.compare ("turns") == 0) return eGameSettingsGameType::Turns;
@@ -236,8 +239,7 @@ std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition 
 //------------------------------------------------------------------------------
 eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std::string& string)
 {
-	auto lowerCaseString = string;
-	std::transform (lowerCaseString.begin (), lowerCaseString.end (), lowerCaseString.begin (), std::tolower);
+	auto lowerCaseString = tolower(string);
 
 	if (lowerCaseString.compare ("turns") == 0) return eGameSettingsVictoryCondition::Turns;
 	else if (lowerCaseString.compare ("points") == 0) return eGameSettingsVictoryCondition::Points;

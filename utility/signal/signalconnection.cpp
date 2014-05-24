@@ -38,7 +38,7 @@ void cSignalConnection::disconnect ()
 }
 
 //------------------------------------------------------------------------------
-cSignalConnection::cSignalConnection (int identifier_, std::weak_ptr<cSignalReference>& signalReference_) :
+cSignalConnection::cSignalConnection (unsigned int identifier_, std::weak_ptr<cSignalReference>& signalReference_) :
 	identifier (identifier_),
 	signalReference (signalReference_)
 {}

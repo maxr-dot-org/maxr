@@ -21,6 +21,8 @@
 #define gui_menu_windows_windowadvancedhangar_windowadvancedhangarH
 
 #include "../windowhangar/windowhangar.h"
+#include "gui/menu/widgets/pushbutton.h"
+#include "gui/menu/widgets/special/unitlistviewitembuy.h"
 
 template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar

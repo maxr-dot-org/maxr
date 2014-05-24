@@ -90,6 +90,8 @@ private:
 
 #else
 
+#include <limits>
+
 /**
  * Generic signal.
  *
@@ -200,7 +202,8 @@ template<typename R, typename... Args, typename ResultCombinerType>
 template<typename F>
 cSignalConnection cSignal<R (Args...), ResultCombinerType>::connect (F&& f)
 {
-	cSignalConnection connection (nextIdentifer++, std::weak_ptr<cSignalReference> (thisReference));
+	std::weak_ptr<cSignalReference> weakSignalRef(thisReference);
+	cSignalConnection connection (nextIdentifer++, weakSignalRef);
 	assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
 
 	assert (!isInvoking); // FIXME: can lead to endless loop! fix this and remove the assert
@@ -238,7 +241,7 @@ void cSignal<R (Args...), ResultCombinerType>::disconnect (const F& f)
 		//       platform independent we may choose to discard the disconnection
 		//       by the original function object and just allow disconnection by
 		//       the connection objects.
-		test_type* target = slot.function.target<test_type> ();
+		test_type* target = slot.function.template target<test_type> ();
 		if (target != nullptr)
 		{
 			auto& t1 = conditionalDeref (target, should_deref ());

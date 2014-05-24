@@ -57,7 +57,7 @@ struct sSignalCallIterator
 
 	sSignalCallIterator operator++(int)
 	{
-		sCallIterator tmp (*this);
+		sSignalCallIterator tmp (*this);
 		++*this;
 		return tmp;
 	}

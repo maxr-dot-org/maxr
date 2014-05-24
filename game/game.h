@@ -23,7 +23,7 @@
 #include <memory>
 #include "../utility/runnable.h"
 
-class cGame : public cRunnable, protected std::enable_shared_from_this<cGame>
+class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
 public:
 	virtual ~cGame () {}

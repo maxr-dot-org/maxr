@@ -45,4 +45,4 @@ private:
 	void addKey (const std::string& sequence);
 };
 
-#endif input_keyboard_keycombination_H
+#endif // input_keyboard_keycombination_H

@@ -28,6 +28,7 @@
 #include "../menu/windows/windowgamesettings/windowgamesettings.h"
 #include "../menu/windows/windowmapselection/windowmapselection.h"
 #include "../menu/windows/windowload/windowload.h"
+#include "../menu/windows/windowload/savegamedata.h"
 #include "../menu/dialogs/dialogok.h"
 #include "../../game/network/host/networkhostgamenew.h"
 #include "../../game/network/host/networkhostgamesaved.h"
@@ -294,7 +295,7 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 		{
 			auto menuPlayer = *i;
 			auto iter = std::find_if (savegamePlayers.begin (), savegamePlayers.end (), [&](const sPlayer& player) { return player.getName () == menuPlayer->getName (); });
-			
+
 			if (iter == savegamePlayers.end ())
 			{
 				// the player does not belong to the save game: disconnect him
@@ -505,7 +506,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage (cNetMessage& message)
 	case MU_MSG_FINISHED_MAP_DOWNLOAD: handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (message); break;
 	case MU_MSG_LANDING_POSITION: handleNetMessage_MU_MSG_LANDING_POSITION (message); break;
     default:
-        Log.write ("Host Menu Controller: Can not handle message type " + message.getTypeAsString (), cLog::eLOG_TYPE_NET_ERROR); 
+        Log.write ("Host Menu Controller: Can not handle message type " + message.getTypeAsString (), cLog::eLOG_TYPE_NET_ERROR);
         break;
 	}
 }

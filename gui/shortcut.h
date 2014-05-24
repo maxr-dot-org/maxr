@@ -35,4 +35,4 @@ private:
 	cKeySequence keySequence;
 };
 
-#endif gui_shortcut_H
+#endif // gui_shortcut_H

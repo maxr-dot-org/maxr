@@ -195,11 +195,11 @@ bool cBox<PointType>::withinOrTouches(const PointType& point) const
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-bool cBox<PointType>::intersects(const cBox<PointType>& point) const
+bool cBox<PointType>::intersects(const cBox<PointType>& rhs) const
 {
-	for(size_t d = 0; d < point.size(); ++d)
+	for(size_t d = 0; d < PointType::size(); ++d)
 	{
-		if(std::min(maxCorner[d], other.getMaxCorner()[d]) < std::max(minCorner[d], other.getMinCorner()[d])) return false;
+		if(std::min(maxCorner[d], rhs.getMaxCorner()[d]) < std::max(minCorner[d], rhs.getMinCorner()[d])) return false;
 	}
 	return true;
 }

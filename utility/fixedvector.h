@@ -21,6 +21,7 @@
 #define utility_fixedvectorH
 
 #include <cassert>
+#include <cmath>
 #include <type_traits>
 
 /**
@@ -29,7 +30,7 @@
  * @tparam T Type of stored elements. Should be an arithmetic type.
  * @tparam D Dimension/size of the vector.
  */
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 class cFixedVector
 {
 public:
@@ -38,7 +39,7 @@ public:
 	typedef const T& const_reference_type;
 	typedef T* point_type;
 	typedef const T* const_point_type;
-	typedef std::integral_constant<size_t, D> const_size;
+	typedef std::integral_constant<std::size_t, D> const_size;
 
 	typedef cFixedVector<T, D> self_type;
 
@@ -47,8 +48,8 @@ public:
 	 * @param index The index of the vector. Should be 0 <= index <= size()
 	 * @return The element with the given index.
 	 */
-	reference_type operator[](size_t index);
-	const_reference_type operator[](size_t index) const;
+	reference_type operator[](std::size_t index);
+	const_reference_type operator[](std::size_t index) const;
 
 	//
 	// arithmetic operations
@@ -89,13 +90,13 @@ public:
 
 	/**
 	 * Returns the fixed size of the vector.
-	 * @return 
+	 * @return
 	 */
-	size_t size() const;
+	std::size_t size() const;
 
 	/**
 	 * Access to the underlying data.
-	 * @return 
+	 * @return
 	 */
 	point_type data();
 	const_point_type data() const;
@@ -104,27 +105,27 @@ private:
 };
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
-typename cFixedVector<T, D>::reference_type cFixedVector<T, D>::operator[](size_t index)
+template<typename T, std::size_t D>
+typename cFixedVector<T, D>::reference_type cFixedVector<T, D>::operator[](std::size_t index)
 {
 	assert(index < D);
 	return data_[index];
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
-typename cFixedVector<T, D>::const_reference_type cFixedVector<T, D>::operator[](size_t index) const
+template<typename T, std::size_t D>
+typename cFixedVector<T, D>::const_reference_type cFixedVector<T, D>::operator[](std::size_t index) const
 {
 	assert(index < D);
 	return data_[index];
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator+(const value_type& value) const
 {
 	cFixedVector<T, D> result;
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] + value;
 	}
@@ -132,11 +133,11 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator+(const value
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator-(const value_type& value) const
 {
 	cFixedVector<T, D> result;
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] - value;
 	}
@@ -144,11 +145,11 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator-(const value
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator*(const value_type& value) const
 {
 	cFixedVector<T, D> result;
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] * value;
 	}
@@ -156,11 +157,11 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator*(const value
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator/(const value_type& value) const
 {
 	cFixedVector<T, D> result;
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] / value;
 	}
@@ -168,10 +169,10 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator/(const value
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator=(const value_type& value)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] = value;
 	}
@@ -179,10 +180,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator=(const valu
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator+=(const value_type& value)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] += value;
 	}
@@ -190,10 +191,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator+=(const val
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator-=(const value_type& value)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] -= value;
 	}
@@ -201,10 +202,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator-=(const val
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator*=(const value_type& value)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] *= value;
 	}
@@ -212,10 +213,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator*=(const val
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator/=(const value_type& value)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] /= value;
 	}
@@ -223,11 +224,11 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator/=(const val
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator+(const self_type& other) const
 {
 	cFixedVector<T, D> result;
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] + other[d];
 	}
@@ -235,11 +236,11 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator+(const self_
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator-(const self_type& other) const
 {
 	cFixedVector<T, D> result;
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] - other[d];
 	}
@@ -247,11 +248,11 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator-(const self_
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator/(const self_type& other) const
 {
 	cFixedVector<T, D> result;
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] / other[d];
 	}
@@ -259,11 +260,11 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator/(const self_
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator*(const self_type& other) const
 {
 	cFixedVector<T, D> result;
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		result[d] = data_[d] * other[d];
 	}
@@ -271,10 +272,10 @@ typename cFixedVector<T, D>::self_type cFixedVector<T, D>::operator*(const self_
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator+=(const self_type& other)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] += other[d];
 	}
@@ -282,10 +283,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator+=(const sel
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator-=(const self_type& other)
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] -= other[d];
 	}
@@ -293,10 +294,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator-=(const sel
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator/=(const self_type& other)
 {
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] /= other[d];
 	}
@@ -304,10 +305,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator/=(const sel
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator*=(const self_type& other)
 {
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] *= other[d];
 	}
@@ -315,10 +316,10 @@ typename cFixedVector<T, D>::self_type& cFixedVector<T, D>::operator*=(const sel
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 bool cFixedVector<T, D>::operator==(const value_type& other) const
 {
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		if (data_[d] != other) return false;
 	}
@@ -326,17 +327,17 @@ bool cFixedVector<T, D>::operator==(const value_type& other) const
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 bool cFixedVector<T, D>::operator!=(const value_type& other) const
 {
 	return !((*this) == other);
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 bool cFixedVector<T, D>::operator==(const self_type& other) const
 {
-	for(size_t d = 0; d < D; ++d)
+	for(std::size_t d = 0; d < D; ++d)
 	{
 		if(data_[d] != other[d]) return false;
 	}
@@ -344,7 +345,7 @@ bool cFixedVector<T, D>::operator==(const self_type& other) const
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 bool cFixedVector<T, D>::operator!=(const self_type& other) const
 {
 	return !((*this) == other);
@@ -352,11 +353,11 @@ bool cFixedVector<T, D>::operator!=(const self_type& other) const
 
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::value_type cFixedVector<T, D>::dotProduct (const self_type& other) const
 {
 	value_type result = 0;
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		result += data_[d] * other[d];
 	}
@@ -364,35 +365,35 @@ typename cFixedVector<T, D>::value_type cFixedVector<T, D>::dotProduct (const se
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 double cFixedVector<T, D>::l2Norm () const
 {
 	return std::sqrt (dotProduct (*this));
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 double cFixedVector<T, D>::l2NormSquared () const
 {
 	return dotProduct(*this);
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
-size_t cFixedVector<T, D>::size() const
+template<typename T, std::size_t D>
+std::size_t cFixedVector<T, D>::size() const
 {
 	return D;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::point_type cFixedVector<T, D>::data()
 {
 	return data_;
 }
 
 //------------------------------------------------------------------------------
-template<typename T, size_t D>
+template<typename T, std::size_t D>
 typename cFixedVector<T, D>::const_point_type cFixedVector<T, D>::data() const
 {
 	return data_;

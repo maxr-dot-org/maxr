@@ -44,7 +44,7 @@ public:
 	 */
 	void disconnect ();
 private:
-	cSignalConnection (int identifier_, std::weak_ptr<cSignalReference>& signalReference);
+	cSignalConnection (unsigned int identifier_, std::weak_ptr<cSignalReference>& signalReference);
 
 	unsigned int identifier;
 	std::weak_ptr<cSignalReference> signalReference;

@@ -47,4 +47,4 @@ private:
 	std::vector<cKeyCombination> keySequence;
 };
 
-#endif input_keyboard_keysequence_H
+#endif // input_keyboard_keysequence_H

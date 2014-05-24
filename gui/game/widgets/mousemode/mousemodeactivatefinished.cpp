@@ -24,9 +24,10 @@
 #include "../../../../buildings.h"
 #include "../../../../input/mouse/mouse.h"
 #include "../../../../input/mouse/cursor/mousecursorsimple.h"
+#include "gui/game/widgets/mouseaction/mouseactiontransfer.h"
 
 //------------------------------------------------------------------------------
-void cMouseModeActivateFinished::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
+void cMouseModeActivateFinished::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
 {
 	if (canExecuteAction (map, mapPosition, unitSelection))
 	{
@@ -39,7 +40,7 @@ void cMouseModeActivateFinished::setCursor (cMouse& mouse, const cMap& map, cons
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeActivateFinished::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
+std::unique_ptr<cMouseAction> cMouseModeActivateFinished::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
 {
 	if (canExecuteAction (map, mapPosition, unitSelection))
 	{

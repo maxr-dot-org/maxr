@@ -35,6 +35,7 @@ class cWindowLoad : public cWindow
 {
 public:
 	cWindowLoad ();
+	~cWindowLoad();
 
 	void update ();
 
@@ -57,7 +58,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	cPushButton* loadButton;
-	
+
 	static const size_t rows = 5;
 	static const size_t columns = 2;
 

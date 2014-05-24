@@ -377,6 +377,11 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 }
 
 //------------------------------------------------------------------------------
+cGameMapWidget::~cGameMapWidget()
+{
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
 	dynamicMap = std::move(dynamicMap_);
@@ -1099,7 +1104,7 @@ void cGameMapWidget::drawResources ()
 
 		const auto& resource = dynamicMap->getResource (*i);
 		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-		
+
 		if (resource.typ == RES_NONE)
 		{
 			src.x = 0;

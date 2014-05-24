@@ -43,7 +43,7 @@ class cGameMapWidget : public cClickableWidget
 {
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer);
-
+	~cGameMapWidget();
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setUnitSelection (const cUnitSelection* unitSelection);

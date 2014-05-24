@@ -47,6 +47,7 @@
 #include "../menu/windows/windowupgrades/windowupgrades.h"
 #include "../menu/windows/windowreports/windowreports.h"
 #include "../menu/windows/windowloadsave/windowloadsave.h"
+#include "../menu/windows/windowload/savegamedata.h"
 
 #include "../../keys.h"
 #include "../../player.h"
@@ -126,7 +127,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (hud->colorToggled, [&](){ gameMap->setDrawColor (hud->getColorActive ()); });
 	signalConnectionManager.connect (hud->rangeToggled, [&](){ gameMap->setDrawRange (hud->getRangeActive ()); });
 	signalConnectionManager.connect (hud->fogToggled, [&](){ gameMap->setDrawFog (hud->getFogActive ()); });
-	
+
 	signalConnectionManager.connect (hud->helpClicked, [&](){ gameMap->toggleHelpMode (); });
 	signalConnectionManager.connect (hud->centerClicked, [&]()
 	{
@@ -263,7 +264,7 @@ void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 			{
 				auto& savedChatReport = static_cast<const cSavedReportChat&>(report);
 				auto player = chatBox->getPlayerFromNumber (savedChatReport.getPlayerNumber ());
-				
+
 				if (player)
 				{
 					chatBox->addChatMessage (*player, savedChatReport.getText ());
@@ -652,7 +653,7 @@ void cGameGui::connectToClient (cClient& client)
 			}
 		}
 	});
-	
+
 	clientSignalConnectionManager.connect (gameMap->triggeredEndBuilding, [&](cVehicle& vehicle, const cPosition& destination)
 	{
 		sendWantEndBuilding (client, vehicle, destination.x (), destination.y ());
@@ -1072,7 +1073,7 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 			if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle ())
 			{
 				if (!vehicle.ClientMoveJob) return;
-				
+
 				bool wasWater = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->position);
 				bool water = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->next->position);
 
