@@ -35,10 +35,10 @@
 
 //------------------------------------------------------------------------------
 cApplication::cApplication () :
-	keyFocusWidget (nullptr),
-	mouseFocusWidget (nullptr),
 	activeMouse (nullptr),
-	activeKeyboard (nullptr)
+	activeKeyboard (nullptr),
+	keyFocusWidget (nullptr),
+	mouseFocusWidget (nullptr)
 	//underMouseWidget (nullptr)
 {}
 
@@ -53,8 +53,8 @@ public:
 	cFrameCounter () :
 		frames (0),
 		lastFrames (0),
-		lastCheckTime (),
-		framesPerSecond (0)
+		framesPerSecond (0),
+		lastCheckTime ()
 	{}
 
 	void frameDrawn ()
@@ -71,7 +71,7 @@ public:
 		if (timeSinceLastCheck > std::chrono::seconds (1))
 		{
 			double passedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(timeSinceLastCheck).count ();
-			
+
 			const auto framesSinceLastCheck = frames - lastFrames;
 
 			framesPerSecond = static_cast<unsigned int>(Round((float)framesSinceLastCheck / passedSeconds));

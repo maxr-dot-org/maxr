@@ -74,11 +74,11 @@ void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_) :
 	animationTimer (std::move (animationTimer_)),
 	drawingCache (animationTimer),
+	blinkColor (0x00FFFFFF),
 	shouldDrawHits (false),
 	shouldDrawStatus (false),
 	shouldDrawAmmo (false),
-	shouldDrawColor (false),
-	blinkColor (0x00FFFFFF)
+	shouldDrawColor (false)
 {
 	signalConnectionManager.connect (animationTimer->triggered100ms, std::bind (&cUnitDrawingEngine::rotateBlinkColor, this));
 }

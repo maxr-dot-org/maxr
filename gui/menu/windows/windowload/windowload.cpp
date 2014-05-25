@@ -30,8 +30,8 @@
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad () :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
-	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows * columns)) - 1),
 	page (0),
+	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows * columns)) - 1),
 	selectedSaveNumber (-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 12), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 12 + 10)), lngPack.i18n ("Text~Title~Load"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));

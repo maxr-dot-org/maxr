@@ -58,8 +58,8 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	network (std::move(network_)),
 	ActivePlayer (NULL),
 	casualtiesTracker (new cCasualtiesTracker()),
-	gameTimer(),
-	effectsList (new cFxContainer)
+	effectsList (new cFxContainer),
+	gameTimer()
 {
 	assert (server != nullptr || network != nullptr);
 

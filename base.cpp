@@ -36,11 +36,8 @@ sSubBase::sSubBase (cPlayer* owner_) :
 	buildings(),
 	owner (owner_),
 	MaxMetal(),
-	metal(),
 	MaxOil(),
-	oil(),
 	MaxGold(),
-	gold(),
 	MaxEnergyProd(),
 	EnergyProd(),
 	MaxEnergyNeed(),
@@ -56,18 +53,18 @@ sSubBase::sSubBase (cPlayer* owner_) :
 	MaxHumanNeed(),
 	MetalProd(),
 	OilProd(),
-	GoldProd()
+	GoldProd(),
+	metal(),
+	oil(),
+	gold()
 {}
 
 sSubBase::sSubBase (const sSubBase& other) :
 	buildings (other.buildings),
 	owner (other.owner),
 	MaxMetal (other.MaxMetal),
-	metal (other.metal),
 	MaxOil (other.MaxOil),
-	oil (other.oil),
 	MaxGold (other.MaxGold),
-	gold (other.gold),
 	MaxEnergyProd (other.MaxEnergyProd),
 	EnergyProd (other.EnergyProd),
 	MaxEnergyNeed (other.MaxEnergyNeed),
@@ -83,7 +80,10 @@ sSubBase::sSubBase (const sSubBase& other) :
 	MaxHumanNeed (other.MaxHumanNeed),
 	MetalProd (other.MetalProd),
 	OilProd (other.OilProd),
-	GoldProd (other.GoldProd)
+	GoldProd (other.GoldProd),
+	metal (other.metal),
+	oil (other.oil),
+	gold (other.gold)
 {}
 
 int sSubBase::getMaxMetalProd() const

@@ -54,17 +54,17 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	cUnit (Owner ? Owner->getUnitDataCurrentVersion (v.ID) : &v, Owner, ID),
 	next (0),
 	prev (0),
-	isBuilding (false),
-	isClearing (false),
-	layMines (false),
-	clearMines (false),
 	loaded (false),
+	isBuilding (false),
 	buildingTyp (),
 	buildCosts (0),
-	buildCostsStart (0),
 	buildTurns (0),
 	buildTurnsStart (0),
+	buildCostsStart (0),
+	isClearing (false),
 	clearingTurns (0),
+	layMines (false),
+	clearMines (false),
 	commandoRank (0)
 {
 	uiData = UnitsData.getVehicleUI (v.ID);

@@ -62,15 +62,15 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	dynamicMap (nullptr),
 	player (nullptr),
 	unitDrawingEngine (animationTimer),
+	mouseMode (std::make_unique<cMouseModeDefault>()),
 	pixelOffset (0, 0),
-	internalZoomFactor (1.),
+	internalZoomFactor (1.f),
 	shouldDrawSurvey (false),
 	shouldDrawScan (false),
 	shouldDrawGrid (false),
 	shouldDrawRange (false),
 	shouldDrawFog (false),
-	lockActive (false),
-	mouseMode (std::make_unique<cMouseModeDefault>())
+	lockActive (false)
 {
 	assert (staticMap != nullptr);
 

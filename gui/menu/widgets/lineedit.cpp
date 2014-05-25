@@ -35,10 +35,10 @@ cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_
 	text (""),
 	fontType (fontType_),
 	frameType (frameType_),
-	readOnly (false),
 	cursorPos (0),
 	startOffset (0),
 	endOffset (0),
+	readOnly (false),
 	hasKeyFocus (false),
 	showCursor (false)
 {

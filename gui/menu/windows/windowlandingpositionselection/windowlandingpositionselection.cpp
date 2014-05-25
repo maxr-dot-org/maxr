@@ -35,9 +35,9 @@
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_) :
 	cWindow (nullptr),
 	staticMap (std::move(staticMap_)),
-	lastSelectedPosition (0, 0),
 	selectionAllowed (true),
-	firstActivate (true)
+	firstActivate (true),
+	lastSelectedPosition (0, 0)
 {
 	using namespace std::placeholders;
 
