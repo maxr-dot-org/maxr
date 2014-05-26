@@ -26,7 +26,7 @@
 cUnitListViewItemBuy::cUnitListViewItemBuy (unsigned int width, const sID& unitId, const cPlayer& owner) :
 	cUnitListViewItem (width, unitId, owner)
 {
-	auto costLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition ().y ())), iToStr (owner.getUnitDataCurrentVersion (unitId)->buildCosts), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (width - 15, 0), cPosition (width, unitImage->getEndPosition ().y ())), iToStr (owner.getUnitDataCurrentVersion (unitId)->buildCosts), FONT_LATIN_SMALL_YELLOW, toEnumFlag (eAlignmentType::Right) | eAlignmentType::CenterVerical));
 
 	nameLabel->resize (nameLabel->getSize () - cPosition (15, 0));
 }

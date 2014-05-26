@@ -70,7 +70,7 @@ public:
 
 		if (timeSinceLastCheck > std::chrono::seconds (1))
 		{
-			double passedSeconds = std::chrono::duration_cast<std::chrono::duration<double>>(timeSinceLastCheck).count ();
+			const auto passedSeconds = std::chrono::duration_cast<std::chrono::duration<float>>(timeSinceLastCheck).count ();
 
 			const auto framesSinceLastCheck = frames - lastFrames;
 

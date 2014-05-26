@@ -68,8 +68,6 @@ public:
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
-	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
-
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void (int saveNumber, const std::string& name)> triggeredSave;

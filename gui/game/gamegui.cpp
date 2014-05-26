@@ -1193,12 +1193,6 @@ bool cGameGui::handleMouseWheelMoved (cApplication& application, cMouse& mouse, 
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::handleLooseMouseFocus (cApplication& application)
-{
-
-}
-
-//------------------------------------------------------------------------------
 void cGameGui::handleActivated (cApplication& application)
 {
 	cWindow::handleActivated (application);

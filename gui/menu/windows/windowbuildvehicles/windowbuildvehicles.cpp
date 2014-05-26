@@ -166,7 +166,6 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 //------------------------------------------------------------------------------
 void cWindowBuildVehicles::generateBuildList (const cBuilding& building)
 {
-	bool select = true;
 	for (size_t i = 0; i != building.BuildList.size (); ++i)
 	{
 		auto& item = addSelectedUnit (building.BuildList[i].type);

@@ -908,7 +908,6 @@ bool cUnicodeFont::isUtf8Space (const char* pch) const
 int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFontType fonttype) /*const*/
 {
 	const AutoSurface (&chars)[0xFFFF] = *getFontTypeSurfaces (fonttype);
-	SDL_Rect rTmp = {0, 0, 0, 0};
 
 	// make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts

@@ -1296,7 +1296,7 @@ void cGameMapWidget::drawExitPointsIf (const cUnit& unit, const std::function<bo
 
 	auto adjacentPositions = unit.getAdjacentPositions ();
 
-	for (int i = 0; i != adjacentPositions.size(); ++i)
+	for (size_t i = 0; i != adjacentPositions.size(); ++i)
 	{
 		if (predicate(adjacentPositions[i]))
 		{
@@ -1329,7 +1329,6 @@ void cGameMapWidget::drawExitPoint (const cPosition& position)
 void cGameMapWidget::drawBuildBand ()
 {
 	auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
 	const auto zoomedTileSize = getZoomedTileSize ();
 

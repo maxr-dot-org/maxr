@@ -22,6 +22,7 @@
 #include "keys.h"
 #include "files.h"
 #include "log.h"
+#include "main.h" // iToStr
 #include "extendedtinyxml.h"
 
 using namespace tinyxml2;
@@ -355,7 +356,11 @@ void cKeysList::saveToFile ()
 	mouseStyleElement->SetAttribute ("Text", MouseStyle == OldSchool ? "OLD_SCHOOL" : "MODERN");
 	mouseElement->LinkEndChild (mouseStyleElement);
 
-	keysXml.SaveFile (KEYS_XMLUsers);
+	const auto errorCode = keysXml.SaveFile (KEYS_XMLUsers);
+	if (errorCode != XML_NO_ERROR)
+	{
+		throw std::runtime_error (std::string ("Could not save key controls to '") + KEYS_XMLUsers + "'. Error code is " + iToStr ((int)errorCode) + "."); // TODO: transform error code to text.
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -190,8 +190,8 @@ void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosit
 
 	// for non 4:3 screen resolutions, the size of the circles is
 	// only correct in x dimension, because I don't draw an ellipse
-	const int warningRadius = (cLandingPositionManager::warningDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ();
-	const int tooCloseRadius = (cLandingPositionManager::tooCloseDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ();
+	const int warningRadius = static_cast<int>((cLandingPositionManager::warningDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ());
+	const int tooCloseRadius = static_cast<int>((cLandingPositionManager::tooCloseDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ());
 	drawCircle (pixelPosition.x (), pixelPosition.y(), warningRadius, SCAN_COLOR, *circleSurface);
 	drawCircle (pixelPosition.x (), pixelPosition.y(), tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
 

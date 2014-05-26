@@ -135,7 +135,7 @@ void cWindowLoad::updateSlots ()
 			{
 				slot->reset (saveNumber);
 			}
-			if (selectedSaveNumber == saveNumber) slot->setSelected (true);
+			if (selectedSaveNumber == static_cast<int>(saveNumber)) slot->setSelected (true);
 			else slot->setSelected (false);
 		}
 	}

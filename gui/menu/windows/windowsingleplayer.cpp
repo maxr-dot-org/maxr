@@ -111,11 +111,11 @@ std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const 
 			numAddConstructors = 2;
 		}
 
-		for (int i = 0; i != numAddConstructors; ++i)
+		for (size_t i = 0; i != numAddConstructors; ++i)
 		{
 			initialLandingUnits.push_back (std::make_pair (constructorID, 0));
 		}
-		for (int i = 0; i != numAddEngineers; ++i)
+		for (size_t i = 0; i != numAddEngineers; ++i)
 		{
 			initialLandingUnits.push_back (std::make_pair (engineerID, 0));
 		}

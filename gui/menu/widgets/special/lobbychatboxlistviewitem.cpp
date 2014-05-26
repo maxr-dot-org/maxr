@@ -35,7 +35,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerN
 {
 	const auto playerNameText = playerName + ": ";
 	const auto playerNameTextWidth = font->getTextWide (playerNameText);
-	auto nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
 
 	auto messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (playerNameTextWidth, 0), getPosition () + cPosition (width, 0)), text));
 	messageLabel->setWordWrap (true);

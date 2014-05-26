@@ -99,7 +99,7 @@ void cStartBuildJob::run (const cGameTimer& gameTimer)
 	{
 		int deltaX = (vehicle->getPosition().x() < org.x() ? -1 : 1) * MOVE_SPEED;
 		int deltaY = (vehicle->getPosition().y() < org.y() ? -1 : 1) * MOVE_SPEED;
-		int dir;
+		int dir = 0;
 		if (deltaX > 0 && deltaY > 0) dir = 3;
 		if (deltaX > 0 && deltaY < 0) dir = 1;
 		if (deltaX < 0 && deltaY > 0) dir = 5;

@@ -202,7 +202,7 @@ int LoadData (void* data)
 	}
 	catch (std::runtime_error& e)
 	{
-		// TODO: write the error to some log?!
+		Log.write (e.what (), LOG_TYPE_ERROR);
 		MakeLog ("", -1, 3);
 		SDL_Delay (5000);
 		loadingState = LOAD_ERROR;

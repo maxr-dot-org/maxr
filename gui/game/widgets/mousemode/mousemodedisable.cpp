@@ -69,7 +69,6 @@ std::unique_ptr<cMouseAction> cMouseModeDisable::getMouseAction (const cMap& map
 //------------------------------------------------------------------------------
 bool cMouseModeDisable::canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
 {
-	const auto& field = map.getField (mapPosition);
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
 	return selectedVehicle && selectedVehicle->canDoCommandoAction (mapPosition, map, false);
