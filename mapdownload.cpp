@@ -24,8 +24,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <algorithm> // std::transform
-#include <cctype> // std::tolower
 #include <cassert>
 
 #include "defines.h"
@@ -34,16 +32,14 @@
 #include "menuevents.h"
 #include "netmessage.h"
 #include "settings.h"
+#include "utility/string/tolower.h"
 
 using namespace std;
 
 //------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (const std::string& mapName, int32_t checksum)
 {
-	std::string lowerMapName (mapName);
-	std::transform (lowerMapName.begin(), lowerMapName.end(),
-					lowerMapName.begin(),
-					static_cast<int (*) (int)> (std::tolower));
+	std::string lowerMapName (to_lower_copy(mapName));
 
 	const struct
 	{

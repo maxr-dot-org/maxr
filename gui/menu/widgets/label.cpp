@@ -223,3 +223,11 @@ void cLabel::draw ()
 
 	cWidget::draw ();
 }
+
+//------------------------------------------------------------------------------
+void cLabel::handleResized (const cPosition& oldSize)
+{
+	cWidget::handleResized (oldSize);
+
+	updateDisplayInformation ();
+}

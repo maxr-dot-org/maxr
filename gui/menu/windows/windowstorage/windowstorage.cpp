@@ -30,6 +30,8 @@
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/image.h"
 #include "../../widgets/special/resourcebar.h"
+#include "../../dialogs/dialogok.h"
+#include "../../../application.h"
 #include "../../../game/widgets/unitdetailsstored.h"
 
 //------------------------------------------------------------------------------
@@ -131,6 +133,8 @@ cWindowStorage::cWindowStorage (const cUnit& unit_) :
 	updateUnitsWidgets ();
 	updateGlobalButtons ();
 	updateUpDownButtons ();
+
+	signalConnectionManager.connect (unit.destroyed, std::bind (&cWindowStorage::closeOnUnitDestruction, this));
 }
 
 //------------------------------------------------------------------------------
@@ -317,4 +321,15 @@ void cWindowStorage::upgradeAllClicked ()
 void cWindowStorage::doneClicked ()
 {
 	close ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowStorage::closeOnUnitDestruction ()
+{
+	close ();
+	auto application = getActiveApplication ();
+	if (application)
+	{
+		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate
+	}
 }

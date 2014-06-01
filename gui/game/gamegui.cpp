@@ -66,6 +66,7 @@
 #include "../../input/mouse/cursor/mousecursorsimple.h"
 #include "../../game/data/report/savedreportsimple.h"
 #include "../../game/data/report/savedreportchat.h"
+#include "../../game/data/report/savedreportunit.h"
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
@@ -75,7 +76,8 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	dynamicMap (nullptr),
 	mouseScrollDirection (0, 0),
 	selectedUnitSoundStream (-1),
-	openPanelOnActivation (true)
+	openPanelOnActivation (true),
+	savedReportPosition (false, cPosition ())
 {
 	auto hudOwning = std::make_unique<cHud> (animationTimer);
 
@@ -188,6 +190,13 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	});
 
 	initShortcuts ();
+
+	signalConnectionManager.connect (Video.resolutionChanged, std::bind (&cGameGui::handleResolutionChange, this));
+
+	signalConnectionManager.connect (Video.screenShotTaken, [this](const std::string& path)
+	{
+		messageList->addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", path));
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -258,32 +267,8 @@ void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 
 	if (player != nullptr)
 	{
-		playerSignalConnectionManager.connect (player->reportAdded, [&](const cSavedReport& report)
-		{
-			if (report.getType () == eSavedReportType::Chat)
-			{
-				auto& savedChatReport = static_cast<const cSavedReportChat&>(report);
-				auto player = chatBox->getPlayerFromNumber (savedChatReport.getPlayerNumber ());
-
-				if (player)
-				{
-					chatBox->addChatMessage (*player, savedChatReport.getText ());
-				}
-				else // should never happen!
-				{
-					messageList->addMessage (savedChatReport.getMessage (), false);
-				}
-			}
-			else
-			{
-				messageList->addMessage (report.getMessage (), report.isAlert ());
-
-				//	messageList->addMessage (report.getFullMessage () + " (" + GetKeyString (KeysList.KeyJumpToAction) + ")", alert);
-				//	// TODO: save position for jump!
-			}
-
-			if (cSettings::getInstance ().isDebug ()) Log.write (report.getMessage (), cLog::eLOG_TYPE_DEBUG);
-		});
+		using namespace std::placeholders;
+		playerSignalConnectionManager.connect (player->reportAdded, std::bind(&cGameGui::handleReport, this, _1));
 	}
 }
 
@@ -370,12 +355,12 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				if (command.length () <= 6)
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 				cPlayer* player = server->getPlayerFromString (command.substr (6, command.length ()));
@@ -383,7 +368,7 @@ void cGameGui::connectToClient (cClient& client)
 				// server can not be kicked
 				if (!player || player->getNr () == 0)
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 
@@ -393,12 +378,12 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				if (command.length () <= 9)
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 				const auto playerStr = command.substr (9, command.find_first_of (" ", 9) - 9);
@@ -408,7 +393,7 @@ void cGameGui::connectToClient (cClient& client)
 
 				if (!player)
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 				const int credits = atoi (creditsStr.c_str ());
@@ -421,12 +406,12 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				if (command.length () <= 12)
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 				cPlayer* player = server->getPlayerFromString (command.substr (12, command.length ()));
@@ -435,7 +420,7 @@ void cGameGui::connectToClient (cClient& client)
 				// can not disconnect local players
 				if (!player || player->getNr () == 0 || player->isLocal ())
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 
@@ -447,19 +432,19 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				if (command.length () <= 9)
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 
 				const int i = atoi (command.substr (9, command.length ()).c_str ());
 				if (i == 0 && command[10] != '0')
 				{
-					messageList->addMessage ("Wrong parameter", false);
+					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 
@@ -472,13 +457,13 @@ void cGameGui::connectToClient (cClient& client)
 				{
 					if (!server)
 					{
-						messageList->addMessage ("Command can only be used by Host", false);
+						messageList->addMessage ("Command can only be used by Host");
 						return;
 					}
 					cPlayer* player = client.getPlayerFromString (command.substr (7, 8));
 					if (!player)
 					{
-						messageList->addMessage ("Wrong parameter", false);
+						messageList->addMessage ("Wrong parameter");
 						return;
 					}
 					sendRequestResync (client, player->getNr ());
@@ -518,7 +503,7 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				cPlayer* serverPlayer = 0;
@@ -541,7 +526,7 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				client.getMap ()->assignRessources (*server->Map);
@@ -551,7 +536,7 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				server->enableFreezeMode (FREEZE_PAUSE);
@@ -560,7 +545,7 @@ void cGameGui::connectToClient (cClient& client)
 			{
 				if (!server)
 				{
-					messageList->addMessage ("Command can only be used by Host", false);
+					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
 				server->disableFreezeMode (FREEZE_PAUSE);
@@ -1213,6 +1198,12 @@ void cGameGui::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
+bool cGameGui::wantsCentered () const
+{
+	return false;
+}
+
+//------------------------------------------------------------------------------
 std::unique_ptr<cMouseCursor> cGameGui::getDefaultCursor () const
 {
 	return nullptr;
@@ -1780,4 +1771,64 @@ void cGameGui::initShortcuts ()
 		chatBox->enable ();
 		chatBox->focus ();
 	});
+
+	auto jumpToActionShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyJumpToAction));
+	signalConnectionManager.connect (jumpToActionShortcut->triggered, [&]()
+	{
+		if (savedReportPosition.first)
+		{
+			centerAt (savedReportPosition.second);
+		}
+	});
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::handleReport (const cSavedReport& report)
+{
+	if (report.getType () == eSavedReportType::Chat)
+	{
+		auto& savedChatReport = static_cast<const cSavedReportChat&>(report);
+		auto player = chatBox->getPlayerFromNumber (savedChatReport.getPlayerNumber ());
+
+		if (player)
+		{
+			chatBox->addChatMessage (*player, savedChatReport.getText ());
+		}
+		else // should never happen!
+		{
+			messageList->addMessage (savedChatReport.getMessage ());
+		}
+	}
+	else if (report.getType () == eSavedReportType::Unit)
+	{
+		auto& savedUnitReport = static_cast<const cSavedReportUnit&>(report);
+
+		savedReportPosition.first = true;
+		savedReportPosition.second = savedUnitReport.getPosition ();
+
+		messageList->addMessage (savedUnitReport.getMessage () + " (" + KeysList.keyJumpToAction.toString () + ")", eGameMessageListViewItemBackgroundColor::LightGray);
+
+	}
+	else
+	{
+		messageList->addMessage (report.getMessage (), report.isAlert () ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
+	}
+
+	if (cSettings::getInstance ().isDebug ()) Log.write (report.getMessage (), cLog::eLOG_TYPE_DEBUG);
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::handleResolutionChange ()
+{
+	hud->resizeToResolution ();
+
+	resize (hud->getSize ());
+
+	hudPanels->resize (cPosition (hudPanels->getSize ().x (), getSize ().y ()));
+
+	gameMap->resize (getSize () - cPosition (cHud::panelTotalWidth, cHud::panelTopHeight));
+
+	messageList->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200)));
+
+	chatBox->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
 }

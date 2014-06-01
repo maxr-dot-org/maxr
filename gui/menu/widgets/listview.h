@@ -74,6 +74,9 @@ public:
 	void pageDown ();
 	void pageUp ();
 
+	cSignal<void ()> itemRemoved;
+	cSignal<void ()> itemAdded;
+
 	cSignal<void ()> selectionChanged;
 
 	cSignal<void (ItemType&)> itemClicked;
@@ -90,6 +93,8 @@ public:
 	virtual void handleMoved (const cPosition& offset);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:
 
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
@@ -196,13 +201,21 @@ const cPosition& cListView<ItemType>::getItemDistance ()
 template<typename ItemType>
 ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 {
+	if (item == nullptr) return nullptr;
+
 	items.push_back (std::move (item));
 
-	items.back ()->setParent(this);
+	auto& addedItem = *items.back ();
+
+	addedItem.resize (cPosition (getSize ().x () - getBeginMargin ().x () - getEndMargin ().x (), addedItem.getSize().y()));
+
+	addedItem.setParent (this);
 
 	updateItems ();
 
-	return items.back ().get();
+	itemAdded ();
+
+	return &addedItem;
 }
 
 //------------------------------------------------------------------------------
@@ -239,6 +252,8 @@ std::unique_ptr<ItemType> cListView<ItemType>::removeItem (ItemType& item)
 		}
 
 		updateItems ();
+
+		itemRemoved ();
 
 		return std::move (removedItem);
 	}
@@ -282,6 +297,8 @@ void cListView<ItemType>::clearItems ()
 	items.clear ();
 
 	if (hadSelection) selectionChanged ();
+
+	itemRemoved ();
 }
 
 //------------------------------------------------------------------------------
@@ -411,6 +428,17 @@ void cListView<ItemType>::draw ()
 	}
 
 	cClickableWidget::draw ();
+}
+
+//------------------------------------------------------------------------------
+template<typename ItemType>
+void cListView<ItemType>::handleResized (const cPosition& oldSize)
+{
+	for (size_t i = 0; i < items.size (); ++i)
+	{
+		items[i]->resize (cPosition (getSize ().x () - getBeginMargin ().x () - getEndMargin ().x (), items[i]->getSize ().y ()));
+	}
+	updateItems ();
 }
 
 //------------------------------------------------------------------------------

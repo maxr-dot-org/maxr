@@ -43,6 +43,8 @@ public:
 	void resizeToTextHeight ();
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	std::string text;
 	eUnicodeFontType fontType;

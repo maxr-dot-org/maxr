@@ -313,6 +313,11 @@ void cCheckBox::renewSurface ()
 		src.x = 0;
 		src.y = (checked || isPressed) ? 21 : 0;
 		break;
+	case eCheckBoxType::ArrowDownSmall:
+		size = cPosition (18, 17);
+		src.x = (checked || isPressed) ? 187 + size.x () : 187;
+		src.y = 59;
+		break;
 	}
 	resize (size);
 	src.w = size.x ();

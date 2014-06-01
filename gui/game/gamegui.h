@@ -44,6 +44,7 @@ class cBuilding;
 class cAnimationTimer;
 class cClient;
 class cHudPanels;
+class cSavedReport;
 struct sID;
 struct sBuildList;
 
@@ -69,6 +70,8 @@ public:
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool wantsCentered () const MAXR_OVERRIDE_FUNCTION;
 
 	cSignal<void (int saveNumber, const std::string& name)> triggeredSave;
 protected:
@@ -100,6 +103,7 @@ private:
 	cLabel* additionalInfoLabel;
 
 	cPosition mouseScrollDirection;
+	std::pair<bool, cPosition> savedReportPosition;
 
 	int selectedUnitSoundStream;
 
@@ -142,6 +146,10 @@ private:
 	void handleChatCommand (const std::string& command);
 
 	void initShortcuts ();
+
+	void handleReport (const cSavedReport& report);
+
+	void handleResolutionChange ();
 
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;

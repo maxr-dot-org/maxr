@@ -53,6 +53,8 @@ private:
 
 	void generateSelectionList (const cBuilding& building, const cMap& map);
 	void generateBuildList (const cBuilding& building);
+
+	void closeOnUnitDestruction ();
 };
 
 #endif // gui_menu_windows_windowbuildvehicles_windowbuildvehiclesH

@@ -68,6 +68,8 @@ private:
 	int destinationMaxCargo;
 
 	void transferValueChanged ();
+
+	void closeOnUnitDestruction ();
 };
 
 #endif // gui_menu_dialogs_dialogtransferH

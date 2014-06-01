@@ -121,6 +121,12 @@ public:
 
 	virtual void executeStopCommand (const cClient& client) const = 0;
 
+	// Important NOTE: This signal will be triggered when the destructor of the unit gets called.
+	//                 This means when the signal is triggered it can not be guaranteed that all
+	//                 of the objects attributes are still valid (especially the ones of derived classes).
+	//                 Therefor you should not access the unit from a function that connects to this signal!
+	mutable cSignal<void ()> destroyed;
+
 	mutable cSignal<void ()> positionChanged;
 
 	mutable cSignal<void ()> renamed;

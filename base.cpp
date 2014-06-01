@@ -86,6 +86,11 @@ sSubBase::sSubBase (const sSubBase& other) :
 	gold (other.gold)
 {}
 
+sSubBase::~sSubBase ()
+{
+	destroyed ();
+}
+
 int sSubBase::getMaxMetalProd() const
 {
 	return calcMaxProd (RES_METAL);

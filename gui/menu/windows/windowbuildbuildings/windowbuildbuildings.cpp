@@ -23,6 +23,8 @@
 #include "../../widgets/listview.h"
 #include "../../widgets/special/unitlistviewitembuy.h"
 #include "../../widgets/special/buildspeedhandlerwidget.h"
+#include "../../dialogs/dialogok.h"
+#include "../../../application.h"
 #include "../../../../pcx.h"
 #include "../../../../vehicles.h"
 #include "../../../../player.h"
@@ -55,6 +57,8 @@ cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_) :
 	generateSelectionList (vehicle);
 
 	signalConnectionManager.connect (selectionUnitClickedSecondTime, [&](const cUnitListViewItemBuy&){ done (); });
+
+	signalConnectionManager.connect (vehicle.destroyed, std::bind (&cWindowBuildBuildings::closeOnUnitDestruction, this));
 }
 
 //------------------------------------------------------------------------------
@@ -101,5 +105,16 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
 		}
 
 		if (vehicle.data.storageResCur < vehicle.owner->BuildingData[i].buildCosts) item.markAsInsufficient();
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowBuildBuildings::closeOnUnitDestruction ()
+{
+	close ();
+	auto application = getActiveApplication ();
+	if (application)
+	{
+		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate
 	}
 }

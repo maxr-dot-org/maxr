@@ -27,6 +27,8 @@ class cSlider;
 class cLineEdit;
 class cCheckBox;
 
+class cComboBox;
+
 class cDialogPreferences : public cWindow
 {
 public:
@@ -58,6 +60,9 @@ private:
 	cCheckBox* autosaveCheckBox;
 	cCheckBox* introCheckBox;
 	cCheckBox* windowCheckBox;
+
+	cComboBox* languagesComboBox;
+	cComboBox* resolutionsComboBox;
 
 	int storedMusicVolume;
 	int storedEffectsVolume;

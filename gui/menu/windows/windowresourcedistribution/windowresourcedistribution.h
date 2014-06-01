@@ -63,6 +63,8 @@ private:
 	void handleMetalChanged ();
 	void handleOilChanged ();
 	void handleGoldChanged ();
+
+	void closeOnSubBaseDestruction ();
 };
 
 #endif // gui_menu_windows_windowresourcedistribution_windowresourcedistributionH

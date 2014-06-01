@@ -131,6 +131,8 @@ public:
 
 	virtual void handleMoved (const cPosition& offset);
 
+	virtual void handleResized (const cPosition& oldSize);
+
 	virtual bool hitShortcuts (cKeySequence& keySequence);
 
 protected:

@@ -31,6 +31,12 @@ struct SDL_Surface;
 
 class cKeyboard;
 
+struct sVidMode
+{
+	unsigned int width;
+	unsigned int height;
+};
+
 /**
  * cVideo class.
  * Stores videosettings (and can hopefully operate 'em too one day'):-)
@@ -98,19 +104,21 @@ public:
 	/**
 	* @return Detected videomodes
 	*/
-	int getVideoSize() const;
+	size_t getVideoSize() const;
 
 	/**
 	* @param iMode video mode num from video mode array
 	* @return Videomode as string widthxheight.
 	*         If iMode is unknown minimal needed videomode will be returned.
 	*/
-	std::string getVideoMode (unsigned int iMode) const;
+	std::string getVideoMode (size_t iMode) const;
 
 	/**
 	* Try to autodetect availavle video modes from SDL.
 	*/
-	void doDetection();
+	void doDetection ();
+
+	const std::vector<sVidMode>& getDetectedVideoModes () const;
 
 	/**
 	* Check whether the provided mode is known to our video mode list
@@ -160,7 +168,9 @@ public:
 
 	void applyShadow (const SDL_Rect* rect);
 
-	cSignal<void(const std::string&)> screenShotTaken;
+	mutable cSignal<void(const std::string&)> screenShotTaken;
+
+	mutable cSignal<void ()> resolutionChanged;
 
 	// Screenbuffers ///////////////////////////////////
 	static SDL_Surface* buffer; // Der Bildschirm-Buffer

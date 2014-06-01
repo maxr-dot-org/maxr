@@ -23,14 +23,8 @@
 
 #include "gamesettings.h"
 #include "../../../../utility/tounderlyingtype.h"
+#include "../../../../utility/string/iequals.h"
 #include "../../../../main.h"
-
-//------------------------------------------------------------------------------
-static std::string tolower(std::string s)
-{
-	std::transform (s.begin(), s.end(), s.begin(), static_cast<int(&)(int)> (std::tolower));
-	return s;
-}
 
 //------------------------------------------------------------------------------
 std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount, bool translated)
@@ -70,12 +64,10 @@ std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amou
 //------------------------------------------------------------------------------
 eGameSettingsResourceAmount gameSettingsResourceAmountFromString (const std::string& string)
 {
-	auto lowerCaseString = tolower(string);
-
-	if (lowerCaseString.compare ("limited") == 0) return eGameSettingsResourceAmount::Limited;
-	else if (lowerCaseString.compare ("normal") == 0) return eGameSettingsResourceAmount::Normal;
-	else if (lowerCaseString.compare ("high") == 0) return eGameSettingsResourceAmount::High;
-	else if (lowerCaseString.compare ("toomuch") == 0) return eGameSettingsResourceAmount::TooMuch;
+	if (iequals(string, "limited")) return eGameSettingsResourceAmount::Limited;
+	else if (iequals (string, "normal")) return eGameSettingsResourceAmount::Normal;
+	else if (iequals (string, "high")) return eGameSettingsResourceAmount::High;
+	else if (iequals (string, "toomuch")) return eGameSettingsResourceAmount::TooMuch;
 	else throw std::runtime_error ("Invalid resource amount string '" + string + "'");
 }
 
@@ -117,12 +109,10 @@ std::string gameSettingsResourceDensityToString (eGameSettingsResourceDensity de
 //------------------------------------------------------------------------------
 eGameSettingsResourceDensity gameSettingsResourceDensityFromString (const std::string& string)
 {
-	auto lowerCaseString = tolower(string);
-
-	if (lowerCaseString.compare ("sparse") == 0) return eGameSettingsResourceDensity::Sparse;
-	else if (lowerCaseString.compare ("normal") == 0) return eGameSettingsResourceDensity::Normal;
-	else if (lowerCaseString.compare ("dense") == 0) return eGameSettingsResourceDensity::Dense;
-	else if (lowerCaseString.compare ("toomuch") == 0) return eGameSettingsResourceDensity::TooMuch;
+	if (iequals (string, "sparse")) return eGameSettingsResourceDensity::Sparse;
+	else if (iequals (string, "normal")) return eGameSettingsResourceDensity::Normal;
+	else if (iequals (string, "dense")) return eGameSettingsResourceDensity::Dense;
+	else if (iequals (string, "toomuch")) return eGameSettingsResourceDensity::TooMuch;
 	else throw std::runtime_error ("Invalid resource density string '" + string + "'");
 }
 
@@ -156,10 +146,8 @@ std::string gameSettingsBridgeheadTypeToString (eGameSettingsBridgeheadType type
 //------------------------------------------------------------------------------
 eGameSettingsBridgeheadType gameSettingsBridgeheadTypeFromString (const std::string& string)
 {
-	auto lowerCaseString = tolower(string);
-
-	if (lowerCaseString.compare ("definite") == 0) return eGameSettingsBridgeheadType::Definite;
-	else if (lowerCaseString.compare ("mobile") == 0) return eGameSettingsBridgeheadType::Mobile;
+	if (iequals (string, "definite")) return eGameSettingsBridgeheadType::Definite;
+	else if (iequals (string, "mobile")) return eGameSettingsBridgeheadType::Mobile;
 	else throw std::runtime_error ("Invalid bridgehead type string '" + string + "'");
 }
 
@@ -197,11 +185,9 @@ std::string gameSettingsGameTypeToString (eGameSettingsGameType type, bool trans
 //------------------------------------------------------------------------------
 eGameSettingsGameType gameSettingsGameTypeString (const std::string& string)
 {
-	auto lowerCaseString = tolower(string);
-
-	if (lowerCaseString.compare ("simultaneous") == 0) return eGameSettingsGameType::Simultaneous;
-	else if (lowerCaseString.compare ("turns") == 0) return eGameSettingsGameType::Turns;
-	else if (lowerCaseString.compare ("hotseat") == 0) return eGameSettingsGameType::HotSeat;
+	if (iequals (string, "simultaneous")) return eGameSettingsGameType::Simultaneous;
+	else if (iequals (string, "turns")) return eGameSettingsGameType::Turns;
+	else if (iequals (string, "hotseat")) return eGameSettingsGameType::HotSeat;
 	else throw std::runtime_error ("Invalid game type string '" + string + "'");
 }
 
@@ -239,11 +225,9 @@ std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition 
 //------------------------------------------------------------------------------
 eGameSettingsVictoryCondition gameSettingsVictoryConditionFromString (const std::string& string)
 {
-	auto lowerCaseString = tolower(string);
-
-	if (lowerCaseString.compare ("turns") == 0) return eGameSettingsVictoryCondition::Turns;
-	else if (lowerCaseString.compare ("points") == 0) return eGameSettingsVictoryCondition::Points;
-	else if (lowerCaseString.compare ("death") == 0) return eGameSettingsVictoryCondition::Death;
+	if (iequals (string, "turns")) return eGameSettingsVictoryCondition::Turns;
+	else if (iequals (string, "points")) return eGameSettingsVictoryCondition::Points;
+	else if (iequals (string, "death")) return eGameSettingsVictoryCondition::Death;
 	else throw std::runtime_error ("Invalid victory condition string '" + string + "'");
 }
 

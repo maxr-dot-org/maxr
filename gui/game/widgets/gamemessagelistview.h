@@ -31,11 +31,13 @@ class cGameMessageListView : public cWidget
 public:
 	explicit cGameMessageListView (const cBox<cPosition>& area);
 
-	void addMessage (const std::string& message, bool alert);
+	void addMessage (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor = eGameMessageListViewItemBackgroundColor::DarkGray);
 
 	void removeOldMessages ();
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cListView<cGameMessageListViewItem>* listView;
 

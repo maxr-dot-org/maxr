@@ -32,9 +32,9 @@ cGameMessageListView::cGameMessageListView (const cBox<cPosition>& area) :
 }
 
 //------------------------------------------------------------------------------
-void cGameMessageListView::addMessage (const std::string& message, bool alert)
+void cGameMessageListView::addMessage (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor)
 {
-	auto addedItem = listView->addItem (std::make_unique<cGameMessageListViewItem> (getSize ().x () - listView->getBeginMargin ().x () - listView->getEndMargin ().x (), message, alert));
+	auto addedItem = listView->addItem (std::make_unique<cGameMessageListViewItem> (message, backgroundColor));
 	listView->scroolToItem (addedItem);
 }
 
@@ -51,4 +51,12 @@ void cGameMessageListView::removeOldMessages ()
 bool cGameMessageListView::isAt (const cPosition& position) const
 {
 	return false; // fully transparent. Do not take any input events
+}
+
+//------------------------------------------------------------------------------
+void cGameMessageListView::handleResized (const cPosition& oldSize)
+{
+	cWidget::handleResized (oldSize);
+
+	listView->setArea (getArea ());
 }

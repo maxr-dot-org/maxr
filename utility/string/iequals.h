@@ -17,47 +17,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_trimH
-#define utility_trimH
+#ifndef utility_string_iequalsH
+#define utility_string_iequalsH
 
-#include <algorithm> 
-#include <functional> 
+#include <string>
 #include <cctype>
-#include <locale>
 
-static inline std::string& trim_left (std::string& s)
+/**
+ * Case insensitive string comparison.
+ * (very basic implementation; does not support Unicode encoded strings!)
+ */
+static inline bool iequals (const std::string& a, const std::string& b)
 {
-	s.erase (s.begin (), std::find_if (s.begin (), s.end (), std::not1 (std::ptr_fun<int, int> (std::isspace))));
-	return s;
+	if (a.size () != b.size ()) return false;
+
+	for (size_t i = 0; i < a.size (); ++i)
+	{
+		if (std::tolower (a[i]) != std::tolower (b[i])) return false;
+	}
+	return true;
 }
 
-static inline std::string& trim_right (std::string& s)
-{
-	s.erase (std::find_if (s.rbegin (), s.rend (), std::not1 (std::ptr_fun<int, int> (std::isspace))).base (), s.end ());
-	return s;
-}
-
-static inline std::string& trim (std::string& s)
-{
-	return trim_left (trim_right (s));
-}
-
-static inline std::string trim_left_copy (const std::string& s)
-{
-	auto s2 = s;
-	return trim_left(s2);
-}
-
-static inline std::string trim_right_copy (const std::string& s)
-{
-	auto s2 = s;
-	return trim_right (s2);
-}
-
-static inline std::string trim_copy (const std::string& s)
-{
-	auto s2 = s;
-	return trim (s2);
-}
-
-#endif // utility_trimH
+#endif // utility_string_iequalsH

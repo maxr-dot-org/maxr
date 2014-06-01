@@ -134,9 +134,13 @@ cPosition cWidget::getSize () const
 //------------------------------------------------------------------------------
 void cWidget::resize (const cPosition& newSize)
 {
-	area.resize (newSize);
+	const auto oldSize = getSize ();
 
-	createFrameSurface ();
+	if (oldSize != newSize)
+	{
+		area.resize (newSize);
+		handleResized (oldSize);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -148,15 +152,14 @@ void cWidget::fitToChildren ()
 	}
 	else
 	{
-		cBox<cPosition> area(children[0]->getPosition (), children[0]->getPosition ());
+		cBox<cPosition> newArea(children[0]->getPosition (), children[0]->getPosition ());
 
 		for (size_t i = 0; i < children.size (); ++i)
 		{
-			area.add (children[i]->getArea ());
+			newArea.add (children[i]->getArea ());
 		}
 
-		moveTo (area.getMinCorner ());
-		resize (area.getSize ());
+		setArea (newArea);
 	}
 }
 
@@ -329,6 +332,12 @@ void cWidget::handleMoved (const cPosition& offset)
 	{
 		(*i)->move (offset);
 	}
+}
+
+//------------------------------------------------------------------------------
+void cWidget::handleResized (const cPosition&)
+{
+	createFrameSurface ();
 }
 
 //------------------------------------------------------------------------------

@@ -122,6 +122,8 @@ public:
 	 */
 	virtual void handleRemoved (cApplication& application);
 
+	virtual bool wantsCentered () const;
+
 	/**
 	 * Triggered when @ref handleRemoved is called.
 	 */

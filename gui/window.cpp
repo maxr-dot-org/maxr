@@ -121,6 +121,12 @@ void cWindow::handleRemoved (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
+bool cWindow::wantsCentered () const
+{
+	return true;
+}
+
+//------------------------------------------------------------------------------
 cApplication* cWindow::getActiveApplication () const
 {
 	return activeApplication;

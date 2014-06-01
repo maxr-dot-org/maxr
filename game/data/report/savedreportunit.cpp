@@ -69,6 +69,18 @@ void cSavedReportUnit::pushInto (tinyxml2::XMLElement& element) const
 }
 
 //------------------------------------------------------------------------------
+const cPosition& cSavedReportUnit::getPosition () const
+{
+	return position;
+}
+
+//------------------------------------------------------------------------------
+const sID& cSavedReportUnit::getUnitId () const
+{
+	return unitId;
+}
+
+//------------------------------------------------------------------------------
 eSavedReportType cSavedReportUnit::getType () const
 {
 	return eSavedReportType::Unit;

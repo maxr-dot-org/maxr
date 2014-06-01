@@ -78,6 +78,8 @@ public:
 	void setCoordinatesText (const std::string& text);
 	void setUnitNameText (const std::string& text);
 
+	void resizeToResolution ();
+
 	cSignal<void ()> zoomChanged;
 
 	cSignal<void ()> surveyToggled;

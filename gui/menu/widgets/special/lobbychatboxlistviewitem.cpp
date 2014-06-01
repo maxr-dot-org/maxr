@@ -21,9 +21,12 @@
 #include "../label.h"
 
 //------------------------------------------------------------------------------
-cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text, int width)
+cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text) :
+	cAbstractListViewItem (cPosition (50, 0))
 {
-	auto messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (width, 0)), text));
+	playerNameLabel = nullptr;
+
+	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (getSize ().x ()-1, 0)), text));
 	messageLabel->setWordWrap (true);
 	messageLabel->resizeToTextHeight ();
 
@@ -31,14 +34,29 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text, i
 }
 
 //------------------------------------------------------------------------------
-cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text, int width)
+cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text) :
+	cAbstractListViewItem (cPosition (50, 0))
 {
 	const auto playerNameText = playerName + ": ";
 	const auto playerNameTextWidth = font->getTextWide (playerNameText);
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
+	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
 
-	auto messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (playerNameTextWidth, 0), getPosition () + cPosition (width, 0)), text));
+	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (playerNameTextWidth, 0), getPosition () + cPosition (getSize ().x ()-1, 0)), text));
 	messageLabel->setWordWrap (true);
+	messageLabel->resizeToTextHeight ();
+
+	fitToChildren ();
+}
+
+//------------------------------------------------------------------------------
+void cLobbyChatBoxListViewItem::handleResized (const cPosition& oldSize)
+{
+	cWidget::handleResized (oldSize);
+
+	if (oldSize.x () == getSize ().x ()) return;
+
+	auto playerNameTextWidth = playerNameLabel ? playerNameLabel->getSize ().x ()-1 : 0;
+	messageLabel->resize (cPosition (getSize ().x () - playerNameTextWidth, messageLabel->getSize ().y ()));
 	messageLabel->resizeToTextHeight ();
 
 	fitToChildren ();

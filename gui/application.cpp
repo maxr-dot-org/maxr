@@ -40,7 +40,18 @@ cApplication::cApplication () :
 	keyFocusWidget (nullptr),
 	mouseFocusWidget (nullptr)
 	//underMouseWidget (nullptr)
-{}
+{
+	signalConnectionManager.connect (Video.resolutionChanged, [this]()
+	{
+		for (auto i = modalWindows.rbegin (); i != modalWindows.rend (); ++i)
+		{
+			if ((*i)->wantsCentered ())
+			{
+				center (*(*i));
+			}
+		}
+	});
+}
 
 //------------------------------------------------------------------------------
 cApplication::~cApplication ()

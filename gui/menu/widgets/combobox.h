@@ -17,25 +17,58 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_iequalsH
-#define utility_iequalsH
+#ifndef gui_menu_widgets_comboboxH
+#define gui_menu_widgets_comboboxH
 
 #include <string>
-#include <cctype>
 
-/**
- * Case insensitive string comparison.
- * (very basic implementation; does not support Unicode encoded strings!)
- */
-bool iequals (const std::string& a, const std::string& b)
+#include "../../../maxrconfig.h"
+#include "../../widget.h"
+#include "../../../autosurface.h"
+#include "../../../utility/signal/signal.h"
+#include "../../../utility/signal/signalconnectionmanager.h"
+
+class cCheckBox;
+class cLineEdit;
+class cTextListViewItem;
+template<typename> class cListView;
+
+class cComboBox : public cWidget
 {
-	if (a.size () != b.size ()) return false;
+public:
+	explicit cComboBox (const cBox<cPosition>& area);
 
-	for (size_t i = 0; i < a.size (); ++i)
-	{
-		if (std::tolower (a[i]) != std::tolower (b[i])) return false;
-	}
-	return true;
-}
+	void setMaxVisibleItems (size_t count);
 
-#endif // utility_iequalsH
+	void addItem (std::string text);
+
+	void removeItem (size_t index);
+
+	size_t getItemsCount () const;
+	const std::string& getItem (size_t index) const;
+
+	void clearItems ();
+
+	const std::string& getSelectedText () const;
+	void setSelectedIndex (size_t index);
+
+	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	AutoSurface listViewBackground;
+	AutoSurface lineEditBackground;
+
+	cListView<cTextListViewItem>* listView;
+	cCheckBox* downButton;
+	cLineEdit* lineEdit;
+
+	size_t maxVisibleItems;
+
+	void updateListViewSize ();
+
+	void updateLineEditBackground ();
+	void updateListViewBackground ();
+};
+
+#endif // gui_menu_widgets_comboboxH

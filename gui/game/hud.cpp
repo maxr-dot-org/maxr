@@ -115,9 +115,9 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed")));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
 
-	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition ().y () - 18), cPosition (265 + 64, getEndPosition ().y () - 18 + 10)), "Test1", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition ().y () - 18), cPosition (343 + 212, getEndPosition ().y () - 18 + 10)), "Test2", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "Test3", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition ().y () - 18), cPosition (265 + 64, getEndPosition ().y () - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition ().y () - 18), cPosition (343 + 212, getEndPosition ().y () - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	timeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10)), "Test4", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (20, 275), cPosition (20 + 130, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));
@@ -381,6 +381,16 @@ void cHud::setCoordinatesText (const std::string& text)
 void cHud::setUnitNameText (const std::string& text)
 {
 	unitNameLabel->setText (text);
+}
+
+//------------------------------------------------------------------------------
+void cHud::resizeToResolution ()
+{
+	surface = generateSurface ();
+	resize (cPosition (surface->w, surface->h));
+
+	coordsLabel->moveTo (cPosition (265, getEndPosition ().y () - 18));
+	unitNameLabel->moveTo (cPosition (343, getEndPosition ().y () - 18));
 }
 
 //------------------------------------------------------------------------------

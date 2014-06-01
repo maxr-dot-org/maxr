@@ -34,11 +34,13 @@ class sPlayer;
 class cLobbyPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-	cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> player, int width);
+	explicit cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> player);
 
 	const std::shared_ptr<sPlayer>& getPlayer () const;
 
 	cSignal<void ()> readyClicked;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

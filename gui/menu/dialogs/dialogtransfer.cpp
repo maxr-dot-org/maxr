@@ -19,9 +19,11 @@
 
 #include "dialogtransfer.h"
 
+#include "dialogok.h"
 #include "../widgets/label.h"
 #include "../widgets/pushbutton.h"
 #include "../widgets/image.h"
+#include "../../application.h"
 #include "../../../pcx.h"
 #include "../../../main.h"
 #include "../../../unit.h"
@@ -82,6 +84,9 @@ cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& de
 	resourceBar->setValue (destinationCargo + maxTransferToDestination);
 
 	transferValueChanged ();
+
+	signalConnectionManager.connect (sourceUnit.destroyed, std::bind (&cNewDialogTransfer::closeOnUnitDestruction, this));
+	signalConnectionManager.connect (destinationUnit.destroyed, std::bind (&cNewDialogTransfer::closeOnUnitDestruction, this));
 }
 
 //------------------------------------------------------------------------------
@@ -243,5 +248,16 @@ void cNewDialogTransfer::transferValueChanged ()
 		FlipSurfaceHorizontally (arrowSurface.get ());
 
 		arrowImage->setImage (arrowSurface.get ());
+	}
+}
+
+//------------------------------------------------------------------------------
+void cNewDialogTransfer::closeOnUnitDestruction ()
+{
+	close ();
+	auto application = getActiveApplication ();
+	if (application)
+	{
+		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate
 	}
 }

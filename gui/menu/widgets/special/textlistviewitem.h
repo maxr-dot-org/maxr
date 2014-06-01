@@ -16,49 +16,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-//
-//
-//
-//
-///////////////////////////////////////////////////////////////////////////////
 
-#ifndef loaddataH
-#define loaddataH
+#ifndef gui_menu_widgets_special_textlistviewitemH
+#define gui_menu_widgets_special_textlistviewitemH
 
-#include <string>
-#include <vector>
+#include "../abstractlistviewitem.h"
+#include "../../../../main.h"
 
-///////////////////////////////////////////////////////////////////////////////
-// Defines
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
+class cLabel;
 
-enum eLoadingState
+class cTextListViewItem : public cAbstractListViewItem
 {
-	LOAD_GOING = 0,
-	LOAD_ERROR = 1,
-	LOAD_FINISHED = 2
+public:
+	explicit cTextListViewItem (const std::string& text);
+
+	const std::string& getText () const;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+protected:
+	cLabel* label;
 };
-///////////////////////////////////////////////////////////////////////////////
-// Predeclerations
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
 
-/**
-* Loads all relevant files and data
-* @return 1 on success
-*/
-int LoadData (void* loadingState);
-
-void reloadUnitValues();
-
-void createShadowGfx ();
-
-/**
-* Splits a string s by "word" according to one of separators seps.
-*/
-void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
-
-#endif
+#endif // gui_menu_widgets_special_textlistviewitemH

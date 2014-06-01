@@ -25,7 +25,6 @@
 # include <unistd.h>
 #endif
 
-#include <cctype>
 #include <iostream>
 #include <locale>
 #include <string>
@@ -38,6 +37,7 @@
 #include "main.h"
 #include "tinyxml2.h"
 #include "video.h"
+#include "utility/string/tolower.h"
 
 using namespace tinyxml2;
 
@@ -524,8 +524,7 @@ void cSettings::initialize()
 	else
 	{
 		voiceLanguage = xmlElement->Attribute ("Text");
-		for (std::string::iterator i = voiceLanguage.begin(), end = voiceLanguage.end(); i != end; ++i)
-			*i = std::tolower ((unsigned char) * i);
+		to_lower (voiceLanguage);
 	}
 
 	// GAME

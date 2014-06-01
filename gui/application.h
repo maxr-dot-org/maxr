@@ -48,7 +48,7 @@ public:
 	void execute ();
 
 	template<typename WindowType>
-	WindowType* show (std::shared_ptr<WindowType> window, bool centered = true);
+	WindowType* show (std::shared_ptr<WindowType> window);
 
 	/**
 	 * Marks all windows to be closed that are above the passed one
@@ -126,11 +126,11 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename WindowType>
-WindowType* cApplication::show (std::shared_ptr<WindowType> window, bool centered)
+WindowType* cApplication::show (std::shared_ptr<WindowType> window)
 {
 	if (window == nullptr) return nullptr;
 
-	if (centered)
+	if (window->wantsCentered())
 	{
 		center (*window);
 	}

@@ -22,15 +22,19 @@
 #include <SDL_mixer.h>
 
 #include "dialogpreferences.h"
+#include "dialogok.h"
 #include "../widgets/label.h"
 #include "../widgets/pushbutton.h"
 #include "../widgets/slider.h"
 #include "../widgets/checkbox.h"
 #include "../widgets/lineedit.h"
+#include "../widgets/combobox.h"
+#include "../widgets/special/textlistviewitem.h"
 #include "../../../pcx.h"
 #include "../../../main.h"
 #include "../../../settings.h"
 #include "../../../video.h"
+#include "../../../utility/string/iequals.h"
 
 #include "../widgets/tools/validatorint.h"
 
@@ -90,6 +94,12 @@ cDialogPreferences::cDialogPreferences () :
 	cancelButton->addClickShortcut (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_ESCAPE)));
 	signalConnectionManager.connect (cancelButton->clicked, std::bind (&cDialogPreferences::cancelClicked, this));
 
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (140, 298+20), getPosition () + cPosition (140+95, 298+20+10)), "Language:", FONT_LATIN_NORMAL, eAlignmentType::Right)); // TODO: translate
+	languagesComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition () + cPosition (240, 294+20), getPosition () + cPosition (240 + 100, 294+20+17))));
+
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (140, 298), getPosition () + cPosition (140+95, 298+10)), "Resolution:", FONT_LATIN_NORMAL, eAlignmentType::Right)); // TODO: translate
+	resolutionsComboBox = addChild (std::make_unique<cComboBox> (cBox<cPosition> (getPosition () + cPosition (240, 294), getPosition () + cPosition (240 + 100, 294+17))));
+
 	loadValues ();
 }
 
@@ -123,6 +133,30 @@ void cDialogPreferences::loadValues ()
 	introCheckBox->setChecked (cSettings::getInstance ().shouldShowIntro ());
 	windowCheckBox->setChecked (Video.getWindowMode ());
 
+	languagesComboBox->clearItems ();
+	const auto availableLanguages = lngPack.getAvailableLanguages ();
+	size_t selectedLanguageIndex = 0;
+	for (size_t i = 0; i < availableLanguages.size (); ++i)
+	{
+		languagesComboBox->addItem (availableLanguages[i]);
+		if (iequals(availableLanguages[i], cSettings::getInstance().getLanguage()))
+		{
+			selectedLanguageIndex = i;
+		}
+	}
+	if (!availableLanguages.empty ())
+	{
+		languagesComboBox->setSelectedIndex (selectedLanguageIndex);
+	}
+
+	resolutionsComboBox->clearItems ();
+	const auto videoModeCount = Video.getVideoSize ();
+	for (size_t i = 0; i < videoModeCount; ++i)
+	{
+		resolutionsComboBox->addItem (Video.getVideoMode (i));
+	}
+	resolutionsComboBox->setSelectedIndex (Video.validateMode (Video.getResolutionX (), Video.getResolutionY ()));
+
 	storePreviewValues ();
 }
 
@@ -149,19 +183,43 @@ void cDialogPreferences::saveValues ()
 	const auto oldScreenX = Video.getResolutionX ();
 	const auto oldScreenY = Video.getResolutionY ();
 
-	// FIXME: get new resolution
-	const auto newResolutionX = oldScreenX;
-	const auto newResolutionY = oldScreenY;
+	const auto& resolutionText = resolutionsComboBox->getSelectedText ();
 
-	if (newResolutionX != oldScreenX || newResolutionY != oldScreenY)
+	const auto newResolutionX = atoi (resolutionText.substr (0, resolutionText.find("x")).c_str());
+	const auto newResolutionY = atoi (resolutionText.substr (resolutionText.find ("x")+1).c_str ());
+
+	if (newResolutionX > 0 && newResolutionY > 0)
 	{
-		Video.setResolution (newResolutionX, newResolutionY, true);
-		cSettings::getInstance ().saveResolution ();
-
-		if (Video.getResolutionX () != oldScreenX || Video.getResolutionY () != oldScreenY)
+		if (newResolutionX != oldScreenX || newResolutionY != oldScreenY)
 		{
-			// TODO: dialog
-			//cDialogOK okDialog (lngPack.i18n ("Text~Comp~ResolutionChange"));
+			Video.setResolution (newResolutionX, newResolutionY, true);
+			cSettings::getInstance ().saveResolution ();
+
+			if (Video.getResolutionX () != oldScreenX || Video.getResolutionY () != oldScreenY)
+			{
+				auto application = getActiveApplication ();
+				if (application)
+				{
+					application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
+				}
+			}
+		}
+	}
+	else
+	{
+		// TODO: handle invalid resolution?!
+	}
+
+	const auto& selectedLanguage = languagesComboBox->getSelectedText ();
+	if (!iequals(selectedLanguage, cSettings::getInstance ().getLanguage ()))
+	{
+		cSettings::getInstance ().setLanguage (selectedLanguage.c_str ());
+
+		auto application = getActiveApplication ();
+		if (application)
+		{
+			const auto text = "Please restart the game to make the language change take effect";// TODO: translate;
+			application->show (std::make_shared<cDialogOk> (text));
 		}
 	}
 }

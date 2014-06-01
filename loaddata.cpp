@@ -823,12 +823,12 @@ static int LoadGraphics (const char* path)
 	LoadGraphicToSurface (GraphicsData.gfx_player_ready, path, "player_ready.pcx");
 	LoadGraphicToSurface (GraphicsData.gfx_hud_chatbox, path, "hud_chatbox.pcx");
 
-	GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
-	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
-	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog3.pcx";
-	FileExists (GraphicsData.DialogPath.c_str());
-	FileExists (GraphicsData.Dialog2Path.c_str());
-	FileExists (GraphicsData.Dialog3Path.c_str());
+	GraphicsData.DialogPath = cSettings::getInstance ().getGfxPath () + PATH_DELIMITER + "dialog.pcx";
+	GraphicsData.Dialog2Path = cSettings::getInstance ().getGfxPath () + PATH_DELIMITER + "dialog2.pcx";
+	GraphicsData.Dialog3Path = cSettings::getInstance ().getGfxPath () + PATH_DELIMITER + "dialog3.pcx";
+	FileExists (GraphicsData.DialogPath.c_str ());
+	FileExists (GraphicsData.Dialog2Path.c_str ());
+	FileExists (GraphicsData.Dialog3Path.c_str ());
 
 	// load colors even for dedicated server
 	// Colors:
@@ -838,11 +838,11 @@ static int LoadGraphics (const char* path)
 
 	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
 	// Shadow:
-	// TODO: reduce size once we use texture.
-	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (0, Video.getResolutionX(), Video.getResolutionY(),
-													Video.getColDepth(),
-													0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	SDL_FillRect (GraphicsData.gfx_shadow.get (), NULL, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
+	createShadowGfx ();
+	Video.resolutionChanged.connect ([]()
+	{
+		createShadowGfx ();
+	});
 
 	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get (), SDL_TRUE, 0xFF00FF);
@@ -2020,4 +2020,13 @@ void reloadUnitValues()
 		else Element = NULL;
 		i++;
 	}
+}
+
+void createShadowGfx ()
+{
+	// TODO: reduce size once we use texture.
+	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (0, Video.getResolutionX (), Video.getResolutionY (),
+													Video.getColDepth (),
+													0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	SDL_FillRect (GraphicsData.gfx_shadow.get (), NULL, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
 }

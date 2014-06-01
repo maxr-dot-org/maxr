@@ -24,6 +24,8 @@
 #include "../../widgets/label.h"
 #include "../../widgets/pushbutton.h"
 #include "../../widgets/special/resourcebar.h"
+#include "../../dialogs/dialogok.h"
+#include "../../../application.h"
 
 //------------------------------------------------------------------------------
 cWindowResourceDistribution::cWindowResourceDistribution (const sSubBase& subBase_) :
@@ -101,6 +103,8 @@ cWindowResourceDistribution::cWindowResourceDistribution (const sSubBase& subBas
 
 	setBarLabels ();
 	setBarValues ();
+
+	signalConnectionManager.connect (subBase.destroyed, std::bind (&cWindowResourceDistribution::closeOnSubBaseDestruction, this));
 }
 
 //------------------------------------------------------------------------------
@@ -206,4 +210,15 @@ void cWindowResourceDistribution::handleGoldChanged ()
 
 	setBarValues ();
 	setBarLabels ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowResourceDistribution::closeOnSubBaseDestruction ()
+{
+	close ();
+	auto application = getActiveApplication ();
+	if (application)
+	{
+		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate
+	}
 }

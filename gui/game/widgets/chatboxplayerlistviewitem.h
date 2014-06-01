@@ -34,11 +34,13 @@ class cPlayer;
 class cChatBoxPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-    cChatBoxPlayerListViewItem (const cPlayer& player, int width);
+    explicit cChatBoxPlayerListViewItem (const cPlayer& player);
 
     const cPlayer& getPlayer () const;
 
 	cSignal<void ()> readyClicked;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

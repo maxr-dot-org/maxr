@@ -47,6 +47,8 @@ public:
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+
 	void clearPlayers ();
 
 	void addPlayer (const cPlayer& player);

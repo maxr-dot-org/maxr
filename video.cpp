@@ -49,12 +49,6 @@ cVideo Video;
 #define MINWIDTH 640
 #define MINHEIGHT 480
 
-struct sVidMode
-{
-	unsigned int width;
-	unsigned int height;
-};
-
 static bool operator < (const sVidMode& lhs, const sVidMode& rhs)
 {
 	if (lhs.width != rhs.width) return lhs.width < rhs.width;
@@ -146,7 +140,9 @@ int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 		}
 		// END SANITY CHECK SCREEN RES
 
-		return applySettings();
+		const auto result = applySettings();
+		resolutionChanged ();
+		return result;
 	}
 	else
 	{
@@ -288,7 +284,7 @@ int cVideo::getResolutionY() const
 	return videoData.height;
 }
 
-std::string cVideo::getVideoMode (unsigned int iMode) const
+std::string cVideo::getVideoMode (size_t iMode) const
 {
 	return iToStr (vVideoMode[iMode].width) + "x" + iToStr (vVideoMode[iMode].height);
 }
@@ -322,6 +318,11 @@ void cVideo::doDetection()
 	}
 }
 
+const std::vector<sVidMode>& cVideo::getDetectedVideoModes () const
+{
+	return vVideoMode;
+}
+
 bool cVideo::bHaveMinMode() const
 {
 	for (unsigned int i = 0; i < vVideoMode.size(); i++)
@@ -349,7 +350,7 @@ int cVideo::validateMode (unsigned int iWidth, unsigned int iHeight) const
 	return -1;
 }
 
-int cVideo::getVideoSize() const
+size_t cVideo::getVideoSize () const
 {
 	return vVideoMode.size();
 }

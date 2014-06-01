@@ -44,6 +44,8 @@ public:
 	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
 	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
+	const cPosition& getPosition () const;
+	const sID& getUnitId () const;
 private:
 	sID unitId;
 	cPosition position;

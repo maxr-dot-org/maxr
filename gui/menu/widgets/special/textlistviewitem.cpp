@@ -16,49 +16,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-//
-//
-//
-//
-///////////////////////////////////////////////////////////////////////////////
 
-#ifndef loaddataH
-#define loaddataH
+#include "textlistviewitem.h"
 
-#include <string>
-#include <vector>
+#include "../label.h"
 
-///////////////////////////////////////////////////////////////////////////////
-// Defines
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-enum eLoadingState
+//------------------------------------------------------------------------------
+cTextListViewItem::cTextListViewItem (const std::string& text) :
+	cAbstractListViewItem (cPosition (50, font->getFontHeight (FONT_LATIN_NORMAL)))
 {
-	LOAD_GOING = 0,
-	LOAD_ERROR = 1,
-	LOAD_FINISHED = 2
-};
-///////////////////////////////////////////////////////////////////////////////
-// Predeclerations
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
+	label = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (0, 0), cPosition (getSize ().x ()-1, font->getFontHeight (FONT_LATIN_NORMAL))), text));
+}
 
-/**
-* Loads all relevant files and data
-* @return 1 on success
-*/
-int LoadData (void* loadingState);
+//------------------------------------------------------------------------------
+const std::string& cTextListViewItem::getText () const
+{
+	return label->getText();
+}
 
-void reloadUnitValues();
-
-void createShadowGfx ();
-
-/**
-* Splits a string s by "word" according to one of separators seps.
-*/
-void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
-
-#endif
+//------------------------------------------------------------------------------
+void cTextListViewItem::handleResized (const cPosition& oldSize)
+{
+	label->resize (getSize ());
+}

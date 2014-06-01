@@ -23,12 +23,13 @@
 #include "../../../../player.h"
 
 //------------------------------------------------------------------------------
-cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> player_, int width) :
+cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> player_) :
+	cAbstractListViewItem (cPosition (50, 0)),
 	player (std::move (player_))
 {
 	assert (player != nullptr);
 
-	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (width - 10, 0)));
+	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
 	signalConnectionManager.connect (readyImage->clicked, [&](){ readyClicked(); });
 
 	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
@@ -36,7 +37,7 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> pla
 	updatePlayerColor ();
 	updatePlayerReady ();
 
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition().x() + 4, 0), getPosition () + cPosition (width - readyImage->getSize ().x (), readyImage->getSize ().y ())), player->getName ()));
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), cPosition (readyImage->getPosition().x(), readyImage->getEndPosition().y())), player->getName ()));
 
 	fitToChildren ();
 
@@ -79,4 +80,18 @@ void cLobbyPlayerListViewItem::updatePlayerReady ()
 	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), NULL);
 
 	readyImage->setImage (readySurface.get ());
+}
+
+//------------------------------------------------------------------------------
+void cLobbyPlayerListViewItem::handleResized (const cPosition& oldSize)
+{
+	cWidget::handleResized (oldSize);
+
+	if (oldSize.x () == getSize ().x ()) return;
+
+	readyImage->moveTo (getPosition () + cPosition (getSize ().x () - 10, 0));
+
+	nameLabel->resize (cPosition (getSize ().x () - readyImage->getSize ().x () - colorImage->getSize().x() - 4, readyImage->getSize ().y ()));
+
+	fitToChildren ();
 }

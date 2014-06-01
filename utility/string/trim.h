@@ -16,49 +16,48 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-//
-//
-//
-//
-///////////////////////////////////////////////////////////////////////////////
 
-#ifndef loaddataH
-#define loaddataH
+#ifndef utility_string_trimH
+#define utility_string_trimH
 
-#include <string>
-#include <vector>
+#include <algorithm> 
+#include <functional> 
+#include <cctype>
+#include <locale>
 
-///////////////////////////////////////////////////////////////////////////////
-// Defines
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-enum eLoadingState
+static inline std::string& trim_left (std::string& s)
 {
-	LOAD_GOING = 0,
-	LOAD_ERROR = 1,
-	LOAD_FINISHED = 2
-};
-///////////////////////////////////////////////////////////////////////////////
-// Predeclerations
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
+	s.erase (s.begin (), std::find_if (s.begin (), s.end (), std::not1 (std::ptr_fun<int, int> (std::isspace))));
+	return s;
+}
 
-/**
-* Loads all relevant files and data
-* @return 1 on success
-*/
-int LoadData (void* loadingState);
+static inline std::string& trim_right (std::string& s)
+{
+	s.erase (std::find_if (s.rbegin (), s.rend (), std::not1 (std::ptr_fun<int, int> (std::isspace))).base (), s.end ());
+	return s;
+}
 
-void reloadUnitValues();
+static inline std::string& trim (std::string& s)
+{
+	return trim_left (trim_right (s));
+}
 
-void createShadowGfx ();
+static inline std::string trim_left_copy (const std::string& s)
+{
+	auto s2 = s;
+	return trim_left(s2);
+}
 
-/**
-* Splits a string s by "word" according to one of separators seps.
-*/
-void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
+static inline std::string trim_right_copy (const std::string& s)
+{
+	auto s2 = s;
+	return trim_right (s2);
+}
 
-#endif
+static inline std::string trim_copy (const std::string& s)
+{
+	auto s2 = s;
+	return trim (s2);
+}
+
+#endif // utility_string_trimH

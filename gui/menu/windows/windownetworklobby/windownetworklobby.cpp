@@ -206,21 +206,21 @@ void cWindowNetworkLobby::triggerChatMessage (bool refocusChatLine)
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std::string& message)
 {
-	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message, chatList->getSize ().x () - chatList->getBeginMargin ().x () - chatList->getEndMargin ().x ()));
+	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
 	chatList->scroolToItem (addedItem);
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addInfoEntry (const std::string& message)
 {
-	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message, chatList->getSize ().x () - chatList->getBeginMargin ().x () - chatList->getEndMargin ().x ()));
+	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message));
 	chatList->scroolToItem (addedItem);
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
 {
-	auto item = playersList->addItem (std::make_unique<cLobbyPlayerListViewItem> (player, playersList->getSize ().x () - playersList->getBeginMargin ().x () - playersList->getEndMargin ().x ()));
+	auto item = playersList->addItem (std::make_unique<cLobbyPlayerListViewItem> (player));
 	if (player == localPlayer)
 	{
 		signalConnectionManager.connect (item->readyClicked, [player, this]()

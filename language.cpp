@@ -33,7 +33,9 @@
 #include "log.h"
 #include "main.h"
 #include "settings.h"
+#include "files.h"
 #include "tinyxml2.h"
+#include "utility/string/toupper.h"
 
 using namespace tinyxml2;
 
@@ -230,6 +232,37 @@ int cLanguage::CheckCurrentLanguagePack (bool bInsertMissingEntries)
 {
 	//TODO: - JCK: Check and correct a language pack
 	return 0;
+}
+
+std::vector<std::string> cLanguage::getAvailableLanguages () const
+{
+	std::vector<std::string> languageCodes;
+
+	const auto fileNames = getFilesOfDirectory (LANGUAGE_FILE_FOLDER);
+
+	const auto languageFileNameSize = strlen (LANGUAGE_FILE_NAME);
+	const auto languageFileExtensionSize = strlen (LANGUAGE_FILE_EXT);
+
+	for (size_t i = 0; i < fileNames.size (); ++i)
+	{
+		const auto& fileName = fileNames[i];
+
+		if (fileName.size () <= languageFileNameSize + languageFileExtensionSize) continue;
+
+		const auto prefix = fileName.substr (0, languageFileNameSize);
+
+		if (prefix.compare (LANGUAGE_FILE_NAME) != 0) continue;
+
+		const auto suffix = fileName.substr (fileName.size () - languageFileExtensionSize);
+
+		if (suffix.compare (LANGUAGE_FILE_EXT) != 0) continue;
+
+		const auto languageCode = fileName.substr (languageFileNameSize, fileName.size () - languageFileExtensionSize - languageFileNameSize);
+
+		languageCodes.push_back (to_upper_copy(languageCode));
+	}
+
+	return languageCodes;
 }
 
 int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)

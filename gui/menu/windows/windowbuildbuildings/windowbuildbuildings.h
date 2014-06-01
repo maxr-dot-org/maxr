@@ -45,6 +45,8 @@ private:
 	cBuildSpeedHandlerWidget* speedHandler;
 
 	void generateSelectionList (const cVehicle& vehicle);
+
+	void closeOnUnitDestruction ();
 };
 
 #endif // gui_menu_windows_windowbuildbuildings_windowbuildbuildingsH

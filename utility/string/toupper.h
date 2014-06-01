@@ -16,49 +16,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-//
-//
-//
-//
-///////////////////////////////////////////////////////////////////////////////
 
-#ifndef loaddataH
-#define loaddataH
+#ifndef utility_string_toupperH
+#define utility_string_toupperH
 
 #include <string>
-#include <vector>
+#include <algorithm>
+#include <cctype>
 
-///////////////////////////////////////////////////////////////////////////////
-// Defines
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-enum eLoadingState
+static inline std::string& to_upper (std::string& s)
 {
-	LOAD_GOING = 0,
-	LOAD_ERROR = 1,
-	LOAD_FINISHED = 2
-};
-///////////////////////////////////////////////////////////////////////////////
-// Predeclerations
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
+	std::transform (s.begin (), s.end (), s.begin (), static_cast<int (&)(int)> (std::toupper));
+	return s;
+}
 
-/**
-* Loads all relevant files and data
-* @return 1 on success
-*/
-int LoadData (void* loadingState);
+static inline std::string to_upper_copy (const std::string& s)
+{
+	auto s2 = s;
+	return to_upper(s2);
+}
 
-void reloadUnitValues();
-
-void createShadowGfx ();
-
-/**
-* Splits a string s by "word" according to one of separators seps.
-*/
-void Split (const std::string& s, const char* seps, std::vector<std::string>& words);
-
-#endif
+#endif // utility_string_toupperH

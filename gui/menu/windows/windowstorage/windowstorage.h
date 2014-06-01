@@ -104,6 +104,8 @@ private:
 	void upgradeAllClicked ();
 
 	void doneClicked ();
+
+	void closeOnUnitDestruction ();
 };
 
 #endif // gui_menu_windows_windowstorage_windowstorageH

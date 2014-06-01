@@ -1872,7 +1872,6 @@ void cClient::deleteUnit (cBuilding* Building)
 {
 	if (!Building) return;
 
-	//if (activeMenu) activeMenu->handleDestroyUnit (*Building);
 	getMap()->deleteBuilding (*Building);
 
 	if (!Building->owner)
@@ -1901,7 +1900,6 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 {
 	if (!Vehicle) return;
 
-	//if (activeMenu) activeMenu->handleDestroyUnit (*Vehicle);
 	getMap()->deleteVehicle (*Vehicle);
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)

@@ -58,6 +58,8 @@ enum class eCheckBoxType
 	HudPlayers,
 
 	UnitContextMenu,
+
+	ArrowDownSmall
 };
 
 enum eCheckBoxTextAnchor

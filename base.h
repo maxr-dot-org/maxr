@@ -34,6 +34,7 @@ struct sSubBase
 public:
 	explicit sSubBase (cPlayer* owner_);
 	sSubBase (const sSubBase& other);
+	~sSubBase ();
 
 	/**
 	* integrates all building of the given subbase in the own one
@@ -154,6 +155,8 @@ public:
 
 	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);
+
+	mutable cSignal<void ()> destroyed;
 
 	mutable cSignal<void ()> metalChanged;
 	mutable cSignal<void ()> oilChanged;

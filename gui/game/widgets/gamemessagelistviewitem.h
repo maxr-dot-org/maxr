@@ -27,20 +27,35 @@
 
 class cLabel;
 
+enum class eGameMessageListViewItemBackgroundColor
+{
+	DarkGray,
+	LightGray,
+	Red
+};
+
 class cGameMessageListViewItem : public cAbstractListViewItem
 {
 public:
-	cGameMessageListViewItem (int width, const std::string& message, bool alert);
+	cGameMessageListViewItem (const std::string& message, eGameMessageListViewItemBackgroundColor backgroundColor);
 
 	std::chrono::steady_clock::time_point getCreationTime () const;
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cLabel* messageLabel;
 	
-	AutoSurface redShadow;
+	eGameMessageListViewItemBackgroundColor backgroundColor;
+	AutoSurface background;
+
+	const cPosition beginMargin;
+	const cPosition endMargin;
 
 	std::chrono::steady_clock::time_point creationTime;
+
+	void createBackground ();
 };
 
 #endif // gui_game_widgets_gamemessagelistviewitemH

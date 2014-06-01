@@ -25,6 +25,8 @@
 #include "../../widgets/special/unitlistviewitembuy.h"
 #include "../../widgets/special/unitlistviewitembuild.h"
 #include "../../widgets/special/buildspeedhandlerwidget.h"
+#include "../../dialogs/dialogok.h"
+#include "../../../application.h"
 #include "../../../../pcx.h"
 #include "../../../../buildings.h"
 #include "../../../../player.h"
@@ -58,6 +60,8 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 
 	generateSelectionList (building, map);
 	generateBuildList (building);
+
+	signalConnectionManager.connect (building.destroyed, std::bind (&cWindowBuildVehicles::closeOnUnitDestruction, this));
 }
 
 //------------------------------------------------------------------------------
@@ -171,5 +175,16 @@ void cWindowBuildVehicles::generateBuildList (const cBuilding& building)
 		auto& item = addSelectedUnit (building.BuildList[i].type);
 
 		item.setRemainingMetal(building.BuildList[i].metall_remaining);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowBuildVehicles::closeOnUnitDestruction ()
+{
+	close ();
+	auto application = getActiveApplication ();
+	if (application)
+	{
+		application->show (std::make_shared<cDialogOk> ("Unit destroyed!")); // TODO: translate
 	}
 }

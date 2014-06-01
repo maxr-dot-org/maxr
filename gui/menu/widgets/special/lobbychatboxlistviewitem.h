@@ -32,8 +32,14 @@ class sPlayer;
 class cLobbyChatBoxListViewItem : public cAbstractListViewItem
 {
 public:
-	cLobbyChatBoxListViewItem (const std::string& text, int width);
-	cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text, int width);
+	cLobbyChatBoxListViewItem (const std::string& text);
+	cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text);
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
+
+private:
+	cLabel* messageLabel;
+	cLabel* playerNameLabel;
 };
 
 #endif // gui_menu_widgets_special_lobbychatboxlistviewitemH

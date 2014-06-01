@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 #include "keycombination.h"
-#include "../../utility/trim.h"
-#include "../../utility/iequals.h"
+#include "../../utility/string/trim.h"
+#include "../../utility/string/iequals.h"
 
 static const struct
 {
