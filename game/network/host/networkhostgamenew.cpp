@@ -58,6 +58,9 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	auto& clientPlayer = localClient->getActivePlayer ();
 	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
+
+	server->start ();
+
 	applyUnitUpgrades (clientPlayer, localPlayerUnitUpgrades);
 
 	sendClan (*localClient);

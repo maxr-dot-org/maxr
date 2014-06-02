@@ -104,6 +104,7 @@ public:
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
 	void addPlayer (std::unique_ptr<cPlayer> player);
 	void setDeadline (int iDeadline);
+	void start ();
 	void stop();
 
 	/** the type of the current game */

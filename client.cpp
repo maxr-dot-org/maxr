@@ -1972,7 +1972,7 @@ void cClient::handleMoveJobs()
 
 		if (MoveJob->bFinished || MoveJob->bEndForNow)
 		{
-			MoveJob->stopped(*Vehicle);
+			if(Vehicle) MoveJob->stopped(*Vehicle);
 		}
 
 		if (MoveJob->bFinished)
@@ -1987,7 +1987,7 @@ void cClient::handleMoveJobs()
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			delete MoveJob;
-			unitFinishedMoveJob (*Vehicle);
+			if(Vehicle) unitFinishedMoveJob(*Vehicle);
 			continue;
 		}
 		if (MoveJob->bEndForNow)
@@ -1999,7 +1999,7 @@ void cClient::handleMoveJobs()
 				Vehicle->moving = false;
 			}
 			ActiveMJobs.erase (ActiveMJobs.begin () + i);
-			unitPausedMoveJob (*Vehicle);
+			if(Vehicle) unitPausedMoveJob(*Vehicle);
 			continue;
 		}
 

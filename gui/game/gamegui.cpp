@@ -39,6 +39,7 @@
 #include "../menu/dialogs/dialogpreferences.h"
 #include "../menu/dialogs/dialogtransfer.h"
 #include "../menu/dialogs/dialogresearch.h"
+#include "../menu/dialogs/dialogselfdestruction.h"
 #include "../menu/windows/windowunitinfo/windowunitinfo.h"
 #include "../menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 #include "../menu/windows/windowbuildvehicles/windowbuildvehicles.h"
@@ -555,6 +556,11 @@ void cGameGui::connectToClient (cClient& client)
 		{
 			client.handleChatMessage (command);
 		}
+	});
+	clientSignalConnectionManager.connect (selfDestructionTriggered, [&](const cUnit& unit)
+	{
+		if (!unit.data.ID.isABuilding ()) return;
+		sendWantSelfDestroy (client, static_cast<const cBuilding&>(unit));
 	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
@@ -1568,7 +1574,20 @@ void cGameGui::showStorageWindow (const cUnit& unit)
 //------------------------------------------------------------------------------
 void cGameGui::showSelfDestroyDialog (const cUnit& unit)
 {
-	//building->executeSelfDestroyCommand (*this);
+	if (unit.data.canSelfDestroy)
+	{
+		auto application = getActiveApplication ();
+
+		if (application)
+		{
+			auto selfDestroyDialog = application->show (std::make_shared<cDialogSelfDestruction> (unit, animationTimer));
+			signalConnectionManager.connect (selfDestroyDialog->triggeredDestruction, [this, selfDestroyDialog, &unit]()
+			{
+				selfDestructionTriggered (unit);
+				selfDestroyDialog->close ();
+			});
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

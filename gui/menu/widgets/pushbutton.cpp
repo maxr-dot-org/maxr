@@ -307,6 +307,11 @@ void cPushButton::renewSurface ()
 		src.y = (isPressed || isLocked) ? 21 : 0;
 		size = cPosition (42, 21);
 		break;
+	case ePushButtonType::Destroy:
+		src.x = (isPressed || isLocked) ? 6 : 15;
+		src.y = (isPressed || isLocked) ? 269 : 13;
+		size = cPosition (59, 56);
+		break;
 	}
 	resize (size);
 
@@ -321,6 +326,7 @@ void cPushButton::renewSurface ()
 
 	if (buttonType >= ePushButtonType::HudHelp && buttonType <= ePushButtonType::HudStop) srcSurface = GraphicsData.gfx_hud_stuff.get ();
 	else if (buttonType == ePushButtonType::UnitContextMenu) srcSurface = GraphicsData.gfx_context_menu.get ();
+	else if (buttonType == ePushButtonType::Destroy) srcSurface = (isPressed || isLocked) ? GraphicsData.gfx_hud_stuff.get () : GraphicsData.gfx_destruction.get ();
 	else srcSurface = GraphicsData.gfx_menu_stuff.get ();
 
 	assert (srcSurface != nullptr);

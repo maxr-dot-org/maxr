@@ -56,6 +56,8 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	}
 	client->setPlayers (clientPlayerList, player);
 
+	server->start ();
+
 	// in single player only the first player is important
 	serverPlayerList[player]->setLocal ();
 	sendRequestResync (*client, serverPlayerList[player]->getNr ());

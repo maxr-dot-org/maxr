@@ -200,7 +200,7 @@ void cDialogPreferences::saveValues ()
 				auto application = getActiveApplication ();
 				if (application)
 				{
-					application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented")));
+					application->show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Comp~ResolutionChange")));
 				}
 			}
 		}

@@ -54,11 +54,50 @@ bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 }
 
 //------------------------------------------------------------------------------
+void cUnitSelection::addSelectedUnitBack (cUnit& unit)
+{
+	auto unitPtr = &unit;
+	auto connection = selectedUnitsSignalConnectionManager.connect (unit.destroyed, [this, unitPtr]()
+	{
+		deselectUnit (*unitPtr);
+	});
+	selectedUnits.push_back (std::make_pair (&unit, connection));
+}
+
+//------------------------------------------------------------------------------
+void cUnitSelection::addSelectedUnitFront (cUnit& unit)
+{
+	auto unitPtr = &unit;
+	auto connection = selectedUnitsSignalConnectionManager.connect (unit.destroyed, [this, unitPtr]()
+	{
+		deselectUnit (*unitPtr);
+	});
+	selectedUnits.insert (selectedUnits.begin(), std::make_pair (&unit, connection));
+}
+
+//------------------------------------------------------------------------------
+void cUnitSelection::removeSelectedUnit (const cUnit& unit)
+{
+	auto iter = std::find_if (selectedUnits.begin (), selectedUnits.end (), [&unit](const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	if (iter == selectedUnits.end ()) return;
+
+	selectedUnitsSignalConnectionManager.disconnect (iter->second);
+	selectedUnits.erase (iter);
+}
+
+//------------------------------------------------------------------------------
+void cUnitSelection::removeAllSelectedUnits ()
+{
+	selectedUnitsSignalConnectionManager.disconnectAll ();
+	selectedUnits.clear ();
+}
+
+//------------------------------------------------------------------------------
 bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& map, const cPlayer& player)
 {
 	auto oldSelectedUnit = getSelectedUnit ();
 
-	selectedUnits.clear ();
+	removeAllSelectedUnits ();
 
 	for (int x = box.getMinCorner ().x (); x <= box.getMaxCorner ().x (); ++x)
 	{
@@ -73,9 +112,12 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& m
 			{
 				if (vehicle == oldSelectedUnit)
 				{
-					selectedUnits.insert (selectedUnits.begin (), vehicle);
+					addSelectedUnitFront (*vehicle);
 				}
-				else selectedUnits.push_back (vehicle);
+				else
+				{
+					addSelectedUnitBack (*vehicle);
+				}
 			}
 		}
 	}
@@ -89,13 +131,13 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& m
 //------------------------------------------------------------------------------
 bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 {
-	if (selectedUnits.size () == 1 && selectedUnits[0] == &unit) return false;
+	if (selectedUnits.size () == 1 && selectedUnits[0].first == &unit) return false;
 
-	if (!add) selectedUnits.clear ();
+	if (!add) removeAllSelectedUnits();
 
 	if (!isSelected (unit))
 	{
-		selectedUnits.push_back (&unit);
+		addSelectedUnitFront (unit);
 
 		if (selectedUnits.size () == 1) mainSelectionChanged ();
 		else groupSelectionChanged ();
@@ -109,27 +151,37 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 //------------------------------------------------------------------------------
 void cUnitSelection::deselectUnit (const cUnit& unit)
 {
-	auto iter = std::find (selectedUnits.begin (), selectedUnits.end (), &unit);
-	if (iter == selectedUnits.end ()) return;
-	selectedUnits.erase (iter);
+	const auto oldSelectedUnitsCount = selectedUnits.size ();
+	const auto isMainUnit = !selectedUnits.empty () && selectedUnits[0].first == &unit;
+
+	removeSelectedUnit (unit);
+
+	if (selectedUnits.size () != oldSelectedUnitsCount)
+	{
+		if (isMainUnit) mainSelectionChanged ();
+		if (selectedUnits.size () > 0) groupSelectionChanged ();
+		selectionChanged ();
+	}
 }
 
 //------------------------------------------------------------------------------
 void cUnitSelection::deselectUnits ()
 {
-	const auto oldSelectedUnits = selectedUnits.size ();
+	if (selectedUnits.empty ()) return;
 
-	selectedUnits.clear ();
+	const auto oldSelectedUnitsCount = selectedUnits.size ();
 
-	if (oldSelectedUnits > 0) mainSelectionChanged ();
-	if (oldSelectedUnits > 1) groupSelectionChanged ();
+	removeAllSelectedUnits ();
+
+	if (oldSelectedUnitsCount > 0) mainSelectionChanged ();
+	if (oldSelectedUnitsCount > 1) groupSelectionChanged ();
 	selectionChanged ();
 }
 
 //------------------------------------------------------------------------------
 cUnit* cUnitSelection::getSelectedUnit () const
 {
-	return selectedUnits.empty () ? nullptr : selectedUnits[0];
+	return selectedUnits.empty () ? nullptr : selectedUnits[0].first;
 }
 
 //------------------------------------------------------------------------------
@@ -147,9 +199,14 @@ cBuilding* cUnitSelection::getSelectedBuilding () const
 }
 
 //------------------------------------------------------------------------------
-const std::vector<cUnit*>& cUnitSelection::getSelectedUnits () const
+std::vector<cUnit*> cUnitSelection::getSelectedUnits () const
 {
-	return selectedUnits;
+	std::vector<cUnit*> result;
+	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
+	{
+		result.push_back (static_cast<cVehicle*>(i->first));
+	}
+	return result;
 }
 
 //------------------------------------------------------------------------------
@@ -158,9 +215,9 @@ std::vector<cVehicle*> cUnitSelection::getSelectedVehicles () const
 	std::vector<cVehicle*> result;
 	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
 	{
-		if ((*i)->data.ID.isAVehicle ())
+		if (i->first->data.ID.isAVehicle ())
 		{
-			result.push_back (static_cast<cVehicle*>(*i));
+			result.push_back (static_cast<cVehicle*>(i->first));
 		}
 	}
 	return result;
@@ -172,9 +229,9 @@ std::vector<cBuilding*> cUnitSelection::getSelectedBuildings () const
 	std::vector<cBuilding*> result;
 	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
 	{
-		if ((*i)->data.ID.isABuilding ())
+		if (i->first->data.ID.isABuilding ())
 		{
-			result.push_back (static_cast<cBuilding*>(*i));
+			result.push_back (static_cast<cBuilding*>(i->first));
 		}
 	}
 	return result;
@@ -192,7 +249,7 @@ size_t cUnitSelection::getSelectedVehiclesCount () const
 	size_t result = 0;
 	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
 	{
-		if ((*i)->data.ID.isAVehicle ()) ++result;
+		if (i->first->data.ID.isAVehicle ()) ++result;
 	}
 	return result;
 }
@@ -203,7 +260,7 @@ size_t cUnitSelection::getSelectedBuildingsCount () const
 	size_t result = 0;
 	for (auto i = selectedUnits.begin (); i != selectedUnits.end (); ++i)
 	{
-		if ((*i)->data.ID.isABuilding ()) ++result;
+		if (i->first->data.ID.isABuilding ()) ++result;
 	}
 	return result;
 }
@@ -211,5 +268,6 @@ size_t cUnitSelection::getSelectedBuildingsCount () const
 //------------------------------------------------------------------------------
 bool cUnitSelection::isSelected (const cUnit& unit) const
 {
-	return std::find (selectedUnits.begin (), selectedUnits.end (), &unit) != selectedUnits.end ();
+	auto iter = std::find_if (selectedUnits.begin (), selectedUnits.end (), [&unit](const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
+	return iter != selectedUnits.end ();
 }

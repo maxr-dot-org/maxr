@@ -64,6 +64,7 @@ int CallbackRunServerThread (void* arg)
 cServer::cServer (std::shared_ptr<cTCP> network_) :
 	network (std::move(network_)),
 	gameTimer(),
+	serverThread (nullptr),
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
 	casualtiesTracker (new cCasualtiesTracker()),
@@ -83,7 +84,6 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 	if (!DEDICATED_SERVER)
 	{
 		if (network) network->setMessageReceiver (this);
-		serverThread = SDL_CreateThread (CallbackRunServerThread, "server", this);
 	}
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
@@ -154,6 +154,15 @@ eGameTypes cServer::getGameType() const
 	if (network) return GAME_TYPE_TCPIP;
 	if (gameSetting->getGameType () == eGameSettingsGameType::HotSeat) return GAME_TYPE_HOTSEAT;
 	return GAME_TYPE_SINGLE;
+}
+
+void cServer::start ()
+{
+	if (serverThread) return;
+
+	if (DEDICATED_SERVER) return;
+
+	serverThread = SDL_CreateThread (CallbackRunServerThread, "server", this);
 }
 
 //------------------------------------------------------------------------------

@@ -164,6 +164,7 @@ private:
 	cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
 	cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
 	cSignal<void (const std::string&)> chatCommandTriggered;
+	cSignal<void (const cUnit&)> selfDestructionTriggered;
 };
 
 #endif // gui_game_gameguiH

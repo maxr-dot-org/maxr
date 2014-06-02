@@ -71,6 +71,8 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	}
     localClient->setPlayers (clientPlayerList, serverListLocalPlayerIndex);
 
+	server->start ();
+
     sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getNr ());
 
 	// TODO: move that in server

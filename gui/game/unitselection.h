@@ -22,6 +22,7 @@
 
 #include <vector>
 
+#include "../../utility/signal/signalconnectionmanager.h"
 #include "../../utility/signal/signal.h"
 
 class cPosition;
@@ -49,7 +50,7 @@ public:
 	cVehicle* getSelectedVehicle () const;
 	cBuilding* getSelectedBuilding () const;
 
-	const std::vector<cUnit*>& getSelectedUnits () const;
+	std::vector<cUnit*> getSelectedUnits () const;
 	std::vector<cVehicle*> getSelectedVehicles () const;
 	std::vector<cBuilding*> getSelectedBuildings () const;
 
@@ -63,7 +64,16 @@ public:
 	cSignal<void ()> mainSelectionChanged;
 	cSignal<void ()> groupSelectionChanged;
 private:
-	std::vector<cUnit*> selectedUnits;
+	cSignalConnectionManager selectedUnitsSignalConnectionManager;
+
+	std::vector<std::pair<cUnit*, cSignalConnection>> selectedUnits;
+
+	void addSelectedUnitBack (cUnit& unit);
+	void addSelectedUnitFront (cUnit& unit);
+
+	void removeSelectedUnit (const cUnit& unit);
+
+	void removeAllSelectedUnits ();
 };
 
 #endif // gui_game_unitselectionH

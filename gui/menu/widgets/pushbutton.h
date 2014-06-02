@@ -62,6 +62,8 @@ enum class ePushButtonType
 
 	UnitContextMenu,
 
+	Destroy,
+
 	Invisible
 };
 

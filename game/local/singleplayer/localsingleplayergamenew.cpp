@@ -76,6 +76,9 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	auto& clientPlayer = client->getActivePlayer ();
 	if (playerClan != -1) clientPlayer.setClan (playerClan);
+
+	server->start ();
+
 	applyUnitUpgrades (clientPlayer, unitUpgrades);
 
 	sendClan (*client);
