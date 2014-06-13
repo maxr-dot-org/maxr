@@ -163,7 +163,7 @@ void cWindowSinglePlayer::newGameClicked ()
 
 					auto initialLandingUnits = createInitialLandingUnitsList (windowClanSelection->getSelectedClan (), *gameSettings);
 
-					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
+					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
 
 					windowLandingUnitSelection->done.connect ([=]()
 					{
@@ -191,7 +191,7 @@ void cWindowSinglePlayer::newGameClicked ()
 			{
 				auto initialLandingUnits = createInitialLandingUnitsList (-1, *gameSettings);
 
-				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (0, -1, initialLandingUnits, gameSettings->getStartCredits ()));
+				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), -1, initialLandingUnits, gameSettings->getStartCredits ()));
 
 				windowLandingUnitSelection->done.connect ([=]()
 				{

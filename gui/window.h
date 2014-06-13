@@ -93,8 +93,12 @@ public:
 	 * absolutely call this function of the base class!
 	 *
 	 * @param application The application that activated this window.
+	 * @param firstTime Will be true when the window is activated the first time.
+	 *                  This means it is new on the window stack and has just been but on the very top of it.
+	 *                  When the window gets activated because all other windows that have been on above
+	 *                  this one have been closed, the flag will be false.
 	 */
-	virtual void handleActivated (cApplication& application);
+	virtual void handleActivated (cApplication& application, bool firstTime);
 	/**
 	 * Gets called when the window is deactivated.
 	 *
@@ -108,19 +112,10 @@ public:
 	 * absolutely call this function of the base class!
 	 *
 	 * @param application The application that deactivated this window.
+	 * @param removed Is true when the window is removed entirely from the
+	 *                applications window stack.
 	 */
-	virtual void handleDeactivated (cApplication& application);
-	/**
-	 * Gets called when the window is removed entirely from the
-	 * applications window stack.
-	 *
-	 * This happens when the window itself requested closing it
-	 * through @ref isClosing(). @ref handleDeactivated() will be
-	 * called as well.
-	 *
-	 * @param application The application that removed the window from it's stack.
-	 */
-	virtual void handleRemoved (cApplication& application);
+	virtual void handleDeactivated (cApplication& application, bool removed);
 
 	virtual bool wantsCentered () const;
 

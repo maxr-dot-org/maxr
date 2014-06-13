@@ -36,6 +36,7 @@
 #include "../../main.h"
 #include "../../unit.h"
 #include "../../keys.h"
+#include "../../game/logic/turnclock.h"
 
 //------------------------------------------------------------------------------
 cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
@@ -150,6 +151,18 @@ void cHud::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move(player_);
 	unitRenameWidget->setPlayer (player.get());
+}
+
+//------------------------------------------------------------------------------
+void cHud::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
+{
+	turnClock = std::move (turnClock_);
+
+	turnClockSignalConnectionManager.disconnectAll ();
+	turnClockSignalConnectionManager.connect (turnClock->turnChanged, [&]()
+	{
+		turnLabel->setText (iToStr (turnClock->getTurn ()));
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -357,12 +370,6 @@ bool cHud::getMiniMapZoomFactorActive () const
 bool cHud::getMiniMapAttackUnitsOnly () const
 {
 	return miniMapAttackUnitsOnlyButton->isChecked ();
-}
-
-//------------------------------------------------------------------------------
-void cHud::setTurnNumberText (const std::string& text)
-{
-	turnLabel->setText (text);
 }
 
 //------------------------------------------------------------------------------

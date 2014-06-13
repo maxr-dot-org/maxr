@@ -42,7 +42,7 @@ void cNetworkClientGameSaved::start (cApplication& application)
 	}
 	localClient->setPlayers (clientPlayers, localPlayerIndex);
 	localClient->setMap (staticMap);
-	localClient->setGameSetting (*gameSettings);
+	localClient->setGameSettings (*gameSettings);
 
 	sendRequestResync (*localClient, localClient->getActivePlayer().getNr());
 
@@ -60,7 +60,10 @@ void cNetworkClientGameSaved::start (cApplication& application)
 			gameGui->setPlayer (player);
 		}
 	}
-    gameGui->setPlayers (guiPlayers);
+	gameGui->setPlayers (guiPlayers);
+	gameGui->setCasualtiesTracker (localClient->getCasualtiesTracker ());
+	gameGui->setTurnClock (localClient->getTurnClock ());
+	gameGui->setGameSettings (localClient->getGameSettings ());
 
 	gameGui->connectToClient (*localClient);
 

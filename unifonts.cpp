@@ -25,6 +25,7 @@
 #include "main.h"
 #include "pcx.h"
 #include "settings.h"
+#include "utility/position.h"
 
 using namespace std;
 
@@ -626,6 +627,12 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 	}
 }
 
+void cUnicodeFont::showText (const cPosition& position, const string& text,
+							 eUnicodeFontType fonttype)
+{
+	showText (position.x (), position.y (), text, fonttype);
+}
+
 int cUnicodeFont::drawWithBreakLines (SDL_Rect rDest, const string& text,
 									  eUnicodeFontType fonttype)
 {
@@ -756,6 +763,12 @@ void cUnicodeFont::showTextCentered (int x, int y, const string& sText,
 {
 	SDL_Rect rTmp = getTextSize (sText, fonttype);
 	showText (x - rTmp.w / 2, y, sText, fonttype);
+}
+
+void cUnicodeFont::showTextCentered (const cPosition& position, const string& sText,
+									 eUnicodeFontType fonttype)
+{
+	showTextCentered (position.x (), position.y (), sText, fonttype);
 }
 
 int cUnicodeFont::getTextWide (const string& sText, eUnicodeFontType fonttype)

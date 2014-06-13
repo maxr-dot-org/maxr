@@ -33,7 +33,8 @@
 #include "vehicles.h"
 #include "gui/menu/windows/windowgamesettings/gamesettings.h"
 #include "utility/tounderlyingtype.h"
-#include "game/data//report/savedreport.h"
+#include "game/data/report/savedreport.h"
+#include "game/logic/turnclock.h"
 #include <ctime>
 
 using namespace std;
@@ -257,9 +258,9 @@ std::vector<sPlayer> cSavegame::loadPlayers ()
 		{
 			const auto name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 			const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
-			const int color = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
+			const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
 
-			playerNames.push_back(sPlayer(name, color, number));
+			playerNames.push_back(sPlayer(name, cPlayerColor(colorIndex), number));
 			playernum++;
 			playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str ());
 		}
@@ -418,11 +419,11 @@ void cSavegame::loadGameInfo (cServer& server)
 	XMLElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
 	if (!gameInfoNode) return;
 
-	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
+	server.turnClock->setTurn(gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num"));
 
-	server.gameSetting = new cGameSettings (loadGameSettings());
+	*server.gameSettings = loadGameSettings();
 
-	if (server.gameSetting->getGameType () == eGameSettingsGameType::Turns)
+	if (server.gameSettings->getGameType () == eGameSettingsGameType::Turns)
 	{
 		XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns");
 		server.activeTurnPlayer = &server.getPlayerFromNumber (element->IntAttribute ("activeplayer"));
@@ -471,8 +472,8 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 {
 	const string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 	const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
-	const int color  = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
-	auto Player = std::make_unique<cPlayer> (sPlayer (name, color, number));
+	const int colorIndex  = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
+	auto Player = std::make_unique<cPlayer> (sPlayer (name, cPlayerColor(colorIndex), number));
 	Player->initMaps (map);
 
 	const XMLElement* landingPosNode = playerNode->FirstChildElement ("LandingPos");
@@ -1286,7 +1287,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 {
 	XMLElement* gameinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
-	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.iTurn));
+	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.getTurnClock ()->getTurn ()));
 	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.activeTurnPlayer->getNr()));
 
 	const auto& gameSetting = *server.getGameSettings();
@@ -1335,7 +1336,7 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	addAttributeElement (playerNode, "Name", "string", Player.getName());
 	addAttributeElement (playerNode, "Credits", "num", iToStr (Player.Credits));
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player.getClan()));
-	addAttributeElement (playerNode, "Color", "num", iToStr (Player.getColor()));
+	addAttributeElement (playerNode, "Color", "num", iToStr (Player.getColor().getIndex()));
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player.getNr()));
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player));
 

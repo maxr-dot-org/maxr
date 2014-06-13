@@ -21,7 +21,7 @@
 #define casualtiestracker_H
 
 #include "main.h"
-#include "notifications.h"
+#include "utility/signal/signal.h"
 #include <vector>
 
 class cNetMessage;
@@ -31,7 +31,7 @@ class XMLElement;
 }
 
 //-------------------------------------------------------------------------------
-class cCasualtiesTracker : public cNotificationSender
+class cCasualtiesTracker
 {
 public:
 	cCasualtiesTracker() {}
@@ -40,13 +40,15 @@ public:
 	void storeToXML (tinyxml2::XMLElement* casualtiesNode) const;
 
 	void logCasualty (sID unitType, int playerNr);
-	int getCasualtiesOfUnitType (sID unitType, int playerNr);
+	int getCasualtiesOfUnitType (sID unitType, int playerNr) const;
 
 	void updateCasualtiesFromNetMessage (cNetMessage* message);
 	void prepareNetMessagesForClient (std::vector<cNetMessage*>& messages, int msgType);
 
 	std::vector<sID> getUnitTypesWithLosses() const;
 
+	mutable cSignal<void (const sID&, int)> casualtyChanged;
+	mutable cSignal<void ()> casualtiesChanged;
 	//-------------------------------------------------------------------------------
 private:
 	struct Casualty
@@ -59,9 +61,9 @@ private:
 		std::vector<Casualty> casualties;
 		int playerNr;
 	};
-	std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
+	mutable std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
 
-	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr);
+	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr) const;
 	void setCasualty (sID unitType, int numberOfLosses, int playerNr);
 
 	void debugPrint();

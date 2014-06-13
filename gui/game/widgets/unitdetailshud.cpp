@@ -27,8 +27,9 @@
 #include "../../../buildings.h"
 
 //------------------------------------------------------------------------------
-cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area) :
+cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
 	cWidget (area),
+	drawLines (drawLines_),
 	unit (nullptr),
 	player (nullptr)
 {
@@ -76,6 +77,12 @@ void cUnitDetailsHud::reset ()
 
 	for (int i = 0; i < maxRows; ++i)
 	{
+		if (drawLines)
+		{
+			SDL_Rect lineRect = {2, 14 + 12*i, getSize ().x (), 1};
+			SDL_FillRect (surface.get (), &lineRect, 0xFF743904);
+		}
+
 		amountLabels[i]->hide ();
 		nameLabels[i]->hide ();
 	}

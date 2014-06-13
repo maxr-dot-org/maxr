@@ -27,6 +27,7 @@
 #include "serverevents.h"
 #include "map.h"
 #include "server.h"
+#include "game/logic/turnclock.h"
 
 #include <algorithm>
 #include <iostream>
@@ -164,7 +165,7 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
-	auto player = std::make_shared<sPlayer> ("unidentified", 0, menuPlayers.size(), message.popInt16());
+	auto player = std::make_shared<sPlayer> ("unidentified", cPlayerColor(0), menuPlayers.size(), message.popInt16());
 	menuPlayers.push_back (player);
 	sendMenuChatMessage (*network, "type --server help for dedicated server help", player.get());
 	sendRequestIdentification (*network, *player);
@@ -218,7 +219,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 	const auto& player = menuPlayers[playerNr];
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
-	player->setColorIndex (message.popInt16());
+	player->setColor (cPlayerColor(message.popInt16()));
 	player->setName (message.popString());
 	player->setReady (message.popBool());
 
@@ -439,7 +440,7 @@ std::string cServerGame::getGameState() const
 
 	result << "Map: " << (map != NULL ? map->getName() : "none") << endl;
 	if (server != NULL)
-		result << "Turn: " << server->getTurn() << endl;
+		result << "Turn: " << server->getTurnClock ()->getTurn () << endl;
 
 	result << "Players:" << endl;
 	if (server != NULL && server->playerList.empty() == false)

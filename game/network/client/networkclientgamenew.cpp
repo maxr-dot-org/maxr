@@ -48,7 +48,7 @@ void cNetworkClientGameNew::start (cApplication& application)
 	}
 	localClient->setPlayers (clientPlayers, localPlayerIndex);
 	localClient->setMap (staticMap);
-	localClient->setGameSetting (*gameSettings);
+	localClient->setGameSettings (*gameSettings);
 
 	auto& clientPlayer = localClient->getActivePlayer ();
 	if (localPlayerClan != -1) clientPlayer.setClan (localPlayerClan);
@@ -76,7 +76,10 @@ void cNetworkClientGameNew::start (cApplication& application)
 			gameGui->setPlayer (player);
 		}
 	}
-    gameGui->setPlayers (guiPlayers);
+	gameGui->setPlayers (guiPlayers);
+	gameGui->setCasualtiesTracker (localClient->getCasualtiesTracker ());
+	gameGui->setTurnClock (localClient->getTurnClock ());
+	gameGui->setGameSettings (localClient->getGameSettings ());
 
 	gameGui->connectToClient (*localClient);
 

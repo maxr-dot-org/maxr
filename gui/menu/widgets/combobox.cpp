@@ -22,6 +22,8 @@
 #include "checkbox.h"
 #include "lineedit.h"
 #include "special/textlistviewitem.h"
+#include "../../../utility/drawing.h"
+#include "../../../utility/color.h"
 
 //------------------------------------------------------------------------------
 cComboBox::cComboBox (const cBox<cPosition>& area) :
@@ -132,7 +134,7 @@ void cComboBox::updateLineEditBackground ()
 
 	SDL_FillRect (lineEditBackground.get (), nullptr, 0x181818);
 
-	drawRectangle (listViewBackground.get (), cBox<cPosition> (cPosition (0, 0), cPosition (lineEditBackground->w, lineEditBackground->h)), 0x000000);
+	drawRectangle (listViewBackground.get (), cBox<cPosition> (cPosition (0, 0), cPosition (lineEditBackground->w, lineEditBackground->h)), cColor::black());
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +146,7 @@ void cComboBox::updateListViewBackground ()
 
 	SDL_FillRect (listViewBackground.get (), nullptr, 0x181818);
 
-	drawRectangle (listViewBackground.get (), cBox<cPosition> (cPosition (0, 0), size), 0x000000);
+	drawRectangle (listViewBackground.get (), cBox<cPosition> (cPosition (0, 0), size), cColor::black ());
 }
 
 //------------------------------------------------------------------------------

@@ -22,6 +22,8 @@
 #include "../../../settings.h"
 #include "../../../video.h"
 #include "../../../main.h"
+#include "../../../utility/drawing.h"
+#include "../../../utility/color.h"
 
 //------------------------------------------------------------------------------
 cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, sSOUND* clickSound_) :
@@ -93,13 +95,13 @@ void cCheckBox::draw ()
 		font->showText (position.x, position.y, text, fontType);
 		if (checked)
 		{
-			const Uint32 selection_color (0xFFE3DACF);
+			const cColor selectionColor (0xE3, 0xDA, 0xCF);
 			auto dest = getArea ();
 			dest.getMinCorner ().x () -= 3;
 			dest.getMinCorner ().y () -= 2;
 			dest.getMaxCorner ().x () += 3;
 			dest.getMaxCorner ().y () += 1;
-			drawRectangle (cVideo::buffer, dest, selection_color);
+			drawRectangle (cVideo::buffer, dest, selectionColor);
 		}
 		break;
 	case eCheckBoxType::Angular:

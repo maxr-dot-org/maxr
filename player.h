@@ -31,6 +31,7 @@
 #include "upgradecalculator.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
+#include "game/data/playercolor.h"
 
 class cBuilding;
 class cHud;
@@ -53,17 +54,14 @@ typedef std::vector<int> PointsHistory;
 class sPlayer
 {
 public:
-	sPlayer (const std::string& name_, unsigned int color_, int Nr_, int socketIndex_ = -1);
+	sPlayer (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
 	sPlayer (const sPlayer& other);
 	sPlayer& operator=(const sPlayer& other);
 
 	const std::string& getName () const;
 	void setName (std::string name);
-	unsigned int getColorIndex() const { return colorIndex; }
-	void setColorIndex (unsigned int index);
-	void setToNextColorIndex();
-	void setToPrevColorIndex();
-	SDL_Surface* getColorSurface() const;
+	const cPlayerColor& getColor () const { return color; }
+	void setColor (cPlayerColor color);
 	int getNr () const;
 	void setNr (int index);
 	int getSocketIndex () const;
@@ -81,8 +79,8 @@ public:
 	mutable cSignal<void ()> readyChanged;
 private:
 	std::string name;
-	unsigned int colorIndex;
-	int Nr; //!< Index in playerList
+	cPlayerColor color;
+	int Nr;
 
 	// Index in socket array of cServer::network
 	// if MAX_CLIENTS it's the local connected player
@@ -103,10 +101,8 @@ public:
 	const std::string& getName() const { return splayer.getName(); }
 	void setName (const std::string& name) { splayer.setName (name); }
 
-	unsigned int getColor() const { return splayer.getColorIndex(); }
-	void setColor (unsigned int index) { return splayer.setColorIndex (index); }
-
-	SDL_Surface* getColorSurface() const { return splayer.getColorSurface(); }
+	const cPlayerColor& getColor () const { return splayer.getColor (); }
+	void setColor (cPlayerColor color) { return splayer.setColor (std::move(color)); }
 
 	int getNr() const { return splayer.getNr(); }
 
@@ -158,6 +154,7 @@ public:
 	void clearDone();
 
 	void addSavedReport (std::unique_ptr<cSavedReport> savedReport);
+	const std::vector<std::unique_ptr<cSavedReport>>& getSavedReports () const;
 
 	void setClan (int newClan);
 	int getClan() const { return clan; }

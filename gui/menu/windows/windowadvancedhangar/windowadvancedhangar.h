@@ -28,7 +28,7 @@ template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan);
+	cWindowAdvancedHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan);
 	cWindowAdvancedHangar (SDL_Surface* surface, const cPlayer& player);
 	~cWindowAdvancedHangar ();
 
@@ -63,7 +63,7 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (SDL_Surface* surface, int playerColor, int playerClan) :
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan) :
 	cWindowHangar (surface, playerColor, playerClan)
 {
 	initialize ();
@@ -166,7 +166,7 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionUnitClickedSeco
 	{
 		auto& addedItem = addSelectedUnit (unitItem.getUnitId ());
 		selectedUnitList->setSelectedItem (&addedItem);
-		selectedUnitList->scroolToItem (&addedItem);
+		selectedUnitList->scrollToItem (&addedItem);
 	}
 }
 

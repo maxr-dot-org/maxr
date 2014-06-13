@@ -19,8 +19,11 @@
 
 #include "widget.h"
 
+#include "application.h"
 #include "../settings.h"
 #include "../video.h"
+#include "../utility/drawing.h"
+#include "../utility/color.h"
 
 //------------------------------------------------------------------------------
 cWidget::cWidget () :
@@ -54,7 +57,15 @@ cWidget::cWidget (const cBox<cPosition>& area_) :
 
 //------------------------------------------------------------------------------
 cWidget::~cWidget ()
-{}
+{
+	auto application = getActiveApplication ();
+
+	if (application)
+	{
+		if (application->hasKeyFocus (*this)) application->releaseKeyFocus (*this);
+		if (application->hasMouseFocus (*this)) application->releaseMouseFocus (*this);
+	}
+}
 
 //------------------------------------------------------------------------------
 cWidget* cWidget::getParent () const
@@ -391,26 +402,8 @@ void cWidget::createFrameSurface ()
 		SDL_SetColorKey (frameSurface.get (), SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (frameSurface.get (), NULL, 0xFF00FF);
 
-		const auto color = SDL_MapRGB (frameSurface->format, 0xff, 0, 0);
-
-		drawRectangle (frameSurface.get (), cBox<cPosition> (cPosition (0, 0), size), color);
+		drawRectangle (frameSurface.get (), cBox<cPosition> (cPosition (0, 0), size), cColor::red());
 	}
-}
-
-//------------------------------------------------------------------------------
-void cWidget::drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, Uint32 color)
-{
-	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
-
-	SDL_Rect line_h = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), size.x (), 1};
-
-	SDL_FillRect (surface, &line_h, color);
-	line_h.y += size.y () - 1;
-	SDL_FillRect (surface, &line_h, color);
-	SDL_Rect line_v = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), 1, size.y ()};
-	SDL_FillRect (surface, &line_v, color);
-	line_v.x += size.x () - 1;
-	SDL_FillRect (surface, &line_v, color);
 }
 
 //------------------------------------------------------------------------------

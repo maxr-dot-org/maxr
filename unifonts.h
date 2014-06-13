@@ -24,6 +24,8 @@
 #include <string>
 #include "defines.h"
 
+class cPosition;
+
 /** different fonttypes*/
 enum eUnicodeFontType
 {
@@ -95,6 +97,10 @@ public:
 	 */
 	void showText (int x, int y, const std::string& sText,
 				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+
+	void showText (const cPosition& position, const std::string& sText,
+				   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+
 	/**
 	 * Displays a text as block.<br><br>
 	 * This does <b>not</b> allow blanks in line. Linebreaks are interpreted.
@@ -128,6 +134,9 @@ public:
 	 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 	 */
 	void showTextCentered (int x, int y, const std::string& sText,
+						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
+
+	void showTextCentered (const cPosition& pos, const std::string& sText,
 						   eUnicodeFontType fonttype = FONT_LATIN_NORMAL);
 	/**
 	 * Calculates the needed width for a text in pixels

@@ -425,13 +425,13 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 void sendGameSettings (cServer& server, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_GAME_SETTINGS));
-	const cGameSettings* gameSettings = server.getGameSettings ();
+	
+	const auto& gameSettings = server.getGameSettings ();
 
-	if (gameSettings)
-	{
-		server.getGameSettings()->pushInto (*message);
-	}
-	message->pushBool (gameSettings != NULL);
+	if (!gameSettings) return;
+
+	gameSettings->pushInto (*message);
+
 	server.sendNetMessage (message, &receiver);
 }
 
@@ -675,12 +675,12 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 		const auto& secondPlayer = *playerList[i];
 		if (&player == &secondPlayer) continue;
 		message.pushInt16 (secondPlayer.getNr ());
-		message.pushInt16 (secondPlayer.getColor ());
+		message.pushInt16 (secondPlayer.getColor ().getIndex());
 		message.pushString (secondPlayer.getName ());
 	}
 	message.pushInt16 ((int) playerList.size());
 	message.pushString (server.Map->getName());
-	message.pushInt16 (player.getColor());
+	message.pushInt16 (player.getColor().getIndex());
 	message.pushInt16 (player.getNr());
 
 	message.pushBool (true);
@@ -962,9 +962,9 @@ void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cP
 }
 
 //------------------------------------------------------------------------------
-void sendCasualtiesReport (cServer& server, const cPlayer& receiver)
+void sendCasualtiesReport (cServer& server, const cPlayer* receiver)
 {
-	cCasualtiesTracker* casualtiesTracker = server.getCasualtiesTracker();
+	const auto casualtiesTracker = server.getCasualtiesTracker().get();
 	if (casualtiesTracker)
 	{
 		std::vector<cNetMessage*> messages;
@@ -972,7 +972,7 @@ void sendCasualtiesReport (cServer& server, const cPlayer& receiver)
 		for (size_t i = 0; i < messages.size(); i++)
 		{
 			AutoPtr<cNetMessage> message (messages[i]);
-			server.sendNetMessage (message, &receiver);
+			server.sendNetMessage (message, receiver);
 		}
 	}
 }

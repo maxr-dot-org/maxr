@@ -33,7 +33,7 @@ class cPlayer;
 class cUnitDetailsHud : public cWidget
 {
 public:
-	explicit cUnitDetailsHud (const cBox<cPosition>& area);
+	explicit cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines = false);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -54,6 +54,8 @@ private:
 
 	std::array<cLabel*, maxRows> amountLabels;
 	std::array<cLabel*, maxRows> nameLabels;
+
+	bool drawLines;
 
 	const cUnit* unit;
 	const cPlayer* player;

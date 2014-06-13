@@ -462,6 +462,20 @@ const sUnitData& cUnitsData::getBuilding (int nr, int clan)
 	return getUnitData_Buildings (clan) [nr];
 }
 
+//------------------------------------------------------------------------------
+const sUnitData& cUnitsData::getUnit (const sID& id, int clan)
+{
+	if (id.isAVehicle ())
+	{
+		return getVehicle (getVehicleIndexBy (id), clan);
+	}
+	else
+	{
+		assert (id.isABuilding ());
+		return getBuilding (getBuildingIndexBy (id), clan);
+	}
+}
+
 const std::vector<sUnitData>& cUnitsData::getUnitData_Vehicles (int clan)
 {
 	if (!initializedClanUnitData)

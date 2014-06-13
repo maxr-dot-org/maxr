@@ -23,6 +23,7 @@
 #include <SDL_timer.h>
 
 #include "../../../utility/signal/signal.h"
+#include "../../../utility/runnable.h"
 
 // TODO: may remove this classes!
 //       replace it by something a lot more generic and clean
@@ -49,7 +50,7 @@ private:
 	bool is400msFlag;
 };
 
-class cAnimationTimer
+class cAnimationTimer : public cRunnable
 {
 public:
 	cAnimationTimer ();
@@ -59,13 +60,15 @@ public:
 
 	unsigned long long getAnimationTime () const;
 
-	void updateAnimationFlags ();
+	virtual void run () MAXR_OVERRIDE_FUNCTION;
 	const cAnimationTimeFlags& getAnimationFlags () const;
 
 	cSignal<void ()> triggered10ms;
 	cSignal<void ()> triggered50ms;
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;
+
+	cSignal<void ()> destroyed;
 private:
 	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;

@@ -31,9 +31,9 @@
 #include "../../widgets/special/unitdetails.h"
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan) :
+cWindowHangar::cWindowHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan) :
 	cWindow (surface),
-	temporaryPlayer (new cPlayer (sPlayer ("unnamed", playerColor, 0))),
+	temporaryPlayer (new cPlayer (sPlayer ("unnamed", std::move(playerColor), 0))),
 	player (*temporaryPlayer)
 {
 	if (playerClan != -1) temporaryPlayer->setClan (playerClan);

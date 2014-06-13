@@ -61,12 +61,10 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	nameLabel->setWordWrap (true);
 
 	auto size = unitImage->getArea ();
-	size.add (nameLabel->getArea ());;
+	size.add (nameLabel->getArea ());
 
 	resize (size.getSize());
 }
-
-namespace {
 
 // TODO: find a nice place for this function
 //------------------------------------------------------------------------------
@@ -92,8 +90,6 @@ void drawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint1
 	SDL_FillRect (surface, &line_v, color);
 	line_v.y += rectangle.h - 1 - cornerSize;
 	SDL_FillRect (surface, &line_v, color);
-}
-
 }
 
 //------------------------------------------------------------------------------

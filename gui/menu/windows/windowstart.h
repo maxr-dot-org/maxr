@@ -29,11 +29,9 @@ public:
 	cWindowStart ();
 	~cWindowStart ();
 
-	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	bool firstActivate;
 
 	void singlePlayerClicked ();
 	void multiPlayerClicked ();

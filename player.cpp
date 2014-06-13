@@ -29,24 +29,23 @@
 #include "serverevents.h"
 #include "vehicles.h"
 #include "game/data/report/savedreport.h"
+#include "game/logic/turnclock.h"
 
 using namespace std;
 
 //------------------------------------------------------------------------------
-sPlayer::sPlayer (const string& name_, unsigned int colorIndex_, int nr_, int socketIndex_) :
+sPlayer::sPlayer (const string& name_, cPlayerColor color_, int nr_, int socketIndex_) :
 	name (name_),
-	colorIndex (colorIndex_),
+	color (std::move(color_)),
 	Nr (nr_),
 	socketIndex (socketIndex_),
 	ready (false)
-{
-	assert (colorIndex < PLAYERCOLORS);
-}
+{}
 
 //------------------------------------------------------------------------------
 sPlayer::sPlayer (const sPlayer& other) :
 	name (other.name),
-	colorIndex (other.colorIndex),
+	color (other.color),
 	Nr (other.Nr),
 	socketIndex (other.socketIndex),
 	ready (other.ready)
@@ -56,7 +55,7 @@ sPlayer::sPlayer (const sPlayer& other) :
 sPlayer& sPlayer::operator=(const sPlayer& other)
 {
 	name = other.name;
-	colorIndex = other.colorIndex;
+	color = other.color;
 	Nr = other.Nr;
 	socketIndex = other.socketIndex;
 	ready = other.ready;
@@ -127,31 +126,11 @@ void sPlayer::onSocketIndexDisconnected (int socketIndex_)
 		--socketIndex;
 	}
 }
-
 //------------------------------------------------------------------------------
-SDL_Surface* sPlayer::getColorSurface() const
+void sPlayer::setColor (cPlayerColor color_)
 {
-	return OtherData.colors[getColorIndex ()].get ();
-}
-
-//------------------------------------------------------------------------------
-void sPlayer::setColorIndex (unsigned int index)
-{
-	assert (index < PLAYERCOLORS);
-	std::swap(colorIndex, index);
-	if (colorIndex != index) colorChanged();
-}
-
-//------------------------------------------------------------------------------
-void sPlayer::setToNextColorIndex()
-{
-	setColorIndex ((colorIndex + 1) % PLAYERCOLORS);
-}
-
-//------------------------------------------------------------------------------
-void sPlayer::setToPrevColorIndex()
-{
-	setColorIndex ((colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
+	std::swap(color, color_);
+	if (color != color_) colorChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -764,7 +743,7 @@ void cPlayer::doResearch (cServer& server)
 
 void cPlayer::accumulateScore (cServer& server)
 {
-	const int now = server.getTurn();
+	const int now = server.getTurnClock()->getTurn();
 	int deltaScore = 0;
 
 	for (cBuilding* bp = BuildingList; bp; bp = bp->next)
@@ -1126,3 +1105,9 @@ void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport)
 
 	reportAdded (*savedReportsList.back ());
 }
+
+//------------------------------------------------------------------------------
+const std::vector<std::unique_ptr<cSavedReport>>& cPlayer::getSavedReports () const
+{
+	return savedReportsList;
+};

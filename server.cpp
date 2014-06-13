@@ -47,6 +47,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreporttranslated.h"
 #include "game/data/report/savedreportchat.h"
+#include "game/logic/turnclock.h"
 
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
@@ -68,13 +69,14 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
 	casualtiesTracker (new cCasualtiesTracker()),
-	serverState (SERVER_STATE_INITGAME)
+	serverState (SERVER_STATE_INITGAME),
+	gameSettings (std::make_unique<cGameSettings> ()),
+	turnClock (std::make_unique<cTurnClock> (1))
 {
 	bExit = false;
 	openMapDefeat = true;
 	neutralBuildings = nullptr;
 	activeTurnPlayer = nullptr;
-	iTurn = 1;
 	iDeadlineStartTime = 0;
 	iNextUnitID = 1;
 	iWantPlayerEndNum = -1;
@@ -88,6 +90,13 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start();
+
+	// connect to casualties tracker to send updates about casualties changes
+	signalConnectionManager.connect (casualtiesTracker->casualtyChanged, [this](const sID unitId, int playerNr)
+	{
+		// TODO: send updated entry only!
+		sendCasualtiesReport (*this, nullptr);
+	});
 }
 //------------------------------------------------------------------------------
 cServer::~cServer()
@@ -139,20 +148,20 @@ void cServer::addPlayer (std::unique_ptr<cPlayer> player)
 //------------------------------------------------------------------------------
 void cServer::setGameSettings (const cGameSettings& gameSettings_)
 {
-	gameSetting = new cGameSettings (gameSettings_);
+	*gameSettings = gameSettings_;
 }
 
 //------------------------------------------------------------------------------
 bool cServer::isTurnBasedGame() const
 {
-	return gameSetting->getGameType() == eGameSettingsGameType::Turns;
+	return gameSettings->getGameType() == eGameSettingsGameType::Turns;
 }
 
 //------------------------------------------------------------------------------
 eGameTypes cServer::getGameType() const
 {
 	if (network) return GAME_TYPE_TCPIP;
-	if (gameSetting->getGameType () == eGameSettingsGameType::HotSeat) return GAME_TYPE_HOTSEAT;
+	if (gameSettings->getGameType () == eGameSettingsGameType::HotSeat) return GAME_TYPE_HOTSEAT;
 	return GAME_TYPE_SINGLE;
 }
 
@@ -184,7 +193,7 @@ void cServer::stop()
 //------------------------------------------------------------------------------
 void cServer::setDeadline (int iDeadline)
 {
-	gameSetting->setTurnDeadline(iDeadline);
+	gameSettings->setTurnDeadline(iDeadline);
 }
 
 //------------------------------------------------------------------------------
@@ -2015,7 +2024,7 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& m
 
 	auto& player = getPlayerFromNumber (message.iPlayerNr);
 
-	sendCasualtiesReport (*this, player);
+	sendCasualtiesReport (*this, &player);
 }
 
 //------------------------------------------------------------------------------
@@ -2224,9 +2233,9 @@ void cServer::placeInitialResources ()
 	{
 		auto& landingPosition = i->second;
 		correctLandingPos (landingPosition);
-		Map->placeRessourcesAddPlayer (landingPosition, gameSetting->getResourceDensity ());
+		Map->placeRessourcesAddPlayer (landingPosition, gameSettings->getResourceDensity ());
 	}
-	Map->placeRessources (gameSetting->getMetalAmount(), gameSetting->getOilAmount(), gameSetting->getGoldAmount());
+	Map->placeRessources (gameSettings->getMetalAmount(), gameSettings->getOilAmount(), gameSettings->getGoldAmount());
 }
 
 //------------------------------------------------------------------------------
@@ -2262,7 +2271,7 @@ cVehicle* cServer::landVehicle (const cPosition& landingPosition, int iWidth, in
 //------------------------------------------------------------------------------
 void cServer::makeLanding()
 {
-	const bool fixed = gameSetting->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
+	const bool fixed = gameSettings->getBridgeheadType () == eGameSettingsBridgeheadType::Definite;
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		auto& player = *playerList[i];
@@ -2350,7 +2359,7 @@ void cServer::startNewGame()
 	for (size_t i = 0; i != playerList.size(); ++i)
 		sendGameSettings (*this, *playerList[i]);
 	// send clan info to clients
-	if (gameSetting->getClansEnabled())
+	if (gameSettings->getClansEnabled())
 		sendClansToClients (*this, playerList);
 
 	// place resources
@@ -2538,8 +2547,9 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	// lose eco points
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
-		unit->owner->setScore (unit->owner->getScore (iTurn) - static_cast<cBuilding*> (unit)->points, iTurn);
-		sendScore (*this, *unit->owner, iTurn);
+		unit->owner->setScore (unit->owner->getScore (turnClock->getTurn ()) - static_cast<cBuilding*> (unit)->points, turnClock->getTurn ());
+		sendScore (*this, *unit->owner, turnClock->getTurn ());
+		sendNumEcos (*this, *unit->owner);
 	}
 
 	if (unit->isABuilding())
@@ -2770,7 +2780,7 @@ void cServer::handleEnd (const cPlayer& player)
 			iWantPlayerEndNum = player.getNr();
 			return;
 		}
-		iTurn++;
+		turnClock->increaseTurn ();
 		makeTurnEnd();
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
@@ -2792,7 +2802,7 @@ void cServer::handleEnd (const cPlayer& player)
 			activeTurnPlayer = playerList.front ().get ();
 
 			makeTurnEnd();
-			iTurn++;
+			turnClock->increaseTurn();
 
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
@@ -2858,7 +2868,7 @@ void cServer::handleEnd (const cPlayer& player)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				sendTurnFinished (*this, player.getNr(), 100 * gameSetting->getTurnDeadline());
+				sendTurnFinished (*this, player.getNr(), 100 * gameSettings->getTurnDeadline());
 				iDeadlineStartTime = gameTimer.gameTime;
 			}
 			else
@@ -2878,7 +2888,7 @@ void cServer::handleEnd (const cPlayer& player)
 
 			PlayerEndList.clear();
 
-			iTurn++;
+			turnClock->increaseTurn ();
 			makeTurnEnd();
 		}
 	}
@@ -3096,7 +3106,7 @@ void cServer::makeTurnEnd()
 		if (cSettings::getInstance().shouldAutosave())
 		{
 			cSavegame Savegame (10); // autosaves are always in slot 10
-			Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (iTurn) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
+			Savegame.save (*this, lngPack.i18n ("Text~Comp~Turn_5") + " " + iToStr (turnClock->getTurn ()) + " - " + lngPack.i18n ("Text~Settings~Autosave"));
 			makeAdditionalSaveRequest (10);
 		}
 	}
@@ -3115,17 +3125,17 @@ void cServer::makeTurnEnd()
 //------------------------------------------------------------------------------
 bool cServer::isVictoryConditionMet() const
 {
-	switch (gameSetting->getVictoryCondition())
+	switch (gameSettings->getVictoryCondition())
 	{
 		case eGameSettingsVictoryCondition::Turns:
-			return iTurn >= static_cast<int>(gameSetting->getVictoryTurns());
+			return turnClock->getTurn () >= static_cast<int>(gameSettings->getVictoryTurns ());
 		case eGameSettingsVictoryCondition::Points:
 		{
 			for (size_t i = 0; i != playerList.size (); ++i)
 			{
 				const cPlayer& player = *playerList[i];
 				if (player.isDefeated) continue;
-				if (player.getScore (iTurn) >= static_cast<int>(gameSetting->getVictoryPoints ())) return true;
+				if (player.getScore (turnClock->getTurn ()) >= static_cast<int>(gameSettings->getVictoryPoints ())) return true;
 			}
 			return false;
 		}
@@ -3178,7 +3188,7 @@ void cServer::checkDefeats()
 	{
 		cPlayer& player = *playerList[i];
 		if (player.isDefeated) continue;
-		const int score = player.getScore (iTurn);
+		const int score = player.getScore (turnClock->getTurn ());
 
 		if (score < best_score) continue;
 
@@ -3263,9 +3273,9 @@ void cServer::addReport (sID id, int iPlayerNum)
 void cServer::checkDeadline()
 {
 	if (!gameTimer.timer50ms) return;
-	if (gameSetting->getTurnDeadline () < 0 || iDeadlineStartTime <= 0) return;
+	if (gameSettings->getTurnDeadline () < 0 || iDeadlineStartTime <= 0) return;
 
-	if (gameTimer.gameTime <= iDeadlineStartTime + gameSetting->getTurnDeadline () * 100) return;
+	if (gameTimer.gameTime <= iDeadlineStartTime + gameSettings->getTurnDeadline () * 100) return;
 
 	if (checkEndActions (nullptr))
 	{
@@ -3275,7 +3285,7 @@ void cServer::checkDeadline()
 
 	PlayerEndList.clear();
 
-	iTurn++;
+	turnClock->increaseTurn();
 	iDeadlineStartTime = 0;
 	makeTurnEnd();
 }
@@ -3715,8 +3725,8 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	{
 		sendClansToClients (*this, playerList);
 	}
-	sendTurn (*this, iTurn, lastTurnEnd, player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSetting->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), &player);
+	sendTurn (*this, turnClock->getTurn (), lastTurnEnd, player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSettings->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), &player);
 	sendResources (*this, player);
 
 	// send all units to the client
@@ -3771,7 +3781,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer& subj = *playerList[i];
-		for (int t = 1; t <= iTurn; ++t)
+		for (int t = 1; t <= turnClock->getTurn (); ++t)
 			sendScore (*this, subj, t, &player);
 		sendNumEcos (*this, subj, &player);
 	}
@@ -4022,11 +4032,6 @@ void cServer::makeAdditionalSaveRequest (int saveNum)
 	savingID++;
 	savingIndex = saveNum;
 	sendRequestSaveInfo (*this, savingID);
-}
-
-int cServer::getTurn() const
-{
-	return iTurn;
 }
 
 void cServer::addJob (cJob* job)

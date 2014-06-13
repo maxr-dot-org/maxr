@@ -337,13 +337,13 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 	switch (key)
 	{
 	case SDLK_ESCAPE:
-		application.releaseKeyFocus (*this);
 		escapePressed ();
+		application.releaseKeyFocus (*this);
 		break;
 	case SDLK_KP_ENTER: // fall through
 	case SDLK_RETURN:
-		application.releaseKeyFocus (*this);
 		returnPressed ();
+		application.releaseKeyFocus (*this);
 		break;
 	case SDLK_LEFT:
 		scrollLeft ();
@@ -353,9 +353,15 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 		break;
 	case SDLK_HOME:
 		cursorPos = 0;
+		startOffset = 0;
+		endOffset = (int)text.length ();
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosDecrease (endOffset);
 		break;
 	case SDLK_END:
 		cursorPos = (int)text.length ();
+		startOffset = 0;
+		endOffset = (int)text.length ();
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
 		break;
 	case SDLK_BACKSPACE:
 		deleteLeft ();

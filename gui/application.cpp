@@ -107,12 +107,11 @@ void cApplication::execute ()
 {
 	cFrameCounter frameCounter;
 	cWindow* lastActiveWindow = nullptr;
+	bool lastClosed = false;
 	while (!modalWindows.empty())
 	{
 		cEventManager::getInstance ().run ();
 
-		// TODO: long term task: remove this.
-		//       Instead: - make things thread save and run single tasks in extra threads
 		for (auto i = runnables.begin(); i != runnables.end (); ++i)
 		{
 			(*i)->run ();
@@ -124,17 +123,20 @@ void cApplication::execute ()
 		{
 			if (activeWindow != lastActiveWindow)
 			{
-				if (lastActiveWindow != nullptr) lastActiveWindow->handleDeactivated (*this);
-				activeWindow->handleActivated (*this);
+				if (lastActiveWindow != nullptr) lastActiveWindow->handleDeactivated (*this, false);
+				activeWindow->handleActivated (*this, !lastClosed);
+				keyFocusWidget = nullptr;
+				mouseFocusWidget = nullptr;
+				lastClosed = false;
 			}
 
 			if (activeWindow->isClosing ())
 			{
 				auto activeWindowOwned = modalWindows.back ();
 				modalWindows.pop_back ();
-				activeWindowOwned->handleDeactivated (*this);
-				activeWindowOwned->handleRemoved (*this);
+				activeWindowOwned->handleDeactivated (*this, true);
 				lastActiveWindow = nullptr;
+				lastClosed = true;
 			}
 			else
 			{

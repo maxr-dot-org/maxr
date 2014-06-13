@@ -36,7 +36,6 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	cWindow (nullptr),
 	staticMap (std::move(staticMap_)),
 	selectionAllowed (true),
-	firstActivate (true),
 	lastSelectedPosition (0, 0)
 {
 	using namespace std::placeholders;
@@ -120,11 +119,10 @@ void cWindowLandingPositionSelection::unlockBack ()
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::handleActivated (cApplication& application)
+void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
-	if (firstActivate) PlayRandomVoice (VoiceData.VOILanding);
-	firstActivate = false;
-	cWindow::handleActivated (application);
+	if (firstTime) PlayRandomVoice (VoiceData.VOILanding);
+	cWindow::handleActivated (application, firstTime);
 }
 
 //------------------------------------------------------------------------------

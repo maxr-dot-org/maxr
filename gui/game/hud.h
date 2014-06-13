@@ -35,6 +35,7 @@ class cUnitRenameWidget;
 class cUnit;
 class cAnimationTimer;
 class cPlayer;
+class cTurnClock;
 
 class cHud : public cWidget
 {
@@ -49,6 +50,7 @@ public:
 	cHud (std::shared_ptr<cAnimationTimer> animationTimer);
 
 	void setPlayer (std::shared_ptr<const cPlayer> player);
+	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
 
 	static SDL_Surface* generateSurface ();
 
@@ -73,7 +75,6 @@ public:
 	bool getMiniMapZoomFactorActive () const;
 	bool getMiniMapAttackUnitsOnly () const;
 
-	void setTurnNumberText (const std::string& text);
 	void setTurnTimeText (const std::string& text);
 	void setCoordinatesText (const std::string& text);
 	void setUnitNameText (const std::string& text);
@@ -119,8 +120,10 @@ private:
 	AutoSurface surface;
 
 	std::shared_ptr<const cPlayer> player;
+	std::shared_ptr<const cTurnClock> turnClock;
 
 	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager turnClockSignalConnectionManager;
 
 	cPushButton* endButton;
 

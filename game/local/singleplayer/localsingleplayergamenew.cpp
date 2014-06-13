@@ -63,7 +63,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	client->setMap (staticMap);
 
 	server->setGameSettings (*gameSettings);
-	client->setGameSetting (*gameSettings);
+	client->setGameSettings (*gameSettings);
 
 	auto player = createPlayer ();
 
@@ -104,6 +104,9 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 		}
     }
     gameGui->setPlayers (guiPlayers);
+	gameGui->setCasualtiesTracker (client->getCasualtiesTracker ());
+	gameGui->setTurnClock (client->getTurnClock ());
+	gameGui->setGameSettings (client->getGameSettings ());
 
 	gameGui->connectToClient (*client);
 
@@ -162,7 +165,7 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 //------------------------------------------------------------------------------
 sPlayer cLocalSingleplayerGameNew::createPlayer ()
 {
-	sPlayer player(cSettings::getInstance ().getPlayerName (), 0, 0);
+	sPlayer player(cSettings::getInstance ().getPlayerName (), cPlayerColor(0), 0);
 
 	player.setLocal ();
 

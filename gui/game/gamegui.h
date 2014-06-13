@@ -45,6 +45,9 @@ class cAnimationTimer;
 class cClient;
 class cHudPanels;
 class cSavedReport;
+class cCasualtiesTracker;
+class cTurnClock;
+class cGameSettings;
 struct sID;
 struct sBuildList;
 
@@ -55,7 +58,10 @@ public:
 
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
-	void setPlayers (const std::vector<std::shared_ptr<const cPlayer>>& players);
+	void setPlayers (std::vector<std::shared_ptr<const cPlayer>> players);
+	void setCasualtiesTracker (std::shared_ptr<const cCasualtiesTracker> casualties);
+	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
+	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
 	void connectToClient (cClient& client);
 	void disconnectCurrentClient ();
@@ -64,12 +70,11 @@ public:
 
 	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
-
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
 
-	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool wantsCentered () const MAXR_OVERRIDE_FUNCTION;
 
@@ -91,6 +96,10 @@ private:
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMap> dynamicMap;
 	std::shared_ptr<const cPlayer> player;
+	std::shared_ptr<const cCasualtiesTracker> casualtiesTracker;
+	std::shared_ptr<const cTurnClock> turnClock;
+	std::shared_ptr<const cGameSettings> gameSettings;
+	std::vector<std::shared_ptr<const cPlayer>> players;
 
 	cHud* hud;
 	cHudPanels* hudPanels;

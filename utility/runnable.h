@@ -23,6 +23,7 @@
 class cRunnable
 {
 public:
+	virtual ~cRunnable () {};
 	virtual void run () = 0;
 };
 

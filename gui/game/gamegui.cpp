@@ -68,6 +68,7 @@
 #include "../../game/data/report/savedreportsimple.h"
 #include "../../game/data/report/savedreportchat.h"
 #include "../../game/data/report/savedreportunit.h"
+#include "../../game/logic/turnclock.h"
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
@@ -274,8 +275,10 @@ void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setPlayers (const std::vector<std::shared_ptr<const cPlayer>>& players)
+void cGameGui::setPlayers (std::vector<std::shared_ptr<const cPlayer>> players_)
 {
+	players = std::move (players_);
+
 	chatBox->clearPlayers ();
 	for (size_t i = 0; i < players.size (); ++i)
 	{
@@ -284,10 +287,27 @@ void cGameGui::setPlayers (const std::vector<std::shared_ptr<const cPlayer>>& pl
 }
 
 //------------------------------------------------------------------------------
+void cGameGui::setCasualtiesTracker (std::shared_ptr<const cCasualtiesTracker> casualtiesTracker_)
+{
+	casualtiesTracker = std::move (casualtiesTracker_);
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
+{
+	turnClock = std::move (turnClock_);
+	hud->setTurnClock (turnClock);
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::setGameSettings (std::shared_ptr<const cGameSettings> gameSettings_)
+{
+	gameSettings = std::move (gameSettings_);
+}
+
+//------------------------------------------------------------------------------
 void cGameGui::connectToClient (cClient& client)
 {
-	hud->setTurnNumberText (iToStr (client.getTurn ()));
-
 	//
 	// GUI to client (action)
 	//
@@ -498,7 +518,7 @@ void cGameGui::connectToClient (cClient& client)
 				int cl = 0;
 				sscanf (command.c_str (), "/color %d", &cl);
 				cl %= 8;
-				client.getActivePlayer ().setColor (cl);
+				client.getActivePlayer ().setColor (cPlayerColor(cl));
 			}
 			else if (command.compare (0, 8, "/fog off") == 0)
 			{
@@ -816,11 +836,6 @@ void cGameGui::connectToClient (cClient& client)
 	//
 	// client to GUI (reaction)
 	//
-	clientSignalConnectionManager.connect (client.turnChanged, [&]()
-	{
-		hud->setTurnNumberText (iToStr(client.getTurn ()));
-	});
-
 	clientSignalConnectionManager.connect (client.startedTurnEndProcess, [&]()
 	{
 		hud->lockEndButton ();
@@ -1102,14 +1117,6 @@ void cGameGui::setInfoTexts (const std::string& primiaryText, const std::string&
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::draw ()
-{
-	animationTimer->updateAnimationFlags (); // TODO: remove this
-
-	cWindow::draw ();
-}
-
-//------------------------------------------------------------------------------
 bool cGameGui::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	const auto currentMousePosition = mouse.getPosition ();
@@ -1184,9 +1191,9 @@ bool cGameGui::handleMouseWheelMoved (cApplication& application, cMouse& mouse, 
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::handleActivated (cApplication& application)
+void cGameGui::handleActivated (cApplication& application, bool firstTime)
 {
-	cWindow::handleActivated (application);
+	cWindow::handleActivated (application, firstTime);
 
 	auto mouse = getActiveMouse ();
 	if (mouse)
@@ -1200,6 +1207,22 @@ void cGameGui::handleActivated (cApplication& application)
 	{
 		startOpenPanel ();
 		openPanelOnActivation = false;
+	}
+
+	if (firstTime)
+	{
+		application.addRunnable (animationTimer);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::handleDeactivated (cApplication& application, bool removed)
+{
+	cWindow::handleDeactivated (application, removed);
+
+	if (removed)
+	{
+		application.removeRunnable (*animationTimer);
 	}
 }
 
@@ -1316,7 +1339,25 @@ void cGameGui::showReportsWindow ()
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto reportsWindow = application->show (std::make_shared<cWindowReports> ());
+	auto reportsWindow = application->show (std::make_shared<cWindowReports> (players, player, casualtiesTracker, turnClock, gameSettings));
+
+	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow](cUnit& unit)
+	{
+		gameMap->getUnitSelection ().selectUnit (unit);
+		gameMap->centerAt (unit.getPosition ());
+		reportsWindow->close ();
+	});
+
+	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow](const cSavedReport& report)
+	{
+		if (report.getType () == eSavedReportType::Unit)
+		{
+			auto& savedUnitReport = static_cast<const cSavedReportUnit&>(report);
+
+			gameMap->centerAt (savedUnitReport.getPosition ());
+			reportsWindow->close ();
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

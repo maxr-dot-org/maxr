@@ -403,10 +403,8 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// Draw the colored frame if necessary
 	if (shouldDrawColor)
 	{
-		const Uint32 color = 0xFF000000 | *static_cast<Uint32*> (vehicle.owner->getColorSurface ()->pixels);
-
 		SDL_Rect d = {Sint16 (destination.x + 1), Sint16 (destination.y + 1), vehicle.data.isBig ? 2 * destination.w - 1 : destination.w - 1, vehicle.data.isBig ? 2 * destination.h - 1 : destination.h - 1};
-		DrawRectangle (cVideo::buffer, d, color, 1);
+		DrawRectangle (cVideo::buffer, d, vehicle.owner->getColor ().getColor ().toMappedSdlRGBAColor (cVideo::buffer->format), 1);
 	}
 
 	// draw the group selected frame if necessary

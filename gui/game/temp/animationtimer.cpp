@@ -118,7 +118,7 @@ unsigned long long cAnimationTimer::getAnimationTime () const
 }
 
 //--------------------------------------------------------------------------
-void cAnimationTimer::updateAnimationFlags ()
+void cAnimationTimer::run ()
 {
 	animationFlags.set10ms (false);
 	animationFlags.set50ms (false);

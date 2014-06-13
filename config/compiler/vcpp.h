@@ -42,9 +42,9 @@
 #endif
 
 #ifndef MAXR_NO_NOEXCEPT_FUNCTION
-//#   if _MSC_VER < ??? // Not yet implemented by any version
+#   if _MSC_VER < 1900
 #       define MAXR_NO_NOEXCEPT_FUNCTION   1
-//#   endif
+#   endif
 #endif
 
 #ifndef MAXR_NO_VARIADIC_TEMPLATES

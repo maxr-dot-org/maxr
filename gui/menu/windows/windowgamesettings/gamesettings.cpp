@@ -394,9 +394,13 @@ void cGameSettings::setTurnDeadline (unsigned int value)
 //------------------------------------------------------------------------------
 void cGameSettings::pushInto (cNetMessage& message) const
 {
+	// FIXME: implement
+	//assert (false);
 }
 
 //------------------------------------------------------------------------------
 void cGameSettings::popFrom (cNetMessage& message)
 {
+	// FIXME: implement
+	//assert (false);
 }

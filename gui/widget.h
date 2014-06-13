@@ -164,9 +164,6 @@ protected:
 
 	bool hasChildren () const;
 
-	// TODO: find some suitable place for this function!
-	static void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, Uint32 color);
-
 	virtual cMouse* getActiveMouse () const;
 	virtual cKeyboard* getActiveKeyboard () const;
 

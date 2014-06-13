@@ -32,7 +32,7 @@
 #include "../../widgets/special/unitlistviewitemcargo.h"
 
 //------------------------------------------------------------------------------
-cWindowLandingUnitSelection::cWindowLandingUnitSelection (int playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold) :
+cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerColor, int playerClan, const std::vector<std::pair<sID, int>>& initialUnits, unsigned int initialGold) :
 	cWindowAdvancedHangar<cUnitListViewItemCargo> (LoadPCX (GFXOD_HANGAR), playerColor, playerClan),
 	selectedCargoUnit (nullptr)
 {

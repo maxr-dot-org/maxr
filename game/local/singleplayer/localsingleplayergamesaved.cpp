@@ -91,7 +91,10 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 			gameGui->setPlayer (player);
 		}
 	}
-    gameGui->setPlayers (guiPlayers);
+	gameGui->setPlayers (guiPlayers);
+	gameGui->setCasualtiesTracker (client->getCasualtiesTracker ());
+	gameGui->setTurnClock (client->getTurnClock ());
+	gameGui->setGameSettings (client->getGameSettings ());
 
 	gameGui->connectToClient (*client);
 

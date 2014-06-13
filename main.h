@@ -225,6 +225,7 @@ public:
 	// clan = -1: without clans
 	const sUnitData& getVehicle (int nr, int clan = -1);
 	const sUnitData& getBuilding (int nr, int clan = -1);
+	const sUnitData& getUnit (const sID& id, int clan = -1);
 
 	// clan = -1: without clans
 	const std::vector<sUnitData>& getUnitData_Vehicles (int clan);

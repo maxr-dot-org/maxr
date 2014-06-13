@@ -47,6 +47,7 @@ class cTCP;
 class sPlayer;
 class cGameSettings;
 class cPosition;
+class cTurnClock;
 struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -173,7 +174,6 @@ public:
 	void destroyUnit (cVehicle& vehicle);
 	void destroyUnit (cBuilding& building);
 
-	int getTurn() const;
 	unsigned int getRemainingTimeInSecond() const;
 	unsigned int getElapsedTimeInSecond() const;
 
@@ -181,10 +181,13 @@ public:
 
     void handleChatMessage (const std::string& message);
 
-	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
+	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker () { return casualtiesTracker; }
+	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker () const { return casualtiesTracker; }
 
 	std::shared_ptr<const cMap> getMap() const { return Map; }
 	const std::shared_ptr<cMap>& getMap() { return Map; }
+
+	std::shared_ptr<const cTurnClock> getTurnClock () const { return turnClock; }
 
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList () { return playerList; }
@@ -192,10 +195,9 @@ public:
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
 	cPlayer& getActivePlayer() { return *ActivePlayer; }
 
-	void setGameSetting (const cGameSettings& gameSetting_);
-	const cGameSettings* getGameSetting () const { return gameSetting.get (); }
+	void setGameSettings (const cGameSettings& gameSettings_);
+	std::shared_ptr<const cGameSettings> getGameSettings () const { return gameSettings; }
 
-	mutable cSignal<void ()> turnChanged;
 	mutable cSignal<void ()> startedTurnEndProcess;
 	mutable cSignal<void ()> finishedTurnEndProcess;
 
@@ -340,18 +342,18 @@ private:
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
-	/** number of current turn */
-	int iTurn;
 	/** true if the player has been defeated */
 	bool bDefeated;
+
+	std::shared_ptr<cTurnClock> turnClock;
 	/** serverTime when players have to finish TurnTime */
 	unsigned int iEndTurnTime;
 	/** serverTime when the TurnTime has been started */
 	unsigned int iStartTurnTime;
 	/** this client's copy of the gameSettings **/
-	AutoPtr<const cGameSettings> gameSetting;
+	std::shared_ptr<cGameSettings> gameSettings;
 
-	AutoPtr<cCasualtiesTracker> casualtiesTracker;
+	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 
 	sFreezeModes freezeModes;
 

@@ -32,6 +32,7 @@
 #include "main.h" // for sID
 #include "map.h"
 #include "network.h"
+#include "utility/signal/signalconnectionmanager.h"
 #include "utility/concurrentqueue.h"
 
 class cBuilding;
@@ -42,6 +43,7 @@ class cServerAttackJob;
 class cServerMoveJob;
 class cTCP;
 class cUnit;
+class cTurnClock;
 struct sLandingUnit;
 class cGameSettings;
 
@@ -112,8 +114,8 @@ public:
 
 	void addLocalClient (cClient& client) { localClients.push_back(&client); }
 
-	const cCasualtiesTracker* getCasualtiesTracker() const { return casualtiesTracker.get();}
-	cCasualtiesTracker* getCasualtiesTracker() { return casualtiesTracker.get();}
+	std::shared_ptr<const cCasualtiesTracker> getCasualtiesTracker() const { return casualtiesTracker;}
+	const std::shared_ptr<cCasualtiesTracker>& getCasualtiesTracker () { return casualtiesTracker; }
 
 	/**
 	* Handles all incoming netMessages from the clients
@@ -279,8 +281,9 @@ public:
 
 	void makeAdditionalSaveRequest (int saveNum);
 
-	int getTurn() const;
-	const cGameSettings* getGameSettings () const { return gameSetting.get (); }
+	std::shared_ptr<const cTurnClock> getTurnClock () const { return turnClock; }
+
+	std::shared_ptr<const cGameSettings> getGameSettings () const { return gameSettings; }
 	bool isTurnBasedGame() const;
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
@@ -453,6 +456,8 @@ private:
 public:
 	std::shared_ptr<cTCP> network;
 private:
+	cSignalConnectionManager signalConnectionManager;
+
 	/** local clients if any. */
 	std::vector<cClient*> localClients;
 
@@ -480,8 +485,9 @@ private:
 	cPlayer* activeTurnPlayer;
 	/** a list with the numbers of all players who have ended their turn */
 	std::vector<const cPlayer*> PlayerEndList;
-	/** number of current turn */
-	int iTurn;
+
+	std::shared_ptr<cTurnClock> turnClock;
+
 	/** gametime when the deadline has been initialised*/
 	unsigned int iDeadlineStartTime;
 	/** stores the gametime of the last turn end. */
@@ -504,8 +510,8 @@ private:
 	 * before turn end is processed */
 	bool executingRemainingMovements;
 
-	AutoPtr<cGameSettings> gameSetting;
-	AutoPtr<cCasualtiesTracker> casualtiesTracker;
+	std::shared_ptr<cGameSettings> gameSettings;
+	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 	sFreezeModes freezeModes;
 public:
 	/** the map */

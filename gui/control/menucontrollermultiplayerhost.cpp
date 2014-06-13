@@ -236,7 +236,7 @@ void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (sPlayer& player
 			player.setReady (false);
 			break;
 		}
-		if (players[i]->getColorIndex () == player.getColorIndex ())
+		if (players[i]->getColor () == player.getColor ())
 		{
 			if (player.getNr () != localPlayer->getNr ()) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Color_Taken", &player, localPlayer->getNr (), true);
 			else windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
@@ -312,7 +312,7 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 			{
 				auto& savegamePlayer = *iter;
 				menuPlayer->setNr (savegamePlayer.getNr());
-				menuPlayer->setColorIndex (savegamePlayer.getColorIndex ());
+				menuPlayer->setColor (savegamePlayer.getColor ());
 				sendPlayerNumber (*network, *menuPlayer);
 				++i;
 			}
@@ -409,7 +409,7 @@ void cMenuControllerMultiplayerHost::startLandingUnitSelection ()
 
 	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan (), *newGame->getGameSettings ());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (0, newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
 
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
 	{
@@ -549,7 +549,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_ACCEPT (cNetMessage& m
 
 	if (!network || !windowNetworkLobby) return;
 
-	auto newPlayer = std::make_shared<sPlayer> (UNIDENTIFIED_PLAYER_NAME, 0, nextPlayerNumber++, message.popInt16 ());
+	auto newPlayer = std::make_shared<sPlayer> (UNIDENTIFIED_PLAYER_NAME, cPlayerColor(0), nextPlayerNumber++, message.popInt16 ());
 	windowNetworkLobby->addPlayer (newPlayer);
 	sendRequestIdentification (*network, *newPlayer);
 }
@@ -608,7 +608,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cNe
 	auto& player = **iter;
 
 	bool freshJoined = (player.getName ().compare (UNIDENTIFIED_PLAYER_NAME) == 0);
-	player.setColorIndex (message.popInt16 ());
+	player.setColor (cPlayerColor(message.popInt16 ()));
 	player.setName (message.popString ());
 	player.setReady (message.popBool ());
 

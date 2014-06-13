@@ -83,7 +83,7 @@ void cWindow::draw ()
 }
 
 //------------------------------------------------------------------------------
-void cWindow::handleActivated (cApplication& application)
+void cWindow::handleActivated (cApplication& application, bool firstTime)
 {
 	// one window should not be displayed in multiple applications at once
 	// (we have only one application anyway...)
@@ -104,20 +104,19 @@ void cWindow::handleActivated (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cWindow::handleDeactivated (cApplication& application)
+void cWindow::handleDeactivated (cApplication& application, bool removed)
 {
 	if (activeApplication == &application)
 	{
 		activeApplication = nullptr;
 	}
-}
 
-//------------------------------------------------------------------------------
-void cWindow::handleRemoved (cApplication& application)
-{
-	assert (isClosing ());
+	if (removed)
+	{
+		assert (isClosing ());
 
-	terminated ();
+		terminated ();
+	}
 }
 
 //------------------------------------------------------------------------------

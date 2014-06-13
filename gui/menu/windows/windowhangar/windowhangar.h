@@ -27,6 +27,7 @@
 class cImage;
 class cLabel;
 class cPlayer;
+class cPlayerColor;
 class cCheckBox;
 class cPushButton;
 class cUnitDetails;
@@ -40,7 +41,7 @@ struct sID;
 class cWindowHangar : public cWindow
 {
 public:
-	cWindowHangar (SDL_Surface* surface, int playerColor, int playerClan);
+	cWindowHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan);
 	cWindowHangar (SDL_Surface* surface, const cPlayer& player);
 	~cWindowHangar ();
 

@@ -312,7 +312,7 @@ void sendCommandoAnswer (cServer& server, bool success, bool steal, const cVehic
 void sendRequestSaveInfo (cServer& server, const int saveingID);
 void sendSavedReport (cServer& server, const cSavedReport& savedReport, const cPlayer* receiver);
 
-void sendCasualtiesReport (cServer& server, const cPlayer& receiver);
+void sendCasualtiesReport (cServer& server, const cPlayer* receiver);
 
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver = nullptr);
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver = nullptr);

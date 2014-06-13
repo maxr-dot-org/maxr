@@ -52,9 +52,9 @@ void cChatBox::draw ()
 {
 	auto application = getActiveApplication ();
 
-	const bool hasKeyFocus = application && (application->hasKeyFocus (*chatLineEdit) ||
+	const bool hasKeyFocus = application && (application->hasKeyFocus (*chatLineEdit)/* ||
 											 application->hasKeyFocus (*chatList) ||
-											 application->hasKeyFocus (*playersList));
+											 application->hasKeyFocus (*playersList)*/);
 
 	auto background = hasKeyFocus ? focusBackground.get () : nonFocusBackground.get ();
 
@@ -110,7 +110,7 @@ const cPlayer* cChatBox::getPlayerFromNumber (int playerNumber)
 void cChatBox::addChatMessage (const cPlayer& player, const std::string& message)
 {
 	auto newItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (player.getName (), message));
-	chatList->scroolToItem (newItem);
+	chatList->scrollToItem (newItem);
 }
 
 //------------------------------------------------------------------------------

@@ -211,7 +211,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	src.y = 0;
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
 	blitWithPreScale (uiData->build_org, uiData->build, &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
@@ -236,7 +236,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	src.y = 0;
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
 	blitWithPreScale (uiData->clear_small_org, uiData->clear_small, &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
@@ -278,7 +278,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
 {
 	// draw player color
-	SDL_BlitSurface (owner->getColorSurface (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
 
 	// read the size:
 	SDL_Rect src;

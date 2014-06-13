@@ -48,8 +48,6 @@ void cProtectionGlass::open ()
 //------------------------------------------------------------------------------
 void cProtectionGlass::draw ()
 {
-	animationTimer->updateAnimationFlags (); // TODO: remove this
-
 	const auto offset = (int)(getSize ().y () * (100. - percentClosed) / 100);
 
 	SDL_Rect source = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};

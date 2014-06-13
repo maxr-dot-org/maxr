@@ -45,6 +45,7 @@
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreporttranslated.h"
 #include "game/data/report/savedreportunit.h"
+#include "game/logic/turnclock.h"
 
 using namespace std;
 
@@ -57,9 +58,11 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	server (server_),
 	network (std::move(network_)),
 	ActivePlayer (NULL),
-	casualtiesTracker (new cCasualtiesTracker()),
+	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer),
-	gameTimer()
+	gameTimer(),
+	turnClock (std::make_shared<cTurnClock>(1)),
+	gameSettings (std::make_shared<cGameSettings> ())
 {
 	assert (server != nullptr || network != nullptr);
 
@@ -68,7 +71,6 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	else network->setMessageReceiver (this);
 	neutralBuildings = NULL;
 	bDefeated = false;
-	iTurn = 1;
 	bWantToEnd = false;
 	iEndTurnTime = 0;
 	iStartTurnTime = 0;
@@ -108,9 +110,9 @@ void cClient::setMap (std::shared_ptr<cStaticMap> staticMap)
 	initPlayersWithMap();
 }
 
-void cClient::setGameSetting (const cGameSettings& gameSetting_)
+void cClient::setGameSettings (const cGameSettings& gameSettings_)
 {
-	gameSetting = new cGameSettings (gameSetting_);
+	*gameSettings = gameSettings_;
 }
 
 class LessByNr
@@ -461,15 +463,14 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	if (bEndTurn)
 	{
 		iStartTurnTime = gameTimer.gameTime;
-		iTurn++;
+		turnClock->increaseTurn ();
 		bWantToEnd = false;
 		ActivePlayer->clearDone();
-		Log.write ("######### Round " + iToStr (iTurn) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write ("######### Round " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 		for (unsigned int i = 0; i < getPlayerList().size(); i++)
 		{
 			getPlayerList() [i]->bFinishedTurn = false;
 		}
-		turnChanged ();
 		finishedTurnEndProcess ();
 	}
 
@@ -1033,7 +1034,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 	}
 
 	// Save the report
-	string msgString = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn);
+	string msgString = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (turnClock->getTurn());
 	if (sReportMsg.length () > 0) msgString += "\n" + sReportMsg;
 	if (bFinishedResearch) msgString += "\n" + researchMsgString;
 	ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (msgString));
@@ -1286,10 +1287,9 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_TURN);
 
-	iTurn = message.popInt16();
+	turnClock->setTurn (message.popInt16 ());
 	iStartTurnTime = message.popInt32();
 	iEndTurnTime = iStartTurnTime;
-	turnChanged ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
@@ -1658,15 +1658,7 @@ void cClient::HandleNetMessage_GAME_EV_GAME_SETTINGS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_GAME_SETTINGS);
 
-	if (message.popBool() == false)
-	{
-		gameSetting = NULL;
-		return;
-	}
-	AutoPtr<cGameSettings> gameSetting_ (new cGameSettings());
-
-	gameSetting_->popFrom (message);
-	gameSetting = gameSetting_.Release();
+	gameSettings->popFrom (message);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
@@ -2121,11 +2113,6 @@ void cClient::destroyUnit (cBuilding& building)
 	{
 		addFx (std::make_shared<cFxExploSmall> (building.getPosition() * 64 + 32));
 	}
-}
-//------------------------------------------------------------------------------
-int cClient::getTurn() const
-{
-	return iTurn;
 }
 
 //------------------------------------------------------------------------------

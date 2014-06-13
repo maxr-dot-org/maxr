@@ -57,7 +57,7 @@ public:
 
 	cSignal<void (const cPosition&)> selectedPosition;
 
-	virtual void handleActivated (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 private:
@@ -66,8 +66,6 @@ private:
 	std::shared_ptr<cStaticMap> staticMap;
 
 	bool selectionAllowed;
-
-	bool firstActivate;
 
 	cPushButton* backButton;
 	cLabel* infoLabel;

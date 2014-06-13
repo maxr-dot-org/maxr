@@ -39,7 +39,7 @@
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	localPlayer (std::make_shared<sPlayer> (cSettings::getInstance ().getPlayerName (), cSettings::getInstance ().getPlayerColor (), 0, MAX_CLIENTS)),
+	localPlayer (std::make_shared<sPlayer> (cSettings::getInstance ().getPlayerName (), cPlayerColor(cSettings::getInstance ().getPlayerColor ()), 0, MAX_CLIENTS)),
 	saveGameNumber (-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 11), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -84,9 +84,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	playersList->setItemDistance (cPosition (0, 4));
 
 	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu.get ()));
-	signalConnectionManager.connect (prevColorButton->clicked, [&]() { localPlayer->setToPrevColorIndex (); });
+	signalConnectionManager.connect (prevColorButton->clicked, [&]() { localPlayer->setColor (cPlayerColor ((localPlayer->getColor ().getIndex () + 1) % PLAYERCOLORS)); });
 	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu.get ()));
-	signalConnectionManager.connect (nextColorButton->clicked, [&]() { localPlayer->setToNextColorIndex (); });
+	signalConnectionManager.connect (nextColorButton->clicked, [&]() { localPlayer->setColor (cPlayerColor ((localPlayer->getColor ().getIndex () + PLAYERCOLORS - 1) % PLAYERCOLORS)); });
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
@@ -182,7 +182,7 @@ void cWindowNetworkLobby::updatePlayerColor ()
 {
 	SDL_Rect src = {0, 0, 83, 10};
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (OtherData.colors[localPlayer->getColorIndex ()].get (), &src, colorSurface.get (), NULL);
+	SDL_BlitSurface (localPlayer->getColor ().getTexture(), &src, colorSurface.get (), NULL);
 	colorImage->setImage (colorSurface.get ());
 }
 //------------------------------------------------------------------------------
@@ -207,14 +207,14 @@ void cWindowNetworkLobby::triggerChatMessage (bool refocusChatLine)
 void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std::string& message)
 {
 	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
-	chatList->scroolToItem (addedItem);
+	chatList->scrollToItem (addedItem);
 }
 
 //------------------------------------------------------------------------------
 void cWindowNetworkLobby::addInfoEntry (const std::string& message)
 {
 	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (message));
-	chatList->scroolToItem (addedItem);
+	chatList->scrollToItem (addedItem);
 }
 
 //------------------------------------------------------------------------------

@@ -215,9 +215,9 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 
 /**
- * scale a surface to the overgiven sice.
+ * scale a surface to the passed size.
  * The scaled surface will be drawn to the destination surface.
- * If the destiniation surface is NULL a new surface will be created.
+ * If the destination surface is NULL a new surface will be created.
  * @author alzi alias DoctorDeath
  * @param scr the surface to be scaled.
  * @param dest the surface that will receive the new pixel data.

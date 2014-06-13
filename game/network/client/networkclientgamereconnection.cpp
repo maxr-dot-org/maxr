@@ -59,7 +59,10 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 			gameGui->setPlayer (player);
 		}
 	}
-    gameGui->setPlayers (guiPlayers);
+	gameGui->setPlayers (guiPlayers);
+	gameGui->setCasualtiesTracker (localClient->getCasualtiesTracker ());
+	gameGui->setTurnClock (localClient->getTurnClock ());
+	gameGui->setGameSettings (localClient->getGameSettings ());
 
 	gameGui->connectToClient (*localClient);
 

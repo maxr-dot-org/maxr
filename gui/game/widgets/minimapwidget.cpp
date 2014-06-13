@@ -295,8 +295,7 @@ void cMiniMapWidget::drawUnits ()
 			{
 				if (!attackUnitsOnly || building->data.canAttack)
 				{
-					unsigned int color = *static_cast<Uint32*> (building->owner->getColorSurface ()->pixels);
-					SDL_FillRect (surface.get (), &rect, color);
+					SDL_FillRect (surface.get (), &rect, building->owner->getColor ().getColor ().toMappedSdlRGBAColor (surface->format));
 				}
 			}
 
@@ -306,8 +305,7 @@ void cMiniMapWidget::drawUnits ()
 			{
 				if (!attackUnitsOnly || vehicle->data.canAttack)
 				{
-					unsigned int color = *static_cast<Uint32*> (vehicle->owner->getColorSurface ()->pixels);
-					SDL_FillRect (surface.get (), &rect, color);
+					SDL_FillRect (surface.get (), &rect, vehicle->owner->getColor ().getColor ().toMappedSdlRGBAColor (surface->format));
 				}
 			}
 
@@ -317,8 +315,7 @@ void cMiniMapWidget::drawUnits ()
 			{
 				if (!attackUnitsOnly || vehicle->data.canAttack)
 				{
-					unsigned int color = *static_cast<Uint32*> (vehicle->owner->getColorSurface ()->pixels);
-					SDL_FillRect (surface.get (), &rect, color);
+					SDL_FillRect (surface.get (), &rect, vehicle->owner->getColor ().getColor ().toMappedSdlRGBAColor (surface->format));
 				}
 			}
 		}

@@ -56,6 +56,8 @@ void cCasualtiesTracker::initFromXML (XMLElement* casualtiesNode)
 		}
 		playerNode = playerNode->NextSiblingElement ("PlayerCasualties");
 	}
+
+	casualtiesChanged ();
 }
 
 //--------------------------------------------------------------------------
@@ -88,11 +90,15 @@ void cCasualtiesTracker::storeToXML (XMLElement* casualtiesNode) const
 void cCasualtiesTracker::logCasualty (sID unitType, int playerNr)
 {
 	setCasualty (unitType, getCasualtiesOfUnitType (unitType, playerNr) + 1, playerNr);
+
+	casualtiesChanged ();
 }
 
 //--------------------------------------------------------------------------
 void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int playerNr)
 {
+	auto signalCaller = makeScopedOperation ([=](){ casualtyChanged (unitType, playerNr); });
+
 	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 
 	for (size_t i = 0; i != casualties.size(); ++i)
@@ -119,7 +125,7 @@ void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int play
 }
 
 //--------------------------------------------------------------------------
-int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr)
+int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr) const
 {
 	const vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 	for (unsigned int i = 0; i < casualties.size(); i++)
@@ -209,7 +215,7 @@ void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 		}
 	}
 
-	notifyListeners ("casualties tracker updated");
+	casualtiesChanged ();
 }
 
 //--------------------------------------------------------------------------
@@ -262,7 +268,7 @@ void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>&
 }
 
 //--------------------------------------------------------------------------
-vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer (int playerNr)
+vector<cCasualtiesTracker::Casualty>& cCasualtiesTracker::getCasualtiesOfPlayer (int playerNr) const
 {
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size(); i++)
 	{

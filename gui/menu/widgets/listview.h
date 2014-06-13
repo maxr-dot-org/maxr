@@ -66,7 +66,7 @@ public:
 	void setSelectedItem (const ItemType* item);
 	void deselectAll ();
 
-	void scroolToItem (const ItemType* item);
+	void scrollToItem (const ItemType* item);
 
 	void scrollDown ();
 	void scrollUp ();
@@ -372,7 +372,7 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 					if (selectedItems[0] == items[i].get() && i != 0)
 					{
 						setSelectedItem (items[i-1].get ());
-						scroolToItem (items[i-1].get ());
+						scrollToItem (items[i-1].get ());
 						break;
 					}
 				}
@@ -390,7 +390,7 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 					if (selectedItems[0] == items[i].get () && i != items.size ()-1)
 					{
 						setSelectedItem (items[i+1].get ());
-						scroolToItem (items[i+1].get ());
+						scrollToItem (items[i+1].get ());
 						break;
 					}
 				}
@@ -526,7 +526,7 @@ void cListView<ItemType>::deselectAll ()
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-void cListView<ItemType>::scroolToItem (const ItemType* item)
+void cListView<ItemType>::scrollToItem (const ItemType* item)
 {
 	auto iter = std::find_if (items.begin (), items.end (), [=](const std::unique_ptr<ItemType>& entry){ return entry.get () == item; });
 
