@@ -23,10 +23,32 @@
 #include <vector>
 #include <algorithm>
 
+/**
+ * Set class based on the ideas from "AssocVector" of "Modern C++ by Andrei Alexandrescu".
+ *
+ * This class provides a very similar interface to std::set but uses a continuous memory layout instead of a tree.
+ *
+ * This results in some differences:
+ *  - insert and erase are in O(N) instead of O(log N)
+ *  - iterators are invalidated on insert and erase
+ *  - iterators fulfill the random-access-iterator concept
+ *
+ * A very important feature of this class is that it supports (a part of)
+ * N3657 - "Adding heterogeneous comparison lookup to associative containers" of C++14.
+ * This means the key type of .find() is a template which allows to look up elements in the set
+ * without the construction of a value_type of the set, as long as the Compare-Predicated supports the
+ * comparison with the passed key type.
+ *
+ * TODO: add check for is_transparent in Compare for the template versions of find/upper_bound/lower_bound.
+ *
+ * @tparam Key The key and value type of the set.
+ * @tparam Compare The less-compare function to use for the sorting.
+ * @tparam Allocator The allocator to use.
+ */
 template<typename Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
-class cFlatSet : private std::vector<Key, Allocator>
+class cFlatSet
 {
-	typedef std::vector<Key, Allocator> Base;
+	typedef std::vector<Key, Allocator> DataType;
 public:
 	typedef Key key_type;
 	typedef Key value_type;
@@ -39,32 +61,32 @@ public:
 	typedef typename Allocator::const_pointer const_pointer;
 	typedef typename Allocator::reference reference;
 	typedef typename Allocator::const_reference const_reference;
-	typedef typename Base::iterator iterator;
-	typedef typename Base::const_iterator const_iterator;
-	typedef typename Base::reverse_iterator reverse_iterator;
-	typedef typename Base::const_reverse_iterator const_reverse_iterator;
+    typedef typename DataType::iterator iterator;
+    typedef typename DataType::const_iterator const_iterator;
+    typedef typename DataType::reverse_iterator reverse_iterator;
+    typedef typename DataType::const_reverse_iterator const_reverse_iterator;
 
 	cFlatSet () :
-		Base (),
+		data (),
 		compare ()
 	{}
 	explicit cFlatSet (const Compare& comp, const allocator_type& alloc = allocator_type ()) :
-		Base (alloc),
+        data (alloc),
 		compare (comp)
 	{}
 	template<typename InputIterator>
 	cFlatSet (InputIterator first, InputIterator last, const Compare& comp = Compare (), const allocator_type& alloc = allocator_type ()) :
-		Base (first, last, alloc),
+        data (first, last, alloc),
 		compare (comp)
 	{
 		std::sort (begin (), end (), compare);
 	}
 	cFlatSet (const cFlatSet& other) :
-		Base (other),
+        data (other.data),
 		compare (other.compare)
 	{}
 	cFlatSet (cFlatSet&& other) :
-		Base (std::move(other)),
+        data (std::move (other.data)),
 		compare (std::move(other.compare))
 	{}
 	//cFlatSet (const cFlatSet& other, const allocator_type& alloc);
@@ -78,35 +100,35 @@ public:
 	}
 	cFlatSet& operator=(cFlatSet&& other)
 	{
-		Base::operator=(std::move (other));
+        data = std::move (other.data);
 		compare = std::move (other.compare);
 		return *this;
 	}
 
-	allocator_type get_allocator () const { return Base::get_allocator (); }
+    allocator_type get_allocator () const { return data.get_allocator (); }
 
 	// iterators
-	iterator begin () { return Base::begin (); }
-	const_iterator begin () const { return Base::begin (); }
-	iterator end () { return Base::end (); }
-	const_iterator end () const { return Base::end (); }
-	const_iterator cbegin () const { return Base::cbegin (); }
-	const_iterator cend () const { return Base::cend (); }
+	iterator begin () { return data.begin (); }
+	const_iterator begin () const { return data.begin (); }
+	iterator end () { return data.end (); }
+	const_iterator end () const { return data.end (); }
+	const_iterator cbegin () const { return data.cbegin (); }
+	const_iterator cend () const { return data.cend (); }
 
-	reverse_iterator rbegin () { return Base::rbegin (); }
-	const_reverse_iterator rbegin () const { return Base::rbegin (); }
-	reverse_iterator rend () { return Base::rend (); }
-	const_reverse_iterator rend () const { return Base::rend (); }
-	const_reverse_iterator crbegin () const { return Base::crbegin (); }
-	const_reverse_iterator crend () const { return Base::crend (); }
+	reverse_iterator rbegin () { return data.rbegin (); }
+	const_reverse_iterator rbegin () const { return data.rbegin (); }
+	reverse_iterator rend () { return data.rend (); }
+	const_reverse_iterator rend () const { return data.rend (); }
+	const_reverse_iterator crbegin () const { return data.crbegin (); }
+	const_reverse_iterator crend () const { return data.crend (); }
 
 	// capacity
-	bool empty () const { return Base::empty (); }
-	size_type size () const { return Base::size (); }
-	size_type max_size () const { return Base::max_size (); }
-	size_type capacity () const { return Base::capacity (); }
-	void reserve (size_type cap) { Base::reserve (cap); }
-	void shrink_to_fit () { Base::shrink_to_fit (); }
+	bool empty () const { return data.empty (); }
+	size_type size () const { return data.size (); }
+	size_type max_size () const { return data.max_size (); }
+	size_type capacity () const { return data.capacity (); }
+	void reserve (size_type cap) { data.reserve (cap); }
+	void shrink_to_fit () { data.shrink_to_fit (); }
 
 	// modifiers
 	std::pair<iterator, bool> insert (const value_type& value)
@@ -116,7 +138,7 @@ public:
 
 		if (i == end () || compare (value, *i))
 		{
-			i = Base::insert (i, value);
+			i = data.insert (i, value);
 			found = false;
 		}
 		return std::make_pair (i, !found);
@@ -128,7 +150,7 @@ public:
 
 		if (i == end () || compare (value, *i))
 		{
-			i = Base::insert (i, std::move(value));
+			i = data.insert (i, std::move(value));
 			found = false;
 		}
 		return std::make_pair (i, !found);
@@ -137,7 +159,7 @@ public:
 	{
 		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, pos)))
 		{
-			return Base::insert (pos, value);
+			return data.insert (pos, value);
 		}
 		return insert (value).first;
 	}
@@ -145,7 +167,7 @@ public:
 	{
 		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, pos)))
 		{
-			return Base::insert (pos, std::move(value));
+			return data.insert (pos, std::move(value));
 		}
 		return insert (std::move(value)).first;
 	}
@@ -158,7 +180,7 @@ public:
 
 	// TODO: emplace?!
 
-	iterator erase (const_iterator position) { return Base::erase (position); }
+	iterator erase (const_iterator position) { return data.erase (position); }
 	size_type erase (const key_type& x)
 	{
 		auto i = find (x);
@@ -166,15 +188,15 @@ public:
 		erase (i);
 		return 1;
 	}
-	iterator erase (const_iterator first, const_iterator last) { return Base::erase (first, last); }
+	iterator erase (const_iterator first, const_iterator last) { return data.erase (first, last); }
 
 	void swap (cFlatSet& other)
-	{
-		Base::swap (other);
+    {
+        std::swap (data, other.data);
 		std::swap (compare, other.compare);
 	}
 
-	void clear () { Base::clear (); }
+	void clear () { data.clear (); }
 
 	// observers
 	key_compare key_comp () const { return compare; }
@@ -280,6 +302,7 @@ public:
 
 private:
 	Compare compare;
+    DataType data;
 };
 
 #endif // utility_flatsetH
