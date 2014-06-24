@@ -129,9 +129,6 @@ public:
 	virtual bool isAVehicle() const { return true; }
 	virtual bool isABuilding() const { return false; }
 
-	cVehicle* next; ///< "next"-pointer for the double linked list
-	cVehicle* prev; ///< "prev"-pointer for the double linked list
-	
 	virtual const cPosition& getMovementOffset() const MAXR_OVERRIDE_FUNCTION { return tileMovementOffset; }
 	void setMovementOffset(const cPosition& newOffset) { tileMovementOffset = newOffset; }
 

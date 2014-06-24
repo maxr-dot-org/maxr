@@ -164,9 +164,6 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 	VehicleData = UnitsData.getUnitData_Vehicles (-1);
 	BuildingData = UnitsData.getUnitData_Buildings (-1);
 
-	VehicleList = NULL;
-	BuildingList = NULL;
-
 	workingResearchCenterCount = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
@@ -182,7 +179,7 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 //------------------------------------------------------------------------------
 cPlayer::~cPlayer()
 {
-	deleteAllUnits ();
+	removeAllUnits ();
 
 	for (size_t i = 0; i != ReportVehicles.size(); ++i)
 	{
@@ -236,33 +233,6 @@ const sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& id) const
 }
 
 //------------------------------------------------------------------------------
-/** Adds the vehicle to the list of the player */
-//------------------------------------------------------------------------------
-cVehicle* cPlayer::addVehicle(const cPosition& position, const sID& id, unsigned int uid)
-{
-	const sUnitData& unitData = *id.getUnitDataOriginalVersion (this);
-	cVehicle* n = new cVehicle (unitData, this, uid);
-	n->setPosition(position);
-
-	addUnitToList (*n);
-
-	drawSpecialCircle(n->getPosition(), n->data.scan, ScanMap, mapSize);
-	if (n->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (n->getPosition(), n->data.scan, DetectLandMap, mapSize);
-	if (n->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (n->getPosition(), n->data.scan, DetectSeaMap, mapSize);
-	if (n->data.canDetectStealthOn & AREA_EXP_MINE)
-	{
-		const int minx = std::max (n->getPosition().x() - 1, 0);
-		const int maxx = std::min (n->getPosition().x() + 1, mapSize.x() - 1);
-		const int miny = std::max (n->getPosition().y() - 1, 0);
-		const int maxy = std::min (n->getPosition().y() + 1, mapSize.y() - 1);
-		for (int x = minx; x <= maxx; ++x)
-			for (int y = miny; y <= maxy; ++y)
-				DetectMinesMap[x + mapSize.x() * y] = 1;
-	}
-	return n;
-}
-
-//------------------------------------------------------------------------------
 /** initialize the maps */
 //------------------------------------------------------------------------------
 void cPlayer::initMaps (cMap& map)
@@ -297,85 +267,117 @@ const cPosition& cPlayer::getMapSize () const
 	return mapSize;
 }
 
-template <typename T>
-T* getPreviousUnitById (T* root, unsigned int id)
+//------------------------------------------------------------------------------
+cVehicle& cPlayer::addNewVehicle (const cPosition& position, const sID& id, unsigned int uid)
 {
-	if (root == 0 || id < root->iID) return 0;
-	T* it = root;
-	for (; it->next; it = it->next)
-	{
-		if (it->next->iID > id)
-			return it;
-	}
-	return it;
-}
+    const sUnitData& unitData = *id.getUnitDataOriginalVersion (this);
+    auto vehicle = std::make_shared<cVehicle> (unitData, this, uid);
+    vehicle->setPosition (position);
 
-void cPlayer::addUnitToList (cUnit& addedUnit)
-{
-	//units in the linked list are sorted in increasing order of IDs
+    drawSpecialCircle (vehicle->getPosition (), vehicle->data.scan, ScanMap, mapSize);
+    if (vehicle->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vehicle->getPosition (), vehicle->data.scan, DetectLandMap, mapSize);
+    if (vehicle->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vehicle->getPosition (), vehicle->data.scan, DetectSeaMap, mapSize);
+    if (vehicle->data.canDetectStealthOn & AREA_EXP_MINE)
+    {
+        const int minx = std::max (vehicle->getPosition ().x () - 1, 0);
+        const int maxx = std::min (vehicle->getPosition ().x () + 1, mapSize.x () - 1);
+        const int miny = std::max (vehicle->getPosition ().y () - 1, 0);
+        const int maxy = std::min (vehicle->getPosition ().y () + 1, mapSize.y () - 1);
+        for (int x = minx; x <= maxx; ++x)
+            for (int y = miny; y <= maxy; ++y)
+                DetectMinesMap[x + mapSize.x () * y] = 1;
+    }
 
-	//find unit before the added unit
-	if (addedUnit.isABuilding())
-	{
-		cBuilding* addedBuilding = static_cast<cBuilding*> (&addedUnit);
-		cBuilding* prev = getPreviousUnitById (BuildingList, addedUnit.iID);
-		insert_after_in_intrusivelist (BuildingList, prev, *addedBuilding);
-	}
-	else
-	{
-		cVehicle* addedVehicle = static_cast<cVehicle*> (&addedUnit);
-		cVehicle* prev = getPreviousUnitById (VehicleList, addedUnit.iID);
-		insert_after_in_intrusivelist (VehicleList, prev, *addedVehicle);
-	}
+    auto result = vehicles.insert (std::move (vehicle));
+    assert (result.second);
+
+    return *(*result.first);
 }
 
 //------------------------------------------------------------------------------
-/** Adds the building to the list of the player */
-//------------------------------------------------------------------------------
-cBuilding* cPlayer::addBuilding (const cPosition& position, const sID& id, unsigned int uid)
+cBuilding& cPlayer::addNewBuilding (const cPosition& position, const sID& id, unsigned int uid)
 {
 	const sUnitData* unitData = id.getUnitDataOriginalVersion (this);
-	cBuilding* Building = new cBuilding (unitData, this, uid);
+	auto building = std::make_shared<cBuilding> (unitData, this, uid);
 
-	Building->setPosition(position);
+	building->setPosition (position);
 
-	addUnitToList (*Building);
-
-	if (Building->data.scan)
+	if (building->data.scan)
 	{
-		if (Building->data.isBig) drawSpecialCircleBig (Building->getPosition(), Building->data.scan, ScanMap, mapSize);
-		else drawSpecialCircle (Building->getPosition(), Building->data.scan, ScanMap, mapSize);
+		if (building->data.isBig) drawSpecialCircleBig (building->getPosition (), building->data.scan, ScanMap, mapSize);
+		else drawSpecialCircle (building->getPosition (), building->data.scan, ScanMap, mapSize);
 	}
-	return Building;
+
+	auto result = buildings.insert (std::move (building));
+	assert (result.second);
+	return *(*result.first);
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::deleteAllUnits ()
+void cPlayer::addUnit (std::shared_ptr<cVehicle> vehicle)
 {
-	// first delete all stored vehicles
-	for (cVehicle* ptr = VehicleList; ptr; ptr = ptr->next)
-	{
-		ptr->deleteStoredUnits ();
-	}
-	// now delete all other vehicles
-	while (VehicleList)
-	{
-		cVehicle* ptr = VehicleList->next;
-		VehicleList->setSentryActive (false);
-		delete VehicleList;
-		VehicleList = ptr;
-	}
-	while (BuildingList)
-	{
-		cBuilding* ptr = BuildingList->next;
-		BuildingList->setSentryActive (false);
+    vehicles.insert (std::move (vehicle));
+}
 
-		// Stored Vehicles are already deleted; just clear the list
-		BuildingList->storedUnits.clear ();
+//------------------------------------------------------------------------------
+void cPlayer::addUnit (std::shared_ptr<cBuilding> building)
+{
+    buildings.insert (std::move (building));
+}
 
-		delete BuildingList;
-		BuildingList = ptr;
-	}
+//------------------------------------------------------------------------------
+std::shared_ptr<cBuilding> cPlayer::removeUnit (const cBuilding& building)
+{
+    auto iter = buildings.find (building);
+    if (iter == buildings.end ()) return nullptr;
+
+    auto removed = *iter;
+    buildings.erase (iter);
+    return removed;
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<cVehicle> cPlayer::removeUnit (const cVehicle& vehicle)
+{
+    auto iter = vehicles.find (vehicle);
+    if (iter == vehicles.end ()) return nullptr;
+
+    auto removed = *iter;
+    vehicles.erase (iter);
+    return removed;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::removeAllUnits ()
+{
+	vehicles.clear ();
+	buildings.clear ();
+}
+
+//------------------------------------------------------------------------------
+cVehicle* cPlayer::getVehicleFromId (unsigned int id) const
+{
+    auto iter =  vehicles.find (id);
+    return iter == vehicles.end () ? nullptr : (*iter).get();
+}
+
+//------------------------------------------------------------------------------
+cBuilding* cPlayer::getBuildingFromId (unsigned int id) const
+{
+    auto iter = buildings.find (id);
+    return iter == buildings.end () ? nullptr : (*iter).get ();
+}
+
+//------------------------------------------------------------------------------
+const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& cPlayer::getVehicles () const
+{
+    return vehicles;
+}
+
+//------------------------------------------------------------------------------
+const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& cPlayer::getBuildings () const
+{
+    return buildings;
 }
 
 //------------------------------------------------------------------------------
@@ -411,16 +413,18 @@ void cPlayer::refreshSentryAir()
 {
 	std::fill (SentriesMapAir.begin(), SentriesMapAir.end(), 0);
 
-	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
+		const auto& unit = *i;
 		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
 			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapAir, mapSize);
 		}
 	}
 
-	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& unit = *i;
 		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
 			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapAir, mapSize);
@@ -433,15 +437,17 @@ void cPlayer::refreshSentryGround()
 {
 	std::fill (SentriesMapGround.begin(), SentriesMapGround.end(), 0);
 
-	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
+		const auto& unit = *i;
 		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
 			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapGround, mapSize);
 		}
 	}
-	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& unit = *i;
 		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
 			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapGround, mapSize);
@@ -461,8 +467,9 @@ void cPlayer::doScan()
 	std::fill (DetectMinesMap.begin(), DetectMinesMap.end(), 0);
 
 	// iterate the vehicle list
-	for (const cVehicle* vp = VehicleList; vp; vp = vp->next)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
+		const auto& vp = *i;
 		if (vp->isUnitLoaded ()) continue;
 
 		if (vp->isDisabled())
@@ -495,8 +502,9 @@ void cPlayer::doScan()
 	}
 
 	// iterate the building list
-	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& bp = *i;
 		if (bp->isDisabled())
 			ScanMap[getOffset (bp->getPosition())] = 1;
 		else if (bp->data.scan)
@@ -536,48 +544,60 @@ bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
 		canSeeAt (unit.getPosition () + cPosition (1, 0));
 }
 
-cVehicle* cPlayer::getNextVehicle (cVehicle* start)
+cVehicle* cPlayer::getNextVehicle (cVehicle* start) const
 {
-	start = (start == NULL) ? VehicleList : start->next;
-	for (cVehicle* it = start; it; it = it->next)
+	if (vehicles.empty ()) return nullptr;
+
+	auto it = (start == nullptr) ? vehicles.begin () : vehicles.find (*start);
+	for (; it != vehicles.end (); ++it)
 	{
-		if (!it->isMarkedAsDone () && (!it->isUnitBuildingABuilding () || it->getBuildTurns () == 0)
-			&& !it->isUnitClearing () && !it->isSentryActive () && !it->isUnitLoaded ()
-			&& (it->data.speedCur || it->data.getShots ()))
-			return it;
+		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
+			&& !(*it)->isUnitClearing () && !(*it)->isSentryActive () && !(*it)->isUnitLoaded ()
+			&& ((*it)->data.speedCur || (*it)->data.getShots ()))
+		{
+			return it->get ();
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
-cBuilding* cPlayer::getNextBuilding (cBuilding* start)
+cBuilding* cPlayer::getNextBuilding (cBuilding* start) const
 {
-	start = (start == NULL) ? BuildingList : start->next;
-	for (cBuilding* it = start; it; it = it->next)
+	if (buildings.empty ()) return nullptr;
+
+	auto it = (start == nullptr) ? buildings.begin () : buildings.find (*start);
+	for (; it != buildings.end (); ++it)
 	{
-		if (!it->isMarkedAsDone () && !it->isUnitWorking () && !it->isSentryActive ()
-			&& (!it->data.canBuild.empty () || it->data.getShots ()
-				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
-				|| it->data.canResearch))
-			return it;
+		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
+			&& (!(*it)->data.canBuild.empty () || (*it)->data.getShots ()
+			|| (*it)->data.canMineMaxRes > 0 || (*it)->data.convertsGold > 0
+			|| (*it)->data.canResearch))
+		{
+			return it->get ();
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
-cBuilding* cPlayer::getNextMiningStation (cBuilding* start)
+cBuilding* cPlayer::getNextMiningStation (cBuilding* start) const
 {
-	start = (start == NULL) ? BuildingList : start->next;
-	for (cBuilding* it = start; it; it = it->next)
+	if (buildings.empty ()) return nullptr;
+
+	auto it = (start == nullptr) ? buildings.begin () : buildings.find (*start);
+	for (; it != buildings.end (); ++it)
 	{
-		if (it->data.canMineMaxRes > 0)
-			return it;
+		if ((*it)->data.canMineMaxRes > 0)
+		{
+			return it->get ();
+		}
 	}
-	return NULL;
+    return nullptr;
 }
 
 //------------------------------------------------------------------------------
 /** Returns the next unit that can still fire/shoot */
 //------------------------------------------------------------------------------
-cUnit* cPlayer::getNextUnit (cUnit* start)
+cUnit* cPlayer::getNextUnit (cUnit* start) const
 {
 	if (start == NULL || start->owner != this)
 	{
@@ -611,48 +631,63 @@ cUnit* cPlayer::getNextUnit (cUnit* start)
 	return getNextMiningStation (NULL);
 }
 
-cVehicle* cPlayer::getPrevVehicle (cVehicle* start)
+cVehicle* cPlayer::getPrevVehicle (cVehicle* start) const
 {
-	start = (start == NULL) ? get_last_of_intrusivelist (VehicleList) : start->prev;
-	for (cVehicle* it = start; it; it = it->prev)
+	if (vehicles.empty ()) return nullptr;
+
+	auto it = (start == nullptr) ? vehicles.end ()-1 : vehicles.find (*start);
+	for (; it != vehicles.end (); --it)
 	{
-		if (!it->isMarkedAsDone () && (!it->isUnitBuildingABuilding () || it->getBuildTurns () == 0)
-			&& !it->isUnitClearing () && !it->isSentryActive () && !it->isUnitLoaded ()
-			&& (it->data.speedCur || it->data.getShots ()))
-			return it;
+		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
+			&& !(*it)->isUnitClearing () && !(*it)->isSentryActive () && !(*it)->isUnitLoaded ()
+			&& ((*it)->data.speedCur || (*it)->data.getShots ()))
+		{
+			return it->get ();
+		}
+		if (it == vehicles.begin ()) break;
 	}
-	return NULL;
+	return nullptr;
 }
 
-cBuilding* cPlayer::getPrevBuilding (cBuilding* start)
+cBuilding* cPlayer::getPrevBuilding (cBuilding* start) const
 {
-	start = (start == NULL) ? get_last_of_intrusivelist (BuildingList) : start->prev;
-	for (cBuilding* it = start; it; it = it->prev)
+	if (buildings.empty ()) return nullptr;
+
+	auto it = (start == nullptr) ? buildings.end()-1 : buildings.find (*start);
+	for (; it != buildings.end (); --it)
 	{
-		if (!it->isMarkedAsDone () && !it->isUnitWorking () && !it->isSentryActive ()
-			&& (!it->data.canBuild.empty () || it->data.getShots ()
-				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
-				|| it->data.canResearch))
-			return it;
+		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
+			&& (!(*it)->data.canBuild.empty () || (*it)->data.getShots ()
+			|| (*it)->data.canMineMaxRes > 0 || (*it)->data.convertsGold > 0
+			|| (*it)->data.canResearch))
+		{
+			return it->get ();
+		}
+		if (it == buildings.begin ()) break;
 	}
-	return NULL;
+	return nullptr;
 }
 
-cBuilding* cPlayer::getPrevMiningStation (cBuilding* start)
+cBuilding* cPlayer::getPrevMiningStation (cBuilding* start) const
 {
-	start = (start == NULL) ? get_last_of_intrusivelist (BuildingList) : start->prev;
-	for (cBuilding* it = start; it; it = it->prev)
+	if (buildings.empty ()) return nullptr;
+
+	auto it = (start == nullptr) ? buildings.end ()-1 : buildings.find (*start);
+	for (; it != buildings.end (); --it)
 	{
-		if (it->data.canMineMaxRes > 0)
-			return it;
+		if ((*it)->data.canMineMaxRes > 0)
+		{
+			return it->get ();
+		}
+		if (it == buildings.begin ()) break;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
 /** Returns the previous vehicle, that can still move / shoot */
 //------------------------------------------------------------------------------
-cUnit* cPlayer::getPrevUnit (cUnit* start)
+cUnit* cPlayer::getPrevUnit (cUnit* start) const
 {
 	if (start == NULL || start->owner != this)
 	{
@@ -687,6 +722,12 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 }
 
 //------------------------------------------------------------------------------
+bool cPlayer::hasUnits () const
+{
+    return !vehicles.empty () || !buildings.empty ();
+}
+
+//------------------------------------------------------------------------------
 /** Starts a research center. */
 //------------------------------------------------------------------------------
 void cPlayer::startAResearch (int researchArea)
@@ -712,7 +753,7 @@ void cPlayer::stopAResearch (int researchArea)
 }
 
 //------------------------------------------------------------------------------
-/** At turnend update the research level */
+/** At turn end update the research level */
 //------------------------------------------------------------------------------
 void cPlayer::doResearch (cServer& server)
 {
@@ -746,8 +787,9 @@ void cPlayer::accumulateScore (cServer& server)
 	const int now = server.getTurnClock()->getTurn();
 	int deltaScore = 0;
 
-	for (cBuilding* bp = BuildingList; bp; bp = bp->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& bp = *i;
 		if (bp->data.canScore && bp->isUnitWorking ())
 		{
 			bp->points++;
@@ -764,8 +806,9 @@ void cPlayer::countEcoSpheres()
 {
 	numEcos = 0;
 
-	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& bp = *i;
 		if (bp->data.canScore && bp->isUnitWorking ())
 			++numEcos;
 	}
@@ -783,13 +826,15 @@ void cPlayer::setScore (int s, int turn)
 
 void cPlayer::clearDone()
 {
-	for (cVehicle* unit = VehicleList; unit; unit = unit->next)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
+		const auto& unit = *i;
 		unit->setMarkedAsDone(false);
 	}
 
-	for (cBuilding* unit = BuildingList; unit; unit = unit->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& unit = *i;
 		unit->setMarkedAsDone(false);
 	}
 }
@@ -920,11 +965,12 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
 
-	for (const cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = curBuilding->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
-		if (curBuilding->data.canResearch && curBuilding->isUnitWorking ())
+		const auto& building = *i;
+		if (building->data.canResearch && building->isUnitWorking ())
 		{
-			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
+			researchCentersWorkingOnArea[building->researchArea] += 1;
 			newResearchCount++;
 		}
 	}
@@ -934,12 +980,14 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 //------------------------------------------------------------------------------
 bool cPlayer::mayHaveOffensiveUnit() const
 {
-	for (const cVehicle* vehicle = VehicleList; vehicle; vehicle = vehicle->next)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
+		const auto& vehicle = *i;
 		if (vehicle->data.canAttack || !vehicle->data.canBuild.empty()) return true;
 	}
-	for (const cBuilding* building = BuildingList; building; building = building->next)
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
+		const auto& building = *i;
 		if (building->data.canAttack || !building->data.canBuild.empty()) return true;
 	}
 	return false;

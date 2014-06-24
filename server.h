@@ -32,8 +32,10 @@
 #include "main.h" // for sID
 #include "map.h"
 #include "network.h"
+#include "unit.h" // sUnitLess
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/concurrentqueue.h"
+#include "utility/flatset.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -232,8 +234,8 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle* addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
-	cBuilding* addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
+	cVehicle& addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
+	cBuilding& addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
 	/**
 	* adds a report to the reportlist
@@ -480,7 +482,7 @@ private:
 	/** the server is on halt, because a client is not responding */
 	int waitForPlayer;
 	/** list with buildings without owner, e.g. rubble fields */
-	cBuilding* neutralBuildings;
+	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 	/** number of active player in turn based multiplayer game */
 	cPlayer* activeTurnPlayer;
 	/** a list with the numbers of all players who have ended their turn */

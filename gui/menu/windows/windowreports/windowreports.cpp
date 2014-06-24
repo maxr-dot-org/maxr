@@ -326,26 +326,26 @@ void cWindowReports::rebuildUnitList ()
 
 	if (localPlayer != nullptr)
 	{
-		cVehicle* nextVehicle = localPlayer->VehicleList;
-		while (nextVehicle)
+		const auto& vehicles = localPlayer->getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
-			if (checkFilter (nextVehicle->data))
+			const auto& vehicle = *i;
+			if (checkFilter (vehicle->data))
 			{
-				unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*nextVehicle));
+				unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*vehicle));
 			}
-			nextVehicle = nextVehicle->next;
 		}
 
 		if (stationaryCheckBox->isChecked ())
 		{
-			cBuilding* nextBuilding = localPlayer->BuildingList;
-			while (nextBuilding)
+			const auto& buildings = localPlayer->getBuildings ();
+			for (auto i = buildings.begin (); i != buildings.end (); ++i)
 			{
-				if (checkFilter (nextBuilding->data))
+				const auto& building = *i;
+				if (checkFilter (building->data))
 				{
-					unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*nextBuilding));
+					unitsList->addItem (std::make_unique<cReportUnitListViewItem> (*building));
 				}
-				nextBuilding = nextBuilding->next;
 			}
 		}
 	}

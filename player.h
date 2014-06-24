@@ -28,9 +28,11 @@
 #include "autoptr.h"
 #include "base.h"
 #include "main.h" // for sID
+#include "unit.h" // sUnitLess
 #include "upgradecalculator.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
+#include "utility/flatset.h"
 #include "game/data/playercolor.h"
 
 class cBuilding;
@@ -89,11 +91,10 @@ private:
 	bool ready;
 };
 
-
 // the Player class //////////////////////////////
 class cPlayer
 {
-	cPlayer (const cPlayer&) DELETE_CPP11;
+	cPlayer (const cPlayer&) MAXR_DELETE_FUNCTION;
 public:
 	cPlayer (const sPlayer& splayer);
 	~cPlayer();
@@ -132,13 +133,28 @@ public:
 	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 	bool canSeeAt (const cPosition& position) const;
 
-	cVehicle* addVehicle (const cPosition& position, const sID& id, unsigned int uid);
-	cBuilding* addBuilding (const cPosition& position, const sID& id, unsigned int uid);
+	cVehicle& addNewVehicle (const cPosition& position, const sID& id, unsigned int uid);
+	cBuilding& addNewBuilding (const cPosition& position, const sID& id, unsigned int uid);
 
-	void deleteAllUnits ();
+	void addUnit (std::shared_ptr<cVehicle> vehicle);
+	void addUnit (std::shared_ptr<cBuilding> building);
 
-	cUnit* getNextUnit (cUnit* start);
-	cUnit* getPrevUnit (cUnit* start);
+	std::shared_ptr<cBuilding> removeUnit (const cBuilding& building);
+	std::shared_ptr<cVehicle> removeUnit (const cVehicle& vehicle);
+
+	void removeAllUnits ();
+
+	cVehicle* getVehicleFromId (unsigned int id) const;
+	cBuilding* getBuildingFromId (unsigned int id) const;
+
+	const cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>>& getVehicles () const;
+	const cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>>& getBuildings () const;
+
+	cUnit* getNextUnit (cUnit* start) const;
+	cUnit* getPrevUnit (cUnit* start) const;
+
+	bool hasUnits () const;
+
 	void addSentry (cUnit& u);
 	void deleteSentry (cUnit& u);
 	void startAResearch (int researchArea);
@@ -158,8 +174,6 @@ public:
 
 	void setClan (int newClan);
 	int getClan() const { return clan; }
-
-	void addUnitToList (cUnit& addedUnit);
 
 	void exploreResource (const cPosition& pos) { ResourceMap[getOffset (pos)] = 1; }
 	bool hasResourceExplored (const cPosition& pos) const { return ResourceMap[getOffset (pos)] != 0; }
@@ -198,23 +212,24 @@ private:
 	*/
 	void drawSpecialCircleBig (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize);
 
-	cBuilding* getNextBuilding (cBuilding* start);
-	cBuilding* getNextMiningStation (cBuilding* start);
-	cVehicle* getNextVehicle (cVehicle* start);
+	cBuilding* getNextBuilding (cBuilding* start) const;
+	cBuilding* getNextMiningStation (cBuilding* start) const;
+	cVehicle* getNextVehicle (cVehicle* start) const;
 
-	cBuilding* getPrevBuilding (cBuilding* start);
-	cBuilding* getPrevMiningStation (cBuilding* start);
-	cVehicle* getPrevVehicle (cVehicle* start);
+	cBuilding* getPrevBuilding (cBuilding* start) const;
+	cBuilding* getPrevMiningStation (cBuilding* start) const;
+	cVehicle* getPrevVehicle (cVehicle* start) const;
 
 private:
 	sPlayer splayer;
 public:
 	std::vector<sUnitData> VehicleData; // Current version of vehicles.
-	cVehicle* VehicleList;     // List of all vehicles of the player.
 	std::vector<sUnitData> BuildingData; // Current version of buildings.
-	cBuilding* BuildingList;  // List of all building of the player.
 	cBase base;               // Die Basis dieses Spielers.
 private:
+	cFlatSet<std::shared_ptr<cVehicle>, sUnitLess<cVehicle>> vehicles;
+	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> buildings;
+
 	int landingPosX;
 	int landingPosY;
 	cPosition mapSize; // Width and Height of the map.

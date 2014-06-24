@@ -289,10 +289,10 @@ uint32_t calcClientChecksum (const cClient& client)
 	const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		for (const cVehicle* vehicle = players[i]->VehicleList;
-			 vehicle;
-			 vehicle = vehicle->next)
+		const auto& vehicles = players[i]->getVehicles ();
+		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
 		{
+			const auto& vehicle = *j;
 			crc = calcCheckSum (vehicle->iID,  crc);
 			crc = calcCheckSum (vehicle->getPosition().x(), crc);
 			crc = calcCheckSum (vehicle->getPosition().y(), crc);
@@ -310,10 +310,10 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 	const auto& playerList = server.playerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		for (const cVehicle* vehicle = playerList[i]->VehicleList;
-			 vehicle;
-			 vehicle = vehicle->next)
+		const auto& vehicles = playerList[i]->getVehicles ();
+		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
 		{
+			const auto& vehicle = *j;
 			if (Contains (vehicle->seenByPlayerList, player) || vehicle->owner == player)
 			{
 				crc = calcCheckSum (vehicle->iID,  crc);
@@ -336,10 +336,10 @@ void compareGameData (const cClient& client, const cServer& server)
 	{
 		const auto& clientPlayer = players[i];
 
-		for (const cVehicle* clientVehicle = clientPlayer->VehicleList;
-			 clientVehicle;
-			 clientVehicle = clientVehicle->next)
+		const auto& vehicles = clientPlayer->getVehicles ();
+		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
 		{
+			const auto& clientVehicle = *j;
 			const cVehicle* serverVehicle = server.getVehicleFromID (clientVehicle->iID);
 
 			assert (clientVehicle->getPosition() == serverVehicle->getPosition());

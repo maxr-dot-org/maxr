@@ -52,8 +52,6 @@ using namespace std;
 //-----------------------------------------------------------------------------
 cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	cUnit (Owner ? Owner->getUnitDataCurrentVersion (v.ID) : &v, Owner, ID),
-	next (0),
-	prev (0),
 	loaded (false),
 	isBuilding (false),
 	buildingTyp (),
@@ -886,14 +884,18 @@ bool cVehicle::InSentryRange (cServer& server)
 		// Check sentry type
 		if (data.factorAir == 0 && player.hasSentriesGround (getPosition ()) == 0) continue;
 
-		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
+        const auto& vehicles = player.getVehicles ();
+        for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
-			if (makeSentryAttack (server, vehicle))
+            const auto& vehicle = *i;
+			if (makeSentryAttack (server, vehicle.get()))
 				return true;
-		}
-		for (cBuilding* building = player.BuildingList; building; building = building->next)
-		{
-			if (makeSentryAttack (server, building))
+        }
+        const auto& buildings = player.getBuildings ();
+        for (auto i = buildings.begin (); i != buildings.end (); ++i)
+        {
+            const auto& building = *i;
+			if (makeSentryAttack (server, building.get()))
 				return true;
 		}
 	}
@@ -934,17 +936,17 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 	{
 		// check if there is a vehicle or building of player, that is offended
 
-		for (const cVehicle* opponentVehicle = player->VehicleList;
-			 opponentVehicle != 0;
-			 opponentVehicle = opponentVehicle->next)
-		{
+        const auto& vehicles = player->getVehicles ();
+        for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+        {
+            const auto& opponentVehicle = *i;
 			if (isOtherUnitOffendedByThis (server, *opponentVehicle))
 				return true;
-		}
-		for (const cBuilding* opponentBuilding = player->BuildingList;
-			 opponentBuilding != 0;
-			 opponentBuilding = opponentBuilding->next)
-		{
+        }
+        const auto& buildings = player->getBuildings ();
+        for (auto i = buildings.begin (); i != buildings.end (); ++i)
+        {
+            const auto& opponentBuilding = *i;
 			if (isOtherUnitOffendedByThis (server, *opponentBuilding))
 				return true;
 		}
@@ -972,18 +974,18 @@ bool cVehicle::doReactionFire (cServer& server, cPlayer* player) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
 	// first look for a building
-	for (cBuilding* opponentBuilding = player->BuildingList;
-		 opponentBuilding != 0;
-		 opponentBuilding = opponentBuilding->next)
-	{
-		if (doReactionFireForUnit (server, opponentBuilding))
+    const auto& buildings = player->getBuildings ();
+    for (auto i = buildings.begin (); i != buildings.end (); ++i)
+    {
+        const auto& opponentBuilding = *i;
+		if (doReactionFireForUnit (server, opponentBuilding.get()))
 			return true;
-	}
-	for (cVehicle* opponentVehicle = player->VehicleList;
-		 opponentVehicle != 0;
-		 opponentVehicle = opponentVehicle->next)
-	{
-		if (doReactionFireForUnit (server, opponentVehicle))
+    }
+    const auto& vehicles = player->getVehicles ();
+    for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+    {
+        const auto& opponentVehicle = *i;
+        if (doReactionFireForUnit (server, opponentVehicle.get ()))
 			return true;
 	}
 	return false;
@@ -1529,8 +1531,12 @@ cBuilding* cVehicle::getContainerBuilding()
 {
 	if (!isUnitLoaded ()) return NULL;
 
-	for (cBuilding* building = owner->BuildingList; building; building = building->next)
-		if (Contains (building->storedUnits, this)) return building;
+    const auto& buildings = owner->getBuildings ();
+    for (auto i = buildings.begin (); i != buildings.end (); ++i)
+    {
+        const auto& building = *i;
+        if (Contains (building->storedUnits, this)) return building.get();
+    }
 
 	return NULL;
 }
@@ -1539,8 +1545,12 @@ cVehicle* cVehicle::getContainerVehicle()
 {
 	if (!isUnitLoaded()) return NULL;
 
-	for (cVehicle* vehicle = owner->VehicleList; vehicle; vehicle = vehicle->next)
-		if (Contains (vehicle->storedUnits, this)) return vehicle;
+    const auto& vehicles = owner->getVehicles ();
+    for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+    {
+        const auto& vehicle = *i;
+        if (Contains (vehicle->storedUnits, this)) return vehicle.get();
+    }
 
 	return NULL;
 }

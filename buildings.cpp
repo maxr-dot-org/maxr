@@ -50,8 +50,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	cUnit ((Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
 		   Owner,
 		   ID),
-	next (0),
-	prev (0),
 	BuildList (0),
 	isWorking (false)
 {

@@ -71,7 +71,6 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 //------------------------------------------------------------------------------
 cUnit::~cUnit()
 {
-	deleteStoredUnits();
 	if (lockerPlayer)
 	{
 		lockerPlayer->deleteLock (*this);
@@ -340,20 +339,6 @@ void cUnit::upgradeToCurrentVersion()
 	data.shotsMax = upgradeVersion->shotsMax;
 	data.damage = upgradeVersion->damage;
 	data.buildCosts = upgradeVersion->buildCosts;
-}
-
-//------------------------------------------------------------------------------
-void cUnit::deleteStoredUnits()
-{
-	for (size_t i = 0; i != storedUnits.size(); ++i)
-	{
-		cVehicle* vehicle = storedUnits[i];
-		remove_from_intrusivelist (vehicle->owner->VehicleList, *vehicle);
-		vehicle->deleteStoredUnits();
-
-		delete vehicle;
-	}
-	storedUnits.clear();
 }
 
 //------------------------------------------------------------------------------

@@ -88,8 +88,6 @@ public:
 	 */
 	void upgradeToCurrentVersion();
 
-	void deleteStoredUnits();
-
 	void setDisabledTurns (int turns);
 	void setSentryActive (bool value);
 	void setManualFireActive (bool value);
@@ -182,6 +180,45 @@ private:
 	bool beeingAttacked; ///< true when an attack on this unit is running
 	bool markedAsDone; ///< the player has pressed the done button for this unit
 	bool beenAttacked; //the unit was attacked in this turn
+};
+
+template<typename T>
+struct sUnitLess
+{
+	//static_assert(std::is_base_of<cUnit, T>::value, "Invalid template parameter. Has to be of a derived class of cUnit!");
+
+	bool operator()(const std::shared_ptr<T>& left, const std::shared_ptr<T>& right) const
+	{
+		return left->iID < right->iID;
+	}
+	bool operator()(const std::shared_ptr<T>& left, const T& right) const
+	{
+		return left->iID < right.iID;
+	}
+	bool operator()(const T& left, const std::shared_ptr<T>& right) const
+	{
+		return left.iID < right->iID;
+	}
+	bool operator()(const T& left, const T& right) const
+	{
+		return left.iID < right.iID;
+	}
+	bool operator()(unsigned int left, const T& right) const
+	{
+		return left < right.iID;
+	}
+	bool operator()(const T& left, unsigned int right) const
+	{
+		return left.iID < right;
+	}
+	bool operator()(unsigned int left, const std::shared_ptr<T>& right) const
+	{
+		return left < right->iID;
+	}
+	bool operator()(const std::shared_ptr<T>& left, unsigned int right) const
+	{
+		return left->iID < right;
+	}
 };
 
 //

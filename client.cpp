@@ -69,7 +69,6 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	gameTimer.setClient (this);
 	if (server) server->addLocalClient (*this);
 	else network->setMessageReceiver (this);
-	neutralBuildings = NULL;
 	bDefeated = false;
 	bWantToEnd = false;
 	iEndTurnTime = 0;
@@ -88,19 +87,14 @@ cClient::~cClient()
 	{
 		delete attackJobs[i];
 	}
-	while (neutralBuildings)
-	{
-		cBuilding* nextBuilding = neutralBuildings->next;
-		delete neutralBuildings;
-		neutralBuildings = nextBuilding;
-	}
+	neutralBuildings.clear ();
 
 	// since currently the vehicles do own movejobs and other stuff that
 	// have non owning references to the client, we delete all units in the players
 	// and hopefully eliminate all those references by doing so...
 	for (size_t i = 0; i < playerList.size (); ++i)
 	{
-		playerList[i]->deleteAllUnits ();
+		playerList[i]->removeAllUnits ();
 	}
 }
 
@@ -341,11 +335,11 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	const sID UnitID = message.popID();
 	const auto position = message.popPosition();
 	unsigned int ID = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding(position, UnitID, ID);
+	auto& addedBuilding = Player->addNewBuilding(position, UnitID, ID);
 
-	addUnit(position, *AddedBuilding, Init);
+	addUnit (position, addedBuilding, Init);
 
-	Player->base.addBuilding (AddedBuilding, NULL);
+	Player->base.addBuilding (&addedBuilding, NULL);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
@@ -364,8 +358,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	const unsigned int ID = message.popInt16();
 	const bool bAddToMap = message.popBool();
 
-	cVehicle* AddedVehicle = Player->addVehicle(position, UnitID, ID);
-	addUnit(position, *AddedVehicle, Init, bAddToMap);
+	auto& addedVehicle = Player->addNewVehicle(position, UnitID, ID);
+	addUnit (position, addedVehicle, Init, bAddToMap);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
@@ -404,11 +398,11 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 	const int dir = message.popInt16();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
-	cVehicle* AddedVehicle = Player->addVehicle (position, UnitID, ID);
+	auto& addedVehicle = Player->addNewVehicle (position, UnitID, ID);
 
-	AddedVehicle->dir = dir;
-	AddedVehicle->data.setVersion(version);
-	addUnit (position, *AddedVehicle, false);
+	addedVehicle.dir = dir;
+	addedVehicle.data.setVersion (version);
+	addUnit (position, addedVehicle, false);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
@@ -425,17 +419,17 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	const auto position = message.popPosition ();
 	const int ID = message.popInt16();
 	const int version = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding (position, UnitID, ID);
+	auto& addedBuilding = Player->addNewBuilding (position, UnitID, ID);
 
-	AddedBuilding->data.setVersion(version);
-	addUnit (position, *AddedBuilding, false);
+	addedBuilding.data.setVersion (version);
+	addUnit (position, addedBuilding, false);
 
-	if (AddedBuilding->data.connectsToBase)
+	if (addedBuilding.data.connectsToBase)
 	{
-		Player->base.SubBases[0]->buildings.push_back (AddedBuilding);
-		AddedBuilding->SubBase = Player->base.SubBases[0];
+		Player->base.SubBases[0]->buildings.push_back (&addedBuilding);
+		addedBuilding.SubBase = Player->base.SubBases[0];
 
-		AddedBuilding->updateNeighbours (*getMap());
+		addedBuilding.updateNeighbours (*getMap ());
 	}
 }
 
@@ -1068,15 +1062,16 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 		}
 		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(message.popInt16());
 		else DestVehicle->data.setHitpoints(message.popInt16());
-		if (DestVehicle->isUnitLoaded ())
-		{
-			// get the building which has loaded the unit
-			cBuilding* Building = DestVehicle->owner->BuildingList;
-			for (; Building; Building = Building->next)
-			{
-				if (Contains (Building->storedUnits, DestVehicle)) break;
-			}
-		}
+		
+		//if (DestVehicle->isUnitLoaded ())
+		//{
+		//	// get the building which has loaded the unit
+		//	cBuilding* Building = DestVehicle->owner->BuildingList;
+		//	for (; Building; Building = Building->next)
+		//	{
+		//		if (Contains (Building->storedUnits, DestVehicle)) break;
+		//	}
+		//}
 	}
 	else
 	{
@@ -1111,8 +1106,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	const int typ = message.popInt16();
 	const int value = message.popInt16();
 	const unsigned int ID = message.popInt16();
-	cBuilding* rubble = new cBuilding (NULL, NULL, ID);
-	push_front_into_intrusivelist (neutralBuildings, *rubble);
+	auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, ID);
 
 	rubble->data.isBig = big;
 	rubble->RubbleTyp = typ;
@@ -1122,6 +1116,9 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	rubble->setPosition (position);
 
 	getMap()->addBuilding (*rubble, rubble->getPosition());
+
+	auto result = neutralBuildings.insert (std::move (rubble));
+	assert (result.second);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message)
@@ -1273,7 +1270,7 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 		Log.write ("Client: Cannot delete own player!", LOG_TYPE_NET_WARNING);
 		return;
 	}
-	if (Player->VehicleList || Player->BuildingList)
+	if (Player->hasUnits())
 	{
 		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
 	}
@@ -1379,38 +1376,20 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& Player = *getPlayerList() [i];
+		cPlayer& player = *getPlayerList() [i];
 
-		for (cVehicle* vehicle = Player.VehicleList; vehicle; vehicle = vehicle->next)
-		{
-			vehicle->deleteStoredUnits();
-		}
-		for (cBuilding* building = Player.BuildingList; building; building = building->next)
-		{
-			building->deleteStoredUnits();
-		}
-
-		while (Player.VehicleList)
-		{
-			deleteUnit (Player.VehicleList);
-		}
-		while (Player.BuildingList)
-		{
-			deleteUnit (Player.BuildingList);
-		}
+		player.removeAllUnits ();
 	}
 
 	//delete subbases
 	// TODO: check that each subbase is deleted
 	ActivePlayer->base.SubBases.clear();
 
-	while (neutralBuildings)
+	for (auto i = neutralBuildings.begin (); i != neutralBuildings.end (); ++i)
 	{
-		cBuilding* nextBuilding = neutralBuildings->next;
-		getMap()->deleteBuilding (*neutralBuildings);
-		delete neutralBuildings;
-		neutralBuildings = nextBuilding;
+		getMap()->deleteBuilding (**i);
 	}
+	neutralBuildings.clear ();
 
 	//delete attack jobs
 	for (size_t i = 0; i != attackJobs.size(); ++i)
@@ -1860,52 +1839,54 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	return NULL;
 }
 
-void cClient::deleteUnit (cBuilding* Building)
+void cClient::deleteUnit (cBuilding* building)
 {
-	if (!Building) return;
+	if (!building) return;
 
-	getMap()->deleteBuilding (*Building);
+	getMap ()->deleteBuilding (*building);
 
-	if (!Building->owner)
+	if (!building->owner)
 	{
-		remove_from_intrusivelist (neutralBuildings, *Building);
-		delete Building;
+		auto iter = neutralBuildings.find (*building);
+		assert (iter != neutralBuildings.end());
+		if (iter != neutralBuildings.end ()) neutralBuildings.erase (iter);
 		return;
 	}
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
-		attackJobs[i]->onRemoveUnit (*Building);
+		attackJobs[i]->onRemoveUnit (*building);
 	}
-	remove_from_intrusivelist (Building->owner->BuildingList, *Building);
 
-	if (Building->owner == ActivePlayer)
-		Building->owner->base.deleteBuilding (Building, NULL);
+	auto owner = building->owner;
 
-	cPlayer* owner = Building->owner;
-	delete Building;
+	if (owner == ActivePlayer)
+	{
+		owner->base.deleteBuilding (building, NULL);
+	}
+
+	owner->removeUnit (*building);
 
 	owner->doScan();
 }
 
-void cClient::deleteUnit (cVehicle* Vehicle)
+void cClient::deleteUnit (cVehicle* vehicle)
 {
-	if (!Vehicle) return;
+	if (!vehicle) return;
 
-	getMap()->deleteVehicle (*Vehicle);
+	getMap ()->deleteVehicle (*vehicle);
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
-		attackJobs[i]->onRemoveUnit (*Vehicle);
+		attackJobs[i]->onRemoveUnit (*vehicle);
 	}
-	helperJobs.onRemoveUnit (Vehicle);
+	helperJobs.onRemoveUnit (vehicle);
 
-	cPlayer* owner = Vehicle->owner;
-	remove_from_intrusivelist (Vehicle->owner->VehicleList, *Vehicle);
+	auto owner = vehicle->owner;
 
-	owner->lastDeletedUnit = Vehicle->iID;
+	owner->lastDeletedUnit = vehicle->iID;
 
-	delete Vehicle;
+	owner->removeUnit (*vehicle);
 
 	owner->doScan();
 }
@@ -2017,35 +1998,27 @@ void cClient::handleMoveJobs()
 	}
 }
 
-cVehicle* cClient::getVehicleFromID (unsigned int iID)
+cVehicle* cClient::getVehicleFromID (unsigned int id)
 {
-	for (unsigned int i = 0; i < getPlayerList().size(); i++)
+	for (unsigned int i = 0; i < getPlayerList ().size (); i++)
 	{
-		cPlayer& player = *getPlayerList() [i];
-		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
-		{
-			if (vehicle->iID == iID) return vehicle;
-		}
+		cPlayer& player = *getPlayerList ()[i];
+		auto unit = player.getVehicleFromId (id);
+		if (unit) return unit;
 	}
-	return NULL;
+	return nullptr;
 }
 
-cBuilding* cClient::getBuildingFromID (unsigned int iID)
+cBuilding* cClient::getBuildingFromID (unsigned int id)
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
 		cPlayer& player = *getPlayerList() [i];
-
-		for (cBuilding* building = player.BuildingList; building; building = building->next)
-		{
-			if (building->iID == iID) return building;
-		}
+		auto unit = player.getBuildingFromId (id);
+		if (unit) return unit;
 	}
-	for (cBuilding* building = neutralBuildings; building; building = building->next)
-	{
-		if (building->iID == iID) return building;
-	}
-	return NULL;
+	auto iter = neutralBuildings.find (id);
+	return iter == neutralBuildings.end () ? nullptr : iter->get ();
 }
 
 void cClient::doGameActions ()

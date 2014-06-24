@@ -28,8 +28,10 @@
 #include "gametimer.h"
 #include "main.h"
 #include "network.h"
+#include "unit.h" // sUnitLess
 #include "utility/concurrentqueue.h"
 #include "utility/signal/signal.h"
+#include "utility/flatset.h"
 
 class cBuilding;
 class cCasualtiesTracker;
@@ -341,7 +343,7 @@ private:
 	cJobContainer helperJobs;
 
 	/** list with buildings without owner, e. g. rubble fields */
-	cBuilding* neutralBuildings;
+	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 	/** true if the player has been defeated */
 	bool bDefeated;
 

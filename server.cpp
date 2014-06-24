@@ -75,7 +75,6 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 {
 	bExit = false;
 	openMapDefeat = true;
-	neutralBuildings = nullptr;
 	activeTurnPlayer = nullptr;
 	iDeadlineStartTime = 0;
 	iNextUnitID = 1;
@@ -116,13 +115,6 @@ cServer::~cServer()
 	for (size_t i = 0; i != AJobs.size(); ++i)
 	{
 		delete AJobs[i];
-	}
-
-	while (neutralBuildings)
-	{
-		cBuilding* nextBuilding = neutralBuildings->next;
-		delete neutralBuildings;
-		neutralBuildings = nextBuilding;
 	}
 }
 
@@ -524,8 +516,10 @@ void cServer::handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 	{
 		auto& player = getPlayerFromNumber (message.iPlayerNr);
 
-		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
+		const auto& vehicles = player.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
+			const auto& vehicle = *i;
 			if (vehicle->ServerMoveJob && !vehicle->moving)
 				vehicle->ServerMoveJob->resume();
 		}
@@ -1815,31 +1809,33 @@ void cServer::handleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 	std::vector<int> newAreasForResearchCenters;
 
 	bool error = false;
-	cBuilding* curBuilding = player.BuildingList;
+	const auto buildings = player.getBuildings ();
+	auto currentBuildingIter = buildings.begin ();
 	for (int newArea = 0; newArea != cResearch::kNrResearchAreas; ++newArea)
 	{
 		int centersToAssign = newResearchSettings[newArea];
-		while (centersToAssign > 0 && curBuilding != 0)
+		for (; currentBuildingIter != buildings.end () && centersToAssign > 0; ++currentBuildingIter)
 		{
-			if (curBuilding->data.canResearch && curBuilding->isUnitWorking ())
+			auto& building = *currentBuildingIter;
+			if (building->data.canResearch && building->isUnitWorking ())
 			{
-				researchCentersToChangeArea.push_back (curBuilding);
+				researchCentersToChangeArea.push_back (building.get());
 				newAreasForResearchCenters.push_back (newArea);
 				--centersToAssign;
 			}
-			curBuilding = curBuilding->next;
 		}
-		if (curBuilding == 0 && centersToAssign > 0)
+		if (centersToAssign > 0)
 		{
 			error = true; // not enough active research centers!
 			break;
 		}
 	}
 	// shut down unused research centers
-	for (; curBuilding != 0; curBuilding = curBuilding->next)
+	for (; currentBuildingIter != buildings.end (); ++currentBuildingIter)
 	{
-		if (curBuilding->data.canResearch && curBuilding->isUnitWorking ())
-			researchCentersToStop.push_back (curBuilding);
+		auto& building = *currentBuildingIter;
+		if (building->data.canResearch && building->isUnitWorking ())
+			researchCentersToStop.push_back (building.get());
 	}
 	if (error)
 		return;
@@ -2247,7 +2243,7 @@ cVehicle* cServer::landVehicle (const cPosition& landingPosition, int iWidth, in
 		{
 			if (!Map->possiblePlaceVehicle (unitData, landingPosition + cPosition (offX, offY), &player)) continue;
 
-			return addVehicle (landingPosition + cPosition (offX, offY), unitData.ID, &player, true);
+			return &addVehicle (landingPosition + cPosition (offX, offY), unitData.ID, &player, true);
 		}
 	}
 	return NULL;
@@ -2370,61 +2366,61 @@ void cServer::startNewGame()
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int uid)
+cVehicle& cServer::addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int uid)
 {
 	// generate the vehicle:
-	cVehicle* AddedVehicle = Player->addVehicle(position, id, uid ? uid : iNextUnitID);
+	cVehicle& addedVehicle = Player->addNewVehicle(position, id, uid ? uid : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
-	if (bAddToMap) Map->addVehicle (*AddedVehicle, position);
+	if (bAddToMap) Map->addVehicle (addedVehicle, position);
 
 	// scan with surveyor:
-	if (AddedVehicle->data.canSurvey)
+	if (addedVehicle.data.canSurvey)
 	{
-		sendVehicleResources (*this, *AddedVehicle);
-		AddedVehicle->doSurvey (*this);
+		sendVehicleResources (*this, addedVehicle);
+		addedVehicle.doSurvey (*this);
 	}
-	if (!bInit) AddedVehicle->InSentryRange (*this);
+	if (!bInit) addedVehicle.InSentryRange (*this);
 
-	if (AddedVehicle->canLand (*Map))
+	if (addedVehicle.canLand (*Map))
 	{
-		AddedVehicle->FlightHigh = 0;
+		addedVehicle.FlightHigh = 0;
 	}
 	else
 	{
-		AddedVehicle->FlightHigh = 64;
+		addedVehicle.FlightHigh = 64;
 	}
 
-	sendAddUnit(*this, position, AddedVehicle->iID, true, id, *Player, bInit);
+	sendAddUnit(*this, position, addedVehicle.iID, true, id, *Player, bInit);
 
 	// detection must be done, after the vehicle has been sent to clients
-	AddedVehicle->makeDetection (*this);
-	return AddedVehicle;
+	addedVehicle.makeDetection (*this);
+	return addedVehicle;
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cServer::addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit, unsigned int uid)
+cBuilding& cServer::addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit, unsigned int uid)
 {
 	// generate the building:
-	cBuilding* AddedBuilding = Player->addBuilding (position, id, uid ? uid : iNextUnitID);
-	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
-	if (AddedBuilding->isSentryActive()) Player->addSentry (*AddedBuilding);
+	cBuilding& addedBuilding = Player->addNewBuilding (position, id, uid ? uid : iNextUnitID);
+	if (addedBuilding.data.canMineMaxRes > 0) addedBuilding.CheckRessourceProd (*this);
+	if (addedBuilding.isSentryActive ()) Player->addSentry (addedBuilding);
 
 	iNextUnitID++;
 
 	cBuilding* buildingToBeDeleted = Map->getField(position).getTopBuilding();
 
-	Map->addBuilding (*AddedBuilding, position);
-	sendAddUnit(*this, position, AddedBuilding->iID, false, id, *Player, bInit);
+	Map->addBuilding (addedBuilding, position);
+	sendAddUnit(*this, position, addedBuilding.iID, false, id, *Player, bInit);
 
 	// integrate the building to the base:
-	Player->base.addBuilding (AddedBuilding, this);
+	Player->base.addBuilding (&addedBuilding, this);
 
 	// if this is a top building, delete connectors, mines and roads
-	if (AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
+	if (addedBuilding.data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
 	{
-		if (AddedBuilding->data.isBig)
+		if (addedBuilding.data.isBig)
 		{
 			auto bigPosition = position;
 			auto buildings = &Map->getField(bigPosition).getBuildings();
@@ -2484,13 +2480,13 @@ cBuilding* cServer::addBuilding (const cPosition& position, const sID& id, cPlay
 		}
 	}
 
-	if (AddedBuilding->data.canMineMaxRes > 0)
+	if (addedBuilding.data.canMineMaxRes > 0)
 	{
-		sendProduceValues (*this, *AddedBuilding);
-		AddedBuilding->ServerStartWork (*this);
+		sendProduceValues (*this, addedBuilding);
+		addedBuilding.ServerStartWork (*this);
 	}
-	AddedBuilding->makeDetection (*this);
-	return AddedBuilding;
+	addedBuilding.makeDetection (*this);
+	return addedBuilding;
 }
 
 //------------------------------------------------------------------------------
@@ -2505,18 +2501,21 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		return;
 	}
 
+	cPlayer* owner = unit->owner;
+
 	if (unit->owner && casualtiesTracker != NULL && ((unit->isABuilding() && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->getNr());
 
+	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive this method.
 	if (unit->isABuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		remove_from_intrusivelist (building->owner->BuildingList, *building);
+		owningPtr = owner->removeUnit (*building);
 	}
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		remove_from_intrusivelist (vehicle->owner->VehicleList, *vehicle);
+		owningPtr = owner->removeUnit (*vehicle);
 	}
 
 	// detach from attack job
@@ -2563,11 +2562,10 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	if (unit->isABuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
 		unit->owner->base.deleteBuilding (static_cast<cBuilding*> (unit), this);
 
-	cPlayer* owner = unit->owner;
-	delete unit;
-
 	if (owner != 0)
-		owner->doScan();
+	{
+		owner->doScan ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -2671,31 +2669,32 @@ void cServer::checkPlayerUnits()
 {
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		// The player whos unit is it
-		cPlayer& UnitPlayer = *playerList[i];
-		for (cVehicle* NextVehicle = UnitPlayer.VehicleList;
-			 NextVehicle != NULL;
-			 NextVehicle = NextVehicle->next)
+		// The player who's unit is it
+		cPlayer& unitPlayer = *playerList[i];
+		const auto& vehicles = unitPlayer.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
+			const auto& vehicle = *i;
 			for (size_t j = 0; j != playerList.size (); ++j)
 			{
-				checkPlayerUnits (*NextVehicle, *playerList[j]);
+				checkPlayerUnits (*vehicle, *playerList[j]);
 			}
 		}
-		for (cBuilding* NextBuilding = UnitPlayer.BuildingList;
-			 NextBuilding != NULL;
-			 NextBuilding = NextBuilding->next)
+		const auto& buildings = unitPlayer.getBuildings ();
+		for (auto i = buildings.begin (); i != buildings.end (); ++i)
 		{
+			const auto& building = *i;
 			for (size_t j = 0; j != playerList.size (); ++j)
 			{
-				checkPlayerUnits (*NextBuilding, *playerList[j]);
+				checkPlayerUnits (*building, *playerList[j]);
 			}
 		}
 	}
 
 	//check the neutral objects
-	for (cBuilding* building = neutralBuildings; building != NULL; building = building->next)
+	for (auto i = neutralBuildings.begin (); i != neutralBuildings.end (); ++i)
 	{
+		const auto& building = *i;
 		for (size_t i = 0; i != playerList.size (); ++i)
 		{
 			checkPlayerRubbles (*building, *playerList[i]);
@@ -2954,14 +2953,15 @@ bool cServer::checkEndActions (const cPlayer* player)
 	{
 		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			for (cVehicle* NextVehicle = playerList[i]->VehicleList;
-				 NextVehicle != NULL;
-				 NextVehicle = NextVehicle->next)
+			cPlayer& player = *playerList[i];
+			const auto& vehicles = player.getVehicles ();
+			for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 			{
-				if (NextVehicle->ServerMoveJob && NextVehicle->data.speedCur > 0 && !NextVehicle->moving)
+				const auto& vehicle = *i;
+				if (vehicle->ServerMoveJob && vehicle->data.speedCur > 0 && !vehicle->moving)
 				{
 					// restart movejob
-					NextVehicle->ServerMoveJob->resume();
+					vehicle->ServerMoveJob->resume();
 					sMessage = "Text~Comp~Turn_Automove";
 				}
 			}
@@ -3003,28 +3003,29 @@ void cServer::makeTurnEnd()
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
 		cPlayer& player = *playerList[i];
-		for (cBuilding* Building = player.BuildingList;
-			 Building;
-			 Building = Building->next)
+		const auto& buildings = player.getBuildings ();
+		for (auto i = buildings.begin (); i != buildings.end (); ++i)
 		{
+			const auto& building = *i;
+
 			bool forceSendUnitData = false;
-			if (Building->isDisabled())
+			if (building->isDisabled ())
 			{
-				Building->setDisabledTurns (Building->getDisabledTurns () - 1);
-				if (Building->isDisabled() == false && Building->wasWorking)
+				building->setDisabledTurns (building->getDisabledTurns () - 1);
+				if (building->isDisabled () == false && building->wasWorking)
 				{
-					Building->ServerStartWork (*this);
-					Building->wasWorking = false;
+					building->ServerStartWork (*this);
+					building->wasWorking = false;
 				}
 				forceSendUnitData = true;
 			}
-			if ((Building->data.canAttack && Building->refreshData()) || forceSendUnitData)
+			if ((building->data.canAttack && building->refreshData ()) || forceSendUnitData)
 			{
-				for (size_t k = 0; k != Building->seenByPlayerList.size(); ++k)
+				for (size_t k = 0; k != building->seenByPlayerList.size (); ++k)
 				{
-					sendUnitData (*this, *Building, *Building->seenByPlayerList[k]);
+					sendUnitData (*this, *building, *building->seenByPlayerList[k]);
 				}
-				sendUnitData (*this, *Building, *Building->owner);
+				sendUnitData (*this, *building, *building->owner);
 			}
 		}
 	}
@@ -3033,29 +3034,30 @@ void cServer::makeTurnEnd()
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
 		cPlayer& player = *playerList[i];
-		for (cVehicle* Vehicle = player.VehicleList;
-			 Vehicle;
-			 Vehicle = Vehicle->next)
+		const auto& vehicles = player.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
+			const auto& vehicle = *i;
+
 			bool isModified = false;
-			if (Vehicle->isDisabled())
+			if (vehicle->isDisabled ())
 			{
-				Vehicle->setDisabledTurns (Vehicle->getDisabledTurns () - 1);
+				vehicle->setDisabledTurns (vehicle->getDisabledTurns () - 1);
 				isModified = true;
 			}
-			isModified |= Vehicle->refreshData();
-			isModified |= Vehicle->refreshData_Build (*this);
-			isModified |= Vehicle->refreshData_Clear (*this);
+			isModified |= vehicle->refreshData ();
+			isModified |= vehicle->refreshData_Build (*this);
+			isModified |= vehicle->refreshData_Clear (*this);
 
 			if (isModified)
 			{
-				for (size_t k = 0; k != Vehicle->seenByPlayerList.size(); ++k)
+				for (size_t k = 0; k != vehicle->seenByPlayerList.size (); ++k)
 				{
-					sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[k]);
+					sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[k]);
 				}
-				sendUnitData (*this, *Vehicle, *Vehicle->owner);
+				sendUnitData (*this, *vehicle, *vehicle->owner);
 			}
-			if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->bEndForNow = false;
+			if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
 		}
 	}
 
@@ -3065,8 +3067,10 @@ void cServer::makeTurnEnd()
 		cPlayer& player = *playerList[i];
 		player.doScan(); // make sure the detection maps are up to date
 
-		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
+		const auto& vehicles = player.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
+			const auto& vehicle = *i;
 			vehicle->clearDetectedInThisTurnPlayerList();
 			vehicle->makeDetection (*this);
 		}
@@ -3093,8 +3097,10 @@ void cServer::makeTurnEnd()
 	{
 		cPlayer& player = *playerList[i];
 
-		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
+		const auto& vehicles = player.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
+			const auto& vehicle = *i;
 			vehicle->InSentryRange (*this);
 		}
 	}
@@ -3407,33 +3413,23 @@ cUnit* cServer::getUnitFromID (unsigned int iID) const
 }
 
 //------------------------------------------------------------------------------
-cVehicle* cServer::getVehicleFromID (unsigned int iID) const
+cVehicle* cServer::getVehicleFromID (unsigned int id) const
 {
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		for (cVehicle* vehicle = playerList[i]->VehicleList;
-			 vehicle != 0;
-			 vehicle = vehicle->next)
-		{
-			if (vehicle->iID == iID)
-				return vehicle;
-		}
+		auto unit = playerList[i]->getVehicleFromId (id);
+		if (unit) return unit;
 	}
 	return 0;
 }
 
 //------------------------------------------------------------------------------
-cBuilding* cServer::getBuildingFromID (unsigned int iID) const
+cBuilding* cServer::getBuildingFromID (unsigned int id) const
 {
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		for (cBuilding* building = playerList[i]->BuildingList;
-			 building != 0;
-			 building = building->next)
-		{
-			if (building->iID == iID)
-				return building;
-		}
+		auto unit = playerList[i]->getBuildingFromId (id);
+		if (unit) return unit;
 	}
 	return 0;
 }
@@ -3619,8 +3615,7 @@ void cServer::addRubble (const cPosition& position, int value, bool big)
 		return;
 	}
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, iNextUnitID);
-	push_front_into_intrusivelist (neutralBuildings, *rubble);
+    auto rubble = std::make_shared<cBuilding> (nullptr, nullptr, iNextUnitID);
 
 	iNextUnitID++;
 
@@ -3639,6 +3634,7 @@ void cServer::addRubble (const cPosition& position, int value, bool big)
 	{
 		rubble->RubbleTyp = random (5);
 	}
+	neutralBuildings.insert (std::move(rubble));
 }
 
 //------------------------------------------------------------------------------
@@ -3646,43 +3642,46 @@ void cServer::deleteRubble (cBuilding* rubble)
 {
 	Map->deleteBuilding (*rubble);
 
-	remove_from_intrusivelist (neutralBuildings, *rubble);
-	sendDeleteUnit (*this, *rubble, nullptr);
+	auto iter = neutralBuildings.find (*rubble);
+	assert (iter != neutralBuildings.end ());
+	if (iter != neutralBuildings.end ()) neutralBuildings.erase (iter);
 
-	delete rubble;
+	sendDeleteUnit (*this, *rubble, nullptr);
 }
 
 //------------------------------------------------------------------------------
-void cServer::deletePlayer (cPlayer* Player)
+void cServer::deletePlayer (cPlayer* player)
 {
 	//remove units
-	for (cVehicle* Vehicle = Player->VehicleList; Vehicle;)
+	const auto& vehicles = player->getVehicles ();
+    while (!vehicles.empty())
 	{
-		cVehicle* nextVehicle = Vehicle->next;
-		if (!Vehicle->isUnitLoaded ()) deleteUnit (Vehicle);
-		Vehicle = nextVehicle;
+        deleteUnit (vehicles.begin()->get());
 	}
-	while (Player->BuildingList)
-	{
-		deleteUnit (Player->BuildingList);
-	}
+    const auto& buildings = player->getVehicles ();
+    while (!buildings.empty ())
+    {
+        deleteUnit (buildings.begin ()->get ());
+    }
 
 	// remove the player of all detected by player lists
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
-		cPlayer* UnitPlayer = playerList[i].get();
-		if (UnitPlayer == Player) continue;
+		cPlayer* unitPlayer = playerList[i].get();
+		if (unitPlayer == player) continue;
 
-		for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
+		const auto& vehicles = unitPlayer->getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
-			if (Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer (Player)) Vehicle->resetDetectedByPlayer (*this, Player);
+			const auto& vehicle = *i;
+			if (vehicle->data.isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (player)) vehicle->resetDetectedByPlayer (*this, player);
 		}
 	}
 	// delete the player
-	sendDeletePlayer (*this, *Player, nullptr);
+	sendDeletePlayer (*this, *player, nullptr);
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		if (Player == playerList[i].get())
+		if (player == playerList[i].get ())
 		{
 			playerList.erase (playerList.begin () + i);
 			break;
@@ -3698,23 +3697,28 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	{
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
-			cPlayer* UnitPlayer = playerList[i].get();
-			if (UnitPlayer == &player) continue;
+			cPlayer* unitPlayer = playerList[i].get ();
+			if (unitPlayer == &player) continue;
 
-			for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
+			const auto& vehicles = unitPlayer->getVehicles ();
+			for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 			{
-				Remove (Vehicle->seenByPlayerList, &player);
+				const auto& vehicle = *i;
+				Remove (vehicle->seenByPlayerList, &player);
 			}
 
-			for (cBuilding* Building = UnitPlayer->BuildingList; Building; Building = Building->next)
+			const auto& buildings = unitPlayer->getBuildings ();
+			for (auto i = buildings.begin (); i != buildings.end (); ++i)
 			{
-				Remove (Building->seenByPlayerList, &player);
+				const auto& building = *i;
+				Remove (building->seenByPlayerList, &player);
 			}
 		}
 
-		for (cBuilding* Building = neutralBuildings; Building; Building = Building->next)
+		for (auto i = neutralBuildings.begin (); i != neutralBuildings.end (); ++i)
 		{
-			Remove (Building->seenByPlayerList, &player);
+			const auto& building = *i;
+			Remove (building->seenByPlayerList, &player);
 		}
 		sendDeleteEverything (*this, player);
 	}
@@ -3730,23 +3734,27 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	sendResources (*this, player);
 
 	// send all units to the client
-	for (cVehicle* Vehicle = player.VehicleList; Vehicle; Vehicle = Vehicle->next)
+	const auto& vehicles = player.getVehicles ();
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
-		if (!Vehicle->isUnitLoaded ()) resyncVehicle (*Vehicle, player);
+		const auto& vehicle = *i;
+		if (!vehicle->isUnitLoaded ()) resyncVehicle (*vehicle, player);
 	}
 
-	for (cBuilding* Building = player.BuildingList; Building; Building = Building->next)
+	const auto& buildings = player.getBuildings ();
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
-		sendAddUnit (*this, Building->getPosition(), Building->iID, false, Building->data.ID, player, true);
-		for (size_t i = 0; i != Building->storedUnits.size(); ++i)
+		const auto& building = *i;
+		sendAddUnit (*this, building->getPosition (), building->iID, false, building->data.ID, player, true);
+		for (size_t i = 0; i != building->storedUnits.size (); ++i)
 		{
-			cVehicle& storedVehicle = *Building->storedUnits[i];
+			cVehicle& storedVehicle = *building->storedUnits[i];
 			resyncVehicle (storedVehicle, player);
-			sendStoreVehicle (*this, Building->iID, false, storedVehicle.iID, player);
+			sendStoreVehicle (*this, building->iID, false, storedVehicle.iID, player);
 		}
-		sendUnitData (*this, *Building, player);
-		if (Building->data.canMineMaxRes > 0) sendProduceValues (*this, *Building);
-		if (!Building->BuildList.empty()) sendBuildList (*this, *Building);
+		sendUnitData (*this, *building, player);
+		if (building->data.canMineMaxRes > 0) sendProduceValues (*this, *building);
+		if (!building->BuildList.empty ()) sendBuildList (*this, *building);
 	}
 	// send all subbases
 	for (size_t i = 0; i != player.base.SubBases.size (); ++i)
@@ -3854,10 +3862,10 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	// delete vehicle in the list of the old player
 	cPlayer* oldOwner = vehicle.owner;
 
-	remove_from_intrusivelist (oldOwner->VehicleList, vehicle);
+	auto owningVehiclePtr = oldOwner->removeUnit (vehicle);
 	// add the vehicle to the list of the new player
 	vehicle.owner = &newOwner;
-	newOwner.addUnitToList (vehicle);
+	newOwner.addUnit (owningVehiclePtr);
 
 	//the vehicle is fully operational for the new owner
 	if (vehicle.isDisabled())

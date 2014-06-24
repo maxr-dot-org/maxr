@@ -141,8 +141,6 @@ public:
 	virtual bool isAVehicle() const { return false; }
 	virtual bool isABuilding() const { return true; }
 
-	cBuilding* next; ///< "next"-pointer for the double linked list
-	cBuilding* prev; ///< "prev"-pointer for the double linked list
 	const sBuildingUIData* uiData;
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks

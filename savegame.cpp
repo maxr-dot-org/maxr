@@ -68,10 +68,10 @@ int cSavegame::save (const cServer& server, const string& saveName)
 		const cPlayer& Player = *playerList[i];
 		writePlayer (Player, i);
 
-		for (const cVehicle* vehicle = Player.VehicleList;
-			 vehicle;
-			 vehicle = vehicle->next)
+		const auto& vehicles = Player.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
+			const auto& vehicle = *i;
 			if (!vehicle->isUnitLoaded ())
 			{
 				writeUnit (server, *vehicle, &unitnum);
@@ -79,19 +79,20 @@ int cSavegame::save (const cServer& server, const string& saveName)
 			}
 		}
 
-		for (const cBuilding* building = Player.BuildingList;
-			 building;
-			 building = building->next)
+		const auto& buildings = Player.getBuildings ();
+		for (auto i = buildings.begin (); i != buildings.end (); ++i)
 		{
+			const auto& building = *i;
 			writeUnit (server, *building, &unitnum);
 			unitnum++;
 		}
 	}
 	int rubblenum = 0;
 
-	for (const cBuilding* rubble = server.neutralBuildings; rubble; rubble = rubble->next)
+	for (auto i = server.neutralBuildings.begin (); i != server.neutralBuildings.end (); ++i)
 	{
-		writeRubble (server, *rubble, rubblenum);
+		const auto& building = *i;
+        writeRubble (server, *building, rubblenum);
 		rubblenum++;
 	}
 
@@ -726,75 +727,75 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cVehicle* vehicle = server.addVehicle (cPosition(x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	auto& vehicle = server.addVehicle (cPosition(x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
-		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
+		vehicle.changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
 
-	loadUnitValues (unitNode, &vehicle->data);
+	loadUnitValues (unitNode, &vehicle.data);
 
-	unitNode->FirstChildElement ("Direction")->QueryIntAttribute ("num", &vehicle->dir);
+	unitNode->FirstChildElement ("Direction")->QueryIntAttribute ("num", &vehicle.dir);
 	if (XMLElement* const element = unitNode->FirstChildElement ("CommandoRank"))
 	{
-		vehicle->setCommandoRank(element->FloatAttribute ("num"));
+		vehicle.setCommandoRank(element->FloatAttribute ("num"));
 	}
-	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, cPosition(x, y));
-	if (unitNode->FirstChildElement ("Disabled")) vehicle->setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
-	if (unitNode->FirstChildElement ("LayMines")) vehicle->setLayMines(true);
-	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
+	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (vehicle, cPosition(x, y));
+	if (unitNode->FirstChildElement ("Disabled")) vehicle.setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
+	if (unitNode->FirstChildElement ("LayMines")) vehicle.setLayMines(true);
+	if (unitNode->FirstChildElement ("AutoMoving")) vehicle.hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
-		owner.addSentry (*vehicle);
+		owner.addSentry (vehicle);
 	}
-	if (unitNode->FirstChildElement ("ManualFire")) vehicle->setManualFireActive(true);
+	if (unitNode->FirstChildElement ("ManualFire")) vehicle.setManualFireActive(true);
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
-		vehicle->setBuildingABuilding(true);
+		vehicle.setBuildingABuilding(true);
 		if (element->Attribute ("type_id") != NULL)
 		{
 			sID temp;
 			temp.generate (element->Attribute ("type_id"));
-			vehicle->setBuildingType (temp);
+			vehicle.setBuildingType (temp);
 		}
 		// be downward compatible and looke for 'type' too
 		else if (element->Attribute ("type") != NULL)
 		{
-			// element->Attribute ("type", &vehicle->BuildingTyp);
+			// element->Attribute ("type", &vehicle.BuildingTyp);
 		}
-		vehicle->setBuildTurns (element->IntAttribute ("turns"));
-		vehicle->setBuildCosts (element->IntAttribute ("costs"));
+		vehicle.setBuildTurns (element->IntAttribute ("turns"));
+		vehicle.setBuildCosts (element->IntAttribute ("costs"));
 
 		// use offset because of backward compatibility
 		int buildBigSavedPosOffset;
 		element->QueryIntAttribute ("savedpos", &buildBigSavedPosOffset);
-		vehicle->buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
-		vehicle->buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
+		vehicle.buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
+		vehicle.buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
 
 		if (element->Attribute ("path"))
 		{
-			vehicle->BuildPath = true;
-			vehicle->setBuildTurnsStart (element->IntAttribute ("turnsstart"));
-			vehicle->setBuildCostsStart (element->IntAttribute ("costsstart"));
-			element->QueryIntAttribute ("endx", &vehicle->bandPosition.x());
-			element->QueryIntAttribute ("endy", &vehicle->bandPosition.y());
+			vehicle.BuildPath = true;
+			vehicle.setBuildTurnsStart (element->IntAttribute ("turnsstart"));
+			vehicle.setBuildCostsStart (element->IntAttribute ("costsstart"));
+			element->QueryIntAttribute ("endx", &vehicle.bandPosition.x());
+			element->QueryIntAttribute ("endy", &vehicle.bandPosition.y());
 		}
 	}
 	if (XMLElement* const element = unitNode->FirstChildElement ("Clearing"))
 	{
-		vehicle->setClearing (true);
-		vehicle->setClearingTurns (element->IntAttribute ("turns"));
+		vehicle.setClearing (true);
+		vehicle.setClearingTurns (element->IntAttribute ("turns"));
 		// use offset because of backward compatibility
 		int buildBigSavedPosOffset;
 		element->QueryIntAttribute ("savedpos", &buildBigSavedPosOffset);
-		vehicle->buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
-		vehicle->buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
+		vehicle.buildBigSavedPosition.x () = buildBigSavedPosOffset % server.Map->getSize ().x ();
+		vehicle.buildBigSavedPosition.y () = buildBigSavedPosOffset / server.Map->getSize ().x ();
 	}
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Movejob"))
 	{
 		sMoveJobLoad* MoveJob = new sMoveJobLoad;
-		MoveJob->vehicle = vehicle;
+		MoveJob->vehicle = &vehicle;
 		element->QueryIntAttribute ("destx", &MoveJob->destX);
 		element->QueryIntAttribute ("desty", &MoveJob->destY);
 
@@ -815,7 +816,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 				wasDetectedThisTurnAttrib = 1;
 			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
 			cPlayer& Player = server.getPlayerFromNumber (playerNum);
-			vehicle->setDetectedByPlayer (server, &Player, wasDetectedThisTurn);
+			vehicle.setDetectedByPlayer (server, &Player, wasDetectedThisTurn);
 			playerNodeNum++;
 		}
 	}
@@ -830,19 +831,19 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		element->QueryIntAttribute ("is_vehicle", &isVehicle);
 		if (isVehicle)
 		{
-			cVehicle* StoringVehicle = server.getVehicleFromID (storedInID);
-			if (!StoringVehicle) return;
+			cVehicle* storingVehicle = server.getVehicleFromID (storedInID);
+            if (!storingVehicle) return;
 
-			StoringVehicle->data.storageUnitsCur--;
-			StoringVehicle->storeVehicle (*vehicle, *server.Map);
+            storingVehicle->data.storageUnitsCur--;
+            storingVehicle->storeVehicle (vehicle, *server.Map);
 		}
 		else
 		{
-			cBuilding* StoringBuilding = server.getBuildingFromID (storedInID);
-			if (!StoringBuilding) return;
+			cBuilding* storingBuilding = server.getBuildingFromID (storedInID);
+            if (!storingBuilding) return;
 
-			StoringBuilding->data.storageUnitsCur--;
-			StoringBuilding->storeVehicle (*vehicle, *server.Map);
+            storingBuilding->data.storageUnitsCur--;
+            storingBuilding->storeVehicle (vehicle, *server.Map);
 		}
 	}
 }
@@ -858,38 +859,38 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	cBuilding* building = server.addBuilding (cPosition(x, y), ID, &owner, true, tmpinteger);
+	auto& building = server.addBuilding (cPosition(x, y), ID, &owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
-		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
+		building.changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
 
-	loadUnitValues (unitNode, &building->data);
+	loadUnitValues (unitNode, &building.data);
 
-	if (unitNode->FirstChildElement ("IsWorking")) building->setWorking(true);
-	if (unitNode->FirstChildElement ("wasWorking")) building->wasWorking = true;
-	if (unitNode->FirstChildElement ("Disabled")) building->setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
-	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->QueryIntAttribute ("area", & (building->researchArea));
-	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building->points));
+	if (unitNode->FirstChildElement ("IsWorking")) building.setWorking(true);
+	if (unitNode->FirstChildElement ("wasWorking")) building.wasWorking = true;
+	if (unitNode->FirstChildElement ("Disabled")) building.setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
+	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->QueryIntAttribute ("area", & (building.researchArea));
+	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building.points));
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
-		if (!building->isSentryActive())
+		if (!building.isSentryActive())
 		{
-			owner.addSentry (*building);
+			owner.addSentry (building);
 		}
 	}
-	else if (building->isSentryActive ())
+	else if (building.isSentryActive ())
 	{
-		owner.deleteSentry (*building);
+		owner.deleteSentry (building);
 	}
-	if (unitNode->FirstChildElement ("ManualFire")) building->setManualFireActive(true);
-	if (unitNode->FirstChildElement ("HasBeenAttacked")) building->setHasBeenAttacked(true);
+	if (unitNode->FirstChildElement ("ManualFire")) building.setManualFireActive(true);
+	if (unitNode->FirstChildElement ("HasBeenAttacked")) building.setHasBeenAttacked(true);
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
 		XMLElement* buildNode = element;
-		if (XMLElement* const element = buildNode->FirstChildElement ("BuildSpeed"))    element->QueryIntAttribute ("num", &building->BuildSpeed);
-		if (XMLElement* const element = buildNode->FirstChildElement ("MetalPerRound")) element->QueryIntAttribute ("num", &building->MetalPerRound);
-		if (buildNode->FirstChildElement ("RepeatBuild")) building->RepeatBuild = true;
+		if (XMLElement* const element = buildNode->FirstChildElement ("BuildSpeed"))    element->QueryIntAttribute ("num", &building.BuildSpeed);
+		if (XMLElement* const element = buildNode->FirstChildElement ("MetalPerRound")) element->QueryIntAttribute ("num", &building.MetalPerRound);
+		if (buildNode->FirstChildElement ("RepeatBuild")) building.RepeatBuild = true;
 
 		int itemnum = 0;
 		const XMLElement* itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ("Item_0");
@@ -908,7 +909,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 				listitem.type = UnitsData.svehicles[typenr].ID;
 			}
 			itemElement->QueryIntAttribute ("metall_remaining", &listitem.metall_remaining);
-			building->BuildList.push_back (listitem);
+			building.BuildList.push_back (listitem);
 
 			itemnum++;
 			itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement (("Item_" + iToStr (itemnum)).c_str());
@@ -924,7 +925,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 			int playerNum;
 			element->QueryIntAttribute ("nr", &playerNum);
 			auto& player = server.getPlayerFromNumber (playerNum);
-			building->setDetectedByPlayer (server, &player);
+			building.setDetectedByPlayer (server, &player);
 			playerNodeNum++;
 		}
 	}
