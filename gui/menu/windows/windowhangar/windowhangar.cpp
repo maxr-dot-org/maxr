@@ -31,8 +31,8 @@
 #include "../../widgets/special/unitdetails.h"
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan) :
-	cWindow (surface),
+cWindowHangar::cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
+	cWindow (std::move(surface)),
 	temporaryPlayer (new cPlayer (sPlayer ("unnamed", std::move(playerColor), 0))),
 	player (*temporaryPlayer)
 {
@@ -42,8 +42,8 @@ cWindowHangar::cWindowHangar (SDL_Surface* surface, cPlayerColor playerColor, in
 }
 
 //------------------------------------------------------------------------------
-cWindowHangar::cWindowHangar (SDL_Surface* surface, const cPlayer& player_) :
-	cWindow (surface),
+cWindowHangar::cWindowHangar (AutoSurface surface, const cPlayer& player_) :
+	cWindow (std::move(surface)),
 	player (player_)
 {
 	initialize ();
@@ -70,10 +70,10 @@ void cWindowHangar::initialize ()
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 
-	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (471, 387), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu.get ()));
+	selectionListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (471, 387), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListUpButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageUp, selectionUnitList));
 
-	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (491, 387), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu.get ()));
+	selectionListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (491, 387), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectionListDownButton->clicked, std::bind (&cListView<cUnitListViewItemBuy>::pageDown, selectionUnitList));
 
 
@@ -116,13 +116,13 @@ void cWindowHangar::setActiveUnit (const sID& unitId)
 	{
 		const auto& uiData = *UnitsData.getVehicleUI (unitId);
 
-		infoImage->setImage (uiData.info);
+        infoImage->setImage (uiData.info.get ());
 	}
 	else if (unitId.isABuilding ())
 	{
 		const auto& uiData = *UnitsData.getBuildingUI (unitId);
 
-		infoImage->setImage (uiData.info);
+        infoImage->setImage (uiData.info.get ());
 	}
 
 	infoLabel->setText (unitId.getUnitDataOriginalVersion ()->description);

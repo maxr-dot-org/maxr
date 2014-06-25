@@ -79,9 +79,9 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerCol
 	signalConnectionManager.connect (metalBar->valueChanged, std::bind (&cWindowLandingUnitSelection::metalChanged, this));
 	metalBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (411, 275), getPosition () + cPosition (411 + 40, 275 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	metalBarUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (413, 424), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu.get ()));
+	metalBarUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (413, 424), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (metalBarUpButton->clicked, std::bind (&cWindowLandingUnitSelection::metalUpButtonClicked, this));
-	metalBarDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (413 + 20, 424), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu.get ()));
+	metalBarDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (413 + 20, 424), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (metalBarDownButton->clicked, std::bind (&cWindowLandingUnitSelection::metalDownButtonClicked, this));
 
 	//
@@ -98,10 +98,10 @@ cWindowLandingUnitSelection::cWindowLandingUnitSelection (cPlayerColor playerCol
 	//
 	for (size_t i = 0; i < maxUpgradeButtons; ++i)
 	{
-		upgradeDecreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu.get ()));
+		upgradeDecreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283, 293 + 19 * i), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
 		signalConnectionManager.connect (upgradeDecreaseButton[i]->clicked, std::bind (&cWindowLandingUnitSelection::upgradeDecreaseClicked, this, i));
 
-		upgradeIncreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu.get ()));
+		upgradeIncreaseButton[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (283 + 18, 293 + 19 * i), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
 		signalConnectionManager.connect (upgradeIncreaseButton[i]->clicked, std::bind (&cWindowLandingUnitSelection::upgradeIncreaseClicked, this, i));
 
 		upgradeCostLabel[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (283 + 40, 293 + 2 + 19 * i), getPosition () + cPosition (283 + 40 + 40, 293 + 2 + 19 * i + 10)), ""));

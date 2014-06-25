@@ -735,13 +735,12 @@ static void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surfac
 
 // CreatePfeil ////////////////////////////////////////////////////////////////
 // Erzeigt ein Pfeil-Surface:
-SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
+AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
 {
-	SDL_Surface* sf;
-	sf = SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0);
-	SDL_SetColorKey (sf, SDL_TRUE, 0x00FF00FF);
-	SDL_FillRect (sf, NULL, 0x00FF00FF);
-	SDL_LockSurface (sf);
+    AutoSurface sf (SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (sf.get(), SDL_TRUE, 0x00FF00FF);
+    SDL_FillRect (sf.get (), NULL, 0x00FF00FF);
+    SDL_LockSurface (sf.get ());
 
 	const float fak = size / 64.0f;
 	p1x = Round (p1x * fak);
@@ -754,8 +753,8 @@ SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, 
 	line (p2x, p2y, p3x, p3y, color, *sf);
 	line (p3x, p3y, p1x, p1y, color, *sf);
 
-	SDL_UnlockSurface (sf);
-	return sf;
+    SDL_UnlockSurface (sf.get ());
+	return std::move(sf);
 }
 
 static void setPixel (SDL_Surface& surface, int x, int y, int iColor)

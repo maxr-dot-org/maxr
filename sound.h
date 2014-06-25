@@ -16,23 +16,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef soundH
 #define soundH
-#include <string.h>
-#include "autoobj.h"
-#include "defines.h"
+
+#include <string>
 #include <vector>
+#include <array>
 
-#define sSOUND struct Mix_Chunk
+#include "defines.h"
 
-extern void FreesSound (sSOUND* sound);
+#include "output/sound/soundchunk.h"
 
-typedef AutoObj<sSOUND, FreesSound> AutoSound;
-
-// Volumes ///////////////////////////////////////////////////////////////////
-EX int SoundLoopChannel;
-
-// Musik /////////////////////////////////////////////////////////////////////
 EX std::vector<std::string> MusicFiles;
 
 // Sounds ////////////////////////////////////////////////////////////////////
@@ -42,35 +37,35 @@ public:
 	void load (const char* path);
 public:
 	// General
-	AutoSound SNDAbsorb;
-	AutoSound SNDActivate;
-	AutoSound SNDArm;
-	AutoSound SNDBuilding;
-	AutoSound SNDChat;
-	AutoSound SNDClearing;
-	AutoSound SNDHudButton;
-	AutoSound SNDHudSwitch;
-	AutoSound SNDLandMineClear;
-	AutoSound SNDLandMinePlace;
-	AutoSound SNDLoad;
-	AutoSound SNDMenuButton;
-	AutoSound SNDObjectMenu;
-	AutoSound SNDPanelClose;
-	AutoSound SNDPanelOpen;
-	AutoSound SNDQuitsch;
-	AutoSound SNDReload;
-	AutoSound SNDRepair;
-	AutoSound SNDSeaMineClear;
-	AutoSound SNDSeaMinePlace;
+	cSoundChunk SNDAbsorb;
+	cSoundChunk SNDActivate;
+	cSoundChunk SNDArm;
+	cSoundChunk SNDBuilding;
+	cSoundChunk SNDChat;
+	cSoundChunk SNDClearing;
+	cSoundChunk SNDHudButton;
+	cSoundChunk SNDHudSwitch;
+	cSoundChunk SNDLandMineClear;
+	cSoundChunk SNDLandMinePlace;
+	cSoundChunk SNDLoad;
+	cSoundChunk SNDMenuButton;
+	cSoundChunk SNDObjectMenu;
+	cSoundChunk SNDPanelClose;
+	cSoundChunk SNDPanelOpen;
+	cSoundChunk SNDQuitsch;
+	cSoundChunk SNDReload;
+	cSoundChunk SNDRepair;
+	cSoundChunk SNDSeaMineClear;
+	cSoundChunk SNDSeaMinePlace;
 
 	// Explosions
-	AutoSound EXPBig[4];
-	AutoSound EXPBigWet[2];
-	AutoSound EXPSmall[3];
-	AutoSound EXPSmallWet[3];
+    std::array<cSoundChunk, 4> EXPBig;
+    std::array<cSoundChunk, 2> EXPBigWet;
+    std::array<cSoundChunk, 3> EXPSmall;
+    std::array<cSoundChunk, 3> EXPSmallWet;
 
 	// Dummy
-	AutoSound DummySound;
+	cSoundChunk DummySound;
 } EX SoundData;
 
 // Voices ////////////////////////////////////////////////////////////////////
@@ -79,57 +74,42 @@ class cVoiceData
 public:
 	void load (const char* path);
 public:
-	AutoSound VOIAmmoLow[2];
-	AutoSound VOIAmmoEmpty[2];
-	AutoSound VOIAttacking[2];
-	AutoSound VOIAttackingEnemy[2];
-	AutoSound VOIAttackingUs[3];
-	AutoSound VOIBuildDone[4];
-	AutoSound VOIClearing;
-	AutoSound VOIClearingMines[2];
-	AutoSound VOICommandoFailed[3];
-	AutoSound VOIDestroyedUs[2];
-	AutoSound VOIDetected[2];
-	AutoSound VOILanding[3];
-	AutoSound VOILayingMines;
-	AutoSound VOINoPath[2];
-	AutoSound VOINoSpeed;
-	AutoSound VOIOK[4];
-	AutoSound VOIReammo;
-	AutoSound VOIReammoAll;
-	AutoSound VOIRepaired[2];
-	AutoSound VOIRepairedAll[2];
-	AutoSound VOIResearchComplete;
-	AutoSound VOISaved;
-	AutoSound VOISentry;
-	AutoSound VOIStartMore;
-	AutoSound VOIStartNone;
-	AutoSound VOIStartOne;
-	AutoSound VOIStatusRed[2];
-	AutoSound VOIStatusYellow[2];
-	AutoSound VOISubDetected;
-	AutoSound VOISurveying[2];
-	AutoSound VOITransferDone;
-	AutoSound VOITurnEnd20Sec[3];
-	AutoSound VOIUnitDisabled;
-	AutoSound VOIUnitDisabledByEnemy[2];
-	AutoSound VOIUnitStolen[2];
-	AutoSound VOIUnitStolenByEnemy;
+    std::array<cSoundChunk, 2> VOIAmmoLow;
+    std::array<cSoundChunk, 2> VOIAmmoEmpty;
+    std::array<cSoundChunk, 2> VOIAttacking;
+    std::array<cSoundChunk, 2> VOIAttackingEnemy;
+    std::array<cSoundChunk, 3> VOIAttackingUs;
+    std::array<cSoundChunk, 4> VOIBuildDone;
+	cSoundChunk VOIClearing;
+    std::array<cSoundChunk, 2> VOIClearingMines;
+    std::array<cSoundChunk, 3> VOICommandoFailed;
+    std::array<cSoundChunk, 2> VOIDestroyedUs;
+    std::array<cSoundChunk, 2> VOIDetected;
+    std::array<cSoundChunk, 3> VOILanding;
+	cSoundChunk VOILayingMines;
+    std::array<cSoundChunk, 2> VOINoPath;
+	cSoundChunk VOINoSpeed;
+    std::array<cSoundChunk, 4> VOIOK;
+	cSoundChunk VOIReammo;
+	cSoundChunk VOIReammoAll;
+    std::array<cSoundChunk, 2> VOIRepaired;
+    std::array<cSoundChunk, 2> VOIRepairedAll;
+	cSoundChunk VOIResearchComplete;
+	cSoundChunk VOISaved;
+	cSoundChunk VOISentry;
+	cSoundChunk VOIStartMore;
+	cSoundChunk VOIStartNone;
+	cSoundChunk VOIStartOne;
+    std::array<cSoundChunk, 2> VOIStatusRed;
+    std::array<cSoundChunk, 2> VOIStatusYellow;
+	cSoundChunk VOISubDetected;
+    std::array<cSoundChunk, 2> VOISurveying;
+	cSoundChunk VOITransferDone;
+    std::array<cSoundChunk, 3> VOITurnEnd20Sec;
+	cSoundChunk VOIUnitDisabled;
+    std::array<cSoundChunk, 2> VOIUnitDisabledByEnemy;
+    std::array<cSoundChunk, 2> VOIUnitStolen;
+	cSoundChunk VOIUnitStolenByEnemy;
 } EX VoiceData;
 
-// Prototypen ////////////////////////////////////////////////////////////////
-int InitSound (int frequency, int chunksize);
-void CloseSound();
-void PlayVoice (sSOUND* snd);
-template <int N> void PlayRandomVoice (AutoSound (&snds) [N]);
-void PlayFX (sSOUND* snd);
-template <int N> void PlayRandomFX (AutoSound (&snds) [N]);
-void PlayMusic (char const* file);
-void SetMusicVol (int vol);
-void StopMusic();
-void StartMusic();
-int PlayFXLoop (sSOUND* snd);
-void StopFXLoop (int SndStream);
-int getSoundLength (sSOUND* snd); // in milliseconds
-//void play(sSOUND *snd);
-#endif
+#endif // soundH

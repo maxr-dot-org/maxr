@@ -272,41 +272,6 @@ void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
 	//gameGUI->onLostConnection();
 }
 
-//void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
-//{
-//	assert (message.iType == GAME_EV_CHAT_SERVER);
-//
-//	switch (message.popChar())
-//	{
-//		case USER_MESSAGE:
-//		{
-//			const string msg = message.popString ();
-//			//getActivePlayer ().addSavedReport (std::make_unique<cSavedReportChat>(msg, sSavedReportMessage::REPORT_TYPE_CHAT);
-//			//FIXME: gameGUI
-//			//PlayFX (SoundData.SNDChat);
-//			break;
-//		}
-//		case SERVER_ERROR_MESSAGE:
-//		{
-//			const string msg = lngPack.i18n (message.popString ());
-//			//getActivePlayer ().addSavedReport (msg, sSavedReportMessage::REPORT_TYPE_COMP);
-//			//FIXME: gameGUI
-//			//PlayFX (SoundData.SNDQuitsch);
-//			break;
-//		}
-//		case SERVER_INFO_MESSAGE:
-//		{
-//			const string translationpath = message.popString();
-//			const string inserttext = message.popString();
-//			string msgString;
-//			if (inserttext.empty()) msgString = lngPack.i18n (translationpath);
-//			else msgString = lngPack.i18n (translationpath, inserttext);
-//			getActivePlayer ().addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
-//			break;
-//		}
-//	}
-//}
-
 void cClient::HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_PLAYER_CLANS);

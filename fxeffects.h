@@ -8,6 +8,8 @@
 #include "autosurface.h"
 #include "utility/position.h"
 
+class cSoundManager;
+
 class cFx
 {
 protected:
@@ -28,7 +30,7 @@ public:
 	int getLength() const;
 
 	virtual void draw (float zoom, const cPosition& destination) const = 0;
-	virtual void playSound () const;
+	virtual void playSound (cSoundManager& soundManager) const;
 	virtual void run();
 };
 
@@ -94,14 +96,14 @@ class cFxExploSmall : public cFxExplo
 {
 public:
 	cFxExploSmall (const cPosition& position); // x, y is the center of the explosion
-	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
 	cFxExploBig (const cPosition& position, bool onWater);
-	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 
 private:
 	bool onWater;
@@ -111,28 +113,28 @@ class cFxExploAir : public cFxExplo
 {
 public:
 	cFxExploAir (const cPosition& position);
-	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
 	cFxExploWater (const cPosition& position);
-	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxHit : public cFxExplo
 {
 public:
 	cFxHit (const cPosition& position);
-	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
 	cFxAbsorb (const cPosition& position);
-	virtual void playSound () const MAXR_OVERRIDE_FUNCTION;
+    virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
 class cFxFade : public cFx

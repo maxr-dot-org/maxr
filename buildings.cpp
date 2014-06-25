@@ -38,6 +38,7 @@
 #include "video.h"
 #include "unifonts.h"
 #include "game/data/report/savedreporttranslated.h"
+#include "utility/random.h"
 
 using namespace std;
 
@@ -379,7 +380,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
 		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
-		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (uiData->img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
 
 		src.x = 0;
 	}
@@ -393,12 +394,12 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		// select clan image
 		if (owner->getClan() != -1)
 			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
-		SDL_BlitSurface (uiData->img, &src, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (uiData->img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
 	}
 	else
 	{
 		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
-		SDL_BlitSurface (uiData->img, NULL, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (uiData->img.get (), NULL, GraphicsData.gfx_tmp.get (), NULL);
 	}
 
 	// draw the building
@@ -441,12 +442,12 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	{
 		SDL_Rect tmp = dest;
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (uiData->shw, StartUp / 5);
+			SDL_SetSurfaceAlphaMod (uiData->shw.get (), StartUp / 5);
 		else
-			SDL_SetSurfaceAlphaMod (uiData->shw, 50);
+			SDL_SetSurfaceAlphaMod (uiData->shw.get (), 50);
 
 		CHECK_SCALING (*uiData->shw, *uiData->shw_org, zoomFactor);
-		blittAlphaSurface (uiData->shw, NULL, surface, &tmp);
+		blittAlphaSurface (uiData->shw.get (), NULL, surface, &tmp);
 	}
 
 	int frameNr = dir;
@@ -1342,25 +1343,49 @@ void cBuilding::makeDetection (cServer& server)
 }
 
 //--------------------------------------------------------------------------
-sBuildingUIData::sBuildingUIData() :
-	img (NULL), img_org (NULL),
-	shw (NULL), shw_org (NULL),
-	eff (NULL), eff_org (NULL),
-	video (NULL),
-	info (NULL),
-	Start (NULL),
-	Running (NULL),
-	Stop (NULL),
-	Attack (NULL),
-	Wait (NULL)
+sBuildingUIData::sBuildingUIData()
 {}
+
+//--------------------------------------------------------------------------
+sBuildingUIData::sBuildingUIData (sBuildingUIData&& other) :
+	img (std::move (other.img)), img_org (std::move (other.img_org)),
+	shw (std::move (other.shw)), shw_org (std::move (other.shw_org)),
+	eff (std::move (other.eff)), eff_org (std::move (other.eff_org)),
+	video (std::move (other.video)),
+	info (std::move (other.info)),
+	Start (std::move (other.Start)),
+	Running (std::move (other.Running)),
+	Stop (std::move (other.Stop)),
+	Attack (std::move (other.Attack)),
+	Wait (std::move (other.Wait))
+{}
+
+//--------------------------------------------------------------------------
+sBuildingUIData& sBuildingUIData::operator=(sBuildingUIData&& other)
+{
+	img = std::move (other.img);
+	img_org = std::move (other.img_org);
+	shw = std::move (other.shw);
+	shw_org = std::move (other.shw_org);
+	eff = std::move (other.eff);
+	eff_org = std::move (other.eff_org);
+	video = std::move (other.video);
+	info = std::move (other.info);
+
+	Start = std::move (other.Start);
+	Running = std::move (other.Running);
+	Stop = std::move (other.Stop);
+	Attack = std::move (other.Attack);
+	Wait = std::move (other.Wait);
+	return *this;
+}
 
 //--------------------------------------------------------------------------
 void sBuildingUIData::scaleSurfaces (float factor)
 {
-	scaleSurface (img_org, img, (int) (img_org->w * factor), (int) (img_org->h * factor));
-	scaleSurface (shw_org, shw, (int) (shw_org->w * factor), (int) (shw_org->h * factor));
-	if (eff_org) scaleSurface (eff_org, eff, (int) (eff_org->w * factor), (int) (eff_org->h * factor));
+	scaleSurface (img_org.get (), img.get (), (int)(img_org->w * factor), (int)(img_org->h * factor));
+	scaleSurface (shw_org.get (), shw.get (), (int)(shw_org->w * factor), (int)(shw_org->h * factor));
+	if (eff_org) scaleSurface (eff_org.get (), eff.get (), (int)(eff_org->w * factor), (int)(eff_org->h * factor));
 }
 
 //-----------------------------------------------------------------------------

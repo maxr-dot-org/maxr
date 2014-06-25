@@ -41,8 +41,8 @@ struct sID;
 class cWindowHangar : public cWindow
 {
 public:
-	cWindowHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan);
-	cWindowHangar (SDL_Surface* surface, const cPlayer& player);
+	cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
+    cWindowHangar (AutoSurface surface, const cPlayer& player);
 	~cWindowHangar ();
 
 	cSignal<void ()> done;

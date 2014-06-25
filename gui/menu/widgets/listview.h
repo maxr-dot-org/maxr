@@ -26,6 +26,8 @@
 #include "../../../video.h"
 #include "../../../sound.h"
 #include "../../../input/mouse/mouse.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 
 #include "../../application.h"
 
@@ -36,7 +38,7 @@ class cListView : public cClickableWidget
 {
 	static_assert(std::is_base_of<cAbstractListViewItem, ItemType>::value, "Items in list view have to inherit from cAbstractListViewItem");
 public:
-	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, sSOUND* clickSound = SoundData.SNDObjectMenu.get ());
+	explicit cListView (const cBox<cPosition>& area, bool allowMultiSelection = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void disableSelectable ();
 	void enableSelectable ();
@@ -103,7 +105,7 @@ private:
 	cPosition endMargin;
 	cPosition itemDistance;
 
-	sSOUND* clickSound;
+	cSoundChunk* clickSound;
 
 	bool removeTookPlace;
 
@@ -123,7 +125,7 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename ItemType>
-cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection, sSOUND* clickSound_) :
+cListView<ItemType>::cListView (const cBox<cPosition>& area, bool allowMultiSelection, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
 	beginMargin (3, 4),
 	endMargin (2, 2),
@@ -457,7 +459,7 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 			{
 				removeTookPlace = false;
 				itemClicked (item);
-				PlayFX (clickSound);
+                if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
 				if (removeTookPlace) break;
 
 				if (selectedItems.size () != 1 || selectedItems[0] != &item)

@@ -45,7 +45,7 @@ cWindowMapSelection::cWindowMapSelection () :
 		{
 			const auto index = row * mapColumns + column;
 
-			mapImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, SoundData.SNDHudButton.get ()));
+			mapImages[index] = addChild (std::make_unique<cImage> (getPosition () + cPosition (21 + 158 * column, 86 + 198 * row), nullptr, &SoundData.SNDHudButton));
 			signalConnectionManager.connect (mapImages[index]->clicked, std::bind (&cWindowMapSelection::mapClicked, this, mapImages[index]));
 
 			mapTitles[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (6 + 158 * column, 48 + 198 * row), getPosition () + cPosition (155 + 158 * column, 48 + 10 + 198 * row)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));

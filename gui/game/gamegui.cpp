@@ -23,6 +23,7 @@
 
 #include "gamegui.h"
 #include "hud.h"
+#include "soundmanager.h"
 #include "widgets/gamemapwidget.h"
 #include "widgets/minimapwidget.h"
 #include "widgets/unitcontextmenuwidget.h"
@@ -69,15 +70,18 @@
 #include "../../game/data/report/savedreportchat.h"
 #include "../../game/data/report/savedreportunit.h"
 #include "../../game/logic/turnclock.h"
+#include "../../output/sound/sounddevice.h"
+#include "../../output/sound/soundchannel.h"
+#include "../../utility/random.h"
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	cWindow (nullptr),
-	animationTimer (std::make_shared<cAnimationTimer>()),
+	animationTimer (std::make_shared<cAnimationTimer> ()),
+	soundManager (std::make_shared<cSoundManager> ()),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	mouseScrollDirection (0, 0),
-	selectedUnitSoundStream (-1),
 	openPanelOnActivation (true),
 	savedReportPosition (false, cPosition ())
 {
@@ -85,7 +89,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	resize (hudOwning->getSize ());
 
-	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer));
+	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer, soundManager));
 
 	messageList = addChild (std::make_unique<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200))));
 
@@ -152,6 +156,11 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
+	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&]()
+	{
+		auto vehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
+		if (vehicle) vehicle->makeReport (*soundManager);
+	});
 
 	signalConnectionManager.connect (gameMap->triggeredUnitHelp, std::bind (&cGameGui::showUnitHelpWindow, this, _1));
 	signalConnectionManager.connect (gameMap->triggeredTransfer, std::bind (&cGameGui::showUnitTransferDialog, this, _1, _2));
@@ -245,13 +254,13 @@ void cGameGui::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 	{
 		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit& unit)
 		{
-			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMinePlace.get ());
-			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMinePlace.get ());
+            if (unit.data.ID == UnitsData.specialIDLandMine) soundManager->playSound (SoundData.SNDLandMinePlace, unit.getPosition ());
+            else if (unit.data.ID == UnitsData.specialIDSeaMine) soundManager->playSound (SoundData.SNDSeaMinePlace, unit.getPosition ());
 		});
 		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit& unit)
 		{
-			if (unit.data.ID == UnitsData.specialIDLandMine) PlayFX (SoundData.SNDLandMineClear.get ());
-			else if (unit.data.ID == UnitsData.specialIDSeaMine) PlayFX (SoundData.SNDSeaMineClear.get ());
+            if (unit.data.ID == UnitsData.specialIDLandMine) soundManager->playSound (SoundData.SNDLandMineClear, unit.getPosition ());
+            else if (unit.data.ID == UnitsData.specialIDSeaMine) soundManager->playSound (SoundData.SNDSeaMineClear, unit.getPosition ());
 		});
 		//dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ });
 	}
@@ -334,7 +343,7 @@ void cGameGui::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (activateAtTriggered, [&](const cUnit& unit, size_t index, const cPosition& position)
 	{
-		sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[index]->iID, position.x (), position.y ());
+		sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[index]->iID, position);
 	});
 	clientSignalConnectionManager.connect (reloadTriggered, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
 	{
@@ -667,7 +676,7 @@ void cGameGui::connectToClient (cClient& client)
 
 	clientSignalConnectionManager.connect (gameMap->triggeredEndBuilding, [&](cVehicle& vehicle, const cPosition& destination)
 	{
-		sendWantEndBuilding (client, vehicle, destination.x (), destination.y ());
+		sendWantEndBuilding (client, vehicle, destination);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredMoveSingle, [&](cVehicle& vehicle, const cPosition& destination)
 	{
@@ -679,7 +688,7 @@ void cGameGui::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredActivateAt, [&](const cUnit& unit, size_t index, const cPosition& position)
 	{
-		sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[index]->iID, position.x (), position.y ());
+		sendWantActivate (client, unit.iID, unit.isAVehicle (), unit.storedUnits[index]->iID, position);
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredExitFinishedUnit, [&](const cBuilding& building, const cPosition& position)
 	{
@@ -707,7 +716,7 @@ void cGameGui::connectToClient (cClient& client)
 					}
 					else
 					{
-						PlayRandomVoice (VoiceData.VOINoPath);
+						soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 					}
 				}
 			}
@@ -725,7 +734,7 @@ void cGameGui::connectToClient (cClient& client)
 					}
 					else
 					{
-						PlayRandomVoice (VoiceData.VOINoPath);
+						soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 					}
 				}
 			}
@@ -747,7 +756,7 @@ void cGameGui::connectToClient (cClient& client)
 					}
 					else
 					{
-						PlayRandomVoice (VoiceData.VOINoPath);
+						soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 					}
 				}
 			}
@@ -765,7 +774,7 @@ void cGameGui::connectToClient (cClient& client)
 					}
 					else
 					{
-						PlayRandomVoice (VoiceData.VOINoPath);
+						soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 					}
 				}
 			}
@@ -807,7 +816,7 @@ void cGameGui::connectToClient (cClient& client)
 				}
 				else
 				{
-					PlayRandomVoice (VoiceData.VOINoPath);
+					soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 				}
 			}
 		}
@@ -895,7 +904,7 @@ void cGameGui::connectToClient (cClient& client)
 		if (&unit == gameMap->getUnitSelection ().getSelectedUnit ())
 		{
 			stopSelectedUnitSound ();
-			if (unit.data.ID.isABuilding ()) PlayFX (static_cast<const cBuilding&>(unit).uiData->Start);
+			if (unit.data.ID.isABuilding ()) soundManager->playSound (static_cast<const cBuilding&>(unit).uiData->Start, unit.getPosition ());
 			updateSelectedUnitIdleSound ();
 		}
 	});
@@ -905,7 +914,7 @@ void cGameGui::connectToClient (cClient& client)
 		if (&unit == gameMap->getUnitSelection ().getSelectedUnit ())
 		{
 			stopSelectedUnitSound ();
-			if (unit.data.ID.isABuilding ()) PlayFX (static_cast<const cBuilding&>(unit).uiData->Stop);
+			if (unit.data.ID.isABuilding ()) soundManager->playSound (static_cast<const cBuilding&>(unit).uiData->Stop, unit.getPosition ());
 			updateSelectedUnitIdleSound ();
 		}
 	});
@@ -942,7 +951,7 @@ void cGameGui::connectToClient (cClient& client)
 		}
 	});
 
-	clientSignalConnectionManager.connect (client.unitStored, [&](const cUnit&, const cUnit&) // storing, stored
+	clientSignalConnectionManager.connect (client.unitStored, [&](const cUnit& storingUnit, const cUnit& /*storedUnit*/)
 	{
 		//auto mouseTilePosition = getTilePosition (cMouse::getInstance ().getPosition ());
 		//if (storedVehicle.PosX == mouseTilePosition.x () && storedVehicle.PosY == mouseTilePosition.y ()) updateMouseCursor ();
@@ -951,65 +960,65 @@ void cGameGui::connectToClient (cClient& client)
 
 		//if (&storedVehicle == getSelectedUnit ()) deselectUnit ();
 
-		PlayFX (SoundData.SNDLoad.get ());
+		soundManager->playSound (SoundData.SNDLoad, storingUnit.getPosition ());
 	});
 
-	clientSignalConnectionManager.connect (client.unitActivated, [&](const cUnit&, const cUnit&) // storing, stored
+	clientSignalConnectionManager.connect (client.unitActivated, [&](const cUnit& storingUnit, const cUnit& /*storedUnit*/)
 	{
 		//if (gameGUI->getSelectedUnit() == StoringVehicle && gameGUI->mouseInputMode == activateVehicle)
 		//{
 		//	gameGUI->mouseInputMode = normalInput;
 		//}
 
-		PlayFX (SoundData.SNDActivate.get ());
+		soundManager->playSound (SoundData.SNDActivate, storingUnit.getPosition ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitHasStolenSuccessfully, [&](const cUnit&)
 	{
-		PlayRandomVoice (VoiceData.VOIUnitStolen);
+		soundManager->playVoice (getRandom (VoiceData.VOIUnitStolen));
 	});
 
 	clientSignalConnectionManager.connect (client.unitHasDisabledSuccessfully, [&](const cUnit&)
 	{
-		PlayVoice (VoiceData.VOIUnitDisabled.get ());
+		soundManager->playVoice (VoiceData.VOIUnitDisabled);
 	});
 
 	clientSignalConnectionManager.connect (client.unitStealDisableFailed, [&](const cUnit&)
 	{
-		PlayRandomVoice (VoiceData.VOICommandoFailed);
+		soundManager->playVoice (getRandom (VoiceData.VOICommandoFailed));
 	});
 
-	clientSignalConnectionManager.connect (client.unitSuppliedWithAmmo, [&](const cUnit&)
+	clientSignalConnectionManager.connect (client.unitSuppliedWithAmmo, [&](const cUnit& unit)
 	{
-		PlayFX (SoundData.SNDReload.get ());
-		PlayVoice (VoiceData.VOIReammo.get ());
+		soundManager->playSound (SoundData.SNDReload, unit.getPosition());
+		soundManager->playVoice (VoiceData.VOIReammo);
 	});
 
-	clientSignalConnectionManager.connect (client.unitRepaired, [&](const cUnit&)
+	clientSignalConnectionManager.connect (client.unitRepaired, [&](const cUnit& unit)
 	{
-		PlayFX (SoundData.SNDRepair.get ());
-		PlayRandomVoice (VoiceData.VOIRepaired);
+		soundManager->playSound (SoundData.SNDRepair, unit.getPosition ());
+		soundManager->playVoice (getRandom (VoiceData.VOIRepaired));
 	});
 
 	clientSignalConnectionManager.connect (client.unitDisabled, [&](const cUnit& unit)
 	{
-		PlayVoice (VoiceData.VOIUnitDisabled.get ());
+		soundManager->playVoice (VoiceData.VOIUnitDisabled);
 	});
 
 	clientSignalConnectionManager.connect (client.unitStolen, [&](const cUnit& unit)
 	{
-		PlayVoice (VoiceData.VOIUnitStolenByEnemy.get ());
+		soundManager->playVoice (VoiceData.VOIUnitStolenByEnemy);
 	});
 
 	clientSignalConnectionManager.connect (client.unitDetected, [&](const cUnit& unit)
 	{
 		if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
 		{
-			PlayVoice (VoiceData.VOISubDetected.get ());
+			soundManager->playVoice (VoiceData.VOISubDetected);
 		}
 		else
 		{
-			PlayRandomVoice (VoiceData.VOIDetected);
+			soundManager->playVoice (getRandom (VoiceData.VOIDetected));
 		}
 	});
 	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect)
@@ -1028,7 +1037,7 @@ void cGameGui::connectToClient (cClient& client)
 	{
 		if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && !vehicle.autoMJob)
 		{
-			PlayRandomVoice (VoiceData.VOINoPath);
+            soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 		}
 	});
 }
@@ -1059,8 +1068,8 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 				if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 				stopSelectedUnitSound ();
-				if (water && vehicle.data.factorSea > 0) PlayFX (vehicle.uiData->StopWater);
-				else PlayFX (vehicle.uiData->Stop);
+				if (water && vehicle.data.factorSea > 0) soundManager->playSound (vehicle.uiData->StopWater, vehicle.getPosition(), false);
+				else soundManager->playSound (vehicle.uiData->Stop, vehicle.getPosition (), false);
 
 				updateSelectedUnitIdleSound ();
 			}
@@ -1070,7 +1079,7 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle ())
 			{
-				PlayRandomVoice (VoiceData.VOINoPath);
+                soundManager->playVoice (getRandom (VoiceData.VOINoPath));
 			}
 		});
 
@@ -1661,11 +1670,11 @@ void cGameGui::updateSelectedUnitIdleSound ()
 
 		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player.get() != vehicle.owner))
 		{
-			startSelectedUnitSound (SoundData.SNDBuilding.get ());
+			startSelectedUnitSound (SoundData.SNDBuilding);
 		}
 		else if (vehicle.isUnitClearing ())
 		{
-			startSelectedUnitSound (SoundData.SNDClearing.get ());
+			startSelectedUnitSound (SoundData.SNDClearing);
 		}
 		else if (water && vehicle.data.factorSea > 0)
 		{
@@ -1694,10 +1703,8 @@ void cGameGui::updateSelectedUnitMoveSound ()
 
 	if (!vehicle.MoveJobActive)
 	{
-		if (water && vehicle.data.factorSea != 0)
-			PlayFX (vehicle.uiData->StartWater);
-		else
-			PlayFX (vehicle.uiData->Start);
+		if (water && vehicle.data.factorSea != 0) soundManager->playSound (vehicle.uiData->StartWater, vehicle.getPosition (), false);
+		else soundManager->playSound (vehicle.uiData->Start, vehicle.getPosition (), false);
 	}
 
 	if (water && vehicle.data.factorSea != 0)
@@ -1707,17 +1714,16 @@ void cGameGui::updateSelectedUnitMoveSound ()
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::startSelectedUnitSound (sSOUND* sound)
+void cGameGui::startSelectedUnitSound (const cSoundChunk& sound)
 {
 	stopSelectedUnitSound ();
-	selectedUnitSoundStream = PlayFXLoop (sound);
+    soundManager->startSoundLoop (sound);
 }
 
 //------------------------------------------------------------------------------
 void cGameGui::stopSelectedUnitSound ()
 {
-	if (selectedUnitSoundStream != -1) StopFXLoop (selectedUnitSoundStream);
-	selectedUnitSoundStream = -1;
+    soundManager->stopSoundLoop ();
 }
 
 //------------------------------------------------------------------------------
@@ -1872,6 +1878,7 @@ void cGameGui::handleReport (const cSavedReport& report)
 	else
 	{
 		messageList->addMessage (report.getMessage (), report.isAlert () ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
+		if (report.isAlert ()) soundManager->playSound (SoundData.SNDQuitsch);
 	}
 
 	if (cSettings::getInstance ().isDebug ()) Log.write (report.getMessage (), cLog::eLOG_TYPE_DEBUG);

@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------
 cWindowLoadSave::cWindowLoadSave ()
 {
-	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (246, 438), ePushButtonType::Huge, SoundData.SNDMenuButton.get (), lngPack.i18n ("Text~Others~Exit")));
+	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (246, 438), ePushButtonType::Huge, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
 	signalConnectionManager.connect (exitButton->clicked, [&](){ exit (); });
 
 	saveButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (132, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Save")));

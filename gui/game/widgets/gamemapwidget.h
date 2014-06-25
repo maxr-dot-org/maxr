@@ -38,11 +38,12 @@ class cUnitSelection;
 class cUnitContextMenuWidget;
 class cFx;
 class cMouseMode;
+class cSoundManager;
 
 class cGameMapWidget : public cClickableWidget
 {
 public:
-	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer);
+	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager);
 	~cGameMapWidget();
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
@@ -69,6 +70,7 @@ public:
 	const cPosition& getPixelOffset () const;
 
 	void centerAt (const cPosition& position);
+    cPosition getMapCenterOffset ();
 
 	void startFindBuildPosition (const sID& buildId);
 	void startFindPathBuildPosition ();
@@ -158,6 +160,7 @@ private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
+	std::shared_ptr<cSoundManager> soundManager;
 
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMap> dynamicMap; // may be null

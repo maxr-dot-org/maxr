@@ -48,6 +48,7 @@ class cSavedReport;
 class cCasualtiesTracker;
 class cTurnClock;
 class cGameSettings;
+class cSoundManager;
 struct sID;
 struct sBuildList;
 
@@ -92,6 +93,7 @@ private:
 	cSignalConnectionManager panelSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
+	std::shared_ptr<cSoundManager> soundManager;
 
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMap> dynamicMap;
@@ -113,8 +115,6 @@ private:
 
 	cPosition mouseScrollDirection;
 	std::pair<bool, cPosition> savedReportPosition;
-
-	int selectedUnitSoundStream;
 
 	bool openPanelOnActivation;
 
@@ -147,7 +147,7 @@ private:
 	void updateSelectedUnitIdleSound ();
 	void updateSelectedUnitMoveSound ();
 
-	void startSelectedUnitSound (sSOUND* sound);
+    void startSelectedUnitSound (const cSoundChunk& sound);
 	void stopSelectedUnitSound ();
 
 	void connectMoveJob (const cVehicle& vehicle);

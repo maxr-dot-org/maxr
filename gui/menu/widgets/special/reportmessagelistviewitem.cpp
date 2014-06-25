@@ -48,11 +48,11 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 		AutoSurface unitSurface;
 		if (unitId.isABuilding ())
 		{
-			unitSurface = scaleSurface (UnitsData.getBuildingUI (unitId)->img_org, nullptr, unitImageSize, unitImageSize);
+            unitSurface = AutoSurface (scaleSurface (UnitsData.getBuildingUI (unitId)->img_org.get (), nullptr, unitImageSize, unitImageSize));
 		}
 		else if (unitId.isAVehicle ())
 		{
-			unitSurface = scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0], nullptr, unitImageSize, unitImageSize);
+            unitSurface = AutoSurface (scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0].get (), nullptr, unitImageSize, unitImageSize));
 		}
 		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get ()));
 	}

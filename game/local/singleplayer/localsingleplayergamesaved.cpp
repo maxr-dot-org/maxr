@@ -106,9 +106,9 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	application.addRunnable (shared_from_this ());
 
 	signalConnectionManager.connect (gameGui->terminated, [&]()
-    {
-        // me pointer ensures that game object stays alive till this call has terminated
-        auto me = application.removeRunnable (*this);
+	{
+		// me pointer ensures that game object stays alive till this call has terminated
+		auto me = application.removeRunnable (*this);
 	});
 }
 

@@ -26,6 +26,8 @@
 #include "../../../unifonts.h"
 #include "../../../main.h"
 #include "../../../input/mouse/mouse.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
 cPushButton::cPushButton (const cBox<cPosition>& area) :
@@ -33,7 +35,7 @@ cPushButton::cPushButton (const cBox<cPosition>& area) :
 	buttonType (ePushButtonType::Invisible),
 	fontType (FONT_LATIN_BIG),
 	text (""),
-	clickSound (SoundData.SNDHudButton.get ()),
+	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 {
 	renewSurface ();
@@ -45,14 +47,14 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	buttonType (buttonType_),
 	fontType (FONT_LATIN_BIG),
 	text (""),
-	clickSound (SoundData.SNDHudButton.get ()),
+	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 {
 	renewSurface ();
 }
 
 //------------------------------------------------------------------------------
-cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, sSOUND* clickSound_) :
+cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	buttonType (buttonType_),
 	fontType (FONT_LATIN_BIG),
@@ -69,14 +71,14 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 	buttonType (buttonType_),
 	fontType (fontType_),
 	text (text_),
-	clickSound (SoundData.SNDHudButton.get ()),
+	clickSound (&SoundData.SNDHudButton),
 	isLocked (false)
 {
 	renewSurface ();
 }
 
 //------------------------------------------------------------------------------
-cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, sSOUND* clickSound_, const std::string& text_, eUnicodeFontType fontType_) :
+cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_, cSoundChunk* clickSound_, const std::string& text_, eUnicodeFontType fontType_) :
 	cClickableWidget (position),
 	buttonType (buttonType_),
 	fontType (fontType_),
@@ -130,7 +132,7 @@ bool cPushButton::handleClicked (cApplication& application, cMouse& mouse, eMous
 {
 	if (button == eMouseButtonType::Left)
 	{
-		if (clickSound) PlayFX (clickSound);
+        if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
 		clicked ();
 		return true;
 	}
@@ -318,7 +320,7 @@ void cPushButton::renewSurface ()
 	src.w = size.x ();
 	src.h = size.y ();
 
-	surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0);
+    surface = AutoSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 

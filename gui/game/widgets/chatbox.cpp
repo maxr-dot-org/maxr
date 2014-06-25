@@ -133,8 +133,8 @@ void cChatBox::sendCommand ()
 void cChatBox::createBackground ()
 {
 	const auto& size = getSize ();
-	nonFocusBackground = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	focusBackground = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+    nonFocusBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
+    focusBackground = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
 	SDL_Rect chatListBackgroundRect = {chatList->getPosition ().x () - getPosition ().x (), chatList->getPosition ().y () - getPosition ().y (), chatList->getSize ().x (), chatList->getSize ().y ()};
 	SDL_FillRect (nonFocusBackground.get (), &chatListBackgroundRect, SDL_MapRGBA (nonFocusBackground->format, 0, 0, 0, 50));

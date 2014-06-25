@@ -80,8 +80,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 		width  = 130;
 		height = 130;
 	}
-	surface = SDL_CreateRGBSurface (0, width, height, 32,
-									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	surface = AutoSurface(SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
 	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
@@ -109,8 +108,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
 	int width  = (int) std::max (building.uiData->img_org->w * zoom, building.uiData->shw_org->w * zoom);
 	if (building.data.hasFrames) width = (int) (building.uiData->shw_org->w * zoom);
 
-	surface = SDL_CreateRGBSurface (0, width, height, 32,
-									0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
 	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }

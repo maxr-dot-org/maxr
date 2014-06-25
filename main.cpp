@@ -56,9 +56,10 @@
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 
+#include "output/sound/sounddevice.h"
+
 #include "gui/application.h"
 #include "gui/menu/windows/windowstart.h"
-
 
 using namespace std;
 
@@ -82,8 +83,6 @@ int main (int argc, char* argv[])
 	is_main_thread();
 
 	logMAXRVersion();
-
-	srand ((unsigned) time (NULL));  // start random number generator
 
 	if (!DEDICATED_SERVER)
 	{
@@ -197,7 +196,7 @@ static int initSDL()
  */
 static int initSound()
 {
-	if (!cSettings::getInstance().isSoundEnabled())
+    if (!cSettings::getInstance ().isSoundEnabled ())
 	{
 		Log.write ("Sound disabled due configuration", cLog::eLOG_TYPE_INFO);
 		return 1;
@@ -212,9 +211,14 @@ static int initSound()
 		return -1;
 	}
 
-	if (!InitSound (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize()))
-	{
-		Log.write ("Could not access mixer", cLog::eLOG_TYPE_WARNING);
+    try
+    {
+        cSoundDevice::getInstance ().initialize (cSettings::getInstance ().getFrequency (), cSettings::getInstance ().getChunkSize ());
+    }
+    catch (std::runtime_error& e)
+    {
+        Log.write ("Could not init SDL_mixer:", cLog::eLOG_TYPE_WARNING);
+		Log.write (e.what(), cLog::eLOG_TYPE_WARNING);
 		Log.write ("Sound won't be available!", cLog::eLOG_TYPE_WARNING);
 		cSettings::getInstance().setSoundEnabled (false, false);
 		return -1;
@@ -277,7 +281,7 @@ static void showIntro()
 		Log.write ("Couldn't find movie " + filename, cLog::eLOG_TYPE_WARNING);
 	}
 	// Close maxr sound for intro movie
-	CloseSound();
+    cSoundDevice::getInstance ().close ();
 
 	Log.write ("Starting movie " + filename, cLog::eLOG_TYPE_DEBUG);
 	const int mvereturn = MVEPlayer (filename.c_str(),
@@ -288,10 +292,17 @@ static void showIntro()
 	//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 
 	// reinit maxr sound
-	if (cSettings::getInstance().isSoundEnabled()
-		&& !InitSound (cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize()))
+	if (cSettings::getInstance().isSoundEnabled())
 	{
-		Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+        try
+        {
+            cSoundDevice::getInstance ().initialize (cSettings::getInstance ().getFrequency (), cSettings::getInstance ().getChunkSize ());
+        }
+        catch (std::runtime_error& e)
+        {
+            Log.write ("Can't reinit sound after playing intro" + iToStr (mvereturn), cLog::eLOG_TYPE_DEBUG);
+            Log.write (e.what(), cLog::eLOG_TYPE_DEBUG);
+        }
 	}
 }
 
@@ -317,17 +328,12 @@ void Quit()
 	UnitsData.sbuildings.clear();
 
 	//unload files here
-	CloseSound();
+    cSoundDevice::getInstance ().close ();
 	SDLNet_Quit();
 	Video.clearMemory();
 	SDL_Quit();
 	Log.write ("EOF");
 	exit (0);
-}
-
-int random (int const x)
-{
-	return (int) ((double) rand() / RAND_MAX * x);
 }
 
 string iToStr (int x)

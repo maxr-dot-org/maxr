@@ -360,7 +360,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 				}
 
 				/* initialize video mvebuffer to the actual movie dimensions */
-				frame_buf = SDL_CreateRGBSurface (0, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
+				frame_buf = AutoSurface(SDL_CreateRGBSurface (0, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0));
 
 				/* init movie screen rect for fullscreen purposes */
 				//movie_screen.x = (screen->w - frame_buf->w) >> 1;

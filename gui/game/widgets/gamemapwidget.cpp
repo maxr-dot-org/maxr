@@ -34,6 +34,7 @@
 #include "mousemode/mousemodetransfer.h"
 #include "mouseaction/mouseaction.h"
 #include "../hud.h"
+#include "../soundmanager.h"
 #include "../temp/animationtimer.h"
 #include "../../application.h"
 #include "../../../map.h"
@@ -49,15 +50,19 @@
 #include "../../../sound.h"
 #include "../../../movejobs.h"
 #include "../../../utility/indexiterator.h"
+#include "../../../utility/random.h"
 #include "../../../input/mouse/mouse.h"
 #include "../../../input/mouse/cursor/mousecursorsimple.h"
 #include "../../../input/mouse/cursor/mousecursoramount.h"
 #include "../../../input/mouse/cursor/mousecursorattack.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
-cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_) :
+cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_) :
 	cClickableWidget (area),
 	animationTimer (animationTimer_),
+	soundManager (soundManager_),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	player (nullptr),
@@ -73,6 +78,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	lockActive (false)
 {
 	assert (staticMap != nullptr);
+	assert (animationTimer != nullptr);
+	assert (soundManager != nullptr);
 
 	// FIXME: should this really be done here?
 	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
@@ -94,6 +101,18 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	scrolled.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
 	scrolled.connect (std::bind (&cGameMapWidget::updateUnitMenuPosition, this));
+	scrolled.connect ([this]()
+	{
+		soundManager->setListenerPosition (getMapCenterOffset ());
+	});
+
+	zoomFactorChanged.connect ([this]()
+	{
+		const auto tileDrawingRange = computeTileDrawingRange ();
+		const cPosition difference = tileDrawingRange.first - tileDrawingRange.second;
+		const auto diameter = difference.l2Norm ();
+		soundManager->setMaxListeningDistance ((int)(diameter * 2));
+	});
 
 	unitSelection.mainSelectionChanged.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitSelection.mainSelectionChanged.connect ([&]()
@@ -704,6 +723,18 @@ void cGameMapWidget::centerAt (const cPosition& position)
 }
 
 //------------------------------------------------------------------------------
+cPosition cGameMapWidget::getMapCenterOffset ()
+{
+    const auto zoomedTileSize = getZoomedTileSize ();
+    
+    cPosition center;
+    center.x () = pixelOffset.x () / cStaticMap::tilePixelWidth + (getSize ().x () / (2 * zoomedTileSize.x ()));
+    center.y () = pixelOffset.y () / cStaticMap::tilePixelHeight + (getSize ().y () / (2 * zoomedTileSize.y ()));
+
+    return center;
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::startFindBuildPosition (const sID& buildId)
 {
 	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPosition>(buildId));
@@ -726,7 +757,7 @@ void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect)
 {
 	if (effect != nullptr)
 	{
-		effect->playSound ();
+		effect->playSound (*soundManager);
 		effects.push_back (std::move (effect));
 	}
 }
@@ -1665,11 +1696,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			}
 			else
 			{
-				if (unitSelection.selectUnitAt (field, true))
-				{
-					auto vehicle = unitSelection.getSelectedVehicle ();
-					if (vehicle) vehicle->makeReport ();
-				}
+				unitSelection.selectUnitAt (field, true);
 			}
 		}
 		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall ()*/) ||
@@ -1771,13 +1798,13 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				if (!selectedVehicle->moving)
 				{
 					toggleUnitContextMenu (selectedVehicle);
-					PlayFX (SoundData.SNDHudButton.get ());
+					cSoundDevice::getInstance().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
 				}
 			}
 			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 			{
 				toggleUnitContextMenu (selectedBuilding);
-				PlayFX (SoundData.SNDHudButton.get ());
+                cSoundDevice::getInstance ().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
 			}
 		}
 

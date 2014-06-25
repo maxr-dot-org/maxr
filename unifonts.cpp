@@ -437,7 +437,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 				else if (charset == CHARSET_ISO8559_1) unicodeplace = currentChar + 128 + 2 * 16;
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
-			chars[unicodeplace] = SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0);
+            chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
 
 			// change color of small fonts
 			switch (fonttype)
@@ -492,7 +492,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
 	return NULL;
 }
 
-SDL_Surface* cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
+AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 											   eUnicodeFontType fonttype)
 {
 	// build the filename from the information
@@ -526,7 +526,7 @@ SDL_Surface* cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 
 	// load the bitmap
 	if (FileExists (filename.c_str())) return LoadPCX (filename);
-	else return NULL;
+	else return nullptr;
 }
 
 const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)

@@ -50,7 +50,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_) :
 		AutoSurface surface (LoadPCX (GFXOD_STORAGE_GROUND));
 		SDL_BlitSurface (surface.get (), NULL, background.get (), NULL);
 	}
-	setSurface (background.Release ());
+	setSurface (std::move(background));
 
 	//
 	// Units
@@ -177,8 +177,8 @@ void cWindowStorage::updateUnitsWidgets ()
 				unitNames[positionIndex]->setText (name);
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
-				SDL_BlitSurface (storedUnit.uiData->storage, NULL, surface.get (), NULL);
-				unitImages[positionIndex]->setImage (surface.Release ());
+				SDL_BlitSurface (storedUnit.uiData->storage.get(), NULL, surface.get (), NULL);
+				unitImages[positionIndex]->setImage (surface.get ());
 
 				unitDetails[positionIndex]->setUnit (&storedUnit);
 
@@ -203,7 +203,7 @@ void cWindowStorage::updateUnitsWidgets ()
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth (), 0, 0, 0, 0));
 				SDL_BlitSurface (srcSurface, NULL, surface.get (), NULL);
-				unitImages[positionIndex]->setImage (surface.Release ());
+				unitImages[positionIndex]->setImage (surface.get ());
 
 				unitDetails[positionIndex]->setUnit (nullptr);
 

@@ -23,9 +23,11 @@
 #include "../../../../settings.h"
 #include "../../../../video.h"
 #include "../../../../input/mouse/mouse.h"
+#include "../../../../output/sound/sounddevice.h"
+#include "../../../../output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
-cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxValue_, eResourceBarType type, eOrientationType orientation_, sSOUND* clickSound_) :
+cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxValue_, eResourceBarType type, eOrientationType orientation_, cSoundChunk* clickSound_) :
 	cClickableWidget (area),
 	clickSound (clickSound_),
 	orientation (orientation_),
@@ -202,7 +204,7 @@ bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMou
 {
 	if (button == eMouseButtonType::Left)
 	{
-		if (clickSound) PlayFX (clickSound);
+        if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
 
 		const auto valueRange = maxValue - minValue;
 		switch (orientation)
@@ -311,7 +313,7 @@ void cResourceBar::createSurface (eResourceBarType type)
 		break;
 	}
 
-	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
+    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
 
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface.get (), NULL, 0xFF00FF);

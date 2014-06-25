@@ -26,14 +26,14 @@
 #include "../video.h"
 
 //------------------------------------------------------------------------------
-cWindow::cWindow (SDL_Surface* surface_, eWindowBackgrounds backgroundType_) :
+cWindow::cWindow (AutoSurface surface_, eWindowBackgrounds backgroundType_) :
 	surface (nullptr),
 	backgroundType (backgroundType_),
 	activeApplication (nullptr),
 	closing (false),
 	hasBeenDrawnOnce (false)
 {
-	setSurface (surface_);
+	setSurface (std::move(surface_));
 }
 
 //------------------------------------------------------------------------------
@@ -156,9 +156,9 @@ SDL_Surface* cWindow::getSurface ()
 }
 
 //------------------------------------------------------------------------------
-void cWindow::setSurface (SDL_Surface* surface_)
+void cWindow::setSurface (AutoSurface surface_)
 {
-	surface = surface_;
+	surface = std::move(surface_);
 	if (surface != nullptr)
 	{
 		resize (cPosition (surface->w, surface->h));

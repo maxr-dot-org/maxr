@@ -27,6 +27,8 @@
 #include "player.h"
 #include "video.h"
 #include "sound.h"
+#include "utility/random.h"
+#include "gui/game/soundmanager.h"
 
 cFx::cFx (bool bottom_, const cPosition& position_) :
 	position (position_),
@@ -53,7 +55,7 @@ bool cFx::isFinished() const
 	return tick >= length;
 }
 
-void cFx::playSound () const
+void cFx::playSound (cSoundManager& /*soundManager*/) const
 {}
 
 void cFx::run()
@@ -175,9 +177,9 @@ cFxExploSmall::cFxExploSmall (const cPosition& position_) :
 	pImages = &EffectsData.fx_explo_small;
 }
 
-void cFxExploSmall::playSound () const
+void cFxExploSmall::playSound (cSoundManager& soundManager) const
 {
-	PlayRandomFX (SoundData.EXPSmall);
+    soundManager.playSound (getRandom (SoundData.EXPSmall), position, false);
 }
 
 //------------------------------------------------------------------------------
@@ -190,15 +192,15 @@ cFxExploBig::cFxExploBig (const cPosition& position_, bool onWater_) :
 }
 
 
-void cFxExploBig::playSound () const
+void cFxExploBig::playSound (cSoundManager& soundManager) const
 {
 	if (onWater)
 	{
-		PlayRandomFX (SoundData.EXPBigWet);
+		soundManager.playSound (getRandom (SoundData.EXPBigWet), position, false);
 	}
 	else
 	{
-		PlayRandomFX (SoundData.EXPBig);
+		soundManager.playSound (getRandom (SoundData.EXPBig), position, false);
 	}
 }
 
@@ -210,9 +212,9 @@ cFxExploAir::cFxExploAir (const cPosition& position_) :
 	pImages = &EffectsData.fx_explo_air;
 }
 
-void cFxExploAir::playSound () const
+void cFxExploAir::playSound (cSoundManager& soundManager) const
 {
-	PlayRandomFX (SoundData.EXPSmall);
+	soundManager.playSound (getRandom (SoundData.EXPSmall), position, false);
 }
 
 //------------------------------------------------------------------------------
@@ -223,9 +225,9 @@ cFxExploWater::cFxExploWater (const cPosition& position_) :
 	pImages = &EffectsData.fx_explo_water;
 }
 
-void cFxExploWater::playSound () const
+void cFxExploWater::playSound (cSoundManager& soundManager) const
 {
-	PlayRandomFX (SoundData.EXPSmallWet);
+	soundManager.playSound (getRandom (SoundData.EXPSmallWet), position, false);
 }
 
 //------------------------------------------------------------------------------
@@ -236,7 +238,7 @@ cFxHit::cFxHit (const cPosition& position_) :
 	pImages = &EffectsData.fx_hit;
 }
 
-void cFxHit::playSound () const
+void cFxHit::playSound (cSoundManager& soundManager) const
 {
 	// TODO:  PlayFX (SoundData.hit);
 }
@@ -249,9 +251,9 @@ cFxAbsorb::cFxAbsorb (const cPosition& position_) :
 	pImages = &EffectsData.fx_absorb;
 }
 
-void cFxAbsorb::playSound () const
+void cFxAbsorb::playSound (cSoundManager& soundManager) const
 {
-	PlayFX (SoundData.SNDAbsorb.get ());
+	soundManager.playSound (SoundData.SNDAbsorb, position, false);
 }
 
 //------------------------------------------------------------------------------

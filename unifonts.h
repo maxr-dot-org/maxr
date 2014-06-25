@@ -228,7 +228,7 @@ private:
 	 * @param fonttype the fonttype which bitmap should be loaded.
 	 * @return the bitmap surface
 	 */
-	SDL_Surface* loadCharsetSurface (eUnicodeFontCharset charset, eUnicodeFontType fonttype);
+	AutoSurface loadCharsetSurface (eUnicodeFontCharset charset, eUnicodeFontType fonttype);
 	/**
 	 * returns the iso page with the unicode positions of the characters
 	 * in a ISO-8859 font

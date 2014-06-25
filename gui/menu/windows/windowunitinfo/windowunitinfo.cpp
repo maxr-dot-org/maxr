@@ -47,13 +47,13 @@ cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owne
 	{
 		const auto& uiData = *UnitsData.getVehicleUI (unitData.ID);
 
-		infoImage->setImage (uiData.info);
+		infoImage->setImage (uiData.info.get ());
 	}
 	else if (unitData.ID.isABuilding ())
 	{
 		const auto& uiData = *UnitsData.getBuildingUI (unitData.ID);
 
-		infoImage->setImage (uiData.info);
+        infoImage->setImage (uiData.info.get ());
 	}
 
 	infoLabel->setText (unitData.ID.getUnitDataOriginalVersion ()->description);

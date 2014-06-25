@@ -298,8 +298,6 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 	{
 		const string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
 		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*vehicle, message));
-		//FIXME: gameGUI
-		//client->getGameGUI().addCoords (report);
 		finished = true;
 	}
 	else

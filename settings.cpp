@@ -1323,7 +1323,7 @@ void cSettings::setHomeDir (const char* homeDir)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isSoundEnabled() const
+bool cSettings::isSoundEnabled () const
 {
 	return soundEnabled;
 }

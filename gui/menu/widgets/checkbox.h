@@ -71,8 +71,8 @@ enum eCheckBoxTextAnchor
 class cCheckBox : public cClickableWidget
 {
 public:
-	explicit cCheckBox (const cPosition& position, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, sSOUND* clickSound = SoundData.SNDObjectMenu.get ());
-	cCheckBox (const cPosition& position, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor textAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, sSOUND* clickSound = SoundData.SNDObjectMenu.get ());
+	explicit cCheckBox (const cPosition& position, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
+	cCheckBox (const cPosition& position, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_NORMAL, eCheckBoxTextAnchor textAnchor = eCheckBoxTextAnchor::Right, eCheckBoxType type = eCheckBoxType::Standard, bool centered = false, cSoundChunk* clickSound = &SoundData.SNDObjectMenu);
 
 	void setChecked (bool checked);
 	bool isChecked () const;
@@ -102,7 +102,7 @@ private:
 	eCheckBoxTextAnchor textAnchor;
 	int textLimitWidth;
 
-	sSOUND* clickSound;
+	cSoundChunk* clickSound;
 
 	bool checked;
 

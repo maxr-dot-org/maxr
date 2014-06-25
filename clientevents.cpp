@@ -358,11 +358,10 @@ void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, i
 	client.sendNetMessage (message);
 }
 
-void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, int escapeX, int escapeY)
+void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const cPosition& escapePosition)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_END_BUILDING);
-	message->pushInt16 (escapeY);
-	message->pushInt16 (escapeX);
+	message->pushPosition (escapePosition);
 	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }
@@ -474,11 +473,10 @@ void sendWantLoad (const cClient& client, int unitid, bool vehicle, int loadedun
 	client.sendNetMessage (message);
 }
 
-void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, int x, int y)
+void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, const cPosition& position)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_EXIT);
-	message->pushInt16 (y);
-	message->pushInt16 (x);
+	message->pushPosition (position);
 	message->pushInt16 (unitid);
 	message->pushBool (vehicle);
 	message->pushInt16 (activatunitid);

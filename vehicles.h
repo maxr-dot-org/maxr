@@ -26,6 +26,7 @@
 
 #include "main.h" // for sUnitData
 #include "unit.h"
+#include "sound.h"
 
 class cAutoMJob;
 class cBuilding;
@@ -37,6 +38,7 @@ class cPlayer;
 class cServer;
 class cServerMoveJob;
 class cApplication;
+class cSoundManager;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -85,35 +87,36 @@ enum eSymbolsBig
 //-----------------------------------------------------------------------------
 struct sVehicleUIData
 {
-	// TODO: Use AutoSurface and AutoSound
-	// Note: not possible since AutoSurface and Autosound (as autoptr)
-	//       cannot be in std::vector.
-	//       C++11 should allow this with move semantic (as unique_ptr)
+	std::array<AutoSurface, 8> img, img_org; // 8 Surfaces of the vehicle
+    std::array<AutoSurface, 8> shw, shw_org; // 8 Surfaces of shadows
+    AutoSurface build, build_org;        // Surfaces when building
+    AutoSurface build_shw, build_shw_org; // Surfaces of shadows when building
+    AutoSurface clear_small, clear_small_org;        // Surfaces when clearing
+    AutoSurface clear_small_shw, clear_small_shw_org; // Surfaces when clearing
+    AutoSurface overlay, overlay_org;    // Overlays
+    AutoSurface storage; // image of the vehicle in storage
+	std::string FLCFile;       // FLC-Video
+    AutoSurface info;   // info image
 
-	SDL_Surface* img[8], *img_org[8]; // 8 Surfaces des Vehicles
-	SDL_Surface* shw[8], *shw_org[8]; // 8 Surfaces des Schattens
-	SDL_Surface* build, *build_org;        // Surfaces beim Bauen
-	SDL_Surface* build_shw, *build_shw_org; // Surfaces beim Bauen (Schatten)
-	SDL_Surface* clear_small, *clear_small_org;        // Surfaces beim Clearen (die große wird in build geladen)
-	SDL_Surface* clear_small_shw, *clear_small_shw_org; // Surfaces beim Clearen (Schatten) (die große wird in build geladen)
-	SDL_Surface* overlay, *overlay_org;    // Overlays
-	SDL_Surface* storage; // Bild des Vehicles im Lager
-	char* FLCFile;       // FLC-Video
-	SDL_Surface* info;   // Infobild
+	// Sounds:
+	cSoundChunk Wait;
+    cSoundChunk WaitWater;
+    cSoundChunk Start;
+    cSoundChunk StartWater;
+    cSoundChunk Stop;
+    cSoundChunk StopWater;
+    cSoundChunk Drive;
+    cSoundChunk DriveWater;
+    cSoundChunk Attack;
 
-	// Die Sounds:
-	struct Mix_Chunk* Wait;
-	struct Mix_Chunk* WaitWater;
-	struct Mix_Chunk* Start;
-	struct Mix_Chunk* StartWater;
-	struct Mix_Chunk* Stop;
-	struct Mix_Chunk* StopWater;
-	struct Mix_Chunk* Drive;
-	struct Mix_Chunk* DriveWater;
-	struct Mix_Chunk* Attack;
+    sVehicleUIData ();
+    sVehicleUIData (sVehicleUIData&& other);
+    sVehicleUIData& operator=(sVehicleUIData&& other);
+    void scaleSurfaces (float faktor);
 
-	sVehicleUIData();
-	void scaleSurfaces (float factor);
+private:
+    sVehicleUIData (const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
+    sVehicleUIData& operator=(const sVehicleUIData& other) MAXR_DELETE_FUNCTION;
 };
 
 //-----------------------------------------------------------------------------
@@ -163,7 +166,7 @@ public:
 	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
 	void doSurvey (const cServer& server);
-	void makeReport ();
+	void makeReport (cSoundManager& soundManager);
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;

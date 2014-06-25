@@ -367,9 +367,9 @@ int LoadData (void* data)
 	// so that Video.draw() can be called in main thread.
 }
 
-static SDL_Surface* CloneSDLSurface (SDL_Surface& src)
+static AutoSurface CloneSDLSurface (SDL_Surface& src)
 {
-	return SDL_ConvertSurface (&src, src.format, src.flags);
+    return AutoSurface(SDL_ConvertSurface (&src, src.format, src.flags));
 }
 
 /**
@@ -379,7 +379,7 @@ static SDL_Surface* CloneSDLSurface (SDL_Surface& src)
  * @param filename Name of the file
  * @return 1 on success
  */
-static int LoadGraphicToSurface (SDL_Surface*& dest, const char* directory, const char* filename)
+static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const char* filename)
 {
 	string filepath;
 	if (strcmp (directory, ""))
@@ -400,14 +400,6 @@ static int LoadGraphicToSurface (SDL_Surface*& dest, const char* directory, cons
 	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
 
 	return 1;
-}
-
-static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const char* filename)
-{
-	SDL_Surface* surface = NULL;
-	const int res = LoadGraphicToSurface (surface, directory, filename);
-	dest = surface;
-	return res;
 }
 
 /**
@@ -432,8 +424,8 @@ static int LoadEffectGraphicToSurface (AutoSurface (&dest) [2], const char* dire
 		return 0;
 	}
 
-	dest[0] = LoadPCX (filepath);
-	dest[1] = CloneSDLSurface (*dest[0]);
+    dest[0] = LoadPCX (filepath);
+    dest[1] = CloneSDLSurface (*dest[0]);
 
 	filepath.insert (0, "Effect successful loaded: ");
 	Log.write (filepath.c_str(), LOG_TYPE_DEBUG);
@@ -455,8 +447,8 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* direct
 	if (!FileExists (filepath.c_str()))
 		return 0;
 
-	dest[0] = LoadPCX (filepath);
-	dest[1] = CloneSDLSurface (*dest[0]);
+    dest[0] = LoadPCX (filepath);
+    dest[1] = CloneSDLSurface (*dest[0]);
 	SDL_SetSurfaceAlphaMod (dest[0].get (), alpha);
 	SDL_SetSurfaceAlphaMod (dest[1].get (), alpha);
 
@@ -474,7 +466,7 @@ static int LoadEffectAlphaToSurface (AutoSurface (&dest) [2], const char* direct
  * @param localize When true, sVoiceLanguage is appended to the filename. Used for loading voice files.
  * @return 1 on success
  */
-static int LoadSoundfile (sSOUND*& dest, const char* directory, const char* filename, bool localize = false)
+static int LoadSoundfile (cSoundChunk& dest, const char* directory, const char* filename, bool localize = false)
 {
 	string filepath;
 	string fullPath;
@@ -490,7 +482,7 @@ static int LoadSoundfile (sSOUND*& dest, const char* directory, const char* file
 		fullPath.insert (fullPath.rfind ("."), "_" + cSettings::getInstance().getVoiceLanguage());
 		if (FileExists (fullPath.c_str()))
 		{
-			dest = Mix_LoadWAV (fullPath.c_str());
+			dest.load(fullPath);
 			return 1;
 		}
 	}
@@ -500,17 +492,9 @@ static int LoadSoundfile (sSOUND*& dest, const char* directory, const char* file
 	if (!FileExists (fullPath.c_str()))
 		return 0;
 
-	dest = Mix_LoadWAV (fullPath.c_str());
+	dest.load(fullPath);
 
 	return 1;
-}
-
-static int LoadSoundfile (AutoSound& dest, const char* directory, const char* filename, bool localize = false)
-{
-	sSOUND* sound = NULL;
-	const int res = LoadSoundfile (sound, directory, filename, localize);
-	dest = sound;
-	return res;
 }
 
 /**
@@ -519,33 +503,38 @@ static int LoadSoundfile (AutoSound& dest, const char* directory, const char* fi
  * @param directory Directory of the file, relative to the main vehicles directory
  * @param filename Name of the file
  */
-static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char* filename)
+static void LoadUnitSoundfile (cSoundChunk& dest, const char* directory, const char* filename)
 {
 	string filepath;
 	if (strcmp (directory, ""))
 		filepath += directory;
 	filepath += filename;
-	if (!SoundData.DummySound)
+	if (SoundData.DummySound.empty())
 	{
 		string sTmpString;
 		sTmpString = cSettings::getInstance().getSoundsPath() + PATH_DELIMITER + "dummy.ogg";
 		if (FileExists (sTmpString.c_str()))
 		{
-			SoundData.DummySound = Mix_LoadWAV (sTmpString.c_str());
-			if (!SoundData.DummySound)
-				Log.write ("Can't load dummy.ogg", LOG_TYPE_WARNING);
+            try
+            {
+                SoundData.DummySound.load (sTmpString);
+            }
+            catch (std::runtime_error& e)
+            {
+                Log.write (std::string("Can't load dummy.ogg: ") + e.what(), LOG_TYPE_WARNING);
+            }
 		}
 	}
 	// Not using FileExists to avoid unnecessary warnings in log file
 	SDL_RWops* file = SDL_RWFromFile (filepath.c_str(), "r");
 	if (!file)
 	{
-		dest = SoundData.DummySound.get ();
+		//dest = SoundData.DummySound;
 		return;
 	}
 	SDL_RWclose (file);
 
-	dest = Mix_LoadWAV (filepath.c_str());
+	dest.load(filepath);
 }
 
 static int LoadLanguage()
@@ -844,7 +833,7 @@ static int LoadGraphics (const char* path)
 		createShadowGfx ();
 	});
 
-	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0);
+	GraphicsData.gfx_tmp = AutoSurface(SDL_CreateRGBSurface (0, 128, 128, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (GraphicsData.gfx_tmp.get (), SDL_TRUE, 0xFF00FF);
 
 	// Glas:
@@ -1025,9 +1014,9 @@ static int LoadVehicles()
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
-				ui.img[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.img[n], SDL_TRUE, 0x00FFFFFF);
-				SDL_FillRect (ui.img[n], NULL, 0x00FF00FF);
+				ui.img[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0));
+                SDL_SetColorKey (ui.img[n].get (), SDL_TRUE, 0x00FFFFFF);
+                SDL_FillRect (ui.img[n].get (), NULL, 0x00FF00FF);
 
 				for (int j = 0; j < 13; j++)
 				{
@@ -1047,26 +1036,26 @@ static int LoadVehicles()
 						{
 							rcDest.x = 64 * j + 32 - sfTempSurface->w / 2;
 							rcDest.y = 32 - sfTempSurface->h / 2;
-							SDL_BlitSurface (sfTempSurface.get (), NULL, ui.img[n], &rcDest);
+                            SDL_BlitSurface (sfTempSurface.get (), NULL, ui.img[n].get (), &rcDest);
 						}
 					}
 				}
-				ui.img_org[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.img[n], SDL_TRUE, 0x00FFFFFF);
-				SDL_FillRect (ui.img_org[n], NULL, 0x00FFFFFF);
-				SDL_BlitSurface (ui.img[n], NULL, ui.img_org[n], NULL);
+                ui.img_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth (), 0, 0, 0, 0));
+                SDL_SetColorKey (ui.img[n].get (), SDL_TRUE, 0x00FFFFFF);
+                SDL_FillRect (ui.img_org[n].get (), NULL, 0x00FFFFFF);
+                SDL_BlitSurface (ui.img[n].get (), NULL, ui.img_org[n].get (), NULL);
 
-				ui.shw[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.shw[n], SDL_TRUE, 0x00FF00FF);
-				SDL_FillRect (ui.shw[n], NULL, 0x00FF00FF);
-				ui.shw_org[n] = SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey (ui.shw_org[n], SDL_TRUE, 0x00FF00FF);
-				SDL_FillRect (ui.shw_org[n], NULL, 0x00FF00FF);
+                ui.shw[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth (), 0, 0, 0, 0));
+                SDL_SetColorKey (ui.shw[n].get (), SDL_TRUE, 0x00FF00FF);
+                SDL_FillRect (ui.shw[n].get (), NULL, 0x00FF00FF);
+                ui.shw_org[n] = AutoSurface (SDL_CreateRGBSurface (0, 64 * 13, 64, Video.getColDepth (), 0, 0, 0, 0));
+                SDL_SetColorKey (ui.shw_org[n].get (), SDL_TRUE, 0x00FF00FF);
+                SDL_FillRect (ui.shw_org[n].get (), NULL, 0x00FF00FF);
 
 				rcDest.x = 3;
 				rcDest.y = 3;
-				SDL_BlitSurface (ui.img_org[n], NULL, ui.shw_org[n], &rcDest);
-				SDL_LockSurface (ui.shw_org[n]);
+                SDL_BlitSurface (ui.img_org[n].get (), NULL, ui.shw_org[n].get (), &rcDest);
+                SDL_LockSurface (ui.shw_org[n].get ());
 				Uint32* ptr = static_cast<Uint32*> (ui.shw_org[n]->pixels);
 				for (int j = 0; j < 64 * 13 * 64; j++)
 				{
@@ -1074,10 +1063,10 @@ static int LoadVehicles()
 						*ptr = 0;
 					ptr++;
 				}
-				SDL_UnlockSurface (ui.shw_org[n]);
-				SDL_BlitSurface (ui.shw_org[n], NULL, ui.shw[n], NULL);
-				SDL_SetSurfaceAlphaMod (ui.shw_org[n], 50);
-				SDL_SetSurfaceAlphaMod (ui.shw[n], 50);
+                SDL_UnlockSurface (ui.shw_org[n].get ());
+                SDL_BlitSurface (ui.shw_org[n].get (), NULL, ui.shw[n].get (), NULL);
+                SDL_SetSurfaceAlphaMod (ui.shw_org[n].get (), 50);
+                SDL_SetSurfaceAlphaMod (ui.shw[n].get (), 50);
 			}
 		}
 		// load other vehicle graphics
@@ -1095,8 +1084,8 @@ static int LoadVehicles()
 				{
 					ui.img_org[n] = LoadPCX (sTmpString);
 					ui.img[n] = CloneSDLSurface (*ui.img_org[n]);
-					SDL_SetColorKey (ui.img_org[n], SDL_TRUE, 0xFFFFFF);
-					SDL_SetColorKey (ui.img[n], SDL_TRUE, 0xFFFFFF);
+                    SDL_SetColorKey (ui.img_org[n].get (), SDL_TRUE, 0xFFFFFF);
+                    SDL_SetColorKey (ui.img[n].get (), SDL_TRUE, 0xFFFFFF);
 				}
 				else
 				{
@@ -1110,7 +1099,7 @@ static int LoadVehicles()
 				{
 					ui.shw_org[n] = LoadPCX (sTmpString);
 					ui.shw[n] = CloneSDLSurface (*ui.shw_org[n]);
-					SDL_SetSurfaceAlphaMod (ui.shw[n], 50);
+                    SDL_SetSurfaceAlphaMod (ui.shw[n].get (), 50);
 				}
 				else
 				{
@@ -1120,16 +1109,13 @@ static int LoadVehicles()
 			}
 		}
 		// load video
-		sTmpString = sVehiclePath;
-		sTmpString += "video.flc";
-		Log.write ("Loading video " + sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if (!FileExists (sTmpString.c_str()))
+        ui.FLCFile = sVehiclePath;
+        ui.FLCFile += "video.flc";
+        Log.write ("Loading video " + ui.FLCFile, cLog::eLOG_TYPE_DEBUG);
+        if (!FileExists (ui.FLCFile.c_str ()))
 		{
-			sTmpString = "";
+            ui.FLCFile = "";
 		}
-		ui.FLCFile = new char[sTmpString.length() + 1];
-		if (!ui.FLCFile) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy (ui.FLCFile, sTmpString.c_str());
 
 		// load infoimage
 		sTmpString = sVehiclePath;
@@ -1195,8 +1181,8 @@ static int LoadVehicles()
 			{
 				ui.build_org = LoadPCX (sTmpString);
 				ui.build = CloneSDLSurface (*ui.build_org);
-				SDL_SetColorKey (ui.build_org, SDL_TRUE, 0xFFFFFF);
-				SDL_SetColorKey (ui.build, SDL_TRUE, 0xFFFFFF);
+                SDL_SetColorKey (ui.build_org.get (), SDL_TRUE, 0xFFFFFF);
+                SDL_SetColorKey (ui.build.get (), SDL_TRUE, 0xFFFFFF);
 			}
 			else
 			{
@@ -1212,7 +1198,7 @@ static int LoadVehicles()
 			{
 				ui.build_shw_org = LoadPCX (sTmpString);
 				ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
-				SDL_SetSurfaceAlphaMod (ui.build_shw, 50);
+                SDL_SetSurfaceAlphaMod (ui.build_shw.get (), 50);
 			}
 			else
 			{
@@ -1240,8 +1226,8 @@ static int LoadVehicles()
 			{
 				ui.clear_small_org = LoadPCX (sTmpString);
 				ui.clear_small = CloneSDLSurface (*ui.clear_small_org);
-				SDL_SetColorKey (ui.clear_small_org, SDL_TRUE, 0xFFFFFF);
-				SDL_SetColorKey (ui.clear_small, SDL_TRUE, 0xFFFFFF);
+                SDL_SetColorKey (ui.clear_small_org.get (), SDL_TRUE, 0xFFFFFF);
+                SDL_SetColorKey (ui.clear_small.get (), SDL_TRUE, 0xFFFFFF);
 			}
 			else
 			{
@@ -1257,7 +1243,7 @@ static int LoadVehicles()
 			{
 				ui.clear_small_shw_org = LoadPCX (sTmpString);
 				ui.clear_small_shw = CloneSDLSurface (*ui.clear_small_shw_org);
-				SDL_SetSurfaceAlphaMod (ui.clear_small_shw, 50);
+                SDL_SetSurfaceAlphaMod (ui.clear_small_shw.get (), 50);
 			}
 			else
 			{
@@ -1273,8 +1259,8 @@ static int LoadVehicles()
 			{
 				ui.build_org = LoadPCX (sTmpString);
 				ui.build = CloneSDLSurface (*ui.build_org);
-				SDL_SetColorKey (ui.build_org, SDL_TRUE, 0xFFFFFF);
-				SDL_SetColorKey (ui.build, SDL_TRUE, 0xFFFFFF);
+                SDL_SetColorKey (ui.build_org.get (), SDL_TRUE, 0xFFFFFF);
+                SDL_SetColorKey (ui.build.get (), SDL_TRUE, 0xFFFFFF);
 			}
 			else
 			{
@@ -1290,7 +1276,7 @@ static int LoadVehicles()
 			{
 				ui.build_shw_org = LoadPCX (sTmpString);
 				ui.build_shw = CloneSDLSurface (*ui.build_shw_org);
-				SDL_SetSurfaceAlphaMod (ui.build_shw, 50);
+                SDL_SetSurfaceAlphaMod (ui.build_shw.get (), 50);
 			}
 			else
 			{
@@ -1579,8 +1565,8 @@ static int LoadBuildings()
 		{
 			ui.img_org = LoadPCX (sTmpString);
 			ui.img = CloneSDLSurface (*ui.img_org);
-			SDL_SetColorKey (ui.img_org, SDL_TRUE, 0xFFFFFF);
-			SDL_SetColorKey (ui.img, SDL_TRUE, 0xFFFFFF);
+            SDL_SetColorKey (ui.img_org.get (), SDL_TRUE, 0xFFFFFF);
+            SDL_SetColorKey (ui.img.get (), SDL_TRUE, 0xFFFFFF);
 		}
 		else
 		{
@@ -1594,7 +1580,7 @@ static int LoadBuildings()
 		{
 			ui.shw_org = LoadPCX (sTmpString);
 			ui.shw     = CloneSDLSurface (*ui.shw_org);
-			SDL_SetSurfaceAlphaMod (ui.shw, 50);
+            SDL_SetSurfaceAlphaMod (ui.shw.get (), 50);
 		}
 
 		// load video
@@ -1618,7 +1604,7 @@ static int LoadBuildings()
 			{
 				ui.eff_org = LoadPCX (sTmpString);
 				ui.eff = CloneSDLSurface (*ui.eff_org);
-				SDL_SetSurfaceAlphaMod (ui.eff, 10);
+				SDL_SetSurfaceAlphaMod (ui.eff.get(), 10);
 			}
 		}
 		else
@@ -1638,17 +1624,17 @@ static int LoadBuildings()
 		if (b.ID == UnitsData.specialIDConnector)
 		{
 			b.isConnectorGraphic = true;
-			UnitsData.ptr_connector = ui.img;
-			UnitsData.ptr_connector_org = ui.img_org;
+            UnitsData.ptr_connector = ui.img.get ();
+            UnitsData.ptr_connector_org = ui.img_org.get ();
 			SDL_SetColorKey (UnitsData.ptr_connector, SDL_TRUE, 0xFF00FF);
-			UnitsData.ptr_connector_shw = ui.shw;
-			UnitsData.ptr_connector_shw_org = ui.shw_org;
+            UnitsData.ptr_connector_shw = ui.shw.get ();
+            UnitsData.ptr_connector_shw_org = ui.shw_org.get ();
 			SDL_SetColorKey (UnitsData.ptr_connector_shw, SDL_TRUE, 0xFF00FF);
 		}
 		else if (b.ID == UnitsData.specialIDSmallBeton)
 		{
-			UnitsData.ptr_small_beton = ui.img;
-			UnitsData.ptr_small_beton_org = ui.img_org;
+            UnitsData.ptr_small_beton = ui.img.get ();
+            UnitsData.ptr_small_beton_org = ui.img_org.get ();
 			SDL_SetColorKey (UnitsData.ptr_small_beton, SDL_TRUE, 0xFF00FF);
 		}
 
@@ -2025,8 +2011,8 @@ void reloadUnitValues()
 void createShadowGfx ()
 {
 	// TODO: reduce size once we use texture.
-	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (0, Video.getResolutionX (), Video.getResolutionY (),
+	GraphicsData.gfx_shadow = AutoSurface(SDL_CreateRGBSurface (0, Video.getResolutionX (), Video.getResolutionY (),
 													Video.getColDepth (),
-													0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+													0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 	SDL_FillRect (GraphicsData.gfx_shadow.get (), NULL, SDL_MapRGBA (GraphicsData.gfx_shadow->format, 0, 0, 0, 50));
 }

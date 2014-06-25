@@ -346,9 +346,6 @@ public:
  */
 bool is_main_thread();
 
-// returns a random number in the range 0 <= r < x
-int random (int x);
-
 /**Converts integer to string
 */
 std::string iToStr (int x);

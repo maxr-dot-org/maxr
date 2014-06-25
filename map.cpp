@@ -28,6 +28,7 @@
 #include "vehicles.h"
 #include "video.h"
 #include "utility/position.h"
+#include "utility/random.h"
 
 #if 1 // TODO: [SDL2]: SDL_SetColors
 inline void SDL_SetColors (SDL_Surface* surface, SDL_Color* colors, int index, int size)
@@ -315,7 +316,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	return true;
 }
 
-/*static*/SDL_Surface* cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
+/*static*/AutoSurface cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum)
 {
 	// Create new surface and copy palette
 	AutoSurface surface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
@@ -328,10 +329,10 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	// Read pixel data and write to surface
 	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
-	return surface.Release();
+    return std::move(surface);
 }
 
-/*static*/SDL_Surface* cStaticMap::loadMapPreview (const std::string& mapName, int* mapSize)
+/*static*/AutoSurface cStaticMap::loadMapPreview (const std::string& mapName, int* mapSize)
 {
 	std::string mapPath = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
 	// if no factory map of that name exists, try the custom user maps
@@ -376,11 +377,11 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	const int MAPWINSIZE = 112;
 	if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
 	{
-		mapSurface = scaleSurface (mapSurface.get (), NULL, MAPWINSIZE, MAPWINSIZE);
+		mapSurface = AutoSurface(scaleSurface (mapSurface.get (), nullptr, MAPWINSIZE, MAPWINSIZE));
 	}
 
 	if (mapSize != NULL) *mapSize = size;
-	return mapSurface.Release();
+    return std::move (mapSurface);
 }
 
 void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
@@ -389,20 +390,20 @@ void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrains
-	terrains[iNum].sf_org = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
+    terrains[iNum].sf_org = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetPaletteColors (terrains[iNum].sf_org->format->palette, surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, NULL, terrains[iNum].sf_org.get (), NULL);
 
-	terrains[iNum].sf = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
+    terrains[iNum].sf = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetPaletteColors (terrains[iNum].sf->format->palette, surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, NULL, terrains[iNum].sf.get (), NULL);
 
 	//copy the terrains with fog
-	terrains[iNum].shw_org = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
+    terrains[iNum].shw_org = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetColors (terrains[iNum].shw_org.get (), surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, NULL, terrains[iNum].shw_org.get (), NULL);
 
-	terrains[iNum].shw = SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0);
+    terrains[iNum].shw = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetColors (terrains[iNum].shw.get (), surface.format->palette->colors, 0, 256);
 	SDL_BlitSurface (&surface, NULL, terrains[iNum].shw.get (), NULL);
 
@@ -450,11 +451,11 @@ void cStaticMap::generateNextAnimationFrame()
 	}
 }
 
-SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
+AutoSurface cStaticMap::createBigSurface (int sizex, int sizey) const
 {
-	SDL_Surface* mapSurface = SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0);
+	AutoSurface mapSurface(SDL_CreateRGBSurface (0, sizex, sizey, Video.getColDepth(), 0, 0, 0, 0));
 
-	if (SDL_MUSTLOCK (mapSurface)) SDL_LockSurface (mapSurface);
+    if (SDL_MUSTLOCK (mapSurface.get ())) SDL_LockSurface (mapSurface.get ());
 	for (int x = 0; x < mapSurface->w; ++x)
 	{
 		const int terrainx = std::min ((x * size) / mapSurface->w, size - 1);
@@ -474,8 +475,8 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 			pixel[2] = palette[ColorNr].r;
 		}
 	}
-	if (SDL_MUSTLOCK (mapSurface)) SDL_UnlockSurface (mapSurface);
-	return mapSurface;
+    if (SDL_MUSTLOCK (mapSurface.get ())) SDL_UnlockSurface (mapSurface.get ());
+	return std::move(mapSurface);
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////

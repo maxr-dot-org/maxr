@@ -29,7 +29,7 @@
 class cImage : public cClickableWidget
 {
 public:
-	cImage (const cPosition& position, SDL_Surface* image = nullptr, sSOUND* clickSound = nullptr);
+	cImage (const cPosition& position, SDL_Surface* image = nullptr, cSoundChunk* clickSound = nullptr);
 
 	void setImage (SDL_Surface* image);
 
@@ -46,7 +46,7 @@ protected:
 
 private:
 	AutoSurface image;
-	sSOUND* clickSound;
+	cSoundChunk* clickSound;
 
 	bool disabledAtTransparent;
 };

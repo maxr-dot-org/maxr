@@ -72,9 +72,9 @@ class cPushButton : public cClickableWidget
 public:
 	explicit cPushButton (const cBox<cPosition>& area);
 	cPushButton (const cPosition& position, ePushButtonType buttonType);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, sSOUND* clickSound);
+	cPushButton (const cPosition& position, ePushButtonType buttonType, cSoundChunk* clickSound);
 	cPushButton (const cPosition& position, ePushButtonType buttonType, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
-	cPushButton (const cPosition& position, ePushButtonType buttonType, sSOUND* clickSound, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
+	cPushButton (const cPosition& position, ePushButtonType buttonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
@@ -97,7 +97,7 @@ private:
 	eUnicodeFontType fontType;
 	std::string text;
 
-	sSOUND* clickSound;
+	cSoundChunk* clickSound;
 
 	bool isLocked;
 

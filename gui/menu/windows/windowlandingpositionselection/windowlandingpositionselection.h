@@ -75,7 +75,7 @@ private:
 
 	cPosition lastSelectedPosition;
 
-	SDL_Surface* createHudSurface ();
+	AutoSurface createHudSurface ();
 
 	void backClicked ();
 	void mapClicked (const cPosition& tilePosition);

@@ -48,6 +48,7 @@
 #include "game/data/report/savedreporttranslated.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/logic/turnclock.h"
+#include "utility/random.h"
 
 #if DEDICATED_SERVER_APPLICATION
 # include "dedicatedserver.h"
@@ -776,9 +777,7 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle == NULL) return;
 
-	const int iEscapeX = message.popInt16();
-	const int iEscapeY = message.popInt16();
-	const cPosition escapePosition(iEscapeX, iEscapeY);
+    const cPosition escapePosition (message.popPosition());
 
 	if (!Vehicle->isUnitBuildingABuilding () || Vehicle->getBuildTurns () > 0) return;
 	if (!Map->possiblePlace (*Vehicle, escapePosition))
@@ -799,8 +798,8 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	{
 		int x = Vehicle->getPosition().x();
 		int y = Vehicle->getPosition().y();
-		if (iEscapeX > Vehicle->getPosition().x()) x++;
-		if (iEscapeY > Vehicle->getPosition().y()) y++;
+        if (escapePosition.x() > Vehicle->getPosition ().x ()) x++;
+        if (escapePosition.y() > Vehicle->getPosition ().y ()) y++;
 		Map->moveVehicle (*Vehicle, cPosition(x, y));
 
 		// refresh SeenByPlayerLists

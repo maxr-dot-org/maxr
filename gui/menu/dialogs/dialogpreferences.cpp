@@ -35,6 +35,8 @@
 #include "../../../settings.h"
 #include "../../../video.h"
 #include "../../../utility/string/iequals.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 
 #include "../widgets/tools/validatorint.h"
 
@@ -242,12 +244,16 @@ void cDialogPreferences::restorePreviewValues ()
 	cSettings::getInstance ().setMusicVol (storedMusicVolume);
 	cSettings::getInstance ().setSoundVol (storedEffectsVolume);
 	cSettings::getInstance ().setVoiceVol (storedVoicesVolume);
-	if (cSettings::getInstance ().isSoundEnabled ()) Mix_VolumeMusic (cSettings::getInstance ().getMusicVol ());
-	if (cSettings::getInstance ().isSoundEnabled ()) Mix_Volume (SoundLoopChannel, cSettings::getInstance ().getSoundVol ());
+    if (cSettings::getInstance ().isSoundEnabled ())
+    {
+        cSoundDevice::getInstance ().setMusicVolume (cSettings::getInstance ().getMusicVol ());
+        cSoundDevice::getInstance ().setSoundEffectVolume (cSettings::getInstance ().getSoundVol ());
+        cSoundDevice::getInstance ().setVoiceVolume (cSettings::getInstance ().getVoiceVol ());
+    }
 
 	bool wasMusicMute = cSettings::getInstance ().isMusicMute ();
 	cSettings::getInstance ().setMusicMute (storedMusicMute);
-	if (wasMusicMute && !storedMusicMute) StartMusic ();
+    if (wasMusicMute && !storedMusicMute) cSoundDevice::getInstance ().startRandomMusic ();
 	cSettings::getInstance ().setSoundMute (storedEffectsMute);
 	cSettings::getInstance ().setVoiceMute (storedVoicesMute);
 }
@@ -270,20 +276,21 @@ void cDialogPreferences::cancelClicked ()
 void cDialogPreferences::musicVolumeChanged ()
 {
 	cSettings::getInstance ().setMusicVol (musicVolumeSlider->getValue ());
-	if (cSettings::getInstance ().isSoundEnabled ()) Mix_VolumeMusic (cSettings::getInstance ().getMusicVol ());
+    if (cSettings::getInstance ().isSoundEnabled ()) cSoundDevice::getInstance ().setMusicVolume (cSettings::getInstance ().getMusicVol ());
 }
 
 //------------------------------------------------------------------------------
 void cDialogPreferences::effectsVolumeChanged ()
 {
 	cSettings::getInstance ().setSoundVol (effectsVolumeSlider->getValue ());
-	if (cSettings::getInstance ().isSoundEnabled ()) Mix_Volume (SoundLoopChannel, cSettings::getInstance ().getSoundVol ());
+    if (cSettings::getInstance ().isSoundEnabled ()) cSoundDevice::getInstance ().setSoundEffectVolume (cSettings::getInstance ().getSoundVol ());
 }
 
 //------------------------------------------------------------------------------
 void cDialogPreferences::voicesVolumeChanged ()
 {
-	cSettings::getInstance ().setVoiceVol (voicesVolumeSlider->getValue ());
+    cSettings::getInstance ().setVoiceVol (voicesVolumeSlider->getValue ());
+    if (cSettings::getInstance ().isSoundEnabled ()) cSoundDevice::getInstance ().setVoiceVolume (cSettings::getInstance ().getVoiceVol ());
 }
 
 //------------------------------------------------------------------------------
@@ -291,8 +298,8 @@ void cDialogPreferences::musicMuteChanged ()
 {
 	bool wasMute = cSettings::getInstance ().isMusicMute ();
 	cSettings::getInstance ().setMusicMute (disableMusicCheckBox->isChecked ());
-	if (cSettings::getInstance ().isMusicMute ()) StopMusic ();
-	if (!cSettings::getInstance ().isMusicMute () && wasMute) StartMusic ();
+    if (cSettings::getInstance ().isMusicMute ()) cSoundDevice::getInstance ().stopMusic();
+    if (!cSettings::getInstance ().isMusicMute () && wasMute) cSoundDevice::getInstance ().startRandomMusic ();
 }
 
 //------------------------------------------------------------------------------

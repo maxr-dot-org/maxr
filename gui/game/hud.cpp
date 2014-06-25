@@ -54,50 +54,50 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	auto filesButton = addChild (std::make_unique<cPushButton> (cPosition (17, 3), ePushButtonType::HudFiles, lngPack.i18n ("Text~Others~Files"), FONT_LATIN_SMALL_WHITE));
 	signalConnectionManager.connect (filesButton->clicked, [&](){ filesClicked (); });
 
-	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, SoundData.SNDHudSwitch.get()));
+	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch));
 	surveyButton->addClickShortcut (KeysList.keySurvey);
 	signalConnectionManager.connect (surveyButton->toggled, [&](){ surveyToggled (); });
 	
-	hitsButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, SoundData.SNDHudSwitch.get ()));
+	hitsButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch));
 	hitsButton->addClickShortcut (KeysList.keyHitpoints);
 	signalConnectionManager.connect (hitsButton->toggled, [&](){ hitsToggled (); });
 	
-	scanButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, SoundData.SNDHudSwitch.get ()));
+	scanButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch));
 	scanButton->addClickShortcut (KeysList.keyScan);
 	signalConnectionManager.connect (scanButton->toggled, [&](){ scanToggled (); });
 	
-	statusButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, SoundData.SNDHudSwitch.get ()));
+	statusButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch));
 	statusButton->addClickShortcut (KeysList.keyStatus);
 	signalConnectionManager.connect (statusButton->toggled, [&](){ statusToggled (); });
 	
-	ammoButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, SoundData.SNDHudSwitch.get ()));
+	ammoButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch));
 	ammoButton->addClickShortcut (KeysList.keyAmmo);
 	signalConnectionManager.connect (ammoButton->toggled, [&](){ ammoToggled (); });
 	
-	gridButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, SoundData.SNDHudSwitch.get ()));
+	gridButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch));
 	gridButton->addClickShortcut (KeysList.keyGrid);
 	signalConnectionManager.connect (gridButton->toggled, [&](){ gridToggled (); });
 	
-	colorButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, SoundData.SNDHudSwitch.get ()));
+	colorButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch));
 	colorButton->addClickShortcut (KeysList.keyColors);
 	signalConnectionManager.connect (colorButton->toggled, [&](){ colorToggled (); });
 	
-	rangeButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, SoundData.SNDHudSwitch.get ()));
+	rangeButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
 	rangeButton->addClickShortcut (KeysList.keyRange);
 	signalConnectionManager.connect (rangeButton->toggled, [&](){ rangeToggled (); });
 	
-	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, SoundData.SNDHudSwitch.get ()));
+	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
 	fogButton->addClickShortcut (KeysList.keyFog);
 	signalConnectionManager.connect (fogButton->toggled, [&](){ fogToggled (); });
 
-	auto lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, SoundData.SNDHudSwitch.get ()));
+	auto lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, &SoundData.SNDHudSwitch));
 
-	miniMapAttackUnitsOnlyButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 413), eCheckBoxType::HudTnt, false, SoundData.SNDHudSwitch.get ()));
+	miniMapAttackUnitsOnlyButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 413), eCheckBoxType::HudTnt, false, &SoundData.SNDHudSwitch));
 	signalConnectionManager.connect (miniMapAttackUnitsOnlyButton->toggled, [&](){ miniMapAttackUnitsOnlyToggled (); });
-	miniMapZoomFactorButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 387), eCheckBoxType::Hud2x, false, SoundData.SNDHudSwitch.get ()));
+	miniMapZoomFactorButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 387), eCheckBoxType::Hud2x, false, &SoundData.SNDHudSwitch));
 	signalConnectionManager.connect (miniMapZoomFactorButton->toggled, [&](){ miniMapZoomFactorToggled (); });
 
-	//auto playersButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 439), eCheckBoxType::HudPlayers, false, SoundData.SNDHudSwitch.get ()));
+	//auto playersButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 439), eCheckBoxType::HudPlayers, false, &SoundData.SNDHudSwitch));
 
 	auto helpButton = addChild (std::make_unique<cPushButton> (cPosition (20, 250), ePushButtonType::HudHelp));
 	signalConnectionManager.connect (helpButton->clicked, [&](){ helpClicked (); });
@@ -192,19 +192,19 @@ void cHud::draw ()
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cHud::generateSurface ()
+AutoSurface cHud::generateSurface ()
 {
-	SDL_Surface* surface = SDL_CreateRGBSurface (0, Video.getResolutionX (), Video.getResolutionY (), Video.getColDepth (), 0, 0, 0, 0);
+	AutoSurface surface(SDL_CreateRGBSurface (0, Video.getResolutionX (), Video.getResolutionY (), Video.getColDepth (), 0, 0, 0, 0));
 
-	SDL_FillRect (surface, NULL, 0x00FF00FF);
-	SDL_SetColorKey (surface, SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (surface.get(), NULL, 0x00FF00FF);
+	SDL_SetColorKey (surface.get(), SDL_TRUE, 0x00FF00FF);
 
 	const std::string gfxPath = cSettings::getInstance ().getGfxPath () + PATH_DELIMITER;
 	{
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_left.pcx"));
 		if (tmpSurface != nullptr)
 		{
-			SDL_BlitSurface (tmpSurface.get (), NULL, surface, NULL);
+			SDL_BlitSurface (tmpSurface.get (), NULL, surface.get(), NULL);
 		}
 	}
 
@@ -216,12 +216,12 @@ SDL_Surface* cHud::generateSurface ()
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
 			dest.x = panelLeftWidth;
 			dest.y = 0;
-			SDL_BlitSurface (tmpSurface.get (), &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), &src, surface.get (), &dest);
 			src.x = 1275;
 			src.w = 18;
 			src.h = panelTopHeight;
 			dest.x = surface->w - panelTopHeight;
-			SDL_BlitSurface (tmpSurface.get (), &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), &src, surface.get (), &dest);
 		}
 	}
 
@@ -232,7 +232,7 @@ SDL_Surface* cHud::generateSurface ()
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
 			dest.x = surface->w - panelRightWidth;
 			dest.y = panelTopHeight;
-			SDL_BlitSurface (tmpSurface.get (), &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), &src, surface.get (), &dest);
 		}
 	}
 
@@ -243,18 +243,18 @@ SDL_Surface* cHud::generateSurface ()
 			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h)};
 			dest.x = panelLeftWidth;
 			dest.y = surface->h - 24;
-			SDL_BlitSurface (tmpSurface.get (), &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), &src, surface.get (), &dest);
 			src.x = 1275;
 			src.w = 23;
 			src.h = 24;
 			dest.x = surface->w - 23;
-			SDL_BlitSurface (tmpSurface.get (), &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), &src, surface.get (), &dest);
 			src.x = 1299;
 			src.w = 16;
 			src.h = 22;
 			dest.x = panelLeftWidth - 16;
 			dest.y = surface->h - 22;
-			SDL_BlitSurface (tmpSurface.get (), &src, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), &src, surface.get (), &dest);
 		}
 	}
 
@@ -265,10 +265,10 @@ SDL_Surface* cHud::generateSurface ()
 		{
 			dest.x = 9;
 			dest.y = Video.getResolutionY () - panelTotalHeight - 15;
-			SDL_BlitSurface (tmpSurface.get (), NULL, surface, &dest);
+			SDL_BlitSurface (tmpSurface.get (), NULL, surface.get (), &dest);
 		}
 	}
-	return surface;
+	return std::move(surface);
 }
 
 void cHud::setMinimalZoomFactor (float zoomFactor)

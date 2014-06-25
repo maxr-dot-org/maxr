@@ -28,6 +28,7 @@
 #include "maxrconfig.h"
 #include "main.h" // for sUnitData, sID
 #include "unit.h"
+#include "sound.h"
 
 class cBase;
 class cPlayer;
@@ -68,26 +69,27 @@ struct sUpgradeNew
 //--------------------------------------------------------------------------
 struct sBuildingUIData
 {
-	// TODO: Use AutoSurface and AutoSound
-	// Note: not possible since AutoSurface and Autosound (as autoptr)
-	//       cannot be in std::vector.
-	//       C++11 should allow this with move semantic (as unique_ptr)
-
-	SDL_Surface* img, *img_org; // Surface des Buildings
-	SDL_Surface* shw, *shw_org; // Surfaces des Schattens
-	SDL_Surface* eff, *eff_org; // Surfaces des Effektes
-	SDL_Surface* video;  // Video
-	SDL_Surface* info;   // Infobild
+	AutoSurface img, img_org; // Surface of the building
+    AutoSurface shw, shw_org; // Surfaces of the shadow
+    AutoSurface eff, eff_org; // Surfaces of the effects
+    AutoSurface video;  // video
+    AutoSurface info;   // info image
 
 	// Die Sounds:
-	struct Mix_Chunk* Start;
-	struct Mix_Chunk* Running;
-	struct Mix_Chunk* Stop;
-	struct Mix_Chunk* Attack;
-	struct Mix_Chunk* Wait;
+	cSoundChunk Start;
+    cSoundChunk Running;
+    cSoundChunk Stop;
+    cSoundChunk Attack;
+    cSoundChunk Wait;
 
-	sBuildingUIData();
+    sBuildingUIData ();
+    sBuildingUIData (sBuildingUIData&& other);
+    sBuildingUIData& operator=(sBuildingUIData&& other);
 	void scaleSurfaces (float faktor);
+
+private:
+    sBuildingUIData (const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
+    sBuildingUIData& operator=(const sBuildingUIData& other) MAXR_DELETE_FUNCTION;
 };
 
 // enum for the upgrade symbols

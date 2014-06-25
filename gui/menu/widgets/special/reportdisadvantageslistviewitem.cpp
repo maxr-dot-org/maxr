@@ -33,11 +33,11 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& u
 	AutoSurface unitSurface;
 	if (unitId.isABuilding ())
 	{
-		unitSurface = scaleSurface (UnitsData.getBuildingUI (unitId)->img_org, nullptr, unitImageWidth, unitImageHeight);
+        unitSurface = AutoSurface (scaleSurface (UnitsData.getBuildingUI (unitId)->img_org.get (), nullptr, unitImageWidth, unitImageHeight));
 	}
 	else if (unitId.isAVehicle ())
 	{
-		unitSurface = scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0], nullptr, unitImageWidth, unitImageHeight);
+        unitSurface = AutoSurface (scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0].get (), nullptr, unitImageWidth, unitImageHeight));
 	}
 	auto unitImage = addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageHeight) / 2), unitSurface.get ()));
 

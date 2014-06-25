@@ -24,9 +24,11 @@
 #include "../../../main.h"
 #include "../../../utility/drawing.h"
 #include "../../../utility/color.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
-cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, sSOUND* clickSound_) :
+cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	type (type_),
 	fontType (FONT_LATIN_NORMAL),
@@ -40,7 +42,7 @@ cCheckBox::cCheckBox (const cPosition& position, eCheckBoxType type_, bool cente
 	if (centered) move (cPosition (-getSize ().x () / 2, 0));
 }
 
-cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnicodeFontType fontType_, eCheckBoxTextAnchor textAnchor_, eCheckBoxType type_, bool centered, sSOUND* clickSound_) :
+cCheckBox::cCheckBox (const cPosition& position, const std::string& text_, eUnicodeFontType fontType_, eCheckBoxTextAnchor textAnchor_, eCheckBoxType type_, bool centered, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	type (type_),
 	text (text_),
@@ -198,7 +200,7 @@ void cCheckBox::setPressed (bool pressed)
 //------------------------------------------------------------------------------
 bool cCheckBox::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (clickSound) PlayFX (clickSound);
+	if (clickSound) cSoundDevice::getInstance().getFreeSoundEffectChannel().play (*clickSound);
 
 	toggle ();
 
@@ -327,7 +329,7 @@ void cCheckBox::renewSurface ()
 
 	if (src.w > 0)
 	{
-		surface = SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0);
+        surface = AutoSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
 		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 

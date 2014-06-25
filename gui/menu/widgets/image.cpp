@@ -20,9 +20,11 @@
 #include "image.h"
 #include "../../../settings.h"
 #include "../../../video.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
-cImage::cImage (const cPosition& position, SDL_Surface* image_, sSOUND* clickSound_) :
+cImage::cImage (const cPosition& position, SDL_Surface* image_, cSoundChunk* clickSound_) :
 	cClickableWidget (position),
 	clickSound (clickSound_),
 	disabledAtTransparent (false)
@@ -35,7 +37,7 @@ void cImage::setImage (SDL_Surface* image_)
 {
 	if (image_ != nullptr)
 	{
-		image = SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth (), 0, 0, 0, 0);
+        image = AutoSurface (SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth (), 0, 0, 0, 0));
 
 		SDL_FillRect (image.get (), NULL, 0xFF00FF);
 		SDL_SetColorKey (image.get (), SDL_TRUE, 0xFF00FF);
@@ -129,7 +131,7 @@ bool cImage::handleClicked (cApplication& application, cMouse& mouse, eMouseButt
 {
 	if (button == eMouseButtonType::Left)
 	{
-		if (clickSound) PlayFX (clickSound);
+        if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
 		clicked ();
 		return true;
 	}

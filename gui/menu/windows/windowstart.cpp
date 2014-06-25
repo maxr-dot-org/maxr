@@ -25,6 +25,8 @@
 #include "../dialogs/dialogpreferences.h"
 #include "../dialogs/dialoglicense.h"
 #include "../../../main.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 #include "../widgets/pushbutton.h"
 #include "../../application.h"
 
@@ -46,7 +48,7 @@ cWindowStart::cWindowStart () :
 	auto licenseButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 190 + buttonSpace * 3), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Mani")));
 	signalConnectionManager.connect (licenseButton->clicked, std::bind (&cWindowStart::licenceClicked, this));
 
-	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, SoundData.SNDMenuButton.get (), lngPack.i18n ("Text~Others~Exit")));
+	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (415, 190 + buttonSpace * 6), ePushButtonType::StandardSmall, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
 	signalConnectionManager.connect (exitButton->clicked, std::bind (&cWindowStart::exitClicked, this));
 }
 
@@ -59,7 +61,7 @@ void cWindowStart::handleActivated (cApplication& application, bool firstTime)
 {
 	cWindow::handleActivated (application, firstTime);
 
-	if (firstTime) PlayMusic ((cSettings::getInstance ().getMusicPath () + PATH_DELIMITER + "main.ogg").c_str ());
+    if (firstTime) cSoundDevice::getInstance ().startMusic (cSettings::getInstance ().getMusicPath () + PATH_DELIMITER + "main.ogg");
 }
 
 //------------------------------------------------------------------------------

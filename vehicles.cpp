@@ -40,8 +40,12 @@
 #include "sound.h"
 #include "unifonts.h"
 #include "input/mouse/mouse.h"
+#include "output/sound/sounddevice.h"
+#include "output/sound/soundchannel.h"
 #include "gui/application.h"
 #include "gui/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
+#include "gui/game/soundmanager.h"
+#include "utility/random.h"
 
 using namespace std;
 
@@ -168,8 +172,8 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	tmp.x += offset;
 	tmp.y += offset;
 
-	SDL_SetSurfaceAlphaMod (uiData->overlay, alpha);
-	blitWithPreScale (uiData->overlay_org, uiData->overlay, &src, surface, &tmp, zoomFactor);
+    SDL_SetSurfaceAlphaMod (uiData->overlay.get (), alpha);
+    blitWithPreScale (uiData->overlay_org.get (), uiData->overlay.get (), &src, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
@@ -202,7 +206,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow) blitWithPreScale (uiData->build_shw_org, uiData->build_shw, NULL, surface, &tmp, zoomFactor);
+    if (drawShadow) blitWithPreScale (uiData->build_shw_org.get (), uiData->build_shw.get (), NULL, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
@@ -210,7 +214,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
 	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
-	blitWithPreScale (uiData->build_org, uiData->build, &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
+    blitWithPreScale (uiData->build_org.get (), uiData->build.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -227,7 +231,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	// draw shadow
 	SDL_Rect tmp = dest;
 	if (drawShadow)
-		blitWithPreScale (uiData->clear_small_shw_org, uiData->clear_small_shw, NULL, surface, &tmp, zoomFactor);
+        blitWithPreScale (uiData->clear_small_shw_org.get (), uiData->clear_small_shw.get (), NULL, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
@@ -235,7 +239,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
 	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
-	blitWithPreScale (uiData->clear_small_org, uiData->clear_small, &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
+    blitWithPreScale (uiData->clear_small_org.get (), uiData->clear_small.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -249,8 +253,8 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 {
 	if (map.isWater (getPosition()) && (data.isStealthOn & TERRAIN_SEA)) return;
 
-	if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetSurfaceAlphaMod (uiData->shw[dir], StartUp / 5);
-	else SDL_SetSurfaceAlphaMod (uiData->shw[dir], 50);
+    if (StartUp && cSettings::getInstance ().isAlphaEffects ()) SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), StartUp / 5);
+    else SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), 50);
 	SDL_Rect tmp = dest;
 
 	// draw shadow
@@ -267,10 +271,10 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 	{
 		const Uint16 size = (int) (uiData->img_org[dir]->h * zoomFactor);
 		SDL_Rect r = {Sint16 (WalkFrame * size), 0, size, size};
-		blitWithPreScale (uiData->shw_org[dir], uiData->shw[dir], &r, surface, &tmp, zoomFactor);
+        blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), &r, surface, &tmp, zoomFactor);
 	}
 	else
-		blitWithPreScale (uiData->shw_org[dir], uiData->shw[dir], NULL, surface, &tmp, zoomFactor);
+        blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), NULL, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
@@ -289,10 +293,10 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 		src.w = src.h = tmp.h = tmp.w = (int) (uiData->img_org[dir]->h * zoomFactor);
 		tmp.x = WalkFrame * tmp.w;
 		tmp.y = 0;
-		blitWithPreScale (uiData->img_org[dir], uiData->img[dir], &tmp, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
+        blitWithPreScale (uiData->img_org[dir].get (), uiData->img[dir].get (), &tmp, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
 	}
 	else
-		blitWithPreScale (uiData->img_org[dir], uiData->img[dir], NULL, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
+        blitWithPreScale (uiData->img_org[dir].get (), uiData->img[dir].get (), NULL, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
 
 	// draw the vehicle
 	src.x = 0;
@@ -714,28 +718,28 @@ void cVehicle::doSurvey (const cServer& server)
 //-----------------------------------------------------------------------------
 /** Makes the report */
 //-----------------------------------------------------------------------------
-void cVehicle::makeReport ()
+void cVehicle::makeReport (cSoundManager& soundManager)
 {
 	if (isDisabled())
 	{
 		// Disabled:
-		PlayRandomVoice (VoiceData.VOIUnitDisabledByEnemy);
+		soundManager.playVoice (getRandom (VoiceData.VOIUnitDisabledByEnemy));
 	}
 	else if (data.getHitpoints () > data.hitpointsMax / 2)
 	{
 		// Status green
 		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
 		{
-			PlayRandomVoice (VoiceData.VOIAttacking);
+			soundManager.playVoice (getRandom (VoiceData.VOIAttacking));
 		}
 		else if (autoMJob)
 		{
-			PlayRandomVoice (VoiceData.VOISurveying);
+			soundManager.playVoice (getRandom (VoiceData.VOISurveying));
 		}
 		else if (data.speedCur == 0)
 		{
 			// no more movement
-			PlayVoice (VoiceData.VOINoSpeed.get ());
+			soundManager.playVoice (VoiceData.VOINoSpeed);
 		}
 		else if (isUnitBuildingABuilding ())
 		{
@@ -743,51 +747,51 @@ void cVehicle::makeReport ()
 			if (!getBuildTurns ())
 			{
 				// Bau beendet:
-				PlayRandomVoice (VoiceData.VOIBuildDone);
+				soundManager.playVoice (getRandom (VoiceData.VOIBuildDone));
 			}
 		}
 		else if (isUnitClearing ())
 		{
 			// removing dirt
-			PlayVoice (VoiceData.VOIClearing.get ());
+			soundManager.playVoice (VoiceData.VOIClearing);
 		}
 		else if (data.canAttack && data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
 		{
 			// red ammo-status but still ammo left
-			PlayRandomVoice (VoiceData.VOIAmmoLow);
+			soundManager.playVoice (getRandom (VoiceData.VOIAmmoLow));
 		}
 		else if (data.canAttack && data.getAmmo () == 0)
 		{
 			// no ammo left
-			PlayRandomVoice (VoiceData.VOIAmmoEmpty);
+			soundManager.playVoice (getRandom (VoiceData.VOIAmmoEmpty));
 		}
 		else if (isSentryActive())
 		{
 			// on sentry:
-			PlayVoice (VoiceData.VOISentry.get ());
+			soundManager.playVoice (VoiceData.VOISentry);
 		}
 		else if (isUnitClearingMines ())
 		{
-			PlayRandomVoice (VoiceData.VOIClearingMines);
+			soundManager.playVoice (getRandom (VoiceData.VOIClearingMines));
 		}
 		else if (isUnitLayingMines ())
 		{
-			PlayVoice (VoiceData.VOILayingMines.get ());
+			soundManager.playVoice (VoiceData.VOILayingMines);
 		}
 		else
 		{
-			PlayRandomVoice (VoiceData.VOIOK);
+			soundManager.playVoice (getRandom (VoiceData.VOIOK));
 		}
 	}
 	else if (data.getHitpoints () > data.hitpointsMax / 4)
 	{
 		// Status yellow:
-		PlayRandomVoice (VoiceData.VOIStatusYellow);
+		soundManager.playVoice (getRandom (VoiceData.VOIStatusYellow));
 	}
 	else
 	{
 		// Status red:
-		PlayRandomVoice (VoiceData.VOIStatusRed);
+		soundManager.playVoice (getRandom (VoiceData.VOIStatusRed));
 	}
 }
 
@@ -1450,25 +1454,64 @@ void cVehicle::makeDetection (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
-sVehicleUIData::sVehicleUIData() :
-	build (NULL), build_org (NULL),
-	build_shw (NULL), build_shw_org (NULL),
-	clear_small (NULL), clear_small_org (NULL),
-	clear_small_shw (NULL), clear_small_shw_org (NULL),
-	overlay (NULL), overlay_org (NULL),
-	storage (NULL),
-	FLCFile (NULL),
-	info (NULL),
-	Wait (NULL), WaitWater (NULL),
-	Start (NULL), StartWater (NULL),
-	Stop (NULL), StopWater (NULL),
-	Drive (NULL), DriveWater (NULL),
-	Attack (NULL)
+sVehicleUIData::sVehicleUIData()
+{}
+
+//-----------------------------------------------------------------------------
+sVehicleUIData::sVehicleUIData (sVehicleUIData&& other) :
+    build (std::move (other.build)), build_org (std::move (other.build_org)),
+    build_shw (std::move (other.build_shw)), build_shw_org (std::move (other.build_shw_org)),
+    clear_small (std::move (other.clear_small)), clear_small_org (std::move (other.clear_small_org)),
+    clear_small_shw (std::move (other.clear_small_shw)), clear_small_shw_org (std::move (other.clear_small_shw_org)),
+    overlay (std::move (other.overlay)), overlay_org (std::move (other.overlay_org)),
+    storage (std::move (other.storage)),
+    FLCFile (std::move (other.FLCFile)),
+    info (std::move (other.info)),
+    Wait (std::move (other.Wait)),
+    WaitWater (std::move (other.WaitWater)),
+    Start (std::move (other.Start)),
+    StartWater (std::move (other.StartWater)),
+    Stop (std::move (other.Stop)),
+    StopWater (std::move (other.StopWater)),
+    Drive (std::move (other.Drive)),
+    DriveWater (std::move (other.DriveWater)),
+    Attack (std::move (other.Attack))
 {
-	for (int i = 0; i != 8; ++i) img[i] = NULL;
-	for (int i = 0; i != 8; ++i) img_org[i] = NULL;
-	for (int i = 0; i != 8; ++i) shw[i] = NULL;
-	for (int i = 0; i != 8; ++i) shw_org[i] = NULL;
+    for (size_t i = 0; i < img.size (); ++i) img[i] = std::move (other.img[i]);
+    for (size_t i = 0; i < img_org.size (); ++i) img_org[i] = std::move (other.img_org[i]);
+    for (size_t i = 0; i < shw.size (); ++i) shw[i] = std::move (other.shw[i]);
+    for (size_t i = 0; i < shw_org.size (); ++i) shw_org[i] = std::move (other.shw_org[i]);
+}
+
+//-----------------------------------------------------------------------------
+sVehicleUIData& sVehicleUIData::operator=(sVehicleUIData&& other)
+{
+    for (size_t i = 0; i < img.size (); ++i) img[i] = std::move (other.img[i]);
+    for (size_t i = 0; i < img_org.size (); ++i) img_org[i] = std::move (other.img_org[i]);
+    for (size_t i = 0; i < shw.size (); ++i) shw[i] = std::move (other.shw[i]);
+    for (size_t i = 0; i < shw_org.size (); ++i) shw_org[i] = std::move (other.shw_org[i]);
+
+    build = std::move (other.build);
+    build_org = std::move (other.build_org);
+    build_shw = std::move (other.build_shw);
+    build_shw_org = std::move (other.build_shw_org);
+    clear_small = std::move (other.clear_small);
+    clear_small_org = std::move (other.clear_small_org);
+    clear_small_shw = std::move (other.clear_small_shw);
+    clear_small_shw_org = std::move (other.clear_small_shw_org);
+    overlay = std::move (other.overlay);
+    overlay_org = std::move (other.overlay_org);
+
+    Wait = std::move (other.Wait);
+    WaitWater = std::move (other.WaitWater);
+    Start = std::move (other.Start);
+    StartWater = std::move (other.StartWater);
+    Stop = std::move (other.Stop);
+    StopWater = std::move (other.StopWater);
+    Drive = std::move (other.Drive);
+    DriveWater = std::move (other.DriveWater);
+    Attack = std::move (other.Attack);
+    return *this;
 }
 
 //-----------------------------------------------------------------------------
@@ -1479,34 +1522,34 @@ void sVehicleUIData::scaleSurfaces (float factor)
 	{
 		width = (int) (img_org[i]->w * factor);
 		height = (int) (img_org[i]->h * factor);
-		scaleSurface (img_org[i], img[i], width, height);
+        scaleSurface (img_org[i].get (), img[i].get (), width, height);
 		width = (int) (shw_org[i]->w * factor);
 		height = (int) (shw_org[i]->h * factor);
-		scaleSurface (shw_org[i], shw[i], width, height);
+        scaleSurface (shw_org[i].get (), shw[i].get (), width, height);
 	}
 	if (build_org)
 	{
 		height = (int) (build_org->h * factor);
 		width = height * 4;
-		scaleSurface (build_org, build, width, height);
+        scaleSurface (build_org.get (), build.get (), width, height);
 		width = (int) (build_shw_org->w * factor);
 		height = (int) (build_shw_org->h * factor);
-		scaleSurface (build_shw_org, build_shw, width, height);
+        scaleSurface (build_shw_org.get (), build_shw.get (), width, height);
 	}
 	if (clear_small_org)
 	{
 		height = (int) (clear_small_org->h * factor);
 		width = height * 4;
-		scaleSurface (clear_small_org, clear_small, width, height);
+        scaleSurface (clear_small_org.get (), clear_small.get (), width, height);
 		width = (int) (clear_small_shw_org->w * factor);
 		height = (int) (clear_small_shw_org->h * factor);
-		scaleSurface (clear_small_shw_org, clear_small_shw, width, height);
+        scaleSurface (clear_small_shw_org.get (), clear_small_shw.get (), width, height);
 	}
 	if (overlay_org)
 	{
 		height = (int) (overlay_org->h * factor);
 		width = (int) (overlay_org->w * factor);
-		scaleSurface (overlay_org, overlay, width, height);
+        scaleSurface (overlay_org.get (), overlay.get (), width, height);
 	}
 }
 

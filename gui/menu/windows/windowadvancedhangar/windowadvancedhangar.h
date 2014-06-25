@@ -28,8 +28,8 @@ template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
-	cWindowAdvancedHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan);
-	cWindowAdvancedHangar (SDL_Surface* surface, const cPlayer& player);
+	cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
+    cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player);
 	~cWindowAdvancedHangar ();
 
 protected:
@@ -63,16 +63,16 @@ private:
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (SDL_Surface* surface, cPlayerColor playerColor, int playerClan) :
-	cWindowHangar (surface, playerColor, playerClan)
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
+	cWindowHangar (std::move(surface), playerColor, playerClan)
 {
 	initialize ();
 }
 
 //------------------------------------------------------------------------------
 template<typename SelectedUnitItemType>
-cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (SDL_Surface* surface, const cPlayer& player) :
-	cWindowHangar (surface, player)
+cWindowAdvancedHangar<SelectedUnitItemType>::cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player) :
+	cWindowHangar (std::move(surface), player)
 {
 	initialize ();
 }
@@ -87,10 +87,10 @@ void cWindowAdvancedHangar<SelectedUnitItemType>::initialize ()
 	signalConnectionManager.connect (selectedUnitList->itemClicked, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::selectedUnitClicked, this, _1));
 	signalConnectionManager.connect (selectedUnitList->selectionChanged, std::bind (&cWindowAdvancedHangar<SelectedUnitItemType>::handleSelectionChanged, this));
 
-	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (327, 240), ePushButtonType::ArrowUpSmall, SoundData.SNDObjectMenu.get ()));
+	selectedListUpButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (327, 240), ePushButtonType::ArrowUpSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectedListUpButton->clicked, std::bind (&cListView<SelectedUnitItemType>::pageUp, selectedUnitList));
 
-	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (348, 240), ePushButtonType::ArrowDownSmall, SoundData.SNDObjectMenu.get ()));
+	selectedListDownButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (348, 240), ePushButtonType::ArrowDownSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectedListDownButton->clicked, std::bind (&cListView<SelectedUnitItemType>::pageDown, selectedUnitList));
 
 	using namespace std::placeholders;

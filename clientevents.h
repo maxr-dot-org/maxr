@@ -192,7 +192,7 @@ void sendWantBuild (const cClient& client, int iVehicleID, sID buildingTypeID, i
 *@param EscapeX X coordinate to which he wants do move now
 *@param EscapeY Y coordinate to which he wants do move now
 */
-void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, int escapeX, int escapeY);
+void sendWantEndBuilding (const cClient& client, const cVehicle& vehicle, const cPosition& escapePosition);
 /**
 * sends that the player wants a vehicle to stop building
 *@author alzi alias DoctorDeath
@@ -256,7 +256,7 @@ void sendWantStopClear (const cClient& client, const cVehicle& vehicle);
 */
 void sendAbortWaiting (const cClient& client);
 void sendWantLoad (const cClient& client, int unitid, bool vehicle, int loadedunitid);
-void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, int x, int y);
+void sendWantActivate (const cClient& client, int unitid, bool vehicle, int activatunitid, const cPosition& position);
 /**
 * sends a request to resync the player
 */

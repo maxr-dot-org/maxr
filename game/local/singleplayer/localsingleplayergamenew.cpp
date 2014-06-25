@@ -93,17 +93,17 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	gameGui->setDynamicMap (client->getMap ());
 
-    std::vector<std::shared_ptr<const cPlayer>> guiPlayers;
-    for (size_t i = 0; i < client->getPlayerList ().size (); ++i)
-    {
+	std::vector<std::shared_ptr<const cPlayer>> guiPlayers;
+	for (size_t i = 0; i < client->getPlayerList ().size (); ++i)
+	{
 		const auto& player = client->getPlayerList ()[i];
 		guiPlayers.push_back (player);
 		if (player.get () == &client->getActivePlayer ())
 		{
 			gameGui->setPlayer (player);
 		}
-    }
-    gameGui->setPlayers (guiPlayers);
+	}
+	gameGui->setPlayers (guiPlayers);
 	gameGui->setCasualtiesTracker (client->getCasualtiesTracker ());
 	gameGui->setTurnClock (client->getTurnClock ());
 	gameGui->setGameSettings (client->getGameSettings ());
@@ -120,9 +120,9 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	application.addRunnable (shared_from_this ());
 
 	signalConnectionManager.connect (gameGui->terminated, [&]()
-    {
-        // me pointer ensures that game object stays alive till this call has terminated
-        auto me = application.removeRunnable (*this);
+	{
+		// me pointer ensures that game object stays alive till this call has terminated
+		auto me = application.removeRunnable (*this);
 	});
 }
 

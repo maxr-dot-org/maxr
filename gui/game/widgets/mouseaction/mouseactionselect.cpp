@@ -43,8 +43,7 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 
 	if (MouseStyle == OldSchool && unitSelection.selectUnitAt (field, false))
 	{
-		auto vehicle = unitSelection.getSelectedVehicle ();
-		if (vehicle) vehicle->makeReport ();
+		/*do nothing here*/
 	}
 	else if (MouseStyle == Modern &&
 		(
@@ -56,8 +55,7 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 		) &&
 		unitSelection.selectUnitAt (field, true))
 	{
-		auto vehicle = unitSelection.getSelectedVehicle ();
-		if (vehicle) vehicle->makeReport ();
+		/*do nothing here*/
 	}
 	else
 	{

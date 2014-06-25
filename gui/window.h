@@ -67,7 +67,7 @@ public:
 	 *                size of this image. If it is null, the window will have an size of (0,0).
 	 * @param backgroundType Background type to apply when drawing the window.
 	 */
-	explicit cWindow (SDL_Surface* surface, eWindowBackgrounds backgroundType = eWindowBackgrounds::Black);
+	explicit cWindow (AutoSurface surface, eWindowBackgrounds backgroundType = eWindowBackgrounds::Black);
 
 	/**
 	 * Returns whether the window wants to be closed.
@@ -143,10 +143,8 @@ protected:
 	 * The window will be resized to the images size.
 	 *
 	 * @param surface The surface to set as background.
-	 *                This function will grab the ownership of the passed surface.
-	 *                Therefor it mustn't be deleted by the caller afterwards!
 	 */
-	void setSurface (SDL_Surface* surface);
+	void setSurface (AutoSurface surface);
 
 	/**
 	 * The current background image.

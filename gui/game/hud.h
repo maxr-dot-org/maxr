@@ -52,7 +52,7 @@ public:
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
 
-	static SDL_Surface* generateSurface ();
+	static AutoSurface generateSurface ();
 
 	void setMinimalZoomFactor (float zoomFactor);
 	float getZoomFactor () const;

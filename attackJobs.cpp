@@ -36,6 +36,9 @@
 #include "vehicles.h"
 #include "sound.h"
 #include "game/data/report/savedreportunit.h"
+#include "output/sound/sounddevice.h"
+#include "output/sound/soundchannel.h"
+#include "utility/random.h"
 
 using namespace std;
 
@@ -614,7 +617,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 
 	if (iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET || iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER || iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO)
 	{
-		aggressorPosition = message.popPosition ();
+		targetPosition = message.popPosition ();
 	}
 	iFireDir = message.popChar();
 
@@ -632,8 +635,8 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 	{
 		const string name = unit->getDisplayName();
 		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*unit, lngPack.i18n ("Text~Comp~AttackingEnemy", name)));
-		//FIXME: gameGUI
-		//PlayRandomVoice (VoiceData.VOIAttackingEnemy);
+		//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
+		cSoundDevice::getInstance ().getFreeVoiceChannel ().play (getRandom (VoiceData.VOIAttackingEnemy));
 	}
 }
 
@@ -660,7 +663,8 @@ void cClientAttackJob::playMuzzle (cClient& client)
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
 		state = FINISHED;
-		PlayFX (building->uiData->Attack);
+		//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
+		cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (building->uiData->Attack);
 		if (map.isWaterOrCoast (unit->getPosition()))
 		{
 			client.addFx (std::make_shared<cFxExploWater> (unit->getPosition() * 64 + 32));
@@ -818,11 +822,13 @@ void cClientAttackJob::playMuzzle (cClient& client)
 	}
 	if (unit && unit->isAVehicle())
 	{
-		PlayFX (static_cast<cVehicle*> (unit)->uiData->Attack);
+		//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
+		cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (static_cast<cVehicle*> (unit)->uiData->Attack);
 	}
 	else if (unit && unit->isABuilding())
 	{
-		PlayFX (static_cast<cBuilding*> (unit)->uiData->Attack);
+		//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
+		cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (static_cast<cBuilding*> (unit)->uiData->Attack);
 	}
 }
 
@@ -923,12 +929,14 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 		if (destroyed)
 		{
 			message = name + " " + lngPack.i18n ("Text~Comp~Destroyed");
-			PlayRandomVoice (VoiceData.VOIDestroyedUs);
+			//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
+			cSoundDevice::getInstance ().getFreeVoiceChannel ().play (getRandom (VoiceData.VOIDestroyedUs));
 		}
 		else
 		{
 			message = name + " " + lngPack.i18n ("Text~Comp~Attacked");
-			PlayRandomVoice (VoiceData.VOIAttackingUs);
+			//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
+			cSoundDevice::getInstance ().getFreeVoiceChannel ().play (getRandom (VoiceData.VOIAttackingUs));
 		}
 		assert (targetUnit != nullptr);
 		client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*targetUnit, message));

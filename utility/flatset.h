@@ -61,32 +61,32 @@ public:
 	typedef typename Allocator::const_pointer const_pointer;
 	typedef typename Allocator::reference reference;
 	typedef typename Allocator::const_reference const_reference;
-    typedef typename DataType::iterator iterator;
-    typedef typename DataType::const_iterator const_iterator;
-    typedef typename DataType::reverse_iterator reverse_iterator;
-    typedef typename DataType::const_reverse_iterator const_reverse_iterator;
+	typedef typename DataType::iterator iterator;
+	typedef typename DataType::const_iterator const_iterator;
+	typedef typename DataType::reverse_iterator reverse_iterator;
+	typedef typename DataType::const_reverse_iterator const_reverse_iterator;
 
 	cFlatSet () :
 		data (),
 		compare ()
 	{}
 	explicit cFlatSet (const Compare& comp, const allocator_type& alloc = allocator_type ()) :
-        data (alloc),
+		data (alloc),
 		compare (comp)
 	{}
 	template<typename InputIterator>
 	cFlatSet (InputIterator first, InputIterator last, const Compare& comp = Compare (), const allocator_type& alloc = allocator_type ()) :
-        data (first, last, alloc),
+		data (first, last, alloc),
 		compare (comp)
 	{
 		std::sort (begin (), end (), compare);
 	}
 	cFlatSet (const cFlatSet& other) :
-        data (other.data),
+		data (other.data),
 		compare (other.compare)
 	{}
 	cFlatSet (cFlatSet&& other) :
-        data (std::move (other.data)),
+		data (std::move (other.data)),
 		compare (std::move(other.compare))
 	{}
 	//cFlatSet (const cFlatSet& other, const allocator_type& alloc);
@@ -100,12 +100,12 @@ public:
 	}
 	cFlatSet& operator=(cFlatSet&& other)
 	{
-        data = std::move (other.data);
+		data = std::move (other.data);
 		compare = std::move (other.compare);
 		return *this;
 	}
 
-    allocator_type get_allocator () const { return data.get_allocator (); }
+	allocator_type get_allocator () const { return data.get_allocator (); }
 
 	// iterators
 	iterator begin () { return data.begin (); }
@@ -191,8 +191,8 @@ public:
 	iterator erase (const_iterator first, const_iterator last) { return data.erase (first, last); }
 
 	void swap (cFlatSet& other)
-    {
-        std::swap (data, other.data);
+	{
+		std::swap (data, other.data);
 		std::swap (compare, other.compare);
 	}
 
@@ -302,7 +302,7 @@ public:
 
 private:
 	Compare compare;
-    DataType data;
+	DataType data;
 };
 
 #endif // utility_flatsetH

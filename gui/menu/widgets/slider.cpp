@@ -196,7 +196,7 @@ void cSlider::createSurface (eSliderType sliderType)
 	//	size.x () = 6;
 	//}
 
-	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
+    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
 

@@ -63,9 +63,9 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 		if (unit->data.ID.isAVehicle ())
 		{
 			const auto& vehicle = *static_cast<const cVehicle*>(unit);
-			if (FileExists (vehicle.uiData->FLCFile))
+			if (FileExists (vehicle.uiData->FLCFile.c_str()))
 			{
-				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (vehicle.uiData->FLCFile, "rb"), NULL), FLI_Close);
+				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (vehicle.uiData->FLCFile.c_str(), "rb"), NULL), FLI_Close);
 				FLI_Rewind (fliAnimation.get());
 				FLI_NextFrame (fliAnimation.get ());
 				currentFrameImage->setImage (fliAnimation->surface);
@@ -73,7 +73,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 			else
 			{
 				fliAnimation = nullptr;
-				currentFrameImage->setImage (vehicle.uiData->storage);
+                currentFrameImage->setImage (vehicle.uiData->storage.get ());
 			}
 		}
 		else if (unit->data.ID.isABuilding ())
@@ -81,7 +81,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 			const auto& building = *static_cast<const cBuilding*>(unit);
 
 			fliAnimation = nullptr;
-			currentFrameImage->setImage (building.uiData->video);
+            currentFrameImage->setImage (building.uiData->video.get ());
 		}
 	}
 }

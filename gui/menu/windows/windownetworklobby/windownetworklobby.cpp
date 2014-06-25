@@ -83,9 +83,9 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	playersList->setEndMargin (cPosition (10, 10));
 	playersList->setItemDistance (cPosition (0, 4));
 
-	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, SoundData.SNDObjectMenu.get ()));
+	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (prevColorButton->clicked, [&]() { localPlayer->setColor (cPlayerColor ((localPlayer->getColor ().getIndex () + 1) % PLAYERCOLORS)); });
-	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, SoundData.SNDObjectMenu.get ()));
+	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (nextColorButton->clicked, [&]() { localPlayer->setColor (cPlayerColor ((localPlayer->getColor ().getIndex () + PLAYERCOLORS - 1) % PLAYERCOLORS)); });
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 
@@ -225,7 +225,7 @@ void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
 	{
 		signalConnectionManager.connect (item->readyClicked, [player, this]()
 		{
-			PlayFX (SoundData.SNDHudButton.get ());
+            cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDHudButton);
 			wantLocalPlayerReadyChange ();
 		});
 	}

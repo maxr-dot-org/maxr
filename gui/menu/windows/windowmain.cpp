@@ -24,6 +24,7 @@
 #include "../../../main.h"
 #include "../../../buildings.h"
 #include "../../../vehicles.h"
+#include "../../../utility/random.h"
 #include "../widgets/label.h"
 #include "../widgets/image.h"
 
@@ -35,7 +36,7 @@ cWindowMain::cWindowMain (const std::string& title) :
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 465), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 475)), lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	infoImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (16, 182), getRandomInfoImage (), SoundData.SNDHudButton.get ()));
+	infoImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (16, 182), getRandomInfoImage (), &SoundData.SNDHudButton));
 	signalConnectionManager.connect (infoImage->clicked, std::bind (&cWindowMain::infoImageClicked, this));
 }
 
@@ -68,7 +69,7 @@ SDL_Surface* cWindowMain::getRandomInfoImage ()
 			// make sure we don't show same unit twice
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrBuildings () > 1);
-		surface = UnitsData.buildingUIs[unitShow].info;
+		surface = UnitsData.buildingUIs[unitShow].info.get();
 	}
 	else if (UnitsData.getNrVehicles () > 0)
 	{
@@ -79,7 +80,7 @@ SDL_Surface* cWindowMain::getRandomInfoImage ()
 			// make sure we don't show same unit twice
 		}
 		while (unitShow == lastUnitShow && UnitsData.getNrVehicles () > 1);
-		surface = UnitsData.vehicleUIs[unitShow].info;
+        surface = UnitsData.vehicleUIs[unitShow].info.get ();
 	}
 	else surface = NULL;
 	lastUnitShow = unitShow; //store shown unit

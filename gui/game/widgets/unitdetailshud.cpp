@@ -42,7 +42,7 @@ cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) 
 		nameLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (40, 2 + rowHeight * i), getPosition () + cPosition (40 + 40, 2 + rowHeight * i + rowHeight)), "", FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::Bottom));
 	}
 
-	surface = SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0);
+    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);

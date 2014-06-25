@@ -16,22 +16,60 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef output_sound_sounddeviceH
+#define output_sound_sounddeviceH
 
-#include <cassert>
+#include <string>
+#include <vector>
+#include <memory>
+#include <chrono>
 
-#include "menus.h"
-#include "netmessage.h"
+#include <SDL_mixer.h>
 
-//std::string ToString (eLandingState state)
-//{
-//	switch (state)
-//	{
-//		case LANDING_POSITION_TOO_CLOSE: return "LANDING_POSITION_TOO_CLOSE";
-//		case LANDING_POSITION_WARNING: return "LANDING_POSITION_WARNING";
-//		case LANDING_POSITION_OK: return "LANDING_POSITION_OK";
-//		case LANDING_POSITION_CONFIRMED: return "LANDING_POSITION_COMFIRMED";
-//		case LANDING_STATE_UNKNOWN: return "LANDING_STATE_UNKNOWN";
-//	}
-//	assert (0);
-//	return "unknown";
-//}
+#include "soundchannelgroup.h"
+
+class cPosition;
+class cSoundChunk;
+class cSoundChannel;
+
+class cSoundDevice
+{
+public:
+    cSoundDevice ();
+
+    static cSoundDevice& getInstance ();
+
+    void initialize (int frequency, int chunkSize);
+    void close ();
+
+    cSoundChannel& getFreeSoundEffectChannel ();
+    cSoundChannel& getFreeVoiceChannel ();
+
+    void startMusic (const std::string& fileName);
+    void startRandomMusic ();
+    void stopMusic ();
+
+    void setSoundEffectVolume (int volume);
+    void setVoiceVolume (int volume);
+    void setMusicVolume (int volume);
+private:
+    const static int soundEffectGroupTag;
+    const static int voiceGroupTag;
+
+    const static int soundEffectGroupSize;
+    const static int voiceGroupSize;
+
+    struct SdlMixMusikDeleter
+    {
+        void operator()(Mix_Music*) const;
+    };
+
+    typedef std::unique_ptr<Mix_Music, SdlMixMusikDeleter> SaveSdlMixMusicPointer;
+
+    SaveSdlMixMusicPointer musicStream;
+
+    cSoundChannelGroup soundEffectChannelGroup;
+    cSoundChannelGroup voiceChannelGroup;
+};
+
+#endif // output_sound_sounddeviceH

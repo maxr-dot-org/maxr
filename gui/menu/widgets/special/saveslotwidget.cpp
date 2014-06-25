@@ -25,6 +25,8 @@
 #include "../../../../input/mouse/mouse.h"
 #include "../../../../sound.h"
 #include "../../../../main.h" // iToStr
+#include "../../../../output/sound/sounddevice.h"
+#include "../../../../output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
 cSaveSlotWidget::cSaveSlotWidget (const cPosition& position) :
@@ -108,7 +110,7 @@ bool cSaveSlotWidget::handleClicked (cApplication& application, cMouse& mouse, e
 	{
 		clicked ();
 
-		PlayFX (SoundData.SNDObjectMenu.get ());
+        cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDObjectMenu);
 
 		if (mouse.getButtonClickCount (button) == 2)
 		{

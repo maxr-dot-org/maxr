@@ -23,14 +23,16 @@
 #include "../../../sound.h"
 #include "../../../video.h"
 #include "../../../main.h"
+#include "../../../output/sound/sounddevice.h"
+#include "../../../output/sound/soundchannel.h"
 #include "../temp/animationtimer.h"
 
 //------------------------------------------------------------------------------
 cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),
 	animationTimer (std::move (animationTimer_)),
-	openStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelOpen.get ()) == 0 ? 800 : getSoundLength (SoundData.SNDPanelOpen.get ()) * 0.95))),
-	closeStep (100. * 10 / ((getSoundLength (SoundData.SNDPanelClose.get ()) == 0 ? 800 : getSoundLength (SoundData.SNDPanelClose.get ()) * 0.95))),
+    openStep (100. * 10 / (SoundData.SNDPanelOpen.empty () ? 800 : SoundData.SNDPanelOpen.getLength ().count () * 0.95)),
+    closeStep (100. * 10 / (SoundData.SNDPanelClose.empty () ? 800 : SoundData.SNDPanelClose.getLength ().count () * 0.95)),
 	percentClosed (percentClosed_)
 {
 	percentClosed = std::max (0., percentClosed);
@@ -44,7 +46,7 @@ cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<c
 //------------------------------------------------------------------------------
 void cHudPanels::open ()
 {
-	PlayFX (SoundData.SNDPanelOpen.get ());
+    cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDPanelOpen);
 
 	signalConnectionManager.connect (animationTimer->triggered10ms, std::bind (&cHudPanels::doOpenStep, this));
 }
@@ -52,7 +54,7 @@ void cHudPanels::open ()
 //------------------------------------------------------------------------------
 void cHudPanels::close ()
 {
-	PlayFX (SoundData.SNDPanelClose.get ());
+    cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDPanelClose);
 
 	signalConnectionManager.connect (animationTimer->triggered10ms, std::bind (&cHudPanels::doCloseStep, this));
 }
@@ -88,12 +90,17 @@ void cHudPanels::doOpenStep ()
 //------------------------------------------------------------------------------
 void cHudPanels::doCloseStep ()
 {
+    if (percentClosed >= 100.)
+    {
+        signalConnectionManager.disconnectAll ();
+        closed ();
+        return;
+    }
+
 	percentClosed += closeStep;
 
 	if (percentClosed >= 100.)
 	{
 		percentClosed = std::min (100., percentClosed);
-		signalConnectionManager.disconnectAll ();
-		closed ();
 	}
 }

@@ -30,6 +30,9 @@
 #include "../../../../input/mouse/mouse.h"
 #include "../../../../input/mouse/cursor/mousecursorsimple.h"
 #include "../../../../game/logic/landingpositionmanager.h"
+#include "../../../../output/sound/sounddevice.h"
+#include "../../../../output/sound/soundchannel.h"
+#include "../../../../utility/random.h"
 
 //------------------------------------------------------------------------------
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_) :
@@ -40,7 +43,7 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 {
 	using namespace std::placeholders;
 
-	auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface ());
+    auto hudImageOwned = std::make_unique<cImage> (cPosition (0, 0), createHudSurface ().get ());
 	hudImageOwned->disableAtTransparent ();
 
 	mapWidget = addChild (std::make_unique<cLandingPositionSelectionMap> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImageOwned->getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap));
@@ -121,7 +124,7 @@ void cWindowLandingPositionSelection::unlockBack ()
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
-	if (firstTime) PlayRandomVoice (VoiceData.VOILanding);
+    if (firstTime) cSoundDevice::getInstance ().getFreeVoiceChannel().play (getRandom (VoiceData.VOILanding));
 	cWindow::handleActivated (application, firstTime);
 }
 
@@ -144,7 +147,7 @@ bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& applicatio
 }
 
 //------------------------------------------------------------------------------
-SDL_Surface* cWindowLandingPositionSelection::createHudSurface ()
+AutoSurface cWindowLandingPositionSelection::createHudSurface ()
 {
 	AutoSurface hudSurface (cHud::generateSurface ());
 
@@ -158,7 +161,7 @@ SDL_Surface* cWindowLandingPositionSelection::createHudSurface ()
 	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), NULL, hudSurface.get (), &top);
 	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), NULL, hudSurface.get (), &bottom);
 
-	return hudSurface.Release ();
+	return std::move(hudSurface);
 }
 
 //------------------------------------------------------------------------------

@@ -16,16 +16,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef pcxH
 #define pcxH
-#include "defines.h"
-#include <SDL.h>
+
 #include <string>
+
+#include <SDL.h>
+
+#include "autosurface.h"
 
 /** Loads an image to a surface
  * @param name path to img
  * @return surface with img<br>or empty surface on error<br>or <b>NULL</b> if SDL couldn't create a surface
  */
-SDL_Surface* LoadPCX (const std::string& name);
+AutoSurface LoadPCX (const std::string& name);
 
 #endif

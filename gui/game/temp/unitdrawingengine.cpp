@@ -27,6 +27,7 @@
 #include "../../../vehicles.h"
 #include "../../../player.h"
 #include "../../../map.h"
+#include "../../../utility/random.h"
 
 namespace
 {
@@ -163,10 +164,10 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		auto& buildingNonConst = const_cast<cBuilding&>(building);
 
 		SDL_Rect tmp = dest;
-		SDL_SetSurfaceAlphaMod (building.uiData->eff, building.EffectAlpha);
+		SDL_SetSurfaceAlphaMod (building.uiData->eff.get(), building.EffectAlpha);
 
 		CHECK_SCALING (*building.uiData->eff, *building.uiData->eff_org, zoomFactor);
-		SDL_BlitSurface (building.uiData->eff, NULL, cVideo::buffer, &tmp);
+        SDL_BlitSurface (building.uiData->eff.get (), NULL, cVideo::buffer, &tmp);
 
 		if (animationFlags.is100ms ())
 		{

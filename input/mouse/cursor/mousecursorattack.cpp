@@ -80,7 +80,7 @@ bool cMouseCursorAttack::equal (const cMouseCursor& other) const
 void cMouseCursorAttack::generateSurface () const
 {
 	SDL_Surface* sourceSurface = GraphicsData.gfx_Cattack.get ();
-	surface = SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth (), 0, 0, 0, 0);
+    surface = AutoSurface (SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth (), 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
