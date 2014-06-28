@@ -49,9 +49,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DO_STOP_WORK,			// stops a building
 	GAME_EV_NEXT_MOVE,				// infos about the next move
 	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
-	GAME_EV_ATTACKJOB_LOCK_TARGET,	// prepares a mapsquare for beeing attacked
-	GAME_EV_ATTACKJOB_FIRE,			// plays the muzzle flash on a client
-	GAME_EV_ATTACKJOB_IMPACT,		// makes impact and target unlocking of an attackjob
+	GAME_EV_ATTACKJOB,		        // sends an cAttackJob object to a client
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
@@ -157,13 +155,8 @@ void sendMoveJobResume (const cClient& client, int unitId);
 /**
 * sends all necessary information to identify aggressor
 * and target of an attack to the server
-*@param targetID ID of the target if it is a vehicle, 0 otherwise.
-*@param targetOffset the offset, where the player has aimed
-*@param aggressor ID of the aggressor, if it is a vehicle. Offset os the aggressor if it is a building
-*@param isVehicle true if aggressor is a vehicle, false otherwise
-*@author Eiko
 */
-void sendWantAttack (const cClient& client, int targetID, int targetOffset, int aggressor, bool isVehicle);
+void sendWantAttack (const cClient& client, int aggressorID, int targetX, int targetY, int targetID);
 
 /**
 * sends whether a minelayer is laying or clearing mines

@@ -189,7 +189,7 @@ void cGameTimerClient::run (cMenu* activeMenu)
 		if (localChecksum != remoteChecksum)
 		{
 			//gameGUI.debugOutput.debugSync = true;
-			//Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
 		}
 
 		if (syncDebugSingleStep)
@@ -294,6 +294,12 @@ uint32_t calcClientChecksum (const cClient& client)
 			 vehicle;
 			 vehicle = vehicle->next)
 		{
+			crc = calcCheckSum (vehicle->data.shotsCur, crc);
+			crc = calcCheckSum (vehicle->data.ammoCur, crc);
+			crc = calcCheckSum (vehicle->data.hitpointsCur, crc);
+			//TODO: movement points
+			//TODO: flight hight
+			//TODO: buildings
 			crc = calcCheckSum (vehicle->iID,  crc);
 			crc = calcCheckSum (vehicle->PosX, crc);
 			crc = calcCheckSum (vehicle->PosY, crc);
@@ -317,6 +323,9 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 		{
 			if (Contains (vehicle->seenByPlayerList, player) || vehicle->owner == player)
 			{
+				crc = calcCheckSum (vehicle->data.shotsCur, crc);
+				crc = calcCheckSum (vehicle->data.ammoCur, crc);
+				crc = calcCheckSum (vehicle->data.hitpointsCur, crc);
 				crc = calcCheckSum (vehicle->iID,  crc);
 				crc = calcCheckSum (vehicle->PosX, crc);
 				crc = calcCheckSum (vehicle->PosY, crc);

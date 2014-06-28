@@ -21,7 +21,7 @@
 
 #include "client.h"
 
-#include "attackJobs.h"
+#include "attackJob2.h"
 #include "automjobs.h"
 #include "buildings.h"
 #include "casualtiestracker.h"
@@ -772,31 +772,6 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 		else Log.write (" Client: Vehicle with ID " + iToStr (iID) + "has no movejob", cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: request sync of vehicle
 	}
-}
-
-void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_LOCK_TARGET);
-
-	cClientAttackJob::lockTarget (*this, message);
-}
-
-void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_FIRE);
-
-	cClientAttackJob* job = new cClientAttackJob (this, message);
-	attackJobs.push_back (job);
-}
-
-void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_IMPACT);
-
-	const int id = message.popInt16();
-	const int remainingHP = message.popInt16();
-	const int offset = message.popInt32();
-	cClientAttackJob::makeImpact (*this, offset, remainingHP, id);
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
@@ -1812,6 +1787,7 @@ int cClient::HandleNetMessage (cNetMessage& message, cMenu* activeMenu)
 		case GAME_EV_PLAYER_CLANS: HandleNetMessage_GAME_EV_PLAYER_CLANS (message); break;
 		case GAME_EV_ADD_BUILDING: HandleNetMessage_GAME_EV_ADD_BUILDING (message); break;
 		case GAME_EV_ADD_VEHICLE: HandleNetMessage_GAME_EV_ADD_VEHICLE (message); break;
+		case GAME_EV_ATTACKJOB: attackJobs.push_back(new cAttackJob(this, message)); break;
 		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (message, activeMenu); break;
 		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (message, activeMenu); break;
 		case GAME_EV_ADD_ENEM_VEHICLE: HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (message); break;
@@ -1825,9 +1801,6 @@ int cClient::HandleNetMessage (cNetMessage& message, cMenu* activeMenu)
 		case GAME_EV_DO_STOP_WORK: HandleNetMessage_GAME_EV_DO_STOP_WORK (message); break;
 		case GAME_EV_MOVE_JOB_SERVER: HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (message); break;
 		case GAME_EV_NEXT_MOVE: HandleNetMessage_GAME_EV_NEXT_MOVE (message); break;
-		case GAME_EV_ATTACKJOB_LOCK_TARGET: HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (message); break;
-		case GAME_EV_ATTACKJOB_FIRE: HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (message); break;
-		case GAME_EV_ATTACKJOB_IMPACT: HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_BUILD_ANSWER: HandleNetMessage_GAME_EV_BUILD_ANSWER (message); break;
 		case GAME_EV_STOP_BUILD: HandleNetMessage_GAME_EV_STOP_BUILD (message); break;
@@ -2111,7 +2084,7 @@ void cClient::handleMoveJobs()
 	}
 }
 
-cVehicle* cClient::getVehicleFromID (unsigned int iID)
+cVehicle* cClient::getVehicleFromID (unsigned int iID) const
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
@@ -2124,7 +2097,15 @@ cVehicle* cClient::getVehicleFromID (unsigned int iID)
 	return NULL;
 }
 
-cBuilding* cClient::getBuildingFromID (unsigned int iID)
+cUnit* cClient::getUnitFromID(unsigned int iID) const
+{
+	cUnit* result = getVehicleFromID(iID);
+	if (result == NULL)
+		result = getBuildingFromID(iID);
+	return result;
+}
+
+cBuilding* cClient::getBuildingFromID (unsigned int iID) const
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
@@ -2142,13 +2123,12 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID)
 	return NULL;
 }
 
-void cClient::doGameActions (cMenu* activeMenu)
+void cClient::doGameActions (cMenu* activeMenu) //TODO: activeMenu
 {
 	runFx();
 
 	// run attackJobs
-	if (gameTimer.timer50ms)
-		cClientAttackJob::handleAttackJobs (*this, activeMenu);
+	cAttackJob::runAttackJobs(attackJobs);			
 
 	// run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();

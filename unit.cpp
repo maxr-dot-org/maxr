@@ -22,6 +22,7 @@
 #include "unit.h"
 
 #include "attackJobs.h"
+#include "attackJob2.h"
 #include "client.h"
 #include "clientevents.h"
 #include "map.h"
@@ -215,7 +216,7 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap& map, bool forceAttack, bool c
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (x, y) == false)
 		return false;
 
-	const cUnit* target = selectTarget (x, y, data.canAttack, map);
+	const cUnit* target = cAttackJob::selectTarget (x, y, data.canAttack, map, owner);
 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;

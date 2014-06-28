@@ -33,7 +33,7 @@ class cBuilding;
 class cCasualtiesTracker;
 class cNetMessage;
 class cPlayer;
-class cServerAttackJob;
+class cAttackJob;
 class cServerMoveJob;
 class cTCP;
 class cUnit;
@@ -340,7 +340,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
-	void handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
@@ -520,11 +519,12 @@ private:
 	AutoPtr<sSettings> gameSetting;
 	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 	sFreezeModes freezeModes;
+	/** List with all attackjobs */
+	std::vector<cAttackJob*> AJobs;
 public:
+	void addAttackJob(cUnit* aggressor, int targetX, int targetY); //TODO: so oder anders?
 	/** the map */
 	AutoPtr<cMap> Map;
-	/** List with all attackjobs */
-	std::vector<cServerAttackJob*> AJobs;
 	/** List with all active movejobs */
 	std::vector<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */

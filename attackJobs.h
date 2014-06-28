@@ -35,7 +35,7 @@ class cVehicle;
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-cUnit* selectTarget (int x, int y, char attackMode, cMap& map);
+//cUnit* selectTarget (int x, int y, char attackMode, cMap& map);
 
 //--------------------------------------------------------------------------
 class cServerAttackJob
