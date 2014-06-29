@@ -105,7 +105,7 @@ cAttackJob::cAttackJob(cServer* server_, cUnit* aggressor_, int targetX_, int ta
 	server(server_),
 	client(NULL),
 	state(S_ROTATING),
-
+	target(NULL),
 	fireDir(0)
 {
 	fireDir = calcFireDir();
@@ -183,10 +183,25 @@ void cAttackJob::run()
 		case S_FIRING:
 			if (counter == 0)
 			{
-				impact();
-				state = S_FINISHED;
+				bool destroyed = impact();
+				if (destroyed)
+				{
+					counter = DESTROY_DELAY;
+					state = S_EXPLODING;
+				}
+				else
+				{
+					state = S_FINISHED;
+				}
 			}
 			break;
+		case S_EXPLODING:
+			if (counter == 0)
+			{
+				if (server)
+					server->destroyUnit(*target);
+				state = S_FINISHED;
+			}
 		case S_FINISHED:
 		default:
 			break;
@@ -409,15 +424,16 @@ cFx* cAttackJob::createMuzzleFx()
 	}
 }
 
-void cAttackJob::impact()
+bool cAttackJob::impact()
 {
 	//select target
 	cPlayer* player = client ? client->getPlayerFromNumber(aggressorPlayerNr) : server->getPlayerFromNumber(aggressorPlayerNr);
 	cMap&    map    = client ? *client->getMap() : *server->Map;
-	cUnit*   target = selectTarget(targetX, targetY, attackMode, map, player);
+	
+	target = selectTarget(targetX, targetY, attackMode, map, player);
 
 	int offX = 0, offY = 0;
-	if (target->isAVehicle())
+	if (target && target->isAVehicle())
 	{
 		offX = static_cast<cVehicle*>(target)->OffX;
 		offY = static_cast<cVehicle*>(target)->OffY;
@@ -442,19 +458,10 @@ void cAttackJob::impact()
 			if (client)
 			{
 				if (target->isAVehicle())
-					client->destroyUnit(*static_cast<cVehicle*>(target));
+					client->addDestroyFx (*static_cast<cVehicle*>(target));
 				else
-					client->destroyUnit(*static_cast<cBuilding*>(target));
-
+					client->addDestroyFx (*static_cast<cBuilding*>(target));
 			}
-			else
-			{
-				if (target->isAVehicle())
-					server->destroyUnit(*static_cast<cVehicle*>(target));
-				else
-					server->destroyUnit(*static_cast<cBuilding*>(target));
-			}
-			target = NULL;
 		}
 
 	}
@@ -488,4 +495,16 @@ void cAttackJob::impact()
 	if (client)
 		client->getGameGUI().updateMouseCursor();
 
+	return destroyed;
+}
+
+void cAttackJob::destroyTarget()
+{
+	if (server)
+	{
+		if (target->isAVehicle())
+			server->destroyUnit(*static_cast<cVehicle*>(target));
+		else
+			server->destroyUnit(*static_cast<cBuilding*>(target));
+	}
 }

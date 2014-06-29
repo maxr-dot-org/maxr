@@ -3439,147 +3439,91 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 }
 
 //------------------------------------------------------------------------------
-void cServer::destroyUnit (cVehicle& vehicle)
+void cServer::destroyUnit (cUnit& unit)
 {
-	const int offset = Map->getOffset (vehicle.PosX, vehicle.PosY);
-	int value = 0;
-	int oldRubbleValue = 0;
-	bool bigRubble = false;
-	int rubblePosX = vehicle.PosX;
-	int rubblePosY = vehicle.PosY;
+	bool isVehicle = false;
+	int x = unit.PosX;
+	int y = unit.PosY;
+	cMap& map = *Map.get();
+	int offset = map.getOffset(x, y);
 
-	if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
+	//delete planes immediately
+	if (unit.isAVehicle())
 	{
-		deleteUnit (&vehicle);
-		return;
-	}
-
-	//delete all buildings on the field, except connectors
-	std::vector<cBuilding*>* buildings = & (*Map) [offset].getBuildings();
-	std::vector<cBuilding*>::iterator b_it = buildings->begin();
-	if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-
-	while (b_it != buildings->end())
-	{
-		// this seems to be rubble
-		if ((*b_it)->owner == 0 && (*b_it)->RubbleValue > 0)
+		isVehicle = true;
+		auto vehicle = *static_cast<cVehicle*>(&unit);
+		if (vehicle.data.factorAir > 0 && vehicle.FlightHigh > 0)
 		{
-			oldRubbleValue += (*b_it)->RubbleValue;
-			if ((*b_it)->data.isBig)
-			{
-				rubblePosX = (*b_it)->PosX;
-				rubblePosY = (*b_it)->PosY;
-				bigRubble = true;
-			}
-		}
-		else // normal unit
-			value += (*b_it)->data.buildCosts;
-		deleteUnit (*b_it);
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-	}
-
-	if (vehicle.data.isBig)
-	{
-		bigRubble = true;
-		buildings = & (*Map) [offset + 1].getBuildings();
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		while (b_it != buildings->end())
-		{
-			value += (*b_it)->data.buildCosts;
-			deleteUnit (*b_it);
-			b_it = buildings->begin();
-			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		}
-
-		buildings = & (*Map) [offset + Map->getSize()].getBuildings();
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		while (b_it != buildings->end())
-		{
-			value += (*b_it)->data.buildCosts;
-			deleteUnit (*b_it);
-			b_it = buildings->begin();
-			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		}
-
-		buildings = & (*Map) [offset + 1 + Map->getSize()].getBuildings();
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		while (b_it != buildings->end())
-		{
-			value += (*b_it)->data.buildCosts;
-			deleteUnit (*b_it);
-			b_it = buildings->begin();
-			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
+			deleteUnit(&vehicle);
+			return;
 		}
 	}
 
-	if (!vehicle.data.hasCorpse)
+	//check, if there is a big unit on the field
+	bool bigUnit = false;
+	auto topBuilding = map[offset].getTopBuilding();
+	if (topBuilding && topBuilding->data.isBig || unit.data.isBig)
+		bigUnit = true;
+
+	//delete unit
+	int rubbleValue = 0;
+	if (!unit.data.hasCorpse)
 	{
-		value += vehicle.data.buildCosts;
+		rubbleValue += unit.data.buildCosts;
 		// stored material is always added completely to the rubble
-		if (vehicle.data.storeResType == sUnitData::STORE_RES_METAL)
-			value += vehicle.data.storageResCur * 2;
+		if (unit.data.storeResType == sUnitData::STORE_RES_METAL)
+			rubbleValue += unit.data.storageResCur * 2;
+	}
+	deleteUnit(&unit);
+
+	//delete all buildings (except connectors, when a vehicle is destroyed)
+	rubbleValue += deleteBuildings(map[offset], !isVehicle);
+	if (bigUnit)
+	{
+		rubbleValue += deleteBuildings(map[offset + 1], !isVehicle);
+		rubbleValue += deleteBuildings(map[offset + map.getSize()], !isVehicle);
+		rubbleValue += deleteBuildings(map[offset + map.getSize() + 1], !isVehicle);
 	}
 
-	if (value > 0 || oldRubbleValue > 0)
-		addRubble (rubblePosX, rubblePosY, value / 2 + oldRubbleValue, bigRubble);
-
-	deleteUnit (&vehicle);
-}
-
-//------------------------------------------------------------------------------
-int cServer::deleteBuildings (std::vector<cBuilding*>& buildings)
-{
-	int rubble = 0;
-	while (buildings.empty() == false)
+	//add rubble
+	auto rubble = map[offset].getRubble();
+	if (rubble)
 	{
-		cBuilding* building = buildings[0];
-		if (building->owner)
-		{
-			rubble += building->data.buildCosts;
-			if (building->data.storeResType == sUnitData::STORE_RES_METAL)
-				rubble += building->data.storageResCur * 2; // stored material is always added completely to the rubble
-		}
+		rubble->RubbleValue += rubbleValue / 2;
+		if (rubble->data.isBig)
+			rubble->RubbleTyp = random(2);
 		else
-			rubble += building->RubbleValue * 2;
-		deleteUnit (building);
+			rubble->RubbleTyp = random(5);
 	}
-	return rubble;
+	else
+	{
+		if (rubbleValue > 2)
+			addRubble(x, y, rubbleValue / 2, bigUnit);
+	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::destroyUnit (cBuilding& b)
+int cServer::deleteBuildings(cMapField& field, bool deleteConnector)
 {
-	int offset = Map->getOffset (b.PosX, b.PosY);
+	auto buildings = field.getBuildings();
 	int rubble = 0;
-	bool big = false;
 
-	cBuilding* topBuilding = Map->fields[offset].getTopBuilding();
-	if (topBuilding && topBuilding->data.isBig)
+	auto b_it = buildings.begin();
+	while (b_it != buildings.end())
 	{
-		big = true;
-		offset = Map->getOffset (topBuilding->PosX, topBuilding->PosY);
+		if ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE && deleteConnector == false) continue;
+		if ((*b_it)->owner == NULL) continue;
 
-		std::vector<cBuilding*>* buildings = &Map->fields[offset + 1].getBuildings();
-		rubble += deleteBuildings (*buildings);
+		if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE) //no rubble for connectors
+			rubble += (*b_it)->data.buildCosts;
+		if ((*b_it)->data.storeResType == sUnitData::STORE_RES_METAL)
+			rubble += (*b_it)->data.storageResCur * 2; // stored material is always added completely to the rubble
 
-		buildings = &Map->fields[offset + Map->getSize()].getBuildings();
-		rubble += deleteBuildings (*buildings);
-
-		buildings = &Map->fields[offset + Map->getSize() + 1].getBuildings();
-		rubble += deleteBuildings (*buildings);
+		deleteUnit(*b_it);
+		b_it = buildings.begin();
 	}
 
-	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
-
-	std::vector<cBuilding*>* buildings = &Map->fields[offset].getBuildings();
-	rubble += deleteBuildings (*buildings);
-
-	if (surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2)
-		addRubble (offset % Map->getSize(), offset / Map->getSize(), rubble / 2, big);
+	return rubble;
 }
 
 //------------------------------------------------------------------------------

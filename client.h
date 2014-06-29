@@ -166,10 +166,10 @@ public:
 
 	/**
 	* destroys a unit
-	* play FX, add rubble and delete Unit
+	* play FX
 	*/
-	void destroyUnit (cVehicle& vehicle);
-	void destroyUnit (cBuilding& building);
+	void addDestroyFx (cVehicle& vehicle);
+	void addDestroyFx(cBuilding& building);
 
 	int getTurn() const;
 	unsigned int getRemainingTimeInSecond() const;

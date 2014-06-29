@@ -1732,7 +1732,7 @@ void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (message.popInt16());
 	if (!building) return;
 
-	destroyUnit (*building);
+	addDestroyFx (*building);
 }
 
 void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message)
@@ -2148,7 +2148,7 @@ sSubBase* cClient::getSubBaseFromID (int iID)
 	return NULL;
 }
 
-void cClient::destroyUnit (cVehicle& vehicle)
+void cClient::addDestroyFx (cVehicle& vehicle)
 {
 	// play explosion
 	if (vehicle.data.isBig)
@@ -2175,7 +2175,7 @@ void cClient::destroyUnit (cVehicle& vehicle)
 	}
 }
 
-void cClient::destroyUnit (cBuilding& building)
+void cClient::addDestroyFx (cBuilding& building)
 {
 	// play explosion animation
 	cBuilding* topBuilding = getMap()->fields[getMap()->getOffset (building.PosX, building.PosY)].getBuilding();

@@ -214,11 +214,8 @@ public:
 	/**
 	* deletes a unit (and additional units on the same field if necessary)
 	* from the game, creates rubble
-	* does not notify the client!
-	* the caller has to take care of the necessary actions on the client
 	*/
-	void destroyUnit (cVehicle& vehicle);
-	void destroyUnit (cBuilding& building);
+	void destroyUnit (cUnit& unit);
 
 	/**
 	* adds the unit to the map and player.
@@ -450,11 +447,10 @@ private:
 	void stopVehicleBuilding (cVehicle& vehicle);
 
 	/**
-	 * Helper for destroyUnit(cBuilding) that deletes all buildings
+	 * Helper for destroyUnit() that deletes all buildings
 	 * and returns the generated rubble value.
-	 * @author Paul Grathwohl
 	 */
-	int deleteBuildings (std::vector<cBuilding*>& buildings);
+	int deleteBuildings(cMapField& field, bool deleteConnector);
 
 	void runJobs();
 
