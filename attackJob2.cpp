@@ -24,9 +24,10 @@
 //TODO: uncover stealth units, when hit
 //TODO: sentry attacks
 //TODO: text and voice messages
-//TODO: load/save attackjobs
+//TODO: load/save attackjobs + isAttacking/isAttacked
 //TODO: resync attackjobs
 //TODO: extend checksum
+//TODO: server.cpp:2547
 
 //--------------------------------------------------------------------------
 cUnit* cAttackJob::selectTarget (int x, int y, char attackMode, const cMap& map, cPlayer* owner)

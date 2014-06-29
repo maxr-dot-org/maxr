@@ -11,6 +11,7 @@
 #include "player.h"
 #include "server.h"
 #include "vehicles.h"
+#include "buildings.h"
 
 bool cGameTimer::syncDebugSingleStep = false;
 
@@ -297,9 +298,8 @@ uint32_t calcClientChecksum (const cClient& client)
 			crc = calcCheckSum (vehicle->data.shotsCur, crc);
 			crc = calcCheckSum (vehicle->data.ammoCur, crc);
 			crc = calcCheckSum (vehicle->data.hitpointsCur, crc);
-			//TODO: movement points
-			//TODO: flight hight
-			//TODO: buildings
+			crc = calcCheckSum (vehicle->data.speedCur, crc);
+			crc = calcCheckSum (vehicle->FlightHigh, crc);
 			crc = calcCheckSum (vehicle->iID,  crc);
 			crc = calcCheckSum (vehicle->PosX, crc);
 			crc = calcCheckSum (vehicle->PosY, crc);
@@ -307,6 +307,19 @@ uint32_t calcClientChecksum (const cClient& client)
 			crc = calcCheckSum (vehicle->OffY, crc);
 			crc = calcCheckSum (vehicle->dir,  crc);
 		}
+
+		for (const cBuilding* building = players[i]->BuildingList;
+			building;
+			building = building->next)
+		{
+			crc = calcCheckSum(building->iID, crc);
+			crc = calcCheckSum(building->data.shotsCur, crc);
+			crc = calcCheckSum(building->data.ammoCur, crc);
+			crc = calcCheckSum(building->data.hitpointsCur, crc);
+			crc = calcCheckSum(building->dir, crc);
+		}
+
+
 	}
 	return crc;
 }
@@ -326,12 +339,28 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 				crc = calcCheckSum (vehicle->data.shotsCur, crc);
 				crc = calcCheckSum (vehicle->data.ammoCur, crc);
 				crc = calcCheckSum (vehicle->data.hitpointsCur, crc);
+				crc = calcCheckSum(vehicle->data.speedCur, crc);
+				crc = calcCheckSum(vehicle->FlightHigh, crc);
 				crc = calcCheckSum (vehicle->iID,  crc);
 				crc = calcCheckSum (vehicle->PosX, crc);
 				crc = calcCheckSum (vehicle->PosY, crc);
 				crc = calcCheckSum (vehicle->OffX, crc);
 				crc = calcCheckSum (vehicle->OffY, crc);
 				crc = calcCheckSum (vehicle->dir,  crc);
+			}
+		}
+
+		for (const cBuilding* building = playerList[i]->BuildingList;
+			building;
+			building = building->next)
+		{
+			if (Contains(building->seenByPlayerList, player) || building->owner == player)
+			{
+				crc = calcCheckSum(building->iID, crc);
+				crc = calcCheckSum(building->data.shotsCur, crc);
+				crc = calcCheckSum(building->data.ammoCur, crc);
+				crc = calcCheckSum(building->data.hitpointsCur, crc);
+				crc = calcCheckSum(building->dir, crc);
 			}
 		}
 	}
@@ -357,6 +386,7 @@ void compareGameData (const cClient& client, const cServer& server)
 			assert (clientVehicle->OffX == serverVehicle->OffX);
 			assert (clientVehicle->OffY == serverVehicle->OffY);
 			assert (clientVehicle->dir == serverVehicle->dir);
+			assert (clientVehicle->data.speedCur == serverVehicle->data.speedCur);
 		}
 	}
 #endif

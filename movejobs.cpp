@@ -990,6 +990,11 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 			Vehicle->moving = true;
 			Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
+			
+			Vehicle->data.speedCur += this->iSavedSpeed;
+			this->iSavedSpeed = 0;
+			Vehicle->DecSpeed(Waypoints->next->Costs);
+
 			//Vehicle->owner->doScan();
 			Vehicle->OffX = 0;
 			Vehicle->OffY = 0;
@@ -1067,6 +1072,10 @@ void cClientMoveJob::moveVehicle()
 			stopMoveSound();
 			return;
 		}
+
+		Vehicle->data.speedCur += iSavedSpeed;
+		iSavedSpeed = 0;
+		Vehicle->DecSpeed(Waypoints->next->Costs);
 
 		Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
 		Vehicle->owner->doScan();
@@ -1175,9 +1184,6 @@ void cClientMoveJob::doEndMoveVehicle()
 		return;
 	}
 
-	Vehicle->data.speedCur += iSavedSpeed;
-	iSavedSpeed = 0;
-	Vehicle->DecSpeed (Waypoints->next->Costs);
 	Vehicle->WalkFrame = 0;
 
 	sWaypoint* Waypoint = Waypoints;
