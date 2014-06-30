@@ -150,10 +150,6 @@ void cImage::resampleFile()
 			exit (-1);
 		}
 
-		surface->pitch = surface->w;	//this seems to be an SDL-Bug...
-										//sometimes the pitch of a surface has an wrong value
-		
-
 		//copy color table
 		surface->format->palette->ncolors = 256;
 		for (int i = 0; i < 256; i++ )
@@ -165,14 +161,14 @@ void cImage::resampleFile()
 		}
 		if ( backgroundIndex > 0 )
 		{
-			SDL_SetColorKey( surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
+			SDL_SetColorKey( surface, SDL_TRUE, SDL_MapRGBA(surface->format, 255, 0, 255, 0));
 		}
 		
 		for (int iX = 0; iX < sWidth; iX++ )
 		{
 			for (int iY = 0; iY < sHeight; iY++ )
 			{
-				Uint8 *pixel = (Uint8*) surface->pixels  + (iY * sWidth + iX);
+				Uint8 *pixel = (Uint8*) surface->pixels  + (iY * surface->pitch + iX);
 
 				*pixel = backgroundIndex;
 				
@@ -712,11 +708,10 @@ SDL_Surface* getImageFromRes(string file_name, int imageNr)
 //note that the information about the player colors are lost, when blitting the surface
 void removePlayerColor( SDL_Surface *surface)
 {
+	SDL_Color color = {255, 255, 255, 0};
 	for ( int i = 32; i < 39 ; i++ )
 	{
-		surface->format->palette->colors[i].r = 255;
-		surface->format->palette->colors[i].g = 255;
-		surface->format->palette->colors[i].b = 255;
+		SDL_SetPaletteColors(surface->format->palette, &color, i, 1);
 	}
 }
 
@@ -857,11 +852,14 @@ void resizeSurface ( SDL_Surface*& surface, int x, int y, int h, int w )
 		cout << "Out of memory";
 		exit (-1);
 	}
-	resizedSurface->pitch = resizedSurface->w;	//this seems to be an SDL-Bug...
-												//sometimes the pitch of a surface has an wrong value
-	SDL_SetColors(resizedSurface, surface->format->palette->colors, 0, 256);
-	SDL_FillRect( resizedSurface, 0, SDL_MapRGB( resizedSurface->format, 255, 0, 255));
-	resizedSurface->format->colorkey = surface->format->colorkey;
+	SDL_SetPaletteColors(resizedSurface->format->palette, surface->format->palette->colors, 0, 256);
+	
+	Uint32 key;
+	if (SDL_GetColorKey(surface, &key) == 0)
+		SDL_SetColorKey(resizedSurface, SDL_TRUE, key);
+
+	SDL_FillRect( resizedSurface, 0, SDL_MapRGBA( resizedSurface->format, 255, 0, 255, 0));
+
 
 	SDL_BlitSurface( surface, &src_rect, resizedSurface, &dst_rect);
 
@@ -876,7 +874,7 @@ void setColor( SDL_Surface* surface, unsigned char nr, unsigned char r, unsigned
 	color.r = r;
 	color.g = g;
 	color.b = b;
-	SDL_SetColors( surface, &color, nr, 1);
+	SDL_SetPaletteColors( surface->format->palette, &color, nr, 1);
 }
 
 void setAnimationColor( SDL_Surface* surface, unsigned char index, unsigned char frame )

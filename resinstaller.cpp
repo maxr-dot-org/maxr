@@ -277,11 +277,8 @@ int installVehicleGraphics()
 	{
 		surface = getImageFromRes( "LRGTAPE", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;
-		// this seems to be an SDL-Bug...
-		// sometimes the pitch of a surface has an wrong value
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -343,11 +340,8 @@ int installVehicleGraphics()
 	{
 		surface = getImageFromRes("SMLTAPE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;
-		// this seems to be an SDL-Bug...
-		// sometimes the pitch of a surface has an wrong value
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -694,11 +688,8 @@ int installVehicleGraphics()
 	{
 		surface = getImageFromRes( "LRGTAPE", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 128, 8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;
-		// this seems to be an SDL-Bug...
-		// sometimes the pitch of a surface has an wrong value
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -997,11 +988,8 @@ int installVehicleGraphics()
 	{
 		surface = getImageFromRes("SMLTAPE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 256, 64, 8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;
-		// this seems to be an SDL-Bug...
-		// sometimes the pitch of a surface has an wrong value
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 
 		dst_rect.x = 0;
 		dst_rect.y = 0;
@@ -1102,11 +1090,8 @@ int installVehicleGraphics()
 	{
 		surface = getImageFromRes("SCANNER", 8);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 360, 45, 8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
-		output->pitch = output->w;
-		// this seems to be an SDL-Bug...
-		// sometimes the pitch of a surface has an wrong value
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 
 		resizeSurface( surface, 2, 1, 45, 45);
 		dst_rect.x = 0;
@@ -1374,8 +1359,8 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("CNCT_4W", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024, 64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.y = 0;
 		for ( int i = 0; i < 1024; i+=64 )
 		{
@@ -1469,8 +1454,8 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("S_CNCT4W", 0);
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024, 64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.y = 0;
 		for ( int i = 0; i < 1024; i+=64 )
 		{
@@ -1658,8 +1643,8 @@ int installBuildingGraphics()
 		surface = getImageFromRes("ANTIAIR");
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 16;
@@ -1698,8 +1683,8 @@ int installBuildingGraphics()
 		surface = getImageFromRes("ARTYTRRT");
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 16;
@@ -1737,8 +1722,8 @@ int installBuildingGraphics()
 		surface = getImageFromRes("ANTIMSSL", 0);
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 15;
@@ -1775,8 +1760,8 @@ int installBuildingGraphics()
 		surface = getImageFromRes("GUNTURRT", 0);
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 512, 64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.y = 0;
 		dst_rect.x = 0;
 		src_rect.x = 13;
@@ -1829,8 +1814,8 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("LANDMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 64,64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.x = 22;
 		dst_rect.y = 22;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
@@ -1844,9 +1829,8 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("S_LANDMI");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
-		output->pitch = output->w;					// workaround for an SDL-Bug
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.x = 22;
 		dst_rect.y = 22;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
@@ -1880,7 +1864,6 @@ int installBuildingGraphics()
 
 		// remove the clan logo from the first image
 		surface = loadPCX(path + "roof.pcx" );
-		surface->pitch = surface->w;					// workaround for an SDL-Bug
 		dst_rect.x = 32;
 		dst_rect.y = 40;
 		SDL_BlitSurface( surface, NULL, output, &dst_rect );
@@ -1926,8 +1909,8 @@ int installBuildingGraphics()
 		surface = getImageFromRes("RADAR", 0);
 		removePlayerColor( surface );
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 1024,64,8,0,0,0,0);
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.x = 0;
 		dst_rect.y = 0;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
@@ -1970,9 +1953,8 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("SEAMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
-		output->pitch = output->w;	// workaround for an SDL-Bug
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		dst_rect.x = 23;
 		dst_rect.y = 23;
 		SDL_BlitSurface(surface, 0, output, &dst_rect);
@@ -1988,9 +1970,8 @@ int installBuildingGraphics()
 	{
 		surface = getImageFromRes("SEAMINE");
 		output = SDL_CreateRGBSurface(SDL_SWSURFACE, 42,41,8,0,0,0,0);
-		output->pitch = output->w;	// workaround for an SDL-Bug
-		SDL_SetColors(output, surface->format->palette->colors, 0, 256);
-		SDL_FillRect( output, 0, SDL_MapRGB( output->format, 255, 0, 255));
+		SDL_SetPaletteColors(output->format->palette, surface->format->palette->colors, 0, 256);
+		SDL_FillRect( output, 0, SDL_MapRGBA( output->format, 255, 0, 255, 0));
 		SDL_FreeSurface( surface );
 		savePCX(output, path + "shw.pcx");
 		SDL_FreeSurface( output );
@@ -2284,7 +2265,7 @@ int installFX()
 {
 	string path;
 	SDL_Surface *surface, *output;
-	iTotalFiles = 8;
+	iTotalFiles = 9;
 	iErrors = 0;
 	iInstalledFiles = 0;
 
@@ -2446,6 +2427,7 @@ int installFX()
 	}
 	END_INSTALL_FILE( path + "torpedo.pcx" )
 
+
 #if 0
 // start iMuzzleTypes for alien units
 	// alien tank plasma ball
@@ -2531,7 +2513,7 @@ int installGfx()
 	string path;
 	char szNum[13];
 	SDL_Surface *surface, *output;
-	iTotalFiles = 42;
+	iTotalFiles = 44;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	
@@ -2983,7 +2965,6 @@ int installGfx()
 	try
 	{
 		output = loadPCX( path + "hud_stuff.pcx");
-		output->pitch = output->w;
 		SDL_Rect dst_rect = {0, 0, 0, 0};
 
 		int backgroundIndex = 17;
@@ -3304,7 +3285,7 @@ int installBuildingSounds()
 int installVehicleSounds()
 {
 	string path;
-	iTotalFiles = 173;
+	iTotalFiles = 178;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 1;
@@ -3616,7 +3597,7 @@ void installVoices()
 {
 	string path;
 	string waveExt;
-	iTotalFiles = 57;
+	iTotalFiles = 65;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 1;
@@ -4120,14 +4101,12 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	while (1)
 	{
 		cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << endl;
-	#ifdef EIKO
-		pathFromUser = "C:\\Users\\eiko\\Desktop\\MAX-Develop\\Original Versions\\MAX";
-	#else
+
 		// read path from cin
 		getline(cin, pathFromUser, '\n');
 		trimSpaces(pathFromUser);
 		trimQuotes(pathFromUser);
-	#endif
+
 		if (validateMAXPath (pathFromUser))
 			break;
 		
@@ -4168,53 +4147,26 @@ bool validateOutputPath (string& outputPath)
 	return false;
 }
 
-
-string validateRessources ( string zChoices )
-{
-	if ( zChoices.find("all") != string::npos )
-	{
-		zChoices = "0123456789ab";
-	}
-	if ( zChoices.find("z") != string::npos )
-	{
-		zChoices = "012345b";
-	}
-	return zChoices;
-}
-
+bool gNewGrafic = false;
 
 void getResChoiceFromUser()
 {
 	string sChoiceFromUser = "";
-	// what kind of ressources should the resinstaller import into M.A.X. Reloaded
-	cout << "What kind of ressources should the resinstaller import into your M.A.X. Reloaded installation?" << endl;
-	cout << "========================================================================" << endl;
-	cout << "All Ressources       (all)" << endl;
-	cout << "==========================" << endl;
-	cout << "Building Sounds        (0)" << endl;
-	cout << "Vehicle Sounds         (1)" << endl;
-	cout << "Voices                 (2)" << endl;
-	cout << "Sounds                 (3)" << endl;
-	cout << "Music                  (4)" << endl;
-	cout << "Movies                 (5)" << endl;
-	cout << "FX                     (6)" << endl;
-	cout << "GFX                    (7)" << endl;
-	cout << "Vehicle Videos         (8)" << endl;
-	cout << "Vehicle Graphics       (9)" << endl;
-	cout << "Building Graphics      (a)" << endl;
-	cout << "Maps                   (b)" << endl;
-	cout << "==========================" << endl;
-	cout << "All but no old Graphic (z)" << endl;
-	cout << "==========================" << endl;
-	cout << "Example: Type \"0123458b\", \"all\" or \"z\" without the \"" << endl;
 
-	getline(cin, sChoiceFromUser); // get user input
-	for(unsigned int i = 0; i < (sChoiceFromUser.length()); i++)
-		{
-		// convert string into lowercase
-		sChoiceFromUser[i] = tolower(sChoiceFromUser[i]);
-		}
-	sResChoice = validateRessources(sChoiceFromUser); // call validate function
+	// use original MAX graphics?
+	cout << "Would you like to use the new M.A.X. Reloaded graphics? Type y for yes." << endl;
+	getline(cin, sChoiceFromUser);
+	writeLog("sChoiceFromUser from command line: " + sChoiceFromUser + TEXT_FILE_LF);
+	sChoiceFromUser = toupper(sChoiceFromUser[0]);
+	writeLog("sChoiceFromUser from command line: toupper " + sChoiceFromUser + TEXT_FILE_LF);
+	if(sChoiceFromUser != "Y")
+	{
+		gNewGrafic = false;
+	}
+	else
+	{
+		gNewGrafic = true;
+	}
 }
 
 //-------------------------------------------------------------
@@ -4244,16 +4196,11 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 	while (1)
 	{
 		cout << "Please enter full path to M.A.X.R. installation for extracted files:" << endl;
-#ifdef EIKO
-		cout << "\n";
-		// pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAXR Install\\output - install skript\\";
-		pathFromUser = "C:\\Users\\eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
-#else
+
 		// read the path from cin
 		getline(cin, pathFromUser);
 		trimSpaces(pathFromUser);
 		trimQuotes(pathFromUser);
-#endif
 		
 		if (validateOutputPath (pathFromUser))
 			break;
@@ -4341,139 +4288,28 @@ bool gFinishedInstalling = false; // MAC: needed as flag, for closing the proges
 int installEverything (void*)
 {
 	gFinishedInstalling = false;
+	installBuildingSounds ();
+	installVehicleSounds ();
 
-	if ( sResChoice.find("0") != string::npos )
-	{
-		installBuildingSounds ();
-	}
-	else
-	{
-		cout << "Skip Building Sounds" << endl;
-		writeLog( string("Skip Building Sounds") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("1") != string::npos )
-	{
-		installVehicleSounds ();
-	}
-	else
-	{
-		cout << "Skip Vehicle Sounds" << endl;
-		writeLog( string("Skip Vehicle Sounds") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("2") != string::npos )
-	{
-		installVoices ();
-	}
-	else
-	{
-		cout << "Skip Voices" << endl;
-		writeLog( string("Skip Voices") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("3") != string::npos )
-	{
-		installSounds ();
-	}
-	else
-	{
-		cout << "Skip Sounds" << endl;
-		writeLog( string("Skip Sounds") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("4") != string::npos )
-	{
-		installMusic ();
-	}
-	else
-	{
-		cout << "Skip Music" << endl;
-		writeLog( string("Skip Music") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("5") != string::npos )
-	{
-		installMVEs ();
-	}
-	else
-	{
-		cout << "Skip Movies" << endl;
-		writeLog( string("Skip Movies") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("6") != string::npos )
+	if(!(gNewGrafic))
 	{
 		installFX();
-	}
-	else
-	{
-		cout << "Skip FX" << endl;
-		writeLog( string("Skip FX") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("7") != string::npos )
-	{
 		installGfx();
-	}
-	else
-	{
-		cout << "Skip GFX" << endl;
-		writeLog( string("Skip GFX") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("8") != string::npos )
-	{
 		installVehicleVideos();
-	}
-	else
-	{
-		cout << "Skip Vehicle Videos" << endl;
-		writeLog( string("Skip Vehicle Videos") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("9") != string::npos )
-	{
 		installVehicleGraphics();
-	}
-	else
-	{
-		cout << "Skip Vehicle Graphics" << endl;
-		writeLog( string("Skip Vehicle Graphics") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
-	if ( sResChoice.find("a") != string::npos )
-	{
 		installBuildingGraphics();
 	}
 	else
 	{
-		cout << "Skip Building Graphics" << endl;
-		writeLog( string("Skip Building Graphics") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
+		cout << "========================================================================\n";
+		cout << "Skip old graphics\n";
 	}
 
-	if ( sResChoice.find("b") != string::npos )
-	{
-		installMaps ();
-	}
-	else
-	{
-		cout << "Skip Maps" << endl;
-		writeLog( string("Skip Maps") + TEXT_FILE_LF);
-		writeLog( string("========================================================================") + TEXT_FILE_LF);
-	}
-
+	installVoices ();
+	installMaps ();
+	installSounds ();
+	installMVEs ();
+	installMusic ();
 	gFinishedInstalling = true;
 
 	return 0;
@@ -4516,24 +4352,18 @@ int main ( int argc, char* argv[] )
 	sAppName = argv[0];
 
 	// look for paths in argv[]
-
-	// original M.A.X. Path (CD or installation)
 	if (argc > 1) sMAXPath = argv[1];
 	else sMAXPath = "";
 	
-	// M.A.X. Reloaded Path
 	if (argc > 2) sOutputPath = argv[2];
 	else sOutputPath = "";
 	
-	// language german, english, french, italian 
 	if (argc > 3) sLanguage = argv[3];
 	else sLanguage = "";
 
-	// Parameter for gNewGrafic
+	// 4. Parameter for gNewGrafic yes / no
 	if (argc > 4) sResChoice = argv[4];
 	else sResChoice = "";
-	
-	sResChoice = validateRessources(sResChoice); // validate the parameter for importing the ressources
 
 	if (string(argv[argc-1]) == "/donotelevate")
 		bDoNotElevate = true;
@@ -4548,9 +4378,21 @@ int main ( int argc, char* argv[] )
 	if (sOutputPath.size () == 0)
 		exit (-1);
 
-	if(sResChoice.empty())
+	if(!sResChoice.empty())
 	{
-		// what ressources should the resinstaller import into M.A.X. Reloaded? Call user input!
+		writeLog("UserNewGrafics argument from command line: " + sResChoice);
+		if(sResChoice.compare("-Gyes") == 0)
+		{
+			gNewGrafic = true;
+		}
+		else
+		{
+			gNewGrafic = false;
+		}
+	}
+	else
+	{
+		// keep old graphics? user input
 		getResChoiceFromUser();
 	}
 	

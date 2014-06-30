@@ -68,11 +68,11 @@ int savePCX_8bpp(SDL_Surface* surface, string fileName)
 	SDL_RWwrite(file, PCXHeader, 128, 1);
 	
 	bild = (unsigned char*) surface->pixels;
-	
+
 	// RLC berechnen
 	for (z = 0; z <= Z_Index; z++)
 	{
-		Index = (long)z * (long)surface->w;
+		Index = (long)z * (long)surface->pitch;
 		s = 0;
 		while (s <= S_Index)
 		{
@@ -198,7 +198,7 @@ int savePCX_32bpp(SDL_Surface* surface, string fileName)
 	// RLC berechnen
 	for (z = 0; z <= Z_Index; z++)
 	{
-		Index = (long)z * (long)surface->w;
+		Index = (long)z * (long)surface->pitch;
 		s = 0;
 		while (s <= S_Index)
 		{
@@ -286,7 +286,7 @@ SDL_Surface *loadPCX ( string name )
 	y = SDL_ReadLE16 ( file );
 	x++;y++;
 	sf = SDL_CreateRGBSurface ( SDL_SWSURFACE, x, y, 8, 0,0,0,0 );
-	SDL_SetColorKey ( sf, SDL_SRCCOLORKEY, 0xFF00FF );
+	SDL_SetColorKey ( sf, SDL_TRUE, 0xFF00FF );
 	
 	_ptr= (Uint8*) sf->pixels;
 	SDL_RWseek ( file, 128, SEEK_SET );
@@ -301,14 +301,14 @@ SDL_Surface *loadPCX ( string name )
 			SDL_RWread ( file, &byte, 1, 1 );
 			for ( j = 0; j < z; j++ )
 			{
-				_ptr[k+i*x] = byte;
+				_ptr[k+i*sf->pitch] = byte;
 				k++;
 				if ( k == x ) break;
 			}
 		}
 		else
 		{
-			_ptr[k+i*x] = byte;
+			_ptr[k+i*sf->pitch] = byte;
 			k++;
 		}
 		if ( k == x )
@@ -322,15 +322,14 @@ SDL_Surface *loadPCX ( string name )
 	//load color table
 	SDL_RWseek ( file, -768, SEEK_END );
 
+	SDL_Color colors[256];
 	for ( i = 0; i < 256; i++ )
 	{
-		SDL_RWread ( file, &byte, 1, 1 );
-		sf->format->palette->colors[i].r = byte;
-		SDL_RWread ( file, &byte, 1, 1 );
-		sf->format->palette->colors[i].g = byte;
-		SDL_RWread ( file, &byte, 1, 1 );
-		sf->format->palette->colors[i].b = byte;
+		SDL_RWread ( file, &colors[i].r, 1, 1 );;
+		SDL_RWread ( file, &colors[i].g, 1, 1 );
+		SDL_RWread ( file, &colors[i].b, 1, 1 );
 	}
+	SDL_SetPaletteColors(sf->format->palette, colors, 0, 256);
 	
 	SDL_RWclose ( file );	
 	return sf;
