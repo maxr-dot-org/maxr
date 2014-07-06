@@ -5,6 +5,7 @@ class cMap;
 class cPlayer;
 class cNetMessage;
 class cFx;
+class cMenu;
 
 #include "autoptr.h"
 
@@ -44,7 +45,7 @@ private:
 
 	void fire();
 	cFx* createMuzzleFx();
-	bool impact();
+	bool impact(cMenu* activeMenu);
 	void destroyTarget();
 
 public:
@@ -52,16 +53,15 @@ public:
 	* selects a target unit from a map field, depending on the attack mode.
 	*/
 	static cUnit* selectTarget(int x, int y, char attackMode, const cMap& map, cPlayer* owner);
-	static void runAttackJobs(std::vector<cAttackJob*>& attackJobs);
-	static void destroyUnit(cUnit& unit, cServer* server, cClient* client);
+	static void runAttackJobs(std::vector<cAttackJob*>& attackJobs, cMenu* activeMenu = NULL);
 
 	cAttackJob(cServer* server, cUnit* aggressor, int targetX, int targetY);
 	cAttackJob(cClient* client, cNetMessage& message);
 
-	void onRemoveUnit(cUnit& unit_) { if (aggressor == &unit_) aggressor = NULL;}
+	void onRemoveUnit(cUnit& unit_) { if (aggressor == &unit_) aggressor = NULL;} //TODO: remove
 
 	cNetMessage* serialize() const;
-	void run();
+	void run(cMenu* activeMenu);
 	bool finished() const;
 
 

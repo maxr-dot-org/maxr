@@ -3508,8 +3508,7 @@ int cServer::deleteBuildings(cMapField& field, bool deleteConnector)
 	auto buildings = field.getBuildings();
 	int rubble = 0;
 
-	auto b_it = buildings.begin();
-	while (b_it != buildings.end())
+	for (auto b_it = buildings.begin(); b_it != buildings.end(); ++b_it)
 	{
 		if ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE && deleteConnector == false) continue;
 		if ((*b_it)->owner == NULL) continue;

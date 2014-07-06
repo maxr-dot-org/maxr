@@ -28,6 +28,7 @@
 //TODO: resync attackjobs
 //TODO: server.cpp:2547
 
+
 //--------------------------------------------------------------------------
 cUnit* cAttackJob::selectTarget (int x, int y, char attackMode, const cMap& map, cPlayer* owner)
 {
@@ -75,11 +76,11 @@ cUnit* cAttackJob::selectTarget (int x, int y, char attackMode, const cMap& map,
 	return targetBuilding;
 }
 
-void cAttackJob::runAttackJobs(std::vector<cAttackJob*>& attackJobs)
+void cAttackJob::runAttackJobs(std::vector<cAttackJob*>& attackJobs, cMenu* activeMenu)
 {
 	for (auto &attackJob : attackJobs)
 	{
-		attackJob->run();
+		attackJob->run(activeMenu);
 		if (attackJob->finished())
 		{
 			delete attackJob;
@@ -113,7 +114,19 @@ cAttackJob::cAttackJob(cServer* server_, cUnit* aggressor_, int targetX_, int ta
 	AutoPtr<cNetMessage> message(serialize());
 	server->sendNetMessage(message);
 
-	//TODO: lock unit
+	//lock agressor
+	aggressor->attacking = true;
+
+	// make the aggressor visible on all clients
+	// who can see the aggressor offset
+	for (auto player : server->PlayerList)
+	{
+		if (player->canSeeAnyAreaUnder(*aggressor) == false) continue;
+		if (aggressor->owner == player) continue;
+
+		aggressor->setDetectedByPlayer(*server, player);
+	}
+
 	//TODO: synchronize isAttacked and isAttacking flags by send unit data
 }
 
@@ -134,6 +147,10 @@ cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
 	aggressorPlayerNr = message.popInt16();
 	fireDir = message.popInt16();
 	aggressorID = message.popInt32();
+
+	aggressor = client->getUnitFromID(aggressorID);
+	if (aggressor)
+		aggressor->attacking = true;
 
 }
 
@@ -157,7 +174,7 @@ cNetMessage* cAttackJob::serialize() const
 }
 
 
-void cAttackJob::run()
+void cAttackJob::run(cMenu*activeMenu)
 {
 	if (counter > 0)
 	{
@@ -182,7 +199,7 @@ void cAttackJob::run()
 		case S_FIRING:
 			if (counter == 0)
 			{
-				bool destroyed = impact();
+				bool destroyed = impact(activeMenu);
 				if (destroyed)
 				{
 					counter = DESTROY_DELAY;
@@ -423,7 +440,7 @@ cFx* cAttackJob::createMuzzleFx()
 	}
 }
 
-bool cAttackJob::impact()
+bool cAttackJob::impact(cMenu* activeMenu)
 {
 	//select target
 	cPlayer* player = client ? client->getPlayerFromNumber(aggressorPlayerNr) : server->getPlayerFromNumber(aggressorPlayerNr);
@@ -480,13 +497,13 @@ bool cAttackJob::impact()
 			{
 				client->addFx(new cFxExploSmall(b.PosX * 64 + 32, b.PosY * 64 + 32));
 			}
+			client->deleteUnit(aggressor, activeMenu);
 		}
 		else
 		{
-			// delete unit is only called on server, because it sends 
-			// all nessesary net messages to update the client
-			server->deleteUnit(aggressor);
+			server->deleteUnit(aggressor, false);
 		}
+		aggressor = NULL;
 	}
 	else if (!destroyed && client)
 	{
@@ -512,6 +529,8 @@ bool cAttackJob::impact()
 		client->getGameGUI().addCoords(report);
 	}
 
+	if (aggressor)
+		aggressor->attacking = false;
 
 	if (client)
 		client->getGameGUI().updateMouseCursor();

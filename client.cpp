@@ -1925,59 +1925,53 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	return NULL;
 }
 
-void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
+void cClient::deleteUnit(cUnit* unit, cMenu* activeMenu)
 {
-	if (!Building) return;
-	gameGUI->onRemoveUnit (*Building);
+	if (!unit) return;
 
-	if (activeMenu) activeMenu->handleDestroyUnit (*Building);
-	getMap()->deleteBuilding (*Building);
+	gameGUI->onRemoveUnit(*unit);
 
-	if (!Building->owner)
+	if (activeMenu) activeMenu->handleDestroyUnit(*unit);
+
+	if (unit->isABuilding())
 	{
-		remove_from_intrusivelist (neutralBuildings, *Building);
-		delete Building;
-		return;
+		cBuilding* building = static_cast<cBuilding*>(unit);
+		getMap()->deleteBuilding(*building);
+
+		if (!unit->owner)
+		{
+			remove_from_intrusivelist(neutralBuildings, *building);
+			delete building;
+			return;
+		}
+
+		remove_from_intrusivelist(building->owner->BuildingList, *building);
+
+		if (building->owner == ActivePlayer)
+			building->owner->base.deleteBuilding(building, NULL);
+	}
+	else
+	{
+		cVehicle* vehicle = static_cast<cVehicle*>(unit);
+		getMap()->deleteVehicle(*vehicle);
+
+		remove_from_intrusivelist(vehicle->owner->VehicleList, *vehicle);
 	}
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
-		attackJobs[i]->onRemoveUnit (*Building);
+		attackJobs[i]->onRemoveUnit(*unit);
 	}
-	remove_from_intrusivelist (Building->owner->BuildingList, *Building);
 
-	if (Building->owner == ActivePlayer)
-		Building->owner->base.deleteBuilding (Building, NULL);
+	helperJobs.onRemoveUnit(unit);
 
-	cPlayer* owner = Building->owner;
-	delete Building;
+	cPlayer* owner = unit->owner;
+	owner->lastDeletedUnit = unit->iID;
+	delete unit;
 
 	owner->doScan();
-}
 
-void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
-{
-	if (!Vehicle) return;
 
-	if (activeMenu) activeMenu->handleDestroyUnit (*Vehicle);
-	getMap()->deleteVehicle (*Vehicle);
-
-	for (unsigned int i = 0; i < attackJobs.size(); i++)
-	{
-		attackJobs[i]->onRemoveUnit (*Vehicle);
-	}
-	helperJobs.onRemoveUnit (Vehicle);
-
-	gameGUI->onRemoveUnit (*Vehicle);
-
-	cPlayer* owner = Vehicle->owner;
-	remove_from_intrusivelist (Vehicle->owner->VehicleList, *Vehicle);
-
-	owner->lastDeletedUnit = Vehicle->iID;
-
-	delete Vehicle;
-
-	owner->doScan();
 }
 
 void cClient::handleEnd()
@@ -2123,12 +2117,12 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID) const
 	return NULL;
 }
 
-void cClient::doGameActions (cMenu* activeMenu) //TODO: activeMenu
+void cClient::doGameActions (cMenu* activeMenu)
 {
 	runFx();
 
 	// run attackJobs
-	cAttackJob::runAttackJobs(attackJobs);			
+	cAttackJob::runAttackJobs(attackJobs, activeMenu);			
 
 	// run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();

@@ -130,8 +130,7 @@ public:
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteUnit (cBuilding* Building, cMenu* activeMenu);
-	void deleteUnit (cVehicle* Vehicle, cMenu* activeMenu);
+	void deleteUnit (cUnit* unit, cMenu* activeMenu);
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!
