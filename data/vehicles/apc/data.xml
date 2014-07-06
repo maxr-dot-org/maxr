@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 6" name="apc">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Armored Personnel Carrier\n\nFast armored vehicle to transport infantery and infiltrators. The APC can move slowly underwater as well es on land. Only enemy corvettes can detect an APC moving under water.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="12"/>
+    <Build_As String="SmallGroundVehicle"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="10"/>
+    <Factor_Ground Num="1"/>
+    <Factor_Sea Num="3"/>
+    <Factor_Coast Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="8"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="4"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+
+    <Is_Stealth_On Num="2"/>
+  </Abilities>
+
+  <Storage>
+    <Capacity_Units Num="6"/>
+    <Capacity_Units_Image_Type Const="Human"/>
+    <Capacity_Units_Type String="Human"/>
+    <Is_Storage_Type String="Ground"/>
+  </Storage>
+</Unit>

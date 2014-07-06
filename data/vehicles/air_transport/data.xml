@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 1" name="air_transport">
+  <!-- ID ist eine einmalige Nummer, über die dieser Einheitentyp identifiziert wird-->
+  <!-- name ist der Einheitenname, der benutzt wird, wenn keine Übersetzung für die ID gefunden wird-->
+
+  <Header>
+
+    <Author name="Someone">
+    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <!-- "Author" ist der ursprüngliche Ersteller. Wichtiger sind die Einträge in "Editor". Der letzte Editor wird vom Spiel genannt, wenn es die XML-Datei nicht auswerten kann. Dadurch hat man einen Ansprechpartner als DAU. -->
+
+    <Game_Version text="0.2.5"/>
+    <!--"Game_Version" gibt die Spiel-Version an, ab der die Einheit im Spiel funktioniert.-->
+  </Header>
+
+  <Description lang="ENG">
+    Air Transport\n\nHeavy aircraft capable of holding up to three ground units.
+  </Description>
+  <!-- Der "Description"-Block dient der spiel-internen Erklärung, wenn keine Übersetzung gefunden wurde. -->
+
+  <Weapon>
+      <Muzzle_Type Const="None"/>
+      <!-- Typ des Geschosses -->
+      <!-- None: Kein Geschoss -->
+      <!-- Big: Ein großes Geschoss -->
+      <!-- Rocket: Eine normale Rackete -->
+      <!-- Small: Ein kleines Geschoss -->
+      <!-- Med: Ein mittleres Geschoss -->
+      <!-- Med_Long: Ein mittelgroßes aber langes Geschoss -->
+      <!-- Rocket_Cluster: Eine Clusterrackete -->
+      <!-- Torpedo: Ein Torpedo -->
+      <!-- Sniper: Eine Gewehrkugel -->
+
+      <Ammo_Quantity Num="0"/>
+      <!-- Wieviel Schuss hat diese Einheit bevor sie aufmunitioniert werden muss -->
+
+      <Can_Attack Num="0"/>
+      <!-- Welche Einheiten kann diese Einheit angreifen -->
+      <!-- - None: 0 -->
+      <!-- - Air: 1 -->
+      <!-- - Sea: 2 -->
+      <!-- - Ground: 4 -->
+      <!-- - Sub: 16 (Einheiten die auf see unsichtbar sind)-->
+      <!-- Kombinationen sind möglich. Z.b. 3 für Air+Sea oder 20 für Ground+Sub -->
+
+      <Shots Num="0"/>
+      <!-- Wieviel Schuss hat die Einheit mit dieser Waffe bei Stillstand -->
+
+      <Range Num="0"/>
+      <!-- Wie groß ist die Reichweite der Einheit? -->
+
+      <Damage Num="0"/>
+      <!-- Wie groß ist der angerichtete Schaden? -->
+
+      <Can_Drive_And_Fire YN="No"/>
+      <!-- Verliert die Einheit alle Schüsse mit der ersten Bewegung oder nehmen diese erst langsam mit den Bewegungspunkten ab? -->
+
+  </Weapon>
+
+  <Production>
+
+    <Built_Costs Num="18"/>
+    <!-- Baukosten bei einfacher Baugeschwindigkeit -->
+
+    <Can_Build String=""/>
+    <Build_As String="Plane"/>
+    <!-- Standardvorschläge: -->
+    <!-- - BigBuilding -->
+    <!-- - SmallBuilding -->
+    <!-- - BigGroundVehicle -->
+    <!-- - SmallGroundVehicle -->
+    <!-- - Ship -->
+    <!-- - Plane -->
+    <!-- - Human -->
+    <!-- Wenn Can_Build und Build_By bei zwei unterschiedlichen Einheiten übereinstimmen, kann die eien die entsprechend andere bauen -->
+
+    <Max_Build_Factor Num="0"/>
+    <!-- Der maximale Bau-Beschläunigungs-Faktor (Bei der Kaserne nur 1) -->
+
+    <Can_Build_Path YN="No"/>
+    <!-- Kann die einheiten im Pfad bauen (es sollte dann noch geprüft werden ob die zu bauende Einheit auch klein ist) -->
+
+    <Can_Build_Repeat YN="No"/>
+    <!-- Can der Bauvorgang auch in Schleife geschalten werden. Geht nur bei internem Bau. S.U. -->
+
+  </Production>
+
+  <Movement>
+
+    <Movement_Sum Num="18"/>
+    <!-- Wie weit kann diese Einehit sich unter normalen Umständen maximal bewegen -->
+
+    <Factor_Ground Num="0"/>
+    <Factor_Sea Num="0"/>
+    <Factor_Coast Num="0"/>
+    <Factor_Air Num="1"/>
+    <!-- Auf welchem Terrain kann sich die Einheit bewegen und wieviele Bewegungspunkte kostet sie dies. -->
+    <!-- Diese Attribute stellen auch fest auf welchem Terrain die Einheit errichtet werden kann. -->
+
+  </Movement>
+
+  <Abilities>
+
+    <Is_Big YN="No"/>
+    <!-- Ist die eiheit 1x1 felder oder 2x2 felder groß? -->
+
+    <Connects_To_Base YN="No"/>
+    <!-- Wird die Einheit an die Basis angeschlossen? -->
+
+    <Armor Num="4"/>
+    <!-- Wieviel Schaden absorbiert die Panzerung -->
+
+    <Hitpoints Num="18"/>
+    <!-- Wieviel Schaden kann die Struktur einstecken -->
+
+    <Scan_Range Num="5"/>
+    <!--Wie weit guckt die Einheit mit normalen "Kameraaugen"-->
+
+    <Modifies_Speed Num="0"/>
+    <!-- mit welchem Faktor werden die kosten für bewegungen auf diesem feld multipliziert. ( 0 steht für keine multiplikation ) -->
+
+    <Can_Clear_Area YN="No"/>
+    <!--Kann die Einheit Schutt beseitigen? -->
+
+    <Can_Be_Captured YN="Yes"/>
+    <!-- Kann die Einheit gefangen genommen werden? Gebäude z.B. Nein -->
+
+    <Can_Be_Disabled YN="Yes"/>
+    <!-- Kann die Einheit durch Infiltratoren abgeschaltet werden. Trifft auf die meisten Einheiten zu -->
+
+    <Can_Disable YN="No"/>
+    <!--Kann die Einheit Gegner abschalten-->
+
+    <Can_Capture YN="No"/>
+    <!--Kann die Einheit Gegner erobern-->
+
+    <Can_Repair YN="No"/>
+    <!--Kann sie andere reparieren-->
+
+    <Can_Rearm YN="No"/>
+    <!--Kann sie andere aufladen (Munition)-->
+
+    <Can_Research YN="No"/>
+    <!--Kann sie Forschung betreiben-->
+
+    <Can_Place_Mines YN="No"/>
+    <!--Könne Minen ausgelegt werden-->
+
+    <Can_Survey YN="No"/>
+    <!--Kann die Einheit Resourcen aufspüren-->
+
+    <Does_Self_Repair YN="No"/>
+    <!-- Repariert sich die Einheit selbst mit Metall? -->
+
+    <Converts_Gold Num="0"/>
+    <!-- Wird hier Gold raffiniert. Wenn ja wie viel pro Runde? -->
+
+    <Can_Mine_Max_Resource Num="0"/>
+    <!-- Wieviel kann die Einheit maximal an Materialien fördern? -->
+
+    <Needs_Energy Num="0"/>
+    <!-- Negativ für Erzeugung -->
+    <!-- Verbraucht bzw. erzeugt die Einheit Energie-->
+
+    <Needs_Metal Num="0"/>
+    <!-- Verbraucht die Einheit Metal-->
+
+    <Needs_Oil Num="0"/>
+    <!--Braucht die Einheit Öl-->
+
+    <Needs_Humans Num="0"/>
+    <!-- Negativ für Erzeugung -->
+    <!-- Stellt die Einheit Arbeiter zur Verfügung bzw. benötigt sie Arbeiter -->
+
+    <Is_Stealth_On Num="0"/>
+    <Can_Detect_Stealth_On Num="0"/>
+    <!-- Auf welchen Untergründen ist die Einheit unsichtbar -->
+    <!-- - Air: 1 -->
+    <!-- - Sea: 2 -->
+    <!-- - Ground: 4 -->
+    <!-- - Coast: 8 -->
+    <!-- - Exp_Mine: 32 -->
+    <!-- Kombinationen sind möglich. Z.b. 3 für Air+Sea oder 6 für Ground+Sea -->
+
+    <Surface_Position Const="Normal"/>
+    <!-- Auf welcher Höhe befindet sich die Einheit -->
+    <!-- - BeneathSea (Seeminen)-->
+    <!-- - AboveSea (Brücken) -->
+    <!-- - Base (Wasserplattform/Straße)-->
+    <!-- - AboveBase (Landminen) -->
+    <!-- - Normal (Normale Einheiten. Dies ist der standardwert, welcher genommen wird wenn hier keine expliziete auswahl getätigt wird) -->
+    <!-- - Above (Konnektoren) -->
+
+    <Can_Be_Overbuild Const="No"/>
+    <!-- - No -->
+    <!-- - Yes -->
+    <!-- - YesNRemove -->
+
+    <Can_Be_Landed_On YN="No"/>
+    <!-- Können Flugzeuge hier landen -->
+
+    <Is_Activatable YN="No"/>
+    <!-- Kann diese Einheit aktiviert werden/arbeiten -->
+
+    <Explodes_On_Contact YN="No"/>
+    <!-- Explodiert die Einheit bei Kontakt mit einer anderen feindlichen Einheit? (Minen) -->
+
+    <Can_Self_Destroy YN="No"/>
+    <!-- Verfügt die Einheit über eine Selbstzerstörung? -->
+
+    <Is_Human YN="No"/>
+    <!-- Menschen bekommen eine andere Upgradeberechnung und können im Startmenü nicht hinzugefügt werden -->
+  </Abilities>
+
+  <Storage>
+    <!--Lagerung-->
+
+    <Capacity_Resources Num="0"/>
+    <!-- Wieviel Resourcen kann diese Einheit speichern -->
+
+    <Capacity_Res_Type Const="None"/>
+    <!-- Welche Resource kann diese Einheit speichern -->
+    <!-- - None -->
+    <!-- - Metal -->
+    <!-- - Oil -->
+    <!-- - Gold -->
+
+    <Capacity_Units Num="3"/>
+    <!--Wieviele andere Einheiten kann diese Einheit speichern-->
+
+    <Capacity_Units_Image_Type Const="Tank"/>
+    <!-- Welche Grafik soll für die Anzeige der geladenen Einheiten im Hud bzw. im Auslademenü verwendet werden? -->
+    <!-- - Tank -->
+    <!-- - Plane -->
+    <!-- - Human -->
+    <!-- - Ship -->
+
+    <Capacity_Units_Type String="Ground+Human"/>
+    <!--Welche Einheitentypen kann diese Einheit laden? Muss bei der Zieleinheit mit "Is_Storage_Type" übereinstimmen. -->
+    <!--Kombinationen sind mit "+" möglich-->
+    <!--Standardwerte: -->
+    <!-- -Ground -->
+    <!-- -Human -->
+    <!-- -Plane -->
+    <!-- -Ship -->
+
+    <Is_Storage_Type String="Plane"/>
+    <!--Von welchem Typ ist diese Einheit wenns ums Einladen geht -->
+
+  </Storage>
+
+</Unit>

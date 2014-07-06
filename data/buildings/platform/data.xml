@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 25" name="platform">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Water Platform\n\nProvides a surface over water on which to construct other buildings. Pioneers can build water platforms over the shore as well as open water. Water platforms are particularly important an island maps, or when a valuable material deposit is under water.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="2"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Sea Num="1"/>
+    <Factor_Coast Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="6"/>
+    <Hitpoints Num="10"/>
+    <Scan_Range Num="1"/>
+    <Can_Self_Destroy YN="Yes"/>
+    <Surface_Position Const="Base"/>
+    <Can_Be_Overbuild Const="Yes"/>
+  </Abilities>
+</Unit>
+
+

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 9" name="bomber">
+  <Header>
+    <Author name="Someone">
+    <Editor name="Rocky" time="2007-10-16 11:30:00"/>
+    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="00.00.00.00"/>
+  </Header>
+  <Description lang="ENG">
+    Ground Attack Plane\n\nA hevier plane carrying a full load of air to ground missiles. Ground Attack Planes are expencive, but the advantages are worth the cost. Their great speet lets them reach any trouble spot quickly, and once they arrive, only fighters and antiaircraft can defend against them.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Rocket"/>
+    <Ammo_Quantity Num="12"/>
+    <Can_Attack Num="22"/>
+    <Shots Num="2"/>
+    <Range Num="4"/>
+    <Damage Num="18"/>
+    <Can_Drive_And_Fire YN="Yes"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="30"/>
+    <Build_As String="Plane"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="18"/>
+    <Factor_Air Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="4"/>
+    <Hitpoints Num="18"/>
+    <Scan_Range Num="5"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Plane"/>
+  </Storage>
+</Unit>

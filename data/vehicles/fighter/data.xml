@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 16" name="fighter">
+  <Header>
+    <Author name="Someone">
+    <Editor name="Rocky" time="2007-10-21 12:30:00"/>
+    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="00.00.00.00"/>
+  </Header>
+  <Description lang="ENG">
+    Fighter\n\nFast but fragile aircraft carrying a limited number of air-to-air missiles. Fighters are the best way to drive enemy planes out an area, and to defend a moving force. Ground based anti aircraft is a better choice for defending a fixed area.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Rocket"/>
+    <Ammo_Quantity Num="4"/>
+    <Can_Attack Num="1"/>
+    <Shots Num="1"/>
+    <Range Num="5"/>
+    <Damage Num="16"/>
+    <Can_Drive_And_Fire YN="Yes"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="24"/>
+    <Build_As String="Plane"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="24"/>
+    <Factor_Air Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="4"/>
+    <Hitpoints Num="12"/>
+    <Scan_Range Num="5"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Plane"/>
+  </Storage>
+</Unit>

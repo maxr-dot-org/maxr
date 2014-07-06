@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 14" name="corvet">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Corvette\n\nHigh speed boat with torpedo tubes and sonar. Corvettes can attack any sea unit, but their real strength is their ability to spot and attack submarines.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Torpedo"/>
+    <Ammo_Quantity Num="14"/>
+    <Can_Attack Num="18"/>
+    <Shots Num="2"/>
+    <Range Num="5"/>
+    <Damage Num="14"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="18"/>
+    <Build_As String="Ship"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="9"/>
+    <Factor_Sea Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="6"/>
+    <Hitpoints Num="32"/>
+    <Scan_Range Num="5"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+
+    <Can_Detect_Stealth_On Num="2"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Ship"/>
+  </Storage>
+</Unit>

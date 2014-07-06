@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 17" name="rocketlauncher">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Missile Launcher\n\nLong-range missile launcher on a fixed mount. Exellent range and firepower, but only slightly more armor than the mobile version. Best surrounded by gun turrets and anti aircraft.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Rocket"/>
+    <Ammo_Quantity Num="10"/>
+    <Can_Attack Num="6"/>
+    <Shots Num="1"/>
+    <Range Num="11"/>
+    <Damage Num="28"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="24"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Connects_To_Base YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Armor Num="6"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="4"/>
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

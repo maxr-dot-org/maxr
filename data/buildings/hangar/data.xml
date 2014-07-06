@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 20" name="hangar">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Hangar\n\nA hangar can repair damage, manufracture ammunition and refit planes with the newest technology. All of these operations require raw materials, so hangars should be connected to stored materials.
+  </Description>
+  <Production>
+    <Built_Costs Num="16"/>
+    <Build_As String="BigBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="12"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+    <Can_Self_Destroy YN="Yes"/>
+    <Can_Repair YN="Yes"/>
+    <Can_Rearm YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Capacity_Units Num="12"/>
+    <Capacity_Units_Image_Type Const="Plane"/>
+    <Capacity_Units_Type String="Plane"/>
+  </Storage>
+</Unit>
+
+
