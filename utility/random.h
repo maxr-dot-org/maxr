@@ -63,7 +63,7 @@ T random (const T min, const T max)
  *
  * @tparam T Has to be an arithmetic type (integral or floating point).
  *           NOTE: char is not yet supported since it is not an IntType by the definition of the C++ standard
- *                 and therefor it is not supported by std::uniform_int_distribution.
+ *                 and therefor it is not supported by std::uniform_int_distribution (see http://open-std.org/JTC1/SC22/WG21/docs/lwg-active.html#2326).
  * @param max Upper bound of the interval.
  * @return Randomly selected value.
  */
@@ -74,7 +74,7 @@ T random (const T max)
 }
 
 /**
- * Selected a random element from a std::array
+ * Select a random element from a std::array
  */
 template<typename T, size_t N>
 typename std::array<T, N>::reference getRandom (std::array<T, N>& data)
@@ -84,7 +84,7 @@ typename std::array<T, N>::reference getRandom (std::array<T, N>& data)
 }
 
 /**
- * Selected a random element from a std::array
+ * Select a random element from a std::array
  */
 template<typename T, size_t N>
 typename std::array<T, N>::const_reference getRandom (const std::array<T, N>& data)
