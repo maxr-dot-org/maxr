@@ -1,0 +1,630 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6B045990-B65A-4A56-95AC-B1D3701CD9C4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>maxr</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild />
+      <AdditionalOptions>/w34189 /w34701 /w34389 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Mixer.lib;SDL2_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>
+      </MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL_Mixer.lib;SDL_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Mixer.lib;SDL2_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Mixer.lib;SDL2_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\attackJobs.cpp" />
+    <ClCompile Include="..\..\automjobs.cpp" />
+    <ClCompile Include="..\..\base.cpp" />
+    <ClCompile Include="..\..\buildings.cpp" />
+    <ClCompile Include="..\..\casualtiestracker.cpp" />
+    <ClCompile Include="..\..\clans.cpp" />
+    <ClCompile Include="..\..\client.cpp" />
+    <ClCompile Include="..\..\clientevents.cpp" />
+    <ClCompile Include="..\..\dedicatedserver.cpp" />
+    <ClCompile Include="..\..\drawingcache.cpp" />
+    <ClCompile Include="..\..\events\eventmanager.cpp" />
+    <ClCompile Include="..\..\events\keyboardevents.cpp" />
+    <ClCompile Include="..\..\events\mouseevents.cpp" />
+    <ClCompile Include="..\..\extendedtinyxml.cpp" />
+    <ClCompile Include="..\..\files.cpp" />
+    <ClCompile Include="..\..\fxeffects.cpp" />
+    <ClCompile Include="..\..\gametimer.cpp" />
+    <ClCompile Include="..\..\game\data\playercolor.cpp" />
+    <ClCompile Include="..\..\game\data\report\savedreport.cpp" />
+    <ClCompile Include="..\..\game\data\report\savedreportchat.cpp" />
+    <ClCompile Include="..\..\game\data\report\savedreportsimple.cpp" />
+    <ClCompile Include="..\..\game\data\report\savedreporttranslated.cpp" />
+    <ClCompile Include="..\..\game\data\report\savedreportunit.cpp" />
+    <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergame.cpp" />
+    <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamenew.cpp" />
+    <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamesaved.cpp" />
+    <ClCompile Include="..\..\game\logic\landingpositionmanager.cpp" />
+    <ClCompile Include="..\..\game\logic\turnclock.cpp" />
+    <ClCompile Include="..\..\game\network\client\networkclientgame.cpp" />
+    <ClCompile Include="..\..\game\network\client\networkclientgamenew.cpp" />
+    <ClCompile Include="..\..\game\network\client\networkclientgamereconnection.cpp" />
+    <ClCompile Include="..\..\game\network\client\networkclientgamesaved.cpp" />
+    <ClCompile Include="..\..\game\network\host\networkhostgame.cpp" />
+    <ClCompile Include="..\..\game\network\host\networkhostgamenew.cpp" />
+    <ClCompile Include="..\..\game\network\host\networkhostgamesaved.cpp" />
+    <ClCompile Include="..\..\gui\application.cpp" />
+    <ClCompile Include="..\..\gui\control\menucontrollermultiplayerclient.cpp" />
+    <ClCompile Include="..\..\gui\control\menucontrollermultiplayerhost.cpp" />
+    <ClCompile Include="..\..\gui\game\gamegui.cpp" />
+    <ClCompile Include="..\..\gui\game\hud.cpp" />
+    <ClCompile Include="..\..\gui\game\soundmanager.cpp" />
+    <ClCompile Include="..\..\gui\game\temp\animationtimer.cpp" />
+    <ClCompile Include="..\..\gui\game\temp\unitdrawingengine.cpp" />
+    <ClCompile Include="..\..\gui\game\unitselection.cpp" />
+    <ClCompile Include="..\..\gui\game\unitselectionbox.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\chatbox.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\chatboxplayerlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\gamemapwidget.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\gamemessagelistview.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\gamemessagelistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\hudpanels.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\minimapwidget.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionactivatefinished.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionactivateloaded.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionattack.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactiondisable.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionhelp.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionload.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionmove.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionrepair.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionselect.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildpathdestination.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildposition.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionsteal.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionsupplyammo.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactiontransfer.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeactivateloaded.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeattack.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodedefault.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodedisable.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodehelp.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeload.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemoderepair.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildpathdestination.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildposition.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodesteal.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodesupplyammo.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodetransfer.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\unitcontextmenuwidget.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\unitdetailshud.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\unitdetailsstored.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\unitrenamewidget.cpp" />
+    <ClCompile Include="..\..\gui\game\widgets\unitvideowidget.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialoglicense.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialogok.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialogpreferences.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialogresearch.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialogselfdestruction.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialogtransfer.cpp" />
+    <ClCompile Include="..\..\gui\menu\dialogs\dialogyesno.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\abstractlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\checkbox.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\clickablewidget.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\combobox.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\frame.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\image.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\label.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\lineedit.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\pushbutton.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\radiogroup.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\scrollbar.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\slider.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\sliderhandle.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\buildspeedhandlerwidget.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\lobbychatboxlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\landingpositionselectionmap.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\lobbyplayerlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\protectionglass.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\reportdisadvantageslistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\reportmessagelistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\reportunitlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\resourcebar.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\saveslotwidget.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\textlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\unitdetails.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitem.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitembuild.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitembuy.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitemcargo.cpp" />
+    <ClCompile Include="..\..\gui\menu\widgets\tools\validatorint.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowbuildbuildings\windowbuildbuildings.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowbuildvehicles\windowbuildvehicles.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowclanselection\windowclanselection.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowgamesettings\gamesettings.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowgamesettings\windowgamesettings.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowhangar\windowhangar.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowlandingpositionselection\windowlandingpositionselection.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowlandingunitselection\windowlandingunitselection.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowloadsave\windowloadsave.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowload\savegamedata.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowload\windowload.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowmain.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowmapselection\windowmapselection.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowmultiplayer.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windownetworklobbyclient\windownetworklobbyclient.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windownetworklobbyhost\windownetworklobbyhost.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windownetworklobby\windownetworklobby.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowreports\windowreports.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowresourcedistribution\windowresourcedistribution.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowsingleplayer.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowstart.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowstorage\windowstorage.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowunitinfo\windowunitinfo.cpp" />
+    <ClCompile Include="..\..\gui\menu\windows\windowupgrades\windowupgrades.cpp" />
+    <ClCompile Include="..\..\gui\shortcut.cpp" />
+    <ClCompile Include="..\..\gui\widget.cpp" />
+    <ClCompile Include="..\..\gui\window.cpp" />
+    <ClCompile Include="..\..\input\keyboard\keyboard.cpp" />
+    <ClCompile Include="..\..\input\keyboard\keycombination.cpp" />
+    <ClCompile Include="..\..\input\keyboard\keysequence.cpp" />
+    <ClCompile Include="..\..\input\mouse\cursor\mousecursoramount.cpp" />
+    <ClCompile Include="..\..\input\mouse\cursor\mousecursorattack.cpp" />
+    <ClCompile Include="..\..\input\mouse\cursor\mousecursorsimple.cpp" />
+    <ClCompile Include="..\..\input\mouse\mouse.cpp" />
+    <ClCompile Include="..\..\jobs.cpp" />
+    <ClCompile Include="..\..\keys.cpp" />
+    <ClCompile Include="..\..\language.cpp" />
+    <ClCompile Include="..\..\loaddata.cpp" />
+    <ClCompile Include="..\..\log.cpp" />
+    <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\map.cpp" />
+    <ClCompile Include="..\..\mapdownload.cpp" />
+    <ClCompile Include="..\..\menuevents.cpp" />
+    <ClCompile Include="..\..\movejobs.cpp" />
+    <ClCompile Include="..\..\mveplayer.cpp" />
+    <ClCompile Include="..\..\netmessage.cpp" />
+    <ClCompile Include="..\..\network.cpp" />
+    <ClCompile Include="..\..\notifications.cpp" />
+    <ClCompile Include="..\..\output\sound\soundchannel.cpp" />
+    <ClCompile Include="..\..\output\sound\soundchannelgroup.cpp" />
+    <ClCompile Include="..\..\output\sound\soundchunk.cpp" />
+    <ClCompile Include="..\..\output\sound\sounddevice.cpp" />
+    <ClCompile Include="..\..\pcx.cpp" />
+    <ClCompile Include="..\..\player.cpp" />
+    <ClCompile Include="..\..\savegame.cpp" />
+    <ClCompile Include="..\..\SDL_flic.c" />
+    <ClCompile Include="..\..\server.cpp" />
+    <ClCompile Include="..\..\serverevents.cpp" />
+    <ClCompile Include="..\..\servergame.cpp" />
+    <ClCompile Include="..\..\settings.cpp" />
+    <ClCompile Include="..\..\tinyxml2.cpp" />
+    <ClCompile Include="..\..\unifonts.cpp" />
+    <ClCompile Include="..\..\unit.cpp" />
+    <ClCompile Include="..\..\unitdata.cpp" />
+    <ClCompile Include="..\..\upgradecalculator.cpp" />
+    <ClCompile Include="..\..\utility\color.cpp" />
+    <ClCompile Include="..\..\utility\drawing.cpp" />
+    <ClCompile Include="..\..\utility\signal\signalconnection.cpp" />
+    <ClCompile Include="..\..\utility\signal\signalconnectionmanager.cpp" />
+    <ClCompile Include="..\..\utility\version.cpp" />
+    <ClCompile Include="..\..\vehicles.cpp" />
+    <ClCompile Include="..\..\video.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\attackJobs.h" />
+    <ClInclude Include="..\..\automjobs.h" />
+    <ClInclude Include="..\..\autoobj.h" />
+    <ClInclude Include="..\..\autoptr.h" />
+    <ClInclude Include="..\..\autosurface.h" />
+    <ClInclude Include="..\..\base.h" />
+    <ClInclude Include="..\..\buildings.h" />
+    <ClInclude Include="..\..\casualtiestracker.h" />
+    <ClInclude Include="..\..\clans.h" />
+    <ClInclude Include="..\..\client.h" />
+    <ClInclude Include="..\..\clientevents.h" />
+    <ClInclude Include="..\..\clist.h" />
+    <ClInclude Include="..\..\cmutex.h" />
+    <ClInclude Include="..\..\config\compiler\clang.h" />
+    <ClInclude Include="..\..\config\compiler\gcc.h" />
+    <ClInclude Include="..\..\config\compiler\intel.h" />
+    <ClInclude Include="..\..\config\compiler\vcpp.h" />
+    <ClInclude Include="..\..\config\platform\amigaos.h" />
+    <ClInclude Include="..\..\config\platform\cygwin.h" />
+    <ClInclude Include="..\..\config\platform\linux.h" />
+    <ClInclude Include="..\..\config\platform\macos.h" />
+    <ClInclude Include="..\..\config\platform\win32.h" />
+    <ClInclude Include="..\..\config\selectcompilerconfig.h" />
+    <ClInclude Include="..\..\config\selectplatformconfig.h" />
+    <ClInclude Include="..\..\config\selectstdlibconfig.h" />
+    <ClInclude Include="..\..\config\stdlib\dinkumware.h" />
+    <ClInclude Include="..\..\config\stdlib\libcpp.h" />
+    <ClInclude Include="..\..\config\stdlib\libstdcpp.h" />
+    <ClInclude Include="..\..\config\userconfig.h" />
+    <ClInclude Include="..\..\config\workaround\language.h" />
+    <ClInclude Include="..\..\config\workaround\makeunique.h" />
+    <ClInclude Include="..\..\config\workaround\underlyingtype.h" />
+    <ClInclude Include="..\..\dedicatedserver.h" />
+    <ClInclude Include="..\..\defines.h" />
+    <ClInclude Include="..\..\drawingcache.h" />
+    <ClInclude Include="..\..\events\eventmanager.h" />
+    <ClInclude Include="..\..\events\keyboardevents.h" />
+    <ClInclude Include="..\..\events\mouseevents.h" />
+    <ClInclude Include="..\..\extendedtinyxml.h" />
+    <ClInclude Include="..\..\files.h" />
+    <ClInclude Include="..\..\fxeffects.h" />
+    <ClInclude Include="..\..\gametimer.h" />
+    <ClInclude Include="..\..\game\data\playercolor.h" />
+    <ClInclude Include="..\..\game\data\report\savedreport.h" />
+    <ClInclude Include="..\..\game\data\report\savedreportchat.h" />
+    <ClInclude Include="..\..\game\data\report\savedreportsimple.h" />
+    <ClInclude Include="..\..\game\data\report\savedreporttranslated.h" />
+    <ClInclude Include="..\..\game\data\report\savedreportunit.h" />
+    <ClInclude Include="..\..\game\game.h" />
+    <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergame.h" />
+    <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamenew.h" />
+    <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamesaved.h" />
+    <ClInclude Include="..\..\game\logic\landingpositionmanager.h" />
+    <ClInclude Include="..\..\game\logic\landingpositionstate.h" />
+    <ClInclude Include="..\..\game\logic\turnclock.h" />
+    <ClInclude Include="..\..\game\network\client\networkclientgame.h" />
+    <ClInclude Include="..\..\game\network\client\networkclientgamenew.h" />
+    <ClInclude Include="..\..\game\network\client\networkclientgamereconnection.h" />
+    <ClInclude Include="..\..\game\network\client\networkclientgamesaved.h" />
+    <ClInclude Include="..\..\game\network\host\networkhostgame.h" />
+    <ClInclude Include="..\..\game\network\host\networkhostgamenew.h" />
+    <ClInclude Include="..\..\game\network\host\networkhostgamesaved.h" />
+    <ClInclude Include="..\..\gui\alignment.h" />
+    <ClInclude Include="..\..\gui\application.h" />
+    <ClInclude Include="..\..\gui\control\menucontrollermultiplayerclient.h" />
+    <ClInclude Include="..\..\gui\control\menucontrollermultiplayerhost.h" />
+    <ClInclude Include="..\..\gui\game\gamegui.h" />
+    <ClInclude Include="..\..\gui\game\hud.h" />
+    <ClInclude Include="..\..\gui\game\soundmanager.h" />
+    <ClInclude Include="..\..\gui\game\temp\animationtimer.h" />
+    <ClInclude Include="..\..\gui\game\temp\unitdrawingengine.h" />
+    <ClInclude Include="..\..\gui\game\unitselection.h" />
+    <ClInclude Include="..\..\gui\game\unitselectionbox.h" />
+    <ClInclude Include="..\..\gui\game\widgets\chatbox.h" />
+    <ClInclude Include="..\..\gui\game\widgets\chatboxplayerlistviewitem.h" />
+    <ClInclude Include="..\..\gui\game\widgets\gamemapwidget.h" />
+    <ClInclude Include="..\..\gui\game\widgets\gamemessagelistview.h" />
+    <ClInclude Include="..\..\gui\game\widgets\gamemessagelistviewitem.h" />
+    <ClInclude Include="..\..\gui\game\widgets\hudpanels.h" />
+    <ClInclude Include="..\..\gui\game\widgets\minimapwidget.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseaction.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionactivatefinished.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionactivateloaded.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionattack.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactiondisable.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionhelp.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionload.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionmove.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionrepair.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionselect.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildpathdestination.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildposition.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionsteal.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionsupplyammo.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactiontransfer.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemode.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeactivateloaded.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeattack.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodedefault.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodedisable.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodehelp.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeload.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemoderepair.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildpathdestination.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildposition.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodesteal.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodesupplyammo.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodetransfer.h" />
+    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodetype.h" />
+    <ClInclude Include="..\..\gui\game\widgets\unitcontextmenuwidget.h" />
+    <ClInclude Include="..\..\gui\game\widgets\unitdetailshud.h" />
+    <ClInclude Include="..\..\gui\game\widgets\unitdetailsstored.h" />
+    <ClInclude Include="..\..\gui\game\widgets\unitrenamewidget.h" />
+    <ClInclude Include="..\..\gui\game\widgets\unitvideowidget.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialoglicense.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialogok.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialogpreferences.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialogresearch.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialogselfdestruction.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialogtransfer.h" />
+    <ClInclude Include="..\..\gui\menu\dialogs\dialogyesno.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\checkbox.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\clickablewidget.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\combobox.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\frame.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\plot.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\image.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\label.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\lineedit.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\listview.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\abstractlistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\pushbutton.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\radiogroup.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\scrollbar.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\slider.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\sliderhandle.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\buildspeedhandlerwidget.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\lobbychatboxlistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\landingpositionselectionmap.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\lobbyplayerlistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\reportdisadvantageslistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\reportmessagelistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\reportunitlistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\resourcebar.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\saveslotwidget.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\protectionglass.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\textlistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\unitdatasymboltype.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\unitdetails.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitem.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitembuild.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitembuy.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitemcargo.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\tools\validator.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\tools\validatorint.h" />
+    <ClInclude Include="..\..\gui\menu\widgets\tools\validatorstate.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowadvancedhangar\windowadvancedhangar.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowbuildbuildings\windowbuildbuildings.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowbuildvehicles\windowbuildvehicles.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowclanselection\windowclanselection.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowgamesettings\gamesettings.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowgamesettings\windowgamesettings.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowhangar\windowhangar.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowlandingpositionselection\windowlandingpositionselection.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowlandingunitselection\windowlandingunitselection.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowloadsave\windowloadsave.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowload\savegamedata.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowload\windowload.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowmain.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowmapselection\windowmapselection.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowmultiplayer.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windownetworklobbyclient\windownetworklobbyclient.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windownetworklobbyhost\windownetworklobbyhost.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windownetworklobby\windownetworklobby.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowreports\windowreports.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowresourcedistribution\windowresourcedistribution.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowsingleplayer.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowstart.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowstorage\windowstorage.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowunitinfo\windowunitinfo.h" />
+    <ClInclude Include="..\..\gui\menu\windows\windowupgrades\windowupgrades.h" />
+    <ClInclude Include="..\..\gui\orientation.h" />
+    <ClInclude Include="..\..\gui\shortcut.h" />
+    <ClInclude Include="..\..\gui\widget.h" />
+    <ClInclude Include="..\..\gui\window.h" />
+    <ClInclude Include="..\..\hud.h" />
+    <ClInclude Include="..\..\input\keyboard\keyboard.h" />
+    <ClInclude Include="..\..\input\keyboard\keycombination.h" />
+    <ClInclude Include="..\..\input\keyboard\keymodifiertype.h" />
+    <ClInclude Include="..\..\input\keyboard\keysequence.h" />
+    <ClInclude Include="..\..\input\mouse\cursor\mousecursor.h" />
+    <ClInclude Include="..\..\input\mouse\cursor\mousecursoramount.h" />
+    <ClInclude Include="..\..\input\mouse\cursor\mousecursorattack.h" />
+    <ClInclude Include="..\..\input\mouse\cursor\mousecursorsimple.h" />
+    <ClInclude Include="..\..\input\mouse\mouse.h" />
+    <ClInclude Include="..\..\input\mouse\mousebuttontype.h" />
+    <ClInclude Include="..\..\input\mouse\mousecursortype.h" />
+    <ClInclude Include="..\..\jobs.h" />
+    <ClInclude Include="..\..\keys.h" />
+    <ClInclude Include="..\..\language.h" />
+    <ClInclude Include="..\..\loaddata.h" />
+    <ClInclude Include="..\..\log.h" />
+    <ClInclude Include="..\..\main.h" />
+    <ClInclude Include="..\..\map.h" />
+    <ClInclude Include="..\..\mapdownload.h" />
+    <ClInclude Include="..\..\maxrconfig.h" />
+    <ClInclude Include="..\..\menuevents.h" />
+    <ClInclude Include="..\..\menus.h" />
+    <ClInclude Include="..\..\movejobs.h" />
+    <ClInclude Include="..\..\mveplayer.h" />
+    <ClInclude Include="..\..\netmessage.h" />
+    <ClInclude Include="..\..\network.h" />
+    <ClInclude Include="..\..\notifications.h" />
+    <ClInclude Include="..\..\output\sound\soundchannel.h" />
+    <ClInclude Include="..\..\output\sound\soundchannelgroup.h" />
+    <ClInclude Include="..\..\output\sound\soundchunk.h" />
+    <ClInclude Include="..\..\output\sound\sounddevice.h" />
+    <ClInclude Include="..\..\pcx.h" />
+    <ClInclude Include="..\..\player.h" />
+    <ClInclude Include="..\..\resource.h" />
+    <ClInclude Include="..\..\savegame.h" />
+    <ClInclude Include="..\..\SDL_flic.h" />
+    <ClInclude Include="..\..\server.h" />
+    <ClInclude Include="..\..\serverevents.h" />
+    <ClInclude Include="..\..\servergame.h" />
+    <ClInclude Include="..\..\settings.h" />
+    <ClInclude Include="..\..\sound.h" />
+    <ClInclude Include="..\..\tinyxml2.h" />
+    <ClInclude Include="..\..\t_2.h" />
+    <ClInclude Include="..\..\unifonts.h" />
+    <ClInclude Include="..\..\unit.h" />
+    <ClInclude Include="..\..\unitdata.h" />
+    <ClInclude Include="..\..\upgradecalculator.h" />
+    <ClInclude Include="..\..\utility\box.h" />
+    <ClInclude Include="..\..\utility\color.h" />
+    <ClInclude Include="..\..\utility\concurrentqueue.h" />
+    <ClInclude Include="..\..\utility\dependentfalse.h" />
+    <ClInclude Include="..\..\utility\deref.h" />
+    <ClInclude Include="..\..\utility\drawing.h" />
+    <ClInclude Include="..\..\utility\enumflag.h" />
+    <ClInclude Include="..\..\utility\fixedvector.h" />
+    <ClInclude Include="..\..\utility\flatset.h" />
+    <ClInclude Include="..\..\utility\functiontraits.h" />
+    <ClInclude Include="..\..\utility\indexiterator.h" />
+    <ClInclude Include="..\..\utility\invoke.h" />
+    <ClInclude Include="..\..\utility\position.h" />
+    <ClInclude Include="..\..\utility\random.h" />
+    <ClInclude Include="..\..\utility\runnable.h" />
+    <ClInclude Include="..\..\utility\scopedoperation.h" />
+    <ClInclude Include="..\..\utility\signal\novariadic\signal_0.h" />
+    <ClInclude Include="..\..\utility\signal\novariadic\signal_1.h" />
+    <ClInclude Include="..\..\utility\signal\novariadic\signal_2.h" />
+    <ClInclude Include="..\..\utility\signal\novariadic\signal_3.h" />
+    <ClInclude Include="..\..\utility\signal\novariadic\signal_4.h" />
+    <ClInclude Include="..\..\utility\signal\signal.h" />
+    <ClInclude Include="..\..\utility\signal\signalcalliterator.h" />
+    <ClInclude Include="..\..\utility\signal\signalconnection.h" />
+    <ClInclude Include="..\..\utility\signal\signalconnectionmanager.h" />
+    <ClInclude Include="..\..\utility\signal\signalresultcombinerlast.h" />
+    <ClInclude Include="..\..\utility\signal\signalresultcombineroperation.h" />
+    <ClInclude Include="..\..\utility\signal\signalresultcombinervoid.h" />
+    <ClInclude Include="..\..\utility\signal\slot.h" />
+    <ClInclude Include="..\..\utility\string\iequals.h" />
+    <ClInclude Include="..\..\utility\string\tolower.h" />
+    <ClInclude Include="..\..\utility\string\toupper.h" />
+    <ClInclude Include="..\..\utility\string\trim.h" />
+    <ClInclude Include="..\..\utility\tounderlyingtype.h" />
+    <ClInclude Include="..\..\utility\version.h" />
+    <ClInclude Include="..\..\vehicles.h" />
+    <ClInclude Include="..\..\video.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
