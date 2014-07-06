@@ -26,7 +26,6 @@
 //TODO: text and voice messages
 //TODO: load/save attackjobs + isAttacking/isAttacked
 //TODO: resync attackjobs
-//TODO: extend checksum
 //TODO: server.cpp:2547
 
 //--------------------------------------------------------------------------
@@ -443,7 +442,7 @@ bool cAttackJob::impact()
 	std::string name;
 	sID unitID;
 
-	//update target data
+	//make impact on target
 	if (target)
 	{
 		target->data.hitpointsCur = target->calcHealth(attackPoints);
@@ -463,11 +462,33 @@ bool cAttackJob::impact()
 					client->addDestroyFx (*static_cast<cBuilding*>(target));
 			}
 		}
-
 	}
 
-	
-	if (!destroyed && client)
+	auto aggressor = getAggressor();
+	if (aggressor && aggressor->data.explodesOnContact && aggressorPosX == targetX && aggressorPosY == targetY)
+	{
+		if (client)
+		{
+			cBuilding& b = *static_cast<cBuilding*> (aggressor);
+
+			PlayFX(b.uiData->Attack);
+			if (map.isWaterOrCoast(b.PosX, b.PosY))
+			{
+				client->addFx(new cFxExploWater(b.PosX * 64 + 32, b.PosY * 64 + 32));
+			}
+			else
+			{
+				client->addFx(new cFxExploSmall(b.PosX * 64 + 32, b.PosY * 64 + 32));
+			}
+		}
+		else
+		{
+			// delete unit is only called on server, because it sends 
+			// all nessesary net messages to update the client
+			server->deleteUnit(aggressor);
+		}
+	}
+	else if (!destroyed && client)
 	{
 		client->addFx(new cFxHit(targetX * 64 + offX + 32, targetY * 64 + offY + 32));
 	}
@@ -500,6 +521,8 @@ bool cAttackJob::impact()
 
 void cAttackJob::destroyTarget()
 {
+	// destroy unit is only called on server, because it sends 
+	// all nessesary net messages to update the client
 	if (server)
 	{
 		if (target->isAVehicle())
