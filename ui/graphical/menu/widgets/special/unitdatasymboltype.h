@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_widgets_special_unitdatasymboltypeH
-#define gui_menu_widgets_special_unitdatasymboltypeH
+#ifndef ui_graphical_menu_widgets_special_unitdatasymboltypeH
+#define ui_graphical_menu_widgets_special_unitdatasymboltypeH
 
 enum class eUnitDataSymbolType
 {
@@ -40,4 +40,4 @@ enum class eUnitDataSymbolType
 	TransportAir
 };
 
-#endif // gui_menu_widgets_special_unitdatasymboltypeH
+#endif // ui_graphical_menu_widgets_special_unitdatasymboltypeH

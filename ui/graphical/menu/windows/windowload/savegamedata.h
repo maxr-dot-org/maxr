@@ -16,8 +16,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef gui_menu_windows_windowload_savegamedataH
-#define gui_menu_windows_windowload_savegamedataH
+#ifndef ui_graphical_menu_windows_windowload_savegamedataH
+#define ui_graphical_menu_windows_windowload_savegamedataH
 
 #include <string>
 
@@ -56,4 +56,4 @@ private:
 	int number;
 };
 
-#endif // gui_menu_windows_windowload_savegamedataH
+#endif // ui_graphical_menu_windows_windowload_savegamedataH

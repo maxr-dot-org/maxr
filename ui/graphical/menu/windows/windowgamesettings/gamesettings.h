@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_menu_windows_windowgamesettings_gamesettingsH
-#define gui_menu_windows_windowgamesettings_gamesettingsH
+#ifndef ui_graphical_menu_windows_windowgamesettings_gamesettingsH
+#define ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 
 #include <string>
 
@@ -147,4 +147,4 @@ private:
 	unsigned int turnDeadline;
 };
 
-#endif // gui_menu_windows_windowgamesettings_gamesettingsH
+#endif // ui_graphical_menu_windows_windowgamesettings_gamesettingsH

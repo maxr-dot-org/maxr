@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_widgets_tools_validatorstateH
-#define gui_widgets_tools_validatorstateH
+#ifndef ui_graphical_widgets_tools_validatorstateH
+#define ui_graphical_widgets_tools_validatorstateH
 
 enum class eValidatorState
 {
@@ -27,4 +27,4 @@ enum class eValidatorState
 	Valid
 };
 
-#endif // gui_widgets_tools_validatorstateH
+#endif // ui_graphical_widgets_tools_validatorstateH

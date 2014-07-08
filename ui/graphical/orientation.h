@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef gui_orientationH
-#define gui_orientationH
+#ifndef ui_graphical_orientationH
+#define ui_graphical_orientationH
 
 enum class eOrientationType
 {
@@ -26,4 +26,4 @@ enum class eOrientationType
 	Vertical	= 2
 };
 
-#endif // gui_orientationH
+#endif // ui_graphical_orientationH
