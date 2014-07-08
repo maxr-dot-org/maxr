@@ -28,7 +28,7 @@
 #include "t_2.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
-#include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 
 class cUnit;
 class cVehicle;

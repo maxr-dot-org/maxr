@@ -58,8 +58,8 @@
 
 #include "output/sound/sounddevice.h"
 
-#include "gui/application.h"
-#include "gui/menu/windows/windowstart.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/menu/windows/windowstart.h"
 
 using namespace std;
 

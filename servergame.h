@@ -26,7 +26,7 @@
 #include <memory>
 #include "autoptr.h"
 #include "utility/concurrentqueue.h"
-#include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 
 class cNetMessage;
 class cPlayer;

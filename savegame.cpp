@@ -31,7 +31,7 @@
 #include "settings.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"
-#include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "utility/tounderlyingtype.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"

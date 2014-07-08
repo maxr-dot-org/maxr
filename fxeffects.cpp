@@ -28,7 +28,7 @@
 #include "video.h"
 #include "sound.h"
 #include "utility/random.h"
-#include "gui/game/soundmanager.h"
+#include "ui/sound/soundmanager.h"
 
 cFx::cFx (bool bottom_, const cPosition& position_) :
 	position (position_),

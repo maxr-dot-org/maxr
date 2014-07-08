@@ -37,100 +37,103 @@
     <Filter Include="maxr\utility\signal">
       <UniqueIdentifier>{14d5c2a2-7159-42b2-a505-b6e75c07fdea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui">
+    <Filter Include="maxr\ui">
+      <UniqueIdentifier>{983b573b-a08b-4213-af3b-4a2671bec366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\ui\graphical">
       <UniqueIdentifier>{f6569a56-fc58-4956-86ef-327916aa15f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu">
+    <Filter Include="maxr\ui\graphical\menu">
       <UniqueIdentifier>{a24e0f47-59ce-4e0e-95db-21bec3604d8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\game">
+    <Filter Include="maxr\ui\graphical\game">
       <UniqueIdentifier>{fce3084e-5e68-41ad-9cc3-fbfd27cb8515}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\widgets">
+    <Filter Include="maxr\ui\graphical\menu\widgets">
       <UniqueIdentifier>{e6411adf-2e33-460c-96b5-33e1b26ab7ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\dialogs">
+    <Filter Include="maxr\ui\graphical\menu\dialogs">
       <UniqueIdentifier>{9c32b345-d567-45d5-9472-b4ebd77f3ea2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\widgets\tools">
+    <Filter Include="maxr\ui\graphical\menu\widgets\tools">
       <UniqueIdentifier>{0af3ff46-c297-428a-b77d-677740ba658c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\widgets\special">
+    <Filter Include="maxr\ui\graphical\menu\widgets\special">
       <UniqueIdentifier>{132eb6a8-8c32-49f8-82bf-7d4cb6b5550f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows">
+    <Filter Include="maxr\ui\graphical\menu\windows">
       <UniqueIdentifier>{90f0727b-de99-4c75-8897-26844890d1fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowgamesettings">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowgamesettings">
       <UniqueIdentifier>{3e27b1b3-d8a9-48e2-b823-be7d2fa6230b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowmapselection">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowmapselection">
       <UniqueIdentifier>{2eb947bf-9d96-4754-9b35-9385362a8c14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowclanselection">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowclanselection">
       <UniqueIdentifier>{3ffb3a58-d4b2-45ce-864e-14c7041fe47b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowlandingunitselection">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowlandingunitselection">
       <UniqueIdentifier>{848684ec-21ba-42c9-8730-aa022dde754a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowhangar">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowhangar">
       <UniqueIdentifier>{3141425a-0537-4c48-9203-a8341d54432d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowadvancedhangar">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowadvancedhangar">
       <UniqueIdentifier>{bdad35de-838b-47aa-ade3-d9ad76718dbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowlandingpositionselection">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowlandingpositionselection">
       <UniqueIdentifier>{81968bab-e0c0-46c4-bf40-c4f7c305d727}</UniqueIdentifier>
     </Filter>
     <Filter Include="maxr\game">
       <UniqueIdentifier>{fb564d5b-2883-4816-904b-62e191bf3d05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\game\temp">
+    <Filter Include="maxr\ui\graphical\game\temp">
       <UniqueIdentifier>{659040a4-b4fb-4209-bf4c-2886254f07ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\game\widgets">
+    <Filter Include="maxr\ui\graphical\game\widgets">
       <UniqueIdentifier>{8d163996-349e-421d-8cea-301c55c4e652}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowunitinfo">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowunitinfo">
       <UniqueIdentifier>{751db915-1e01-4ea4-b33b-fbfb159e0644}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowupgrades">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowupgrades">
       <UniqueIdentifier>{8ccca121-ee8e-494e-99e3-536a773022da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowbuildbuildings">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowbuildbuildings">
       <UniqueIdentifier>{6a46fa24-5df0-4ff2-9dce-82beae000a12}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowbuildvehicles">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowbuildvehicles">
       <UniqueIdentifier>{ff0b1889-5e34-4eae-97a2-960dbdfee030}</UniqueIdentifier>
     </Filter>
     <Filter Include="maxr\input\mouse\cursor">
       <UniqueIdentifier>{a578556a-932c-4fb1-896a-8dbbd511927c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\game\widgets\mousemode">
+    <Filter Include="maxr\ui\graphical\game\widgets\mousemode">
       <UniqueIdentifier>{c9549bcf-7a71-4419-a43c-1adad17b9338}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\game\widgets\mouseaction">
+    <Filter Include="maxr\ui\graphical\game\widgets\mouseaction">
       <UniqueIdentifier>{cac0339e-0ab4-4ba4-894a-66a409497baf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowstorage">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowstorage">
       <UniqueIdentifier>{72dbc550-ed08-44f1-89c4-3e0082a2f54e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowresourcedistribution">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowresourcedistribution">
       <UniqueIdentifier>{977875b6-a195-4184-82b4-fb2efe13509d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowload">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowload">
       <UniqueIdentifier>{33afc04a-1d3b-4a59-8bc3-20409f27606b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowloadsave">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowloadsave">
       <UniqueIdentifier>{4336d02d-b1fd-42f7-ab63-f6d6d0979321}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windownetworklobby">
+    <Filter Include="maxr\ui\graphical\menu\windows\windownetworklobby">
       <UniqueIdentifier>{fefb8aef-da63-4b77-9dfb-5238407c78a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windownetworklobbyclient">
+    <Filter Include="maxr\ui\graphical\menu\windows\windownetworklobbyclient">
       <UniqueIdentifier>{562a4c51-75b9-4950-a248-f21c00f0c908}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windownetworklobbyhost">
+    <Filter Include="maxr\ui\graphical\menu\windows\windownetworklobbyhost">
       <UniqueIdentifier>{416362b4-b3ff-4cac-850a-2f57bfcf2755}</UniqueIdentifier>
     </Filter>
     <Filter Include="maxr\game\local">
@@ -154,7 +157,7 @@
     <Filter Include="maxr\game\logic">
       <UniqueIdentifier>{de955a25-911a-4bf4-8806-3070541ddccc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\control">
+    <Filter Include="maxr\ui\graphical\control">
       <UniqueIdentifier>{a06463be-4a3e-43fe-9845-e2dac75d8ef7}</UniqueIdentifier>
     </Filter>
     <Filter Include="maxr\utility\signal\novariadic">
@@ -166,7 +169,7 @@
     <Filter Include="maxr\game\data\report">
       <UniqueIdentifier>{660b37ed-c6e7-4f84-850a-cf0da7314506}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\gui\menu\windows\windowreports">
+    <Filter Include="maxr\ui\graphical\menu\windows\windowreports">
       <UniqueIdentifier>{e94a20c1-df37-46e0-bdcc-dbd75ef342fc}</UniqueIdentifier>
     </Filter>
     <Filter Include="maxr\utility\string">
@@ -177,6 +180,9 @@
     </Filter>
     <Filter Include="maxr\output\sound">
       <UniqueIdentifier>{f4f0949f-4133-4f67-ab8c-031b5b5833ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\ui\sound">
+      <UniqueIdentifier>{2ff00b55-1cbb-4f60-b6b0-d9753931c22d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -327,173 +333,173 @@
     <ClCompile Include="..\..\utility\signal\signalconnectionmanager.cpp">
       <Filter>maxr\utility\signal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\widget.cpp">
-      <Filter>maxr\gui</Filter>
+    <ClCompile Include="..\..\ui\graphical\widget.cpp">
+      <Filter>maxr\ui\graphical</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\application.cpp">
-      <Filter>maxr\gui</Filter>
+    <ClCompile Include="..\..\ui\graphical\application.cpp">
+      <Filter>maxr\ui\graphical</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\window.cpp">
-      <Filter>maxr\gui</Filter>
+    <ClCompile Include="..\..\ui\graphical\window.cpp">
+      <Filter>maxr\ui\graphical</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowmain.cpp">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowmain.cpp">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowmultiplayer.cpp">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowmultiplayer.cpp">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowsingleplayer.cpp">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowsingleplayer.cpp">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowstart.cpp">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowstart.cpp">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialogok.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialogok.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialogpreferences.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialogpreferences.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialogyesno.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialogyesno.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\checkbox.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\checkbox.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\clickablewidget.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\clickablewidget.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\image.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\image.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\label.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\label.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\lineedit.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\lineedit.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\pushbutton.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\pushbutton.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\radiogroup.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\radiogroup.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\slider.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\slider.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\sliderhandle.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\sliderhandle.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\tools\validatorint.cpp">
-      <Filter>maxr\gui\menu\widgets\tools</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\tools\validatorint.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\tools</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowgamesettings\windowgamesettings.cpp">
-      <Filter>maxr\gui\menu\windows\windowgamesettings</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowgamesettings\windowgamesettings.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowgamesettings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowgamesettings\gamesettings.cpp">
-      <Filter>maxr\gui\menu\windows\windowgamesettings</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowgamesettings\gamesettings.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowgamesettings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowmapselection\windowmapselection.cpp">
-      <Filter>maxr\gui\menu\windows\windowmapselection</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowmapselection\windowmapselection.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowmapselection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowlandingunitselection\windowlandingunitselection.cpp">
-      <Filter>maxr\gui\menu\windows\windowlandingunitselection</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowlandingunitselection\windowlandingunitselection.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowlandingunitselection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowclanselection\windowclanselection.cpp">
-      <Filter>maxr\gui\menu\windows\windowclanselection</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowclanselection\windowclanselection.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowclanselection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowhangar\windowhangar.cpp">
-      <Filter>maxr\gui\menu\windows\windowhangar</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowhangar\windowhangar.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowhangar</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\scrollbar.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\scrollbar.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\abstractlistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\abstractlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\resourcebar.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\resourcebar.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\unitdetails.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\unitdetails.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitembuy.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitembuy.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitemcargo.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitemcargo.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowlandingpositionselection\windowlandingpositionselection.cpp">
-      <Filter>maxr\gui\menu\windows\windowlandingpositionselection</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowlandingpositionselection\windowlandingpositionselection.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowlandingpositionselection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\landingpositionselectionmap.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\landingpositionselectionmap.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\gamegui.cpp">
-      <Filter>maxr\gui\game</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\gamegui.cpp">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\temp\animationtimer.cpp">
-      <Filter>maxr\gui\game\temp</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\temp\animationtimer.cpp">
+      <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\temp\unitdrawingengine.cpp">
-      <Filter>maxr\gui\game\temp</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\temp\unitdrawingengine.cpp">
+      <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\unitselection.cpp">
-      <Filter>maxr\gui\game</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\unitselection.cpp">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\gamemapwidget.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\gamemapwidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\minimapwidget.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\minimapwidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\unitcontextmenuwidget.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\unitcontextmenuwidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\unitvideowidget.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\unitvideowidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\unitdetailshud.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\unitdetailshud.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\unitselectionbox.cpp">
-      <Filter>maxr\gui\game</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\unitselectionbox.cpp">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\gamemessagelistview.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\gamemessagelistview.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\gamemessagelistviewitem.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\gamemessagelistviewitem.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\unitrenamewidget.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\unitrenamewidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialogtransfer.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialogtransfer.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowunitinfo\windowunitinfo.cpp">
-      <Filter>maxr\gui\menu\windows\windowunitinfo</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowunitinfo\windowunitinfo.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowunitinfo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowupgrades\windowupgrades.cpp">
-      <Filter>maxr\gui\menu\windows\windowupgrades</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowupgrades\windowupgrades.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowupgrades</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowbuildbuildings\windowbuildbuildings.cpp">
-      <Filter>maxr\gui\menu\windows\windowbuildbuildings</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowbuildbuildings\windowbuildbuildings.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowbuildbuildings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowbuildvehicles\windowbuildvehicles.cpp">
-      <Filter>maxr\gui\menu\windows\windowbuildvehicles</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowbuildvehicles\windowbuildvehicles.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowbuildvehicles</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialogresearch.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialogresearch.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\buildspeedhandlerwidget.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\buildspeedhandlerwidget.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\unitlistviewitembuild.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitembuild.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
     <ClCompile Include="..\..\input\mouse\cursor\mousecursorattack.cpp">
       <Filter>maxr\input\mouse\cursor</Filter>
@@ -504,134 +510,134 @@
     <ClCompile Include="..\..\input\mouse\cursor\mousecursoramount.cpp">
       <Filter>maxr\input\mouse\cursor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodetransfer.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodetransfer.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeattack.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeattack.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodedisable.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodedisable.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodehelp.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodehelp.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeload.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeload.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemoderepair.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemoderepair.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildpathdestination.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeselectbuildpathdestination.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildposition.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeselectbuildposition.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodesteal.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesteal.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodesupplyammo.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodeactivateloaded.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionactivatefinished.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionactivatefinished.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionload.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionload.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionactivateloaded.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionactivateloaded.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionattack.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionattack.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactiondisable.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactiondisable.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionhelp.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionhelp.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionmove.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionmove.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionrepair.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionrepair.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionselect.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionselect.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildpathdestination.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildpathdestination.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildposition.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildposition.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionsteal.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionsteal.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactiontransfer.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mouseaction\mouseactionsupplyammo.cpp">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\mousemode\mousemodedefault.cpp">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodedefault.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowstorage\windowstorage.cpp">
-      <Filter>maxr\gui\menu\windows\windowstorage</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowstorage\windowstorage.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowstorage</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowreports\windowreports.cpp">
-      <Filter>maxr\gui\menu\windows\windowreports</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowreports\windowreports.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowreports</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowresourcedistribution\windowresourcedistribution.cpp">
-      <Filter>maxr\gui\menu\windows\windowresourcedistribution</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowresourcedistribution\windowresourcedistribution.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowresourcedistribution</Filter>
     </ClCompile>
     <ClCompile Include="..\..\unitdata.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\unitdetailsstored.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\unitdetailsstored.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\hudpanels.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\hudpanels.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowload\windowload.cpp">
-      <Filter>maxr\gui\menu\windows\windowload</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowload\windowload.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowload</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowloadsave\windowloadsave.cpp">
-      <Filter>maxr\gui\menu\windows\windowloadsave</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowloadsave\windowloadsave.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowloadsave</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\saveslotwidget.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\saveslotwidget.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windowload\savegamedata.cpp">
-      <Filter>maxr\gui\menu\windows\windowload</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowload\savegamedata.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windowload</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utility\version.cpp">
       <Filter>maxr\utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\hud.cpp">
-      <Filter>maxr\gui\game</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\hud.cpp">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windownetworklobby\windownetworklobby.cpp">
-      <Filter>maxr\gui\menu\windows\windownetworklobby</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windownetworklobby\windownetworklobby.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windownetworklobby</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windownetworklobbyclient\windownetworklobbyclient.cpp">
-      <Filter>maxr\gui\menu\windows\windownetworklobbyclient</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windownetworklobbyclient\windownetworklobbyclient.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windownetworklobbyclient</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\windows\windownetworklobbyhost\windownetworklobbyhost.cpp">
-      <Filter>maxr\gui\menu\windows\windownetworklobbyhost</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windownetworklobbyhost\windownetworklobbyhost.cpp">
+      <Filter>maxr\ui\graphical\menu\windows\windownetworklobbyhost</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\lobbyplayerlistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\lobbyplayerlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\lobbychatboxlistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\lobbychatboxlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergame.cpp">
       <Filter>maxr\game\local\singleplayer</Filter>
@@ -654,11 +660,11 @@
     <ClCompile Include="..\..\game\logic\landingpositionmanager.cpp">
       <Filter>maxr\game\logic</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\control\menucontrollermultiplayerhost.cpp">
-      <Filter>maxr\gui\control</Filter>
+    <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.cpp">
+      <Filter>maxr\ui\graphical\control</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\control\menucontrollermultiplayerclient.cpp">
-      <Filter>maxr\gui\control</Filter>
+    <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.cpp">
+      <Filter>maxr\ui\graphical\control</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\network\client\networkclientgame.cpp">
       <Filter>maxr\game\network\client</Filter>
@@ -672,11 +678,11 @@
     <ClCompile Include="..\..\game\network\client\networkclientgamereconnection.cpp">
       <Filter>maxr\game\network\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\chatbox.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\chatbox.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\widgets\chatboxplayerlistviewitem.cpp">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\chatboxplayerlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\data\report\savedreportchat.cpp">
       <Filter>maxr\game\data\report</Filter>
@@ -693,8 +699,8 @@
     <ClCompile Include="..\..\game\data\report\savedreporttranslated.cpp">
       <Filter>maxr\game\data\report</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\shortcut.cpp">
-      <Filter>maxr\gui</Filter>
+    <ClCompile Include="..\..\ui\graphical\shortcut.cpp">
+      <Filter>maxr\ui\graphical</Filter>
     </ClCompile>
     <ClCompile Include="..\..\input\keyboard\keycombination.cpp">
       <Filter>maxr\input\keyboard</Filter>
@@ -702,32 +708,32 @@
     <ClCompile Include="..\..\input\keyboard\keysequence.cpp">
       <Filter>maxr\input\keyboard</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\combobox.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\combobox.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\textlistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\textlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialogselfdestruction.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialogselfdestruction.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\protectionglass.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\protectionglass.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\dialogs\dialoglicense.cpp">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\dialogs\dialoglicense.cpp">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\reportunitlistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\reportunitlistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\frame.cpp">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\frame.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\reportdisadvantageslistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\reportdisadvantageslistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\menu\widgets\special\reportmessagelistviewitem.cpp">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClCompile Include="..\..\ui\graphical\menu\widgets\special\reportmessagelistviewitem.cpp">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
     <ClCompile Include="..\..\utility\drawing.cpp">
       <Filter>maxr\utility</Filter>
@@ -741,9 +747,6 @@
     <ClCompile Include="..\..\utility\color.cpp">
       <Filter>maxr\utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\game\soundmanager.cpp">
-      <Filter>maxr\gui\game</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\output\sound\sounddevice.cpp">
       <Filter>maxr\output\sound</Filter>
     </ClCompile>
@@ -755,6 +758,9 @@
     </ClCompile>
     <ClCompile Include="..\..\output\sound\soundchannelgroup.cpp">
       <Filter>maxr\output\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\sound\soundmanager.cpp">
+      <Filter>maxr\ui\sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1055,131 +1061,131 @@
     <ClInclude Include="..\..\utility\invoke.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\widget.h">
-      <Filter>maxr\gui</Filter>
+    <ClInclude Include="..\..\ui\graphical\widget.h">
+      <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\application.h">
-      <Filter>maxr\gui</Filter>
+    <ClInclude Include="..\..\ui\graphical\application.h">
+      <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\alignment.h">
-      <Filter>maxr\gui</Filter>
+    <ClInclude Include="..\..\ui\graphical\alignment.h">
+      <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\orientation.h">
-      <Filter>maxr\gui</Filter>
+    <ClInclude Include="..\..\ui\graphical\orientation.h">
+      <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\window.h">
-      <Filter>maxr\gui</Filter>
+    <ClInclude Include="..\..\ui\graphical\window.h">
+      <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowmain.h">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowmain.h">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowmultiplayer.h">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowmultiplayer.h">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowsingleplayer.h">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowsingleplayer.h">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowstart.h">
-      <Filter>maxr\gui\menu\windows</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowstart.h">
+      <Filter>maxr\ui\graphical\menu\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialogok.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialogok.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialogpreferences.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialogpreferences.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialogyesno.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialogyesno.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\checkbox.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\checkbox.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\clickablewidget.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\clickablewidget.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\image.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\image.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\label.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\label.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\lineedit.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\lineedit.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\pushbutton.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\pushbutton.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\radiogroup.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\radiogroup.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\slider.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\slider.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\sliderhandle.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\sliderhandle.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\tools\validator.h">
-      <Filter>maxr\gui\menu\widgets\tools</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\tools\validator.h">
+      <Filter>maxr\ui\graphical\menu\widgets\tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\tools\validatorint.h">
-      <Filter>maxr\gui\menu\widgets\tools</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\tools\validatorint.h">
+      <Filter>maxr\ui\graphical\menu\widgets\tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowgamesettings\windowgamesettings.h">
-      <Filter>maxr\gui\menu\windows\windowgamesettings</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowgamesettings\windowgamesettings.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowgamesettings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowgamesettings\gamesettings.h">
-      <Filter>maxr\gui\menu\windows\windowgamesettings</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowgamesettings\gamesettings.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowgamesettings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowmapselection\windowmapselection.h">
-      <Filter>maxr\gui\menu\windows\windowmapselection</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowmapselection\windowmapselection.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowmapselection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowlandingunitselection\windowlandingunitselection.h">
-      <Filter>maxr\gui\menu\windows\windowlandingunitselection</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowlandingunitselection\windowlandingunitselection.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowlandingunitselection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowclanselection\windowclanselection.h">
-      <Filter>maxr\gui\menu\windows\windowclanselection</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowclanselection\windowclanselection.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowclanselection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowhangar\windowhangar.h">
-      <Filter>maxr\gui\menu\windows\windowhangar</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowhangar\windowhangar.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowhangar</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowadvancedhangar\windowadvancedhangar.h">
-      <Filter>maxr\gui\menu\windows\windowadvancedhangar</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowadvancedhangar\windowadvancedhangar.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowadvancedhangar</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\scrollbar.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\scrollbar.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\listview.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\listview.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\abstractlistviewitem.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\abstractlistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\resourcebar.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\resourcebar.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\unitdetails.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\unitdetails.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitembuy.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitembuy.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitemcargo.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitemcargo.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowlandingpositionselection\windowlandingpositionselection.h">
-      <Filter>maxr\gui\menu\windows\windowlandingpositionselection</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowlandingpositionselection\windowlandingpositionselection.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowlandingpositionselection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\landingpositionselectionmap.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\landingpositionselectionmap.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\gamegui.h">
-      <Filter>maxr\gui\game</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\gamegui.h">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\hud.h">
-      <Filter>maxr\gui\game</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\hud.h">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\indexiterator.h">
       <Filter>maxr\utility</Filter>
@@ -1187,71 +1193,71 @@
     <ClInclude Include="..\..\game\game.h">
       <Filter>maxr\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\temp\animationtimer.h">
-      <Filter>maxr\gui\game\temp</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\temp\animationtimer.h">
+      <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\temp\unitdrawingengine.h">
-      <Filter>maxr\gui\game\temp</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\temp\unitdrawingengine.h">
+      <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\unitselection.h">
-      <Filter>maxr\gui\game</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\unitselection.h">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\gamemapwidget.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\gamemapwidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\minimapwidget.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\minimapwidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\unitcontextmenuwidget.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\unitcontextmenuwidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\unitvideowidget.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\unitvideowidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\unitdetailshud.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\unitdetailshud.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\unitdatasymboltype.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\unitdatasymboltype.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\unitselectionbox.h">
-      <Filter>maxr\gui\game</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\unitselectionbox.h">
+      <Filter>maxr\ui\graphical\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\gamemessagelistview.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\gamemessagelistview.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\gamemessagelistviewitem.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\gamemessagelistviewitem.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\tools\validatorstate.h">
-      <Filter>maxr\gui\menu\widgets\tools</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\tools\validatorstate.h">
+      <Filter>maxr\ui\graphical\menu\widgets\tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\unitrenamewidget.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\unitrenamewidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialogtransfer.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialogtransfer.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowunitinfo\windowunitinfo.h">
-      <Filter>maxr\gui\menu\windows\windowunitinfo</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowunitinfo\windowunitinfo.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowunitinfo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowupgrades\windowupgrades.h">
-      <Filter>maxr\gui\menu\windows\windowupgrades</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowupgrades\windowupgrades.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowupgrades</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowbuildbuildings\windowbuildbuildings.h">
-      <Filter>maxr\gui\menu\windows\windowbuildbuildings</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowbuildbuildings\windowbuildbuildings.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowbuildbuildings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowbuildvehicles\windowbuildvehicles.h">
-      <Filter>maxr\gui\menu\windows\windowbuildvehicles</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowbuildvehicles\windowbuildvehicles.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowbuildvehicles</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialogresearch.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialogresearch.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\buildspeedhandlerwidget.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\buildspeedhandlerwidget.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\unitlistviewitembuild.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\unitlistviewitembuild.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
     <ClInclude Include="..\..\input\mouse\cursor\mousecursor.h">
       <Filter>maxr\input\mouse\cursor</Filter>
@@ -1265,140 +1271,140 @@
     <ClInclude Include="..\..\input\mouse\cursor\mousecursorattack.h">
       <Filter>maxr\input\mouse\cursor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemode.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemode.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodetransfer.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodetransfer.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeattack.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeattack.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildposition.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeselectbuildposition.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeselectbuildpathdestination.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeselectbuildpathdestination.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeload.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeload.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodesupplyammo.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemoderepair.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemoderepair.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodedisable.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodedisable.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodesteal.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesteal.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodehelp.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodehelp.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodeactivateloaded.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseaction.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseaction.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionattack.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionattack.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildposition.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildposition.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionselectbuildpathdestination.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildpathdestination.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactiontransfer.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionhelp.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionhelp.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactiondisable.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactiondisable.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionselect.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionselect.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionmove.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionmove.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionload.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionload.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionactivateloaded.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionactivateloaded.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionactivatefinished.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionactivatefinished.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionsteal.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionsteal.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionsupplyammo.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mouseaction\mouseactionrepair.h">
-      <Filter>maxr\gui\game\widgets\mouseaction</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionrepair.h">
+      <Filter>maxr\ui\graphical\game\widgets\mouseaction</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodedefault.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodedefault.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\mousemode\mousemodetype.h">
-      <Filter>maxr\gui\game\widgets\mousemode</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodetype.h">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowstorage\windowstorage.h">
-      <Filter>maxr\gui\menu\windows\windowstorage</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowstorage\windowstorage.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowstorage</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowreports\windowreports.h">
-      <Filter>maxr\gui\menu\windows\windowreports</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowreports\windowreports.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowreports</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowresourcedistribution\windowresourcedistribution.h">
-      <Filter>maxr\gui\menu\windows\windowresourcedistribution</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowresourcedistribution\windowresourcedistribution.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowresourcedistribution</Filter>
     </ClInclude>
     <ClInclude Include="..\..\unitdata.h">
       <Filter>maxr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\unitdetailsstored.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\unitdetailsstored.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\hudpanels.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\hudpanels.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowload\windowload.h">
-      <Filter>maxr\gui\menu\windows\windowload</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowload\windowload.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowload</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowloadsave\windowloadsave.h">
-      <Filter>maxr\gui\menu\windows\windowloadsave</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowloadsave\windowloadsave.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowloadsave</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\saveslotwidget.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\saveslotwidget.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windowload\savegamedata.h">
-      <Filter>maxr\gui\menu\windows\windowload</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowload\savegamedata.h">
+      <Filter>maxr\ui\graphical\menu\windows\windowload</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\version.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windownetworklobby\windownetworklobby.h">
-      <Filter>maxr\gui\menu\windows\windownetworklobby</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windownetworklobby\windownetworklobby.h">
+      <Filter>maxr\ui\graphical\menu\windows\windownetworklobby</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windownetworklobbyclient\windownetworklobbyclient.h">
-      <Filter>maxr\gui\menu\windows\windownetworklobbyclient</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windownetworklobbyclient\windownetworklobbyclient.h">
+      <Filter>maxr\ui\graphical\menu\windows\windownetworklobbyclient</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\windows\windownetworklobbyhost\windownetworklobbyhost.h">
-      <Filter>maxr\gui\menu\windows\windownetworklobbyhost</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windownetworklobbyhost\windownetworklobbyhost.h">
+      <Filter>maxr\ui\graphical\menu\windows\windownetworklobbyhost</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\lobbyplayerlistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\lobbyplayerlistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\lobbychatboxlistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\lobbychatboxlistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergame.h">
       <Filter>maxr\game\local\singleplayer</Filter>
@@ -1424,14 +1430,14 @@
     <ClInclude Include="..\..\utility\concurrentqueue.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\control\menucontrollermultiplayerhost.h">
-      <Filter>maxr\gui\control</Filter>
+    <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.h">
+      <Filter>maxr\ui\graphical\control</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\runnable.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\control\menucontrollermultiplayerclient.h">
-      <Filter>maxr\gui\control</Filter>
+    <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.h">
+      <Filter>maxr\ui\graphical\control</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\signal\novariadic\signal_0.h">
       <Filter>maxr\utility\signal\novariadic</Filter>
@@ -1463,11 +1469,11 @@
     <ClInclude Include="..\..\game\network\client\networkclientgamereconnection.h">
       <Filter>maxr\game\network\client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\chatbox.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\chatbox.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\widgets\chatboxplayerlistviewitem.h">
-      <Filter>maxr\gui\game\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\chatboxplayerlistviewitem.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\data\report\savedreport.h">
       <Filter>maxr\game\data\report</Filter>
@@ -1484,8 +1490,8 @@
     <ClInclude Include="..\..\game\data\report\savedreporttranslated.h">
       <Filter>maxr\game\data\report</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\shortcut.h">
-      <Filter>maxr\gui</Filter>
+    <ClInclude Include="..\..\ui\graphical\shortcut.h">
+      <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
     <ClInclude Include="..\..\input\keyboard\keycombination.h">
       <Filter>maxr\input\keyboard</Filter>
@@ -1493,11 +1499,11 @@
     <ClInclude Include="..\..\input\keyboard\keysequence.h">
       <Filter>maxr\input\keyboard</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\combobox.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\combobox.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\textlistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\textlistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\string\iequals.h">
       <Filter>maxr\utility\string</Filter>
@@ -1511,29 +1517,29 @@
     <ClInclude Include="..\..\utility\string\toupper.h">
       <Filter>maxr\utility\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialogselfdestruction.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialogselfdestruction.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\protectionglass.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\protectionglass.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\dialogs\dialoglicense.h">
-      <Filter>maxr\gui\menu\dialogs</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\dialogs\dialoglicense.h">
+      <Filter>maxr\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\reportunitlistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\reportunitlistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\frame.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\frame.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\reportdisadvantageslistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\reportdisadvantageslistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\special\reportmessagelistviewitem.h">
-      <Filter>maxr\gui\menu\widgets\special</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\special\reportmessagelistviewitem.h">
+      <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\menu\widgets\plot.h">
-      <Filter>maxr\gui\menu\widgets</Filter>
+    <ClInclude Include="..\..\ui\graphical\menu\widgets\plot.h">
+      <Filter>maxr\ui\graphical\menu\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\color.h">
       <Filter>maxr\utility</Filter>
@@ -1550,9 +1556,6 @@
     <ClInclude Include="..\..\utility\flatset.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\game\soundmanager.h">
-      <Filter>maxr\gui\game</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\output\sound\sounddevice.h">
       <Filter>maxr\output\sound</Filter>
     </ClInclude>
@@ -1567,6 +1570,9 @@
     </ClInclude>
     <ClInclude Include="..\..\utility\random.h">
       <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\sound\soundmanager.h">
+      <Filter>maxr\ui\sound</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

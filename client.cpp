@@ -40,7 +40,7 @@
 #include "settings.h"
 #include "vehicles.h"
 #include "video.h"
-#include "gui/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreporttranslated.h"

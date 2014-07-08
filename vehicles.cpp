@@ -42,9 +42,9 @@
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
-#include "gui/application.h"
-#include "gui/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
-#include "gui/game/soundmanager.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
+#include "ui/sound/soundmanager.h"
 #include "utility/random.h"
 
 using namespace std;
