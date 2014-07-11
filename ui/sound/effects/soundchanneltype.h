@@ -17,20 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_sound_effects_soundeffectpositionH
-#define ui_sound_effects_soundeffectpositionH
+#ifndef ui_sound_effects_soundchanneltypeH
+#define ui_sound_effects_soundchanneltypeH
 
-#include "maxrconfig.h"
-#include "ui/sound/effects/soundeffect.h"
-#include "utility/position.h"
-
-class cSoundEffectPosition : public cSoundEffect
+enum class eSoundChannelType
 {
-public:
-	cSoundEffectPosition (eSoundEffectType type, const cSoundChunk& sound, const cPosition& position);
-
-private:
-	cPosition position;
+	General,
+	Voice
 };
 
-#endif // ui_sound_effects_soundeffectpositionH
+#endif // ui_sound_effects_soundchanneltypeH

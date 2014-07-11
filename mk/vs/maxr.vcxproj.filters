@@ -1601,5 +1601,14 @@
     <ClInclude Include="..\..\ui\sound\effects\soundeffectposition.h">
       <Filter>maxr\ui\sound\effects</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ui\sound\effects\soundeffecttype.h">
+      <Filter>maxr\ui\sound\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\sound\effects\soundchanneltype.h">
+      <Filter>maxr\ui\sound\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\sound\effects\soundconflicthandlingtype.h">
+      <Filter>maxr\ui\sound\effects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

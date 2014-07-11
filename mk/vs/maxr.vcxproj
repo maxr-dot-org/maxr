@@ -586,8 +586,11 @@
     <ClInclude Include="..\..\sound.h" />
     <ClInclude Include="..\..\tinyxml2.h" />
     <ClInclude Include="..\..\t_2.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundchanneltype.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundconflicthandlingtype.h" />
     <ClInclude Include="..\..\ui\sound\effects\soundeffect.h" />
     <ClInclude Include="..\..\ui\sound\effects\soundeffectposition.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundeffecttype.h" />
     <ClInclude Include="..\..\ui\sound\effects\soundeffectunit.h" />
     <ClInclude Include="..\..\ui\sound\effects\soundeffectvoice.h" />
     <ClInclude Include="..\..\ui\sound\soundmanager.h" />

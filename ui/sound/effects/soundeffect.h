@@ -20,52 +20,16 @@
 #ifndef ui_sound_effects_soundeffectH
 #define ui_sound_effects_soundeffectH
 
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
+#include "ui/sound/effects/soundeffecttype.h"
+#include "ui/sound/effects/soundchanneltype.h"
+#include "ui/sound/effects/soundconflicthandlingtype.h"
+
 #include "output/sound/soundchunk.h"
 
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
+
 class cSoundChannel;
-
-enum class eSoundChannelType
-{
-	General,
-	Voice
-};
-
-enum class eSoundConflictHandlingType
-{
-	StopOld,
-	DiscardNew,
-	PlayAnyway
-};
-
-enum class eSoundEffectType
-{
-	// Effects
-	EffectReload,
-	EffectRepair,
-	EffectPlaceMine,
-	EffectClearMine,
-	EffectStartWork,
-	EffectStopWork,
-	EffectLoad,
-	EffectActivate,
-	EffectStartMove,
-	EffectStopMove,
-	EffectExplosion,
-	EffectAbsorb,
-	EffectAlert,
-
-	// Voices
-	VoiceNoPath,
-	VoiceCommandoAction,
-	VoiceReload,
-	VoiceRepair,
-	VoiceDisabled,
-	VoiceStolenByEnemy,
-	VoiceDetected,
-	VoiceUnitStatus
-};
 
 class cSoundEffect
 {
