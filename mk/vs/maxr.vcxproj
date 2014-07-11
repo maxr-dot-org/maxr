@@ -340,6 +340,10 @@
     <ClCompile Include="..\..\servergame.cpp" />
     <ClCompile Include="..\..\settings.cpp" />
     <ClCompile Include="..\..\tinyxml2.cpp" />
+    <ClCompile Include="..\..\ui\sound\effects\soundeffect.cpp" />
+    <ClCompile Include="..\..\ui\sound\effects\soundeffectposition.cpp" />
+    <ClCompile Include="..\..\ui\sound\effects\soundeffectunit.cpp" />
+    <ClCompile Include="..\..\ui\sound\effects\soundeffectvoice.cpp" />
     <ClCompile Include="..\..\ui\sound\soundmanager.cpp" />
     <ClCompile Include="..\..\unifonts.cpp" />
     <ClCompile Include="..\..\unit.cpp" />
@@ -582,6 +586,10 @@
     <ClInclude Include="..\..\sound.h" />
     <ClInclude Include="..\..\tinyxml2.h" />
     <ClInclude Include="..\..\t_2.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundeffect.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundeffectposition.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundeffectunit.h" />
+    <ClInclude Include="..\..\ui\sound\effects\soundeffectvoice.h" />
     <ClInclude Include="..\..\ui\sound\soundmanager.h" />
     <ClInclude Include="..\..\unifonts.h" />
     <ClInclude Include="..\..\unit.h" />

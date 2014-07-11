@@ -45,6 +45,7 @@
 #include "ui/graphical/application.h"
 #include "ui/graphical/menu/windows/windowbuildbuildings/windowbuildbuildings.h"
 #include "ui/sound/soundmanager.h"
+#include "ui/sound/effects/soundeffectvoice.h"
 #include "utility/random.h"
 
 using namespace std;
@@ -723,23 +724,23 @@ void cVehicle::makeReport (cSoundManager& soundManager)
 	if (isDisabled())
 	{
 		// Disabled:
-		soundManager.playVoice (getRandom (VoiceData.VOIUnitDisabledByEnemy));
+		soundManager.playSound (std::make_shared<cSoundEffectVoice>(eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIUnitDisabledByEnemy)));
 	}
 	else if (data.getHitpoints () > data.hitpointsMax / 2)
 	{
 		// Status green
 		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
 		{
-			soundManager.playVoice (getRandom (VoiceData.VOIAttacking));
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
 		}
 		else if (autoMJob)
 		{
-			soundManager.playVoice (getRandom (VoiceData.VOISurveying));
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}
 		else if (data.speedCur == 0)
 		{
 			// no more movement
-			soundManager.playVoice (VoiceData.VOINoSpeed);
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOINoSpeed));
 		}
 		else if (isUnitBuildingABuilding ())
 		{
@@ -747,51 +748,51 @@ void cVehicle::makeReport (cSoundManager& soundManager)
 			if (!getBuildTurns ())
 			{
 				// Bau beendet:
-				soundManager.playVoice (getRandom (VoiceData.VOIBuildDone));
+				soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIBuildDone)));
 			}
 		}
 		else if (isUnitClearing ())
 		{
 			// removing dirt
-			soundManager.playVoice (VoiceData.VOIClearing);
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIClearing));
 		}
 		else if (data.canAttack && data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
 		{
 			// red ammo-status but still ammo left
-			soundManager.playVoice (getRandom (VoiceData.VOIAmmoLow));
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoLow)));
 		}
 		else if (data.canAttack && data.getAmmo () == 0)
 		{
 			// no ammo left
-			soundManager.playVoice (getRandom (VoiceData.VOIAmmoEmpty));
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoEmpty)));
 		}
 		else if (isSentryActive())
 		{
 			// on sentry:
-			soundManager.playVoice (VoiceData.VOISentry);
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOISentry));
 		}
 		else if (isUnitClearingMines ())
 		{
-			soundManager.playVoice (getRandom (VoiceData.VOIClearingMines));
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIClearingMines)));
 		}
 		else if (isUnitLayingMines ())
 		{
-			soundManager.playVoice (VoiceData.VOILayingMines);
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOILayingMines));
 		}
 		else
 		{
-			soundManager.playVoice (getRandom (VoiceData.VOIOK));
+			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIOK)));
 		}
 	}
 	else if (data.getHitpoints () > data.hitpointsMax / 4)
 	{
 		// Status yellow:
-		soundManager.playVoice (getRandom (VoiceData.VOIStatusYellow));
+		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIStatusYellow)));
 	}
 	else
 	{
 		// Status red:
-		soundManager.playVoice (getRandom (VoiceData.VOIStatusRed));
+		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIStatusRed)));
 	}
 }
 
