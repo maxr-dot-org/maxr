@@ -30,6 +30,11 @@ class cSoundEffectUnit : public cSoundEffect
 public:
 	cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& sound, const cUnit& unit);
 
+	virtual bool hasPosition () const MAXR_OVERRIDE_FUNCTION;
+
+	virtual const cPosition& getPosition () const MAXR_OVERRIDE_FUNCTION;
+private:
+	const cUnit& unit;
 };
 
 #endif // ui_sound_effects_soundeffectunitH

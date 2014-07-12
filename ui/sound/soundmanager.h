@@ -46,20 +46,20 @@ public:
 private:
 	struct sStoredSound
 	{
-		sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
-			sound (std::move(sound_)),
-			startGameTime (startGameTime_),
-			active (active_)
-		{}
+		sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_);
+		sStoredSound (sStoredSound&& other);
+		sStoredSound& operator=(sStoredSound&& other);
 
-		bool operator<(const sStoredSound& other) const
-		{
-			return startGameTime < other.startGameTime;
-		}
+		bool operator<(const sStoredSound& other) const;
 
 		std::shared_ptr<cSoundEffect> sound;
 		unsigned int startGameTime;
 		bool active;
+		cSignalConnectionManager signalConnectionManager;
+
+	private:
+		sStoredSound (const sStoredSound& other) MAXR_DELETE_FUNCTION;
+		sStoredSound& operator=(const sStoredSound& other) MAXR_DELETE_FUNCTION;
 	};
 	cSignalConnectionManager signalConnectionManager;
 	cMutex playingSoundsMutex;
@@ -73,6 +73,9 @@ private:
 	cSoundChannel& getChannelForSound (cSoundEffect& sound);
 
 	void finishedSound (cSoundEffect& sound);
+
+	void updateSoundPosition (cSoundEffect& sound);
+	void updateAllSoundPositions ();
 };
 
 #endif // ui_sound_soundmanagerH

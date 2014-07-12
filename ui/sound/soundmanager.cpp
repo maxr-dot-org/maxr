@@ -23,6 +23,40 @@
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 
+#include "settings.h"
+
+//--------------------------------------------------------------------------
+cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
+	sound (std::move(sound_)),
+	startGameTime (startGameTime_),
+	active (active_)
+{}
+
+//--------------------------------------------------------------------------
+cSoundManager::sStoredSound::sStoredSound (sStoredSound&& other) :
+	sound (std::move (other.sound)),
+	startGameTime (other.startGameTime),
+	active (other.active),
+	signalConnectionManager (std::move (other.signalConnectionManager))
+{}
+
+//--------------------------------------------------------------------------
+cSoundManager::sStoredSound& cSoundManager::sStoredSound::operator=(sStoredSound&& other)
+{
+	sound = std::move (other.sound);
+	startGameTime = other.startGameTime;
+	active = other.active;
+	signalConnectionManager = std::move (other.signalConnectionManager);
+
+	return *this;
+}
+
+//--------------------------------------------------------------------------
+bool cSoundManager::sStoredSound::operator<(const sStoredSound& other) const
+{
+	return startGameTime < other.startGameTime;
+}
+
 //--------------------------------------------------------------------------
 cSoundManager::cSoundManager () :
 	muted (false),
@@ -47,12 +81,14 @@ void cSoundManager::unmute ()
 void cSoundManager::setListenerPosition (const cPosition& listenerPosition_)
 {
 	listenerPosition = listenerPosition_;
+	updateAllSoundPositions ();
 }
 
 //--------------------------------------------------------------------------
 void cSoundManager::setMaxListeningDistance (int distance)
 {
 	maxListeningDistance = distance;
+	updateAllSoundPositions ();
 }
 
 //--------------------------------------------------------------------------
@@ -97,24 +133,21 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 			case eSoundConflictHandlingType::StopOld:
 				{
 					// stop oldest sounds that are in conflict (list is sorted by start game time)
-					while (conflicts > sound->getMaxConcurrentConflictedCount ())
+					for (auto i = playingSounds.begin (); i != playingSounds.end () && conflicts > sound->getMaxConcurrentConflictedCount (); /*erase in loop*/)
 					{
-						for (auto i = playingSounds.begin (); i != playingSounds.end (); /*erase in loop*/)
-						{
-							const auto playingSound = i->sound; // copy so that we get an owning pointer in this scope
-							const auto& soundGameTime = i->startGameTime;
+						const auto playingSound = i->sound; // copy so that we get an owning pointer in this scope
+						const auto& soundGameTime = i->startGameTime;
 
-							if (soundGameTime == currentGameTime && sound->isInConflict (*playingSound))
-							{
-								// first remove from list and than stop by method to avoid conflicts with "finished" callback.
-								i = playingSounds.erase (i);
-								playingSound->stop ();
-								--conflicts;
-							}
-							else
-							{
-								++i;
-							}
+						if (soundGameTime == currentGameTime && sound->isInConflict (*playingSound))
+						{
+							// first remove from list and than stop by method to avoid conflicts with "finished" callback.
+							i = playingSounds.erase (i);
+							playingSound->stop ();
+							--conflicts;
+						}
+						else
+						{
+							++i;
 						}
 					}
 				}
@@ -132,6 +165,9 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 	auto& soundRef = *playingSounds.back ().sound;
 	signalConnectionManager.connect (soundRef.stopped, std::bind (&cSoundManager::finishedSound, this, std::ref (soundRef)));
 
+	updateSoundPosition (soundRef);
+	playingSounds.back ().signalConnectionManager.connect (soundRef.positionChanged, std::bind (&cSoundManager::updateSoundPosition, this, std::ref (soundRef)));
+
 	// Sound list is always sorted by start game time.
 	// Push order is kept by stable sort to handle sounds that are played at same game time
 	std::stable_sort (playingSounds.begin (), playingSounds.end ());
@@ -148,24 +184,6 @@ void cSoundManager::stopAllSounds ()
 
 	playingSounds.clear ();
 }
-
-////--------------------------------------------------------------------------
-//void cSoundManager::playSound (const cSoundChunk& sound, const cPosition& soundPosition, bool disallowDuplicate)
-//{
-//	if (muted) return;
-//
-//	if (disallowDuplicate && isAlreadyPlayingSound (sound)) return;
-//
-//	auto& channel = cSoundDevice::getInstance ().getFreeSoundEffectChannel ();
-//	channel.play (sound);
-//
-//	//const cPosition offset = soundPosition - listenerPosition;
-//	//const auto soundDistance = std::max<char> (offset.l2Norm () / maxListeningDistance * 255, 255);
-//	//const auto temp = (offset.x () == 0 && offset.x () == 0) ? 0 : std::atan2 (offset.y (), offset.x ());
-//	//const auto soundAngle = (temp > 0 ? temp : (2*M_PI + temp)) * 360 / (2*M_PI) + 90;
-//
-//	//channel.setPosition (soundAngle, soundDistance);
-//}
 
 //--------------------------------------------------------------------------
 cSoundChannel& cSoundManager::getChannelForSound (cSoundEffect& sound)
@@ -190,5 +208,55 @@ void cSoundManager::finishedSound (cSoundEffect& sound)
 	if (iter != playingSounds.end ())
 	{
 		iter->active = false;
+	}
+}
+
+//--------------------------------------------------------------------------
+void cSoundManager::updateSoundPosition (cSoundEffect& sound)
+{
+	if (!cSettings::getInstance ().is3DSound ()) return;
+
+	if (!sound.hasPosition ()) return;
+
+	auto channel = sound.getChannel ();
+
+	if (!channel) return;
+
+	cFixedVector<double, 2> offset(sound.getPosition () - listenerPosition);
+
+	const auto distance = offset.l2Norm ();
+
+	// Fade volume down when distance comes close to the maximum listening distance
+	const auto soundDistance = static_cast<unsigned char>(std::min (static_cast<int>(distance / maxListeningDistance * std::numeric_limits<unsigned char>::max ()), (int)std::numeric_limits<unsigned char>::max ()));
+	
+	channel->setDistance (soundDistance);
+
+	// compute panning
+	double pan = 0;
+	if (std::abs (distance) > std::numeric_limits<double>::epsilon () * std::abs (distance))
+	{
+		// y coordinate is taken into account as well
+		offset /= distance;
+		pan = offset[0] * std::cos (offset[1] * M_PI / 2);
+
+		// if we are close to the position the panning will be reduced in effect.
+		const auto distanceFactor = 1. - (1. / std::max(5. * distance / maxListeningDistance, 1.));
+		pan *= distanceFactor;
+
+		// just to make 100% sure that there are no overflows
+		pan = std::max (std::min (pan, 1.), -1.);
+	}
+	const auto right = std::min ((int)(std::numeric_limits<unsigned char>::max () * (pan+1)), (int)std::numeric_limits<unsigned char>::max ());
+	const auto left = std::min ((int)(std::numeric_limits<unsigned char>::max () * (-1.*pan+1)), (int)std::numeric_limits<unsigned char>::max ());
+
+	channel->setPanning (left, right);
+}
+
+//--------------------------------------------------------------------------
+void cSoundManager::updateAllSoundPositions ()
+{
+	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
+	{
+		updateSoundPosition (*i->sound);
 	}
 }

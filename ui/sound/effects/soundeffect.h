@@ -30,6 +30,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 class cSoundChannel;
+class cPosition;
 
 class cSoundEffect
 {
@@ -45,17 +46,25 @@ public:
 	void pause ();
 	void resume ();
 
+	cSoundChannel* getChannel () const;
+
 	bool isInConflict (const cSoundEffect& other) const;
 
 	unsigned int getMaxConcurrentConflictedCount () const;
 
 	eSoundConflictHandlingType getSoundConflictHandlingType () const;
 
+	virtual bool hasPosition () const;
+
+	virtual const cPosition& getPosition () const;
+
 	cSignal<void ()> started;
 	cSignal<void ()> stopped;
 
 	cSignal<void ()> paused;
 	cSignal<void ()> resumed;
+
+	cSignal<void ()> positionChanged;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

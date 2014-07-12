@@ -36,6 +36,7 @@ enum class eSoundEffectType
 	EffectExplosion,
 	EffectAbsorb,
 	EffectAlert,
+	EffectUnitSound,
 
 	// Voices
 	VoiceNoPath,

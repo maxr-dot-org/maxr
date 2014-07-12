@@ -152,6 +152,9 @@ public:
 	bool isVoiceMute() const;
 	void setVoiceMute (bool voiceMute, bool save = true);
 
+	bool is3DSound () const;
+	void set3DSound (bool sound3d, bool save = true);
+
 	// Startup
 
 	bool shouldShowIntro() const;
@@ -317,6 +320,8 @@ private:
 	bool soundMute;
 	/** mute voices */
 	bool voiceMute;
+	/** in-game sound effects should respect position*/
+	bool sound3d;
 
 	// PATHS
 	std::string fontPath;      // Path to the fonts

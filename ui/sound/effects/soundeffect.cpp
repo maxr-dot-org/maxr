@@ -19,6 +19,7 @@
 
 #include "ui/sound/effects/soundeffect.h"
 #include "output/sound/soundchannel.h"
+#include "utility/position.h"
 
 //--------------------------------------------------------------------------
 cSoundEffect::cSoundEffect (eSoundEffectType type_, const cSoundChunk& sound_) :
@@ -30,7 +31,7 @@ cSoundEffect::cSoundEffect (eSoundEffectType type_, const cSoundChunk& sound_) :
 //--------------------------------------------------------------------------
 cSoundEffect::~cSoundEffect ()
 {
-	signalConnectionManager.clear ();
+	signalConnectionManager.disconnectAll ();
 	if (channel)
 	{
 		channel->stop ();
@@ -100,6 +101,12 @@ void cSoundEffect::resume ()
 }
 
 //--------------------------------------------------------------------------
+cSoundChannel* cSoundEffect::getChannel () const
+{
+	return channel;
+}
+
+//--------------------------------------------------------------------------
 bool cSoundEffect::isInConflict (const cSoundEffect& other) const
 {
 	return type == other.type;
@@ -122,6 +129,7 @@ unsigned int cSoundEffect::getMaxConcurrentConflictedCount () const
 	case eSoundEffectType::EffectStartMove:
 	case eSoundEffectType::EffectStopMove:
 	case eSoundEffectType::EffectAlert:
+	case eSoundEffectType::EffectUnitSound:
 	case eSoundEffectType::VoiceNoPath:
 	case eSoundEffectType::VoiceCommandoAction:
 	case eSoundEffectType::VoiceReload:
@@ -164,9 +172,23 @@ eSoundConflictHandlingType cSoundEffect::getSoundConflictHandlingType () const
 	case eSoundEffectType::VoiceDetected:
 		return eSoundConflictHandlingType::DiscardNew;
 	case eSoundEffectType::VoiceUnitStatus:
+	case eSoundEffectType::EffectUnitSound:
 		return eSoundConflictHandlingType::StopOld;
 	case eSoundEffectType::EffectExplosion:
 	case eSoundEffectType::EffectAbsorb:
 		return eSoundConflictHandlingType::PlayAnyway;
 	}
+}
+
+//--------------------------------------------------------------------------
+bool cSoundEffect::hasPosition () const
+{
+	return false;
+}
+
+//--------------------------------------------------------------------------
+const cPosition& cSoundEffect::getPosition () const
+{
+	static cPosition dummyPosition (0, 0);
+	return dummyPosition;
 }

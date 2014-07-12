@@ -46,6 +46,8 @@ private:
 	cCheckBox* disableEffectsCheckBox;
 	cCheckBox* disableVoicesCheckBox;
 
+	cCheckBox* effects3DCheckBox;
+
 	cSlider* scrollSpeedSlider;
 
 	cLineEdit* nameEdit;

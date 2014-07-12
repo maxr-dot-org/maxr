@@ -18,8 +18,22 @@
  ***************************************************************************/
 
 #include "ui/sound/effects/soundeffectunit.h"
+#include "unit.h"
 
 //--------------------------------------------------------------------------
-cSoundEffectUnit::cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& sound, const cUnit& unit) :
-	cSoundEffect (type, sound)
+cSoundEffectUnit::cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& sound, const cUnit& unit_) :
+	cSoundEffect (type, sound),
+	unit (unit_)
 {}
+
+//--------------------------------------------------------------------------
+bool cSoundEffectUnit::hasPosition () const
+{
+	return true;
+}
+
+//--------------------------------------------------------------------------
+const cPosition& cSoundEffectUnit::getPosition () const
+{
+	return unit.getPosition ();
+}

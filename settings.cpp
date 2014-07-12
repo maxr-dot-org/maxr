@@ -702,6 +702,18 @@ void cSettings::initialize()
 		}
 
 		// =====================================================================
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Sound3D", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("YN"))
+		{
+			Log.write ("Can't load 3D sound from config file: using default value", LOG_TYPE_WARNING);
+			set3DSound (true);
+		}
+		else
+		{
+			sound3d = xmlElement->BoolAttribute ("YN");
+		}
+
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicVol", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
@@ -1437,6 +1449,19 @@ void cSettings::setVoiceMute (bool voiceMute, bool save)
 {
 	this->voiceMute = voiceMute;
 	if (save) saveSetting ("Options~Game~Sound~VoiceMute", voiceMute);
+}
+
+//------------------------------------------------------------------------------
+bool cSettings::is3DSound () const
+{
+	return sound3d;
+}
+
+//------------------------------------------------------------------------------
+void cSettings::set3DSound (bool sound3d, bool save)
+{
+	this->sound3d = sound3d;
+	if (save) saveSetting ("Options~Game~Sound~Sound3D", sound3d);
 }
 
 //------------------------------------------------------------------------------

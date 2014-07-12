@@ -64,6 +64,7 @@ cDialogPreferences::cDialogPreferences () :
 	signalConnectionManager.connect (effectsVolumeSlider->valueChanged, std::bind (&cDialogPreferences::effectsVolumeChanged, this));
 	disableEffectsCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (245, 73 + 20), lngPack.i18n ("Text~Settings~Disable")));
 	signalConnectionManager.connect (disableEffectsCheckBox->toggled, std::bind (&cDialogPreferences::effectsMuteChanged, this));
+	effects3DCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (340, 73 + 20), "3D"));
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (25, 56 + 20 * 3), getPosition () + cPosition (135, 66 + 20 * 3)), lngPack.i18n ("Text~Settings~Voices"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	voicesVolumeSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (getPosition () + cPosition (140, 53 + 20 * 3), getPosition () + cPosition (240, 70 + 20 * 3)), 0, 128, eOrientationType::Horizontal));
@@ -120,6 +121,8 @@ void cDialogPreferences::loadValues ()
 	disableEffectsCheckBox->setChecked (cSettings::getInstance ().isSoundMute ());
 	disableVoicesCheckBox->setChecked (cSettings::getInstance ().isVoiceMute ());
 
+	effects3DCheckBox->setChecked (cSettings::getInstance ().is3DSound ());
+
 	scrollSpeedSlider->setValue (cSettings::getInstance ().getScrollSpeed());
 
 	nameEdit->setText (cSettings::getInstance ().getPlayerName ());
@@ -166,6 +169,8 @@ void cDialogPreferences::loadValues ()
 void cDialogPreferences::saveValues ()
 {
 	cSettings::getInstance ().setPlayerName (nameEdit->getText ().c_str ());
+
+	cSettings::getInstance ().set3DSound (effects3DCheckBox->isChecked ());
 
 	cSettings::getInstance ().setAnimations (animationCheckBox->isChecked ());
 	cSettings::getInstance ().setShadows (shadowsCheckBox->isChecked ());

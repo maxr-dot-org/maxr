@@ -24,3 +24,15 @@ cSoundEffectPosition::cSoundEffectPosition (eSoundEffectType type, const cSoundC
 	cSoundEffect (type, sound),
 	position (position_)
 {}
+
+//--------------------------------------------------------------------------
+bool cSoundEffectPosition::hasPosition () const
+{
+	return true;
+}
+
+//--------------------------------------------------------------------------
+const cPosition& cSoundEffectPosition::getPosition () const
+{
+	return position;
+}

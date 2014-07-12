@@ -43,6 +43,10 @@ public:
 
 	typedef cFixedVector<T, D> self_type;
 
+	cFixedVector ();
+	template<typename U>
+	cFixedVector (const cFixedVector<U, D>& other);
+
 	/**
 	 * Returns a single element of the vector.
 	 * @param index The index of the vector. Should be 0 <= index <= size()
@@ -103,6 +107,22 @@ public:
 private:
 	T data_[D];
 };
+
+//------------------------------------------------------------------------------
+template<typename T, std::size_t D>
+cFixedVector<T, D>::cFixedVector ()
+{}
+
+//------------------------------------------------------------------------------
+template<typename T, std::size_t D>
+template<typename U>
+cFixedVector<T, D>::cFixedVector (const cFixedVector<U, D>& other)
+{
+	for (size_t d = 0; d < D; ++d)
+	{
+		data_[d] = other[d];
+	}
+}
 
 //------------------------------------------------------------------------------
 template<typename T, std::size_t D>

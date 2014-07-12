@@ -1718,7 +1718,7 @@ void cGameGui::updateSelectedUnitMoveSound ()
 void cGameGui::startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound)
 {
 	stopSelectedUnitSound ();
-	selectedUnitSoundLoop = std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, sound, unit);
+	selectedUnitSoundLoop = std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectUnitSound, sound, unit);
 	soundManager->playSound (selectedUnitSoundLoop, true);
 }
 

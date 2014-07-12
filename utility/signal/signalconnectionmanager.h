@@ -37,7 +37,11 @@ class cSignalConnectionManager
 {
 public:
 	cSignalConnectionManager ();
+	cSignalConnectionManager (cSignalConnectionManager&& other);
+
     ~cSignalConnectionManager ();
+
+	cSignalConnectionManager& operator=(cSignalConnectionManager&& other);
 
     /**
      * Connects the passed function object to the passed signal and
