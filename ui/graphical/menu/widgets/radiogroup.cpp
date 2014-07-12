@@ -77,7 +77,7 @@ void cRadioGroup::buttonToggled (cCheckBox* button)
 		if (!button->isChecked ())
 		{
 			if (!allowUncheckAll) button->setChecked (true);
-			else currentlyCheckedButton = false;
+			else currentlyCheckedButton = nullptr;
 		}
 	}
 	else

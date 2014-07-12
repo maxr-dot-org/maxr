@@ -1278,11 +1278,8 @@ void cGameMapWidget::drawUnitCircles ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawExitPoints ()
 {
-
 	auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	auto selectedBuilding = unitSelection.getSelectedBuilding ();
-
-	const auto zoomedTileSize = getZoomedTileSize ();
 
 	if (selectedVehicle && selectedVehicle->isDisabled () == false)
 	{

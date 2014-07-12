@@ -28,8 +28,8 @@
 cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
 	cWidget (position),
 	animationTimer (std::move(animationTimer_)),
-	percentClosed (percentClosed_),
-	openStep (100. * 10 / (400)) // open in 400 ms
+	openStep (100. * 10 / (400)), // open in 400 ms
+	percentClosed (percentClosed_)
 {
 	percentClosed = std::max (0., percentClosed);
 	percentClosed = std::min (100., percentClosed);

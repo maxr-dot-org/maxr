@@ -85,8 +85,6 @@ private:
 
 	std::vector<std::shared_ptr<cWindow>> modalWindows;
 
-	bool terminate;
-
 	cSignalConnectionManager signalConnectionManager;
 
 	cKeySequence currentKeySequence;

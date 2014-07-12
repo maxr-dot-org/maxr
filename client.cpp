@@ -58,11 +58,11 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	server (server_),
 	network (std::move(network_)),
 	ActivePlayer (NULL),
+	turnClock (std::make_shared<cTurnClock> (1)),
+	gameSettings (std::make_shared<cGameSettings> ()),
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
 	effectsList (new cFxContainer),
-	gameTimer(),
-	turnClock (std::make_shared<cTurnClock>(1)),
-	gameSettings (std::make_shared<cGameSettings> ())
+	gameTimer ()
 {
 	assert (server != nullptr || network != nullptr);
 

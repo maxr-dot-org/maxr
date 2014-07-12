@@ -30,20 +30,20 @@
 class cColor
 {
 public:
-	cColor::cColor ();
-	cColor::cColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF);
+	cColor ();
+	cColor (unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 0xFF);
 
-	bool cColor::operator==(const cColor& other) const;
-	bool cColor::operator!=(const cColor& other) const;
+	bool operator==(const cColor& other) const;
+	bool operator!=(const cColor& other) const;
 
-	SDL_Color cColor::toSdlColor () const;
-	Uint32 cColor::toMappedSdlRGBColor (const SDL_PixelFormat* format) const;
-	Uint32 cColor::toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
+	SDL_Color toSdlColor () const;
+	Uint32 toMappedSdlRGBColor (const SDL_PixelFormat* format) const;
+	Uint32 toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
 
-	cColor cColor::exchangeRed (unsigned char red);
-	cColor cColor::exchangeGreen (unsigned char green);
-	cColor cColor::exchangeBlue (unsigned char blue);
-	cColor cColor::exchangeAlpha (unsigned char alpha);
+	cColor exchangeRed (unsigned char red);
+	cColor exchangeGreen (unsigned char green);
+	cColor exchangeBlue (unsigned char blue);
+	cColor exchangeAlpha (unsigned char alpha);
 
 	unsigned char r, g, b;
 	unsigned char a;

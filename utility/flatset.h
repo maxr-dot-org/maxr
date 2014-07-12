@@ -67,27 +67,27 @@ public:
 	typedef typename DataType::const_reverse_iterator const_reverse_iterator;
 
 	cFlatSet () :
-		data (),
-		compare ()
+		compare (),
+		data ()
 	{}
 	explicit cFlatSet (const Compare& comp, const allocator_type& alloc = allocator_type ()) :
-		data (alloc),
-		compare (comp)
+		compare (comp),
+		data (alloc)
 	{}
 	template<typename InputIterator>
 	cFlatSet (InputIterator first, InputIterator last, const Compare& comp = Compare (), const allocator_type& alloc = allocator_type ()) :
-		data (first, last, alloc),
-		compare (comp)
+		compare (comp),
+		data (first, last, alloc)
 	{
 		std::sort (begin (), end (), compare);
 	}
 	cFlatSet (const cFlatSet& other) :
-		data (other.data),
-		compare (other.compare)
+		compare (other.compare),
+		data (other.data)
 	{}
 	cFlatSet (cFlatSet&& other) :
-		data (std::move (other.data)),
-		compare (std::move(other.compare))
+		compare (std::move (other.compare)),
+		data (std::move (other.data))
 	{}
 	//cFlatSet (const cFlatSet& other, const allocator_type& alloc);
 	//cFlatSet (cFlatSet&& other, const allocator_type& alloc);

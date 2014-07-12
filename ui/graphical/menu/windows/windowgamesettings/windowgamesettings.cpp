@@ -41,7 +41,7 @@ cWindowGameSettings::cWindowGameSettings () :
 
 	// Metal
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Metal") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	metalRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto metalRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	metalLimitedCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	metalNormalCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	metalHighCheckBox = metalRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
@@ -50,7 +50,7 @@ cWindowGameSettings::cWindowGameSettings () :
 
 	// Oil
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Oil") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	oilRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto oilRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	oilLimitedCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	oilNormalCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	oilHighCheckBox = oilRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
@@ -59,7 +59,7 @@ cWindowGameSettings::cWindowGameSettings () :
 
 	// Gold
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Gold") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	goldRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto goldRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	goldLimitedCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Limited"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	goldNormalCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	goldHighCheckBox = goldRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~High"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
@@ -68,7 +68,7 @@ cWindowGameSettings::cWindowGameSettings () :
 
 	// Density
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Resource_Density") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	densityRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto densityRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	densitySparseCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Sparse"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	densityNormalCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86, currentLine), lngPack.i18n ("Text~Option~Normal"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	densityDenseCheckBox = densityRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 86 * 2, currentLine), lngPack.i18n ("Text~Option~Dense"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
@@ -79,7 +79,7 @@ cWindowGameSettings::cWindowGameSettings () :
 	// Bridgehead
 	//
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~BridgeHead") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	bridgeheadRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto bridgeheadRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	bridgeheadMobileCheckBox = bridgeheadRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Mobile"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	bridgeheadDefiniteCheckBox = bridgeheadRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~Definite"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
@@ -91,13 +91,12 @@ cWindowGameSettings::cWindowGameSettings () :
 	if (!hotSeat)
 	{
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Game_Type") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-		gameTypeRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+		auto gameTypeRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 		gameTypeTurnsCheckBox = gameTypeRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~Type_Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 		gameTypeSimultaneousCheckBox = gameTypeRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 173, currentLine), lngPack.i18n ("Text~Option~Type_Simu"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	}
 	else
 	{
-		gameTypeRadioGroup = nullptr;
 		gameTypeTurnsCheckBox = nullptr;
 		gameTypeSimultaneousCheckBox = nullptr;
 	}
@@ -107,7 +106,7 @@ cWindowGameSettings::cWindowGameSettings () :
 	// Clans
 	//
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Clans") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
-	clansRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto clansRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	clansOnCheckBox = clansRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), lngPack.i18n ("Text~Option~On"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	clansOffCheckBox = clansRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 64, currentLine), lngPack.i18n ("Text~Option~Off"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight * 3;
@@ -119,7 +118,7 @@ cWindowGameSettings::cWindowGameSettings () :
 	//
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Credits_start") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	currentLine += lineHeight;
-	creditsRadioGroup = addChild (std::make_unique<cRadioGroup> ());
+	auto creditsRadioGroup = addChild (std::make_unique<cRadioGroup> ());
 	
 	creditsNoneCheckBox = creditsRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (140, currentLine), lngPack.i18n ("Text~Option~None") + " (" + iToStr (cGameSettings::defaultCreditsNone) + ")", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;

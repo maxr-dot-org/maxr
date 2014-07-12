@@ -234,48 +234,6 @@ int cBuilding::refreshData()
 	return 0;
 }
 
-namespace
-{
-
-// TODO: Factorize with code in menuitems.cpp
-void DrawRectangle (SDL_Surface* surface, const SDL_Rect& rectangle, Uint32 color, Uint16 borderSize)
-{
-	SDL_Rect line_h = {rectangle.x, rectangle.y, rectangle.w, borderSize};
-	SDL_FillRect (surface, &line_h, color);
-	line_h.y += rectangle.h - borderSize;
-	SDL_FillRect (surface, &line_h, color);
-	SDL_Rect line_v = {rectangle.x, rectangle.y, borderSize, rectangle.h};
-	SDL_FillRect (surface, &line_v, color);
-	line_v.x += rectangle.w - borderSize;
-	SDL_FillRect (surface, &line_v, color);
-}
-
-// TODO: Factorize with code in menuitems.cpp
-void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint16 cornerSize, Uint32 color)
-{
-	SDL_Rect line_h = { rectangle.x, rectangle.y, cornerSize, 1 };
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x += rectangle.w - 1 - cornerSize;
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x = rectangle.x;
-	line_h.y += rectangle.h - 1;
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x += rectangle.w - 1 - cornerSize;
-	SDL_FillRect (surface, &line_h, color);
-
-	SDL_Rect line_v = { rectangle.x, rectangle.y, 1, cornerSize };
-	SDL_FillRect (surface, &line_v, color);
-	line_v.y += rectangle.h - 1 - cornerSize;
-	SDL_FillRect (surface, &line_v, color);
-	line_v.x += rectangle.w - 1;
-	line_v.y = rectangle.y;
-	SDL_FillRect (surface, &line_v, color);
-	line_v.y += rectangle.h - 1 - cornerSize;
-	SDL_FillRect (surface, &line_v, color);
-}
-
-}
-
 void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
 	assert (!owner);

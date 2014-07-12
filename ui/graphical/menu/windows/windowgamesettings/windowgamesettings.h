@@ -42,43 +42,35 @@ public:
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-	cRadioGroup* metalRadioGroup;
 	cCheckBox* metalLimitedCheckBox;
 	cCheckBox* metalNormalCheckBox;
 	cCheckBox* metalHighCheckBox;
 	cCheckBox* metalTooMuchCheckBox;
 
-	cRadioGroup* oilRadioGroup;
 	cCheckBox* oilLimitedCheckBox;
 	cCheckBox* oilNormalCheckBox;
 	cCheckBox* oilHighCheckBox;
 	cCheckBox* oilTooMuchCheckBox;
 
-	cRadioGroup* goldRadioGroup;
 	cCheckBox* goldLimitedCheckBox;
 	cCheckBox* goldNormalCheckBox;
 	cCheckBox* goldHighCheckBox;
 	cCheckBox* goldTooMuchCheckBox;
 
-	cRadioGroup* densityRadioGroup;
 	cCheckBox* densitySparseCheckBox;
 	cCheckBox* densityNormalCheckBox;
 	cCheckBox* densityDenseCheckBox;
 	cCheckBox* densityTooMuchCheckBox;
 
-	cRadioGroup* bridgeheadRadioGroup;
 	cCheckBox* bridgeheadMobileCheckBox;
 	cCheckBox* bridgeheadDefiniteCheckBox;
 
-	cRadioGroup* gameTypeRadioGroup;
 	cCheckBox* gameTypeTurnsCheckBox;
 	cCheckBox* gameTypeSimultaneousCheckBox;
 
-	cRadioGroup* clansRadioGroup;
 	cCheckBox* clansOnCheckBox;
 	cCheckBox* clansOffCheckBox;
 
-	cRadioGroup* creditsRadioGroup;
 	cCheckBox* creditsNoneCheckBox;
 	cCheckBox* creditsLowCheckBox;
 	cCheckBox* creditsLimitedCheckBox;
@@ -86,7 +78,6 @@ private:
 	cCheckBox* creditsHighCheckBox;
 	cCheckBox* creditsMoreCheckBox;
 
-	cRadioGroup* victoryRadioGroup;
 	cCheckBox* victoryTurns100CheckBox;
 	cCheckBox* victoryTurns200CheckBox;
 	cCheckBox* victoryTurns400CheckBox;

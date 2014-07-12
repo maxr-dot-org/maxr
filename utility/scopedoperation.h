@@ -20,6 +20,8 @@
 #ifndef utility_scopedoperationH
 #define utility_scopedoperationH
 
+#include <functional>
+
 #include "maxrconfig.h"
 
 /**

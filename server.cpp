@@ -67,12 +67,12 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 	network (std::move(network_)),
 	gameTimer(),
 	serverThread (nullptr),
+	turnClock (std::make_unique<cTurnClock> (1)),
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
-	casualtiesTracker (new cCasualtiesTracker()),
-	serverState (SERVER_STATE_INITGAME),
 	gameSettings (std::make_unique<cGameSettings> ()),
-	turnClock (std::make_unique<cTurnClock> (1))
+	casualtiesTracker (new cCasualtiesTracker ()),
+	serverState (SERVER_STATE_INITGAME)
 {
 	bExit = false;
 	openMapDefeat = true;

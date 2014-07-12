@@ -84,10 +84,9 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	animationTimer (std::make_shared<cAnimationTimer> ()),
 	soundManager (std::make_shared<cSoundManager> ()),
 	staticMap (std::move (staticMap_)),
-	dynamicMap (nullptr),
 	mouseScrollDirection (0, 0),
-	openPanelOnActivation (true),
-	savedReportPosition (false, cPosition ())
+	savedReportPosition (false, cPosition ()),
+	openPanelOnActivation (true)
 {
 	auto hudOwning = std::make_unique<cHud> (animationTimer);
 
@@ -957,23 +956,11 @@ void cGameGui::connectToClient (cClient& client)
 
 	clientSignalConnectionManager.connect (client.unitStored, [&](const cUnit& storingUnit, const cUnit& /*storedUnit*/)
 	{
-		//auto mouseTilePosition = getTilePosition (cMouse::getInstance ().getPosition ());
-		//if (storedVehicle.PosX == mouseTilePosition.x () && storedVehicle.PosY == mouseTilePosition.y ()) updateMouseCursor ();
-
-		//checkMouseInputMode ();
-
-		//if (&storedVehicle == getSelectedUnit ()) deselectUnit ();
-
 		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectLoad, SoundData.SNDLoad, storingUnit));
 	});
 
 	clientSignalConnectionManager.connect (client.unitActivated, [&](const cUnit& storingUnit, const cUnit& /*storedUnit*/)
 	{
-		//if (gameGUI->getSelectedUnit() == StoringVehicle && gameGUI->mouseInputMode == activateVehicle)
-		//{
-		//	gameGUI->mouseInputMode = normalInput;
-		//}
-
 		soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectActivate, SoundData.SNDActivate, storingUnit));
 	});
 
