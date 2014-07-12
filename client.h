@@ -50,6 +50,8 @@ class sPlayer;
 class cGameSettings;
 class cPosition;
 class cTurnClock;
+class cTurnTimeClock;
+class cTurnTimeDeadline;
 struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -95,12 +97,6 @@ public:
 	* so that they are handled also, when the effects are not drawn.
 	*/
 	void runFx();
-
-	/**
-	* handles the rest-time of the current turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleTurnTime();
 
 	/**
 	* creates a new moveJob and transmits it to the server
@@ -176,9 +172,6 @@ public:
 	void destroyUnit (cVehicle& vehicle);
 	void destroyUnit (cBuilding& building);
 
-	unsigned int getRemainingTimeInSecond() const;
-	unsigned int getElapsedTimeInSecond() const;
-
     void deletePlayer (cPlayer* player);
 
     void handleChatMessage (const std::string& message);
@@ -190,6 +183,7 @@ public:
 	const std::shared_ptr<cMap>& getMap() { return Map; }
 
 	std::shared_ptr<const cTurnClock> getTurnClock () const { return turnClock; }
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock () const { return turnTimeClock; }
 
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
 	std::vector<std::shared_ptr<cPlayer>>& getPlayerList () { return playerList; }
@@ -199,6 +193,8 @@ public:
 
 	void setGameSettings (const cGameSettings& gameSettings_);
 	std::shared_ptr<const cGameSettings> getGameSettings () const { return gameSettings; }
+
+	const std::shared_ptr<cGameTimerClient>& getGameTimer () const { return gameTimer; }
 
 	mutable cSignal<void ()> startedTurnEndProcess;
 	mutable cSignal<void ()> finishedTurnEndProcess;
@@ -276,6 +272,8 @@ private:
 	void HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message);
@@ -331,8 +329,13 @@ private:
 
 private:
 	cServer* server;
+
 	std::shared_ptr<cTCP> network;
+
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;
+
+	std::shared_ptr<cGameTimerClient> gameTimer;
+
 	/** the map */
 	std::shared_ptr<cMap> Map;
 	/** List with all players */
@@ -348,10 +351,10 @@ private:
 	bool bDefeated;
 
 	std::shared_ptr<cTurnClock> turnClock;
-	/** serverTime when players have to finish TurnTime */
-	unsigned int iEndTurnTime;
-	/** serverTime when the TurnTime has been started */
-	unsigned int iStartTurnTime;
+	std::shared_ptr<cTurnTimeClock> turnTimeClock;
+	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;
+	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;
+
 	/** this client's copy of the gameSettings **/
 	std::shared_ptr<cGameSettings> gameSettings;
 
@@ -362,7 +365,6 @@ private:
 	/** lists with all FX-Animation */
 	AutoPtr<cFxContainer> effectsList;
 public:
-	cGameTimerClient gameTimer;
 	/** list with the running clientAttackJobs */
 	std::vector<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */

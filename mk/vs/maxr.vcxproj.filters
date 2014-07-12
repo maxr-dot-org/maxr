@@ -777,6 +777,12 @@
     <ClCompile Include="..\..\ui\sound\effects\soundeffectvoice.cpp">
       <Filter>maxr\ui\sound\effects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\logic\turntimeclock.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\turntimeclockwidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\attackJobs.h">
@@ -1609,6 +1615,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ui\sound\effects\soundconflicthandlingtype.h">
       <Filter>maxr\ui\sound\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\turntimeclock.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\turntimeclockwidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

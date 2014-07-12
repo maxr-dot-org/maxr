@@ -48,6 +48,7 @@
 #include "game/data/report/savedreporttranslated.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/logic/turnclock.h"
+#include "game/logic/turntimeclock.h"
 #include "utility/random.h"
 
 #if DEDICATED_SERVER_APPLICATION
@@ -65,9 +66,10 @@ int CallbackRunServerThread (void* arg)
 //------------------------------------------------------------------------------
 cServer::cServer (std::shared_ptr<cTCP> network_) :
 	network (std::move(network_)),
-	gameTimer(),
+	gameTimer(std::make_shared<cGameTimerServer>()),
 	serverThread (nullptr),
 	turnClock (std::make_unique<cTurnClock> (1)),
+	turnTimeClock (std::make_unique<cTurnTimeClock> (gameTimer)),
 	lastTurnEnd (0),
 	executingRemainingMovements (false),
 	gameSettings (std::make_unique<cGameSettings> ()),
@@ -77,7 +79,6 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 	bExit = false;
 	openMapDefeat = true;
 	activeTurnPlayer = nullptr;
-	iDeadlineStartTime = 0;
 	iNextUnitID = 1;
 	iWantPlayerEndNum = -1;
 	savingID = 0;
@@ -88,8 +89,12 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 		if (network) network->setMessageReceiver (this);
 	}
 
-	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
-	gameTimer.start();
+	gameTimer->maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
+	gameTimer->start ();
+	if (gameSettings->isTurnLimitActive ())
+	{
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
+	}
 
 	// connect to casualties tracker to send updates about casualties changes
 	signalConnectionManager.connect (casualtiesTracker->casualtyChanged, [this](const sID unitId, int playerNr)
@@ -171,7 +176,7 @@ void cServer::start ()
 void cServer::stop()
 {
 	bExit = true;
-	gameTimer.stop();
+	gameTimer->stop();
 
 	if (!DEDICATED_SERVER)
 	{
@@ -183,11 +188,30 @@ void cServer::stop()
 	}
 }
 
-//------------------------------------------------------------------------------
-void cServer::setDeadline (int iDeadline)
-{
-	gameSettings->setTurnDeadline(iDeadline);
-}
+////------------------------------------------------------------------------------
+//void cServer::setTurnEndDeadline (const std::chrono::seconds& deadline)
+//{
+//	gameSettings->setTurnEndDeadline (deadline);
+//	if (turnEndDeadline)
+//	{
+//		turnEndDeadline->changeDeadline (deadline);
+//	}
+//}
+//
+////------------------------------------------------------------------------------
+//void cServer::setTurnEndDeadlineActive (bool value)
+//{
+//	gameSettings->setTurnEndDeadlineActive (value);
+//	if (!value && turnEndDeadline)
+//	{
+//		turnTimeClock->removeDeadline (turnEndDeadline);
+//		turnEndDeadline = nullptr;
+//	}
+//	else if (value && !turnEndDeadline && !PlayerEndList.empty ())
+//	{
+//		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
+//	}
+//}
 
 //------------------------------------------------------------------------------
 void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
@@ -207,7 +231,7 @@ void cServer::sendNetMessage (AutoPtr<cNetMessage>& message, const cPlayer* play
 	{
         Log.write ("Server: --> " + playerName + " (" + iToStr(playerNumber) + ") "
 				   + message->getTypeAsString ()
-				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
 				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -251,14 +275,14 @@ void cServer::run()
 		}
 
 		// don't do anything if games hasn't been started yet!
-		unsigned int lastTime = gameTimer.gameTime;
+		unsigned int lastTime = gameTimer->gameTime;
 		if (serverState == SERVER_STATE_INGAME)
 		{
-			gameTimer.run (*this);
+			gameTimer->run (*this);
 		}
 
 		// nothing done
-		if (!message && lastTime == gameTimer.gameTime)
+		if (!message && lastTime == gameTimer->gameTime)
 		{
 			SDL_Delay (10);
 		}
@@ -2070,7 +2094,7 @@ int cServer::handleNetMessage (cNetMessage& message)
 	{
 		Log.write ("Server: <-- Player " + iToStr (message.iPlayerNr) + " "
 				   + message.getTypeAsString ()
-				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
 				   + ", Hexdump: " + message.getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -2129,7 +2153,7 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_SELFDESTROY: handleNetMessage_GAME_EV_WANT_SELFDESTROY (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
 		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (message); break;
-		case NET_GAME_TIME_CLIENT: gameTimer.handleSyncMessage (message); break;
+		case NET_GAME_TIME_CLIENT: gameTimer->handleSyncMessage (message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 			break;
@@ -2772,13 +2796,12 @@ void cServer::handleEnd (const cPlayer& player)
 
 	if (gameType == GAME_TYPE_SINGLE)
 	{
-		sendTurnFinished (*this, player.getNr(), -1);
+		sendTurnFinished (*this, player.getNr());
 		if (checkEndActions (&player))
 		{
 			iWantPlayerEndNum = player.getNr();
 			return;
 		}
-		turnClock->increaseTurn ();
 		makeTurnEnd();
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
@@ -2800,7 +2823,6 @@ void cServer::handleEnd (const cPlayer& player)
 			activeTurnPlayer = playerList.front ().get ();
 
 			makeTurnEnd();
-			turnClock->increaseTurn();
 
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
@@ -2866,18 +2888,21 @@ void cServer::handleEnd (const cPlayer& player)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				sendTurnFinished (*this, player.getNr(), 100 * gameSettings->getTurnDeadline());
-				iDeadlineStartTime = gameTimer.gameTime;
+				sendTurnFinished (*this, player.getNr());
+				if (gameSettings->isTurnEndDeadlineActive ())
+				{
+					turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
+					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
+				}
 			}
 			else
 			{
-				sendTurnFinished (*this, player.getNr (), -1);
+				sendTurnFinished (*this, player.getNr ());
 			}
 		}
 
 		if (PlayerEndList.size() >= playerList.size())
 		{
-			iDeadlineStartTime = 0;
 			if (checkEndActions (nullptr))
 			{
 				iWantPlayerEndNum = player.getNr ();
@@ -2886,7 +2911,6 @@ void cServer::handleEnd (const cPlayer& player)
 
 			PlayerEndList.clear();
 
-			turnClock->increaseTurn ();
 			makeTurnEnd();
 		}
 	}
@@ -2895,7 +2919,7 @@ void cServer::handleEnd (const cPlayer& player)
 //------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
-	if (!gameTimer.timer50ms) return;
+	if (!gameTimer->timer50ms) return;
 
 	// wait until all clients have reported a gametime
 	// that is after the turn end.
@@ -2906,7 +2930,7 @@ void cServer::handleWantEnd()
 		for (size_t i = 0; i != playerList.size(); ++i)
 		{
 			cPlayer& player = *playerList[i];
-			if (!isPlayerDisconnected (player) && gameTimer.getReceivedTime (i) <= lastTurnEnd)
+			if (!isPlayerDisconnected (player) && gameTimer->getReceivedTime (i) <= lastTurnEnd)
 				return;
 		}
 
@@ -2995,8 +3019,17 @@ bool cServer::checkEndActions (const cPlayer* player)
 //------------------------------------------------------------------------------
 void cServer::makeTurnEnd()
 {
+	turnClock->increaseTurn ();
+	turnTimeClock->restartFromNow ();
+	sendTurnStartTime (*this, turnTimeClock->getStartGameTime ());
+	turnTimeClock->clearAllDeadlines ();
+	if (gameSettings->isTurnLimitActive ())
+	{
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
+	}
+
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
-	lastTurnEnd = gameTimer.gameTime;
+	lastTurnEnd = gameTimer->gameTime;
 
 	// reload all buildings
 	for (size_t i = 0; i != playerList.size (); ++i)
@@ -3277,10 +3310,9 @@ void cServer::addReport (sID id, int iPlayerNum)
 //------------------------------------------------------------------------------
 void cServer::checkDeadline()
 {
-	if (!gameTimer.timer50ms) return;
-	if (gameSettings->getTurnDeadline () < 0 || iDeadlineStartTime <= 0) return;
+	if (!gameTimer->timer50ms) return;
 
-	if (gameTimer.gameTime <= iDeadlineStartTime + gameSettings->getTurnDeadline () * 100) return;
+	if (!turnTimeClock->hasReachedAnyDeadline ()) return;
 
 	if (checkEndActions (nullptr))
 	{
@@ -3290,8 +3322,6 @@ void cServer::checkDeadline()
 
 	PlayerEndList.clear();
 
-	turnClock->increaseTurn();
-	iDeadlineStartTime = 0;
 	makeTurnEnd();
 }
 
@@ -3386,7 +3416,7 @@ void cServer::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir)
 		{
 			// rotate vehicle
-			if (gameTimer.timer100ms)
+			if (gameTimer->timer100ms)
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
 			}
@@ -3394,7 +3424,7 @@ void cServer::handleMoveJobs()
 		else
 		{
 			// move the vehicle
-			if (gameTimer.timer10ms)
+			if (gameTimer->timer10ms)
 			{
 				MoveJob->moveVehicle();
 			}
@@ -3722,14 +3752,13 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 		sendDeleteEverything (*this, player);
 	}
 
-	sendGameTime (*this, player, gameTimer.gameTime);
+	sendGameTime (*this, player, gameTimer->gameTime);
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
 		sendClansToClients (*this, playerList);
 	}
-	sendTurn (*this, turnClock->getTurn (), lastTurnEnd, player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, 100 * gameSettings->getTurnDeadline () - (gameTimer.gameTime - iDeadlineStartTime), &player);
+	sendTurn (*this, turnClock->getTurn (), player);
 	sendResources (*this, player);
 
 	// send all units to the client
@@ -4048,7 +4077,7 @@ void cServer::addJob (cJob* job)
 
 void cServer::runJobs()
 {
-	helperJobs.run (gameTimer);
+	helperJobs.run (*gameTimer);
 }
 
 void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
@@ -4056,11 +4085,11 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 	freezeModes.enable (mode, playerNumber);
 	switch (mode)
 	{
-		case FREEZE_PAUSE: gameTimer.stop(); break;
-		case FREEZE_WAIT_FOR_RECONNECT: gameTimer.stop(); break;
+		case FREEZE_PAUSE: gameTimer->stop(); break;
+		case FREEZE_WAIT_FOR_RECONNECT: gameTimer->stop(); break;
 		case FREEZE_WAIT_FOR_TURNEND: break;
 		case FREEZE_WAIT_FOR_PLAYER:
-			//gameTimer.stop(); //done in cGameTimer::nextTickAllowed();
+			//gameTimer->stop(); //done in cGameTimer::nextTickAllowed();
 			break;
 		default:
 			Log.write (" Server: Tried to enable unsupported freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
@@ -4088,6 +4117,6 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 
 	if (!freezeModes.pause && !freezeModes.waitForReconnect)
 	{
-		gameTimer.start();
+		gameTimer->start();
 	}
 }

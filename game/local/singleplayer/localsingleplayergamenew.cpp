@@ -106,6 +106,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	gameGui->setPlayers (guiPlayers);
 	gameGui->setCasualtiesTracker (client->getCasualtiesTracker ());
 	gameGui->setTurnClock (client->getTurnClock ());
+	gameGui->setTurnTimeClock (client->getTurnTimeClock ());
 	gameGui->setGameSettings (client->getGameSettings ());
 
 	gameGui->connectToClient (*client);

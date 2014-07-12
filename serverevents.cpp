@@ -120,14 +120,33 @@ void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, i
 }
 
 //------------------------------------------------------------------------------
-void sendTurnFinished (cServer& server, int playerNum, int timeDelay, const cPlayer* receiver)
+void sendTurnFinished (cServer& server, int playerNum, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_TURN));
 
-	message->pushInt32 (timeDelay);
 	message->pushInt16 (playerNum);
 
 	server.sendNetMessage (message, receiver);
+}
+
+//------------------------------------------------------------------------------
+void sendTurnStartTime (cServer& server, unsigned int gameTime)
+{
+	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN_START_TIME));
+
+	message->pushInt32 (gameTime);
+
+	server.sendNetMessage (message);
+}
+
+//------------------------------------------------------------------------------
+void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime)
+{
+	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN_END_DEADLINE_START_TIME));
+
+	message->pushInt32 (gameTime);
+
+	server.sendNetMessage (message);
 }
 
 //------------------------------------------------------------------------------
@@ -690,10 +709,9 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 }
 
 //------------------------------------------------------------------------------
-void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& receiver)
+void sendTurn (cServer& server, int turn, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN));
-	message->pushInt32 (gameTime);
 	message->pushInt16 (turn);
 	server.sendNetMessage (message, &receiver);
 }

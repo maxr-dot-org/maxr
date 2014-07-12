@@ -375,7 +375,19 @@ cGameSettings cSavegame::loadGameSettings ()
 			}
 		}
 
-		if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadLine")) gameSetting.setTurnDeadline (e->IntAttribute ("num"));
+		if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadline"))
+		{
+			const auto value = e->IntAttribute ("num");
+			if (value >= 0)
+			{
+				gameSetting.setTurnEndDeadline (std::chrono::seconds (value));
+				gameSetting.setTurnEndDeadlineActive (true);
+			}
+			else
+			{
+				gameSetting.setTurnEndDeadlineActive (false);
+			}
+		}
 	}
 	else
 	{
@@ -403,7 +415,11 @@ cGameSettings cSavegame::loadGameSettings ()
 				if (XMLElement* e = gameInfoNode->FirstChildElement ("VictoryPoints")) gameSetting.setVictoryPoints (e->IntAttribute ("num"));
 			}
 
-			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnDeadline")) gameSetting.setTurnDeadline (e->IntAttribute ("num"));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnEndDeadline")) gameSetting.setTurnEndDeadline (std::chrono::seconds (e->IntAttribute ("num")));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnEndDeadlineActive")) gameSetting.setTurnEndDeadlineActive (e->BoolAttribute ("bool"));
+
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnLimit")) gameSetting.setTurnLimit (std::chrono::seconds (e->IntAttribute ("num")));
+			if (XMLElement* e = gameInfoNode->FirstChildElement ("TurnLimitActive")) gameSetting.setTurnLimitActive (e->BoolAttribute ("bool"));
 		}
 		catch (std::runtime_error&)
 		{
@@ -1309,7 +1325,11 @@ void cSavegame::writeGameInfo (const cServer& server)
 	if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)	addAttributeElement (gameinfoNode, "VictoryTurns", "num", iToStr (gameSetting.getVictoryTurns ()));
 	else if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Points) addAttributeElement (gameinfoNode, "VictoryPoints", "num", iToStr (gameSetting.getVictoryPoints ()));
 	
-	addAttributeElement (gameinfoNode, "TurnDeadline", "num", iToStr (gameSetting.getTurnDeadline()));
+	addAttributeElement (gameinfoNode, "TurnEndDeadline", "num", iToStr (gameSetting.getTurnEndDeadline ().count ()));
+	addAttributeElement (gameinfoNode, "TurnEndDeadlineActive", "bool", bToStr (gameSetting.isTurnEndDeadlineActive()));
+
+	addAttributeElement (gameinfoNode, "TurnLimit", "num", iToStr (gameSetting.getTurnLimit ().count ()));
+	addAttributeElement (gameinfoNode, "TurnLimitActive", "bool", bToStr (gameSetting.isTurnLimitActive ()));
 }
 
 //--------------------------------------------------------------------------

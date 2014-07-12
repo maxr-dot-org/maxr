@@ -17,29 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/network/client/networkclientgame.h"
-#include "client.h"
-#include "savegame.h"
-#include "loaddata.h"
+#ifndef ui_graphical_game_widgets_turntimeclockwidgetH
+#define ui_graphical_game_widgets_turntimeclockwidgetH
 
-//------------------------------------------------------------------------------
-cNetworkClientGame::~cNetworkClientGame ()
-{}
+#include <memory>
 
-//------------------------------------------------------------------------------
-void cNetworkClientGame::run ()
+#include "ui/graphical/widget.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+class cLabel;
+class cTurnTimeClock;
+
+class cTurnTimeClockWidget : public cWidget
 {
-	if (localClient) localClient->getGameTimer()->run ();
-}
+public:
+	cTurnTimeClockWidget (const cBox<cPosition>& area);
 
-//------------------------------------------------------------------------------
-void cNetworkClientGame::save (int saveNumber, const std::string& saveName)
-{
-	throw std::runtime_error (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
-}
+	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+private:
+	cSignalConnectionManager signalConnectionManager;
 
-//------------------------------------------------------------------------------
-void cNetworkClientGame::setNetwork (std::shared_ptr<cTCP> network_)
-{
-	network = network_;
-}
+	cLabel* textLabel;
+
+	std::shared_ptr<const cTurnTimeClock> turnTimeClock;
+
+	void update ();
+};
+
+#endif // ui_graphical_game_widgets_turntimeclockwidgetH

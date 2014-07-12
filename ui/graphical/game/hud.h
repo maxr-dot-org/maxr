@@ -29,6 +29,7 @@ class cPushButton;
 class cCheckBox;
 class cSlider;
 class cLabel;
+class cTurnTimeClockWidget;
 class cUnitVideoWidget;
 class cUnitDetailsHud;
 class cUnitRenameWidget;
@@ -36,6 +37,7 @@ class cUnit;
 class cAnimationTimer;
 class cPlayer;
 class cTurnClock;
+class cTurnTimeClock;
 
 class cHud : public cWidget
 {
@@ -51,6 +53,7 @@ public:
 
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
+	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	static AutoSurface generateSurface ();
 
@@ -75,7 +78,6 @@ public:
 	bool getMiniMapZoomFactorActive () const;
 	bool getMiniMapAttackUnitsOnly () const;
 
-	void setTurnTimeText (const std::string& text);
 	void setCoordinatesText (const std::string& text);
 	void setUnitNameText (const std::string& text);
 
@@ -145,7 +147,7 @@ private:
 	cLabel* coordsLabel;
 	cLabel* unitNameLabel;
 	cLabel* turnLabel;
-	cLabel* timeLabel;
+	cTurnTimeClockWidget* turnTimeClockWidget;
 
 	cUnitRenameWidget* unitRenameWidget;
 

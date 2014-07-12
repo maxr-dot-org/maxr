@@ -1,10 +1,12 @@
 #ifndef SIMSPEEDCTRL_H
 #define SIMSPEEDCTRL_H
 
-
-#include "cmutex.h"
 #include <vector>
 #include <SDL.h>
+
+#include "cmutex.h"
+#include "utility/signal/signal.h"
+
 
 class cClient;
 class cNetMessage;
@@ -36,7 +38,6 @@ protected:
 	void timerCallback();
 	void handleTimer();
 	bool popEvent();
-
 public:
 	~cGameTimer();
 
@@ -55,6 +56,8 @@ public:
 	void stop();
 
 	static bool syncDebugSingleStep;
+
+	cSignal<void ()> gameTimeChanged;
 };
 
 class cGameTimerServer : public cGameTimer

@@ -107,6 +107,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	gameGui->setPlayers (guiPlayers);
 	gameGui->setCasualtiesTracker (localClient->getCasualtiesTracker ());
 	gameGui->setTurnClock (localClient->getTurnClock ());
+	gameGui->setTurnTimeClock (localClient->getTurnTimeClock ());
 	gameGui->setGameSettings (localClient->getGameSettings ());
 
 	gameGui->connectToClient (*localClient);

@@ -142,10 +142,13 @@ void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, i
 * Information for other clients that one player has finished his turn
 *@author alzi alias DoctorDeath
 *@param iPlayerNum Number of player who has finished his turn.
-*@param iTimeDelay Deadline for the rest of the players
-*       until the turn will be finished. -1 for no deadline.
 */
-void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cPlayer* receiver = nullptr);
+void sendTurnFinished (cServer& server, int iPlayerNum, const cPlayer* receiver = nullptr);
+
+void sendTurnStartTime (cServer& server, unsigned int gameTime);
+
+void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
+
 /**
 * Sends the data values of this unit to the client
 *@author alzi alias DoctorDeath
@@ -289,7 +292,7 @@ void sendRequestIdentification (cTCP& network, int iSocket);
 void sendReconnectAnswer (cServer& server, int socketNumber);
 void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
 
-void sendTurn (cServer& server, int turn, unsigned int gameTime, const cPlayer& receiver);
+void sendTurn (cServer& server, int turn, const cPlayer& receiver);
 void sendHudSettings (cServer& server, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);

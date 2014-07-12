@@ -44,6 +44,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_PLAYER_CLANS,			// data about the clans of the players
 	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn
+	GAME_EV_TURN_START_TIME,		// time at that the turn started
+	GAME_EV_TURN_END_DEADLINE_START_TIME,	// time at that the turn deadline started
 	GAME_EV_UNIT_DATA,				// set new data values for a vehicle
 	GAME_EV_SPECIFIC_UNIT_DATA,		// more specific unit values which are only for the owner
 	GAME_EV_UNIT_UPGRADE_VALUES,	// message contains upgraded values for a unit

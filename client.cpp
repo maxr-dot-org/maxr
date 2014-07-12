@@ -46,6 +46,7 @@
 #include "game/data/report/savedreporttranslated.h"
 #include "game/data/report/savedreportunit.h"
 #include "game/logic/turnclock.h"
+#include "game/logic/turntimeclock.h"
 
 using namespace std;
 
@@ -56,32 +57,35 @@ using namespace std;
 //------------------------------------------------------------------------
 cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	server (server_),
-	network (std::move(network_)),
+	network (std::move (network_)),
+	gameTimer (std::make_shared<cGameTimerClient> ()),
 	ActivePlayer (NULL),
 	turnClock (std::make_shared<cTurnClock> (1)),
+	turnTimeClock (std::make_shared<cTurnTimeClock> (gameTimer)),
 	gameSettings (std::make_shared<cGameSettings> ()),
 	casualtiesTracker (std::make_shared<cCasualtiesTracker> ()),
-	effectsList (new cFxContainer),
-	gameTimer ()
+	effectsList (new cFxContainer)
 {
 	assert (server != nullptr || network != nullptr);
 
-	gameTimer.setClient (this);
+	gameTimer->setClient (this);
 	if (server) server->addLocalClient (*this);
 	else network->setMessageReceiver (this);
 	bDefeated = false;
 	bWantToEnd = false;
-	iEndTurnTime = 0;
-	iStartTurnTime = 0;
 
-	gameTimer.start();
+	gameTimer->start ();
+	if (gameSettings->isTurnLimitActive ())
+	{
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
+	}
 }
 
 cClient::~cClient()
 {
 	if (network != nullptr) network->setMessageReceiver (nullptr);
 
-	gameTimer.stop();
+	gameTimer->stop();
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{
@@ -162,7 +166,7 @@ void cClient::initPlayersWithMap()
 		unsigned int receivedTime = message->popInt32();
 		message->rewind();
 
-		gameTimer.setReceivedTime (receivedTime);
+		gameTimer->setReceivedTime (receivedTime);
 	}
 	eventQueue.push (std::move(message));
 }
@@ -178,7 +182,7 @@ void cClient::sendNetMessage (cNetMessage* message_) const
 	{
 		Log.write ("Client: " + getActivePlayer ().getName () + " --> "
 				   + message->getTypeAsString ()
-				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
 				   + ", Hexdump: " + message->getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -418,10 +422,8 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	const bool bWaitForNextPlayer = message.popBool();
 	const bool bEndTurn = message.popBool();
 
-	iEndTurnTime = gameTimer.gameTime;
 	if (bEndTurn)
 	{
-		iStartTurnTime = gameTimer.gameTime;
 		turnClock->increaseTurn ();
 		bWantToEnd = false;
 		ActivePlayer->clearDone();
@@ -454,31 +456,44 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FINISHED_TURN);
 
-	const int iPlayerNum = message.popInt16();
-	const int iTimeDelay = message.popInt32();
-	cPlayer* Player = getPlayerFromNumber (iPlayerNum);
+	const int playerNumber = message.popInt16();
+	cPlayer* player = getPlayerFromNumber (playerNumber);
 
-	if (Player == NULL && iPlayerNum != -1)
+	if (player == nullptr)
 	{
-		Log.write (" Client: Player with nr " + iToStr (iPlayerNum) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Player with nr " + iToStr (playerNumber) + " has finished turn, but can't find him", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
 
-	if (Player) Player->bFinishedTurn = true;
+	if (playerNumber != ActivePlayer->getNr())
+	{
+		//string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName ()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay / 100));
+		ActivePlayer->addSavedReport (std::make_unique<cSavedReportTranslated> ("Text~Multiplayer~Player_Turn_End", player->getName ()));
+	}
+}
 
-	if (iTimeDelay != -1)
+void cClient::HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message)
+{
+	assert (message.iType == GAME_EV_TURN_START_TIME);
+
+	const auto time = message.popInt32 ();
+
+	turnTimeClock->restartFrom (time);
+	turnTimeClock->clearAllDeadlines ();
+
+	if (gameSettings->isTurnLimitActive ())
 	{
-		if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
-		{
-			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay / 100));
-			ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (msgString));
-		}
-		iEndTurnTime = gameTimer.gameTime + iTimeDelay;
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
 	}
-	else if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
-	{
-		ActivePlayer->addSavedReport (std::make_unique<cSavedReportTranslated> ("Text~Multiplayer~Player_Turn_End", Player->getName()));
-	}
+}
+
+void cClient::HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (cNetMessage& message)
+{
+	assert (message.iType == GAME_EV_TURN_END_DEADLINE_START_TIME);
+
+	const auto time = message.popInt32 ();
+
+	turnEndDeadline = turnTimeClock->startNewDeadlineFrom (time, gameSettings->getTurnEndDeadline ());
 }
 
 void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
@@ -689,7 +704,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	cClientMoveJob* MoveJob = new cClientMoveJob(*this, srcPosition, destPosition, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (message)) return;
-	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	moveJobCreated (*Vehicle);
 }
@@ -703,7 +718,7 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	int iSavedSpeed = -1;
 	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
 
-	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr (gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle && Vehicle->ClientMoveJob)
@@ -1250,8 +1265,6 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 	assert (message.iType == GAME_EV_TURN);
 
 	turnClock->setTurn (message.popInt16 ());
-	iStartTurnTime = message.popInt32();
-	iEndTurnTime = iStartTurnTime;
 }
 
 void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
@@ -1632,11 +1645,11 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 	assert (message.iType == GAME_EV_SET_GAME_TIME);
 
 	const unsigned int newGameTime = message.popInt32();
-	gameTimer.gameTime = newGameTime;
+	gameTimer->gameTime = newGameTime;
 
 	//confirm new time to the server
 	cNetMessage* response = new cNetMessage (NET_GAME_TIME_CLIENT);
-	response->pushInt32 (gameTimer.gameTime);
+	response->pushInt32 (gameTimer->gameTime);
 	sendNetMessage (response);
 }
 
@@ -1649,13 +1662,13 @@ void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)
 
 void cClient::handleNetMessages ()
 {
-	if (gameTimer.nextMsgIsNextGameTime) return;
+	if (gameTimer->nextMsgIsNextGameTime) return;
 
 	std::unique_ptr<cNetMessage> message;
 	while (eventQueue.try_pop(message))
 	{
 		handleNetMessage (*message);
-		if (gameTimer.nextMsgIsNextGameTime) break;
+		if (gameTimer->nextMsgIsNextGameTime) break;
 	}
 }
 
@@ -1665,7 +1678,7 @@ int cClient::handleNetMessage (cNetMessage& message)
 	{
 		Log.write ("Client: " + getActivePlayer ().getName () + " <-- "
 				   + message.getTypeAsString ()
-				   + ", gameTime:" + iToStr (this->gameTimer.gameTime)
+				   + ", gameTime:" + iToStr (this->gameTimer->gameTime)
 				   + ", Hexdump: " + message.getHexDump (), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -1685,6 +1698,8 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WAIT_FOR: HandleNetMessage_GAME_EV_WAIT_FOR (message); break;
 		case GAME_EV_MAKE_TURNEND: HandleNetMessage_GAME_EV_MAKE_TURNEND (message); break;
 		case GAME_EV_FINISHED_TURN: HandleNetMessage_GAME_EV_FINISHED_TURN (message); break;
+		case GAME_EV_TURN_START_TIME: HandleNetMessage_GAME_EV_TURN_START_TIME (message); break;
+		case GAME_EV_TURN_END_DEADLINE_START_TIME: HandleNetMessage_GAME_EV_TURN_END_DEADLINE_START_TIME (message); break;
 		case GAME_EV_UNIT_DATA: HandleNetMessage_GAME_EV_UNIT_DATA (message); break;
 		case GAME_EV_SPECIFIC_UNIT_DATA: HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (message); break;
 		case GAME_EV_DO_START_WORK: HandleNetMessage_GAME_EV_DO_START_WORK (message); break;
@@ -1738,7 +1753,7 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (message); break;
 		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (message); break;
 		case GAME_EV_REVEAL_MAP: HandleNetMessage_GAME_EV_REVEAL_MAP (message); break;
-		case NET_GAME_TIME_SERVER: gameTimer.handleSyncMessage (message); break;
+		case NET_GAME_TIME_SERVER: gameTimer->handleSyncMessage (message); break;
 
 		default:
 			Log.write ("Client: Can not handle message type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
@@ -1864,31 +1879,6 @@ void cClient::handleEnd()
 	startedTurnEndProcess ();
 }
 
-unsigned int cClient::getRemainingTimeInSecond() const
-{
-	if (iEndTurnTime <= iStartTurnTime) return ~0u; // max value
-	return (iEndTurnTime - gameTimer.gameTime) / 100;
-}
-
-unsigned int cClient::getElapsedTimeInSecond() const
-{
-	if (gameTimer.gameTime <= iStartTurnTime) return 0;
-	return (gameTimer.gameTime - iStartTurnTime) / 100;
-}
-
-void cClient::handleTurnTime()
-{
-	if (iEndTurnTime > iStartTurnTime)
-	{
-		//FIXME: gameGUI
-		//gameGUI->updateTurnTime (getRemainingTimeInSecond());
-	}
-	else
-	{
-		//FIXME: gameGUI
-		//gameGUI->updateTurnTime (getElapsedTimeInSecond());
-	}
-}
 
 void cClient::addActiveMoveJob (cClientMoveJob& MoveJob)
 {
@@ -1947,7 +1937,7 @@ void cClient::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speedCur)
 		{
 			// rotate vehicle
-			if (gameTimer.timer100ms)
+			if (gameTimer->timer100ms)
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
 			}
@@ -1955,7 +1945,7 @@ void cClient::handleMoveJobs()
 		else if (Vehicle->MoveJobActive)
 		{
 			// move vehicle
-			if (gameTimer.timer10ms)
+			if (gameTimer->timer10ms)
 			{
 				MoveJob->moveVehicle();
 			}
@@ -1991,14 +1981,14 @@ void cClient::doGameActions ()
 	runFx();
 
 	// run attackJobs
-	if (gameTimer.timer50ms)
+	if (gameTimer->timer50ms)
 		cClientAttackJob::handleAttackJobs (*this);
 
 	// run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();
 
 	// run surveyor ai
-	if (gameTimer.timer50ms)
+	if (gameTimer->timer50ms)
 		cAutoMJob::handleAutoMoveJobs();
 
 	runJobs();
@@ -2083,7 +2073,7 @@ void cClient::addJob (cJob* job)
 
 void cClient::runJobs()
 {
-	helperJobs.run (gameTimer);
+	helperJobs.run (*gameTimer);
 }
 
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)

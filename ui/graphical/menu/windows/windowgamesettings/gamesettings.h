@@ -21,6 +21,9 @@
 #define ui_graphical_menu_windows_windowgamesettings_gamesettingsH
 
 #include <string>
+#include <chrono>
+
+#include "utility/signal/signal.h"
 
 class cNetMessage;
 
@@ -86,6 +89,9 @@ public:
 	static const int defaultCreditsMore    = 250;
 
 	cGameSettings ();
+	cGameSettings (const cGameSettings& other);
+
+	cGameSettings& operator=(const cGameSettings& other);
 
 	eGameSettingsResourceAmount getMetalAmount () const;
 	void setMetalAmount (eGameSettingsResourceAmount value);
@@ -120,11 +126,44 @@ public:
 	unsigned int getVictoryPoints () const;
 	void setVictoryPoints (unsigned int value);
 
-	unsigned int getTurnDeadline () const;
-	void setTurnDeadline (unsigned int value);
+	const std::chrono::seconds& getTurnEndDeadline () const;
+	void setTurnEndDeadline (const std::chrono::seconds& value);
+
+	bool isTurnEndDeadlineActive () const;
+	void setTurnEndDeadlineActive (bool value);
+
+	const std::chrono::seconds& getTurnLimit () const;
+	void setTurnLimit (const std::chrono::seconds& value);
+
+	bool isTurnLimitActive () const;
+	void setTurnLimitActive (bool value);
 
 	void pushInto (cNetMessage& message) const;
 	void popFrom (cNetMessage& message);
+
+	mutable cSignal<void ()> metalAmountChanged;
+	mutable cSignal<void ()> oilAmountChanged;
+	mutable cSignal<void ()> goldAmountChanged;
+
+	mutable cSignal<void ()> resourceDensityChanged;
+
+	mutable cSignal<void ()> bridgeheadTypeChanged;
+
+	mutable cSignal<void ()> gameTypeChanged;
+
+	mutable cSignal<void ()> clansEnabledChanged;
+
+	mutable cSignal<void ()> startCreditsChanged;
+
+	mutable cSignal<void ()> victoryConditionTypeChanged;
+	mutable cSignal<void ()> victoryTurnsChanged;
+	mutable cSignal<void ()> victoryPointsChanged;
+
+	mutable cSignal<void ()> turnEndDeadlineChanged;
+	mutable cSignal<void ()> turnEndDeadlineActiveChanged;
+
+	mutable cSignal<void ()> turnLimitChanged;
+	mutable cSignal<void ()> turnLimitActiveChanged;
 private:
 	eGameSettingsResourceAmount metalAmount;
 	eGameSettingsResourceAmount oilAmount;
@@ -144,7 +183,11 @@ private:
 	unsigned int victoryTurns;
 	unsigned int vectoryPoints;
 
-	unsigned int turnDeadline;
+	std::chrono::seconds turnEndDeadline;
+	bool turnEndDeadlineActive;
+
+	std::chrono::seconds turnLimit;
+	bool turnLimitActive;
 };
 
 #endif // ui_graphical_menu_windows_windowgamesettings_gamesettingsH

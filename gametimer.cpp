@@ -179,6 +179,7 @@ void cGameTimerClient::run ()
 		if (nextTickAllowed() == false) continue;
 
 		gameTime++;
+		gameTimeChanged ();
 		handleTimer();
 		client->doGameActions ();
 
@@ -268,6 +269,7 @@ void cGameTimerServer::run (cServer& server)
 	if (nextTickAllowed (server) == false) return;
 
 	gameTime++;
+	gameTimeChanged ();
 	handleTimer();
 	server.doGameActions();
 	const auto& playerList = server.playerList;

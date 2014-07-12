@@ -47,6 +47,7 @@ class cHudPanels;
 class cSavedReport;
 class cCasualtiesTracker;
 class cTurnClock;
+class cTurnTimeClock;
 class cGameSettings;
 class cSoundManager;
 class cSoundEffect;
@@ -63,6 +64,7 @@ public:
 	void setPlayers (std::vector<std::shared_ptr<const cPlayer>> players);
 	void setCasualtiesTracker (std::shared_ptr<const cCasualtiesTracker> casualties);
 	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
+	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
 	void connectToClient (cClient& client);

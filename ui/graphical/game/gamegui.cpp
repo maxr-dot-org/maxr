@@ -312,6 +312,12 @@ void cGameGui::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
 }
 
 //------------------------------------------------------------------------------
+void cGameGui::setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock)
+{
+	hud->setTurnTimeClock (std::move (turnTimeClock));
+}
+
+//------------------------------------------------------------------------------
 void cGameGui::setGameSettings (std::shared_ptr<const cGameSettings> gameSettings_)
 {
 	gameSettings = std::move (gameSettings_);
@@ -481,7 +487,16 @@ void cGameGui::connectToClient (cClient& client)
 					return;
 				}
 
-				server->setDeadline (i);
+				// TODO: reimplement
+				//if (i >= 0)
+				//{
+				//	server->setTurnEndDeadline (std::chrono::seconds(i));
+				//	server->setTurnEndDeadlineActive (true);
+				//}
+				//else
+				//{
+				//	server->setTurnEndDeadlineActive (false);
+				//}
 				Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
 			}
 			else if (command.compare (0, 7, "/resync") == 0)

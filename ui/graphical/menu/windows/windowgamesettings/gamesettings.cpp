@@ -244,8 +244,52 @@ cGameSettings::cGameSettings () :
 	victoryConditionType (eGameSettingsVictoryCondition::Death),
 	victoryTurns (400),
 	vectoryPoints (400),
-	turnDeadline (90)
+	turnEndDeadline (90),
+	turnEndDeadlineActive (true),
+	turnLimit (5 * 60),
+	turnLimitActive (false)
 {}
+
+//------------------------------------------------------------------------------
+cGameSettings::cGameSettings (const cGameSettings& other) :
+	metalAmount (other.metalAmount),
+	oilAmount (other.oilAmount),
+	goldAmount (other.goldAmount),
+	resourceDensity (other.resourceDensity),
+	bridgeheadType (other.bridgeheadType),
+	gameType (other.gameType),
+	clansEnabled (other.clansEnabled),
+	startCredits (other.startCredits),
+	victoryConditionType (other.victoryConditionType),
+	victoryTurns (other.victoryTurns),
+	vectoryPoints (other.vectoryPoints),
+	turnEndDeadline (other.turnEndDeadline),
+	turnEndDeadlineActive (other.turnEndDeadlineActive),
+	turnLimit (other.turnLimit),
+	turnLimitActive (other.turnLimitActive)
+{}
+
+//------------------------------------------------------------------------------
+cGameSettings& cGameSettings::operator=(const cGameSettings& other)
+{
+	metalAmount = other.metalAmount;
+	oilAmount = other.oilAmount;
+	goldAmount = other.goldAmount;
+	resourceDensity = other.resourceDensity;
+	bridgeheadType = other.bridgeheadType;
+	gameType = other.gameType;
+	clansEnabled = other.clansEnabled;
+	startCredits = other.startCredits;
+	victoryConditionType = other.victoryConditionType;
+	victoryTurns = other.victoryTurns;
+	vectoryPoints = other.vectoryPoints;
+	turnEndDeadline = other.turnEndDeadline;
+	turnEndDeadlineActive = other.turnEndDeadlineActive;
+	turnLimit = other.turnLimit;
+	turnLimitActive = other.turnLimitActive;
+
+	return *this;
+}
 
 //------------------------------------------------------------------------------
 eGameSettingsResourceAmount cGameSettings::getMetalAmount () const
@@ -256,7 +300,8 @@ eGameSettingsResourceAmount cGameSettings::getMetalAmount () const
 //------------------------------------------------------------------------------
 void cGameSettings::setMetalAmount (eGameSettingsResourceAmount value)
 {
-	metalAmount = value;
+	std::swap(metalAmount, value);
+	if (metalAmount != value) metalAmountChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -268,7 +313,8 @@ eGameSettingsResourceAmount cGameSettings::getOilAmount () const
 //------------------------------------------------------------------------------
 void cGameSettings::setOilAmount (eGameSettingsResourceAmount value)
 {
-	oilAmount = value;
+	std::swap (oilAmount, value);
+	if (oilAmount != value) oilAmountChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -280,7 +326,8 @@ eGameSettingsResourceAmount cGameSettings::getGoldAmount () const
 //------------------------------------------------------------------------------
 void cGameSettings::setGoldAmount (eGameSettingsResourceAmount value)
 {
-	goldAmount = value;
+	std::swap (goldAmount, value);
+	if (goldAmount != value) goldAmountChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -292,7 +339,8 @@ eGameSettingsResourceDensity cGameSettings::getResourceDensity () const
 //------------------------------------------------------------------------------
 void cGameSettings::setResourceDensity (eGameSettingsResourceDensity value)
 {
-	resourceDensity = value;
+	std::swap (resourceDensity, value);
+	if (resourceDensity != value) resourceDensityChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -304,7 +352,8 @@ eGameSettingsBridgeheadType cGameSettings::getBridgeheadType () const
 //------------------------------------------------------------------------------
 void cGameSettings::setBridgeheadType (eGameSettingsBridgeheadType value)
 {
-	bridgeheadType = value;
+	std::swap (bridgeheadType, value);
+	if (bridgeheadType != value) bridgeheadTypeChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -316,7 +365,8 @@ eGameSettingsGameType cGameSettings::getGameType () const
 //------------------------------------------------------------------------------
 void cGameSettings::setGameType (eGameSettingsGameType value)
 {
-	gameType = value;
+	std::swap (gameType, value);
+	if (gameType != value) gameTypeChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -328,7 +378,8 @@ bool cGameSettings::getClansEnabled () const
 //------------------------------------------------------------------------------
 void cGameSettings::setClansEnabled (bool value)
 {
-	clansEnabled = value;
+	std::swap (clansEnabled, value);
+	if (clansEnabled != value) clansEnabledChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -340,7 +391,8 @@ unsigned int cGameSettings::getStartCredits () const
 //------------------------------------------------------------------------------
 void cGameSettings::setStartCredits (unsigned int value)
 {
-	startCredits = value;
+	std::swap (startCredits, value);
+	if (startCredits != value) startCreditsChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -352,7 +404,8 @@ eGameSettingsVictoryCondition cGameSettings::getVictoryCondition () const
 //------------------------------------------------------------------------------
 void cGameSettings::setVictoryCondition (eGameSettingsVictoryCondition value)
 {
-	victoryConditionType = value;
+	std::swap (victoryConditionType, value);
+	if (victoryConditionType != value) victoryConditionTypeChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -364,7 +417,8 @@ unsigned int cGameSettings::getVictoryTurns () const
 //------------------------------------------------------------------------------
 void cGameSettings::setVictoryTurns (unsigned int value)
 {
-	victoryTurns = value;
+	std::swap (victoryTurns, value);
+	if (victoryTurns != value) victoryTurnsChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -376,19 +430,62 @@ unsigned int cGameSettings::getVictoryPoints () const
 //------------------------------------------------------------------------------
 void cGameSettings::setVictoryPoints (unsigned int value)
 {
-	vectoryPoints = value;
+	std::swap (vectoryPoints, value);
+	if (vectoryPoints != value) victoryPointsChanged ();
 }
 
 //------------------------------------------------------------------------------
-unsigned int cGameSettings::getTurnDeadline () const
+const std::chrono::seconds& cGameSettings::getTurnEndDeadline () const
 {
-	return turnDeadline;
+	return turnEndDeadline;
 }
 
 //------------------------------------------------------------------------------
-void cGameSettings::setTurnDeadline (unsigned int value)
+void cGameSettings::setTurnEndDeadline (const std::chrono::seconds& value)
 {
-	turnDeadline = value;
+	const auto oldValue = turnEndDeadline;
+	turnEndDeadline = value;
+	if (oldValue != turnEndDeadline) turnEndDeadlineChanged ();
+}
+
+//------------------------------------------------------------------------------
+bool cGameSettings::isTurnEndDeadlineActive () const
+{
+	return turnEndDeadlineActive;
+}
+
+//------------------------------------------------------------------------------
+void cGameSettings::setTurnEndDeadlineActive (bool value)
+{
+	std::swap (turnEndDeadlineActive, value);
+	if (turnEndDeadlineActive != value) turnEndDeadlineActiveChanged ();
+}
+
+//------------------------------------------------------------------------------
+const std::chrono::seconds& cGameSettings::getTurnLimit () const
+{
+	return turnLimit;
+}
+
+//------------------------------------------------------------------------------
+void cGameSettings::setTurnLimit (const std::chrono::seconds& value)
+{
+	const auto oldValue = turnLimit;
+	turnLimit = value;
+	if (oldValue != turnLimit) turnLimitChanged ();
+}
+
+//------------------------------------------------------------------------------
+bool cGameSettings::isTurnLimitActive () const
+{
+	return turnLimitActive;
+}
+
+//------------------------------------------------------------------------------
+void cGameSettings::setTurnLimitActive (bool value)
+{
+	std::swap (turnLimitActive, value);
+	if (turnLimitActive != value) turnLimitActiveChanged ();
 }
 
 //------------------------------------------------------------------------------

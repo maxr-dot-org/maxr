@@ -129,6 +129,7 @@
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,6 +189,7 @@
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamesaved.cpp" />
     <ClCompile Include="..\..\game\logic\landingpositionmanager.cpp" />
     <ClCompile Include="..\..\game\logic\turnclock.cpp" />
+    <ClCompile Include="..\..\game\logic\turntimeclock.cpp" />
     <ClCompile Include="..\..\game\network\client\networkclientgame.cpp" />
     <ClCompile Include="..\..\game\network\client\networkclientgamenew.cpp" />
     <ClCompile Include="..\..\game\network\client\networkclientgamereconnection.cpp" />
@@ -237,6 +239,7 @@
     <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesteal.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodetransfer.cpp" />
+    <ClCompile Include="..\..\ui\graphical\game\widgets\turntimeclockwidget.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\unitcontextmenuwidget.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\unitdetailshud.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\unitdetailsstored.cpp" />
@@ -413,6 +416,7 @@
     <ClInclude Include="..\..\game\logic\landingpositionmanager.h" />
     <ClInclude Include="..\..\game\logic\landingpositionstate.h" />
     <ClInclude Include="..\..\game\logic\turnclock.h" />
+    <ClInclude Include="..\..\game\logic\turntimeclock.h" />
     <ClInclude Include="..\..\game\network\client\networkclientgame.h" />
     <ClInclude Include="..\..\game\network\client\networkclientgamenew.h" />
     <ClInclude Include="..\..\game\network\client\networkclientgamereconnection.h" />
@@ -466,6 +470,7 @@
     <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodetransfer.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\mousemode\mousemodetype.h" />
+    <ClInclude Include="..\..\ui\graphical\game\widgets\turntimeclockwidget.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\unitcontextmenuwidget.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\unitdetailshud.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\unitdetailsstored.h" />

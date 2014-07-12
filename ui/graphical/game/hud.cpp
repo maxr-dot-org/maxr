@@ -22,6 +22,7 @@
 #include "ui/graphical/game/widgets/unitvideowidget.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
 #include "ui/graphical/game/widgets/unitrenamewidget.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
@@ -37,6 +38,7 @@
 #include "unit.h"
 #include "keys.h"
 #include "game/logic/turnclock.h"
+#include "game/logic/turntimeclock.h"
 
 //------------------------------------------------------------------------------
 cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
@@ -119,7 +121,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition ().y () - 18), cPosition (265 + 64, getEndPosition ().y () - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition ().y () - 18), cPosition (343 + 212, getEndPosition ().y () - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	timeLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10)), "Test4", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10))));
 
 	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (20, 275), cPosition (20 + 130, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));
 	signalConnectionManager.connect (zoomSlider->valueChanged, [&](){ zoomChanged (); });
@@ -159,10 +161,20 @@ void cHud::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
 	turnClock = std::move (turnClock_);
 
 	turnClockSignalConnectionManager.disconnectAll ();
-	turnClockSignalConnectionManager.connect (turnClock->turnChanged, [&]()
+	if (turnClock != nullptr)
 	{
 		turnLabel->setText (iToStr (turnClock->getTurn ()));
-	});
+		turnClockSignalConnectionManager.connect (turnClock->turnChanged, [&]()
+		{
+			turnLabel->setText (iToStr (turnClock->getTurn ()));
+		});
+	}
+}
+
+//------------------------------------------------------------------------------
+void cHud::setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock)
+{
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 }
 
 //------------------------------------------------------------------------------
@@ -370,12 +382,6 @@ bool cHud::getMiniMapZoomFactorActive () const
 bool cHud::getMiniMapAttackUnitsOnly () const
 {
 	return miniMapAttackUnitsOnlyButton->isChecked ();
-}
-
-//------------------------------------------------------------------------------
-void cHud::setTurnTimeText (const std::string& text)
-{
-	timeLabel->setText (text);
 }
 
 //------------------------------------------------------------------------------

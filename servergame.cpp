@@ -137,12 +137,12 @@ void cServerGame::run()
 
 		static unsigned int lastTime = 0;
 		if (server)
-			lastTime = server->gameTimer.gameTime;
+			lastTime = server->gameTimer->gameTime;
 
 		// don't do anything if games hasn't been started yet!
 		if (server && server->serverState == SERVER_STATE_INGAME)
 		{
-			server->gameTimer.run (*server);
+			server->gameTimer->run (*server);
 
 			if (shouldSave)
 			{
@@ -153,7 +153,7 @@ void cServerGame::run()
 			}
 		}
 
-		if (!message && (!server || lastTime == server->gameTimer.gameTime)) //nothing to do
+		if (!message && (!server || lastTime == server->gameTimer->gameTime)) //nothing to do
 			SDL_Delay (10);
 	}
 	if (server)

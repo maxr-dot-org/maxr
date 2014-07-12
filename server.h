@@ -46,6 +46,8 @@ class cServerMoveJob;
 class cTCP;
 class cUnit;
 class cTurnClock;
+class cTurnTimeClock;
+class cTurnTimeDeadline;
 struct sLandingUnit;
 class cGameSettings;
 
@@ -107,7 +109,6 @@ public:
 	void setGameSettings (const cGameSettings& gameSettings);
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
 	void addPlayer (std::unique_ptr<cPlayer> player);
-	void setDeadline (int iDeadline);
 	void start ();
 	void stop();
 
@@ -284,6 +285,8 @@ public:
 	void makeAdditionalSaveRequest (int saveNum);
 
 	std::shared_ptr<const cTurnClock> getTurnClock () const { return turnClock; }
+
+	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock () const { return turnTimeClock; }
 
 	std::shared_ptr<const cGameSettings> getGameSettings () const { return gameSettings; }
 	bool isTurnBasedGame() const;
@@ -468,7 +471,7 @@ private:
 	std::map<const cPlayer*, std::vector<sLandingUnit>> playerLandingUnits;
 
 	/** controls the timesynchoneous actions on server and client */
-	cGameTimerServer gameTimer;
+	std::shared_ptr<cGameTimerServer> gameTimer;
 	/** little helper jobs, that do some time dependent actions */
 	cJobContainer helperJobs;
 	/** a list with all events for the server */
@@ -490,8 +493,10 @@ private:
 
 	std::shared_ptr<cTurnClock> turnClock;
 
-	/** gametime when the deadline has been initialised*/
-	unsigned int iDeadlineStartTime;
+	std::shared_ptr<cTurnTimeClock> turnTimeClock;
+	std::shared_ptr<cTurnTimeDeadline> turnEndDeadline;
+	std::shared_ptr<cTurnTimeDeadline> turnLimitDeadline;
+
 	/** stores the gametime of the last turn end. */
 	unsigned int lastTurnEnd;
 	/** Number of the Player who wants to end his turn;
