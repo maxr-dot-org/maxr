@@ -35,22 +35,21 @@
 		<Title>
 			<Alien_Tech ENG="Alien technology" localized="Tecnologia alien"/>
 			<BridgeHead ENG="Starting base" localized="Base inicial"/>
-			
-			
+			<Build_Factory ENG="Factory Menu" localized="Menú de Fabrica"/>
+			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcción/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
-			
-			<Choose_Planet ENG="Choose Planet" localized="Selecciona planeta"/>
-			
-			
+			<Choose_Clan ENG="Choose Clan" localized="Elige Clan"/>
+			<Choose_Planet ENG="Choose Planet" localized="Elige planeta"/>
+			<Choose_Units ENG="Choose Units" localized="Elige Unidades"/>
 			<Clans ENG="Clans" localized="Clanes"/>
 			<Color ENG="Color:" localized="Color:"/>
 			<Computer ENG="Computer" localized="Ordenador (IA)"/>
 			<Connect ENG="Connect" localized="Conectar"/>
 			<Credits ENG="Credits" localized="Créditos"/>
-			
+			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo/>
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Gold ENG="Gold" localized="Oro"/>
-			
+			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
 			<Human ENG="Human" localized="Humano"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
@@ -78,7 +77,7 @@
 		<Others>
 			<Active ENG="Active" localized="Activar"/>
 			<Active_7 ENG="Activ." localized="Activar"/>
-			
+			<ActiveAll_9 ENG="Activ All" localized="Activar todos"/>
 			<Air_Units ENG="Airunits" localized="Unidades aéreas"/>
 			<Ammo ENG="Ammunition" localized="Munición"/>
 			<Ammo_7 ENG="Ammo" localized="Munic"/>
@@ -136,12 +135,12 @@
 			<Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
 			<Range ENG="Range" localized="Alcance"/>
 			<Range_7 ENG="Range" localized="Alcance"/>
-			
+			<Reload ENG="Reload" localized="Recargar"/>
 			<Reload_7 ENG="Reload" localized="Recargar"/>
-			
+			<ReloadAll_9 ENG="Reload All" localized="Rec. Todos"/>
 			<Repair ENG="Repair" localized="Reparar"/>
 			<Repair_7 ENG="Repair" localized="Reparar"/>
-			
+			<RepairAll_9 ENG="Rep. All" localized="Rep. Todos/>
 			<Reports ENG="Reports" localized="Reportes"/>
 			<Research ENG="Research" localized="Investigar"/>
 			<Save ENG="Save" localized="Guardar"/>
@@ -234,10 +233,10 @@
 			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="Mapa original de M.A.X. %s desde el servidor (registrado)!"/>
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Mapa no instalado: Solicitando descarga personalizada"/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Mapa no instalado: no tienes permisos para descargar"/>
-			
+			<MapDL_Finished ENG="Map download finished." localized="Descarga de mapa terminada"/>
 			<MapDL_Percent ENG="Map download: %s%" localized="Descargando mapa: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="Cargando mapa a %s..."/>
-			
+			<MapDL_UploadFinished ENG="Map upload to %s finished." localized="Carga de mapa a %s terminada"/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Las opciones, el mapa, o el guardado no estan disponibles"/>
 			<Network_Closed ENG="Connection closed" localized="Conexión cerrada"/>
 			<Network_Connected ENG="Connected" localized="Conectado"/>
@@ -249,27 +248,27 @@
 			<Network_Open ENG="Game open" localized="Partida abierta"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Sincronizando..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="No se puede cargar el mapa %s. No estás listo."/>
-			
+			<No_Response ENG="Waiting for network response from player %s" localized="Esperando respuesta de la red del jugador %s"/>
 			<Not_Ready ENG="is not ready" localized="no esta listo"/>
 			<Option_NoSet ENG="--no options set--" localized="--opciones no seleccionadas--"/>
-			
+			<Pause ENG="Game has been paused." localized="La partida se ha pausado"/>
 			<Player ENG="Player" localized="Jugador"/>
-			
-			
-			
-			
-			
-			
-			
-			
+			<Player1 ENG="Player 1" localized="Jugador 1"/>
+			<Player2 ENG="Player 2" localized="Jugador 2"/>
+			<Player3 ENG="Player 3" localized="Jugador 3"/>
+			<Player4 ENG="Player 4" localized="Jugador 4"/>
+			<Player5 ENG="Player 5" localized="Jugador 5"/>
+			<Player6 ENG="Player 6" localized="Jugador 6"/>
+			<Player7 ENG="Player 7" localized="Jugador 7"/>
+			<Player8 ENG="Player 8" localized="Jugador 8"/>
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum" localized="Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."/>
-			
+			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized="Color de jugador ya usado, por favor elige otro color de forma que sea único"/>
 			<Player_Few ENG="Not enough players!" localized="No hay suficientes jugadores!"/>
 			<Player_Joined ENG="%s has joined" localized=" Se ha unido %s"/>
 			<Player_Left ENG="%s has left the game" localized=" %s ha salido de la partida"/>
 			<Player_Many ENG="Too many players!" localized="Demasiados jugadores!"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="El server debe estar en partida basada en turnos!"/>
-			
+			<Player_Name_Taken ENG="Playername already in use, please select an other name to be unique" localized="Nombre de jugador ya utilizado, por favor, elige otro de forma que sea único"/>
 			<Player_Turn ENG="%s's turn" localized="El turno de %s"/>
 			<Player_Turn_End ENG="%s ended turn" localized=" turno finalizado por %s"/>
 			<Player_Twice ENG="Playername exists twice: " localized="El nombre de usuario está repetido: "/>
@@ -278,9 +277,9 @@
 			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Solo el servidor puede guardar partidas"/>
 			<Server_Not_Running ENG="The server is not running." localized="Els servidor no está funcionando"/>
-			
+			<Wait_For_Server ENG="Waiting for network response from server" localized="Esperando la respuesta de la red del servidor"/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Esperando la reconexión del jugador"/>
-			
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Por favor, espera mientras las ordenes de finalizar turno se ejecutan"/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="por favor espera hasta que %s haya terminado su turno"/>
 			<Waiting ENG="Waiting for other players..." localized="Esperando a otros jugadores..."/>
 		</Multiplayer>
@@ -468,6 +467,7 @@
 			<Editor name="Kuan_Ji" time="2010-12-06 19:01:00"/>
 			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
 			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+			<Editor name="Kuan_Ji" time="2014-07-14 18:41:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Footer>
