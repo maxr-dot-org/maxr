@@ -71,6 +71,8 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	sendReadyToStart (*localClient);
 
+	server->startTurnTimers ();
+
 	auto gameGui = std::make_shared<cGameGui> (staticMap);
 
 	gameGui->setDynamicMap (localClient->getMap ());

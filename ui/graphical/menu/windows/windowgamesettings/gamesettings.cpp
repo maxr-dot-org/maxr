@@ -25,6 +25,21 @@
 #include "utility/tounderlyingtype.h"
 #include "utility/string/iequals.h"
 #include "main.h"
+#include "netmessage.h"
+
+const std::chrono::seconds cGameSettings::defaultTurnLimitOption0 (60);
+const std::chrono::seconds cGameSettings::defaultTurnLimitOption1 (120);
+const std::chrono::seconds cGameSettings::defaultTurnLimitOption2 (180);
+const std::chrono::seconds cGameSettings::defaultTurnLimitOption3 (240);
+const std::chrono::seconds cGameSettings::defaultTurnLimitOption4 (300);
+const std::chrono::seconds cGameSettings::defaultTurnLimitOption5 (350);
+
+const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption0 (15);
+const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption1 (30);
+const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption2 (45);
+const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption3 (60);
+const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption4 (75);
+const std::chrono::seconds cGameSettings::defaultEndTurnDeadlineOption5 (90);
 
 //------------------------------------------------------------------------------
 std::string gameSettingsResourceAmountToString (eGameSettingsResourceAmount amount, bool translated)
@@ -491,13 +506,55 @@ void cGameSettings::setTurnLimitActive (bool value)
 //------------------------------------------------------------------------------
 void cGameSettings::pushInto (cNetMessage& message) const
 {
-	// FIXME: implement
-	//assert (false);
+	message.pushInt32 (toUnderlyingType (metalAmount));
+	message.pushInt32 (toUnderlyingType (oilAmount));
+	message.pushInt32 (toUnderlyingType (goldAmount));
+
+	message.pushInt32 (toUnderlyingType (resourceDensity));
+
+	message.pushInt32 (toUnderlyingType (bridgeheadType));
+
+	message.pushInt32 (toUnderlyingType (gameType));
+
+	message.pushBool (clansEnabled);
+
+	message.pushInt32 (startCredits);
+
+	message.pushInt32 (toUnderlyingType (victoryConditionType));
+	message.pushInt32 (victoryTurns);
+	message.pushInt32 (vectoryPoints);
+
+	message.pushInt32 (turnEndDeadline.count());
+	message.pushBool (turnEndDeadlineActive);
+
+	message.pushInt32 (turnLimit.count());
+	message.pushBool (turnLimitActive);
 }
 
 //------------------------------------------------------------------------------
 void cGameSettings::popFrom (cNetMessage& message)
 {
-	// FIXME: implement
-	//assert (false);
+	turnLimitActive = message.popBool ();
+	turnLimit = std::chrono::seconds (message.popInt32 ());
+
+	turnEndDeadlineActive = message.popBool ();
+	turnEndDeadline = std::chrono::seconds (message.popInt32 ());
+
+	vectoryPoints = message.popInt32 ();
+	victoryTurns = message.popInt32 ();
+	victoryConditionType = static_cast<eGameSettingsVictoryCondition>(message.popInt32 ());
+
+	startCredits = message.popInt32 ();
+
+	clansEnabled = message.popBool ();
+
+	gameType = static_cast<eGameSettingsGameType>(message.popInt32 ());
+
+	bridgeheadType = static_cast<eGameSettingsBridgeheadType>(message.popInt32 ());
+
+	resourceDensity = static_cast<eGameSettingsResourceDensity>(message.popInt32 ());
+
+	goldAmount = static_cast<eGameSettingsResourceAmount>(message.popInt32 ());
+	oilAmount = static_cast<eGameSettingsResourceAmount>(message.popInt32 ());
+	metalAmount = static_cast<eGameSettingsResourceAmount>(message.popInt32 ());
 }

@@ -75,10 +75,6 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	bWantToEnd = false;
 
 	gameTimer->start ();
-	if (gameSettings->isTurnLimitActive ())
-	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
-	}
 }
 
 cClient::~cClient()

@@ -26,8 +26,8 @@
 
 class cGameSettings;
 
-class cRadioGroup;
 class cCheckBox;
+class cLineEdit;
 
 class cWindowGameSettings : public cWindow
 {
@@ -87,6 +87,26 @@ private:
 	cCheckBox* victoryPoints400CheckBox;
 
 	cCheckBox* victoryNoLimitCheckBox;
+
+	cCheckBox* turnLimitNoLimit;
+	cCheckBox* turnLimit0;
+	cCheckBox* turnLimit1;
+	cCheckBox* turnLimit2;
+	cCheckBox* turnLimit3;
+	cCheckBox* turnLimit4;
+	cCheckBox* turnLimit5;
+	cCheckBox* turnLimitCustom;
+	cLineEdit* turnLimitCustomLineEdit;
+
+	cCheckBox* turnEndTurnDeadlineNoLimit;
+	cCheckBox* turnEndTurnDeadline0;
+	cCheckBox* turnEndTurnDeadline1;
+	cCheckBox* turnEndTurnDeadline2;
+	cCheckBox* turnEndTurnDeadline3;
+	cCheckBox* turnEndTurnDeadline4;
+	cCheckBox* turnEndTurnDeadline5;
+	cCheckBox* turnEndTurnDeadlineCustom;
+	cLineEdit* turnEndTurnDeadlineLineEdit;
 
 	void okClicked ();
 	void backClicked ();

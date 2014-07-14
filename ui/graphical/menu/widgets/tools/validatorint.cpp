@@ -37,6 +37,8 @@ cValidatorInt::cValidatorInt (int minValue_, int maxValue_) :
 
 eValidatorState cValidatorInt::validate (const std::string& text) const
 {
+	if (text.empty ()) return eValidatorState::Intermediate;
+
 	for (size_t i = 0; i < text.size (); ++i)
 	{
 		if (!std::isdigit (text[i])) return eValidatorState::Invalid;
@@ -52,19 +54,24 @@ eValidatorState cValidatorInt::validate (const std::string& text) const
 void cValidatorInt::fixup (std::string& text) const
 {
 	// remove all non digits
-	struct isnotdigit { bool operator()(char c) { return !isdigit (c); } };
-
-	auto newEnd = std::remove_if (text.begin (), text.end (), isnotdigit ());
+	auto newEnd = std::remove_if (text.begin (), text.end (), [](char c) { return !std::isdigit (c); });
 	text.erase (newEnd, text.end ());
 
-	int value = std::atoi (text.c_str ());
-
-	if (value < minValue)
+	if (text.empty ())
 	{
-		text = iToStr (minValue);
+		text = iToStr (std::max (std::min (0, maxValue), minValue));
 	}
-	else if (value > maxValue)
+	else
 	{
-		text = iToStr (maxValue);
+		int value = std::atoi (text.c_str ());
+
+		if (value < minValue)
+		{
+			text = iToStr (minValue);
+		}
+		else if (value > maxValue)
+		{
+			text = iToStr (maxValue);
+		}
 	}
 }

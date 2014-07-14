@@ -78,6 +78,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)
 	{
+		sendGameSettings (*server, *serverPlayerList[i]);
 		sendHudSettings (*server, *serverPlayerList[i]);
 		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size (); ++j)
@@ -89,6 +90,9 @@ void cNetworkHostGameSaved::start (cApplication& application)
 
 	// start game
 	server->serverState = SERVER_STATE_INGAME;
+
+	// TODO: save/load game time
+	server->startTurnTimers ();
 
 	auto gameGui = std::make_shared<cGameGui> (staticMap);
 

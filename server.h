@@ -294,6 +294,7 @@ public:
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 
+	void startTurnTimers ();
 private:
 	void startNewGame ();
 

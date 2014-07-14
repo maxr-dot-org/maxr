@@ -91,10 +91,6 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 
 	gameTimer->maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer->start ();
-	if (gameSettings->isTurnLimitActive ())
-	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
-	}
 
 	// connect to casualties tracker to send updates about casualties changes
 	signalConnectionManager.connect (casualtiesTracker->casualtyChanged, [this](const sID unitId, int playerNr)
@@ -163,6 +159,7 @@ eGameTypes cServer::getGameType() const
 	return GAME_TYPE_SINGLE;
 }
 
+//------------------------------------------------------------------------------
 void cServer::start ()
 {
 	if (serverThread) return;
@@ -3020,13 +3017,7 @@ bool cServer::checkEndActions (const cPlayer* player)
 void cServer::makeTurnEnd()
 {
 	turnClock->increaseTurn ();
-	turnTimeClock->restartFromNow ();
-	sendTurnStartTime (*this, turnTimeClock->getStartGameTime ());
-	turnTimeClock->clearAllDeadlines ();
-	if (gameSettings->isTurnLimitActive ())
-	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
-	}
+	startTurnTimers ();
 
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	lastTurnEnd = gameTimer->gameTime;
@@ -3158,6 +3149,18 @@ void cServer::makeTurnEnd()
 	checkDefeats();
 
 	iWantPlayerEndNum = -1;
+}
+
+//------------------------------------------------------------------------------
+void cServer::startTurnTimers ()
+{
+	turnTimeClock->restartFromNow ();
+	sendTurnStartTime (*this, turnTimeClock->getStartGameTime ());
+	turnTimeClock->clearAllDeadlines ();
+	if (gameSettings->isTurnLimitActive ())
+	{
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
+	}
 }
 
 //------------------------------------------------------------------------------

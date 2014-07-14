@@ -88,6 +88,20 @@ public:
 	static const int defaultCreditsHigh    = 200;
 	static const int defaultCreditsMore    = 250;
 
+	static const std::chrono::seconds defaultTurnLimitOption0;
+	static const std::chrono::seconds defaultTurnLimitOption1;
+	static const std::chrono::seconds defaultTurnLimitOption2;
+	static const std::chrono::seconds defaultTurnLimitOption3;
+	static const std::chrono::seconds defaultTurnLimitOption4;
+	static const std::chrono::seconds defaultTurnLimitOption5;
+
+	static const std::chrono::seconds defaultEndTurnDeadlineOption0;
+	static const std::chrono::seconds defaultEndTurnDeadlineOption1;
+	static const std::chrono::seconds defaultEndTurnDeadlineOption2;
+	static const std::chrono::seconds defaultEndTurnDeadlineOption3;
+	static const std::chrono::seconds defaultEndTurnDeadlineOption4;
+	static const std::chrono::seconds defaultEndTurnDeadlineOption5;
+
 	cGameSettings ();
 	cGameSettings (const cGameSettings& other);
 
