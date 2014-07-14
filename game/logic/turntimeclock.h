@@ -35,9 +35,9 @@ public:
 
 	unsigned int getStartGameTime () const;
 
-	void changeDeadline (const std::chrono::milliseconds& deadline);
+	const std::chrono::milliseconds& getDeadline () const;
 
-	std::chrono::milliseconds getTimeTillReached (unsigned int currentGameTime);
+	void changeDeadline (const std::chrono::milliseconds& deadline);
 
 private:
 	unsigned int startGameTime;
@@ -51,6 +51,9 @@ public:
 
 	void restartFromNow ();
 	void restartFrom (unsigned int gameTime);
+
+	void stop ();
+	void resume ();
 
 	unsigned int getStartGameTime () const;
 
@@ -77,6 +80,11 @@ private:
 	std::vector<std::shared_ptr<cTurnTimeDeadline>> deadlines;
 
 	unsigned int startTurnGameTime;
+	unsigned int stoppedAtTime;
+	unsigned int stoppedTicks;
+	bool stopped;
+
+	std::chrono::milliseconds getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const;
 };
 
 #endif // game_logic_turnclockH

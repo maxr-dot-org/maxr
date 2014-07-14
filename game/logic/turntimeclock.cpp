@@ -36,24 +36,23 @@ unsigned int cTurnTimeDeadline::getStartGameTime () const
 }
 
 //------------------------------------------------------------------------------
+const std::chrono::milliseconds& cTurnTimeDeadline::getDeadline () const
+{
+	return deadline;
+}
+
+//------------------------------------------------------------------------------
 void cTurnTimeDeadline::changeDeadline (const std::chrono::milliseconds& deadline_)
 {
 	deadline = deadline_;
 }
 
 //------------------------------------------------------------------------------
-std::chrono::milliseconds cTurnTimeDeadline::getTimeTillReached (unsigned int currentGameTime)
-{
-	const auto deadlineEndMilliseconds = startGameTime * GAME_TICK_TIME + deadline.count ();
-	const auto currentTimeMilliseconds = currentGameTime * GAME_TICK_TIME;
-
-	return std::chrono::milliseconds (deadlineEndMilliseconds < currentTimeMilliseconds ? 0 : deadlineEndMilliseconds - currentTimeMilliseconds);
-}
-
-//------------------------------------------------------------------------------
 cTurnTimeClock::cTurnTimeClock (std::shared_ptr<cGameTimer> gameTimer_) :
 	gameTimer (std::move(gameTimer_)),
-	startTurnGameTime (0)
+	startTurnGameTime (0),
+	stopped (false),
+	stoppedTicks (0)
 {
 	unsigned int lastCheckedSeconds = 0;
 	signalConnectionManager.connect (gameTimer->gameTimeChanged, [lastCheckedSeconds, this]() mutable
@@ -77,7 +76,31 @@ void cTurnTimeClock::restartFromNow ()
 void cTurnTimeClock::restartFrom (unsigned int gameTime)
 {
 	startTurnGameTime = gameTime;
+
+	if (stopped) stoppedAtTime = gameTime;
+	stoppedTicks = 0;
+
 	secondChanged ();
+}
+
+//------------------------------------------------------------------------------
+void cTurnTimeClock::stop ()
+{
+	if (stopped) return;
+
+	stoppedAtTime = gameTimer->gameTime;
+
+	stopped = true;
+}
+
+//------------------------------------------------------------------------------
+void cTurnTimeClock::resume ()
+{
+	if (!stopped) return;
+
+	stoppedTicks += gameTimer->gameTime - stoppedAtTime;
+
+	stopped = false;
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +148,10 @@ void cTurnTimeClock::removeDeadline (const std::shared_ptr<cTurnTimeDeadline>& d
 //------------------------------------------------------------------------------
 std::chrono::milliseconds cTurnTimeClock::getTimeSinceStart () const
 {
-	return std::chrono::milliseconds ((gameTimer->gameTime - startTurnGameTime) * GAME_TICK_TIME);
+	const auto ticksSinceStart = gameTimer->gameTime - startTurnGameTime;
+	const auto ticksStopped = stoppedTicks + (stopped ? gameTimer->gameTime - stoppedAtTime : 0);
+	assert (ticksSinceStart >= ticksStopped);
+	return std::chrono::milliseconds ((ticksSinceStart - ticksStopped) * GAME_TICK_TIME);
 }
 
 //------------------------------------------------------------------------------
@@ -133,10 +159,10 @@ std::chrono::milliseconds cTurnTimeClock::getTimeTillFirstDeadline () const
 {
 	if (deadlines.empty ()) return std::chrono::milliseconds (0);
 
-	auto minTime = deadlines[0]->getTimeTillReached (gameTimer->gameTime);
+	auto minTime = getTimeTillDeadlineReached (*deadlines[0]);
 	for (auto i = deadlines.begin () + 1; i != deadlines.end (); ++i)
 	{
-		minTime = std::min (minTime, (*i)->getTimeTillReached (gameTimer->gameTime));
+		minTime = std::min (minTime, getTimeTillDeadlineReached (**i));
 	}
 	return minTime;
 }
@@ -146,7 +172,7 @@ bool cTurnTimeClock::hasReachedAnyDeadline () const
 {
 	for (auto i = deadlines.begin (); i != deadlines.end (); ++i)
 	{
-		if ((*i)->getTimeTillReached (gameTimer->gameTime) <= std::chrono::milliseconds (0))
+		if (getTimeTillDeadlineReached (**i) <= std::chrono::milliseconds (0))
 		{
 			return true;
 		}
@@ -158,4 +184,14 @@ bool cTurnTimeClock::hasReachedAnyDeadline () const
 bool cTurnTimeClock::hasDeadline () const
 {
 	return !deadlines.empty();
+}
+
+//------------------------------------------------------------------------------
+std::chrono::milliseconds cTurnTimeClock::getTimeTillDeadlineReached (const cTurnTimeDeadline& deadline) const
+{
+	const auto ticksStopped = stoppedTicks + (stopped ? gameTimer->gameTime - stoppedAtTime : 0);
+	const auto deadlineEndMilliseconds = (deadline.getStartGameTime () + ticksStopped) * GAME_TICK_TIME + deadline.getDeadline ().count ();
+	const auto currentTimeMilliseconds = gameTimer->gameTime * GAME_TICK_TIME;
+
+	return std::chrono::milliseconds (deadlineEndMilliseconds < currentTimeMilliseconds ? 0 : deadlineEndMilliseconds - currentTimeMilliseconds);
 }
