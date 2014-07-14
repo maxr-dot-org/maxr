@@ -24,6 +24,7 @@
 #include "output/sound/soundchannel.h"
 
 #include "settings.h"
+#include "gametimer.h"
 
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :
@@ -65,6 +66,12 @@ cSoundManager::cSoundManager () :
 {}
 
 //--------------------------------------------------------------------------
+void cSoundManager::setGameTimer (std::shared_ptr<const cGameTimer> gameTimer_)
+{
+	gameTimer = gameTimer_;
+}
+
+//--------------------------------------------------------------------------
 void cSoundManager::mute ()
 {
 	muted = true;
@@ -100,7 +107,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	cMutex::Lock playingSoundsLock (playingSoundsMutex);
 
-	const unsigned int currentGameTime = 0; // TODO: get game time
+	const unsigned int currentGameTime = gameTimer ? gameTimer->gameTime : 0;
 
 	const auto soundConflictHandlingType = sound->getSoundConflictHandlingType ();
 

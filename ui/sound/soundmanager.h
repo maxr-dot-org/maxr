@@ -29,10 +29,14 @@
 class cSoundEffect;
 class cSoundChannel;
 
+class cGameTimer;
+
 class cSoundManager
 {
 public:
 	cSoundManager ();
+
+	void setGameTimer (std::shared_ptr<const cGameTimer> gameTimer);
 
 	void mute ();
 	void unmute ();
@@ -62,6 +66,9 @@ private:
 		sStoredSound& operator=(const sStoredSound& other) MAXR_DELETE_FUNCTION;
 	};
 	cSignalConnectionManager signalConnectionManager;
+
+	std::shared_ptr<const cGameTimer> gameTimer;
+
 	cMutex playingSoundsMutex;
 	std::vector<sStoredSound> playingSounds;
 

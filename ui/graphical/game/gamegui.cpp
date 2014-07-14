@@ -326,6 +326,8 @@ void cGameGui::setGameSettings (std::shared_ptr<const cGameSettings> gameSetting
 //------------------------------------------------------------------------------
 void cGameGui::connectToClient (cClient& client)
 {
+	soundManager->setGameTimer (client.getGameTimer ());
+
 	//
 	// GUI to client (action)
 	//
