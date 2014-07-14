@@ -103,6 +103,7 @@ private:
 	std::shared_ptr<const cPlayer> player;
 	std::shared_ptr<const cCasualtiesTracker> casualtiesTracker;
 	std::shared_ptr<const cTurnClock> turnClock;
+	std::shared_ptr<const cTurnTimeClock> turnTimeClock;
 	std::shared_ptr<const cGameSettings> gameSettings;
 	std::vector<std::shared_ptr<const cPlayer>> players;
 

@@ -26,13 +26,17 @@
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 //------------------------------------------------------------------------------
-cWindowResourceDistribution::cWindowResourceDistribution (const sSubBase& subBase_) :
+cWindowResourceDistribution::cWindowResourceDistribution (const sSubBase& subBase_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (LoadPCX (GFXOD_MINEMANAGER)),
 	subBase (subBase_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 11), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 11 + 10)), lngPack.i18n ("Text~Title~Mine"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	for (size_t i = 0; i < 3; ++i)
 	{

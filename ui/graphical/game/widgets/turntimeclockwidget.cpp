@@ -24,6 +24,8 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "game/logic/turntimeclock.h"
 
+const std::chrono::seconds cTurnTimeClockWidget::alertRemainingTime (30);
+
 //------------------------------------------------------------------------------
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
 	cWidget (area)
@@ -43,11 +45,19 @@ void cTurnTimeClockWidget::setTurnTimeClock (std::shared_ptr<const cTurnTimeCloc
 		signalConnectionManager.connect (turnTimeClock->secondChanged, std::bind (&cTurnTimeClockWidget::update, this));
 		signalConnectionManager.connect (turnTimeClock->deadlinesChanged, std::bind (&cTurnTimeClockWidget::update, this));
 	}
+	update ();
 }
 
 //------------------------------------------------------------------------------
 void cTurnTimeClockWidget::update ()
 {
+	if (turnTimeClock == nullptr)
+	{
+		textLabel->setText ("");
+		textLabel->setFont (FONT_LATIN_NORMAL);
+		return;
+	}
+
 	const auto time = turnTimeClock->hasDeadline () ? turnTimeClock->getTimeTillFirstDeadline () : turnTimeClock->getTimeSinceStart ();
 
 	const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(time);
@@ -61,15 +71,12 @@ void cTurnTimeClockWidget::update ()
 
 	textLabel->setText (text.str ());
 
-	const std::chrono::seconds alertRemainingTime (30);
-
-	// TODO: activate when red font gets implemented
-	//if (turnTimeClock->hasDeadline () && time < alertRemainingTime)
-	//{
-	//	timeLabel->setFont (FONT_LATIN_NORMAL_RED);
-	//}
-	//else
-	//{
-	//	timeLabel->setFont (FONT_LATIN_NORMAL);
-	//}
+	if (turnTimeClock->hasDeadline () && time <= alertRemainingTime)
+	{
+		textLabel->setFont (FONT_LATIN_NORMAL_RED);
+	}
+	else
+	{
+		textLabel->setFont (FONT_LATIN_NORMAL);
+	}
 }

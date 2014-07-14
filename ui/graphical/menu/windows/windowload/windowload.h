@@ -30,11 +30,12 @@
 class cPushButton;
 class cSaveSlotWidget;
 class cSaveGameData;
+class cTurnTimeClock;
 
 class cWindowLoad : public cWindow
 {
 public:
-	cWindowLoad ();
+	explicit cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock = nullptr);
 	~cWindowLoad();
 
 	void update ();

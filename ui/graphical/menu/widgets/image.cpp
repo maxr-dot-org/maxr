@@ -22,6 +22,7 @@
 #include "video.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cImage::cImage (const cPosition& position, SDL_Surface* image_, cSoundChunk* clickSound_) :
@@ -77,49 +78,14 @@ void cImage::enableAtTransparent ()
 	disabledAtTransparent = false;
 }
 
-namespace {
-
-Uint32 getPixel (SDL_Surface *surface, const cPosition& position)
-{
-	int bpp = surface->format->BytesPerPixel;
-
-	Uint8 *p = (Uint8 *)surface->pixels + position.y () * surface->pitch + position.x () * bpp;
-
-	switch (bpp)
-	{
-	case 1:
-		return *p;
-		break;
-
-	case 2:
-		return *(Uint16 *)p;
-		break;
-
-	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			return p[0] << 16 | p[1] << 8 | p[2];
-		else
-			return p[0] | p[1] << 8 | p[2] << 16;
-		break;
-
-	case 4:
-		return *(Uint32 *)p;
-		break;
-
-	default:
-		return 0;
-	}
-}
-
-}
-
+//------------------------------------------------------------------------------
 bool cImage::isAt (const cPosition& position) const
 {
 	if (!cClickableWidget::isAt (position)) return false;
 
 	if (!disabledAtTransparent) return true;
 
-	auto color = getPixel (image.get (), position - getPosition ());
+	auto color = getPixel (*image, position - getPosition ());
 
 	if (color == 0xFF00FF) return false;
 

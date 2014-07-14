@@ -22,15 +22,19 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "pcx.h"
 #include "main.h"
 #include "player.h"
 
 //------------------------------------------------------------------------------
-cWindowUpgrades::cWindowUpgrades (const cPlayer& player) :
+cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindowHangar (LoadPCX (GFXOD_UPGRADE), player)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (474, 12), getPosition () + cPosition (474 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Choose_Units"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	//
 	// Unit Filters

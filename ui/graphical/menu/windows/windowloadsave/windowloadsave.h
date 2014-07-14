@@ -23,11 +23,12 @@
 #include "ui/graphical/menu/windows/windowload/windowload.h"
 
 class cPushButton;
+class cTurnTimeClock;
 
 class cWindowLoadSave : public cWindowLoad
 {
 public:
-	cWindowLoadSave ();
+	explicit cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	cSignal<void (int, const std::string&)> save;
 	cSignal<void ()> exit;

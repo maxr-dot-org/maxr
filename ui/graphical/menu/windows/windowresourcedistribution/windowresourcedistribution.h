@@ -29,11 +29,12 @@
 
 class cResourceBar;
 class cLabel;
+class cTurnTimeClock;
 
 class cWindowResourceDistribution : public cWindow
 {
 public:
-	cWindowResourceDistribution (const sSubBase& subBase);
+	cWindowResourceDistribution (const sSubBase& subBase, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	int getMetalProduction ();
 	int getOilProduction ();

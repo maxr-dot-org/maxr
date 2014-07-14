@@ -22,19 +22,23 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/saveslotwidget.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "pcx.h"
 #include "main.h"
 #include "files.h"
 #include "savegame.h"
 
 //------------------------------------------------------------------------------
-cWindowLoad::cWindowLoad () :
+cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (LoadPCX (GFXOD_SAVELOAD)),
 	page (0),
 	lastPage ((int)std::ceil ((double)maximalDisplayedSaves / (rows * columns)) - 1),
 	selectedSaveNumber (-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 12), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 12 + 10)), lngPack.i18n ("Text~Title~Load"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (525, 16), cPosition (525 + 60, 16 + 10))));
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (353, 438), ePushButtonType::Huge, lngPack.i18n ("Text~Others~Back")));
 	signalConnectionManager.connect (backButton->clicked, [&](){ close (); });

@@ -24,11 +24,12 @@
 
 class cVehicle;
 class cBuildSpeedHandlerWidget;
+class cTurnTimeClock;
 
 class cWindowBuildBuildings : public cWindowHangar
 {
 public:
-	cWindowBuildBuildings (const cVehicle& vehicle);
+	cWindowBuildBuildings (const cVehicle& vehicle, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	const sID* getSelectedUnitId () const;
 	int getSelectedBuildSpeed () const;

@@ -40,7 +40,7 @@
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
-
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 namespace {
 std::string plural (int n, const std::string& sing, const std::string& plu)
@@ -57,6 +57,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 								std::shared_ptr<const cPlayer> localPlayer_,
 								std::shared_ptr<const cCasualtiesTracker> casualties_,
 								std::shared_ptr<const cTurnClock> turnClock_,
+								std::shared_ptr<const cTurnTimeClock> turnTimeClock,
 								std::shared_ptr<const cGameSettings> gameSettings_) :
 	cWindow (LoadPCX (GFXOD_REPORTS)),
 	players (std::move(players_)),
@@ -68,6 +69,9 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	disadvantagesListDirty (true),
 	reportsListDirty (true)
 {
+	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (527, 17), cPosition (527 + 57, 17 + 10))));
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
+
 	auto typeButtonGroup = addChild (std::make_unique<cRadioGroup> ());
 	unitsRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (524, 71), lngPack.i18n ("Text~Others~Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
 	disadvantagesRadioButton = typeButtonGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (524, 71 + 29), lngPack.i18n ("Text~Others~Disadvantages_8cut"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));

@@ -24,7 +24,8 @@
 #include "main.h"
 
 //------------------------------------------------------------------------------
-cWindowLoadSave::cWindowLoadSave ()
+cWindowLoadSave::cWindowLoadSave (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
+	cWindowLoad (std::move (turnTimeClock))
 {
 	auto exitButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (246, 438), ePushButtonType::Huge, &SoundData.SNDMenuButton, lngPack.i18n ("Text~Others~Exit")));
 	signalConnectionManager.connect (exitButton->clicked, [&](){ exit (); });

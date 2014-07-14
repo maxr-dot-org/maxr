@@ -32,4 +32,10 @@ void drawLine (SDL_Surface* surface, const cPosition& start, const cPosition& en
 
 void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, const cColor& color);
 
+Uint32 getPixel (const SDL_Surface& surface, const cPosition& position);
+
+void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel);
+
+void replaceColor (SDL_Surface& surface, const cColor& sourceColor, const cColor& destinationColor);
+
 #endif // utility_drawingH

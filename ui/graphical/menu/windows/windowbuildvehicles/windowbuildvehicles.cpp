@@ -26,6 +26,7 @@
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuild.h"
 #include "ui/graphical/menu/widgets/special/buildspeedhandlerwidget.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/application.h"
 #include "pcx.h"
 #include "buildings.h"
@@ -33,11 +34,14 @@
 #include "map.h"
 
 //------------------------------------------------------------------------------
-cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map) :
+cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), *building_.owner),
 	building (building_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+
+	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 16), cPosition (523 + 65, 16 + 10))));
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition () + cPosition (292, 345)));
 

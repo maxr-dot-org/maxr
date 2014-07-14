@@ -312,9 +312,10 @@ void cGameGui::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock)
+void cGameGui::setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock_)
 {
-	hud->setTurnTimeClock (std::move (turnTimeClock));
+	turnTimeClock = std::move (turnTimeClock_);
+	hud->setTurnTimeClock (turnTimeClock);
 }
 
 //------------------------------------------------------------------------------
@@ -1324,7 +1325,7 @@ void cGameGui::showFilesWindow ()
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto loadSaveWindow = application->show (std::make_shared<cWindowLoadSave> ());
+	auto loadSaveWindow = application->show (std::make_shared<cWindowLoadSave> (turnTimeClock));
 	loadSaveWindow->exit.connect ([&, loadSaveWindow, application]()
 	{
 		auto yesNoDialog = application->show (std::make_shared<cDialogYesNo> (lngPack.i18n ("Text~Comp~End_Game")));
@@ -1386,7 +1387,7 @@ void cGameGui::showReportsWindow ()
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto reportsWindow = application->show (std::make_shared<cWindowReports> (players, player, casualtiesTracker, turnClock, gameSettings));
+	auto reportsWindow = application->show (std::make_shared<cWindowReports> (players, player, casualtiesTracker, turnClock, turnTimeClock, gameSettings));
 
 	signalConnectionManager.connect (reportsWindow->unitClickedSecondTime, [this, reportsWindow](cUnit& unit)
 	{
@@ -1436,7 +1437,7 @@ void cGameGui::showBuildBuildingsWindow (const cVehicle& vehicle)
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle));
+	auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle, turnTimeClock));
 
 	buildWindow->done.connect ([&, buildWindow]()
 	{
@@ -1487,7 +1488,7 @@ void cGameGui::showBuildVehiclesWindow (const cBuilding& building)
 
 	if (!dynamicMap) return;
 
-	auto buildWindow = application->show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap));
+	auto buildWindow = application->show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap, turnTimeClock));
 
 	buildWindow->done.connect ([&, buildWindow]()
 	{
@@ -1506,7 +1507,7 @@ void cGameGui::showResourceDistributionDialog (const cUnit& unit)
 
 	const auto& building = static_cast<const cBuilding&>(unit);
 
-	auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> (*building.SubBase));
+	auto resourceDistributionWindow = application->show (std::make_shared<cWindowResourceDistribution> (*building.SubBase, turnTimeClock));
 	resourceDistributionWindow->done.connect ([&, resourceDistributionWindow]()
 	{
 		changeResourceDistributionTriggered (building, resourceDistributionWindow->getMetalProduction (), resourceDistributionWindow->getOilProduction (), resourceDistributionWindow->getGoldProduction());
@@ -1540,7 +1541,7 @@ void cGameGui::showUpgradesWindow (const cUnit& unit)
 	if (unit.owner != player.get()) return;
 	if (!player) return;
 
-	auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> (*player));
+	auto upgradesWindow = application->show (std::make_shared<cWindowUpgrades> (*player, turnTimeClock));
 	upgradesWindow->done.connect ([&, upgradesWindow]()
 	{
 		takeUnitUpgradesTriggered (upgradesWindow->getUnitUpgrades ());
@@ -1554,7 +1555,7 @@ void cGameGui::showStorageWindow (const cUnit& unit)
 	auto application = getActiveApplication ();
 	if (!application) return;
 
-	auto storageWindow = application->show (std::make_shared<cWindowStorage> (unit));
+	auto storageWindow = application->show (std::make_shared<cWindowStorage> (unit, turnTimeClock));
 	storageWindow->activate.connect ([&, storageWindow](size_t index)
 	{
 		if (unit.isAVehicle () && unit.data.factorAir > 0)

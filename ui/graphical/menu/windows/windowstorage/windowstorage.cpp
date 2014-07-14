@@ -33,9 +33,10 @@
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/widgets/unitdetailsstored.h"
+#include "ui/graphical/game/widgets/turntimeclockwidget.h"
 
 //------------------------------------------------------------------------------
-cWindowStorage::cWindowStorage (const cUnit& unit_) :
+cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
 	cWindow (nullptr),
 	unit (unit_),
 	canRepairReloadUpgrade (unit_.isABuilding ()),
@@ -51,6 +52,9 @@ cWindowStorage::cWindowStorage (const cUnit& unit_) :
 		SDL_BlitSurface (surface.get (), NULL, background.get (), NULL);
 	}
 	setSurface (std::move(background));
+
+	auto turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (523, 17), cPosition (523 + 62, 17 + 10))));
+	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
 
 	//
 	// Units

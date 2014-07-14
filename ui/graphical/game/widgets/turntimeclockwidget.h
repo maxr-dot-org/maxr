@@ -21,6 +21,7 @@
 #define ui_graphical_game_widgets_turntimeclockwidgetH
 
 #include <memory>
+#include <chrono>
 
 #include "ui/graphical/widget.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -30,6 +31,7 @@ class cTurnTimeClock;
 
 class cTurnTimeClockWidget : public cWidget
 {
+	static const std::chrono::seconds alertRemainingTime;
 public:
 	cTurnTimeClockWidget (const cBox<cPosition>& area);
 

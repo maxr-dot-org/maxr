@@ -28,6 +28,7 @@
 
 class cUnit;
 class cVehicle;
+class cTurnTimeClock;
 class cPushButton;
 class cLabel;
 class cImage;
@@ -37,7 +38,7 @@ class cUnitDetailsStored;
 class cWindowStorage : public cWindow
 {
 public:
-	cWindowStorage (const cUnit& unit);
+	cWindowStorage (const cUnit& unit, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	cSignal<void ()> activateAll;
 	cSignal<void ()> reloadAll;

@@ -38,6 +38,7 @@ class cCasualtiesTracker;
 class cUnit;
 class cSavedReport;
 class cTurnClock;
+class cTurnTimeClock;
 class cGameSettings;
 struct sUnitData;
 
@@ -48,6 +49,7 @@ public:
 					std::shared_ptr<const cPlayer> localPlayer,
 					std::shared_ptr<const cCasualtiesTracker> casualties,
 					std::shared_ptr<const cTurnClock> turnClock,
+					std::shared_ptr<const cTurnTimeClock> turnTimeClock,
 					std::shared_ptr<const cGameSettings> gameSettings);
 
 	cSignal<void (cUnit&)> unitClickedSecondTime;

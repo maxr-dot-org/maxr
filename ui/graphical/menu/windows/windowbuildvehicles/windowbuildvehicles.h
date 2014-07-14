@@ -29,12 +29,13 @@ class cBuilding;
 class cMap;
 class cBuildSpeedHandlerWidget;
 class cUnitListViewItemBuild;
+class cTurnTimeClock;
 struct sBuildList;
 
 class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild>
 {
 public:
-	cWindowBuildVehicles (const cBuilding& building, const cMap& map);
+	cWindowBuildVehicles (const cBuilding& building, const cMap& map, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	std::vector<sBuildList> getBuildList () const;
 	int getSelectedBuildSpeed () const;

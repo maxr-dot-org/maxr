@@ -30,6 +30,7 @@ class cPosition;
 enum eUnicodeFontType
 {
 	FONT_LATIN_NORMAL,
+	FONT_LATIN_NORMAL_RED,
 	FONT_LATIN_BIG,
 	FONT_LATIN_BIG_GOLD,
 	FONT_LATIN_SMALL_WHITE,
@@ -193,8 +194,9 @@ private:
 	typedef AutoSurface FontTypeSurfaces[0xFFFF];
 	// character surfaces.
 	// Since SDL maximal gives us the unicodes
-	// from BMP we maximaly need 0xFFFF surfaces
+	// from BMP we need 0xFFFF surfaces at maximum
 	AutoSurface charsNormal[0xFFFF];
+	AutoSurface charsNormalRed[0xFFFF];
 	AutoSurface charsSmallWhite[0xFFFF];
 	AutoSurface charsSmallGreen[0xFFFF];
 	AutoSurface charsSmallRed[0xFFFF];
@@ -212,7 +214,6 @@ private:
 	 * @param fonttype the fonttype which should be loaded.
 	 */
 	void loadChars (eUnicodeFontCharset charset, eUnicodeFontType fonttype);
-	Uint32 getPixel32 (int x, int y, SDL_Surface* surface);
 	/**
 	 * returns the character array of a fonttype.
 	 * @author alzi alias DoctorDeath

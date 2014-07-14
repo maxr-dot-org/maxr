@@ -26,6 +26,8 @@
 #include "pcx.h"
 #include "settings.h"
 #include "utility/position.h"
+#include "utility/drawing.h"
+#include "utility/color.h"
 
 using namespace std;
 
@@ -326,6 +328,11 @@ cUnicodeFont::cUnicodeFont()
 	loadChars (CHARSET_ISO8559_2, FONT_LATIN_NORMAL);
 	loadChars (CHARSET_ISO8559_5, FONT_LATIN_NORMAL);
 
+	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL_RED);
+	loadChars (CHARSET_ISO8559_1, FONT_LATIN_NORMAL_RED);
+	loadChars (CHARSET_ISO8559_2, FONT_LATIN_NORMAL_RED);
+	loadChars (CHARSET_ISO8559_5, FONT_LATIN_NORMAL_RED);
+
 	loadChars (CHARSET_ISO8559_ALL, FONT_LATIN_BIG);
 	loadChars (CHARSET_ISO8559_1, FONT_LATIN_BIG);
 	loadChars (CHARSET_ISO8559_2, FONT_LATIN_BIG);
@@ -403,7 +410,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					pX = (cellW * cols) + pCol;
 					pY = (cellH * rows) + pRow;
 
-					if (getPixel32 (pX, pY, surface.get ()) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
+					if (getPixel (*surface, cPosition (pX, pY)) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
 					{
 						// offset
 						Rect.x = pX;
@@ -420,7 +427,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 					pX = (cellW * cols) + pCol_w;
 					pY = (cellH * rows) + pRow_w;
 
-					if (getPixel32 (pX, pY, surface.get ()) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
+					if (getPixel (*surface, cPosition (pX, pY)) != SDL_MapRGB (surface->format, 0xFF, 0, 0xFF))
 					{
 						Rect.w = (pX - Rect.x) + 1;
 						pCol_w = -1; // break loop
@@ -439,41 +446,32 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			else unicodeplace = iso8859_to_uni[currentChar];
             chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
 
-			// change color of small fonts
-			switch (fonttype)
-			{
-				case FONT_LATIN_SMALL_RED:
-					SDL_SetColorKey (surface.get (), SDL_TRUE, 0xf0d8b8);
-					SDL_FillRect (chars[unicodeplace].get (), NULL, 0xe60000);
-					break;
-				case FONT_LATIN_SMALL_GREEN:
-					SDL_SetColorKey (surface.get (), SDL_TRUE, 0xf0d8b8);
-					SDL_FillRect (chars[unicodeplace].get (), NULL, 0x04ae04);
-					break;
-				case FONT_LATIN_SMALL_YELLOW:
-					SDL_SetColorKey (surface.get (), SDL_TRUE, 0xf0d8b8);
-					SDL_FillRect (chars[unicodeplace].get (), NULL, 0xdbde00);
-					break;
-				default:
-					SDL_FillRect (chars[unicodeplace].get (), NULL, 0xFF00FF);
-					break;
-			}
+			SDL_FillRect (chars[unicodeplace].get (), NULL, 0xFF00FF);
 			SDL_BlitSurface (surface.get (), &Rect, chars[unicodeplace].get (), NULL);
 			SDL_SetColorKey (chars[unicodeplace].get (), SDL_TRUE, 0xFF00FF);
+
+			// change color for some fonts
+			switch (fonttype)
+			{
+			case FONT_LATIN_NORMAL_RED:
+				replaceColor (*chars[unicodeplace], cColor (214, 189, 148), cColor (250, 0, 0));
+				replaceColor (*chars[unicodeplace], cColor (140, 132, 132), cColor (163, 0, 0));
+				break;
+			case FONT_LATIN_SMALL_RED:
+				replaceColor (*chars[unicodeplace], cColor (240, 216, 184), cColor (230, 0, 0));
+				break;
+			case FONT_LATIN_SMALL_GREEN:
+				replaceColor (*chars[unicodeplace], cColor (240, 216, 184), cColor (4, 174, 4));
+				break;
+			case FONT_LATIN_SMALL_YELLOW:
+				replaceColor (*chars[unicodeplace], cColor (240, 216, 184), cColor (219, 222, 0));
+				break;
+			}
 
 			// goto next character
 			currentChar++;
 		}
 	}
-}
-
-Uint32 cUnicodeFont::getPixel32 (int x, int y, SDL_Surface* surface)
-{
-	// converts the Pixel to 32 bit
-	Uint32* pixels = static_cast<Uint32*> (surface->pixels);
-
-	// get the requested pixels
-	return pixels[ (y * surface->w) + x];
 }
 
 cUnicodeFont::FontTypeSurfaces*
@@ -482,6 +480,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
 	switch (fonttype)
 	{
 		case FONT_LATIN_NORMAL: return &charsNormal;
+		case FONT_LATIN_NORMAL_RED: return &charsNormalRed;
 		case FONT_LATIN_BIG: return &charsBig;
 		case FONT_LATIN_BIG_GOLD: return &charsBigGold;
 		case FONT_LATIN_SMALL_WHITE: return &charsSmallWhite;
@@ -500,6 +499,7 @@ AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
 	switch (fonttype)
 	{
 		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_NORMAL_RED:
 			filename += "normal";
 			break;
 		case FONT_LATIN_BIG:
@@ -583,6 +583,7 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 			iSpace = 1;
 			break;
 		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_NORMAL_RED:
 		case FONT_LATIN_BIG:
 		case FONT_LATIN_BIG_GOLD:
 			break;
@@ -796,6 +797,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 			iSpace = 1;
 			break;
 		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_NORMAL_RED:
 		case FONT_LATIN_BIG:
 		case FONT_LATIN_BIG_GOLD:
 			break;
@@ -855,6 +857,7 @@ eUnicodeFontSize cUnicodeFont::getFontSize (eUnicodeFontType fonttype) const
 	{
 		default:
 		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_NORMAL_RED:
 			return FONT_SIZE_NORMAL;
 		case FONT_LATIN_BIG:
 		case FONT_LATIN_BIG_GOLD:
@@ -936,6 +939,7 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 		break;
 	default:
 	case FONT_LATIN_NORMAL:
+	case FONT_LATIN_NORMAL_RED:
 	case FONT_LATIN_BIG:
 	case FONT_LATIN_BIG_GOLD:
 		space = 0;

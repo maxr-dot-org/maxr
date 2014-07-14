@@ -21,6 +21,7 @@
 #include "utility/color.h"
 #include "utility/position.h"
 #include "utility/box.h"
+#include "autosurface.h"
 
 //------------------------------------------------------------------------------
 void drawPoint (SDL_Surface* surface, const cPosition& position, const cColor& color)
@@ -84,4 +85,109 @@ void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, cons
 	SDL_FillRect (surface, &line_v, sdlColor);
 	line_v.x += size.x () - 1;
 	SDL_FillRect (surface, &line_v, sdlColor);
+}
+
+//------------------------------------------------------------------------------
+Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
+{
+	int bpp = surface.format->BytesPerPixel;
+
+	Uint8* p = (Uint8*)surface.pixels + position.y () * surface.pitch + position.x () * bpp;
+
+	switch (bpp)
+	{
+	case 1:
+		return *p;
+		break;
+
+	case 2:
+		return *(Uint16*)p;
+		break;
+
+	case 3:
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			return p[0] << 16 | p[1] << 8 | p[2];
+		else
+			return p[0] | p[1] << 8 | p[2] << 16;
+		break;
+
+	case 4:
+		return *(Uint32*)p;
+		break;
+
+	default:
+		return 0;
+	}
+}
+
+//------------------------------------------------------------------------------
+void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
+{
+	int bpp = surface.format->BytesPerPixel;
+	Uint8* p = (Uint8*)surface.pixels + position.y () * surface.pitch + position.x () * bpp;
+
+	switch (bpp)
+	{
+	case 1:
+		*p = pixel;
+		break;
+
+	case 2:
+		*(Uint16*)p = pixel;
+		break;
+
+	case 3:
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+		{
+			p[0] = (pixel >> 16) & 0xff;
+			p[1] = (pixel >> 8) & 0xff;
+			p[2] = pixel & 0xff;
+		}
+		else
+		{
+			p[0] = pixel & 0xff;
+			p[1] = (pixel >> 8) & 0xff;
+			p[2] = (pixel >> 16) & 0xff;
+		}
+		break;
+
+	case 4:
+		*(Uint32*)p = pixel;
+		break;
+	}
+}
+
+//------------------------------------------------------------------------------
+void replaceColor (SDL_Surface& surface, const cColor& sourceColor, const cColor& destinationColor)
+{
+	const auto srcMapped = sourceColor.toMappedSdlRGBAColor (surface.format);
+	const auto destMapped = destinationColor.toMappedSdlRGBAColor (surface.format);
+
+	Uint32 key;
+	const auto hadKey = SDL_GetColorKey (&surface, &key) == 0;
+
+	AutoSurface temp (SDL_ConvertSurface (&surface, surface.format, surface.flags));
+
+	SDL_SetColorKey (temp.get(), SDL_TRUE, srcMapped);
+	SDL_FillRect (&surface, nullptr, destMapped);
+	SDL_BlitSurface (temp.get (), nullptr, &surface, nullptr);
+
+	if (hadKey) SDL_SetColorKey (&surface, SDL_TRUE, key);
+	else SDL_SetColorKey (&surface, SDL_FALSE, 0);
+
+	// The following version is to slow...
+	//
+	//SDL_LockSurface (&surface);
+	//for (int y = 0; y < surface.h; y++)
+	//{
+	//	for (int x = 0; x < surface.w; x++)
+	//	{
+	//		const cPosition position (x, y);
+	//		if (getPixel (surface, position) == srcMapped)
+	//		{
+	//			putPixel (surface, position, destMapped);
+	//		}
+	//	}
+	//}
+	//SDL_UnlockSurface (&surface);
 }

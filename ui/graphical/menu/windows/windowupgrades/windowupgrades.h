@@ -30,6 +30,7 @@ class cPushButton;
 class cResourceBar;
 class cCheckBox;
 class cPlayer;
+class cTurnTimeClock;
 
 class cWindowUpgrades : public cWindowHangar
 {
@@ -37,7 +38,7 @@ class cWindowUpgrades : public cWindowHangar
 
 	// FIXME: remove code duplication with @ref cWindowLandingUnitSelection
 public:
-	explicit cWindowUpgrades (const cPlayer& player);
+	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 
 	std::vector<std::pair<sID, cUnitUpgrade>> getUnitUpgrades () const;
 
