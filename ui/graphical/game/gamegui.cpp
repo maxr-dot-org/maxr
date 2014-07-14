@@ -489,17 +489,47 @@ void cGameGui::connectToClient (cClient& client)
 					return;
 				}
 
-				// TODO: reimplement
-				//if (i >= 0)
-				//{
-				//	server->setTurnEndDeadline (std::chrono::seconds(i));
-				//	server->setTurnEndDeadlineActive (true);
-				//}
-				//else
-				//{
-				//	server->setTurnEndDeadlineActive (false);
-				//}
+				if (i >= 0)
+				{
+					server->setTurnEndDeadline (std::chrono::seconds(i));
+					server->setTurnEndDeadlineActive (true);
+				}
+				else
+				{
+					server->setTurnEndDeadlineActive (false);
+				}
 				Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
+			}
+			else if (command.compare (0, 6, "/limit") == 0)
+			{
+				if (!server)
+				{
+					messageList->addMessage ("Command can only be used by Host");
+					return;
+				}
+				if (command.length () <= 6)
+				{
+					messageList->addMessage ("Wrong parameter");
+					return;
+				}
+
+				const int i = atoi (command.substr (6, command.length ()).c_str ());
+				if (i == 0 && command[7] != '0')
+				{
+					messageList->addMessage ("Wrong parameter");
+					return;
+				}
+
+				if (i > 0)
+				{
+					server->setTurnLimit (std::chrono::seconds (i));
+					server->setTurnLimitActive (true);
+				}
+				else
+				{
+					server->setTurnLimitActive (false);
+				}
+				Log.write ("Limit changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
 			}
 			else if (command.compare (0, 7, "/resync") == 0)
 			{

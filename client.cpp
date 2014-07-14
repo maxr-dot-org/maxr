@@ -75,6 +75,44 @@ cClient::cClient (cServer* server_, std::shared_ptr<cTCP> network_) :
 	bWantToEnd = false;
 
 	gameTimer->start ();
+
+	signalConnectionManager.connect (gameSettings->turnEndDeadlineChanged, [this]()
+	{
+		if (turnEndDeadline)
+		{
+			turnEndDeadline->changeDeadline (gameSettings->getTurnEndDeadline ());
+		}
+	});
+
+	signalConnectionManager.connect (gameSettings->turnEndDeadlineActiveChanged, [this]()
+	{
+		if (!gameSettings->isTurnEndDeadlineActive () && turnEndDeadline)
+		{
+			turnTimeClock->removeDeadline (turnEndDeadline);
+			turnEndDeadline = nullptr;
+		}
+	});
+
+	signalConnectionManager.connect (gameSettings->turnLimitChanged, [this]()
+	{
+		if (turnLimitDeadline)
+		{
+			turnLimitDeadline->changeDeadline (gameSettings->getTurnLimit ());
+		}
+	});
+
+	signalConnectionManager.connect (gameSettings->turnLimitActiveChanged, [this]()
+	{
+		if (!gameSettings->isTurnLimitActive () && turnLimitDeadline)
+		{
+			turnTimeClock->removeDeadline (turnLimitDeadline);
+			turnLimitDeadline = nullptr;
+		}
+		else if (gameSettings->isTurnLimitActive () && !turnLimitDeadline)
+		{
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime (), gameSettings->getTurnLimit ());
+		}
+	});
 }
 
 cClient::~cClient()

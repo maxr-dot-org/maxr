@@ -111,7 +111,7 @@ std::shared_ptr<cTurnTimeDeadline> cTurnTimeClock::startNewDeadlineFrom (unsigne
 //------------------------------------------------------------------------------
 void cTurnTimeClock::removeDeadline (const std::shared_ptr<cTurnTimeDeadline>& deadline)
 {
-	for (auto i = deadlines.begin () + 1; i != deadlines.end (); ++i)
+	for (auto i = deadlines.begin (); i != deadlines.end (); ++i)
 	{
 		if ((*i) == deadline)
 		{

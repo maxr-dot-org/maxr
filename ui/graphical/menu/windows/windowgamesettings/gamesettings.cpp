@@ -257,11 +257,11 @@ cGameSettings::cGameSettings () :
 	clansEnabled (true),
 	startCredits (defaultCreditsNormal),
 	victoryConditionType (eGameSettingsVictoryCondition::Death),
-	victoryTurns (400),
-	vectoryPoints (400),
-	turnEndDeadline (90),
+	victoryTurns (defaultVictoryTurnsOption2),
+	victoryPoints (defaultVictoryPointsOption2),
+	turnEndDeadline (defaultEndTurnDeadlineOption5),
 	turnEndDeadlineActive (true),
-	turnLimit (5 * 60),
+	turnLimit (defaultTurnLimitOption5),
 	turnLimitActive (false)
 {}
 
@@ -277,7 +277,7 @@ cGameSettings::cGameSettings (const cGameSettings& other) :
 	startCredits (other.startCredits),
 	victoryConditionType (other.victoryConditionType),
 	victoryTurns (other.victoryTurns),
-	vectoryPoints (other.vectoryPoints),
+	victoryPoints (other.victoryPoints),
 	turnEndDeadline (other.turnEndDeadline),
 	turnEndDeadlineActive (other.turnEndDeadlineActive),
 	turnLimit (other.turnLimit),
@@ -297,7 +297,7 @@ cGameSettings& cGameSettings::operator=(const cGameSettings& other)
 	startCredits = other.startCredits;
 	victoryConditionType = other.victoryConditionType;
 	victoryTurns = other.victoryTurns;
-	vectoryPoints = other.vectoryPoints;
+	victoryPoints = other.victoryPoints;
 	turnEndDeadline = other.turnEndDeadline;
 	turnEndDeadlineActive = other.turnEndDeadlineActive;
 	turnLimit = other.turnLimit;
@@ -439,14 +439,14 @@ void cGameSettings::setVictoryTurns (unsigned int value)
 //------------------------------------------------------------------------------
 unsigned int cGameSettings::getVictoryPoints () const
 {
-	return vectoryPoints;
+	return victoryPoints;
 }
 
 //------------------------------------------------------------------------------
 void cGameSettings::setVictoryPoints (unsigned int value)
 {
-	std::swap (vectoryPoints, value);
-	if (vectoryPoints != value) victoryPointsChanged ();
+	std::swap (victoryPoints, value);
+	if (victoryPoints != value) victoryPointsChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -522,7 +522,7 @@ void cGameSettings::pushInto (cNetMessage& message) const
 
 	message.pushInt32 (toUnderlyingType (victoryConditionType));
 	message.pushInt32 (victoryTurns);
-	message.pushInt32 (vectoryPoints);
+	message.pushInt32 (victoryPoints);
 
 	message.pushInt32 (turnEndDeadline.count());
 	message.pushBool (turnEndDeadlineActive);
@@ -534,27 +534,27 @@ void cGameSettings::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cGameSettings::popFrom (cNetMessage& message)
 {
-	turnLimitActive = message.popBool ();
-	turnLimit = std::chrono::seconds (message.popInt32 ());
+	setTurnLimitActive(message.popBool ());
+	setTurnLimit(std::chrono::seconds (message.popInt32 ()));
 
-	turnEndDeadlineActive = message.popBool ();
-	turnEndDeadline = std::chrono::seconds (message.popInt32 ());
+	setTurnEndDeadlineActive (message.popBool ());
+	setTurnEndDeadline (std::chrono::seconds (message.popInt32 ()));
 
-	vectoryPoints = message.popInt32 ();
-	victoryTurns = message.popInt32 ();
-	victoryConditionType = static_cast<eGameSettingsVictoryCondition>(message.popInt32 ());
+	setVictoryPoints (message.popInt32 ());
+	setVictoryTurns (message.popInt32 ());
+	setVictoryCondition (static_cast<eGameSettingsVictoryCondition>(message.popInt32 ()));
 
-	startCredits = message.popInt32 ();
+	setStartCredits (message.popInt32 ());
 
-	clansEnabled = message.popBool ();
+	setClansEnabled (message.popBool ());
 
-	gameType = static_cast<eGameSettingsGameType>(message.popInt32 ());
+	setGameType (static_cast<eGameSettingsGameType>(message.popInt32 ()));
 
-	bridgeheadType = static_cast<eGameSettingsBridgeheadType>(message.popInt32 ());
+	setBridgeheadType (static_cast<eGameSettingsBridgeheadType>(message.popInt32 ()));
 
-	resourceDensity = static_cast<eGameSettingsResourceDensity>(message.popInt32 ());
+	setResourceDensity (static_cast<eGameSettingsResourceDensity>(message.popInt32 ()));
 
-	goldAmount = static_cast<eGameSettingsResourceAmount>(message.popInt32 ());
-	oilAmount = static_cast<eGameSettingsResourceAmount>(message.popInt32 ());
-	metalAmount = static_cast<eGameSettingsResourceAmount>(message.popInt32 ());
+	setGoldAmount (static_cast<eGameSettingsResourceAmount>(message.popInt32 ()));
+	setOilAmount (static_cast<eGameSettingsResourceAmount>(message.popInt32 ()));
+	setMetalAmount (static_cast<eGameSettingsResourceAmount>(message.popInt32 ()));
 }

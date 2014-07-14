@@ -295,6 +295,12 @@ public:
 	void disableFreezeMode (eFreezeMode mode);
 
 	void startTurnTimers ();
+
+	void setTurnEndDeadline (const std::chrono::seconds& deadline);
+	void setTurnEndDeadlineActive (bool value);
+
+	void setTurnLimit (const std::chrono::seconds& deadline);
+	void setTurnLimitActive (bool value);
 private:
 	void startNewGame ();
 

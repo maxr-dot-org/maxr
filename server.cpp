@@ -98,6 +98,65 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 		// TODO: send updated entry only!
 		sendCasualtiesReport (*this, nullptr);
 	});
+
+	signalConnectionManager.connect (gameSettings->turnEndDeadlineChanged, [this]()
+	{
+		for (size_t i = 0; i < playerList.size (); ++i)
+		{
+			sendGameSettings (*this, *playerList[i]);
+		}
+		if (turnEndDeadline)
+		{
+			turnEndDeadline->changeDeadline (gameSettings->getTurnEndDeadline());
+		}
+	});
+
+	signalConnectionManager.connect (gameSettings->turnEndDeadlineActiveChanged, [this]()
+	{
+		for (size_t i = 0; i < playerList.size (); ++i)
+		{
+			sendGameSettings (*this, *playerList[i]);
+		}
+		if (!gameSettings->isTurnEndDeadlineActive() && turnEndDeadline)
+		{
+			turnTimeClock->removeDeadline (turnEndDeadline);
+			turnEndDeadline = nullptr;
+		}
+		else if (gameSettings->isTurnEndDeadlineActive () && !turnEndDeadline && !PlayerEndList.empty ())
+		{
+			turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
+			sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime ());
+		}
+	});
+
+	signalConnectionManager.connect (gameSettings->turnLimitChanged, [this]()
+	{
+		for (size_t i = 0; i < playerList.size (); ++i)
+		{
+			sendGameSettings (*this, *playerList[i]);
+		}
+		if (turnLimitDeadline)
+		{
+			turnLimitDeadline->changeDeadline (gameSettings->getTurnLimit ());
+		}
+	});
+
+	signalConnectionManager.connect (gameSettings->turnLimitActiveChanged, [this]()
+	{
+		for (size_t i = 0; i < playerList.size (); ++i)
+		{
+			sendGameSettings (*this, *playerList[i]);
+		}
+		if (!gameSettings->isTurnLimitActive () && turnLimitDeadline)
+		{
+			turnTimeClock->removeDeadline (turnLimitDeadline);
+			turnLimitDeadline = nullptr;
+		}
+		else if (gameSettings->isTurnLimitActive () && !turnLimitDeadline)
+		{
+			turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime(), gameSettings->getTurnLimit ());
+		}
+	});
 }
 //------------------------------------------------------------------------------
 cServer::~cServer()
@@ -185,30 +244,29 @@ void cServer::stop()
 	}
 }
 
-////------------------------------------------------------------------------------
-//void cServer::setTurnEndDeadline (const std::chrono::seconds& deadline)
-//{
-//	gameSettings->setTurnEndDeadline (deadline);
-//	if (turnEndDeadline)
-//	{
-//		turnEndDeadline->changeDeadline (deadline);
-//	}
-//}
-//
-////------------------------------------------------------------------------------
-//void cServer::setTurnEndDeadlineActive (bool value)
-//{
-//	gameSettings->setTurnEndDeadlineActive (value);
-//	if (!value && turnEndDeadline)
-//	{
-//		turnTimeClock->removeDeadline (turnEndDeadline);
-//		turnEndDeadline = nullptr;
-//	}
-//	else if (value && !turnEndDeadline && !PlayerEndList.empty ())
-//	{
-//		turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
-//	}
-//}
+//------------------------------------------------------------------------------
+void cServer::setTurnEndDeadline (const std::chrono::seconds& deadline)
+{
+	gameSettings->setTurnEndDeadline (deadline);
+}
+
+//------------------------------------------------------------------------------
+void cServer::setTurnEndDeadlineActive (bool value)
+{
+	gameSettings->setTurnEndDeadlineActive (value);
+}
+
+//------------------------------------------------------------------------------
+void cServer::setTurnLimit (const std::chrono::seconds& deadline)
+{
+	gameSettings->setTurnLimit (deadline);
+}
+
+//------------------------------------------------------------------------------
+void cServer::setTurnLimitActive (bool value)
+{
+	gameSettings->setTurnLimitActive (value);
+}
 
 //------------------------------------------------------------------------------
 void cServer::pushEvent (std::unique_ptr<cNetMessage> message)
@@ -3159,7 +3217,7 @@ void cServer::startTurnTimers ()
 	turnTimeClock->clearAllDeadlines ();
 	if (gameSettings->isTurnLimitActive ())
 	{
-		turnLimitDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnLimit ());
+		turnLimitDeadline = turnTimeClock->startNewDeadlineFrom (turnTimeClock->getStartGameTime (), gameSettings->getTurnLimit ());
 	}
 }
 

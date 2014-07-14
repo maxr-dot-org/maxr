@@ -147,20 +147,20 @@ cWindowGameSettings::cWindowGameSettings () :
 
 	savedLine = currentLine;
 
-	victoryTurns100CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (380, currentLine), "100 " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	victoryTurns0CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (380, currentLine), iToStr (cGameSettings::defaultVictoryTurnsOption0) + " " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight; 
-	victoryTurns200CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (380, currentLine), "200 " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	victoryTurns1CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (380, currentLine), iToStr (cGameSettings::defaultVictoryTurnsOption1) + " " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight; 
-	victoryTurns400CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (380, currentLine), "400 " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	victoryTurns2CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (380, currentLine), iToStr (cGameSettings::defaultVictoryTurnsOption2) + " " + lngPack.i18n ("Text~Comp~Turns"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
 
 	currentLine = savedLine;
 
-	victoryPoints100CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (500, currentLine), "100 " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	victoryPoints0CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (500, currentLine), iToStr (cGameSettings::defaultVictoryPointsOption0) + " " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
-	victoryPoints200CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (500, currentLine), "200 " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	victoryPoints1CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (500, currentLine), iToStr (cGameSettings::defaultVictoryPointsOption1) + " " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
-	victoryPoints400CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (500, currentLine), "400 " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
+	victoryPoints2CheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (500, currentLine), iToStr (cGameSettings::defaultVictoryPointsOption2) + " " + lngPack.i18n ("Text~Comp~Points"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
 	currentLine += lineHeight;
 
 	victoryNoLimitCheckBox = victoryRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (440, currentLine), lngPack.i18n ("Text~Comp~NoLimit"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly, true));
@@ -171,16 +171,16 @@ cWindowGameSettings::cWindowGameSettings () :
 	currentLine = savedLine2;
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), "Turn Limit:", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	auto turnLimitRadioGroup = addChild (std::make_unique<cRadioGroup> ());
-	turnLimitNoLimit = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "No Limit", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnLimit0 = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85, currentLine), iToStr (cGameSettings::defaultTurnLimitOption0.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnLimit1 = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40, currentLine), iToStr (cGameSettings::defaultTurnLimitOption1.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnLimit2 = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 2, currentLine), iToStr (cGameSettings::defaultTurnLimitOption2.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnLimit3 = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 3, currentLine), iToStr (cGameSettings::defaultTurnLimitOption3.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnLimit4 = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 4, currentLine), iToStr (cGameSettings::defaultTurnLimitOption4.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnLimit5 = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 5, currentLine), iToStr (cGameSettings::defaultTurnLimitOption5.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimitNoLimitCheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "No Limit", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimit0CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85, currentLine), iToStr (cGameSettings::defaultTurnLimitOption0.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimit1CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40, currentLine), iToStr (cGameSettings::defaultTurnLimitOption1.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimit2CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 2, currentLine), iToStr (cGameSettings::defaultTurnLimitOption2.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimit3CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 3, currentLine), iToStr (cGameSettings::defaultTurnLimitOption3.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimit4CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 4, currentLine), iToStr (cGameSettings::defaultTurnLimitOption4.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnLimit5CheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 5, currentLine), iToStr (cGameSettings::defaultTurnLimitOption5.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
-	turnLimitCustom = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "Custom:", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	signalConnectionManager.connect (turnLimitCustom->toggled, [this](){ if (turnLimitCustom->isChecked ()) turnLimitCustomLineEdit->enable (); else turnLimitCustomLineEdit->disable (); });
+	turnLimitCustomCheckBox = turnLimitRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "Custom:", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	signalConnectionManager.connect (turnLimitCustomCheckBox->toggled, [this](){ if (turnLimitCustomCheckBox->isChecked ()) turnLimitCustomLineEdit->enable (); else turnLimitCustomLineEdit->disable (); });
 	turnLimitCustomLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (240 + 85, currentLine), getPosition () + cPosition (240 + 85 + 30, currentLine + lineHeight))));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (240 + 85 + 30, currentLine), getPosition () + cPosition (240 + 85 + 30 + 10, currentLine + 10)), "s", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	turnLimitCustomLineEdit->setText ("410");
@@ -192,16 +192,16 @@ cWindowGameSettings::cWindowGameSettings () :
 	// TODO: translate
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), "Turn End:", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	auto turnEndTurnDeadlineRadioGroup = addChild (std::make_unique<cRadioGroup> ());
-	turnEndTurnDeadlineNoLimit = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "No Limit", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnEndTurnDeadline0 = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption0.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnEndTurnDeadline1 = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption1.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnEndTurnDeadline2 = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 2, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption2.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnEndTurnDeadline3 = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 3, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption3.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnEndTurnDeadline4 = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 4, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption4.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	turnEndTurnDeadline5 = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 5, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption5.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadlineNoLimitCheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "No Limit", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadline0CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption0.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadline1CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption1.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadline2CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 2, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption2.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadline3CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 3, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption3.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadline4CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 4, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption4.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	turnEndTurnDeadline5CheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240 + 85 + 40 * 5, currentLine), iToStr (cGameSettings::defaultEndTurnDeadlineOption5.count ()) + "s", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
 	currentLine += lineHeight;
-	turnEndTurnDeadlineCustom = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "Custom:", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
-	signalConnectionManager.connect (turnEndTurnDeadlineCustom->toggled, [this](){ if (turnEndTurnDeadlineCustom->isChecked ()) turnEndTurnDeadlineLineEdit->enable (); else turnEndTurnDeadlineLineEdit->disable (); });
+	turnEndTurnDeadlineCustomCheckBox = turnEndTurnDeadlineRadioGroup->addButton (std::make_unique<cCheckBox> (getPosition () + cPosition (240, currentLine), "Custom:", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::TextOnly));
+	signalConnectionManager.connect (turnEndTurnDeadlineCustomCheckBox->toggled, [this](){ if (turnEndTurnDeadlineCustomCheckBox->isChecked ()) turnEndTurnDeadlineLineEdit->enable (); else turnEndTurnDeadlineLineEdit->disable (); });
 	turnEndTurnDeadlineLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (240 + 85, currentLine), getPosition () + cPosition (240 + 85 + 30, currentLine + lineHeight))));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (240 + 85 + 30, currentLine), getPosition () + cPosition (240 + 85 + 30 + 10, currentLine + 10)), "s", FONT_LATIN_NORMAL, eAlignmentType::Left));
 	turnEndTurnDeadlineLineEdit->setText ("105");
@@ -329,14 +329,14 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 	switch (gameSettings.getVictoryCondition ())
 	{
 	case eGameSettingsVictoryCondition::Turns:
-		if (gameSettings.getVictoryTurns () < 200) victoryTurns100CheckBox->setChecked (true);
-		else if (gameSettings.getVictoryTurns () < 400) victoryTurns200CheckBox->setChecked (true);
-		else victoryTurns400CheckBox->setChecked (true);
+		if (gameSettings.getVictoryTurns () < cGameSettings::defaultVictoryTurnsOption1) victoryTurns0CheckBox->setChecked (true);
+		else if (gameSettings.getVictoryTurns () < cGameSettings::defaultVictoryTurnsOption2) victoryTurns1CheckBox->setChecked (true);
+		else victoryTurns2CheckBox->setChecked (true);
 		break;
 	case eGameSettingsVictoryCondition::Points:
-		if (gameSettings.getVictoryPoints () < 200) victoryPoints100CheckBox->setChecked (true);
-		else if (gameSettings.getVictoryPoints () < 400) victoryPoints200CheckBox->setChecked (true);
-		else victoryPoints400CheckBox->setChecked (true);
+		if (gameSettings.getVictoryPoints () < cGameSettings::defaultVictoryPointsOption1) victoryPoints0CheckBox->setChecked (true);
+		else if (gameSettings.getVictoryPoints () < cGameSettings::defaultVictoryPointsOption2) victoryPoints1CheckBox->setChecked (true);
+		else victoryPoints2CheckBox->setChecked (true);
 		break;
 	default:
 	case eGameSettingsVictoryCondition::Death:
@@ -346,40 +346,40 @@ void cWindowGameSettings::applySettings (const cGameSettings& gameSettings)
 
 	if (gameSettings.isTurnLimitActive ())
 	{
-		if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption0) turnLimit0->setChecked (true);
-		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption1) turnLimit1->setChecked (true);
-		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption2) turnLimit2->setChecked (true);
-		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption3) turnLimit3->setChecked (true);
-		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption4) turnLimit4->setChecked (true);
-		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption5) turnLimit5->setChecked (true);
+		if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption0) turnLimit0CheckBox->setChecked (true);
+		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption1) turnLimit1CheckBox->setChecked (true);
+		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption2) turnLimit2CheckBox->setChecked (true);
+		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption3) turnLimit3CheckBox->setChecked (true);
+		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption4) turnLimit4CheckBox->setChecked (true);
+		else if (gameSettings.getTurnLimit () == cGameSettings::defaultTurnLimitOption5) turnLimit5CheckBox->setChecked (true);
 		else
 		{
-			turnLimitCustom->setChecked (true);
+			turnLimitCustomCheckBox->setChecked (true);
 			turnLimitCustomLineEdit->setText (iToStr (gameSettings.getTurnLimit ().count ()));
 		}
 	}
 	else
 	{
-		turnLimitNoLimit->setChecked (true);
+		turnLimitNoLimitCheckBox->setChecked (true);
 	}
 
 	if (gameSettings.isTurnEndDeadlineActive ())
 	{
-		if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption0) turnEndTurnDeadline0->setChecked (true);
-		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption1) turnEndTurnDeadline1->setChecked (true);
-		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption2) turnEndTurnDeadline2->setChecked (true);
-		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption3) turnEndTurnDeadline3->setChecked (true);
-		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption4) turnEndTurnDeadline4->setChecked (true);
-		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption5) turnEndTurnDeadline5->setChecked (true);
+		if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption0) turnEndTurnDeadline0CheckBox->setChecked (true);
+		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption1) turnEndTurnDeadline1CheckBox->setChecked (true);
+		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption2) turnEndTurnDeadline2CheckBox->setChecked (true);
+		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption3) turnEndTurnDeadline3CheckBox->setChecked (true);
+		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption4) turnEndTurnDeadline4CheckBox->setChecked (true);
+		else if (gameSettings.getTurnEndDeadline () == cGameSettings::defaultEndTurnDeadlineOption5) turnEndTurnDeadline5CheckBox->setChecked (true);
 		else
 		{
-			turnEndTurnDeadlineCustom->setChecked (true);
+			turnEndTurnDeadlineCustomCheckBox->setChecked (true);
 			turnEndTurnDeadlineLineEdit->setText (iToStr (gameSettings.getTurnEndDeadline ().count ()));
 		}
 	}
 	else
 	{
-		turnEndTurnDeadlineNoLimit->setChecked (true);
+		turnEndTurnDeadlineNoLimitCheckBox->setChecked (true);
 	}
 }
 
@@ -424,41 +424,41 @@ cGameSettings cWindowGameSettings::getGameSettings () const
 	else if (creditsMoreCheckBox->isChecked ()) gameSettings.setStartCredits (cGameSettings::defaultCreditsMore);
 	else gameSettings.setStartCredits (cGameSettings::defaultCreditsNormal);
 
-	if (victoryTurns100CheckBox->isChecked () || victoryTurns100CheckBox->isChecked () || victoryTurns100CheckBox->isChecked ())
+	if (victoryTurns0CheckBox->isChecked () || victoryTurns1CheckBox->isChecked () || victoryTurns2CheckBox->isChecked ())
 	{
 		gameSettings.setVictoryCondition (eGameSettingsVictoryCondition::Turns);
-		if (victoryTurns100CheckBox->isChecked ()) gameSettings.setVictoryTurns (100);
-		else if (victoryTurns200CheckBox->isChecked ()) gameSettings.setVictoryTurns (200);
-		else gameSettings.setVictoryTurns (400);
+		if (victoryTurns0CheckBox->isChecked ()) gameSettings.setVictoryTurns (cGameSettings::defaultVictoryTurnsOption0);
+		else if (victoryTurns1CheckBox->isChecked ()) gameSettings.setVictoryTurns (cGameSettings::defaultVictoryTurnsOption1);
+		else gameSettings.setVictoryTurns (cGameSettings::defaultVictoryTurnsOption2);
 	}
-	else if (victoryPoints100CheckBox->isChecked () || victoryPoints200CheckBox->isChecked () || victoryPoints400CheckBox->isChecked ())
+	else if (victoryPoints0CheckBox->isChecked () || victoryPoints1CheckBox->isChecked () || victoryPoints2CheckBox->isChecked ())
 	{
 		gameSettings.setVictoryCondition (eGameSettingsVictoryCondition::Points);
-		if (victoryPoints100CheckBox->isChecked ()) gameSettings.setVictoryPoints (100);
-		else if (victoryPoints200CheckBox->isChecked ()) gameSettings.setVictoryPoints (200);
-		else gameSettings.setVictoryPoints (400);
+		if (victoryPoints0CheckBox->isChecked ()) gameSettings.setVictoryPoints (cGameSettings::defaultVictoryPointsOption0);
+		else if (victoryPoints1CheckBox->isChecked ()) gameSettings.setVictoryPoints (cGameSettings::defaultVictoryPointsOption1);
+		else gameSettings.setVictoryPoints (cGameSettings::defaultVictoryPointsOption2);
 	}
 	else gameSettings.setVictoryCondition (eGameSettingsVictoryCondition::Death);
 
-	gameSettings.setTurnLimitActive (!turnLimitNoLimit->isChecked ());
+	gameSettings.setTurnLimitActive (!turnLimitNoLimitCheckBox->isChecked ());
 
-	if (turnLimit0->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption0);
-	else if (turnLimit1->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption1);
-	else if (turnLimit2->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption2);
-	else if (turnLimit3->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption3);
-	else if (turnLimit4->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption4);
-	else if (turnLimit5->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption5);
-	else if (turnLimitCustom->isChecked ()) gameSettings.setTurnLimit (std::chrono::seconds (atoi(turnLimitCustomLineEdit->getText().c_str())));
+	if (turnLimit0CheckBox->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption0);
+	else if (turnLimit1CheckBox->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption1);
+	else if (turnLimit2CheckBox->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption2);
+	else if (turnLimit3CheckBox->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption3);
+	else if (turnLimit4CheckBox->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption4);
+	else if (turnLimit5CheckBox->isChecked ()) gameSettings.setTurnLimit (cGameSettings::defaultTurnLimitOption5);
+	else if (turnLimitCustomCheckBox->isChecked ()) gameSettings.setTurnLimit (std::chrono::seconds (atoi (turnLimitCustomLineEdit->getText ().c_str ())));
 
-	gameSettings.setTurnEndDeadlineActive (!turnEndTurnDeadlineNoLimit->isChecked ());
+	gameSettings.setTurnEndDeadlineActive (!turnEndTurnDeadlineNoLimitCheckBox->isChecked ());
 
-	if (turnEndTurnDeadline0->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption0);
-	else if (turnEndTurnDeadline1->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption1);
-	else if (turnEndTurnDeadline2->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption2);
-	else if (turnEndTurnDeadline3->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption3);
-	else if (turnEndTurnDeadline4->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption4);
-	else if (turnEndTurnDeadline5->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption5);
-	else if (turnEndTurnDeadlineCustom->isChecked ()) gameSettings.setTurnEndDeadline (std::chrono::seconds (std::atoi (turnEndTurnDeadlineLineEdit->getText ().c_str ())));
+	if (turnEndTurnDeadline0CheckBox->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption0);
+	else if (turnEndTurnDeadline1CheckBox->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption1);
+	else if (turnEndTurnDeadline2CheckBox->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption2);
+	else if (turnEndTurnDeadline3CheckBox->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption3);
+	else if (turnEndTurnDeadline4CheckBox->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption4);
+	else if (turnEndTurnDeadline5CheckBox->isChecked ()) gameSettings.setTurnEndDeadline (cGameSettings::defaultEndTurnDeadlineOption5);
+	else if (turnEndTurnDeadlineCustomCheckBox->isChecked ()) gameSettings.setTurnEndDeadline (std::chrono::seconds (std::atoi (turnEndTurnDeadlineLineEdit->getText ().c_str ())));
 
 	return gameSettings;
 }

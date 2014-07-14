@@ -31,6 +31,7 @@
 #include "unit.h" // sUnitLess
 #include "utility/concurrentqueue.h"
 #include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 #include "utility/flatset.h"
 
 class cBuilding;
@@ -328,6 +329,8 @@ private:
 	void HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message);
 
 private:
+	cSignalConnectionManager signalConnectionManager;
+
 	cServer* server;
 
 	std::shared_ptr<cTCP> network;

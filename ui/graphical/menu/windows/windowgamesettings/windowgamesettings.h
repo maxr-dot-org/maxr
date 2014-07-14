@@ -78,34 +78,34 @@ private:
 	cCheckBox* creditsHighCheckBox;
 	cCheckBox* creditsMoreCheckBox;
 
-	cCheckBox* victoryTurns100CheckBox;
-	cCheckBox* victoryTurns200CheckBox;
-	cCheckBox* victoryTurns400CheckBox;
+	cCheckBox* victoryTurns0CheckBox;
+	cCheckBox* victoryTurns1CheckBox;
+	cCheckBox* victoryTurns2CheckBox;
 
-	cCheckBox* victoryPoints100CheckBox;
-	cCheckBox* victoryPoints200CheckBox;
-	cCheckBox* victoryPoints400CheckBox;
+	cCheckBox* victoryPoints0CheckBox;
+	cCheckBox* victoryPoints1CheckBox;
+	cCheckBox* victoryPoints2CheckBox;
 
 	cCheckBox* victoryNoLimitCheckBox;
 
-	cCheckBox* turnLimitNoLimit;
-	cCheckBox* turnLimit0;
-	cCheckBox* turnLimit1;
-	cCheckBox* turnLimit2;
-	cCheckBox* turnLimit3;
-	cCheckBox* turnLimit4;
-	cCheckBox* turnLimit5;
-	cCheckBox* turnLimitCustom;
+	cCheckBox* turnLimitNoLimitCheckBox;
+	cCheckBox* turnLimit0CheckBox;
+	cCheckBox* turnLimit1CheckBox;
+	cCheckBox* turnLimit2CheckBox;
+	cCheckBox* turnLimit3CheckBox;
+	cCheckBox* turnLimit4CheckBox;
+	cCheckBox* turnLimit5CheckBox;
+	cCheckBox* turnLimitCustomCheckBox;
 	cLineEdit* turnLimitCustomLineEdit;
 
-	cCheckBox* turnEndTurnDeadlineNoLimit;
-	cCheckBox* turnEndTurnDeadline0;
-	cCheckBox* turnEndTurnDeadline1;
-	cCheckBox* turnEndTurnDeadline2;
-	cCheckBox* turnEndTurnDeadline3;
-	cCheckBox* turnEndTurnDeadline4;
-	cCheckBox* turnEndTurnDeadline5;
-	cCheckBox* turnEndTurnDeadlineCustom;
+	cCheckBox* turnEndTurnDeadlineNoLimitCheckBox;
+	cCheckBox* turnEndTurnDeadline0CheckBox;
+	cCheckBox* turnEndTurnDeadline1CheckBox;
+	cCheckBox* turnEndTurnDeadline2CheckBox;
+	cCheckBox* turnEndTurnDeadline3CheckBox;
+	cCheckBox* turnEndTurnDeadline4CheckBox;
+	cCheckBox* turnEndTurnDeadline5CheckBox;
+	cCheckBox* turnEndTurnDeadlineCustomCheckBox;
 	cLineEdit* turnEndTurnDeadlineLineEdit;
 
 	void okClicked ();

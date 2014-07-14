@@ -88,6 +88,14 @@ public:
 	static const int defaultCreditsHigh    = 200;
 	static const int defaultCreditsMore    = 250;
 
+	static const int defaultVictoryTurnsOption0 = 100;
+	static const int defaultVictoryTurnsOption1 = 200;
+	static const int defaultVictoryTurnsOption2 = 400;
+
+	static const int defaultVictoryPointsOption0 = 100;
+	static const int defaultVictoryPointsOption1 = 200;
+	static const int defaultVictoryPointsOption2 = 400;
+
 	static const std::chrono::seconds defaultTurnLimitOption0;
 	static const std::chrono::seconds defaultTurnLimitOption1;
 	static const std::chrono::seconds defaultTurnLimitOption2;
@@ -195,7 +203,7 @@ private:
 
 	eGameSettingsVictoryCondition victoryConditionType;
 	unsigned int victoryTurns;
-	unsigned int vectoryPoints;
+	unsigned int victoryPoints;
 
 	std::chrono::seconds turnEndDeadline;
 	bool turnEndDeadlineActive;
