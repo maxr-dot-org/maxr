@@ -100,7 +100,7 @@ cAutoMJob::~cAutoMJob()
 
 	Remove (::autoMJobs, this);
 
-	vehicle->autoMJob = NULL;
+	vehicle->setAutoMoveJob (nullptr);
 }
 
 // performs the auto move of a vehicle and
@@ -111,7 +111,7 @@ void cAutoMJob::DoAutoMove (const std::vector<cAutoMJob*>& jobs, int iNumber)
 	if (client->isFreezed()) return;
 	if (vehicle->owner != &client->getActivePlayer()) return;
 
-	if (vehicle->ClientMoveJob == NULL || vehicle->ClientMoveJob->bFinished)
+	if (vehicle->getClientMoveJob () == nullptr || vehicle->getClientMoveJob ()->bFinished)
 	{
 		if (n > WAIT_FRAMES)
 		{
@@ -126,13 +126,13 @@ void cAutoMJob::DoAutoMove (const std::vector<cAutoMJob*>& jobs, int iNumber)
 	}
 	else
 	{
-		if (vehicle->ClientMoveJob && (vehicle->ClientMoveJob->destination != lastDestination))
+		if (vehicle->getClientMoveJob () && (vehicle->getClientMoveJob ()->destination != lastDestination))
 		{
 			playerMJob = true;
 		}
-		if (vehicle->ClientMoveJob->bSuspended && vehicle->data.speedCur)
+		if (vehicle->getClientMoveJob ()->bSuspended && vehicle->data.speedCur)
 		{
-			client->addMoveJob (*vehicle, vehicle->ClientMoveJob->destination);
+			client->addMoveJob (*vehicle, vehicle->getClientMoveJob ()->destination);
 			// prevent, that all surveyors try to calc
 			// their next move in the same frame
 			n = iNumber % WAIT_FRAMES;

@@ -51,8 +51,8 @@ cUnit* selectTarget(const cPosition& position, char attackMode, const cMap& map)
 
 	// planes
 	targetVehicle = mapField.getPlane();
-	if (targetVehicle && targetVehicle->FlightHigh >  0 && ! (attackMode & TERRAIN_AIR)) targetVehicle = NULL;
-	if (targetVehicle && targetVehicle->FlightHigh == 0 && ! (attackMode & TERRAIN_GROUND)) targetVehicle = NULL;
+	if (targetVehicle && targetVehicle->getFlightHeight () >  0 && ! (attackMode & TERRAIN_AIR)) targetVehicle = NULL;
+	if (targetVehicle && targetVehicle->getFlightHeight () == 0 && !(attackMode & TERRAIN_GROUND)) targetVehicle = NULL;
 
 	// vehicles
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
@@ -89,7 +89,7 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, const cPosit
 	iNextID++;
 	bMuzzlePlayed = false;
 	targetPosition = targetPosition_;
-	damage = unit->data.damage;
+	damage = unit->data.getDamage();
 	attackMode = unit->data.canAttack;
 	sentryFire = sentry;
 
@@ -135,7 +135,7 @@ void cServerAttackJob::lockTarget(const cPosition& position)
 	if (target)
 		target->setIsBeeinAttacked(true);
 
-	const bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
+	const bool isAir = (target && target->isAVehicle () && static_cast<cVehicle*> (target)->getFlightHeight () > 0);
 
 	// if the aggressor can attack air and land units,
 	// decide whether it is currently attacking air or land targets
@@ -361,7 +361,7 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 	int remainingHP = 0;
 	int id = 0;
 	cPlayer* owner = 0;
-	bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
+	bool isAir = (target && target->isAVehicle() && static_cast<cVehicle*> (target)->getFlightHeight() > 0);
 
 	// in the time between the first locking and the impact,
 	// it is possible that a vehicle drove onto the target field

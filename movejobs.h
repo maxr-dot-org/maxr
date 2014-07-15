@@ -254,7 +254,7 @@ public:
 	void moveVehicle();
 	void doEndMoveVehicle();
 	void calcNextDir();
-	void drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial);
+	void drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial) const;
 
 	// TODO: check when this signal get triggered
 	mutable cSignal<void (const cVehicle&)> activated;

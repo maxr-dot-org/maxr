@@ -67,7 +67,6 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	dynamicMap (nullptr),
 	player (nullptr),
 	unitDrawingEngine (animationTimer),
-	mouseMode (std::make_unique<cMouseModeDefault>()),
 	pixelOffset (0, 0),
 	internalZoomFactor (1.f),
 	shouldDrawSurvey (false),
@@ -80,6 +79,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	assert (staticMap != nullptr);
 	assert (animationTimer != nullptr);
 	assert (soundManager != nullptr);
+
+	setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 
 	// FIXME: should this really be done here?
 	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
@@ -99,11 +100,17 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
 
-	scrolled.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
 	scrolled.connect (std::bind (&cGameMapWidget::updateUnitMenuPosition, this));
 	scrolled.connect ([this]()
 	{
 		soundManager->setListenerPosition (getMapCenterOffset ());
+	});
+	tileUnderMouseChanged.connect ([this](const cPosition& tilePosition)
+	{
+		if (mouseMode)
+		{
+			mouseMode->handleMapTilePositionChanged (tilePosition);
+		}
 	});
 
 	zoomFactorChanged.connect ([this]()
@@ -117,9 +124,8 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitSelection.mainSelectionChanged.connect (std::bind (&cGameMapWidget::toggleUnitContextMenu, this, nullptr));
 	unitSelection.mainSelectionChanged.connect ([&]()
 	{
-		setMouseInputMode (std::make_unique<cMouseModeDefault> ());
+		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 	});
-	unitSelection.selectionChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
 
 	unitMenu->attackToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Attack));
 	unitMenu->transferToggled.connect (std::bind (&cGameMapWidget::toggleMouseInputMode, this, eMouseModeType::Transfer));
@@ -288,7 +294,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	relaodShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRearm && unit->data.storageResCur >= 1)
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRearm && unit->data.getStoredResources () >= 1)
 		{
 			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
 		}
@@ -298,7 +304,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	repairShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRepair && unit->data.storageResCur >= 1)
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRepair && unit->data.getStoredResources () >= 1)
 		{
 			toggleMouseInputMode (eMouseModeType::Repair);
 		}
@@ -308,7 +314,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	layMineShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.storageResCur > 0)
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.getStoredResources () > 0)
 		{
 			triggeredLayMines (*unitSelection.getSelectedUnit ());
 		}
@@ -318,7 +324,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	clearMineShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.storageResCur < unit->data.storageResMax)
+		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.getStoredResources () < unit->data.storageResMax)
 		{
 			triggeredCollectMines (*unitSelection.getSelectedUnit ());
 		}
@@ -409,23 +415,30 @@ void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 
 	if (dynamicMap != nullptr)
 	{
-		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit&){ updateMouseCursor (); });
 		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit& unit)
 		{
-			updateMouseCursor ();
 			if (unitSelection.isSelected (unit))
 			{
 				unitSelection.deselectUnit (unit);
 			}
 		});
-		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ updateMouseCursor (); });
+	}
+
+	if (mouseMode != nullptr)
+	{
+		mouseMode->setMap (dynamicMap.get ());
 	}
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
-	player = std::move(player_);
+	player = std::move (player_);
+
+	if (mouseMode != nullptr)
+	{
+		mouseMode->setPlayer (player.get ());
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -453,7 +466,7 @@ void cGameMapWidget::draw ()
 		drawResources ();
 	}
 
-	if (selectedVehicle && ((selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
+	if (selectedVehicle && ((selectedVehicle->getClientMoveJob () && selectedVehicle->getClientMoveJob ()->bSuspended) || selectedVehicle->BuildPath))
 	{
 		drawPath (*selectedVehicle);
 	}
@@ -618,17 +631,34 @@ void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 //------------------------------------------------------------------------------
 void cGameMapWidget::setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode)
 {
+	assert (newMouseMode != nullptr);
+
 	std::swap (newMouseMode, mouseMode);
 
-	if (newMouseMode->getType () != mouseMode->getType ()) mouseInputModeChanged ();
+	mouseModeSignalConnectionManager.disconnectAll ();
+	mouseModeSignalConnectionManager.connect (mouseMode->needRefresh, std::bind (static_cast<void(cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
+
+	auto activeMouse = getActiveMouse ();
+	if (activeMouse && getArea().withinOrTouches(activeMouse->getPosition()))
+	{
+		mouseMode->handleMapTilePositionChanged (getMapTilePosition (activeMouse->getPosition ()));
+	}
+	else
+	{
+		mouseMode->handleMapTilePositionChanged (cPosition (-1, -1));
+	}
+
+	if (!newMouseMode || newMouseMode->getType () != mouseMode->getType ()) mouseInputModeChanged ();
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 {
+	assert (dynamicMap != nullptr);
+
 	if (mouseMode->getType () == mouseModeType)
 	{
-		setMouseInputMode (std::make_unique<cMouseModeDefault>());
+		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 	}
 	else
 	{
@@ -640,34 +670,34 @@ void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 			// fall through
 		default:
 		case eMouseModeType::Default:
-			setMouseInputMode (std::make_unique<cMouseModeDefault> ());
+			setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Attack:
-			setMouseInputMode (std::make_unique<cMouseModeAttack> ());
+			setMouseInputMode (std::make_unique<cMouseModeAttack> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::SelectBuildPathDestintaion:
-			setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> ());
+			setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Transfer:
-			setMouseInputMode (std::make_unique<cMouseModeTransfer> ());
+			setMouseInputMode (std::make_unique<cMouseModeTransfer> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Load:
-			setMouseInputMode (std::make_unique<cMouseModeLoad> ());
+			setMouseInputMode (std::make_unique<cMouseModeLoad> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::SupplyAmmo:
-			setMouseInputMode (std::make_unique<cMouseModeSupplyAmmo> ());
+			setMouseInputMode (std::make_unique<cMouseModeSupplyAmmo> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Repair:
-			setMouseInputMode (std::make_unique<cMouseModeRepair> ());
+			setMouseInputMode (std::make_unique<cMouseModeRepair> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Disable:
-			setMouseInputMode (std::make_unique<cMouseModeDisable> ());
+			setMouseInputMode (std::make_unique<cMouseModeDisable> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Steal:
-			setMouseInputMode (std::make_unique<cMouseModeSteal> ());
+			setMouseInputMode (std::make_unique<cMouseModeSteal> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		case eMouseModeType::Help:
-			setMouseInputMode (std::make_unique<cMouseModeHelp> ());
+			setMouseInputMode (std::make_unique<cMouseModeHelp> (dynamicMap.get (), unitSelection, player.get ()));
 			break;
 		}
 	}
@@ -737,19 +767,19 @@ cPosition cGameMapWidget::getMapCenterOffset ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::startFindBuildPosition (const sID& buildId)
 {
-	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPosition>(buildId));
+	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPosition> (dynamicMap.get (), unitSelection, player.get (), buildId));
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::startFindPathBuildPosition ()
 {
-	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination>());
+	setMouseInputMode (std::make_unique<cMouseModeSelectBuildPathDestination> (dynamicMap.get (), unitSelection, player.get ()));
 }
 
 //------------------------------------------------------------------------------
 void cGameMapWidget::startActivateVehicle (const cUnit& unit, size_t index)
 {
-	setMouseInputMode (std::make_unique<cMouseModeActivateLoaded> (index));
+	setMouseInputMode (std::make_unique<cMouseModeActivateLoaded> (dynamicMap.get (), unitSelection, player.get (), index));
 }
 
 //------------------------------------------------------------------------------
@@ -1227,17 +1257,17 @@ void cGameMapWidget::drawUnitCircles ()
 		{
 			if (selectedVehicle->data.isBig)
 			{
-				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), selectedVehicle->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), selectedVehicle->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
-				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange)
 		{
-			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x () +zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
-			else drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.range * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
+			if (selectedVehicle->data.canAttack & TERRAIN_AIR) drawCircle (screenPosition.x () +zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.getRange () * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+			else drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, selectedVehicle->data.getRange () * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
@@ -1249,26 +1279,26 @@ void cGameMapWidget::drawUnitCircles ()
 			{
 				drawCircle (screenPosition. x() + zoomedTileSize.x (),
 							screenPosition. y() + zoomedTileSize.y (),
-							selectedBuilding->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+							selectedBuilding->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 			else
 			{
 				drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
 							screenPosition. y() + zoomedTileSize.y () / 2,
-							selectedBuilding->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+							selectedBuilding->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			}
 		}
 		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact)
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
 						screenPosition. y() + zoomedTileSize.y () / 2,
-						selectedBuilding->data.range * zoomedTileSize.x () + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
+						selectedBuilding->data.getRange () * zoomedTileSize.x () + 2, RANGE_GROUND_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (selectedBuilding->data.canAttack & TERRAIN_AIR))
 		{
 			drawCircle (screenPosition. x() + zoomedTileSize.x () / 2,
 						screenPosition. y() + zoomedTileSize.y () / 2,
-						selectedBuilding->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+						selectedBuilding->data.getRange () * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		}
 	}
 
@@ -1373,7 +1403,7 @@ void cGameMapWidget::drawBuildBand ()
 			auto selectBuildPositionMode = static_cast<const cMouseModeSelectBuildPosition*>(mouseMode.get ());
 			bool validPosition;
 			cPosition destination;
-			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (*dynamicMap, selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition ()));
+			std::tie (validPosition, destination) = selectBuildPositionMode->findNextBuildPosition (selectedVehicle->getPosition(), getMapTilePosition (mouse->getPosition ()));
 			if (!validPosition) return;
 
 			SDL_Rect dest;
@@ -1421,16 +1451,16 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 		if (shouldDrawScan)
 		{
 			if (unit->data.isBig)
-				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), unit->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x (), screenPosition.y () + zoomedTileSize.y (), unit->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 			else
-				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, unit->data.scan * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
+				drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2, unit->data.getScan () * zoomedTileSize.x (), SCAN_COLOR, *cVideo::buffer);
 		}
 		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_GROUND))
 			drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2,
-						unit->data.range * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
+						unit->data.getRange () * zoomedTileSize.x () + 1, RANGE_GROUND_COLOR, *cVideo::buffer);
 		if (shouldDrawRange && (unit->data.canAttack & TERRAIN_AIR))
 			drawCircle (screenPosition.x () + zoomedTileSize.x () / 2, screenPosition.y () + zoomedTileSize.y () / 2,
-						unit->data.range * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
+						unit->data.getRange () * zoomedTileSize.x () + 2, RANGE_AIR_COLOR, *cVideo::buffer);
 		//if (ammoChecked () && unit->data.canAttack)
 		//	drawMunBar (*unit, screenPos);
 		//if (hitsChecked ())
@@ -1485,7 +1515,7 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 //------------------------------------------------------------------------------
 void cGameMapWidget::drawPath (const cVehicle& vehicle)
 {
-	auto moveJob = vehicle.ClientMoveJob;
+	auto moveJob = vehicle.getClientMoveJob ();
 
 	if (!moveJob || !moveJob->Waypoints || vehicle.owner != player.get ())
 	{
@@ -1603,7 +1633,11 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse,
 		{
 			tileUnderMouseChanged (tilePosition);
 		}
-		updateMouseCursor (mouse);
+		updateMouseCursor ();
+	}
+	else
+	{
+		tileUnderMouseChanged (cPosition(-1,-1));
 	}
 
 	if (unitSelectionBox.isValidStart () && isAt (mouse.getPosition ()) &&
@@ -1776,14 +1810,14 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		auto oldSelectedUnitForLock = selectedUnit;
 		bool consumed = false;
 
-		auto action = mouseMode->getMouseAction (*dynamicMap, tilePosition, unitSelection, player.get ());
+		auto action = mouseMode->getMouseAction (tilePosition);
 		if (action && (changeAllowed || !action->doesChangeState()))
 		{
 			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection);
 
 			if (action->isSingleAction ())
 			{
-				setMouseInputMode (std::make_unique<cMouseModeDefault> ());
+				setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 			}
 		}
 
@@ -1792,7 +1826,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		{
 			if (changeAllowed && selectedVehicle && (Contains (field.getPlanes (), selectedVehicle) || selectedVehicle == overVehicle))
 			{
-				if (!selectedVehicle->moving)
+				if (!selectedVehicle->isUnitMoving ())
 				{
 					toggleUnitContextMenu (selectedVehicle);
 					cSoundDevice::getInstance().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
@@ -1898,7 +1932,7 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 	}
 	else
 	{
-		mouseMode->setCursor (mouse, *dynamicMap, getMapTilePosition (mouse.getPosition ()), unitSelection, player.get ());
+		mouseMode->setCursor (mouse, getMapTilePosition (mouse.getPosition ()));
 	}
 }
 

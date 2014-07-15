@@ -137,10 +137,7 @@ public:
 
 	const sVehicleUIData* uiData;
 	cServerMoveJob* ServerMoveJob;
-	cClientMoveJob* ClientMoveJob;
-	cAutoMJob* autoMJob; //the auto move AI of the vehicle
 	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
-	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
 	int ditherX, ditherY; // Dithering für Flugzeuge
 	cPosition bandPosition; // X,Y Position für das Band
@@ -148,7 +145,6 @@ public:
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	int StartUp;      // Zähler für die Startupannimation
-	int FlightHigh;   // Die Flughöhe des Flugzeugs
 	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame; // Frame der Geh-Annimation
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
@@ -267,13 +263,14 @@ public:
 	bool isUnitLoaded () const { return loaded; }
 
 	virtual bool isUnitMoving () const { return moving; }
-	virtual bool isAutoMoveJobActive () const { return autoMJob != 0; }
+	virtual bool isAutoMoveJobActive () const { return autoMoveJob != nullptr; }
 	virtual bool isUnitClearing () const { return isClearing; }
 	virtual bool isUnitLayingMines () const { return layMines; }
 	virtual bool isUnitClearingMines () const { return clearMines; }
 	virtual bool isUnitBuildingABuilding () const { return isBuilding; }
 	virtual bool canBeStoppedViaUnitMenu () const;
 
+	void setMoving (bool value);
 	void setLoaded (bool value);
 	void setClearing (bool value);
 	void setBuildingABuilding (bool value);
@@ -297,6 +294,16 @@ public:
 	int getBuildTurnsStart () const;
 	void setBuildTurnsStart (int value);
 
+	int getFlightHeight () const;
+	void setFlightHeight (int value);
+
+	cClientMoveJob* getClientMoveJob ();
+	const cClientMoveJob* getClientMoveJob () const;
+	void setClientMoveJob (cClientMoveJob* clientMoveJob);
+
+	cAutoMJob* getAutoMoveJob ();
+	const cAutoMJob* getAutoMoveJob () const;
+	void setAutoMoveJob (std::unique_ptr<cAutoMJob> autoMoveJob);
 
 	/**
 	* return the unit which contains this vehicle
@@ -309,6 +316,10 @@ public:
 	mutable cSignal<void ()> buildingCostsChanged;
 	mutable cSignal<void ()> buildingTypeChanged;
 	mutable cSignal<void ()> commandoRankChanged;
+	mutable cSignal<void ()> flightHeightChanged;
+
+	mutable cSignal<void ()> clientMoveJobChanged;
+	mutable cSignal<void ()> autoMoveJobChanged;
 private:
 
 	void render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
@@ -341,7 +352,11 @@ private:
 
 	cPosition tileMovementOffset;  // offset within tile during movement
 
+	cClientMoveJob* clientMoveJob;
+	std::unique_ptr<cAutoMJob> autoMoveJob; //the auto move AI of the vehicle
+
 	bool loaded;
+	bool moving;
 
 	bool isBuilding;
 	sID buildingTyp;
@@ -355,6 +370,8 @@ private:
 
 	bool layMines;
 	bool clearMines;
+
+	int flightHeight;
 
 	float commandoRank;
 

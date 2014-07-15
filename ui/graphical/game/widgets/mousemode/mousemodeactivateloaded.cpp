@@ -27,7 +27,8 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-cMouseModeActivateLoaded::cMouseModeActivateLoaded (int vehicleToActivateIndex_) :
+cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, int vehicleToActivateIndex_) :
+	cMouseMode (map_, unitSelection_, player_),
 	vehicleToActivateIndex (vehicleToActivateIndex_)
 {}
 
@@ -38,9 +39,9 @@ eMouseModeType cMouseModeActivateLoaded::getType () const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Activate));
 	}
@@ -51,9 +52,9 @@ void cMouseModeActivateLoaded::setCursor (cMouse& mouse, const cMap& map, const 
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		return std::make_unique<cMouseActionActivateLoaded> (vehicleToActivateIndex);
 	}
@@ -61,17 +62,37 @@ std::unique_ptr<cMouseAction> cMouseModeActivateLoaded::getMouseAction (const cM
 }
 
 //------------------------------------------------------------------------------
-bool cMouseModeActivateLoaded::canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
+bool cMouseModeActivateLoaded::canExecuteAction (const cPosition& mapPosition) const
 {
+	if (!map) return false;
+
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
-	return (selectedVehicle && !selectedVehicle->isDisabled () && selectedVehicle->canExitTo (mapPosition, map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
-		(selectedBuilding && !selectedBuilding->isDisabled () && selectedBuilding->canExitTo (mapPosition, map, selectedBuilding->storedUnits[vehicleToActivateIndex]->data));
+	return (selectedVehicle && !selectedVehicle->isDisabled () && selectedVehicle->canExitTo (mapPosition, *map, selectedVehicle->storedUnits[vehicleToActivateIndex]->data)) ||
+		(selectedBuilding && !selectedBuilding->isDisabled () && selectedBuilding->canExitTo (mapPosition, *map, selectedBuilding->storedUnits[vehicleToActivateIndex]->data));
 }
 
 //------------------------------------------------------------------------------
 size_t cMouseModeActivateLoaded::getVehicleToActivateIndex () const
 {
 	return vehicleToActivateIndex;
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeActivateLoaded::establishUnitSelectionConnections ()
+{
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+
+	if (selectedUnit)
+	{
+		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+	}
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeActivateLoaded::establishMapFieldConnections (const cMapField& field)
+{
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this](){ needRefresh (); });
 }

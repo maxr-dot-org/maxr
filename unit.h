@@ -137,6 +137,7 @@ public:
 	mutable cSignal<void ()> beeingAttackedChanged;
 	mutable cSignal<void ()> markedAsDoneChanged;
 	mutable cSignal<void ()> beenAttackedChanged;
+	mutable cSignal<void ()> movingChanged;
 
 	mutable cSignal<void ()> stored;
 	mutable cSignal<void ()> activated;

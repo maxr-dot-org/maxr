@@ -57,8 +57,6 @@ struct sUnitData
 
 	int ammoMax;
 	int shotsMax;
-	int range;
-	int damage;
 
 	char canAttack;
 
@@ -86,9 +84,7 @@ struct sUnitData
 	// Abilities
 	bool isBig;
 	bool connectsToBase;
-	int armor;
 	int hitpointsMax;
-	int scan;
 	float modifiesSpeed;
 	bool canClearArea;
 	bool canBeCaptured;
@@ -143,7 +139,6 @@ struct sUnitData
 
 	// Storage
 	int storageResMax;
-	int storageResCur;
 	enum eStorageResType
 	{
 		STORE_RES_NONE,
@@ -154,7 +149,6 @@ struct sUnitData
 	eStorageResType storeResType;
 
 	int storageUnitsMax;
-	int storageUnitsCur;
 	enum eStorageUnitsImageType
 	{
 		STORE_UNIT_IMG_NONE,
@@ -190,16 +184,40 @@ struct sUnitData
 	int getHitpoints () const;
 	void setHitpoints (int value);
 
+	int getScan () const;
+	void setScan (int value);
+
+	int getRange () const;
+	void setRange (int value);
+
 	int getShots () const;
 	void setShots (int value);
 
 	int getAmmo () const;
 	void setAmmo (int value);
 
+	int getDamage () const;
+	void setDamage (int value);
+
+	int getArmor () const;
+	void setArmor (int value);
+
+	int getStoredResources () const;
+	void setStoredResources (int value);
+
+	int getStoredUnits () const;
+	void setStoredUnits (int value);
+
 	mutable cSignal<void ()> versionChanged;
 	mutable cSignal<void ()> hitpointsChanged;
 	mutable cSignal<void ()> shotsChanged;
 	mutable cSignal<void ()> ammoChanged;
+	mutable cSignal<void ()> scanChanged;
+	mutable cSignal<void ()> rangeChanged;
+	mutable cSignal<void ()> damageChanged;
+	mutable cSignal<void ()> armorChanged;
+	mutable cSignal<void ()> storedResourcesChanged;
+	mutable cSignal<void ()> storedUnitsChanged;
 private:
 	int version;
 
@@ -207,6 +225,14 @@ private:
 	int shotsCur;
 	int ammoCur;
 
+	int range;
+	int scan;
+
+	int damage;
+	int armor;
+
+	int storageResCur;
+	int storageUnitsCur;
 };
 
 #endif // unitdataH

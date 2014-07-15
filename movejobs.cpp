@@ -53,7 +53,7 @@ bool cPathDestHandler::hasReachedDestination(const cPosition& position) const
 		case PATH_DEST_TYPE_LOAD:
 			return (destUnit && destUnit->isNextTo (position));
 		case PATH_DEST_TYPE_ATTACK:
-			return (position - destination).l2NormSquared() <= Square (srcVehicle->data.range);
+			return (position - destination).l2NormSquared () <= Square (srcVehicle->data.getRange ());
 		default:
 			return true;
 	}
@@ -423,7 +423,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	{
 		iSavedSpeed = Vehicle->ServerMoveJob->iSavedSpeed;
 		Vehicle->ServerMoveJob->release();
-		Vehicle->moving = false;
+		Vehicle->setMoving (false);
 		Vehicle->MoveJobActive = false;
 		Vehicle->ServerMoveJob->Vehicle = NULL;
 	}
@@ -463,7 +463,7 @@ void cServerMoveJob::stop()
 	}
 
 	// if the vehicle is not moving, it has to stop immediately
-	if (!Vehicle->moving)
+	if (!Vehicle->isUnitMoving ())
 	{
 		release();
 	}
@@ -471,7 +471,7 @@ void cServerMoveJob::stop()
 
 void cServerMoveJob::resume()
 {
-	if (Vehicle && Vehicle->data.speedCur > 0 && !Vehicle->moving)
+	if (Vehicle && Vehicle->data.speedCur > 0 && !Vehicle->isUnitMoving ())
 	{
 		// restart movejob
 		calcNextDir();
@@ -647,7 +647,7 @@ bool cServerMoveJob::checkMove()
 	// start the move and set the vehicle to the next field
 	calcNextDir();
 	Vehicle->MoveJobActive = true;
-	Vehicle->moving = true;
+	Vehicle->setMoving (true);
 
 	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;
@@ -761,16 +761,16 @@ void cServerMoveJob::doEndMoveVehicle()
 		}
 	}
 
-	Vehicle->moving = false;
+	Vehicle->setMoving (false);
 	calcNextDir();
 
 	if (Vehicle->canLand (*server->Map))
 	{
-		Vehicle->FlightHigh = 0;
+		Vehicle->setFlightHeight(0);
 	}
 	else
 	{
-		Vehicle->FlightHigh = 64;
+		Vehicle->setFlightHeight(64);
 	}
 }
 
@@ -855,7 +855,8 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 cClientMoveJob::cClientMoveJob (cClient& client_, const cPosition& source_, const cPosition& destination_, cVehicle* Vehicle) :
 	client (&client_),
 	destination(destination_),
-	Waypoints (NULL)
+	Waypoints (nullptr),
+	endMoveAction (nullptr)
 {
 	init (source_, Vehicle);
 }
@@ -872,14 +873,14 @@ void cClientMoveJob::init(const cPosition& source_, cVehicle* Vehicle)
 	iSavedSpeed = 0;
 	bSuspended = false;
 
-	if (Vehicle->ClientMoveJob)
+	if (Vehicle->getClientMoveJob ())
 	{
-		Vehicle->ClientMoveJob->release();
-		Vehicle->moving = false;
+		Vehicle->getClientMoveJob ()->release ();
+		Vehicle->setMoving (false);
 		Vehicle->MoveJobActive = false;
 	}
-	Vehicle->ClientMoveJob = this;
-	endMoveAction = NULL;
+	Vehicle->setClientMoveJob(this);
+	endMoveAction = nullptr;
 }
 
 cClientMoveJob::~cClientMoveJob()
@@ -964,13 +965,13 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (bEndForNow)
 			{
 				bEndForNow = false;
-				client->addActiveMoveJob (*Vehicle->ClientMoveJob);
+				client->addActiveMoveJob (*Vehicle->getClientMoveJob ());
 				Log.write (" Client: reactivated movejob; Vehicle-ID: " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			Vehicle->MoveJobActive = true;
-			if (Vehicle->moving) doEndMoveVehicle();
+			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
 
-			Vehicle->moving = true;
+			Vehicle->setMoving (true);
 			Map->moveVehicle (*Vehicle, Waypoints->next->position);
 			//Vehicle->owner->doScan();
 			Vehicle->setMovementOffset(cPosition(0, 0));
@@ -982,7 +983,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		case MJOB_STOP:
 		{
 			Log.write (" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
-			if (Vehicle->moving) doEndMoveVehicle();
+			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
 			if (bEndForNow) client->addActiveMoveJob (*this);
 			this->iSavedSpeed = iSavedSpeed;
 			Vehicle->data.speedCur = 0;
@@ -993,13 +994,13 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		case MJOB_FINISHED:
 		{
 			Log.write (" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
-			if (Vehicle->moving) doEndMoveVehicle();
+			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
 			release();
 		}
 		break;
 		case MJOB_BLOCKED:
 		{
-			if (Vehicle->moving) doEndMoveVehicle();
+			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
 			Log.write (" Client: next field is blocked: DestX: " + iToStr (Waypoints->next->position.x()) + ", DestY: " + iToStr (Waypoints->next->position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 
 			if (Vehicle->owner != &client->getActivePlayer())
@@ -1028,7 +1029,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 void cClientMoveJob::moveVehicle()
 {
-	if (Vehicle == NULL || Vehicle->ClientMoveJob != this) return;
+	if (Vehicle == NULL || Vehicle->getClientMoveJob () != this) return;
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
 	if (Waypoints == NULL || Waypoints->next == NULL)
@@ -1037,7 +1038,7 @@ void cClientMoveJob::moveVehicle()
 		return;
 	}
 
-	if (!Vehicle->moving)
+	if (!Vehicle->isUnitMoving ())
 	{
 		//check remaining speed
 		if (Vehicle->data.speedCur < Waypoints->next->Costs)
@@ -1052,7 +1053,7 @@ void cClientMoveJob::moveVehicle()
 		Vehicle->owner->doScan();
 		Vehicle->setMovementOffset(cPosition(0, 0));
 		setOffset (Vehicle, iNextDir, -64);
-		Vehicle->moving = true;
+		Vehicle->setMoving (true);
 
 		moved (*Vehicle);
 	}
@@ -1135,7 +1136,7 @@ void cClientMoveJob::moveVehicle()
 
 void cClientMoveJob::doEndMoveVehicle()
 {
-	if (Vehicle == NULL || Vehicle->ClientMoveJob != this) return;
+	if (Vehicle == NULL || Vehicle->getClientMoveJob () != this) return;
 
 	if (Waypoints->next == NULL)
 	{
@@ -1153,7 +1154,7 @@ void cClientMoveJob::doEndMoveVehicle()
 	Waypoints = Waypoints->next;
 	delete Waypoint;
 
-	Vehicle->moving = false;
+	Vehicle->setMoving (false);
 
 	Vehicle->setMovementOffset(cPosition(0, 0));
 
@@ -1168,7 +1169,7 @@ void cClientMoveJob::calcNextDir()
 	iNextDir = getDir (Waypoints->position, Waypoints->next->position);
 }
 
-void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial)
+void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial) const
 {
 	int iIndex = -1;
 #define TESTXY_DP(a, b) if (Dest.x a LastDest->x && Dest.y b LastDest->y)

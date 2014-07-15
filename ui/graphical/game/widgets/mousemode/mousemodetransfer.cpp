@@ -23,8 +23,15 @@
 #include "ui/graphical/game/unitselection.h"
 #include "map.h"
 #include "unit.h"
+#include "vehicles.h"
+#include "buildings.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
+
+//------------------------------------------------------------------------------
+cMouseModeTransfer::cMouseModeTransfer (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
+{}
 
 //------------------------------------------------------------------------------
 eMouseModeType cMouseModeTransfer::getType () const
@@ -33,9 +40,9 @@ eMouseModeType cMouseModeTransfer::getType () const
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeTransfer::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeTransfer::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Transfer));
 	}
@@ -46,9 +53,9 @@ void cMouseModeTransfer::setCursor (cMouse& mouse, const cMap& map, const cPosit
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeTransfer::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeTransfer::getMouseAction (const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		return std::make_unique<cMouseActionTransfer> ();
 	}
@@ -56,11 +63,53 @@ std::unique_ptr<cMouseAction> cMouseModeTransfer::getMouseAction (const cMap& ma
 }
 
 //------------------------------------------------------------------------------
-bool cMouseModeTransfer::canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
+bool cMouseModeTransfer::canExecuteAction (const cPosition& mapPosition) const
 {
-	const auto& field = map.getField (mapPosition);
+	if (!map) return false;
+
+	const auto& field = map->getField (mapPosition);
 
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
 
 	return selectedUnit && selectedUnit->canTransferTo (mapPosition, field);
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeTransfer::establishUnitSelectionConnections ()
+{
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+
+	if (selectedUnit)
+	{
+		// TODO: sub base change
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+	}
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeTransfer::establishMapFieldConnections (const cMapField& field)
+{
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field](){ updateFieldUnitConnections (field); needRefresh (); });
+
+	updateFieldUnitConnections (field);
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeTransfer::updateFieldUnitConnections (const cMapField& field)
+{
+	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+
+	auto vehicle = field.getVehicle ();
+	if (vehicle)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->buildingChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->clearingChanged, [this](){ needRefresh (); });
+	}
+	auto building = field.getBuilding ();
+	if (building)
+	{
+		// TODO: react on:
+		//  - sub base change
+		//mapFieldUnitsSignalConnectionManager.connect (building->xyz, [this](){ needRefresh (); });
+	}
 }

@@ -236,13 +236,11 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 		if (vehicle.canLand (map))
 		{
-			vehicleNonConst.FlightHigh -= 8;
-			vehicleNonConst.FlightHigh = std::max (vehicle.FlightHigh, 0);
+			vehicleNonConst.setFlightHeight (vehicle.getFlightHeight() - 8);
 		}
 		else
 		{
-			vehicleNonConst.FlightHigh += 8;
-			vehicleNonConst.FlightHigh = std::min (64, vehicle.FlightHigh);
+			vehicleNonConst.setFlightHeight (vehicle.getFlightHeight () + 8);
 		}
 	}
 
@@ -252,7 +250,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		// FIXME: remove the the dithering stuff from the vehicle or the dithering code from the drawing
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
-		if (vehicle.FlightHigh > 0 && !vehicle.moving && animationTimer->getAnimationTime () % 10 != 0)
+		if (vehicle.getFlightHeight () > 0 && !vehicle.isUnitMoving () && animationTimer->getAnimationTime () % 10 != 0)
 		{
 			vehicleNonConst.ditherX = random (2) - 1;
 			vehicleNonConst.ditherY = random (2) - 1;
@@ -300,7 +298,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	destination.x += ox;
 	destination.y += oy;
 
-	if (vehicle.FlightHigh > 0)
+	if (vehicle.getFlightHeight () > 0)
 	{
 		destination.x += vehicle.ditherX;
 		destination.y += vehicle.ditherY;
@@ -340,7 +338,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	vehicle.drawOverlayAnimation (animationTimer->getAnimationTime(), cVideo::buffer, destination, zoomFactor);
 
 	// remove the dithering for the following operations
-	if (vehicle.FlightHigh > 0)
+	if (vehicle.getFlightHeight () > 0)
 	{
 		destination.x -= vehicle.ditherX;
 		destination.y -= vehicle.ditherY;

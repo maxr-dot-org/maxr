@@ -180,13 +180,13 @@ void cNewDialogTransfer::initCargo (int& cargo, int& maxCargo, const cUnit& unit
 		else if (unit2.isABuilding ())
 		{
 			maxCargo = building.data.storageResMax;
-			cargo = building.data.storageResCur;
+			cargo = building.data.getStoredResources ();
 		}
 	}
 	else if (unit1.isAVehicle ())
 	{
 		maxCargo = unit1.data.storageResMax;
-		cargo = unit1.data.storageResCur;
+		cargo = unit1.data.getStoredResources ();
 	}
 }
 

@@ -26,11 +26,13 @@
 class cMouseModeHelp : public cMouseMode
 {
 public:
+	cMouseModeHelp (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player);
+
 	virtual eMouseModeType getType () const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 };
 
 #endif // ui_graphical_game_widgets_mousemode_mousemodehelpH

@@ -43,7 +43,7 @@ bool cMouseActionSupplyAmmo::executeLeftClick (cGameMapWidget& gameMapWidget, co
 	{
 		gameMapWidget.triggeredSupplyAmmo (*selectedVehicle, *overVehicle);
 	}
-	else if (overPlane && overPlane->FlightHigh == 0)
+	else if (overPlane && overPlane->getFlightHeight () == 0)
 	{
 		gameMapWidget.triggeredSupplyAmmo (*selectedVehicle, *overPlane);
 	}

@@ -27,15 +27,20 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
+cMouseModeRepair::cMouseModeRepair (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
+{}
+
+//------------------------------------------------------------------------------
 eMouseModeType cMouseModeRepair::getType () const
 {
 	return eMouseModeType::Repair;
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeRepair::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeRepair::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Repair));
 	}
@@ -46,9 +51,9 @@ void cMouseModeRepair::setCursor (cMouse& mouse, const cMap& map, const cPositio
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		return std::make_unique<cMouseActionRepair> ();
 	}
@@ -56,9 +61,53 @@ std::unique_ptr<cMouseAction> cMouseModeRepair::getMouseAction (const cMap& map,
 }
 
 //------------------------------------------------------------------------------
-bool cMouseModeRepair::canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
+bool cMouseModeRepair::canExecuteAction (const cPosition& mapPosition) const
 {
+	if (!map) return false;
+
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	return selectedVehicle && selectedVehicle->canSupply (map, mapPosition, SUPPLY_TYPE_REPAIR);
+	return selectedVehicle && selectedVehicle->canSupply (*map, mapPosition, SUPPLY_TYPE_REPAIR);
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeRepair::establishUnitSelectionConnections ()
+{
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+
+	if (selectedUnit)
+	{
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.storedResourcesChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+	}
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeRepair::establishMapFieldConnections (const cMapField& field)
+{
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field](){ updateFieldUnitConnections (field); needRefresh (); });
+
+	updateFieldUnitConnections (field);
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeRepair::updateFieldUnitConnections (const cMapField& field)
+{
+	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+
+	auto plane = field.getPlane ();
+	if (plane)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (plane->flightHeightChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->data.hitpointsChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->attackingChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->movingChanged, [this](){ needRefresh (); });
+	}
+	auto vehicle = field.getVehicle ();
+	if (vehicle)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.hitpointsChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->attackingChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->movingChanged, [this](){ needRefresh (); });
+	}
 }

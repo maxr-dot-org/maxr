@@ -564,7 +564,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			// the position should be changed
 			// so the log message will just be a debug one
 			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
-			if (Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing () || Vehicle->moving) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
+			if (Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing () || Vehicle->isUnitMoving ()) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->getPosition().x()) + " Y" + iToStr (Vehicle->getPosition().y()) + "; SHOULD: X" + iToStr (position.x()) + " Y" + iToStr (position.y()) + "]", iLogType);
 
 			// set to server position if vehicle is not moving
@@ -638,16 +638,16 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	Data->buildCosts = message.popInt16();
 	Data->setAmmo(message.popInt16());
 	Data->ammoMax = message.popInt16();
-	Data->storageResCur = message.popInt16();
+	Data->setStoredResources(message.popInt16());
 	Data->storageResMax = message.popInt16();
-	Data->storageUnitsCur = message.popInt16();
+	Data->setStoredUnits(message.popInt16());
 	Data->storageUnitsMax = message.popInt16();
-	Data->damage = message.popInt16();
+	Data->setDamage(message.popInt16());
 	Data->setShots(message.popInt16());
 	Data->shotsMax = message.popInt16();
-	Data->range = message.popInt16();
-	Data->scan = message.popInt16();
-	Data->armor = message.popInt16();
+	Data->setRange(message.popInt16());
+	Data->setScan(message.popInt16());
+	Data->setArmor(message.popInt16());
 	Data->setHitpoints(message.popInt16());
 	Data->hitpointsMax = message.popInt16();
 	Data->setVersion(message.popInt16());
@@ -656,13 +656,13 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	{
 		if (Data->canPlaceMines)
 		{
-			if (Data->storageResCur <= 0) Vehicle->setLayMines(false);
-			if (Data->storageResCur >= Data->storageResMax) Vehicle->setClearMines(false);
+			if (Data->getStoredResources () <= 0) Vehicle->setLayMines (false);
+			if (Data->getStoredResources () >= Data->storageResMax) Vehicle->setClearMines (false);
 		}
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
-		Vehicle->FlightHigh = message.popInt16 ();
+		Vehicle->setFlightHeight(message.popInt16 ());
 
 		if (bWasBuilding && !Vehicle->isUnitBuildingABuilding ())
 		{
@@ -755,9 +755,9 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
-	if (Vehicle && Vehicle->ClientMoveJob)
+	if (Vehicle && Vehicle->getClientMoveJob ())
 	{
-		Vehicle->ClientMoveJob->handleNextMove (iType, iSavedSpeed);
+		Vehicle->getClientMoveJob ()->handleNextMove (iType, iSavedSpeed);
 	}
 	else
 	{
@@ -876,7 +876,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	unitStartedBuilding (*Vehicle);
 
-	if (Vehicle->ClientMoveJob) Vehicle->ClientMoveJob->release();
+	if (Vehicle->getClientMoveJob ()) Vehicle->getClientMoveJob ()->release ();
 }
 
 
@@ -1427,11 +1427,11 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 	if (Data == NULL) return;
 
 	Data->setVersion(message.popInt16());
-	Data->scan = message.popInt16();
-	Data->range = message.popInt16();
-	Data->damage = message.popInt16();
+	Data->setScan(message.popInt16());
+	Data->setRange(message.popInt16());
+	Data->setDamage(message.popInt16());
 	Data->buildCosts = message.popInt16();
-	Data->armor = message.popInt16();
+	Data->setArmor(message.popInt16());
 	Data->speedMax = message.popInt16();
 	Data->shotsMax = message.popInt16();
 	Data->ammoMax = message.popInt16();
@@ -1465,7 +1465,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 			break;
 		}
 		const sUnitData& upgraded = *ActivePlayer->getUnitDataCurrentVersion (building->data.ID);
-		if (building->data.scan < upgraded.scan)
+		if (building->data.getScan () < upgraded.getScan ())
 			scanNecessary = true; // Scan range was upgraded. So trigger a scan.
 		building->upgradeToCurrentVersion();
 		if (i == 0)
@@ -1557,8 +1557,7 @@ void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle)
 	{
-		delete Vehicle->autoMJob;
-		Vehicle->autoMJob = new cAutoMJob (*this, Vehicle);
+		Vehicle->setAutoMoveJob(std::make_unique<cAutoMJob> (*this, Vehicle));
 	}
 }
 
@@ -1667,11 +1666,11 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 	assert (message.iType == GAME_EV_END_MOVE_ACTION_SERVER);
 
 	cVehicle* vehicle = getVehicleFromID (message.popInt32());
-	if (!vehicle || !vehicle->ClientMoveJob) return;
+	if (!vehicle || !vehicle->getClientMoveJob ()) return;
 
 	const int destID = message.popInt32();
 	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
-	vehicle->ClientMoveJob->endMoveAction = new cEndMoveAction (vehicle, destID, type);
+	vehicle->getClientMoveJob ()->endMoveAction = new cEndMoveAction (vehicle, destID, type);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
@@ -1939,11 +1938,11 @@ void cClient::handleMoveJobs()
 
 		if (MoveJob->bFinished)
 		{
-			if (Vehicle && Vehicle->ClientMoveJob == MoveJob)
+			if (Vehicle && Vehicle->getClientMoveJob () == MoveJob)
 			{
 				Log.write (" Client: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-				Vehicle->ClientMoveJob = NULL;
-				Vehicle->moving = false;
+				Vehicle->setClientMoveJob (nullptr);
+				Vehicle->setMoving (false);
 				Vehicle->MoveJobActive = false;
 			}
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
@@ -1958,7 +1957,7 @@ void cClient::handleMoveJobs()
 			if (Vehicle)
 			{
 				Vehicle->MoveJobActive = false;
-				Vehicle->moving = false;
+				Vehicle->setMoving (false);
 			}
 			ActiveMJobs.erase (ActiveMJobs.begin () + i);
 			if(Vehicle) unitPausedMoveJob(*Vehicle);
@@ -2043,7 +2042,7 @@ void cClient::destroyUnit (cVehicle& vehicle)
 	{
 		addFx (std::make_shared<cFxExploBig> (vehicle.getPosition() * 64 + 64, getMap ()->isWaterOrCoast (vehicle.getPosition())));
 	}
-	else if (vehicle.data.factorAir > 0 && vehicle.FlightHigh != 0)
+	else if (vehicle.data.factorAir > 0 && vehicle.getFlightHeight () != 0)
 	{
 		addFx(std::make_shared<cFxExploAir>(vehicle.getPosition() * 64 + vehicle.getMovementOffset() + 32));
 	}

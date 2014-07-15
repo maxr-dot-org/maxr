@@ -227,6 +227,7 @@
     <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionsteal.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.cpp" />
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemode.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodeattack.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemodedefault.cpp" />

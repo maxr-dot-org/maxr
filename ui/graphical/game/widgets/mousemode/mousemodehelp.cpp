@@ -26,19 +26,24 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
+cMouseModeHelp::cMouseModeHelp (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
+{}
+
+//------------------------------------------------------------------------------
 eMouseModeType cMouseModeHelp::getType () const
 {
 	return eMouseModeType::Help;
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeHelp::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeHelp::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Help));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeHelp::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeHelp::getMouseAction (const cPosition& mapPosition) const
 {
 	return std::make_unique<cMouseActionHelp> ();
 }

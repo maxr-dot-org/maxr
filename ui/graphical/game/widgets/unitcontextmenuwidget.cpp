@@ -202,7 +202,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Ammo:
-		if (unit->data.canRearm && unit->data.storageResCur >= 1)
+		if (unit->data.canRearm && unit->data.getStoredResources () >= 1)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Reload_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 			button->setChecked (mouseInputMode == eMouseModeType::SupplyAmmo);
@@ -212,7 +212,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Repair:
-		if (unit->data.canRepair && unit->data.storageResCur >= 1)
+		if (unit->data.canRepair && unit->data.getStoredResources () >= 1)
 		{
 			auto button = mouseActionGroup->addButton (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Repair_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 			button->setChecked (mouseInputMode == eMouseModeType::Repair);
@@ -222,7 +222,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Lay mines:
-		if (unit->data.canPlaceMines && unit->data.storageResCur > 0)
+		if (unit->data.canPlaceMines && unit->data.getStoredResources () > 0)
 		{
 			auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Seed"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 			button->setChecked (unit->isUnitLayingMines());
@@ -232,7 +232,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 		}
 
 		// Collect/clear mines:
-		if (unit->data.canPlaceMines && unit->data.storageResCur < unit->data.storageResMax)
+		if (unit->data.canPlaceMines && unit->data.getStoredResources () < unit->data.storageResMax)
 		{
 			auto button = addChild (std::make_unique<cCheckBox> (nextButtonPosition, lngPack.i18n ("Text~Others~Clear_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Right, eCheckBoxType::UnitContextMenu, false, &SoundData.SNDObjectMenu));
 			button->setChecked (unit->isUnitClearingMines());

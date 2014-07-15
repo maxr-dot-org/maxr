@@ -155,19 +155,17 @@ void cPlaneTakeoffJob::run (const cGameTimer& gameTimer)
 	cVehicle* plane = vehicle;
 	if (takeoff)
 	{
-		plane->FlightHigh += 2;
-		if (plane->FlightHigh < 0)
+		plane->setFlightHeight(plane->getFlightHeight() + 2);
+		if (plane->getFlightHeight () == 64)
 		{
-			plane->FlightHigh = 0;
 			finished = true;
 		}
 	}
 	else
 	{
-		plane->FlightHigh -= 2;
-		if (plane->FlightHigh > 64)
+		plane->setFlightHeight (plane->getFlightHeight () - 2);
+		if (plane->getFlightHeight () == 0)
 		{
-			plane->FlightHigh = 64;
 			finished = true;
 		}
 	}

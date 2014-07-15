@@ -501,28 +501,28 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 		const int iStartValue = value;
 		if (value < 0)
 		{
-			if (b.data.storageResCur > -value)
+			if (b.data.getStoredResources() > -value)
 			{
-				b.data.storageResCur += value;
+				b.data.setStoredResources (b.data.getStoredResources () + value);
 				value = 0;
 			}
 			else
 			{
-				value += b.data.storageResCur;
-				b.data.storageResCur = 0;
+				value += b.data.getStoredResources ();
+				b.data.setStoredResources (0);
 			}
 		}
 		else
 		{
-			if (b.data.storageResMax - b.data.storageResCur > value)
+			if (b.data.storageResMax - b.data.getStoredResources () > value)
 			{
-				b.data.storageResCur += value;
+				b.data.setStoredResources (b.data.getStoredResources () + value);
 				value = 0;
 			}
 			else
 			{
-				value -= b.data.storageResMax - b.data.storageResCur;
-				b.data.storageResCur = b.data.storageResMax;
+				value -= b.data.storageResMax - b.data.getStoredResources ();
+				b.data.setStoredResources (b.data.storageResMax);
 			}
 		}
 		if (iStartValue != value) sendUnitData (server, b, *owner);
@@ -959,15 +959,15 @@ void sSubBase::addBuilding (cBuilding* b)
 	{
 		case sUnitData::STORE_RES_METAL:
 			MaxMetal += b->data.storageResMax;
-			setMetal (getMetal () + b->data.storageResCur);
+			setMetal (getMetal () + b->data.getStoredResources ());
 			break;
 		case sUnitData::STORE_RES_OIL:
 			MaxOil += b->data.storageResMax;
-			setOil (getOil () + b->data.storageResCur);
+			setOil (getOil () + b->data.getStoredResources ());
 			break;
 		case sUnitData::STORE_RES_GOLD:
 			MaxGold += b->data.storageResMax;
-			setGold (getGold () + b->data.storageResCur);
+			setGold (getGold () + b->data.getStoredResources ());
 			break;
 		case sUnitData::STORE_RES_NONE:
 			break;

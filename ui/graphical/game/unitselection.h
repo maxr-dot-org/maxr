@@ -60,9 +60,9 @@ public:
 
 	bool isSelected (const cUnit& unit) const;
 
-	cSignal<void ()> selectionChanged;
-	cSignal<void ()> mainSelectionChanged;
-	cSignal<void ()> groupSelectionChanged;
+	mutable cSignal<void ()> selectionChanged;
+	mutable cSignal<void ()> mainSelectionChanged;
+	mutable cSignal<void ()> groupSelectionChanged;
 private:
 	cSignalConnectionManager selectedUnitsSignalConnectionManager;
 

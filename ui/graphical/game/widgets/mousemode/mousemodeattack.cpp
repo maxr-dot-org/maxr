@@ -29,21 +29,26 @@
 #include "input/mouse/cursor/mousecursorattack.h"
 
 //------------------------------------------------------------------------------
+cMouseModeAttack::cMouseModeAttack (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
+{}
+
+//------------------------------------------------------------------------------
 eMouseModeType cMouseModeAttack::getType () const
 {
 	return eMouseModeType::Attack;
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeAttack::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeAttack::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		const auto selectedUnit = unitSelection.getSelectedUnit ();
 
-		if (selectedUnit != nullptr)
+		if (selectedUnit != nullptr && map != nullptr)
 		{
-			mouse.setCursor (std::make_unique<cMouseCursorAttack> (*selectedUnit, mapPosition, map));
+			mouse.setCursor (std::make_unique<cMouseCursorAttack> (*selectedUnit, mapPosition, *map));
 		}
 		else
 		{
@@ -57,9 +62,9 @@ void cMouseModeAttack::setCursor (cMouse& mouse, const cMap& map, const cPositio
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeAttack::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeAttack::getMouseAction (const cPosition& mapPosition) const
 {
-	if (canExecuteAction (map, mapPosition, unitSelection))
+	if (canExecuteAction (mapPosition))
 	{
 		return std::make_unique<cMouseActionAttack> ();
 	}
@@ -67,11 +72,58 @@ std::unique_ptr<cMouseAction> cMouseModeAttack::getMouseAction (const cMap& map,
 }
 
 //------------------------------------------------------------------------------
-bool cMouseModeAttack::canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const
+bool cMouseModeAttack::canExecuteAction (const cPosition& mapPosition) const
 {
+	if (!map) return false;
+
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
-	return (selectedVehicle && (selectedVehicle->data.muzzleType != sUnitData::MUZZLE_TYPE_TORPEDO || map.isWaterOrCoast (mapPosition))) ||
+	return (selectedVehicle && (selectedVehicle->data.muzzleType != sUnitData::MUZZLE_TYPE_TORPEDO || map->isWaterOrCoast (mapPosition))) ||
 		(selectedBuilding && selectedBuilding->isInRange (mapPosition));
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeAttack::establishUnitSelectionConnections ()
+{
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+
+	if (selectedUnit)
+	{
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.rangeChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.damageChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+	}
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeAttack::establishMapFieldConnections (const cMapField& field)
+{
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this,&field](){ updateFieldUnitConnections (field); needRefresh (); });
+
+	updateFieldUnitConnections (field);
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeAttack::updateFieldUnitConnections (const cMapField& field)
+{
+	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+
+	auto plane = field.getPlane ();
+	if (plane)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (plane->flightHeightChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->data.hitpointsChanged, [this](){ needRefresh (); });
+	}
+	auto vehicle = field.getVehicle ();
+	if (vehicle)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.hitpointsChanged, [this](){ needRefresh (); });
+	}
+	auto building = field.getBuilding ();
+	if (building)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (building->data.hitpointsChanged, [this](){ needRefresh (); });
+	}
 }

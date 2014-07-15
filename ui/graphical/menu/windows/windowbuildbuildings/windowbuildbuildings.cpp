@@ -107,7 +107,7 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
 			select = false;
 		}
 
-		if (vehicle.data.storageResCur < vehicle.owner->BuildingData[i].buildCosts) item.markAsInsufficient();
+		if (vehicle.data.getStoredResources () < vehicle.owner->BuildingData[i].buildCosts) item.markAsInsufficient ();
 	}
 }
 

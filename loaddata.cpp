@@ -1752,8 +1752,8 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 
 	Data->ammoMax = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Ammo_Quantity", NULL);
 	Data->shotsMax = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Shots", NULL);
-	Data->range = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Range", NULL);
-	Data->damage = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Damage", NULL);
+	Data->setRange(getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Range", NULL));
+	Data->setDamage(getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Damage", NULL));
 	Data->canAttack = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Can_Attack", NULL);
 
 	// TODO: make the code differ between attacking sea units and land units.
@@ -1785,9 +1785,9 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	// Abilities
 	Data->isBig = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Is_Big", NULL);
 	Data->connectsToBase = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Connects_To_Base", NULL);
-	Data->armor = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Armor", NULL);
+	Data->setArmor(getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Armor", NULL));
 	Data->hitpointsMax = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Hitpoints", NULL);
-	Data->scan = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Scan_Range", NULL);
+	Data->setScan(getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Scan_Range", NULL));
 	Data->modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", "Abilities", "Modifies_Speed", NULL);
 	Data->canClearArea = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Clear_Area", NULL);
 	Data->canBeCaptured = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Captured", NULL);

@@ -783,6 +783,9 @@
     <ClCompile Include="..\..\ui\graphical\game\widgets\turntimeclockwidget.cpp">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\mousemode\mousemode.cpp">
+      <Filter>maxr\ui\graphical\game\widgets\mousemode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\attackJobs.h">

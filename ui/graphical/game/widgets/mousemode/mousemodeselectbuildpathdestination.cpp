@@ -23,19 +23,24 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
+cMouseModeSelectBuildPathDestination::cMouseModeSelectBuildPathDestination (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
+{}
+
+//------------------------------------------------------------------------------
 eMouseModeType cMouseModeSelectBuildPathDestination::getType () const
 {
 	return eMouseModeType::SelectBuildPathDestintaion;
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeSelectBuildPathDestination::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeSelectBuildPathDestination::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
 	mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Band));
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeSelectBuildPathDestination::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeSelectBuildPathDestination::getMouseAction (const cPosition& mapPosition) const
 {
 	return std::make_unique<cMouseActionSelectBuildPathDestination> ();
 }

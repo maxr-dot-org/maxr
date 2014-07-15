@@ -17,50 +17,69 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/widgets/mouseaction/mouseactionsteal.h"
-#include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/widgets/mousemode/mousemode.h"
 #include "ui/graphical/game/unitselection.h"
 #include "map.h"
-#include "vehicles.h"
-#include "input/mouse/mouse.h"
-#include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionSteal::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
+cMouseMode::cMouseMode (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	map (map_),
+	unitSelection (unitSelection_),
+	player (player_)
 {
-	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+	signalConnectionManager.connect (unitSelection.selectionChanged, std::bind (&cMouseMode::updateSelectedUnitConnections, this));
 
-	if (!selectedVehicle) return false;
-
-	const auto& field = map.getField (mapPosition);
-
-	const auto overVehicle = field.getVehicle ();
-	const auto overPlane = field.getPlane ();
-
-	if (overVehicle)
-	{
-		gameMapWidget.triggeredSteal (*selectedVehicle, *overVehicle);
-	}
-	else if (overPlane && overPlane->getFlightHeight () == 0)
-	{
-		gameMapWidget.triggeredSteal (*selectedVehicle, *overPlane);
-	}
-	else
-	{
-		return false;
-	}
-
-	return true;
+	updateSelectedUnitConnections ();
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSteal::doesChangeState () const
+void cMouseMode::handleMapTilePositionChanged (const cPosition& mapPosition)
 {
-	return true;
+	if (!map) return;
+
+	mapFieldSignalConnectionManager.disconnectAll ();
+	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+
+	if (map->isValidPosition (mapPosition))
+	{
+		const auto& field = map->getField (mapPosition);
+
+		establishMapFieldConnections (field);
+	}
 }
 
 //------------------------------------------------------------------------------
-bool cMouseActionSteal::isSingleAction () const
+void cMouseMode::updateSelectedUnitConnections ()
 {
-	return false;
+	selectedUnitSignalConnectionManager.disconnectAll ();
+
+	establishUnitSelectionConnections ();
 }
+
+//------------------------------------------------------------------------------
+cMouseMode::~cMouseMode ()
+{}
+
+//------------------------------------------------------------------------------
+void cMouseMode::setMap (const cMap* map_)
+{
+	map = map_;
+	
+	needRefresh ();
+}
+
+//------------------------------------------------------------------------------
+void cMouseMode::setPlayer (const cPlayer* player_)
+{
+	player = player_;
+	
+	needRefresh ();
+}
+
+//------------------------------------------------------------------------------
+void cMouseMode::establishUnitSelectionConnections ()
+{}
+
+//------------------------------------------------------------------------------
+void cMouseMode::establishMapFieldConnections (const cMapField& field)
+{}

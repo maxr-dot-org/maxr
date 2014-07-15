@@ -43,7 +43,7 @@ bool cMouseActionDisable::executeLeftClick (cGameMapWidget& gameMapWidget, const
 	{
 		gameMapWidget.triggeredDisable (*selectedVehicle, *overVehicle);
 	}
-	else if (overPlane && overPlane->FlightHigh == 0)
+	else if (overPlane && overPlane->getFlightHeight () == 0)
 	{
 		gameMapWidget.triggeredDisable (*selectedVehicle, *overPlane);
 	}

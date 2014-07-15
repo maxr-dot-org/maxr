@@ -274,9 +274,9 @@ cVehicle& cPlayer::addNewVehicle (const cPosition& position, const sID& id, unsi
     auto vehicle = std::make_shared<cVehicle> (unitData, this, uid);
     vehicle->setPosition (position);
 
-    drawSpecialCircle (vehicle->getPosition (), vehicle->data.scan, ScanMap, mapSize);
-    if (vehicle->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vehicle->getPosition (), vehicle->data.scan, DetectLandMap, mapSize);
-    if (vehicle->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vehicle->getPosition (), vehicle->data.scan, DetectSeaMap, mapSize);
+	drawSpecialCircle (vehicle->getPosition (), vehicle->data.getScan (), ScanMap, mapSize);
+	if (vehicle->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vehicle->getPosition (), vehicle->data.getScan (), DetectLandMap, mapSize);
+	if (vehicle->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vehicle->getPosition (), vehicle->data.getScan (), DetectSeaMap, mapSize);
     if (vehicle->data.canDetectStealthOn & AREA_EXP_MINE)
     {
         const int minx = std::max (vehicle->getPosition ().x () - 1, 0);
@@ -302,10 +302,10 @@ cBuilding& cPlayer::addNewBuilding (const cPosition& position, const sID& id, un
 
 	building->setPosition (position);
 
-	if (building->data.scan)
+	if (building->data.getScan ())
 	{
-		if (building->data.isBig) drawSpecialCircleBig (building->getPosition (), building->data.scan, ScanMap, mapSize);
-		else drawSpecialCircle (building->getPosition (), building->data.scan, ScanMap, mapSize);
+		if (building->data.isBig) drawSpecialCircleBig (building->getPosition (), building->data.getScan (), ScanMap, mapSize);
+		else drawSpecialCircle (building->getPosition (), building->data.getScan (), ScanMap, mapSize);
 	}
 
 	auto result = buildings.insert (std::move (building));
@@ -386,11 +386,11 @@ void cPlayer::addSentry (cUnit& u)
 	u.setSentryActive (true);
 	if (u.data.canAttack & TERRAIN_AIR)
 	{
-		drawSpecialCircle (u.getPosition(), u.data.range, SentriesMapAir, mapSize);
+		drawSpecialCircle (u.getPosition (), u.data.getRange (), SentriesMapAir, mapSize);
 	}
 	if ((u.data.canAttack & TERRAIN_GROUND) || (u.data.canAttack & TERRAIN_SEA))
 	{
-		drawSpecialCircle (u.getPosition(), u.data.range, SentriesMapGround, mapSize);
+		drawSpecialCircle (u.getPosition (), u.data.getRange (), SentriesMapGround, mapSize);
 	}
 }
 
@@ -418,7 +418,7 @@ void cPlayer::refreshSentryAir()
 		const auto& unit = *i;
 		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
-			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapAir, mapSize);
+			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapAir, mapSize);
 		}
 	}
 
@@ -427,7 +427,7 @@ void cPlayer::refreshSentryAir()
 		const auto& unit = *i;
 		if (unit->isSentryActive() && unit->data.canAttack & TERRAIN_AIR)
 		{
-			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapAir, mapSize);
+			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapAir, mapSize);
 		}
 	}
 }
@@ -442,7 +442,7 @@ void cPlayer::refreshSentryGround()
 		const auto& unit = *i;
 		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
-			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapGround, mapSize);
+			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapGround, mapSize);
 		}
 	}
 	for (auto i = buildings.begin (); i != buildings.end (); ++i)
@@ -450,7 +450,7 @@ void cPlayer::refreshSentryGround()
 		const auto& unit = *i;
 		if (unit->isSentryActive() && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
-			drawSpecialCircle (unit->getPosition(), unit->data.range, SentriesMapGround, mapSize);
+			drawSpecialCircle (unit->getPosition (), unit->data.getRange (), SentriesMapGround, mapSize);
 		}
 	}
 }
@@ -477,13 +477,13 @@ void cPlayer::doScan()
 		else
 		{
 			if (vp->data.isBig)
-				drawSpecialCircleBig (vp->getPosition(), vp->data.scan, ScanMap, mapSize);
+				drawSpecialCircleBig (vp->getPosition (), vp->data.getScan (), ScanMap, mapSize);
 			else
-				drawSpecialCircle (vp->getPosition(), vp->data.scan, ScanMap, mapSize);
+				drawSpecialCircle (vp->getPosition (), vp->data.getScan (), ScanMap, mapSize);
 
 			//detection maps
-			if (vp->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vp->getPosition(), vp->data.scan, DetectLandMap, mapSize);
-			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->getPosition(), vp->data.scan, DetectSeaMap, mapSize);
+			if (vp->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vp->getPosition (), vp->data.getScan (), DetectLandMap, mapSize);
+			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->getPosition (), vp->data.getScan (), DetectSeaMap, mapSize);
 			if (vp->data.canDetectStealthOn & AREA_EXP_MINE)
 			{
 				const int minx = std::max (vp->getPosition().x() - 1, 0);
@@ -507,12 +507,12 @@ void cPlayer::doScan()
 		const auto& bp = *i;
 		if (bp->isDisabled())
 			ScanMap[getOffset (bp->getPosition())] = 1;
-		else if (bp->data.scan)
+		else if (bp->data.getScan ())
 		{
 			if (bp->data.isBig)
-				drawSpecialCircleBig (bp->getPosition(), bp->data.scan, ScanMap, mapSize);
+				drawSpecialCircleBig (bp->getPosition (), bp->data.getScan (), ScanMap, mapSize);
 			else
-				drawSpecialCircle (bp->getPosition(), bp->data.scan, ScanMap, mapSize);
+				drawSpecialCircle (bp->getPosition (), bp->data.getScan (), ScanMap, mapSize);
 		}
 	}
 }
@@ -871,12 +871,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = originalData.damage; break;
+				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
 				case cResearch::kShotsResearch: startValue = originalData.shotsMax; break;
-				case cResearch::kRangeResearch: startValue = originalData.range; break;
-				case cResearch::kArmorResearch: startValue = originalData.armor; break;
+				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
+				case cResearch::kArmorResearch: startValue = originalData.getArmor (); break;
 				case cResearch::kHitpointsResearch: startValue = originalData.hitpointsMax; break;
-				case cResearch::kScanResearch: startValue = originalData.scan; break;
+				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
 				case cResearch::kSpeedResearch: startValue = originalData.speedMax; break;
 				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
 			}
@@ -890,12 +890,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			{
 				switch (researchArea)
 				{
-					case cResearch::kAttackResearch: VehicleData[i].damage += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kAttackResearch: VehicleData[i].setDamage( VehicleData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kShotsResearch: VehicleData[i].shotsMax += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kRangeResearch: VehicleData[i].range += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kArmorResearch: VehicleData[i].armor += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kRangeResearch: VehicleData[i].setRange (VehicleData[i].getRange () + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kArmorResearch: VehicleData[i].setArmor (VehicleData[i].getArmor () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kHitpointsResearch: VehicleData[i].hitpointsMax += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kScanResearch: VehicleData[i].scan += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kScanResearch: VehicleData[i].setScan (VehicleData[i].getScan () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kSpeedResearch: VehicleData[i].speedMax += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kCostResearch: VehicleData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
@@ -921,12 +921,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = originalData.damage; break;
+				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
 				case cResearch::kShotsResearch: startValue = originalData.shotsMax; break;
-				case cResearch::kRangeResearch: startValue = originalData.range; break;
-				case cResearch::kArmorResearch: startValue = originalData.armor; break;
+				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
+				case cResearch::kArmorResearch: startValue = originalData.getArmor (); break;
 				case cResearch::kHitpointsResearch: startValue = originalData.hitpointsMax; break;
-				case cResearch::kScanResearch: startValue = originalData.scan; break;
+				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
 				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
@@ -939,12 +939,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			{
 				switch (researchArea)
 				{
-					case cResearch::kAttackResearch: BuildingData[i].damage += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kAttackResearch: BuildingData[i].setDamage( BuildingData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kShotsResearch: BuildingData[i].shotsMax += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kRangeResearch: BuildingData[i].range += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kArmorResearch: BuildingData[i].armor += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kRangeResearch: BuildingData[i].setRange (BuildingData[i].getRange () + newResearchBonus - oldResearchBonus); break;
+					case cResearch::kArmorResearch: BuildingData[i].setArmor (BuildingData[i].getArmor () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kHitpointsResearch: BuildingData[i].hitpointsMax += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kScanResearch: BuildingData[i].scan += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kScanResearch: BuildingData[i].setScan (BuildingData[i].getScan () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kCostResearch: BuildingData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs

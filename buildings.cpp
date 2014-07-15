@@ -103,6 +103,11 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	}
 
 	refreshData();
+
+	// TODO: register the following events to trigger the "statusChanged" signal:
+	// - player credits changed
+	// - research changed
+	// - build list changes
 }
 
 //--------------------------------------------------------------------------
@@ -931,13 +936,13 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->isUnitLoaded ()) return false;
 
-	if (data.storageUnitsCur == data.storageUnitsMax) return false;
+	if (data.getStoredUnits() == data.storageUnitsMax) return false;
 
 	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
-	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->getClientMoveJob () && (Vehicle->isUnitMoving () || Vehicle->isAttacking () || Vehicle->MoveJobActive)) return false;
 
 	if (Vehicle->owner != owner || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
 
@@ -960,7 +965,7 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 	vehicle.setLoaded(true);
 
 	storedUnits.push_back (&vehicle);
-	data.storageUnitsCur++;
+	data.setStoredUnits(data.getStoredUnits ()+1);
 
 	owner->doScan();
 }
@@ -971,7 +976,7 @@ void cBuilding::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap
 {
 	Remove (storedUnits, &vehicle);
 
-	data.storageUnitsCur--;
+	data.setStoredUnits (data.getStoredUnits ()-1);
 
 	map.addVehicle(vehicle, position);
 

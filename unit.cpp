@@ -66,6 +66,7 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	buildingChanged.connect ([&](){ statusChanged (); });
 	clearingChanged.connect ([&](){ statusChanged (); });
 	workingChanged.connect ([&](){ statusChanged (); });
+	movingChanged.connect ([&](){ statusChanged (); });
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +132,7 @@ std::vector<cPosition> cUnit::getAdjacentPositions () const
 //------------------------------------------------------------------------------
 int cUnit::calcHealth (int damage) const
 {
-	damage -= data.armor;
+	damage -= data.getArmor ();
 
 	// minimum damage is 1
 	damage = std::max (1, damage);
@@ -147,7 +148,7 @@ bool cUnit::isInRange (const cPosition& position) const
 {
 	const auto distanceSquared = (position - this->position).l2NormSquared();
 
-	return distanceSquared <= Square(data.range);
+	return distanceSquared <= Square (data.getRange ());
 }
 
 //------------------------------------------------------------------------------
@@ -332,12 +333,12 @@ void cUnit::upgradeToCurrentVersion()
 
 	data.speedMax = upgradeVersion->speedMax;
 
-	data.armor = upgradeVersion->armor;
-	data.scan = upgradeVersion->scan;
-	data.range = upgradeVersion->range;
+	data.setArmor (upgradeVersion->getArmor ());
+	data.setScan (upgradeVersion->getScan ());
+	data.setRange (upgradeVersion->getRange ());
 	// TODO: check behaviour in original
 	data.shotsMax = upgradeVersion->shotsMax;
-	data.damage = upgradeVersion->damage;
+	data.setDamage (upgradeVersion->getDamage ());
 	data.buildCosts = upgradeVersion->buildCosts;
 }
 

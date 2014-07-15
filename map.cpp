@@ -44,6 +44,9 @@ sTerrain::sTerrain() :
 	blocked (false)
 {}
 
+cMapField::cMapField ()
+{}
+
 cVehicle* cMapField::getVehicle() const
 {
 	if (vehicles.empty()) return NULL;
@@ -56,14 +59,19 @@ cVehicle* cMapField::getPlane() const
 	return planes[0];
 }
 
-const std::vector<cVehicle*>& cMapField::getPlanes() const
-{
-	return planes;
-}
-
 const std::vector<cBuilding*>& cMapField::getBuildings() const
 {
 	return buildings;
+}
+
+const std::vector<cVehicle*>& cMapField::getVehicles () const
+{
+	return vehicles;
+}
+
+const std::vector<cVehicle*>& cMapField::getPlanes () const
+{
+	return planes;
 }
 
 cBuilding* cMapField::getBuilding() const
@@ -113,6 +121,67 @@ cBuilding* cMapField::getMine() const
 		if (buildings[i]->data.explodesOnContact)
 			return buildings[i];
 	return NULL;
+}
+
+void cMapField::addBuilding (cBuilding& building, size_t index)
+{
+	assert (index <= buildings.size ());
+	buildings.insert (buildings.begin () + index, &building);
+
+	buildingsChanged ();
+	unitsChanged ();
+}
+void cMapField::addVehicle (cVehicle& vehicle, size_t index)
+{
+	assert (index <= vehicles.size ());
+	vehicles.insert (vehicles.begin () + index, &vehicle);
+
+	vehiclesChanged ();
+	unitsChanged ();
+}
+void cMapField::addPlane (cVehicle& plane, size_t index)
+{
+	assert (index <= planes.size ());
+	planes.insert (planes.begin () + index, &plane);
+
+	planesChanged ();
+	unitsChanged ();
+}
+
+void cMapField::removeBuilding (const cBuilding& building)
+{
+	Remove (buildings, &building);
+
+	buildingsChanged ();
+	unitsChanged ();
+}
+
+void cMapField::removeVehicle (const cVehicle& vehicle)
+{
+	Remove (vehicles, &vehicle);
+
+	vehiclesChanged ();
+	unitsChanged ();
+}
+
+void cMapField::removePlane (const cVehicle& plane)
+{
+	Remove (planes, &plane);
+
+	planesChanged ();
+	unitsChanged ();
+}
+
+void cMapField::removeAll ()
+{
+	buildings.clear ();
+	vehicles.clear ();
+	planes.clear ();
+
+	buildingsChanged ();
+	vehiclesChanged ();
+	planesChanged ();
+	unitsChanged ();
 }
 
 // cStaticMap //////////////////////////////////////////////////
@@ -743,36 +812,36 @@ void cMap::addBuilding(cBuilding& building, const cPosition& position)
 	if (building.data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building.data.isBig && building.owner) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
-	unsigned int i = 0;
+	size_t i = 0;
 
 	if (building.data.isBig)
 	{
 		auto& field = getField(position);
 		i = 0;
-		while (i < field.buildings.size() && cMap::getMapLevel (*field.buildings[i]) < mapLevel) i++;
-		field.buildings.insert (field.buildings.begin() + i, &building);
+		while (i < field.getBuildings ().size () && cMap::getMapLevel (*field.getBuildings ()[i]) < mapLevel) i++;
+		field.addBuilding (building, i);
 
 		auto& fieldEast = getField(position + cPosition(1,0));
 		i = 0;
-		while(i < fieldEast.buildings.size() && cMap::getMapLevel(*fieldEast.buildings[i]) < mapLevel) i++;
-		fieldEast.buildings.insert(fieldEast.buildings.begin() + i, &building);
+		while (i < fieldEast.getBuildings ().size () && cMap::getMapLevel (*fieldEast.getBuildings ()[i]) < mapLevel) i++;
+		fieldEast.addBuilding (building, i);
 
 		auto& fieldSouth = getField(position + cPosition(0, 1));
 		i = 0;
-		while(i < fieldSouth.buildings.size() && cMap::getMapLevel(*fieldSouth.buildings[i]) < mapLevel) i++;
-		fieldSouth.buildings.insert(fieldSouth.buildings.begin() + i, &building);
+		while (i < fieldSouth.getBuildings ().size () && cMap::getMapLevel (*fieldSouth.getBuildings ()[i]) < mapLevel) i++;
+		fieldSouth.addBuilding (building, i);
 
 		auto& fieldSouthEast = getField(position + cPosition(1, 1));
 		i = 0;
-		while(i < fieldSouthEast.buildings.size() && cMap::getMapLevel(*fieldSouthEast.buildings[i]) < mapLevel) i++;
-		fieldSouthEast.buildings.insert(fieldSouthEast.buildings.begin() + i, &building);
+		while (i < fieldSouthEast.getBuildings ().size () && cMap::getMapLevel (*fieldSouthEast.getBuildings ()[i]) < mapLevel) i++;
+		fieldSouthEast.addBuilding (building, i);
 	}
 	else
 	{
 		auto& field = getField(position);
 
-		while (i < field.buildings.size() && cMap::getMapLevel (*field.buildings[i]) < mapLevel) i++;
-		field.buildings.insert (field.buildings.begin() + i, &building);
+		while (i < field.getBuildings ().size () && cMap::getMapLevel (*field.getBuildings ()[i]) < mapLevel) i++;
+		field.addBuilding (building, i);
 	}
 	addedUnit (building);
 }
@@ -782,30 +851,24 @@ void cMap::addVehicle(cVehicle& vehicle, const cPosition& position)
 	auto& field = getField(position);
 	if (vehicle.data.factorAir > 0)
 	{
-		field.planes.insert (field.planes.begin(), &vehicle);
+		field.addPlane (vehicle, 0);
 	}
 	else
 	{
-		field.vehicles.insert (field.vehicles.begin(), &vehicle);
+		field.addVehicle (vehicle, 0);
 	}
 	addedUnit (vehicle);
 }
 
 void cMap::deleteBuilding (const cBuilding& building)
 {
-	std::vector<cBuilding*>* buildings = &getField (building.getPosition ()).buildings;
-	Remove (*buildings, &building);
+	getField (building.getPosition ()).removeBuilding(building);
 
 	if (building.data.isBig)
 	{
-		buildings = &getField (building.getPosition () + cPosition(1, 0)).buildings;
-		Remove (*buildings, &building);
-
-		buildings = &getField (building.getPosition () + cPosition (1, 1)).buildings;
-		Remove (*buildings, &building);
-
-		buildings = &getField (building.getPosition () + cPosition (0, 1)).buildings;
-		Remove (*buildings, &building);
+		getField (building.getPosition () + cPosition (1, 0)).removeBuilding (building);
+		getField (building.getPosition () + cPosition (1, 1)).removeBuilding (building);
+		getField (building.getPosition () + cPosition (0, 1)).removeBuilding (building);
 	}
 	removedUnit (building);
 }
@@ -814,24 +877,17 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 {
 	if (vehicle.data.factorAir > 0)
 	{
-		std::vector<cVehicle*>& planes = getField (vehicle.getPosition ()).planes;
-		Remove (planes, &vehicle);
+		getField (vehicle.getPosition ()).removePlane (vehicle);
 	}
 	else
 	{
-		std::vector<cVehicle*>* vehicles = &getField (vehicle.getPosition ()).vehicles;
-		Remove (*vehicles, &vehicle);
+		getField (vehicle.getPosition ()).removeVehicle(vehicle);
 
 		if (vehicle.data.isBig)
 		{
-			vehicles = &getField (vehicle.getPosition () + cPosition(1, 0)).vehicles;
-			Remove (*vehicles, &vehicle);
-
-			vehicles = &getField (vehicle.getPosition () + cPosition (1, 1)).vehicles;
-			Remove (*vehicles, &vehicle);
-
-			vehicles = &getField (vehicle.getPosition () + cPosition (0, 1)).vehicles;
-			Remove (*vehicles, &vehicle);
+			getField (vehicle.getPosition () + cPosition (1, 0)).removeVehicle (vehicle);
+			getField (vehicle.getPosition () + cPosition (1, 1)).removeVehicle (vehicle);
+			getField (vehicle.getPosition () + cPosition (0, 1)).removeVehicle (vehicle);
 		}
 	}
 	removedUnit (vehicle);
@@ -845,27 +901,25 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 
 	if (vehicle.data.factorAir > 0)
 	{
-		std::vector<cVehicle*>& planes = getField(oldPosition).planes;
-		Remove (planes, &vehicle);
-		height = std::min<int> (getField(position).planes.size(), height);
-		getField (position).planes.insert (getField (position).planes.begin () + height, &vehicle);
+		getField(oldPosition).removePlane(vehicle);
+		height = std::min<int> (getField(position).getPlanes().size(), height);
+		getField (position).addPlane(vehicle, height);
 	}
 	else
 	{
-		std::vector<cVehicle*>& vehicles = getField (oldPosition).vehicles;
-		Remove (vehicles, &vehicle);
+		getField (oldPosition).removeVehicle(vehicle);
 
 		//check, whether the vehicle is centered on 4 map fields
 		if (vehicle.data.isBig)
 		{
-			getField (oldPosition + cPosition (1, 0)).vehicles.erase (getField (oldPosition + cPosition (1, 0)).vehicles.begin ());
-			getField (oldPosition + cPosition (1, 1)).vehicles.erase (getField (oldPosition + cPosition (1, 1)).vehicles.begin ());
-			getField (oldPosition + cPosition (0, 1)).vehicles.erase (getField (oldPosition + cPosition (0, 1)).vehicles.begin ());
+			getField (oldPosition + cPosition (1, 0)).removeVehicle (vehicle);
+			getField (oldPosition + cPosition (1, 1)).removeVehicle (vehicle);
+			getField (oldPosition + cPosition (0, 1)).removeVehicle (vehicle);
 
 			vehicle.data.isBig = false;
 		}
 
-		getField (position).vehicles.insert (getField (position).vehicles.begin (), &vehicle);
+		getField (position).addVehicle (vehicle, 0);
 	}
 	movedVehicle (vehicle);
 }
@@ -882,14 +936,14 @@ void cMap::moveVehicleBig(cVehicle& vehicle, const cPosition& position)
 
 	const auto oldPosition = vehicle.getPosition();
 
-	getField (oldPosition).vehicles.erase (getField (oldPosition).vehicles.begin ());
+	getField (oldPosition).removeVehicle (vehicle);
 
 	vehicle.setPosition(position);
 
-	getField (position).vehicles.insert (getField (position).vehicles.begin (), &vehicle);
-	getField (position + cPosition (1, 0)).vehicles.insert (getField (position + cPosition (1, 0)).vehicles.begin (), &vehicle);
-	getField (position + cPosition (1, 1)).vehicles.insert (getField (position + cPosition (1, 1)).vehicles.begin (), &vehicle);
-	getField (position + cPosition (0, 1)).vehicles.insert (getField (position + cPosition (0, 1)).vehicles.begin (), &vehicle);
+	getField (position).addVehicle (vehicle, 0);
+	getField (position + cPosition (1, 0)).addVehicle (vehicle, 0);
+	getField (position + cPosition (1, 1)).addVehicle (vehicle, 0);
+	getField (position + cPosition (0, 1)).addVehicle (vehicle, 0);
 
 	vehicle.data.isBig = true;
 
@@ -916,7 +970,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 	{
 		if (checkPlayer && player && !player->canSeeAt(position)) return true;
 		//only one plane per field for now
-		if (getField(position).planes.size() >= MAX_PLANES_PER_FIELD) return false;
+		if (getField(position).getPlanes().size() >= MAX_PLANES_PER_FIELD) return false;
 	}
 	if (vehicleData.factorGround > 0)
 	{
@@ -941,7 +995,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 
 		if (checkPlayer && player && !player->canSeeAt(position)) return true;
 
-		if (getField(position).vehicles.empty() == false) return false;
+		if (getField(position).getVehicles().empty() == false) return false;
 		if (b_it != b_end)
 		{
 			// only base buildings and rubble is allowed on the same field with a vehicle
@@ -967,7 +1021,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 
 		if (checkPlayer && player && !player->canSeeAt(position)) return true;
 
-		if (getField(position).vehicles.empty() == false) return false;
+		if (getField (position).getVehicles ().empty () == false) return false;
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
 		if (b_it != b_end &&
@@ -1051,10 +1105,10 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, const cPosition
 		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
 		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
 
-	if (field.vehicles.empty() == false)
+	if (field.getVehicles ().empty () == false)
 	{
 		if (!vehicle) return false;
-		if (vehicle != field.vehicles[0]) return false;
+		if (vehicle != field.getVehicles()[0]) return false;
 	}
 	return true;
 }
@@ -1062,9 +1116,7 @@ void cMap::reset()
 {
 	for (int i = 0; i < getSize().x() * getSize().y(); i++)
 	{
-		fields[i].buildings.clear();
-		fields[i].vehicles.clear();
-		fields[i].planes.clear();
+		fields[i].removeAll ();
 	}
 }
 

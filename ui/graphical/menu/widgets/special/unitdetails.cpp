@@ -131,7 +131,7 @@ void cUnitDetails::reset ()
 	{
 		// Damage:
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->damage, lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->damage, playerOriginalData->damage);
+		drawRow (rowIndex++, eUnitDataSymbolType::Attack, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getDamage (), lngPack.i18n ("Text~Others~Attack_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getDamage (), playerOriginalData->getDamage ());
 
 		if (!unitObjectCurrentData->explodesOnContact)
 		{
@@ -141,7 +141,7 @@ void cUnitDetails::reset ()
 
 			// Range:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->range, lngPack.i18n ("Text~Others~Range_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->range, playerOriginalData->range);
+			drawRow (rowIndex++, eUnitDataSymbolType::Range, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getRange (), lngPack.i18n ("Text~Others~Range_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getRange (), playerOriginalData->getRange ());
 
 			// Ammo:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO) : nullptr;
@@ -188,17 +188,17 @@ void cUnitDetails::reset ()
 
 	// Armor:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR) : nullptr;
-	drawRow (rowIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->armor, lngPack.i18n ("Text~Others~Armor_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->armor, playerOriginalData->armor);
+	drawRow (rowIndex++, eUnitDataSymbolType::Armor, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getArmor (), lngPack.i18n ("Text~Others~Armor_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getArmor (), playerOriginalData->getArmor ());
 
 	// Hit points:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS) : nullptr;
 	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, playerOriginalData->hitpointsMax);
 
 	// Scan:
-	if (unitObjectCurrentData->scan)
+	if (unitObjectCurrentData->getScan ())
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->scan, lngPack.i18n ("Text~Others~Scan_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->scan, playerOriginalData->scan);
+		drawRow (rowIndex++, eUnitDataSymbolType::Scan, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getScan (), lngPack.i18n ("Text~Others~Scan_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getScan (), playerOriginalData->getScan ());
 	}
 
 	// Speed:

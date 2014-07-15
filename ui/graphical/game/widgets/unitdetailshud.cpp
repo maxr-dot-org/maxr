@@ -124,7 +124,7 @@ void cUnitDetailsHud::reset ()
 				break;
 			}
 
-			drawRow (1, symbolType, data.storageResCur, data.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
+			drawRow (1, symbolType, data.getStoredResources (), data.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
 
 			if (unit->data.ID.isABuilding ())
 			{
@@ -160,7 +160,7 @@ void cUnitDetailsHud::reset ()
 				break;
 			}
 
-			drawRow (1, symbolType, data.storageUnitsCur, data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
+			drawRow (1, symbolType, data.getStoredUnits (), data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));
 		}
 	}
 	else if (data.canAttack && !data.explodesOnContact)

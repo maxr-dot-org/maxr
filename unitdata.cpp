@@ -17,6 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <algorithm>
+
 #include "unitdata.h"
 
 //------------------------------------------------------------------------------
@@ -239,6 +241,32 @@ void sUnitData::setHitpoints (int value)
 }
 
 //------------------------------------------------------------------------------
+int sUnitData::getScan () const
+{
+	return scan;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setScan (int value)
+{
+	std::swap (scan, value);
+	if (scan != value) scanChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getRange () const
+{
+	return range;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setRange (int value)
+{
+	std::swap (range, value);
+	if (range != value) rangeChanged ();
+}
+
+//------------------------------------------------------------------------------
 int sUnitData::getShots () const
 {
 	return shotsCur;
@@ -262,4 +290,58 @@ void sUnitData::setAmmo (int value)
 {
 	std::swap (ammoCur, value);
 	if (ammoCur != value) ammoChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getDamage () const
+{
+	return damage;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setDamage (int value)
+{
+	std::swap (damage, value);
+	if (damage != value) damageChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getArmor () const
+{
+	return armor;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setArmor (int value)
+{
+	std::swap (armor, value);
+	if (armor != value) armorChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getStoredResources () const
+{
+	return storageResCur;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setStoredResources (int value)
+{
+	value = std::max (std::min (value, storageResMax), 0);
+	std::swap (storageResCur, value);
+	if (storageResCur != value) storedResourcesChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getStoredUnits () const
+{
+	return storageUnitsCur;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setStoredUnits (int value)
+{
+	value = std::max (std::min (value, storageUnitsMax), 0);
+	std::swap (storageUnitsCur, value);
+	if (storageUnitsCur != value) storedUnitsChanged ();
 }

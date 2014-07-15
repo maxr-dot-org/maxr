@@ -56,29 +56,21 @@ const int RES_COUNT = 4;
 /** contains all information of a map field */
 class cMapField
 {
-private:
-	friend class cMap;
-	/**the list with all buildings on this field
-	* the top building is always stored at first position */
-	std::vector<cBuilding*> buildings;
-	/** the list with all planes on this field
-	* the top plane is always stored at first position */
-	std::vector<cVehicle*> vehicles;
-	/**the list with all vehicles on this field
-	* the top vehicle is always stored at first position */
-	std::vector<cVehicle*> planes;
-
 public:
+	cMapField ();
 
 	/** returns the top vehicle on this field */
 	cVehicle* getVehicle() const;
 
 	/** returns a Iterator for the planes on this field */
 	cVehicle* getPlane() const;
+
+	/** returns the buildings on this field */
+	const std::vector<cBuilding*>& getBuildings () const;
+	/** returns the vehicles on this field */
+	const std::vector<cVehicle*>& getVehicles () const;
 	/** returns the planes on this field */
 	const std::vector<cVehicle*>& getPlanes () const;
-	/** returns the buildings on this field */
-	const std::vector<cBuilding*>& getBuildings ()const;
 
 	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding() const;
@@ -90,6 +82,47 @@ public:
 	cBuilding* getRubble() const;
 	/** returns a pointer to an expl. mine, if there is one */
 	cBuilding* getMine() const;
+
+	/** Adds the passed building before the given index to the building list of the field */
+	void addBuilding (cBuilding& building, size_t index);
+	/** Adds the passed vehicle before the given index to the vehicle list of the field */
+	void addVehicle (cVehicle& vehicle, size_t index);
+	/** Adds the passed plane before the given index to the plane list of the field */
+	void addPlane (cVehicle& plane, size_t index);
+
+	/** Removes the passed building from the field's building list */
+	void removeBuilding (const cBuilding& building);
+	/** Removes the passed vehicle from the field's vehicle list */
+	void removeVehicle (const cVehicle& vehicle);
+	/** Removes the passed plane from the field's plane list */
+	void removePlane (const cVehicle& plane);
+
+	/** Removed all units from the field */
+	void removeAll ();
+
+	/** Triggered when a building has been added or removed to/from the field */
+	mutable cSignal<void ()> buildingsChanged;
+	/** Triggered when a vehicle has been added or removed to/from the field */
+	mutable cSignal<void ()> vehiclesChanged;
+	/** Triggered when a plane has been added or removed to/from the field */
+	mutable cSignal<void ()> planesChanged;
+	/** Triggered when any unit (building, vehicle or plane) has been added or removed to/from the field */
+	mutable cSignal<void ()> unitsChanged;
+
+private:
+	cMapField (const cMapField& other) MAXR_DELETE_FUNCTION;
+	cMapField& operator=(const cMapField& other) MAXR_DELETE_FUNCTION;
+
+	/**the list with all buildings on this field
+	* the top building is always stored at first position */
+	std::vector<cBuilding*> buildings;
+	/** the list with all planes on this field
+	* the top plane is always stored at first position */
+	std::vector<cVehicle*> vehicles;
+	/**the list with all vehicles on this field
+	* the top vehicle is always stored at first position */
+	std::vector<cVehicle*> planes;
+
 };
 
 struct sTerrain

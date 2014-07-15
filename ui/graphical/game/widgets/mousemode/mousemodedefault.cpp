@@ -35,24 +35,29 @@
 #include "input/mouse/cursor/mousecursorattack.h"
 
 //------------------------------------------------------------------------------
+cMouseModeDefault::cMouseModeDefault (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
+	cMouseMode (map_, unitSelection_, player_)
+{}
+
+//------------------------------------------------------------------------------
 eMouseModeType cMouseModeDefault::getType () const
 {
 	return eMouseModeType::Default;
 }
 
 //------------------------------------------------------------------------------
-void cMouseModeDefault::setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+void cMouseModeDefault::setCursor (cMouse& mouse, const cPosition& mapPosition) const
 {
-	const auto mouseClickAction = selectAction (map, mapPosition, unitSelection, player);
+	const auto mouseClickAction = selectAction (mapPosition);
 
 	switch (mouseClickAction)
 	{
 	case eActionType::Steal:
 		{
 			const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-			if (selectedVehicle)
+			if (selectedVehicle && map)
 			{
-				const auto& field = map.getField (mapPosition);
+				const auto& field = map->getField (mapPosition);
 				const cUnit* unit = field.getVehicle ();
 
 				mouse.setCursor (std::make_unique<cMouseCursorAmount> (eMouseCursorAmountType::Steal, selectedVehicle->calcCommandoChance (unit, true)));
@@ -63,9 +68,9 @@ void cMouseModeDefault::setCursor (cMouse& mouse, const cMap& map, const cPositi
 	case eActionType::Disable:
 		{
 			const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-			if (selectedVehicle)
+			if (selectedVehicle && map)
 			{
-				const auto& field = map.getField (mapPosition);
+				const auto& field = map->getField (mapPosition);
 				const cUnit* unit = field.getVehicle ();
 				if (!unit) unit = field.getTopBuilding ();
 
@@ -77,9 +82,9 @@ void cMouseModeDefault::setCursor (cMouse& mouse, const cMap& map, const cPositi
 	case eActionType::Attack:
 		{
 			const auto selectedUnit = unitSelection.getSelectedUnit ();
-			if (selectedUnit != nullptr)
+			if (selectedUnit && map)
 			{
-				mouse.setCursor (std::make_unique<cMouseCursorAttack> (*selectedUnit, mapPosition, map));
+				mouse.setCursor (std::make_unique<cMouseCursorAttack> (*selectedUnit, mapPosition, *map));
 			}
 		}
 		break;
@@ -103,9 +108,9 @@ void cMouseModeDefault::setCursor (cMouse& mouse, const cMap& map, const cPositi
 }
 
 //------------------------------------------------------------------------------
-std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cPosition& mapPosition) const
 {
-	const auto mouseClickAction = selectAction (map, mapPosition, unitSelection, player);
+	const auto mouseClickAction = selectAction (mapPosition);
 
 	switch (mouseClickAction)
 	{
@@ -136,29 +141,31 @@ std::unique_ptr<cMouseAction> cMouseModeDefault::getMouseAction (const cMap& map
 }
 
 //------------------------------------------------------------------------------
-cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const
+cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition& mapPosition) const
 {
-	const auto& field = map.getField (mapPosition);
+	if (!map) return eActionType::Unknown;
+
+	const auto& field = map->getField (mapPosition);
 
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
 	// Infiltrators: auto selected disable vs. vehicle/building
-	if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, map, false))
+	if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, false))
 	{
 		return eActionType::Disable;
 	}
 	// Infiltrators: auto selected steal vs. vehicle/building
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, map, true))
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, true))
 	{
 		return eActionType::Steal;
 	}
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canAttackObjectAt (mapPosition, map, false, false))
+	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canAttackObjectAt (mapPosition, *map, false, false))
 	{
 		return eActionType::Attack;
 	}
-	else if (selectedBuilding && selectedBuilding->owner == player && selectedBuilding->canAttackObjectAt (mapPosition, map))
+	else if (selectedBuilding && selectedBuilding->owner == player && selectedBuilding->canAttackObjectAt (mapPosition, *map))
 	{
 		return eActionType::Attack;
 	}
@@ -224,7 +231,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 			{
 				return eActionType::None;
 			}
-			else if (map.possiblePlace (*selectedVehicle, mapPosition, true))
+			else if (map->possiblePlace (*selectedVehicle, mapPosition, true))
 			{
 				return eActionType::Move;
 			}
@@ -237,7 +244,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 		{
 			if (((selectedVehicle->isUnitBuildingABuilding () && selectedVehicle->getBuildTurns() == 0) ||
 				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns () == 0)) &&
-				map.possiblePlace (*selectedVehicle, mapPosition) && selectedVehicle->isNextTo (mapPosition))
+				map->possiblePlace (*selectedVehicle, mapPosition) && selectedVehicle->isNextTo (mapPosition))
 			{
 				return eActionType::Move;
 			}
@@ -252,7 +259,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 		!selectedBuilding->isUnitWorking () &&
 		selectedBuilding->BuildList[0].metall_remaining <= 0)
 	{
-		if (selectedBuilding->canExitTo (mapPosition, map, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
+		if (selectedBuilding->canExitTo (mapPosition, *map, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
 		{
 			return eActionType::ActivateFinished;
 		}
@@ -263,4 +270,75 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cMap& map,
 	}
 
 	return eActionType::Unknown;
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeDefault::establishUnitSelectionConnections ()
+{
+	const auto selectedUnit = unitSelection.getSelectedUnit ();
+
+	if (selectedUnit)
+	{
+		// TODO: react on
+		// - build list changes
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.rangeChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.damageChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.ammoChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->data.rangeChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->attackingChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->beenAttackedChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->clearingChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->buildingChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->workingChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->disabledChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+	}
+
+	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
+
+	if (selectedVehicle)
+	{
+		assert (selectedVehicle == selectedUnit);
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->clientMoveJobChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, [this](){ needRefresh (); });
+		selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, [this](){ needRefresh (); });
+	}
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeDefault::establishMapFieldConnections (const cMapField& field)
+{
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field](){ updateFieldUnitConnections (field); needRefresh (); });
+
+	updateFieldUnitConnections (field);
+}
+
+//------------------------------------------------------------------------------
+void cMouseModeDefault::updateFieldUnitConnections (const cMapField& field)
+{
+	mapFieldUnitsSignalConnectionManager.disconnectAll ();
+
+	auto plane = field.getPlane ();
+	if (plane)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (plane->flightHeightChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->data.hitpointsChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->disabledChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (plane->data.storedUnitsChanged, [this](){ needRefresh (); });
+	}
+	auto vehicle = field.getVehicle ();
+	if (vehicle)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.storedUnitsChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->disabledChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (vehicle->data.hitpointsChanged, [this](){ needRefresh (); });
+	}
+	auto building = field.getBuilding ();
+	if (building)
+	{
+		mapFieldUnitsSignalConnectionManager.connect (building->data.storedUnitsChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (building->disabledChanged, [this](){ needRefresh (); });
+		mapFieldUnitsSignalConnectionManager.connect (building->data.hitpointsChanged, [this](){ needRefresh (); });
+	}
 }

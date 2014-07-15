@@ -623,11 +623,11 @@ void cSavegame::loadUpgrade (XMLElement* upgradeNode, sUnitData* data)
 	if (XMLElement* const element = upgradeNode->FirstChildElement ("HitPoints")) data->hitpointsMax = element->IntAttribute ("num");
 	if (XMLElement* const element = upgradeNode->FirstChildElement ("Shots"))     data->shotsMax = element->IntAttribute ("num");
 	if (XMLElement* const element = upgradeNode->FirstChildElement ("Speed"))     data->speedMax = element->IntAttribute ("num");
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Armor"))     data->armor = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Armor"))     data->setArmor(element->IntAttribute ("num"));
 	if (XMLElement* const element = upgradeNode->FirstChildElement ("Costs"))     data->buildCosts = element->IntAttribute ("num");
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Damage"))    data->damage = element->IntAttribute ("num");
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Range"))     data->range = element->IntAttribute ("num");
-	if (XMLElement* const element = upgradeNode->FirstChildElement ("Scan"))      data->scan = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Damage"))    data->setDamage(element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Range"))     data->setRange(element->IntAttribute ("num"));
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Scan"))      data->setScan(element->IntAttribute ("num"));
 }
 
 //--------------------------------------------------------------------------
@@ -850,7 +850,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			cVehicle* storingVehicle = server.getVehicleFromID (storedInID);
             if (!storingVehicle) return;
 
-            storingVehicle->data.storageUnitsCur--;
+			storingVehicle->data.setStoredUnits (storingVehicle->data.getStoredUnits ()-1);
             storingVehicle->storeVehicle (vehicle, *server.Map);
 		}
 		else
@@ -858,7 +858,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			cBuilding* storingBuilding = server.getBuildingFromID (storedInID);
             if (!storingBuilding) return;
 
-            storingBuilding->data.storageUnitsCur--;
+			storingBuilding->data.setStoredUnits (storingBuilding->data.getStoredUnits ()-1);
             storingBuilding->storeVehicle (vehicle, *server.Map);
 		}
 	}
@@ -971,23 +971,23 @@ void cSavegame::loadUnitValues (XMLElement* unitNode, sUnitData* Data)
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Ammo"))      Element->QueryIntAttribute ("num", &Data->ammoMax);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Speed"))     Element->QueryIntAttribute ("num", &Data->speedMax);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Shots"))     Element->QueryIntAttribute ("num", &Data->shotsMax);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Armor"))         Element->QueryIntAttribute ("num", &Data->armor);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage"))        Element->QueryIntAttribute ("num", &Data->damage);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))         Element->QueryIntAttribute ("num", &Data->range);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))          Element->QueryIntAttribute ("num", &Data->scan);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Armor"))         Data->setArmor (Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage"))        Data->setDamage (Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))         Data->setRange (Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))          Data->setScan (Element->IntAttribute ("num"));
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Hitpoints")) Data->setHitpoints(Element->IntAttribute ("num"));
 	else Data->setHitpoints(Data->hitpointsMax);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo")) Data->setAmmo(Element->IntAttribute ("num"));
 	else Data->setAmmo(Data->ammoMax);
 
-	if (XMLElement* const Element = unitNode->FirstChildElement ("ResCargo"))  Element->QueryIntAttribute ("num", &Data->storageResCur);
-	if (XMLElement* const Element = unitNode->FirstChildElement ("UnitCargo")) Element->QueryIntAttribute ("num", &Data->storageUnitsCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("ResCargo"))  Data->setStoredResources(Element->IntAttribute ("num"));
+	if (XMLElement* const Element = unitNode->FirstChildElement ("UnitCargo")) Data->setStoredUnits(Element->IntAttribute ("num"));
 	// look for "Cargo" to be savegamecompatible
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Cargo"))
 	{
-		Element->QueryIntAttribute ("num", &Data->storageResCur);
-		Data->storageUnitsCur = Data->storageResCur;
+		Data->setStoredResources (Element->IntAttribute ("num"));
+		Data->setStoredUnits (Data->getStoredResources ());
 	}
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Speed")) Element->QueryIntAttribute ("num", &Data->speedCur);
@@ -1035,10 +1035,10 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	Data->name = unitNode->FirstChildElement ("Name")->Attribute ("string");
 
 	unitNode->FirstChildElement ("Hitpoints")->QueryIntAttribute ("num", &Data->hitpointsMax);
-	unitNode->FirstChildElement ("Armor")->QueryIntAttribute ("num", &Data->armor);
+	Data->setArmor(unitNode->FirstChildElement ("Armor")->IntAttribute ("num"));
 	unitNode->FirstChildElement ("Built_Costs")->QueryIntAttribute ("num", &Data->buildCosts);
 
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))     Element->QueryIntAttribute ("num", &Data->scan);     else Data->scan     = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))     Data->setScan (Element->IntAttribute ("num"));      else Data->setScan (0);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Movement")) Element->QueryIntAttribute ("num", &Data->speedMax); else Data->speedMax = 0;
 	Data->speedMax *= 4;
 
@@ -1055,8 +1055,8 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	}
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Shots"))  Element->QueryIntAttribute ("num", &Data->shotsMax); else Data->shotsMax = 0;
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo"))   Element->QueryIntAttribute ("num", &Data->ammoMax);  else Data->ammoMax  = 0;
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))  Element->QueryIntAttribute ("num", &Data->range);    else Data->range    = 0;
-	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage")) Element->QueryIntAttribute ("num", &Data->damage);   else Data->damage   = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))  Data->setRange (Element->IntAttribute ("num"));     else Data->setRange (0);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage")) Data->setDamage (Element->IntAttribute ("num"));     else Data->setDamage(0);
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Attack"))
 	{
 		Element->QueryIntAttribute ("num", &tmpInt);
@@ -1429,11 +1429,11 @@ void cSavegame::writeUpgrade (XMLElement* upgradesNode, int upgradenumber, const
 	if (data.hitpointsMax != originaldata.hitpointsMax) addAttributeElement (upgradeNode, "HitPoints", "num", iToStr (data.hitpointsMax));
 	if (data.shotsMax != originaldata.shotsMax) addAttributeElement (upgradeNode, "Shots", "num", iToStr (data.shotsMax));
 	if (data.speedMax != originaldata.speedMax) addAttributeElement (upgradeNode, "Speed", "num", iToStr (data.speedMax));
-	if (data.armor != originaldata.armor) addAttributeElement (upgradeNode, "Armor", "num", iToStr (data.armor));
+	if (data.getArmor () != originaldata.getArmor ()) addAttributeElement (upgradeNode, "Armor", "num", iToStr (data.getArmor ()));
 	if (data.buildCosts != originaldata.buildCosts) addAttributeElement (upgradeNode, "Costs", "num", iToStr (data.buildCosts));
-	if (data.damage != originaldata.damage) addAttributeElement (upgradeNode, "Damage", "num", iToStr (data.damage));
-	if (data.range != originaldata.range) addAttributeElement (upgradeNode, "Range", "num", iToStr (data.range));
-	if (data.scan != originaldata.scan) addAttributeElement (upgradeNode, "Scan", "num", iToStr (data.scan));
+	if (data.getDamage () != originaldata.getDamage ()) addAttributeElement (upgradeNode, "Damage", "num", iToStr (data.getDamage ()));
+	if (data.getRange () != originaldata.getRange ()) addAttributeElement (upgradeNode, "Range", "num", iToStr (data.getRange ()));
+	if (data.getScan () != originaldata.getScan ()) addAttributeElement (upgradeNode, "Scan", "num", iToStr (data.getScan ()));
 }
 
 //--------------------------------------------------------------------------
@@ -1667,8 +1667,8 @@ void cSavegame::writeUnitValues (XMLElement* unitNode, const sUnitData& Data, co
 	if (Data.getHitpoints () != Data.hitpointsMax) addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data.getHitpoints ()));
 	if (Data.getAmmo () != Data.ammoMax) addAttributeElement (unitNode, "Ammo", "num", iToStr (Data.getAmmo ()));
 
-	if (Data.storageResCur > 0) addAttributeElement (unitNode, "ResCargo", "num", iToStr (Data.storageResCur));
-	if (Data.storageUnitsCur > 0) addAttributeElement (unitNode, "UnitCargo", "num", iToStr (Data.storageUnitsCur));
+	if (Data.getStoredResources () > 0) addAttributeElement (unitNode, "ResCargo", "num", iToStr (Data.getStoredResources ()));
+	if (Data.getStoredUnits () > 0) addAttributeElement (unitNode, "UnitCargo", "num", iToStr (Data.getStoredUnits ()));
 
 	if (Data.speedCur != Data.speedMax) addAttributeElement (unitNode, "Speed", "num", iToStr (Data.speedCur));
 	if (Data.getShots () != Data.shotsMax) addAttributeElement (unitNode, "Shots", "num", iToStr (Data.getShots ()));
@@ -1682,10 +1682,10 @@ void cSavegame::writeUnitValues (XMLElement* unitNode, const sUnitData& Data, co
 	if (Data.speedMax != OwnerData.speedMax) addAttributeElement (unitNode, "Max_Speed", "num", iToStr (Data.speedMax));
 	if (Data.shotsMax != OwnerData.shotsMax) addAttributeElement (unitNode, "Max_Shots", "num", iToStr (Data.shotsMax));
 
-	if (Data.armor != OwnerData.armor) addAttributeElement (unitNode, "Armor", "num", iToStr (Data.armor));
-	if (Data.damage != OwnerData.damage) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.damage));
-	if (Data.range != OwnerData.range) addAttributeElement (unitNode, "Range", "num", iToStr (Data.range));
-	if (Data.scan != OwnerData.scan) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.scan));
+	if (Data.getArmor () != OwnerData.getArmor ()) addAttributeElement (unitNode, "Armor", "num", iToStr (Data.getArmor ()));
+	if (Data.getDamage () != OwnerData.getDamage ()) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.getDamage ()));
+	if (Data.getRange () != OwnerData.getRange ()) addAttributeElement (unitNode, "Range", "num", iToStr (Data.getRange ()));
+	if (Data.getScan () != OwnerData.getScan ()) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.getScan ()));
 }
 
 //--------------------------------------------------------------------------
@@ -1703,18 +1703,18 @@ void cSavegame::writeStandardUnitValues (const sUnitData& Data, int unitnum)
 	addAttributeElement (unitNode, "Name", "string", Data.name);
 
 	addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data.hitpointsMax));
-	addAttributeElement (unitNode, "Armor", "num", iToStr (Data.armor));
+	addAttributeElement (unitNode, "Armor", "num", iToStr (Data.getArmor ()));
 	addAttributeElement (unitNode, "Built_Costs", "num", iToStr (Data.buildCosts));
 
-	if (Data.scan > 0) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.scan));
+	if (Data.getScan () > 0) addAttributeElement (unitNode, "Scan", "num", iToStr (Data.getScan ()));
 
 	if (Data.speedMax > 0) addAttributeElement (unitNode, "Movement", "num", iToStr (Data.speedMax / 4));
 
 	if (Data.muzzleType > 0) addAttributeElement (unitNode, "MuzzleType", "num", iToStr (Data.muzzleType));
 	if (Data.shotsMax > 0) addAttributeElement (unitNode, "Shots", "num", iToStr (Data.shotsMax));
 	if (Data.ammoMax > 0) addAttributeElement (unitNode, "Ammo", "num", iToStr (Data.ammoMax));
-	if (Data.range > 0) addAttributeElement (unitNode, "Range", "num", iToStr (Data.range));
-	if (Data.damage > 0) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.damage));
+	if (Data.getRange () > 0) addAttributeElement (unitNode, "Range", "num", iToStr (Data.getRange ()));
+	if (Data.getDamage () > 0) addAttributeElement (unitNode, "Damage", "num", iToStr (Data.getDamage ()));
 	if (Data.canAttack != TERRAIN_NONE) addAttributeElement (unitNode, "Can_Attack", "num", iToStr (Data.canAttack));
 
 	if (!Data.canBuild.empty()) addAttributeElement (unitNode, "Can_Build", "string", Data.canBuild);

@@ -29,7 +29,7 @@ bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cM
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 
-	if (selectedVehicle && !selectedVehicle->moving && !selectedVehicle->isAttacking ())
+	if (selectedVehicle && !selectedVehicle->isUnitMoving () && !selectedVehicle->isAttacking ())
 	{
 		if (selectedVehicle->isUnitBuildingABuilding ())
 		{

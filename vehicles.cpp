@@ -76,14 +76,13 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	ditherX = 0;
 	ditherY = 0;
 	StartUp = 0;
-	FlightHigh = 0;
+	flightHeight = 0;
 	WalkFrame = 0;
 	buildBigSavedPosition = 0;
 	data.setHitpoints(data.hitpointsMax);
 	data.setAmmo(data.ammoMax);
-	ClientMoveJob = NULL;
-	ServerMoveJob = NULL;
-	autoMJob = NULL;
+	clientMoveJob = nullptr;
+	ServerMoveJob = nullptr;
 	hasAutoMoveJob = false;
 	moving = false;
 	MoveJobActive = false;
@@ -100,23 +99,23 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	buildingTurnsChanged.connect ([&](){ statusChanged (); });
 	buildingTypeChanged.connect ([&](){ statusChanged (); });
 	commandoRankChanged.connect ([&](){ statusChanged (); });
+	clientMoveJobChanged.connect ([&](){ statusChanged (); });
+	autoMoveJobChanged.connect ([&](){ statusChanged (); });
 }
 
 //-----------------------------------------------------------------------------
 cVehicle::~cVehicle()
 {
-	if (ClientMoveJob)
+	if (clientMoveJob)
 	{
-		ClientMoveJob->release();
-		ClientMoveJob->Vehicle = NULL;
+		clientMoveJob->release ();
+		clientMoveJob->Vehicle = NULL;
 	}
 	if (ServerMoveJob)
 	{
 		ServerMoveJob->release();
 		ServerMoveJob->Vehicle = NULL;
 	}
-
-	delete autoMJob;
 }
 
 void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
@@ -217,7 +216,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 	SDL_Rect tmp = dest;
 
 	// draw shadow
-	if (FlightHigh > 0)
+	if (getFlightHeight () > 0)
 	{
 		// TODO: implement
 		//int high = ((int) ((int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
@@ -320,10 +319,8 @@ bool cVehicle::refreshData_Build (cServer& server)
 {
 	if (isUnitBuildingABuilding () == false || getBuildTurns () == 0) return false;
 
-	data.storageResCur -= (getBuildCosts () / getBuildTurns ());
+	data.setStoredResources(data.getStoredResources() - (getBuildCosts () / getBuildTurns ()));
 	setBuildCosts(getBuildCosts() - (getBuildCosts () / getBuildTurns ()));
-
-	data.storageResCur = std::max (this->data.storageResCur, 0);
 
 	setBuildTurns(getBuildTurns()-1);
 	if (getBuildTurns () != 0) return true;
@@ -435,8 +432,7 @@ bool cVehicle::refreshData_Clear (cServer& server)
 			sendStopClear (server, *this, cPosition (-1, -1), *seenByPlayerList[i]);
 		}
 	}
-	data.storageResCur += Rubble->RubbleValue;
-	data.storageResCur = std::min (data.storageResMax, data.storageResCur);
+	data.setStoredResources (data.getStoredResources () + Rubble->RubbleValue);
 	server.deleteRubble (Rubble);
 
 	return true;
@@ -483,7 +479,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 		sText += iToStr (getDisabledTurns()) + ")";
 		return sText;
 	}
-	else if (autoMJob)
+	else if (autoMoveJob)
 		return lngPack.i18n ("Text~Comp~Surveying");
 	else if (isUnitBuildingABuilding ())
 	{
@@ -546,9 +542,9 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 	// generate other infos for normall non-unit-related-events and infiltartors
 	string sTmp;
 	{
-		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
+		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
 			sTmp = lngPack.i18n ("Text~Comp~MovingToAttack");
-		else if (ClientMoveJob)
+		else if (clientMoveJob)
 			sTmp = lngPack.i18n ("Text~Comp~Moving");
 		else if (isAttacking())
 			sTmp = lngPack.i18n ("Text~Comp~AttackingStatusStr");
@@ -604,7 +600,7 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 	turboBuildTurns[2] = 0;
 
 	// step 1x
-	if (data.storageResCur >= buildCosts)
+	if (data.getStoredResources () >= buildCosts)
 	{
 		turboBuildCosts[0] = buildCosts;
 		// prevent division by zero
@@ -618,7 +614,7 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 	int rounds = turboBuildTurns[0];
 	int costs = turboBuildCosts[0];
 
-	while (a >= 4 && data.storageResCur >= costs + 4)
+	while (a >= 4 && data.getStoredResources () >= costs + 4)
 	{
 		rounds--;
 		costs += 4;
@@ -639,7 +635,7 @@ void cVehicle::calcTurboBuild (std::array<int, 3>& turboBuildTurns, std::array<i
 	while (a >= 10 && costs < data.storageResMax - 2)
 	{
 		int inc = 24 - min (16, a);
-		if (costs + inc > data.storageResCur) break;
+		if (costs + inc > data.getStoredResources ()) break;
 
 		rounds--;
 		costs += inc;
@@ -687,11 +683,11 @@ void cVehicle::makeReport (cSoundManager& soundManager)
 	else if (data.getHitpoints () > data.hitpointsMax / 2)
 	{
 		// Status green
-		if (ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
+		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAttacking)));
 		}
-		else if (autoMJob)
+		else if (autoMoveJob)
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}
@@ -1009,7 +1005,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->isUnitLoaded ()) return false;
 
-	if (data.storageUnitsCur >= data.storageUnitsMax) return false;
+	if (data.getStoredUnits () >= data.storageUnitsMax) return false;
 
 	if (checkPosition && !isNextTo (Vehicle->getPosition())) return false;
 
@@ -1017,7 +1013,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (!Contains (data.storeUnitsTypes, Vehicle->data.isStorageType)) return false;
 
-	if (Vehicle->ClientMoveJob && (Vehicle->moving || Vehicle->isAttacking() || Vehicle->MoveJobActive)) return false;
+	if (Vehicle->clientMoveJob && (Vehicle->moving || Vehicle->isAttacking () || Vehicle->MoveJobActive)) return false;
 
 	if (Vehicle->owner != owner || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
 
@@ -1040,7 +1036,7 @@ void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 	vehicle.setLoaded (true);
 
 	storedUnits.push_back (&vehicle);
-	data.storageUnitsCur++;
+	data.setStoredUnits (data.getStoredUnits ()+1);
 
 	owner->doScan();
 }
@@ -1052,7 +1048,7 @@ void cVehicle::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap
 {
 	Remove (storedUnits, &vehicle);
 
-	data.storageUnitsCur--;
+	data.setStoredUnits (data.getStoredUnits ()-1);
 
 	map.addVehicle (vehicle, position);
 
@@ -1085,13 +1081,13 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 	if (unit == 0)
 		return false;
 
-	if (data.storageResCur <= 0)
+	if (data.getStoredResources () <= 0)
 		return false;
 
 	if (unit->isNextTo (getPosition()) == false)
 		return false;
 
-	if (unit->isAVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0)
+	if (unit->isAVehicle () && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->getFlightHeight () > 0)
 		return false;
 
 	switch (supplyType)
@@ -1118,7 +1114,7 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 //-----------------------------------------------------------------------------
 bool cVehicle::layMine (cServer& server)
 {
-	if (data.storageResCur <= 0) return false;
+	if (data.getStoredResources () <= 0) return false;
 
 	const cMap& map = *server.Map;
 	if (data.factorSea > 0 && data.factorGround == 0)
@@ -1131,9 +1127,9 @@ bool cVehicle::layMine (cServer& server)
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), getPosition(), this)) return false;
 		server.addBuilding (getPosition(), UnitsData.specialIDLandMine, owner, false);
 	}
-	data.storageResCur--;
+	data.setStoredResources (data.getStoredResources ()-1);
 
-	if (data.storageResCur <= 0) setLayMines(false);
+	if (data.getStoredResources () <= 0) setLayMines (false);
 
 	return true;
 }
@@ -1144,14 +1140,14 @@ bool cVehicle::clearMine (cServer& server)
 	const cMap& map = *server.Map;
 	cBuilding* Mine = map.getField(getPosition()).getMine();
 
-	if (!Mine || Mine->owner != owner || data.storageResCur >= data.storageResMax) return false;
+	if (!Mine || Mine->owner != owner || data.getStoredResources () >= data.storageResMax) return false;
 	if (Mine->data.factorGround > 0 && data.factorGround == 0) return false;
 	if (Mine->data.factorSea > 0 && data.factorSea == 0) return false;
 
 	server.deleteUnit (Mine);
-	data.storageResCur++;
+	data.setStoredResources (data.getStoredResources ()+1);
 
-	if (data.storageResCur >= data.storageResMax) setClearMines(false);
+	if (data.getStoredResources () >= data.storageResMax) setClearMines (false);
 
 	return true;
 }
@@ -1192,7 +1188,7 @@ bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
 	if (steal == false && unit->data.canBeDisabled == false) return false;
 	if (steal && unit->storedUnits.empty () == false) return false;
 	if (unit->owner == owner) return false;
-	if (unit->isAVehicle () && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
+	if (unit->isAVehicle () && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->getFlightHeight () > 0) return false;
 
 	return true;
 }
@@ -1376,10 +1372,10 @@ void cVehicle::makeDetection (cServer& server)
 	if (data.canDetectStealthOn == false) return;
 
 	cMap& map = *server.Map;
-	const int minx = std::max (getPosition().x() - data.scan, 0);
-	const int maxx = std::min (getPosition().x() + data.scan, map.getSize().x() - 1);
-	const int miny = std::max (getPosition().y() - data.scan, 0);
-	const int maxy = std::min (getPosition().y() + data.scan, map.getSize().x() - 1);
+	const int minx = std::max (getPosition ().x () - data.getScan (), 0);
+	const int maxx = std::min (getPosition ().x () + data.getScan (), map.getSize ().x () - 1);
+	const int miny = std::max (getPosition ().y () - data.getScan (), 0);
+	const int maxy = std::min (getPosition ().y () + data.getScan (), map.getSize ().x () - 1);
 
 	for (int x = minx; x <= maxx; ++x)
 	{
@@ -1566,13 +1562,13 @@ cVehicle* cVehicle::getContainerVehicle()
 //-----------------------------------------------------------------------------
 bool cVehicle::canBeStoppedViaUnitMenu() const
 {
-	return (ClientMoveJob != 0 || (isUnitBuildingABuilding () && getBuildTurns () > 0) || (isUnitClearing () && getClearingTurns () > 0));
+	return (clientMoveJob != 0 || (isUnitBuildingABuilding () && getBuildTurns () > 0) || (isUnitClearing () && getClearingTurns () > 0));
 }
 
 //-----------------------------------------------------------------------------
 void cVehicle::executeStopCommand (const cClient& client) const
 {
-	if (ClientMoveJob != 0)
+	if (clientMoveJob != 0)
 		sendWantStopMove (client, iID);
 	else if (isUnitBuildingABuilding())
 		sendWantStopBuilding (client, iID);
@@ -1585,14 +1581,13 @@ void cVehicle::executeAutoMoveJobCommand (cClient& client)
 {
 	if (data.canSurvey == false)
 		return;
-	if (autoMJob == 0)
+	if (!autoMoveJob)
 	{
-		autoMJob = new cAutoMJob (client, this);
+		autoMoveJob = std::make_unique<cAutoMJob> (client, this);
 	}
 	else
 	{
-		delete autoMJob;
-		autoMJob = 0;
+		autoMoveJob = nullptr;
 	}
 }
 
@@ -1618,7 +1613,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (data.factorAir == 0) return true;
 
-	if (moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking()) return false;     //vehicle busy?
+	if (moving || clientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking ()) return false;     //vehicle busy?
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField(getPosition()).getBuildings();
@@ -1635,17 +1630,24 @@ bool cVehicle::canLand (const cMap& map) const
 	for (std::vector<cVehicle*>::const_iterator it = v.begin(); it != v.end(); ++it)
 	{
 		const cVehicle& vehicle = **it;
-		if (vehicle.FlightHigh < 64 && vehicle.iID != iID)
+		if (vehicle.getFlightHeight () < 64 && vehicle.iID != iID)
 			return false;
 	}
 
 	// returning true before checking owner, because a stolen vehicle
 	// can stay on an enemy landing pad until it is moved
-	if (FlightHigh == 0) return true;
+	if (getFlightHeight () == 0) return true;
 
 	if ((*b_it)->owner != owner) return false;
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setMoving (bool value)
+{
+	std::swap (moving, value);
+	if (value != moving) movingChanged ();
 }
 
 //-----------------------------------------------------------------------------
@@ -1777,4 +1779,56 @@ void cVehicle::setBuildTurnsStart (int value)
 {
 	std::swap (buildTurnsStart, value);
 	//if (value != buildTurnsStart) event ();
+}
+
+//-----------------------------------------------------------------------------
+int cVehicle::getFlightHeight () const
+{
+	return flightHeight;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setFlightHeight (int value)
+{
+	value = std::min (std::max (value, 0), 64);
+	std::swap (flightHeight, value);
+	if (flightHeight != value) flightHeightChanged;
+}
+
+//-----------------------------------------------------------------------------
+cClientMoveJob* cVehicle::getClientMoveJob ()
+{
+	return clientMoveJob;
+}
+
+//-----------------------------------------------------------------------------
+const cClientMoveJob* cVehicle::getClientMoveJob () const
+{
+	return clientMoveJob;
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setClientMoveJob (cClientMoveJob* clientMoveJob_)
+{
+	std::swap (clientMoveJob, clientMoveJob_);
+	if (clientMoveJob != clientMoveJob_) clientMoveJobChanged ();
+}
+
+//-----------------------------------------------------------------------------
+cAutoMJob* cVehicle::getAutoMoveJob ()
+{
+	return autoMoveJob.get();
+}
+
+//-----------------------------------------------------------------------------
+const cAutoMJob* cVehicle::getAutoMoveJob () const
+{
+	return autoMoveJob.get();
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::setAutoMoveJob (std::unique_ptr<cAutoMJob> autoMoveJob_)
+{
+	std::swap (autoMoveJob, autoMoveJob_);
+	if (autoMoveJob != autoMoveJob_) autoMoveJobChanged ();
 }

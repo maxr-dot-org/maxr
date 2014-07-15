@@ -227,7 +227,7 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 	std::string unitNameString;
 	if (dynamicMap && (!player || player->canSeeAt (tilePosition)))
 	{
-		const auto field = dynamicMap->getField (tilePosition);
+		const auto& field = dynamicMap->getField (tilePosition);
 
 		cUnit* unit = nullptr;
 		if (field.getVehicle () != nullptr) unit = field.getVehicle ();
@@ -747,7 +747,7 @@ void cGameGui::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (gameMap->triggeredLoadAt, [&](const cUnit& unit, const cPosition& position)
 	{
-		const auto field = client.getMap ()->getField (position);
+		const auto& field = client.getMap ()->getField (position);
 		auto overVehicle = field.getVehicle ();
 		auto overPlane = field.getPlane ();
 		if (unit.isAVehicle ())
@@ -1074,7 +1074,7 @@ void cGameGui::connectToClient (cClient& client)
 	});
 	clientSignalConnectionManager.connect (client.moveJobBlocked, [&](const cVehicle& vehicle)
 	{
-		if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && !vehicle.autoMJob)
+		if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && !vehicle.getAutoMoveJob())
 		{
 			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
 		}
@@ -1086,9 +1086,9 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 {
 	moveJobSignalConnectionManager.disconnectAll ();
 
-	if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && vehicle.ClientMoveJob)
+	if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle () && vehicle.getClientMoveJob ())
 	{
-		auto& moveJob = *vehicle.ClientMoveJob;
+		auto& moveJob = *vehicle.getClientMoveJob ();
 
 		moveJobSignalConnectionManager.connect (moveJob.activated, [&](const cVehicle& vehicle)
 		{
@@ -1126,10 +1126,10 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle ())
 			{
-				if (!vehicle.ClientMoveJob) return;
+				if (!vehicle.getClientMoveJob ()) return;
 
-				bool wasWater = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->position);
-				bool water = dynamicMap->isWater (vehicle.ClientMoveJob->Waypoints->next->position);
+				bool wasWater = dynamicMap->isWater (vehicle.getClientMoveJob ()->Waypoints->position);
+				bool water = dynamicMap->isWater (vehicle.getClientMoveJob ()->Waypoints->next->position);
 
 				if (wasWater != water)
 				{

@@ -23,6 +23,8 @@
 #include <memory>
 
 #include "ui/graphical/game/widgets/mousemode/mousemodetype.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cMouse;
 class cMap;
@@ -31,15 +33,42 @@ class cGameMapWidget;
 class cUnitSelection;
 class cMouseAction;
 class cPlayer;
+class cMapField;
 
 class cMouseMode
 {
 public:
+	cMouseMode (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_);
+	virtual ~cMouseMode ();
+
+	void setMap (const cMap* map_);
+	void setPlayer (const cPlayer* player_);
+
+	void handleMapTilePositionChanged (const cPosition& mapPosition);
+
 	virtual eMouseModeType getType () const = 0;
 
-	virtual void setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const = 0;
+	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const = 0;
 
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const = 0;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const = 0;
+
+	mutable cSignal<void ()> needRefresh;
+protected:
+	cSignalConnectionManager selectedUnitSignalConnectionManager;
+	cSignalConnectionManager mapFieldSignalConnectionManager;
+	cSignalConnectionManager mapFieldUnitsSignalConnectionManager;
+
+	const cMap* map;
+	const cUnitSelection& unitSelection;
+	const cPlayer* player;
+
+	virtual void establishUnitSelectionConnections ();
+	virtual void establishMapFieldConnections (const cMapField& field);
+
+private:
+	cSignalConnectionManager signalConnectionManager;
+
+	void updateSelectedUnitConnections ();
 };
 
 #endif // ui_graphical_game_widgets_mousemode_mousemodeH

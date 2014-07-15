@@ -37,7 +37,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	owner = vehicle.owner;
 	isBuilding = vehicle.isUnitBuildingABuilding ();
 	isClearing = vehicle.isUnitClearing ();
-	flightHigh = vehicle.FlightHigh;
+	flightHigh = vehicle.getFlightHeight ();
 	big = vehicle.data.isBig;
 	id = vehicle.data.ID;
 	if (vehicle.data.animationMovement)
@@ -69,7 +69,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	//determine needed size of the surface
 	int height = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->h * zoom, vehicle.uiData->shw_org[vehicle.dir]->h * zoom);
 	int width  = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->w * zoom, vehicle.uiData->shw_org[vehicle.dir]->w * zoom);
-	if (vehicle.FlightHigh > 0)
+	if (vehicle.getFlightHeight () > 0)
 	{
 		//int shwOff = ((int) (gameGUI.getTileSize() * (vehicle.FlightHigh / 64.0f)));
 		//height += shwOff;
@@ -198,7 +198,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		if (entry.isBuilding != vehicle.isUnitBuildingABuilding ()) continue;
 		if (entry.isClearing != vehicle.isUnitClearing ()) continue;
 
-		if (entry.flightHigh != vehicle.FlightHigh) continue;
+		if (entry.flightHigh != vehicle.getFlightHeight ()) continue;
 		if (entry.dir != vehicle.dir) continue;
 
 		if (vehicle.data.animationMovement)
@@ -344,7 +344,7 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 		return false;
 	}
 
-	if (vehicle.FlightHigh > 0 && vehicle.FlightHigh < 64)
+	if (vehicle.getFlightHeight () > 0 && vehicle.getFlightHeight () < 64)
 	{
 		notCached++;
 		return false;

@@ -22,23 +22,29 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/game/widgets/mousemode/mousemode.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cMouseModeActivateLoaded : public cMouseMode
 {
 public:
-	cMouseModeActivateLoaded (int vehicleToActivateIndex);
+	cMouseModeActivateLoaded (const cMap* map, const cUnitSelection& unitSelection, const cPlayer* player, int vehicleToActivateIndex);
 
 	virtual eMouseModeType getType () const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void setCursor (cMouse& mouse, const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual void setCursor (cMouse& mouse, const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual std::unique_ptr<cMouseAction> getMouseAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection, const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 
 	size_t getVehicleToActivateIndex () const;
+
+protected:
+	virtual void establishUnitSelectionConnections () MAXR_OVERRIDE_FUNCTION;
+	virtual void establishMapFieldConnections (const cMapField& field) MAXR_OVERRIDE_FUNCTION;
+
 private:
 	int vehicleToActivateIndex;
 
-	bool canExecuteAction (const cMap& map, const cPosition& mapPosition, const cUnitSelection& unitSelection) const;
+	bool canExecuteAction (const cPosition& mapPosition) const;
 };
 
 #endif // ui_graphical_game_widgets_mousemode_mousemodeactivateloadedH
