@@ -1510,16 +1510,6 @@ void cBuilding::addBuildListItem (cBuildListItem item)
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::clearBuildList ()
-{
-	buildList.clear ();
-
-	buildListFirstItemSignalConnectionManager.disconnectAll ();
-
-	buildListChanged ();
-}
-
-//-----------------------------------------------------------------------------
 void cBuilding::removeBuildListItem (size_t index)
 {
 	buildList.erase (buildList.begin () + index);

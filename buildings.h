@@ -235,7 +235,6 @@ public:
 	cBuildListItem& getBuildListItem (size_t index);
 	void setBuildList (std::vector<cBuildListItem> buildList);
 	void addBuildListItem (cBuildListItem item);
-	void clearBuildList ();
 	void removeBuildListItem (size_t index);
 
 	void setWorking (bool value);
