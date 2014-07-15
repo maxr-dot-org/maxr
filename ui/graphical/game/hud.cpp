@@ -123,7 +123,7 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	turnLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (471, 7), cPosition (471 + 55, 7 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	turnTimeClockWidget = addChild (std::make_unique<cTurnTimeClockWidget> (cBox<cPosition> (cPosition (537, 7), cPosition (537 + 55, 7 + 10))));
 
-	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (20, 275), cPosition (20 + 130, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));
+	zoomSlider = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (22, 275), cPosition (22 + 126, 275 + 15)), 0, 100, eOrientationType::Horizontal, eSliderHandleType::HudZoom, eSliderType::Invisible));
 	signalConnectionManager.connect (zoomSlider->valueChanged, [&](){ zoomChanged (); });
 	auto zoomPlusButton = addChild (std::make_unique<cPushButton> (cBox<cPosition> (cPosition (2, 275), cPosition (2 + 15, 275 + 15))));
 	signalConnectionManager.connect (zoomPlusButton->clicked, std::bind (&cHud::handleZoomPlusClicked, this));
