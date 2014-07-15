@@ -1330,12 +1330,12 @@ void cGameMapWidget::drawExitPoints ()
 	}
 	else if (selectedBuilding && selectedBuilding->isDisabled () == false)
 	{
-		if (selectedBuilding->BuildList.empty () == false &&
+		if (!selectedBuilding->isBuildListEmpty() &&
 			!selectedBuilding->isUnitWorking () &&
-			selectedBuilding->BuildList[0].metall_remaining <= 0 &&
+			selectedBuilding->getBuildListItem(0).getRemainingMetal () <= 0 &&
 			selectedBuilding->owner == player.get ())
 		{
-			auto unitToExit = selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ();
+			auto unitToExit = selectedBuilding->getBuildListItem (0).getType ().getUnitDataOriginalVersion ();
 			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
 		}
 		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->owner == player.get ())
@@ -1815,7 +1815,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		{
 			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection);
 
-			if (action->isSingleAction ())
+			if (action->isSingleAction () && mouseMode->getType() != eMouseModeType::Default)
 			{
 				setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 			}

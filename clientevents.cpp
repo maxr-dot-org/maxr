@@ -385,13 +385,13 @@ void sendWantTransfer (const cClient& client, bool bSrcVehicle, int iSrcID, bool
 	client.sendNetMessage (message);
 }
 
-void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<sBuildList>& buildList, bool bRepeat, int buildSpeed)
+void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<cBuildListItem>& buildList, bool bRepeat, int buildSpeed)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_BUILDLIST);
 	message->pushBool (bRepeat);
 	for (int i = (int) buildList.size() - 1; i >= 0; i--)
 	{
-		message->pushID (buildList[i].type);
+		message->pushID (buildList[i].getType());
 	}
 	message->pushInt16 ((int) buildList.size());
 	message->pushInt16 (buildSpeed);

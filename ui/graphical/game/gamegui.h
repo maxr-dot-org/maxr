@@ -52,7 +52,7 @@ class cGameSettings;
 class cSoundManager;
 class cSoundEffect;
 struct sID;
-struct sBuildList;
+struct cBuildListItem;
 
 class cGameGui : public cWindow
 {
@@ -169,7 +169,7 @@ private:
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
-	cSignal<void (const cBuilding&, const std::vector<sBuildList>&, int, bool)> buildVehiclesTriggered;
+	cSignal<void (const cBuilding&, const std::vector<cBuildListItem>&, int, bool)> buildVehiclesTriggered;
 	cSignal<void (const cUnit& unit, size_t index, const cPosition& position)> activateAtTriggered;
 	cSignal<void (const cUnit&, const cUnit&)> reloadTriggered;
 	cSignal<void (const cUnit&, const cUnit&)> repairTriggered;

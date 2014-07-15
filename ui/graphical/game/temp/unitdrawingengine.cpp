@@ -155,7 +155,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw the mark, when a build order is finished
-	if (building.owner == player && ((!building.BuildList.empty () && !building.isUnitWorking () && building.BuildList[0].metall_remaining <= 0) ||
+	if (building.owner == player && ((!building.isBuildListEmpty() && !building.isUnitWorking () && building.getBuildListItem(0).getRemainingMetal () <= 0) ||
 									 (building.data.canResearch && building.owner->researchFinished)))
 	{
 		const cColor finishedMarkColor = cColor::green();

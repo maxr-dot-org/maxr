@@ -349,7 +349,7 @@ void cGameGui::connectToClient (cClient& client)
 		sendWantBuild (client, vehicle.iID, unitId, buildSpeed, vehicle.getPosition(), true, destination);
 		buildPositionSelectionConnectionManager.disconnectAll ();
 	});
-	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&](const cBuilding& building, const std::vector<sBuildList>& buildList, int buildSpeed, bool repeat)
+	clientSignalConnectionManager.connect (buildVehiclesTriggered, [&](const cBuilding& building, const std::vector<cBuildListItem>& buildList, int buildSpeed, bool repeat)
 	{
 		sendWantBuildList (client, building, buildList, repeat, buildSpeed);
 	});

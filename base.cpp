@@ -839,30 +839,31 @@ void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
 void sSubBase::makeTurnend_build (cServer& server, cBuilding& building)
 {
 	// build:
-	if (!building.isUnitWorking () || building.data.canBuild.empty () || building.BuildList.empty ())
+	if (!building.isUnitWorking () || building.data.canBuild.empty () || building.isBuildListEmpty())
 	{
 		return;
 	}
 
-	sBuildList& buildListItem = building.BuildList[0];
-	if (buildListItem.metall_remaining > 0)
+	cBuildListItem& buildListItem = building.getBuildListItem(0);
+	if (buildListItem.getRemainingMetal() > 0)
 	{
 		// in this block the metal consumption of the factory
 		// in the next round can change
 		// so we first subtract the old value from MetalNeed and
 		// then add the new one, to hold the base up to date
-		MetalNeed -= min (building.MetalPerRound, buildListItem.metall_remaining);
+		MetalNeed -= min (building.MetalPerRound, buildListItem.getRemainingMetal ());
 
-		buildListItem.metall_remaining -= min (building.MetalPerRound, buildListItem.metall_remaining);
-		buildListItem.metall_remaining = std::max (buildListItem.metall_remaining, 0);
+		auto value = buildListItem.getRemainingMetal () - std::min (building.MetalPerRound, buildListItem.getRemainingMetal ());
+		value = std::max (value, 0);
+		buildListItem.setRemainingMetal (value);
 
-		MetalNeed += min (building.MetalPerRound, buildListItem.metall_remaining);
+		MetalNeed += min (building.MetalPerRound, buildListItem.getRemainingMetal ());
 		sendBuildList (server, building);
 		sendSubbaseValues (server, *this, *owner);
 	}
-	if (buildListItem.metall_remaining <= 0)
+	if (buildListItem.getRemainingMetal () <= 0)
 	{
-		server.addReport (buildListItem.type, owner->getNr());
+		server.addReport (buildListItem.getType(), owner->getNr());
 		building.ServerStopWork (server, false);
 	}
 }
@@ -997,7 +998,7 @@ void sSubBase::addBuilding (cBuilding* b)
 		MaxMetalNeed += b->data.needsMetal * 12;
 		if (b->isUnitWorking ())
 		{
-			MetalNeed += min (b->MetalPerRound, b->BuildList[0].metall_remaining);
+			MetalNeed += min (b->MetalPerRound, b->getBuildListItem(0).getRemainingMetal ());
 		}
 	}
 	// calculate gold

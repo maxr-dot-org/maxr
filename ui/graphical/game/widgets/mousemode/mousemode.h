@@ -65,10 +65,9 @@ protected:
 	virtual void establishUnitSelectionConnections ();
 	virtual void establishMapFieldConnections (const cMapField& field);
 
+	void updateSelectedUnitConnections ();
 private:
 	cSignalConnectionManager signalConnectionManager;
-
-	void updateSelectedUnitConnections ();
 };
 
 #endif // ui_graphical_game_widgets_mousemode_mousemodeH

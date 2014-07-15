@@ -520,12 +520,12 @@ void sendBuildList (cServer& server, const cBuilding& building)
 	message->pushBool (building.RepeatBuild);
 	message->pushInt16 (building.BuildSpeed);
 	message->pushInt16 (building.MetalPerRound);
-	for (int i = (int) building.BuildList.size() - 1; i >= 0; i--)
+	for (int i = (int) building.getBuildListSize() - 1; i >= 0; i--)
 	{
-		message->pushInt16 (building.BuildList[i].metall_remaining);
-		message->pushID (building.BuildList[i].type);
+		message->pushInt16 (building.getBuildListItem (i).getRemainingMetal ());
+		message->pushID (building.getBuildListItem (i).getType ());
 	}
-	message->pushInt16 ((int) building.BuildList.size());
+	message->pushInt16 ((int)building.getBuildListSize ());
 	message->pushInt16 (building.iID);
 	server.sendNetMessage (message, building.owner);
 }

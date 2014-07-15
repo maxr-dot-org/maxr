@@ -28,8 +28,6 @@ cMouseMode::cMouseMode (const cMap* map_, const cUnitSelection& unitSelection_, 
 	player (player_)
 {
 	signalConnectionManager.connect (unitSelection.selectionChanged, std::bind (&cMouseMode::updateSelectedUnitConnections, this));
-
-	updateSelectedUnitConnections ();
 }
 
 //------------------------------------------------------------------------------

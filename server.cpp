@@ -1079,7 +1079,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	if (iBuildSpeed == 1) Building->MetalPerRound =  4 * Building->data.needsMetal;
 	if (iBuildSpeed == 2) Building->MetalPerRound = 12 * Building->data.needsMetal;
 
-	std::vector<sBuildList> NewBuildList;
+	std::vector<cBuildListItem> NewBuildList;
 
 	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
@@ -1087,16 +1087,13 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		const sID Type = message.popID();
 
 		// if the first unit hasn't changed copy it to the new buildlist
-		if (Building->BuildList.empty() == false && i == 0 && Type == Building->BuildList[0].type)
+		if (!Building->isBuildListEmpty () && i == 0 && Type == Building->getBuildListItem (0).getType ())
 		{
 			// recalculate costs, because build speed could have been changed
 			std::array<int, 3> iTurboBuildRounds;
 			std::array<int, 3> iTurboBuildCosts;
-			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, Building->BuildList[0].metall_remaining);
-			sBuildList BuildListItem;
-			BuildListItem.metall_remaining = iTurboBuildCosts[iBuildSpeed];
-			BuildListItem.type = Type;
-			NewBuildList.push_back (BuildListItem);
+			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, Building->getBuildListItem (0).getRemainingMetal ());
+			NewBuildList.push_back (cBuildListItem (Type, iTurboBuildCosts[iBuildSpeed]));
 			continue;
 		}
 
@@ -1109,28 +1106,26 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		if (Building->data.canBuild != Type.getUnitDataOriginalVersion()->buildAs)
 			continue;
 
-		sBuildList BuildListItem;
-		BuildListItem.metall_remaining = -1;
-		BuildListItem.type = Type;
+		cBuildListItem BuildListItem(Type, -1);
 
 		NewBuildList.push_back (BuildListItem);
 	}
 
-	std::swap (Building->BuildList, NewBuildList);
+	Building->setBuildList (std::move (NewBuildList));
 
-	if (Building->BuildList.empty() == false)
+	if (!Building->isBuildListEmpty())
 	{
-		if (Building->BuildList[0].metall_remaining == -1)
+		if (Building->getBuildListItem(0).getRemainingMetal () == -1)
 		{
 			std::array<int, 3> iTurboBuildRounds;
 			std::array<int, 3> iTurboBuildCosts;
-			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Building->BuildList[0].type)->buildCosts);
-			Building->BuildList[0].metall_remaining = iTurboBuildCosts[iBuildSpeed];
+			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Building->getBuildListItem (0).getType ())->buildCosts);
+			Building->getBuildListItem (0).setRemainingMetal (iTurboBuildCosts[iBuildSpeed]);
 		}
 
 		Building->RepeatBuild = message.popBool();
 		Building->BuildSpeed = iBuildSpeed;
-		if (Building->BuildList[0].metall_remaining > 0)
+		if (Building->getBuildListItem (0).getRemainingMetal () > 0)
 		{
 			Building->ServerStartWork (*this);
 		}
@@ -1148,39 +1143,39 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 
 	const auto position = message.popPosition();
 	if (Map->isValidPosition (position) == false) return;
-	if (Building->BuildList.empty()) return;
+	if (Building->isBuildListEmpty()) return;
 
-	sBuildList& BuildingListItem = Building->BuildList[0];
-	if (BuildingListItem.metall_remaining > 0) return;
+	cBuildListItem& BuildingListItem = Building->getBuildListItem (0);
+	if (BuildingListItem.getRemainingMetal () > 0) return;
 
 	if (!Building->isNextTo (position)) return;
 
-	const sUnitData& unitData = *BuildingListItem.type.getUnitDataOriginalVersion();
+	const sUnitData& unitData = *BuildingListItem.getType ().getUnitDataOriginalVersion ();
 	if (!Map->possiblePlaceVehicle (unitData, position, Building->owner))
 	{
 		sideStepStealthUnit (position, unitData, Building->owner);
 	}
 	if (!Map->possiblePlaceVehicle (unitData, position, Building->owner)) return;
 
-	addVehicle (position, BuildingListItem.type, Building->owner, false);
+	addVehicle (position, BuildingListItem.getType (), Building->owner, false);
 
 	// start new buildjob
 	if (Building->RepeatBuild)
 	{
-		BuildingListItem.metall_remaining = -1;
-		Building->BuildList.push_back (BuildingListItem);
+		BuildingListItem.setRemainingMetal (-1);
+		Building->addBuildListItem (BuildingListItem);
 	}
-	Building->BuildList.erase (Building->BuildList.begin());
+	Building->removeBuildListItem (0);
 
-	if (Building->BuildList.empty() == false)
+	if (!Building->isBuildListEmpty())
 	{
-		sBuildList& BuildingListItem = Building->BuildList[0];
-		if (BuildingListItem.metall_remaining == -1)
+		cBuildListItem& BuildingListItem = Building->getBuildListItem(0);
+		if (BuildingListItem.getRemainingMetal () == -1)
 		{
 			std::array<int, 3> iTurboBuildRounds;
 			std::array<int, 3> iTurboBuildCosts;
-			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (BuildingListItem.type)->buildCosts);
-			BuildingListItem.metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
+			Building->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (BuildingListItem.getType ())->buildCosts);
+			BuildingListItem.setRemainingMetal (iTurboBuildCosts[Building->BuildSpeed]);
 		}
 		Building->ServerStartWork (*this);
 	}
@@ -3841,7 +3836,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 		}
 		sendUnitData (*this, *building, player);
 		if (building->data.canMineMaxRes > 0) sendProduceValues (*this, *building);
-		if (!building->BuildList.empty ()) sendBuildList (*this, *building);
+		if (!building->isBuildListEmpty()) sendBuildList (*this, *building);
 	}
 	// send all subbases
 	for (size_t i = 0; i != player.base.SubBases.size (); ++i)

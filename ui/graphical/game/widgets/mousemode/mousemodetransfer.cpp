@@ -31,7 +31,9 @@
 //------------------------------------------------------------------------------
 cMouseModeTransfer::cMouseModeTransfer (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
-{}
+{
+	updateSelectedUnitConnections ();
+}
 
 //------------------------------------------------------------------------------
 eMouseModeType cMouseModeTransfer::getType () const
@@ -78,11 +80,18 @@ bool cMouseModeTransfer::canExecuteAction (const cPosition& mapPosition) const
 void cMouseModeTransfer::establishUnitSelectionConnections ()
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
-
 	if (selectedUnit)
 	{
-		// TODO: sub base change
 		selectedUnitSignalConnectionManager.connect (selectedUnit->positionChanged, [this](){ needRefresh (); });
+	}
+
+	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	if (selectedBuilding)
+	{
+		// TODO: react on:
+		//  - sub base change
+		assert (selectedBuilding == selectedUnit);
+		//selectedUnitSignalConnectionManager.connect (selectedBuilding->xyz, [this](){ needRefresh (); });
 	}
 }
 

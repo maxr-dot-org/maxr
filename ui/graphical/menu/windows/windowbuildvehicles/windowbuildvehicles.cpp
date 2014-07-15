@@ -69,17 +69,14 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 }
 
 //------------------------------------------------------------------------------
-std::vector<sBuildList> cWindowBuildVehicles::getBuildList () const
+std::vector<cBuildListItem> cWindowBuildVehicles::getBuildList () const
 {
-	std::vector<sBuildList> result;
+	std::vector<cBuildListItem> result;
 	for (size_t i = 0; i < getSelectedUnitsCount (); ++i)
 	{
 		const auto& selectedUnitItem = getSelectedUnit (i);
 
-		sBuildList buildUnit;
-		buildUnit.type = selectedUnitItem.getUnitId ();
-		buildUnit.metall_remaining = selectedUnitItem.getRemainingMetal ();
-		result.push_back (std::move (buildUnit));
+		result.push_back (cBuildListItem (selectedUnitItem.getUnitId (), selectedUnitItem.getRemainingMetal ()));
 	}
 	return result;
 }
@@ -174,11 +171,11 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 //------------------------------------------------------------------------------
 void cWindowBuildVehicles::generateBuildList (const cBuilding& building)
 {
-	for (size_t i = 0; i != building.BuildList.size (); ++i)
+	for (size_t i = 0; i != building.getBuildListSize(); ++i)
 	{
-		auto& item = addSelectedUnit (building.BuildList[i].type);
+		auto& item = addSelectedUnit (building.getBuildListItem (i).getType ());
 
-		item.setRemainingMetal(building.BuildList[i].metall_remaining);
+		item.setRemainingMetal (building.getBuildListItem (i).getRemainingMetal ());
 	}
 }
 

@@ -942,14 +942,14 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 		return;
 	}
 
-	Building->BuildList.clear();
+	Building->clearBuildList();
 	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
 	{
-		sBuildList BuildListItem;
-		BuildListItem.type = message.popID();
-		BuildListItem.metall_remaining = message.popInt16();
-		Building->BuildList.push_back (BuildListItem);
+		cBuildListItem BuildListItem;
+		BuildListItem.setType (message.popID());
+		BuildListItem.setRemainingMetal (message.popInt16());
+		Building->addBuildListItem (std::move(BuildListItem));
 	}
 
 	Building->MetalPerRound = message.popInt16();

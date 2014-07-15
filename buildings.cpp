@@ -42,6 +42,72 @@
 
 using namespace std;
 
+
+//--------------------------------------------------------------------------
+cBuildListItem::cBuildListItem ()
+{}
+
+//--------------------------------------------------------------------------
+cBuildListItem::cBuildListItem (sID type_, int remainingMetal_) :
+	type (type_),
+	remainingMetal (remainingMetal_)
+{}
+
+//--------------------------------------------------------------------------
+cBuildListItem::cBuildListItem (const cBuildListItem& other) :
+	type (other.type),
+	remainingMetal (other.remainingMetal)
+{}
+
+//--------------------------------------------------------------------------
+cBuildListItem::cBuildListItem (cBuildListItem&& other) :
+	type (std::move (other.type)),
+	remainingMetal (std::move (other.remainingMetal))
+{}
+
+//--------------------------------------------------------------------------
+cBuildListItem& cBuildListItem::operator=(const cBuildListItem& other)
+{
+	type = other.type;
+	remainingMetal = other.remainingMetal;
+	return *this;
+}
+
+//--------------------------------------------------------------------------
+cBuildListItem& cBuildListItem::operator=(cBuildListItem&& other)
+{
+	type = std::move (other.type);
+	remainingMetal = std::move (other.remainingMetal);
+	return *this;
+}
+
+//--------------------------------------------------------------------------
+const sID& cBuildListItem::getType () const
+{
+	return type;
+}
+
+//--------------------------------------------------------------------------
+void cBuildListItem::setType (const sID& type_)
+{
+	auto oldType = type;
+	type = type_;
+	if (type != oldType) typeChanged ();
+}
+
+//--------------------------------------------------------------------------
+int cBuildListItem::getRemainingMetal () const
+{
+	return remainingMetal;
+}
+
+//--------------------------------------------------------------------------
+void cBuildListItem::setRemainingMetal (int value)
+{
+	std::swap (remainingMetal, value);
+	if (value != remainingMetal) remainingMetalChanged ();
+}
+
 //--------------------------------------------------------------------------
 // cBuilding Implementation
 //--------------------------------------------------------------------------
@@ -51,7 +117,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	cUnit ((Owner != 0 && b != 0) ? Owner->getUnitDataCurrentVersion (b->ID) : 0,
 		   Owner,
 		   ID),
-	BuildList (0),
 	isWorking (false)
 {
 	setSentryActive(data.canAttack != TERRAIN_NONE);
@@ -105,9 +170,10 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	refreshData();
 
 	// TODO: register the following events to trigger the "statusChanged" signal:
-	// - player credits changed
+	// - owner credits changed
 	// - research changed
-	// - build list changes
+	buildListChanged.connect ([&](){ statusChanged (); });
+	buildListFirstItemDataChanged.connect ([&](){ statusChanged (); });
 }
 
 //--------------------------------------------------------------------------
@@ -130,17 +196,17 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 	if (isUnitWorking () || (factoryHasJustFinishedBuilding () && isDisabled () == false))
 	{
 		// Factory:
-		if (!data.canBuild.empty () && !BuildList.empty () && owner == player)
+		if (!data.canBuild.empty () && !buildList.empty () && owner == player)
 		{
-			const sBuildList& buildListItem = BuildList[0];
-			const string& unitName = buildListItem.type.getUnitDataOriginalVersion()->name;
+			const cBuildListItem& buildListItem = buildList[0];
+			const string& unitName = buildListItem.getType ().getUnitDataOriginalVersion ()->name;
 			string sText;
 
-			if (buildListItem.metall_remaining > 0)
+			if (buildListItem.getRemainingMetal () > 0)
 			{
 				int iRound;
 
-				iRound = (int) ceilf (buildListItem.metall_remaining / (float) MetalPerRound);
+				iRound = (int) ceilf (buildListItem.getRemainingMetal () / (float) MetalPerRound);
 				sText = lngPack.i18n ("Text~Comp~Producing") + ": ";
 				sText += unitName + " (";
 				sText += iToStr (iRound) + ")";
@@ -637,7 +703,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	// needs raw material:
 	if (data.needsMetal)
 	{
-		if (SubBase->MetalNeed + min (MetalPerRound, BuildList[0].metall_remaining) > SubBase->getMetalProd() + SubBase->getMetal())
+		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal ()) > SubBase->getMetalProd () + SubBase->getMetal ())
 		{
 			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Metal_Insufficient", true), owner);
 			return;
@@ -744,7 +810,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed += min (MetalPerRound, BuildList[0].metall_remaining);
+		SubBase->MetalNeed += std::min (MetalPerRound, buildList[0].getRemainingMetal ());
 
 	// gold consumer:
 	SubBase->GoldNeed += data.convertsGold;
@@ -810,7 +876,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	// raw material consumer:
 	if (data.needsMetal)
-		SubBase->MetalNeed -= min (MetalPerRound, BuildList[0].metall_remaining);
+		SubBase->MetalNeed -= std::min (MetalPerRound, buildList[0].getRemainingMetal ());
 
 	// gold consumer
 	if (data.convertsGold)
@@ -1360,7 +1426,7 @@ void sBuildingUIData::scaleSurfaces (float factor)
 //-----------------------------------------------------------------------------
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
-	return (!BuildList.empty() && isUnitWorking() == false && BuildList[0].metall_remaining <= 0);
+	return (!buildList.empty () && isUnitWorking () == false && buildList[0].getRemainingMetal () <= 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1379,7 +1445,7 @@ void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updat
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (data.canWork && isUnitWorking() == false
-			&& (!BuildList.empty() || data.canBuild.empty()));
+			&& (!buildList.empty () || data.canBuild.empty ()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1387,6 +1453,85 @@ bool cBuilding::buildingCanBeUpgraded() const
 {
 	const sUnitData& upgraded = *owner->getUnitDataCurrentVersion (data.ID);
 	return (data.getVersion () != upgraded.getVersion () && SubBase && SubBase->getMetal () >= 2);
+}
+
+//-----------------------------------------------------------------------------
+bool cBuilding::isBuildListEmpty () const
+{
+	return buildList.empty ();
+}
+
+//-----------------------------------------------------------------------------
+size_t cBuilding::getBuildListSize () const
+{
+	return buildList.size ();
+}
+
+//-----------------------------------------------------------------------------
+const cBuildListItem& cBuilding::getBuildListItem (size_t index) const
+{
+	return buildList[index];
+}
+
+//-----------------------------------------------------------------------------
+cBuildListItem& cBuilding::getBuildListItem (size_t index)
+{
+	return buildList[index];
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::setBuildList (std::vector<cBuildListItem> buildList_)
+{
+	buildList = std::move (buildList_);
+
+	buildListFirstItemSignalConnectionManager.disconnectAll ();
+	if (!buildList.empty ())
+	{
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged (); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged (); });
+	}
+
+	buildListChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::addBuildListItem (cBuildListItem item)
+{
+	buildList.push_back (std::move (item));
+
+	buildListFirstItemSignalConnectionManager.disconnectAll ();
+	if (!buildList.empty ())
+	{
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged (); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged (); });
+	}
+
+	buildListChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::clearBuildList ()
+{
+	buildList.clear ();
+
+	buildListFirstItemSignalConnectionManager.disconnectAll ();
+
+	buildListChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::removeBuildListItem (size_t index)
+{
+	buildList.erase (buildList.begin () + index);
+
+	buildListFirstItemSignalConnectionManager.disconnectAll ();
+	if (!buildList.empty ())
+	{
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].remainingMetalChanged, [this]() { buildListFirstItemDataChanged (); });
+		buildListFirstItemSignalConnectionManager.connect (buildList[0].typeChanged, [this]() { buildListFirstItemDataChanged (); });
+	}
+
+	buildListChanged ();
 }
 
 //-----------------------------------------------------------------------------

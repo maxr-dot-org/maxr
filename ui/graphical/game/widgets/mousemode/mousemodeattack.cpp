@@ -31,7 +31,9 @@
 //------------------------------------------------------------------------------
 cMouseModeAttack::cMouseModeAttack (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
-{}
+{
+	updateSelectedUnitConnections ();
+}
 
 //------------------------------------------------------------------------------
 eMouseModeType cMouseModeAttack::getType () const

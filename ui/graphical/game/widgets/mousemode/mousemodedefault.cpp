@@ -37,7 +37,9 @@
 //------------------------------------------------------------------------------
 cMouseModeDefault::cMouseModeDefault (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :
 	cMouseMode (map_, unitSelection_, player_)
-{}
+{
+	updateSelectedUnitConnections ();
+}
 
 //------------------------------------------------------------------------------
 eMouseModeType cMouseModeDefault::getType () const
@@ -214,9 +216,9 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 				!selectedBuilding ||
 				selectedBuilding->owner != player ||
 				(
-					selectedBuilding->BuildList.empty() ||
+					selectedBuilding->isBuildListEmpty() ||
 					selectedBuilding->isUnitWorking () ||
-					selectedBuilding->BuildList[0].metall_remaining > 0
+					selectedBuilding->getBuildListItem (0).getRemainingMetal () > 0
 				)
 			)
 		)
@@ -255,11 +257,11 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 		}
 	}
 	else if (selectedBuilding && selectedBuilding->owner == player &&
-		!selectedBuilding->BuildList.empty () &&
+		!selectedBuilding->isBuildListEmpty () &&
 		!selectedBuilding->isUnitWorking () &&
-		selectedBuilding->BuildList[0].metall_remaining <= 0)
+		selectedBuilding->getBuildListItem (0).getRemainingMetal () <= 0)
 	{
-		if (selectedBuilding->canExitTo (mapPosition, *map, *selectedBuilding->BuildList[0].type.getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
+		if (selectedBuilding->canExitTo (mapPosition, *map, *selectedBuilding->getBuildListItem (0).getType ().getUnitDataOriginalVersion ()) && selectedUnit->isDisabled () == false)
 		{
 			return eActionType::ActivateFinished;
 		}
@@ -276,11 +278,8 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 void cMouseModeDefault::establishUnitSelectionConnections ()
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
-
 	if (selectedUnit)
 	{
-		// TODO: react on
-		// - build list changes
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.rangeChanged, [this](){ needRefresh (); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.damageChanged, [this](){ needRefresh (); });
 		selectedUnitSignalConnectionManager.connect (selectedUnit->data.shotsChanged, [this](){ needRefresh (); });
@@ -296,7 +295,6 @@ void cMouseModeDefault::establishUnitSelectionConnections ()
 	}
 
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
-
 	if (selectedVehicle)
 	{
 		assert (selectedVehicle == selectedUnit);
@@ -304,12 +302,28 @@ void cMouseModeDefault::establishUnitSelectionConnections ()
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->buildingTurnsChanged, [this](){ needRefresh (); });
 		selectedUnitSignalConnectionManager.connect (selectedVehicle->clearingTurnsChanged, [this](){ needRefresh (); });
 	}
+
+	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
+	if (selectedBuilding)
+	{
+		assert (selectedBuilding == selectedUnit);
+		selectedUnitSignalConnectionManager.connect (selectedBuilding->buildListChanged, [this](){
+			needRefresh ();
+		});
+		selectedUnitSignalConnectionManager.connect (selectedBuilding->buildListFirstItemDataChanged, [this](){
+			needRefresh ();
+		});
+	}
 }
 
 //------------------------------------------------------------------------------
 void cMouseModeDefault::establishMapFieldConnections (const cMapField& field)
 {
-	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field](){ updateFieldUnitConnections (field); needRefresh (); });
+	mapFieldSignalConnectionManager.connect (field.unitsChanged, [this, &field]()
+	{
+		updateFieldUnitConnections (field);
+		needRefresh ();
+	});
 
 	updateFieldUnitConnections (field);
 }

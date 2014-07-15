@@ -29,6 +29,8 @@
 #include "main.h" // for sUnitData, sID
 #include "unit.h"
 #include "sound.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cBase;
 class cPlayer;
@@ -100,27 +102,29 @@ enum eSymbolsBig {SBSpeed, SBHits, SBAmmo, SBAttack, SBShots, SBRange, SBArmor, 
 #endif
 
 //--------------------------------------------------------------------------
-struct sBuildStruct
-{
-public:
-	sBuildStruct (SDL_Surface* const sf_, const sID& ID_, int const iRemainingMetal_ = -1) :
-		sf (sf_),
-		ID (ID_),
-		iRemainingMetal (iRemainingMetal_)
-	{}
-
-	SDL_Surface* sf;
-	sID ID;
-	int iRemainingMetal;
-};
-
-//--------------------------------------------------------------------------
 /** struct for the building order list */
 //--------------------------------------------------------------------------
-struct sBuildList
+struct cBuildListItem
 {
+	cBuildListItem ();
+	cBuildListItem (sID type, int remainingMetal);
+	cBuildListItem (const cBuildListItem& other);
+	cBuildListItem (cBuildListItem&& other);
+
+	cBuildListItem& operator=(const cBuildListItem& other);
+	cBuildListItem& operator=(cBuildListItem&& other);
+
+	const sID& getType () const;
+	void setType (const sID& type);
+
+	int getRemainingMetal () const;
+	void setRemainingMetal (int value);
+
+	cSignal<void ()> typeChanged;
+	cSignal<void ()> remainingMetalChanged;
+private:
 	sID type;
-	int metall_remaining;
+	int remainingMetal;
 };
 
 //--------------------------------------------------------------------------
@@ -154,7 +158,6 @@ public:
 	bool EffectInc;  // is the effect counted upwards or dounwards?
 	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
-	std::vector<sBuildList> BuildList; // Die Bauliste der Fabrik
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
 	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
@@ -226,8 +229,22 @@ public:
 	virtual bool buildingCanBeUpgraded () const;
 	virtual bool canBeStoppedViaUnitMenu () const { return isUnitWorking (); }
 
+	bool isBuildListEmpty () const;
+	size_t getBuildListSize () const;
+	const cBuildListItem& getBuildListItem (size_t index) const;
+	cBuildListItem& getBuildListItem (size_t index);
+	void setBuildList (std::vector<cBuildListItem> buildList);
+	void addBuildListItem (cBuildListItem item);
+	void clearBuildList ();
+	void removeBuildListItem (size_t index);
+
 	void setWorking (bool value);
+
+	cSignal<void ()> buildListChanged;
+	cSignal<void ()> buildListFirstItemDataChanged;
 private:
+	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
+
 	/**
 	* draws the connectors onto the given surface
 	*/
@@ -237,6 +254,8 @@ private:
 	void render_beton (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 
 	bool isWorking;  // is the building currently working?
+
+	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
 
 	//-----------------------------------------------------------------------------
 protected:

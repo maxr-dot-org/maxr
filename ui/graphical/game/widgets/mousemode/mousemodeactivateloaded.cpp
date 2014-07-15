@@ -30,7 +30,9 @@
 cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_, int vehicleToActivateIndex_) :
 	cMouseMode (map_, unitSelection_, player_),
 	vehicleToActivateIndex (vehicleToActivateIndex_)
-{}
+{
+	updateSelectedUnitConnections ();
+}
 
 //------------------------------------------------------------------------------
 eMouseModeType cMouseModeActivateLoaded::getType () const

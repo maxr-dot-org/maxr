@@ -26,7 +26,7 @@
 #include "serverevents.h"
 #include "upgradecalculator.h"
 
-struct sBuildList;
+struct cBuildListItem;
 class cUnit;
 class cClient;
 class cPosition;
@@ -216,7 +216,7 @@ void sendWantTransfer (const cClient& client, bool bSrcVehicle, int iSrcID, bool
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */
-void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<sBuildList>& buildList, bool bRepeat, int buildSpeed);
+void sendWantBuildList (const cClient& client, const cBuilding& building, const std::vector<cBuildListItem>& buildList, bool bRepeat, int buildSpeed);
 /**
 * sends that the client wants to exit the finished vehicle
 *@author alzi alias DoctorDeath
