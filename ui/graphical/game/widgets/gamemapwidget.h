@@ -159,6 +159,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager mouseModeSignalConnectionManager;
+	cSignalConnectionManager unitContextMenuSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	std::shared_ptr<cSoundManager> soundManager;

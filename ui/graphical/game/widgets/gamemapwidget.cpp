@@ -613,6 +613,7 @@ const cUnitSelection& cGameMapWidget::getUnitSelection () const
 //------------------------------------------------------------------------------
 void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 {
+	unitContextMenuSignalConnectionManager.disconnectAll ();
 	if (unitMenu->isEnabled () || unit == nullptr)
 	{
 		unitMenu->disable ();
@@ -625,6 +626,11 @@ void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 		unitMenu->enable ();
 		unitMenu->show ();
 		updateUnitMenuPosition ();
+
+		unitContextMenuSignalConnectionManager.connect (unit->positionChanged, [this,unit]()
+		{
+			toggleUnitContextMenu (unit);
+		});
 	}
 }
 
