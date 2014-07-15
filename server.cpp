@@ -1146,9 +1146,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
-	const int iX = message.popInt16();
-	const int iY = message.popInt16();
-	const cPosition position(iX, iY);
+	const auto position = message.popPosition();
 	if (Map->isValidPosition (position) == false) return;
 	if (Building->BuildList.empty()) return;
 
