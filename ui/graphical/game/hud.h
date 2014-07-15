@@ -74,6 +74,7 @@ public:
 	bool getColorActive () const;
 	bool getRangeActive () const;
 	bool getFogActive () const;
+	bool getLockActive () const;
 
 	bool getMiniMapZoomFactorActive () const;
 	bool getMiniMapAttackUnitsOnly () const;
@@ -94,6 +95,7 @@ public:
 	cSignal<void ()> colorToggled;
 	cSignal<void ()> rangeToggled;
 	cSignal<void ()> fogToggled;
+	cSignal<void ()> lockToggled;
 
 	cSignal<void ()> centerClicked;
 	cSignal<void ()> helpClicked;
@@ -140,6 +142,7 @@ private:
 	cCheckBox* colorButton;
 	cCheckBox* rangeButton;
 	cCheckBox* fogButton;
+	cCheckBox* lockButton;
 
 	cCheckBox* miniMapZoomFactorButton;
 	cCheckBox* miniMapAttackUnitsOnlyButton;

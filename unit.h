@@ -71,8 +71,6 @@ public:
 	std::string getDisplayName() const;
 	void changeName (const std::string& newName);
 
-	bool isLocked() const { return lockerPlayer != NULL; }
-
 	void rotateTo (int newDir);
 
 	/** checks if the unit can attack something at the offset
@@ -163,7 +161,6 @@ public: // TODO: make protected/private and make getters/setters
 	// e.g. rotating to a specific direction
 	cJob* job;
 
-	cPlayer* lockerPlayer; // back pointer to (client) player which lock this unit
 	//-----------------------------------------------------------------------------
 protected:
 	cBox<cPosition> getArea() const;

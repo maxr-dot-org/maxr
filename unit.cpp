@@ -41,7 +41,6 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	, dir (0)
 	, owner (owner)
 	, job (NULL)
-	, lockerPlayer (NULL)
 	, position (0,0)
 	, isOriginalName (true)
 	, turnsDisabled (0)
@@ -72,11 +71,6 @@ cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 //------------------------------------------------------------------------------
 cUnit::~cUnit()
 {
-	if (lockerPlayer)
-	{
-		lockerPlayer->deleteLock (*this);
-	}
-
 	destroyed ();
 }
 

@@ -1002,53 +1002,6 @@ bool cPlayer::canSeeAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-void cPlayer::deleteLock (cUnit& unit)
-{
-	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);
-	if (it != LockList.end()) LockList.erase (it);
-	unit.lockerPlayer = NULL;
-}
-
-//------------------------------------------------------------------------------
-/** Toggles the lock state of a unit under the mouse
- * (when locked it's range and scan is displayed, although the unit is not selected).
-*/
-//------------------------------------------------------------------------------
-void cPlayer::toggleLock (cMapField& OverUnitField)
-{
-	cUnit* unit = NULL;
-	if (OverUnitField.getBaseBuilding() && OverUnitField.getBaseBuilding()->owner != this)
-	{
-		unit = OverUnitField.getBaseBuilding();
-	}
-	else if (OverUnitField.getTopBuilding() && OverUnitField.getTopBuilding()->owner != this)
-	{
-		unit = OverUnitField.getTopBuilding();
-	}
-	if (OverUnitField.getVehicle() && OverUnitField.getVehicle()->owner != this)
-	{
-		unit = OverUnitField.getVehicle();
-	}
-	if (OverUnitField.getPlane() && OverUnitField.getPlane()->owner != this)
-	{
-		unit = OverUnitField.getPlane();
-	}
-	if (unit == NULL) return;
-
-	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), unit);
-	if (it == LockList.end())
-	{
-		unit->lockerPlayer = this;
-		LockList.push_back (unit);
-	}
-	else
-	{
-		unit->lockerPlayer = NULL;
-		LockList.erase (it);
-	}
-}
-
-//------------------------------------------------------------------------------
 void cPlayer::drawSpecialCircle (const cPosition& position, int iRadius, std::vector<char>& map, const cPosition& mapsize)
 {
 	const float PI_ON_180 = 0.017453f;

@@ -158,7 +158,7 @@ void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t posit
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUnitsWidgets ()
 {
-	unitsSignalConnectionManager.clear ();
+	unitsSignalConnectionManager.disconnectAll ();
 
 	for (size_t x = 0; x < columns; x++)
 	{

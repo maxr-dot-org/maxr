@@ -435,6 +435,8 @@ void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move (player_);
 
+	unitLockList.setPlayer (player.get ());
+
 	if (mouseMode != nullptr)
 	{
 		mouseMode->setPlayer (player.get ());
@@ -576,6 +578,12 @@ void cGameMapWidget::setDrawRange (bool shouldDrawRange_)
 void cGameMapWidget::setDrawFog (bool drawFog_)
 {
 	shouldDrawFog = drawFog_;
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::setLockActive (bool lockActive_)
+{
+	lockActive = lockActive_;
 }
 
 //------------------------------------------------------------------------------
@@ -1438,17 +1446,12 @@ void cGameMapWidget::drawLockList (const cPlayer& player)
 {
 	const auto zoomedTileSize = getZoomedTileSize ();
 
-	for (size_t i = 0; i < player.LockList.size (); i++)
+	for (size_t i = 0; i < unitLockList.getLockedUnitsCount(); ++i)
 	{
-		cUnit* unit = player.LockList[i];
+		const cUnit* unit = unitLockList.getLockedUnit(i);
 
 		if (!player.canSeeAnyAreaUnder (*unit))
 		{
-			// FIXME: Do not change the lock state during drawing.
-			//        Instead remove the locked unit when it goes out of range directly
-			//unit->lockerPlayer = NULL;
-			//player.LockList.erase (player.LockList.begin () + i);
-			//i--;
 			continue;
 		}
 
@@ -1808,12 +1811,6 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 	}
 	else if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right))
 	{
-		// Store the currently selected unit to determine
-		// if the lock state of the clicked unit maybe has to be changed.
-		// If the selected unit changes during the click handling,
-		// then the newly selected unit has to be added / removed
-		// from the "locked units" list.
-		auto oldSelectedUnitForLock = selectedUnit;
 		bool consumed = false;
 
 		auto action = mouseMode->getMouseAction (tilePosition);
@@ -1849,9 +1846,9 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		// if the selection has changed
 		if (player && lockActive)
 		{
-			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != player.get ())
+			if (unitSelection.getSelectedUnit () && unitSelection.getSelectedUnit () != selectedUnit && selectedUnit->owner != player.get ())
 			{
-				triggeredToggleUnitLock (tilePosition);
+				unitLockList.toggleLockAt (field);
 			}
 		}
 	}

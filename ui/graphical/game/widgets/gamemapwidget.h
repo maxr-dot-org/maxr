@@ -23,6 +23,7 @@
 #include "ui/graphical/game/widgets/mousemode/mousemodetype.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
+#include "ui/graphical/game/unitlocklist.h"
 #include "ui/graphical/game/temp/unitdrawingengine.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "maxrconfig.h"
@@ -87,6 +88,7 @@ public:
 	void setDrawColor (bool drawColor);
 	void setDrawRange (bool drawRange);
 	void setDrawFog (bool drawFog);
+	void setLockActive (bool lockActive);
 
 	void toggleHelpMode ();
 
@@ -121,8 +123,6 @@ public:
 	cSignal<void (const cUnit&, const cPosition&)> triggeredAttack;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredSteal;
 	cSignal<void (const cUnit&, const cUnit&)> triggeredDisable;
-
-	cSignal<void (const cPosition&)> triggeredToggleUnitLock;
 
 	cSignal<void (const cUnit&)> triggeredBuild;
 	cSignal<void (const cUnit&)> triggeredResourceDistribution;
@@ -172,6 +172,8 @@ private:
 
 	cUnitSelection unitSelection;
 	cUnitSelectionBox unitSelectionBox;
+
+	cUnitLockList unitLockList;
 
 	cUnitContextMenuWidget* unitMenu;
 

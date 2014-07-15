@@ -138,6 +138,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (hud->colorToggled, [&](){ gameMap->setDrawColor (hud->getColorActive ()); });
 	signalConnectionManager.connect (hud->rangeToggled, [&](){ gameMap->setDrawRange (hud->getRangeActive ()); });
 	signalConnectionManager.connect (hud->fogToggled, [&](){ gameMap->setDrawFog (hud->getFogActive ()); });
+	signalConnectionManager.connect (hud->lockToggled, [&](){ gameMap->setLockActive (hud->getLockActive ()); });
 
 	signalConnectionManager.connect (hud->helpClicked, [&](){ gameMap->toggleHelpMode (); });
 	signalConnectionManager.connect (hud->centerClicked, [&]()

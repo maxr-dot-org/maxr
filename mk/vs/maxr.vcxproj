@@ -204,6 +204,7 @@
     <ClCompile Include="..\..\ui\graphical\game\hud.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\temp\animationtimer.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\temp\unitdrawingengine.cpp" />
+    <ClCompile Include="..\..\ui\graphical\game\unitlocklist.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\unitselection.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\unitselectionbox.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\chatbox.cpp" />
@@ -433,6 +434,7 @@
     <ClInclude Include="..\..\ui\graphical\game\hud.h" />
     <ClInclude Include="..\..\ui\graphical\game\temp\animationtimer.h" />
     <ClInclude Include="..\..\ui\graphical\game\temp\unitdrawingengine.h" />
+    <ClInclude Include="..\..\ui\graphical\game\unitlocklist.h" />
     <ClInclude Include="..\..\ui\graphical\game\unitselection.h" />
     <ClInclude Include="..\..\ui\graphical\game\unitselectionbox.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\chatbox.h" />

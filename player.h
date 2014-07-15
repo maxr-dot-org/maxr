@@ -161,8 +161,6 @@ public:
 	void stopAResearch (int researchArea);
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
-	void deleteLock (cUnit& unit);
-	void toggleLock (cMapField& OverUnitField);
 	void countEcoSpheres();
 	int getScore (int turn) const;
 	int getScore () const;
@@ -252,7 +250,6 @@ public:
 	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
 	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
-	std::vector<cUnit*> LockList;  // List of locked units.
 	bool bFinishedTurn;     // true when player send his turn end
 	bool isDefeated;        // true if the player has been defeated
 	bool isRemovedFromGame; // true if the player has been removed from the game.

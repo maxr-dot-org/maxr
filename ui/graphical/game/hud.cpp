@@ -92,7 +92,8 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	fogButton->addClickShortcut (KeysList.keyFog);
 	signalConnectionManager.connect (fogButton->toggled, [&](){ fogToggled (); });
 
-	auto lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, &SoundData.SNDHudSwitch));
+	lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, &SoundData.SNDHudSwitch));
+	signalConnectionManager.connect (lockButton->toggled, [&](){ lockToggled (); });
 
 	miniMapAttackUnitsOnlyButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 413), eCheckBoxType::HudTnt, false, &SoundData.SNDHudSwitch));
 	signalConnectionManager.connect (miniMapAttackUnitsOnlyButton->toggled, [&](){ miniMapAttackUnitsOnlyToggled (); });
@@ -370,6 +371,12 @@ bool cHud::getRangeActive () const
 bool cHud::getFogActive () const
 {
 	return fogButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+bool cHud::getLockActive () const
+{
+	return lockButton->isChecked ();
 }
 
 //------------------------------------------------------------------------------
