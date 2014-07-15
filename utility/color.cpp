@@ -66,22 +66,22 @@ Uint32 cColor::toMappedSdlRGBAColor (const SDL_PixelFormat* format) const
 }
 
 //------------------------------------------------------------------------------
-cColor cColor::exchangeRed (unsigned char red_)
+cColor cColor::exchangeRed (unsigned char red_) const
 {
 	return cColor (red_, g, b, a);
 }
 //------------------------------------------------------------------------------
-cColor cColor::exchangeGreen (unsigned char green_)
+cColor cColor::exchangeGreen (unsigned char green_) const
 {
 	return cColor (r, green_, b, a);
 }
 //------------------------------------------------------------------------------
-cColor cColor::exchangeBlue (unsigned char blue_)
+cColor cColor::exchangeBlue (unsigned char blue_) const
 {
 	return cColor (r, g, blue_, a);
 }
 //------------------------------------------------------------------------------
-cColor cColor::exchangeAlpha (unsigned char alpha_)
+cColor cColor::exchangeAlpha (unsigned char alpha_) const
 {
 	return cColor (r, g, b, alpha_);
 }

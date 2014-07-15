@@ -70,7 +70,7 @@ void cReportMessageListViewItem::draw ()
 		auto dest = getArea ();
 		dest.getMinCorner () -= cPosition (1, 1);
 		dest.getMaxCorner () += cPosition (1, 1);
-		drawRectangle (cVideo::buffer, dest, cColor (0xE0, 0xE0, 0xE0));
+		drawRectangle (*cVideo::buffer, dest, cColor (0xE0, 0xE0, 0xE0));
 	}
 }
 

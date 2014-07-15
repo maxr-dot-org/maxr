@@ -24,6 +24,7 @@
 #include "buildings.h"
 #include "vehicles.h"
 #include "player.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, const cPlayer& owner) :
@@ -66,32 +67,6 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	resize (size.getSize());
 }
 
-// TODO: find a nice place for this function
-//------------------------------------------------------------------------------
-void drawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint16 cornerSize, Uint32 color)
-{
-	SDL_Rect line_h = {rectangle.x, rectangle.y, cornerSize, 1};
-
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x += rectangle.w - 1 - cornerSize;
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x = rectangle.x;
-	line_h.y += rectangle.h - 1;
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x += rectangle.w - 1 - cornerSize;
-	SDL_FillRect (surface, &line_h, color);
-
-	SDL_Rect line_v = {rectangle.x, rectangle.y, 1, cornerSize};
-	SDL_FillRect (surface, &line_v, color);
-	line_v.y += rectangle.h - 1 - cornerSize;
-	SDL_FillRect (surface, &line_v, color);
-	line_v.x += rectangle.w - 1;
-	line_v.y = rectangle.y;
-	SDL_FillRect (surface, &line_v, color);
-	line_v.y += rectangle.h - 1 - cornerSize;
-	SDL_FillRect (surface, &line_v, color);
-}
-
 //------------------------------------------------------------------------------
 void cUnitListViewItem::draw ()
 {
@@ -102,7 +77,7 @@ void cUnitListViewItem::draw ()
 		auto dest = unitImage->getArea ();
 		dest.getMinCorner () -= cPosition (1, 1);
 		dest.getMaxCorner () += cPosition (1, 1);
-		drawSelectionCorner (cVideo::buffer, dest.toSdlRect (), 8, 0xFFE0E0E0);
+		drawSelectionCorner (*cVideo::buffer, dest, cColor (224, 224, 224), 8);
 	}
 }
 

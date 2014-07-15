@@ -53,7 +53,10 @@ public:
 	void restartFrom (unsigned int gameTime);
 
 	void stop ();
+	void stopAt (unsigned int gameTime);
+
 	void resume ();
+	void resumeAt (unsigned int gameTime);
 
 	unsigned int getStartGameTime () const;
 

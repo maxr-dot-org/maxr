@@ -86,9 +86,15 @@ void cTurnTimeClock::restartFrom (unsigned int gameTime)
 //------------------------------------------------------------------------------
 void cTurnTimeClock::stop ()
 {
+	stopAt (gameTimer->gameTime);
+}
+
+//------------------------------------------------------------------------------
+void cTurnTimeClock::stopAt (unsigned int gameTime)
+{
 	if (stopped) return;
 
-	stoppedAtTime = gameTimer->gameTime;
+	stoppedAtTime = gameTime;
 
 	stopped = true;
 }
@@ -96,9 +102,15 @@ void cTurnTimeClock::stop ()
 //------------------------------------------------------------------------------
 void cTurnTimeClock::resume ()
 {
+	resumeAt (gameTimer->gameTime);
+}
+
+//------------------------------------------------------------------------------
+void cTurnTimeClock::resumeAt (unsigned int gameTime)
+{
 	if (!stopped) return;
 
-	stoppedTicks += gameTimer->gameTime - stoppedAtTime;
+	stoppedTicks += gameTime - stoppedAtTime;
 
 	stopped = false;
 }

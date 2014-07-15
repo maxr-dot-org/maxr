@@ -24,6 +24,8 @@
 #include "unit.h"
 #include "vehicles.h"
 #include "buildings.h"
+#include "utility/drawing.h"
+#include "utility/color.h"
 
 //------------------------------------------------------------------------------
 cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
@@ -67,8 +69,6 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 	fitToChildren ();
 }
 
-void drawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint16 cornerSize, Uint32 color);
-
 //------------------------------------------------------------------------------
 void cReportUnitListViewItem::draw ()
 {
@@ -79,7 +79,7 @@ void cReportUnitListViewItem::draw ()
 		auto dest = unitImage->getArea ();
 		dest.getMinCorner () -= cPosition (1, 1);
 		dest.getMaxCorner () += cPosition (1, 1);
-		drawSelectionCorner (cVideo::buffer, dest.toSdlRect (), 8, 0xFFE0E0E0);
+		drawSelectionCorner (*cVideo::buffer, dest, cColor(224, 224, 224), 8);
 	}
 }
 

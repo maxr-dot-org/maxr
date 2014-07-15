@@ -103,7 +103,7 @@ void cCheckBox::draw ()
 			dest.getMinCorner ().y () -= 2;
 			dest.getMaxCorner ().x () += 3;
 			dest.getMaxCorner ().y () += 1;
-			drawRectangle (cVideo::buffer, dest, selectionColor);
+			drawRectangle (*cVideo::buffer, dest, selectionColor);
 		}
 		break;
 	case eCheckBoxType::Angular:

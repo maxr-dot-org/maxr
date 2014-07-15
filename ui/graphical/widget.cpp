@@ -402,7 +402,7 @@ void cWidget::createFrameSurface ()
 		SDL_SetColorKey (frameSurface.get (), SDL_TRUE, 0xFF00FF);
 		SDL_FillRect (frameSurface.get (), NULL, 0xFF00FF);
 
-		drawRectangle (frameSurface.get (), cBox<cPosition> (cPosition (0, 0), size), cColor::red());
+		drawRectangle (*frameSurface, cBox<cPosition> (cPosition (0, 0), size), cColor::red());
 	}
 }
 

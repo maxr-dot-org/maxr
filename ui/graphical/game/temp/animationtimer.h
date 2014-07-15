@@ -67,8 +67,6 @@ public:
 	cSignal<void ()> triggered50ms;
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;
-
-	cSignal<void ()> destroyed;
 private:
 	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;

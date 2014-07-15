@@ -40,10 +40,10 @@ public:
 	Uint32 toMappedSdlRGBColor (const SDL_PixelFormat* format) const;
 	Uint32 toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
 
-	cColor exchangeRed (unsigned char red);
-	cColor exchangeGreen (unsigned char green);
-	cColor exchangeBlue (unsigned char blue);
-	cColor exchangeAlpha (unsigned char alpha);
+	cColor exchangeRed (unsigned char red) const;
+	cColor exchangeGreen (unsigned char green) const;
+	cColor exchangeBlue (unsigned char blue) const;
+	cColor exchangeAlpha (unsigned char alpha) const;
 
 	unsigned char r, g, b;
 	unsigned char a;

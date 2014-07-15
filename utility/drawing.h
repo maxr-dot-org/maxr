@@ -30,7 +30,9 @@ void drawPoint (SDL_Surface* surface, const cPosition& position, const cColor& c
 
 void drawLine (SDL_Surface* surface, const cPosition& start, const cPosition& end, const cColor& color);
 
-void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, const cColor& color);
+void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int thickness = 1);
+
+void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int cornerSize);
 
 Uint32 getPixel (const SDL_Surface& surface, const cPosition& position);
 

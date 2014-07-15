@@ -28,54 +28,14 @@
 #include "player.h"
 #include "map.h"
 #include "utility/random.h"
-
-namespace
-{
-
-// TODO: Factorize with code in menuitems.cpp
-void DrawRectangle (SDL_Surface* surface, const SDL_Rect& rectangle, Uint32 color, Uint16 borderSize)
-{
-	SDL_Rect line_h = {rectangle.x, rectangle.y, rectangle.w, borderSize};
-	SDL_FillRect (surface, &line_h, color);
-	line_h.y += rectangle.h - borderSize;
-	SDL_FillRect (surface, &line_h, color);
-	SDL_Rect line_v = {rectangle.x, rectangle.y, borderSize, rectangle.h};
-	SDL_FillRect (surface, &line_v, color);
-	line_v.x += rectangle.w - borderSize;
-	SDL_FillRect (surface, &line_v, color);
-}
-
-// TODO: Factorize with code in menuitems.cpp
-void DrawSelectionCorner (SDL_Surface* surface, const SDL_Rect& rectangle, Uint16 cornerSize, Uint32 color)
-{
-	SDL_Rect line_h = { rectangle.x, rectangle.y, cornerSize, 1 };
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x += rectangle.w - 1 - cornerSize;
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x = rectangle.x;
-	line_h.y += rectangle.h - 1;
-	SDL_FillRect (surface, &line_h, color);
-	line_h.x += rectangle.w - 1 - cornerSize;
-	SDL_FillRect (surface, &line_h, color);
-
-	SDL_Rect line_v = { rectangle.x, rectangle.y, 1, cornerSize };
-	SDL_FillRect (surface, &line_v, color);
-	line_v.y += rectangle.h - 1 - cornerSize;
-	SDL_FillRect (surface, &line_v, color);
-	line_v.x += rectangle.w - 1;
-	line_v.y = rectangle.y;
-	SDL_FillRect (surface, &line_v, color);
-	line_v.y += rectangle.h - 1 - cornerSize;
-	SDL_FillRect (surface, &line_v, color);
-}
-
-}
+#include "utility/drawing.h"
+#include "utility/box.h"
 
 //--------------------------------------------------------------------------
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_) :
 	animationTimer (std::move (animationTimer_)),
 	drawingCache (animationTimer),
-	blinkColor (0x00FFFFFF),
+	blinkColor (cColor::white()),
 	shouldDrawHits (false),
 	shouldDrawStatus (false),
 	shouldDrawAmmo (false),
@@ -198,10 +158,10 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	if (building.owner == player && ((!building.BuildList.empty () && !building.isUnitWorking () && building.BuildList[0].metall_remaining <= 0) ||
 									 (building.data.canResearch && building.owner->researchFinished)))
 	{
-		const Uint32 color = 0xFF00FF00 - (0x1000 * (animationTimer->getAnimationTime() % 0x8));
-		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), building.data.isBig ? 2 * destination.w - 3 : destination.w - 3, building.data.isBig ? 2 * destination.h - 3 : destination.h - 3};
+		const cColor finishedMarkColor = cColor::green();
+		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.data.isBig ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
-		DrawRectangle (cVideo::buffer, d, color, 3);
+		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTimer->getAnimationTime () % 0x8)), 3);
 	}
 
 #if 0
@@ -227,8 +187,9 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		const int len = maxX / 4;
 		maxX -= 3;
 		maxY -= 3;
-		SDL_Rect d = {Sint16 (dest.x + 2), Sint16 (dest.y + 2), maxX, maxY};
-		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | blinkColor);
+		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + maxX, dest.y + 2 + maxY));
+
+		drawSelectionCorner (*cVideo::buffer, d, blinkColor, len);
 	}
 
 	// draw health bar
@@ -395,26 +356,27 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// draw indication, when building is complete
 	if (vehicle.isUnitBuildingABuilding () && vehicle.getBuildTurns () == 0 && vehicle.owner == player && !vehicle.BuildPath)
 	{
-		const Uint32 color = 0xFF00FF00 - (0x1000 * (animationTimer->getAnimationTime() % 0x8));
-		SDL_Rect d = {Sint16 (destination.x + 2), Sint16 (destination.y + 2), vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3, vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3};
+		const cColor finishedMarkColor = cColor::green ();
+		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
-		DrawRectangle (cVideo::buffer, d, color, 3);
+		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTimer->getAnimationTime () % 0x8)), 3);
 	}
 
 	// Draw the colored frame if necessary
 	if (shouldDrawColor)
 	{
-		SDL_Rect d = {Sint16 (destination.x + 1), Sint16 (destination.y + 1), vehicle.data.isBig ? 2 * destination.w - 1 : destination.w - 1, vehicle.data.isBig ? 2 * destination.h - 1 : destination.h - 1};
-		DrawRectangle (cVideo::buffer, d, vehicle.owner->getColor ().getColor ().toMappedSdlRGBAColor (cVideo::buffer->format), 1);
+		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.data.isBig ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.data.isBig ? 2 * destination.h - 1 : destination.h - 1)));
+
+		drawRectangle (*cVideo::buffer, d, vehicle.owner->getColor ().getColor ());
 	}
 
 	// draw the group selected frame if necessary
 	if (unitSelection && unitSelection->getSelectedUnitsCount() > 1 && unitSelection->isSelected (vehicle))
 	{
-		const Uint32 color = 0xFFFFFF00;
-		SDL_Rect d = {Sint16 (destination.x + 2), Sint16 (destination.y + 2), destination.w - 3, destination.h - 3};
+		const cColor groupSelectionColor = cColor::yellow ();
+		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
-		DrawRectangle (cVideo::buffer, d, color, 1);
+		drawRectangle (*cVideo::buffer, d, groupSelectionColor, 1);
 	}
 	// draw the seleted-unit-flash-frame for vehicles
 	if (unitSelection && &vehicle == unitSelection->getSelectedVehicle())
@@ -424,8 +386,9 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		const int len = maxX / 4;
 		maxX -= 3;
 		maxY -= 3;
-		SDL_Rect d = {Sint16 (destination.x + 2), Sint16 (destination.y + 2), maxX, maxY};
-		DrawSelectionCorner (cVideo::buffer, d, len, 0xFF000000 | blinkColor);
+		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + maxX, destination.y + 2 + maxY));
+
+		drawSelectionCorner (*cVideo::buffer, d, blinkColor, len);
 	}
 
 	// draw health bar
@@ -576,12 +539,16 @@ void cUnitDrawingEngine::rotateBlinkColor ()
 	static bool dec = true;
 	if (dec)
 	{
-		blinkColor -= 0x000A0A0A;
-		if (blinkColor <= 0x00A0A0A0) dec = false;
+		blinkColor.r -= 0x0A;
+		blinkColor.g -= 0x0A;
+		blinkColor.b -= 0x0A;
+		if (blinkColor.r <= 0xA0) dec = false;
 	}
 	else
 	{
-		blinkColor += 0x000A0A0A;
-		if (blinkColor >= 0x00FFFFFF) dec = true;
+		blinkColor.r += 0x0A;
+		blinkColor.g += 0x0A;
+		blinkColor.b += 0x0A;
+		if (blinkColor.r >= 0xFF) dec = true;
 	}
 }

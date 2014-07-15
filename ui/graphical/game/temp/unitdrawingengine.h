@@ -24,6 +24,7 @@
 
 #include "drawingcache.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "utility/color.h"
 
 class cBuilding;
 class cVehicle;
@@ -56,7 +57,7 @@ public:
 
 	cSignalConnectionManager signalConnectionManager;
 
-	unsigned int blinkColor;
+	cColor blinkColor;
 
 	bool shouldDrawHits;
 	bool shouldDrawStatus;

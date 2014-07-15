@@ -70,21 +70,50 @@ void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, con
 }
 
 //------------------------------------------------------------------------------
-void drawRectangle (SDL_Surface* surface, const cBox<cPosition>& rectangle, const cColor& color)
+void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int thickness)
 {
 	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
 
-	SDL_Rect line_h = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), size.x (), 1};
+	SDL_Rect line_h = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), size.x (), thickness};
 
-	const auto sdlColor = color.toMappedSdlRGBAColor (surface->format);
+	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
 
-	SDL_FillRect (surface, &line_h, sdlColor);
+	SDL_FillRect (&surface, &line_h, sdlColor);
+	line_h.y += size.y () - thickness;
+	SDL_FillRect (&surface, &line_h, sdlColor);
+	SDL_Rect line_v = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), thickness, size.y ()};
+	SDL_FillRect (&surface, &line_v, sdlColor);
+	line_v.x += size.x () - thickness;
+	SDL_FillRect (&surface, &line_v, sdlColor);
+}
+
+//------------------------------------------------------------------------------
+void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int cornerSize)
+{
+	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
+
+	SDL_Rect line_h = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), cornerSize, 1};
+
+	const auto sdlColor = color.toMappedSdlRGBAColor (surface.format);
+
+	SDL_FillRect (&surface, &line_h, sdlColor);
+	line_h.x += size.x() - 1 - cornerSize;
+	SDL_FillRect (&surface, &line_h, sdlColor);
+	line_h.x = rectangle.getMinCorner ().x ();
 	line_h.y += size.y () - 1;
-	SDL_FillRect (surface, &line_h, sdlColor);
-	SDL_Rect line_v = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), 1, size.y ()};
-	SDL_FillRect (surface, &line_v, sdlColor);
+	SDL_FillRect (&surface, &line_h, sdlColor);
+	line_h.x += size.x () - 1 - cornerSize;
+	SDL_FillRect (&surface, &line_h, sdlColor);
+
+	SDL_Rect line_v = {rectangle.getMinCorner ().x (), rectangle.getMinCorner ().y (), 1, cornerSize};
+	SDL_FillRect (&surface, &line_v, sdlColor);
+	line_v.y += size.y () - 1 - cornerSize;
+	SDL_FillRect (&surface, &line_v, sdlColor);
 	line_v.x += size.x () - 1;
-	SDL_FillRect (surface, &line_v, sdlColor);
+	line_v.y = rectangle.getMinCorner ().y ();
+	SDL_FillRect (&surface, &line_v, sdlColor);
+	line_v.y += size.y () - 1 - cornerSize;
+	SDL_FillRect (&surface, &line_v, sdlColor);
 }
 
 //------------------------------------------------------------------------------
