@@ -402,7 +402,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 
 	// blit the players color and building graphic
 	if (data.hasPlayerColor) SDL_BlitSurface (owner->getColor().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
-	else SDL_FillRect (GraphicsData.gfx_tmp.get (), NULL, 0xFFFF00FF);
+	else SDL_FillRect (GraphicsData.gfx_tmp.get (), NULL, 0x00FF00FF);
 
 	if (data.hasFrames)
 	{
