@@ -113,6 +113,19 @@ bool cSoundEffect::isInConflict (const cSoundEffect& other) const
 }
 
 //--------------------------------------------------------------------------
+bool  cSoundEffect::hasConflictAtSameGameTimeOnly ()
+{
+	switch (type)
+	{
+	default:
+		return true;
+	case eSoundEffectType::EffectUnitSound:
+	case eSoundEffectType::VoiceUnitStatus:
+		return false;
+	}
+}
+
+//--------------------------------------------------------------------------
 unsigned int cSoundEffect::getMaxConcurrentConflictedCount () const
 {
 	switch (type)

@@ -62,7 +62,7 @@ eSavedReportType cSavedReportHostCommand::getType () const
 //------------------------------------------------------------------------------
 std::string cSavedReportHostCommand::getMessage () const
 {
-	return "Server entered command: '" + command + "'";
+	return "Host entered command: '" + command + "'"; // TODO: translate
 }
 
 //------------------------------------------------------------------------------

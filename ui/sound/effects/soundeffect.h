@@ -50,6 +50,8 @@ public:
 
 	bool isInConflict (const cSoundEffect& other) const;
 
+	bool hasConflictAtSameGameTimeOnly ();
+
 	unsigned int getMaxConcurrentConflictedCount () const;
 
 	eSoundConflictHandlingType getSoundConflictHandlingType () const;

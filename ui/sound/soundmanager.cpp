@@ -123,7 +123,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 			}
 			else
 			{
-				if (i->startGameTime == currentGameTime && sound->isInConflict (*i->sound))
+				if ((!sound->hasConflictAtSameGameTimeOnly () || i->startGameTime == currentGameTime) && sound->isInConflict (*i->sound))
 				{
 					++conflicts;
 				}
@@ -145,7 +145,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 						const auto playingSound = i->sound; // copy so that we get an owning pointer in this scope
 						const auto& soundGameTime = i->startGameTime;
 
-						if (soundGameTime == currentGameTime && sound->isInConflict (*playingSound))
+						if ((!sound->hasConflictAtSameGameTimeOnly () || i->startGameTime == currentGameTime) && sound->isInConflict (*playingSound))
 						{
 							// first remove from list and than stop by method to avoid conflicts with "finished" callback.
 							i = playingSounds.erase (i);
