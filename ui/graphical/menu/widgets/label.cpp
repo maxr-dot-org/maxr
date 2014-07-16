@@ -34,13 +34,13 @@ void cLabel::setText (const std::string& text_)
 {
 	text = text_;
 
-	// FIXME: do we really want to do this here?
-	//        we replace the character sequence "\n" by the escape sequence '\n'
-	//        because e.g. when reading translation strings, this is used to
-	//        indicate line breaks.
-	//        May move this directly to @ref cLanguage and make it more robust
-	//        (i.e. really parsing escape sequence, so that "\\n" will result in
-	//        "\n" and not in "\" followed by '\n')
+	// NOTE: do we really want to do this here?
+	//       we replace the character sequence "\n" by the escape sequence '\n'
+	//       because e.g. when reading translation strings, this is used to
+	//       indicate line breaks.
+	//       May move this directly to @ref cLanguage and make it more robust
+	//       (i.e. really parsing escape sequence, so that "\\n" will result in
+	//       "\n" and not in "\" followed by '\n')
 	size_t pos = 0;
 	while ((pos = text.find ("\\n", pos)) != std::string::npos)
 	{

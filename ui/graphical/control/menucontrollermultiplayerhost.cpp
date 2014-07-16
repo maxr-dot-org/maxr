@@ -45,7 +45,7 @@
 #include "client.h"
 #include "server.h"
 
-// FIXME: remove
+// TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------

@@ -36,7 +36,7 @@ class cWindowUpgrades : public cWindowHangar
 {
 	// TODO: implement restoring last filter state (without static variables!)
 
-	// FIXME: remove code duplication with @ref cWindowLandingUnitSelection
+	// TODO: remove code duplication with @ref cWindowLandingUnitSelection
 public:
 	explicit cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 

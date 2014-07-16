@@ -36,7 +36,7 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	SDL_FillRect (surface, NULL, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	// FIXME: very very bad...
+	// TODO: very very bad...
 	//        why do we need to create a full vehicle/building object to draw it?!
 	//        Currently the const_cast is okay here because the player state is not changed during the render
 	//        method of the units.

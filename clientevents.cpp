@@ -549,7 +549,7 @@ void sendWantResearchChange (const cClient& client, const std::array<int, cResea
 void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_HUD_INFO);
-	//FIXME: gameGUI
+	//TODO: gameGUI
 	//const cGameGui& gameGUI = client.getGameGUI();
 	//message->pushBool (gameGUI.tntChecked());
 	//message->pushBool (gameGUI.hitsChecked());

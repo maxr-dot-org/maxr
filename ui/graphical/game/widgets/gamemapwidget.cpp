@@ -82,7 +82,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 
 	setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 
-	// FIXME: should this really be done here?
+	// TODO: should this really be done here?
 	signalConnectionManager.connect (animationTimer->triggered400ms, [&]()
 	{
 		const_cast<cStaticMap&>(*staticMap).generateNextAnimationFrame ();

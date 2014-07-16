@@ -40,7 +40,7 @@
 #include "netmessage.h"
 #include "mapdownload.h"
 
-// FIXME: remove
+// TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp
 
 //------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ void cMenuControllerMultiplayerClient::connect ()
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + ip + ":" + iToStr (port));    // e.g. Connecting to 127.0.0.1:55800
 	Log.write (("Connecting to " + ip + ":" + iToStr (port)), cLog::eLOG_TYPE_INFO);
 
-	// FIXME: make this non blocking!
+	// TODO: make this non blocking!
 	if (network->connect (ip, port) == -1)
 	{
 		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect") + ip + ":" + iToStr (port));

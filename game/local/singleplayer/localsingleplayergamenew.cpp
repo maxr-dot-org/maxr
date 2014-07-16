@@ -28,7 +28,7 @@
 #include "vehicles.h"
 #include "clientevents.h"
 
-// FIXME: find nice place
+// TODO: find nice place
 //------------------------------------------------------------------------------
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {

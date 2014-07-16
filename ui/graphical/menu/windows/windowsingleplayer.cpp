@@ -63,7 +63,7 @@ cWindowSinglePlayer::cWindowSinglePlayer () :
 cWindowSinglePlayer::~cWindowSinglePlayer ()
 {}
 
-// FIXME: find nice place
+// TODO: find nice place
 //------------------------------------------------------------------------------
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings)
 {

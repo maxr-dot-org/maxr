@@ -26,7 +26,7 @@
 #include "player.h"
 #include "clientevents.h"
 
-// FIXME: remove
+// TODO: remove
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);
 
 //------------------------------------------------------------------------------

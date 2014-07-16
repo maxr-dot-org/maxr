@@ -109,7 +109,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	if (building.StartUp)
 	{
-		// FIXME: remove the effect stuff from the building
+		// TODO: remove the effect stuff from the building
 		auto& buildingNonConst = const_cast<cBuilding&>(building);
 
 		if (animationFlags.is100ms ()) buildingNonConst.StartUp += 25;
@@ -120,7 +120,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	// draw the effect if necessary
 	if (building.data.powerOnGraphic && cSettings::getInstance ().isAnimations () && (building.isUnitWorking () || !building.data.canWork))
 	{
-		// FIXME: remove the effect stuff from the building
+		// TODO: remove the effect stuff from the building
 		auto& buildingNonConst = const_cast<cBuilding&>(building);
 
 		SDL_Rect tmp = dest;
@@ -231,7 +231,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// make landing and take off of planes
 	if (vehicle.data.factorAir > 0 && animationFlags.is50ms () && !vehicle.isDisabled ())
 	{
-		// FIXME: remove the the landing animation from the drawing code
+		// TODO: remove the the landing animation from the drawing code
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
 		if (vehicle.canLand (map))
@@ -247,7 +247,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// make the dithering
 	if (animationFlags.is100ms())
 	{
-		// FIXME: remove the the dithering stuff from the vehicle or the dithering code from the drawing
+		// TODO: remove the the dithering stuff from the vehicle or the dithering code from the drawing
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
 		if (vehicle.getFlightHeight () > 0 && !vehicle.isUnitMoving () && animationTimer->getAnimationTime () % 10 != 0)
@@ -265,7 +265,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// run start up effect
 	if (vehicle.StartUp)
 	{
-		// FIXME: remove this animation stuff from the drawing code
+		// TODO: remove this animation stuff from the drawing code
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
 		if (animationFlags.is50ms ()) vehicleNonConst.StartUp += 25;
@@ -282,7 +282,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 	if (vehicle.isUnitBuildingABuilding() && !vehicle.job && vehicle.BigBetonAlpha < 254u)
 	{
-		// FIXME: remove this animation stuff from the drawing code
+		// TODO: remove this animation stuff from the drawing code
 		auto& vehicleNonConst = const_cast<cVehicle&>(vehicle);
 
 		if (animationFlags.is50ms())

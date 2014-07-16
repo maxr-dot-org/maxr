@@ -214,7 +214,7 @@ void cClient::initPlayersWithMap()
 
 void cClient::sendNetMessage (cNetMessage* message_) const
 {
-	// FIXME: sendNetMessage should take a unique_ptr directly!
+	// TODO: sendNetMessage should take a unique_ptr directly!
 	std::unique_ptr<cNetMessage> message (message_);
 
 	message->iPlayerNr = ActivePlayer->getNr();
@@ -313,7 +313,7 @@ void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
 	assert (message.iType == TCP_CLOSE);
 
 	network->close (message.popInt16());
-	//FIXME: gameGUI
+	//TODO: gameGUI
 	//gameGUI->onLostConnection();
 }
 
@@ -1231,7 +1231,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 
 void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
 {
-	//FIXME: gameGUI
+	//TODO: gameGUI
 	//assert (message.iType == GAME_EV_HUD_SETTINGS);
 
 	//const int unitID = message.popInt16();
@@ -1512,7 +1512,7 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
 
 	const int saveingID = message.popInt16();
-	//FIXME: gameGUI
+	//TODO: gameGUI
 	//if (gameGUI->getSelectedUnit()) sendSaveHudInfo (*this, gameGUI->getSelectedUnit()->iID, ActivePlayer->getNr(), saveingID);
 	//else sendSaveHudInfo (*this, -1, ActivePlayer->getNr(), saveingID);
 
