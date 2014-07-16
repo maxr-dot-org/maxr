@@ -69,6 +69,7 @@
 #include "netmessage.h"
 #include "game/game.h"
 #include "input/mouse/mouse.h"
+#include "input/keyboard/keyboard.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
@@ -141,11 +142,11 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (hud->lockToggled, [&](){ gameMap->setLockActive (hud->getLockActive ()); });
 
 	signalConnectionManager.connect (hud->helpClicked, [&](){ gameMap->toggleHelpMode (); });
-	signalConnectionManager.connect (hud->centerClicked, [&]()
-	{
-		const auto selectedUnit = gameMap->getUnitSelection ().getSelectedUnit ();
-		if (selectedUnit) gameMap->centerAt (selectedUnit->getPosition());
-	});
+	signalConnectionManager.connect (hud->centerClicked, std::bind (&cGameGui::centerSelectedUnit, this));
+
+	signalConnectionManager.connect (hud->nextClicked, std::bind (&cGameGui::selectNextUnit, this));
+	signalConnectionManager.connect (hud->prevClicked, std::bind (&cGameGui::selectPreviousUnit, this));
+	signalConnectionManager.connect (hud->doneClicked, std::bind (&cGameGui::markSelectedUnitAsDone, this));
 
     signalConnectionManager.connect (hud->reportsClicked, std::bind (&cGameGui::showReportsWindow, this));
 	signalConnectionManager.connect (hud->chatClicked, std::bind (&cGameGui::toggleChatBox, this));
@@ -642,6 +643,14 @@ void cGameGui::connectToClient (cClient& client)
 	{
 		if (!unit.data.ID.isABuilding ()) return;
 		sendWantSelfDestroy (client, static_cast<const cBuilding&>(unit));
+	});
+	clientSignalConnectionManager.connect (resumeMoveJobTriggered, [&](const cUnit& unit)
+	{
+		sendMoveJobResume (client, unit.iID);
+	});
+	clientSignalConnectionManager.connect (resumeAllMoveJobsTriggered, [&]()
+	{
+		sendMoveJobResume (client, 0);
 	});
 	clientSignalConnectionManager.connect (hud->endClicked, [&]()
 	{
@@ -1888,6 +1897,13 @@ void cGameGui::initShortcuts ()
 			centerAt (savedReportPosition.second);
 		}
 	});
+
+	auto doneAndNextShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitDoneAndNext));
+	signalConnectionManager.connect (doneAndNextShortcut->triggered, [&]()
+	{
+		markSelectedUnitAsDone ();
+		selectNextUnit ();
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -1940,4 +1956,59 @@ void cGameGui::handleResolutionChange ()
 	messageList->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200)));
 
 	chatBox->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::selectNextUnit ()
+{
+	if (!player) return;
+
+	const auto nextUnit = player->getNextUnit (gameMap->getUnitSelection ().getSelectedUnit ());
+	if (nextUnit)
+	{
+		gameMap->getUnitSelection ().selectUnit (*nextUnit);
+		gameMap->centerAt (nextUnit->getPosition ());
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::selectPreviousUnit ()
+{
+	if (!player) return;
+
+	const auto prevUnit = player->getPrevUnit (gameMap->getUnitSelection ().getSelectedUnit ());
+	if (prevUnit)
+	{
+		gameMap->getUnitSelection ().selectUnit (*prevUnit);
+		gameMap->centerAt (prevUnit->getPosition ());
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::markSelectedUnitAsDone ()
+{
+	if (!player) return;
+
+	auto keyboard = getActiveKeyboard ();
+	if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
+	{
+		resumeAllMoveJobsTriggered ();
+		return;
+	}
+
+	const auto unit = gameMap->getUnitSelection ().getSelectedUnit ();
+
+	if (unit && unit->owner == player.get())
+	{
+		gameMap->centerAt (unit->getPosition ());
+		unit->setMarkedAsDone(true);
+		resumeMoveJobTriggered (*unit);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::centerSelectedUnit ()
+{
+	const auto selectedUnit = gameMap->getUnitSelection ().getSelectedUnit ();
+	if (selectedUnit) gameMap->centerAt (selectedUnit->getPosition ());
 }

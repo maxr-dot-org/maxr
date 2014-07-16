@@ -166,6 +166,12 @@ private:
 
 	void handleResolutionChange ();
 
+	void selectNextUnit ();
+	void selectPreviousUnit ();
+	void markSelectedUnitAsDone ();
+
+	void centerSelectedUnit ();
+
 	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
 	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
@@ -180,6 +186,8 @@ private:
 	cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
 	cSignal<void (const std::string&)> chatCommandTriggered;
 	cSignal<void (const cUnit&)> selfDestructionTriggered;
+	cSignal<void (const cUnit&)> resumeMoveJobTriggered;
+	cSignal<void ()> resumeAllMoveJobsTriggered;
 };
 
 #endif // ui_graphical_game_gameguiH

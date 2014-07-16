@@ -114,10 +114,13 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));
 	nextButton->addClickShortcut (KeysList.keyUnitNext);
+	signalConnectionManager.connect (nextButton->clicked, [&](){ nextClicked (); });
 	auto prevButton = addChild (std::make_unique<cPushButton> (cPosition (60, 227), ePushButtonType::HudPrev, "<<"));
 	prevButton->addClickShortcut (KeysList.keyUnitPrev);
+	signalConnectionManager.connect (prevButton->clicked, [&](){ prevClicked (); });
 	auto doneButton = addChild (std::make_unique<cPushButton> (cPosition (99, 227), ePushButtonType::HudDone, lngPack.i18n ("Text~Others~Proceed")));
 	doneButton->addClickShortcut (KeysList.keyUnitDone);
+	signalConnectionManager.connect (doneButton->clicked, [&](){ doneClicked (); });
 
 	coordsLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (265, getEndPosition ().y () - 18), cPosition (265 + 64, getEndPosition ().y () - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 	unitNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (343, getEndPosition ().y () - 18), cPosition (343 + 212, getEndPosition ().y () - 18 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));

@@ -111,6 +111,10 @@ public:
 	cSignal<void ()> filesClicked;
 	cSignal<void ()> preferencesClicked;
 
+	cSignal<void ()> nextClicked;
+	cSignal<void ()> prevClicked;
+	cSignal<void ()> doneClicked;
+
 	cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
 
 	void setActiveUnit (const cUnit* unit);

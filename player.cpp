@@ -549,6 +549,7 @@ cVehicle* cPlayer::getNextVehicle (cVehicle* start) const
 	if (vehicles.empty ()) return nullptr;
 
 	auto it = (start == nullptr) ? vehicles.begin () : vehicles.find (*start);
+	if (start != nullptr && it != vehicles.end ()) ++it;
 	for (; it != vehicles.end (); ++it)
 	{
 		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
@@ -566,6 +567,7 @@ cBuilding* cPlayer::getNextBuilding (cBuilding* start) const
 	if (buildings.empty ()) return nullptr;
 
 	auto it = (start == nullptr) ? buildings.begin () : buildings.find (*start);
+	if (start != nullptr && it != buildings.end ()) ++it;
 	for (; it != buildings.end (); ++it)
 	{
 		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
@@ -584,6 +586,7 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start) const
 	if (buildings.empty ()) return nullptr;
 
 	auto it = (start == nullptr) ? buildings.begin () : buildings.find (*start);
+	if (start != nullptr && it != buildings.end ()) ++it;
 	for (; it != buildings.end (); ++it)
 	{
 		if ((*it)->data.canMineMaxRes > 0)
@@ -636,6 +639,7 @@ cVehicle* cPlayer::getPrevVehicle (cVehicle* start) const
 	if (vehicles.empty ()) return nullptr;
 
 	auto it = (start == nullptr) ? vehicles.end ()-1 : vehicles.find (*start);
+	if (start != nullptr && it != vehicles.end ()) --it;
 	for (; it != vehicles.end (); --it)
 	{
 		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
@@ -653,7 +657,8 @@ cBuilding* cPlayer::getPrevBuilding (cBuilding* start) const
 {
 	if (buildings.empty ()) return nullptr;
 
-	auto it = (start == nullptr) ? buildings.end()-1 : buildings.find (*start);
+	auto it = (start == nullptr) ? buildings.end ()-1 : buildings.find (*start);
+	if (start != nullptr && it != buildings.end ()) --it;
 	for (; it != buildings.end (); --it)
 	{
 		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
