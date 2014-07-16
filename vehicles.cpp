@@ -326,7 +326,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 	if (getBuildTurns () != 0) return true;
 
 	const cMap& map = *server.Map;
-	server.addReport (getBuildingType (), owner->getNr ());
+	owner->addTurnReportUnit (getBuildingType ());
 
 	// handle pathbuilding
 	// here the new building is added (if possible) and

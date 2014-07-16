@@ -219,12 +219,6 @@ void sendBuildList (cServer& server, const cBuilding& building);
 */
 void sendProduceValues (cServer& server, const cBuilding& building);
 /**
-* sends the turnstart report of a player
-*@author alzi alias DoctorDeath
-*@param Player player to who his report should be send
-*/
-void sendTurnReport (cServer& server, cPlayer& player);
-/**
 * sends that a unit has to be rearmed or repaired
 *@author alzi alias DoctorDeath
 *@param iDestID the ID of the destination unit

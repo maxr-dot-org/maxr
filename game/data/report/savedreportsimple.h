@@ -27,9 +27,7 @@
 class cSavedReportSimple : public cSavedReport
 {
 public:
-	explicit cSavedReportSimple (std::string text);
-	explicit cSavedReportSimple (cNetMessage& message);
-	explicit cSavedReportSimple (const tinyxml2::XMLElement& element);
+	explicit cSavedReportSimple (eSavedReportType type);
 
 	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
 
@@ -37,11 +35,8 @@ public:
 
 	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
-
 private:
-	std::string text;
+	eSavedReportType type;
 };
 
 #endif // game_data_reports_savedreportsimpleH

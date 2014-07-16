@@ -73,9 +73,9 @@ enum eServerState
 struct sTurnstartReport
 {
 	/** unit type of the report */
-	sID Type;
+	sID type;
 	/** counter for this report */
-	int iAnz;
+	int count;
 };
 
 /**
@@ -238,14 +238,6 @@ public:
 	cVehicle& addVehicle (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int uid = 0);
 	cBuilding& addBuilding (const cPosition& position, const sID& id, cPlayer* Player, bool bInit = false, unsigned int uid = 0);
 
-	/**
-	* adds a report to the reportlist
-	*@author alzi alias DoctorDeath
-	*@param sName the report name
-	*@param bVehicle true if the report is about vehicles
-	*@param iPlayerNum Number of player to whos list the report should be added
-	*/
-	void addReport (sID Type, int iPlayerNum);
 	/**
 	* adds a new movejob
 	*@author alzi alias DoctorDeath

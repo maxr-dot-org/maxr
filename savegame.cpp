@@ -544,15 +544,23 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	}
 
 	// read reports
-	const XMLElement* reportsNode = playerNode->FirstChildElement ("Reports");
-	if (reportsNode)
+	if (version < cVersion (0, 5))
 	{
-		const XMLElement* reportElement = reportsNode->FirstChildElement ("Report");
-		while (reportElement)
+		Log.write ("Skipping reports from save game because save game version is incompatible", cLog::eLOG_TYPE_WARNING);
+	}
+	else
+	{
+		const XMLElement* reportsNode = playerNode->FirstChildElement ("Reports");
+		if (reportsNode)
 		{
-			if (reportElement->Parent() != reportsNode) break;
-			Player->savedReportsList.push_back (cSavedReport::createFrom (*reportElement));
-			reportElement = reportElement->NextSiblingElement();
+			const XMLElement* reportElement = reportsNode->FirstChildElement ("Report");
+			while (reportElement)
+			{
+				if (reportElement->Parent () != reportsNode) break;
+				auto report = cSavedReport::createFrom (*reportElement);
+				if (report) Player->savedReportsList.push_back (std::move (report));
+				reportElement = reportElement->NextSiblingElement ();
+			}
 		}
 	}
 

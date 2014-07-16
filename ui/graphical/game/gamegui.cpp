@@ -74,6 +74,7 @@
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportunit.h"
+#include "game/data/report/special/savedreporthostcommand.h"
 #include "game/logic/turnclock.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
@@ -600,7 +601,6 @@ void cGameGui::connectToClient (cClient& client)
 				}
 				if (serverPlayer)
 				{
-					sendSavedReport (*server, cSavedReportSimple ("Server entered command: '" + command + "'"), nullptr);
 					serverPlayer->revealMap ();
 					sendRevealMap (*server, *serverPlayer);
 				}
@@ -632,6 +632,10 @@ void cGameGui::connectToClient (cClient& client)
 					return;
 				}
 				server->disableFreezeMode (FREEZE_PAUSE);
+			}
+			if (server)
+			{
+				sendSavedReport (*server, cSavedReportHostCommand (command), nullptr);
 			}
 		}
 		else
@@ -1049,27 +1053,6 @@ void cGameGui::connectToClient (cClient& client)
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
 	});
 
-	clientSignalConnectionManager.connect (client.unitDisabled, [&](const cUnit& unit)
-	{
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDisabled, VoiceData.VOIUnitDisabled));
-	});
-
-	clientSignalConnectionManager.connect (client.unitStolen, [&](const cUnit& unit)
-	{
-		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceStolenByEnemy, VoiceData.VOIUnitStolenByEnemy));
-	});
-
-	clientSignalConnectionManager.connect (client.unitDetected, [&](const cUnit& unit)
-	{
-		if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
-		{
-			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDetected, VoiceData.VOISubDetected));
-		}
-		else
-		{
-			soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceDetected, getRandom (VoiceData.VOIDetected)));
-		}
-	});
 	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect)
 	{
 		gameMap->addEffect (effect);
@@ -1408,11 +1391,9 @@ void cGameGui::showReportsWindow ()
 
 	signalConnectionManager.connect (reportsWindow->reportClickedSecondTime, [this, reportsWindow](const cSavedReport& report)
 	{
-		if (report.getType () == eSavedReportType::Unit)
+		if (report.hasPosition())
 		{
-			auto& savedUnitReport = static_cast<const cSavedReportUnit&>(report);
-
-			gameMap->centerAt (savedUnitReport.getPosition ());
+			gameMap->centerAt (report.getPosition ());
 			reportsWindow->close ();
 		}
 	});
@@ -1917,27 +1898,27 @@ void cGameGui::handleReport (const cSavedReport& report)
 		if (player)
 		{
 			chatBox->addChatMessage (*player, savedChatReport.getText ());
+			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
 		}
 		else // should never happen!
 		{
 			messageList->addMessage (savedChatReport.getMessage ());
 		}
 	}
-	else if (report.getType () == eSavedReportType::Unit)
+	else if (report.hasPosition())
 	{
-		auto& savedUnitReport = static_cast<const cSavedReportUnit&>(report);
-
 		savedReportPosition.first = true;
-		savedReportPosition.second = savedUnitReport.getPosition ();
+		savedReportPosition.second = report.getPosition ();
 
-		messageList->addMessage (savedUnitReport.getMessage () + " (" + KeysList.keyJumpToAction.toString () + ")", eGameMessageListViewItemBackgroundColor::LightGray);
-
+		messageList->addMessage (report.getMessage () + " (" + KeysList.keyJumpToAction.toString () + ")", eGameMessageListViewItemBackgroundColor::LightGray);
 	}
 	else
 	{
 		messageList->addMessage (report.getMessage (), report.isAlert () ? eGameMessageListViewItemBackgroundColor::Red : eGameMessageListViewItemBackgroundColor::DarkGray);
 		if (report.isAlert ()) soundManager->playSound (std::make_shared<cSoundEffect>(eSoundEffectType::EffectAlert, SoundData.SNDQuitsch));
 	}
+
+	report.playSound (*soundManager);
 
 	if (cSettings::getInstance ().isDebug ()) Log.write (report.getMessage (), cLog::eLOG_TYPE_DEBUG);
 }

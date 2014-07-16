@@ -20,55 +20,82 @@
 #include "game/data/report/savedreportsimple.h"
 
 #include "netmessage.h"
+#include "main.h" //lngPack
 
 //------------------------------------------------------------------------------
-cSavedReportSimple::cSavedReportSimple (std::string text_) :
-	text (std::move (text_))
-{}
-
-
-//------------------------------------------------------------------------------
-cSavedReportSimple::cSavedReportSimple (cNetMessage& message)
+cSavedReportSimple::cSavedReportSimple (eSavedReportType type_) :
+	type (type_)
 {
-	text = message.popString ();
-}
-
-//------------------------------------------------------------------------------
-cSavedReportSimple::cSavedReportSimple (const tinyxml2::XMLElement& element)
-{
-	text = element.Attribute ("msg");
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportSimple::pushInto (cNetMessage& message) const
-{
-	message.pushString (text);
-
-	cSavedReport::pushInto (message);
-}
-
-//------------------------------------------------------------------------------
-void cSavedReportSimple::pushInto (tinyxml2::XMLElement& element) const
-{
-	element.SetAttribute ("msg", text.c_str ());
-
-	cSavedReport::pushInto (element);
+	// TODO: check valid type?!
 }
 
 //------------------------------------------------------------------------------
 eSavedReportType cSavedReportSimple::getType () const
 {
-	return eSavedReportType::Simple;
+	return type;
 }
 
 //------------------------------------------------------------------------------
 std::string cSavedReportSimple::getMessage () const
 {
-	return text;
+	switch (type)
+	{
+	case eSavedReportType::MetalInsufficient:
+		return lngPack.i18n ("Text~Comp~Metal_Insufficient");
+	case eSavedReportType::FuelInsufficient:
+		return lngPack.i18n ("Text~Comp~Fuel_Insufficient");
+	case eSavedReportType::GoldInsufficient:
+		return lngPack.i18n ("Text~Comp~Gold_Insufficient");
+	case eSavedReportType::EnergyInsufficient:
+		return lngPack.i18n ("Text~Comp~Energy_Insufficient");
+	case eSavedReportType::TeamInsufficient:
+		return lngPack.i18n ("Text~Comp~Team_Insufficient");
+
+	case eSavedReportType::MetalLow:
+		return lngPack.i18n ("Text~Comp~Metal_Low");
+	case eSavedReportType::FuelLow:
+		return lngPack.i18n ("Text~Comp~Fuel_Low");
+	case eSavedReportType::GoldLow:
+		return lngPack.i18n ("Text~Comp~Gold_Low");
+	case eSavedReportType::EnergyLow:
+		return lngPack.i18n ("Text~Comp~Energy_ToLow");
+	case eSavedReportType::TeamLow:
+		return lngPack.i18n ("Text~Comp~Team_Low");
+
+	case eSavedReportType::EnergyToLow:
+		return lngPack.i18n ("Text~Comp~Energy_ToLow");
+	case eSavedReportType::EnergyIsNeeded:
+		return lngPack.i18n ("Text~Comp~Energy_IsNeeded");
+
+	case eSavedReportType::BuildingDisabled:
+		return lngPack.i18n ("Text~Comp~Building_Disabled");
+
+	case eSavedReportType::ProducingError:
+		return lngPack.i18n ("Text~Comp~Producing_Err");
+
+	case eSavedReportType::TurnWait:
+		return lngPack.i18n ("Text~Comp~Turn_Wait");
+	case eSavedReportType::TurnAutoMove:
+		return lngPack.i18n ("Text~Comp~Turn_Automove");
+	}
+	return "";
 }
 
 //------------------------------------------------------------------------------
 bool cSavedReportSimple::isAlert () const
 {
+	switch (type)
+	{
+	case eSavedReportType::MetalInsufficient:
+	case eSavedReportType::FuelInsufficient:
+	case eSavedReportType::GoldInsufficient:
+	case eSavedReportType::EnergyInsufficient:
+	case eSavedReportType::TeamInsufficient:
+	case eSavedReportType::EnergyIsNeeded:
+	case eSavedReportType::BuildingDisabled:
+		return true;
+	default:
+		return false;
+	}
 	return false;
 }

@@ -28,7 +28,7 @@
 
 //------------------------------------------------------------------------------
 cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner) :
-	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Alpha)
+	cWindow (LoadPCX (GFXOD_HELP), eWindowBackgrounds::Black)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Unitinfo"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 

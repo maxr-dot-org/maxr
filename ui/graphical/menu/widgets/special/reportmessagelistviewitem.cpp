@@ -37,22 +37,20 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 	textLabel->setWordWrap (true);
 	textLabel->resizeToTextHeight ();
 
-	if (report.getType () == eSavedReportType::Unit)
+	if (report.hasUnitId ())
 	{
-		const auto& unitReport = static_cast<const cSavedReportUnit&>(report);
-
-		const auto& unitId = unitReport.getUnitId ();
+		const auto& unitId = report.getUnitId ();
 
 		const auto totalHeight = std::max (unitImageSize, textLabel->getSize ().y ());
 
 		AutoSurface unitSurface;
 		if (unitId.isABuilding ())
 		{
-            unitSurface = AutoSurface (scaleSurface (UnitsData.getBuildingUI (unitId)->img_org.get (), nullptr, unitImageSize, unitImageSize));
+			unitSurface = AutoSurface (scaleSurface (UnitsData.getBuildingUI (unitId)->img_org.get (), nullptr, unitImageSize, unitImageSize));
 		}
 		else if (unitId.isAVehicle ())
 		{
-            unitSurface = AutoSurface (scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0].get (), nullptr, unitImageSize, unitImageSize));
+			unitSurface = AutoSurface (scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0].get (), nullptr, unitImageSize, unitImageSize));
 		}
 		addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageSize) / 2), unitSurface.get ()));
 	}

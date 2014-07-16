@@ -180,17 +180,6 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 cPlayer::~cPlayer()
 {
 	removeAllUnits ();
-
-	for (size_t i = 0; i != ReportVehicles.size(); ++i)
-	{
-		delete ReportVehicles[i];
-	}
-	ReportVehicles.clear();
-	for (size_t i = 0; i != ReportBuildings.size(); ++i)
-	{
-		delete ReportBuildings[i];
-	}
-	ReportBuildings.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -765,7 +754,7 @@ void cPlayer::doResearch (cServer& server)
 	bool researchFinished = false;
 	std::vector<sUnitData*> upgradedUnitDatas;
 	std::vector<int> areasReachingNextLevel;
-	reportResearchAreasFinished.clear();
+	currentTurnResearchAreasFinished.clear ();
 	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 &&
@@ -773,7 +762,7 @@ void cPlayer::doResearch (cServer& server)
 		{
 			// next level reached
 			areasReachingNextLevel.push_back (area);
-			reportResearchAreasFinished.push_back (area);
+			currentTurnResearchAreasFinished.push_back (area);
 			researchFinished = true;
 		}
 	}
@@ -996,6 +985,41 @@ bool cPlayer::mayHaveOffensiveUnit() const
 		if (building->data.canAttack || !building->data.canBuild.empty()) return true;
 	}
 	return false;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::addTurnReportUnit (const sID& unitTypeId)
+{
+	auto iter = std::find_if (currentTurnUnitReports.begin (), currentTurnUnitReports.end (), [unitTypeId](const sTurnstartReport& entry){ return entry.type == unitTypeId; });
+	if (iter != currentTurnUnitReports.end ())
+	{
+		++iter->count;
+	}
+	else
+	{
+		sTurnstartReport entry;
+		entry.type = unitTypeId;
+		entry.count = 1;
+		currentTurnUnitReports.push_back (entry);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::resetTurnReportData ()
+{
+	currentTurnUnitReports.clear ();
+}
+
+//------------------------------------------------------------------------------
+const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports () const
+{
+	return currentTurnUnitReports;
+}
+
+//------------------------------------------------------------------------------
+const std::vector<int>& cPlayer::getCurrentTurnResearchAreasFinished () const
+{
+	return currentTurnResearchAreasFinished;
 }
 
 //------------------------------------------------------------------------------

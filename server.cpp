@@ -45,8 +45,10 @@
 #include "vehicles.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "game/data/report/savedreport.h"
-#include "game/data/report/savedreporttranslated.h"
+#include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
+#include "game/data/report/special/savedreportlostconnection.h"
+#include "game/data/report/special/savedreportturnstart.h"
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 #include "utility/random.h"
@@ -495,7 +497,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 		// because it's expected client behaviour
 		if (DEDICATED_SERVER == false)
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-		sendSavedReport (*this, cSavedReportTranslated ("Text~Multiplayer~Lost_Connection", Player->getName ()), nullptr);
+		sendSavedReport (*this, cSavedReportLostConnection (*Player), nullptr);
 
 		DisconnectedPlayerList.push_back (Player);
 
@@ -2903,7 +2905,8 @@ void cServer::handleEnd (const cPlayer& player)
 			}
 		}
 		// send report to next player
-		sendTurnReport (*this, *activeTurnPlayer);
+		sendSavedReport (*this, cSavedReportTurnStart (*activeTurnPlayer, turnClock->getTurn()), activeTurnPlayer);
+		activeTurnPlayer->resetTurnReportData ();
 	}
 	else // it's a simultaneous TCP/IP multiplayer game
 	{
@@ -2989,7 +2992,8 @@ void cServer::handleWantEnd()
 		}
 		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			sendTurnReport (*this, *playerList[i]);
+			sendSavedReport (*this, cSavedReportTurnStart (*playerList[i], turnClock->getTurn ()), playerList[i].get ());
+			playerList[i]->resetTurnReportData ();
 		}
 
 		// begin the new turn
@@ -3015,10 +3019,11 @@ bool cServer::checkEndActions (const cPlayer* player)
 {
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 
-	std::string sMessage;
-	if (ActiveMJobs.empty() == false)
+	executingRemainingMovements = false;
+	bool remainingAutomove = false;
+	if (!ActiveMJobs.empty())
 	{
-		sMessage = "Text~Comp~Turn_Wait";
+		executingRemainingMovements = true;
 	}
 	else
 	{
@@ -3032,19 +3037,22 @@ bool cServer::checkEndActions (const cPlayer* player)
 				if (vehicle->ServerMoveJob && vehicle->data.speedCur > 0 && !vehicle->isUnitMoving ())
 				{
 					// restart movejob
-					vehicle->ServerMoveJob->resume();
-					sMessage = "Text~Comp~Turn_Automove";
+					vehicle->ServerMoveJob->resume ();
+					executingRemainingMovements = true;
+					remainingAutomove = true;
 				}
 			}
 		}
 	}
-	if (!sMessage.empty())
+	if (executingRemainingMovements)
 	{
 		if (player != nullptr)
 		{
 			if (iWantPlayerEndNum == -1)
 			{
-				sendSavedReport (*this, cSavedReportTranslated (sMessage), player);
+				if (remainingAutomove) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), player);
+				else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), player);
+				
 			}
 		}
 		else
@@ -3053,14 +3061,13 @@ bool cServer::checkEndActions (const cPlayer* player)
 			{
 				for (size_t i = 0; i != playerList.size(); ++i)
 				{
-					sendSavedReport (*this, cSavedReportTranslated (sMessage), playerList[i].get ());
+					if (remainingAutomove) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), playerList[i].get ());
+					else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), playerList[i].get ());
 				}
 			}
 		}
-		executingRemainingMovements = true;
 		return true;
 	}
-	executingRemainingMovements = false;
 	return false;
 }
 
@@ -3317,48 +3324,11 @@ void cServer::checkDefeats()
 	// i.e. first player to get ahead in score wins.
 	if (winners.size() > 1)
 	{
-		for (size_t i = 0; i != playerList.size (); ++i)
-			sendSavedReport (*this, cSavedReportTranslated ("Text~Comp~SuddenDeath"), playerList[i].get ());
+		// TODO: reimplement
+		//for (size_t i = 0; i != playerList.size (); ++i)
+		//	sendSavedReport (*this, cSavedReportTranslated ("Text~Comp~SuddenDeath"), playerList[i].get ());
 	}
 	// TODO: send win message to the winner.
-}
-
-//------------------------------------------------------------------------------
-void cServer::addReport (sID id, int iPlayerNum)
-{
-	cPlayer& player = getPlayerFromNumber (iPlayerNum);
-	if (id.isAVehicle())
-	{
-		for (size_t i = 0; i != player.ReportVehicles.size(); ++i)
-		{
-			sTurnstartReport& report = *player.ReportVehicles[i];
-			if (report.Type == id)
-			{
-				report.iAnz++;
-				return;
-			}
-		}
-		sTurnstartReport* report = new sTurnstartReport;
-		report->Type = id;
-		report->iAnz = 1;
-		player.ReportVehicles.push_back (report);
-	}
-	else
-	{
-		for (size_t i = 0; i != player.ReportBuildings.size(); ++i)
-		{
-			sTurnstartReport* report = player.ReportBuildings[i];
-			if (report->Type == id)
-			{
-				report->iAnz++;
-				return;
-			}
-		}
-		sTurnstartReport* report = new sTurnstartReport;
-		report->Type = id;
-		report->iAnz = 1;
-		player.ReportBuildings.push_back (report);
-	}
 }
 
 //------------------------------------------------------------------------------

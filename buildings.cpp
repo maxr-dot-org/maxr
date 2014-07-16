@@ -37,7 +37,8 @@
 #include "vehicles.h"
 #include "video.h"
 #include "unifonts.h"
-#include "game/data/report/savedreporttranslated.h"
+#include "game/data/report/savedreportsimple.h"
+#include "game/data/report/special/savedreportresourcechanged.h"
 #include "utility/random.h"
 
 using namespace std;
@@ -678,24 +679,26 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (isDisabled())
 	{
-		sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Building_Disabled", true), owner);
+		sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), owner);
 		return;
 	}
 
 	// needs human workers:
 	if (data.needsHumans)
+	{
 		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
 		{
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Team_Insufficient", true), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), owner);
 			return;
 		}
+	}
 
 	// needs gold:
 	if (data.convertsGold)
 	{
 		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Gold_Insufficient", true), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), owner);
 			return;
 		}
 	}
@@ -705,7 +708,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal ()) > SubBase->getMetalProd () + SubBase->getMetal ())
 		{
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Metal_Insufficient", true), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), owner);
 			return;
 		}
 	}
@@ -717,7 +720,7 @@ void cBuilding::ServerStartWork (cServer& server)
 		// (current production + reserves)
 		if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getMaxOilProd())
 		{
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Fuel_Insufficient", true), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), owner);
 			return;
 		}
 		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getOilProd ())
@@ -737,11 +740,11 @@ void cBuilding::ServerStartWork (cServer& server)
 			SubBase->setGoldProd (gold);
 			SubBase->setMetalProd (metal);
 
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Fuel_Increased", iToStr (missingOil)), owner);
+			sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), owner);
 			if (SubBase->getMetalProd () < metal)
-				sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Metal_Decreased", iToStr (metal - SubBase->getMetalProd ())), owner);
+				sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd (), false), owner);
 			if (SubBase->getGoldProd () < gold)
-				sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Adjustments_Gold_Decreased", iToStr (gold - SubBase->getGoldProd ())), owner);
+				sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd (), false), owner);
 		}
 	}
 
@@ -791,10 +794,10 @@ void cBuilding::ServerStartWork (cServer& server)
 					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 				}
 
-				sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_Insufficient", true), owner);
+				sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), owner);
 				return;
 			}
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_ToLow"), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), owner);
 		}
 	}
 
@@ -860,7 +863,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	{
 		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
 		{
-			sendSavedReport (server, cSavedReportTranslated ("Text~Comp~Energy_IsNeeded", true), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), owner);
 			return;
 		}
 

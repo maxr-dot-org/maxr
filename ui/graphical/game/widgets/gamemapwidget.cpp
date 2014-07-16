@@ -1846,7 +1846,8 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		// if the selection has changed
 		if (player && lockActive)
 		{
-			if (unitSelection.getSelectedUnit () && unitSelection.getSelectedUnit () != selectedUnit && selectedUnit->owner != player.get ())
+			const auto newSelectedUnit = unitSelection.getSelectedUnit ();
+			if (newSelectedUnit && newSelectedUnit != selectedUnit && newSelectedUnit->owner != player.get ())
 			{
 				unitLockList.toggleLockAt (field);
 			}

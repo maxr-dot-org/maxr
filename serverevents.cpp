@@ -542,41 +542,6 @@ void sendProduceValues (cServer& server, const cBuilding& building)
 }
 
 //------------------------------------------------------------------------------
-void sendTurnReport (cServer& server, cPlayer& player)
-{
-	// TODO: make sure, that the message size is not exceeded!
-
-	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_TURN_REPORT));
-	int iCount = 0;
-
-	int nrResearchAreasFinished = player.reportResearchAreasFinished.size();
-	for (int i = nrResearchAreasFinished - 1; i >= 0; i--)   // count down to get the correct order at the client conveniently
-		message->pushChar (player.reportResearchAreasFinished[i]);
-	message->pushChar (nrResearchAreasFinished);
-
-	for (size_t i = 0; i != player.ReportBuildings.size(); ++i)
-	{
-		const sTurnstartReport* report = player.ReportBuildings[i];
-		message->pushInt16 (report->iAnz);
-		message->pushID (report->Type);
-		delete report;
-		iCount++;
-	}
-	player.ReportBuildings.clear();
-	for (size_t i = 0; i != player.ReportVehicles.size(); ++i)
-	{
-		sTurnstartReport* report = player.ReportVehicles[i];
-		message->pushInt16 (report->iAnz);
-		message->pushID (report->Type);
-		delete report;
-		iCount++;
-	}
-	player.ReportVehicles.clear();
-	message->pushInt16 (iCount);
-	server.sendNetMessage (message, &player);
-}
-
-//------------------------------------------------------------------------------
 void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SUPPLY));

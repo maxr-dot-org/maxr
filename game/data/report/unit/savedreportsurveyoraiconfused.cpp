@@ -17,76 +17,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "game/data/report/savedreporttranslated.h"
-
-#include "netmessage.h"
-#include "language.h"
-#include "main.h" // lngPack
+#include "game/data/report/unit/savedreportsurveyoraiconfused.h"
 
 //------------------------------------------------------------------------------
-cSavedReportTranslated::cSavedReportTranslated (std::string translationText_, bool isAlert) :
-	translationText (std::move (translationText_)),
-	alert (isAlert)
+cSavedReportSurveyorAiConfused::cSavedReportSurveyorAiConfused (const cUnit& unit) :
+	cSavedReportUnit (unit)
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportTranslated::cSavedReportTranslated (std::string translationText_, std::string insertText_, bool isAlert) :
-	translationText (std::move (translationText_)),
-	insertText (std::move (insertText_)),
-	alert (isAlert)
+cSavedReportSurveyorAiConfused::cSavedReportSurveyorAiConfused (cNetMessage& message) :
+	cSavedReportUnit (message)
 {}
 
 //------------------------------------------------------------------------------
-cSavedReportTranslated::cSavedReportTranslated (cNetMessage& message)
+cSavedReportSurveyorAiConfused::cSavedReportSurveyorAiConfused (const tinyxml2::XMLElement& element) :
+	cSavedReportUnit (element)
+{}
+
+//------------------------------------------------------------------------------
+void cSavedReportSurveyorAiConfused::pushInto (cNetMessage& message) const
 {
-	translationText = message.popString ();
-	insertText = message.popString ();
-	alert = message.popBool ();
+	cSavedReportUnit::pushInto (message);
 }
 
 //------------------------------------------------------------------------------
-cSavedReportTranslated::cSavedReportTranslated (const tinyxml2::XMLElement& element)
+void cSavedReportSurveyorAiConfused::pushInto (tinyxml2::XMLElement& element) const
 {
-	translationText = element.Attribute ("msg");
-	insertText = element.Attribute ("insert");
-	alert = element.BoolAttribute ("alert");
+	cSavedReportUnit::pushInto (element);
 }
 
 //------------------------------------------------------------------------------
-void cSavedReportTranslated::pushInto (cNetMessage& message) const
+eSavedReportType cSavedReportSurveyorAiConfused::getType () const
 {
-	message.pushBool (alert);
-	message.pushString (insertText);
-	message.pushString (translationText);
-
-	cSavedReport::pushInto (message);
+	return eSavedReportType::SurveyorAiConfused;
 }
 
 //------------------------------------------------------------------------------
-void cSavedReportTranslated::pushInto (tinyxml2::XMLElement& element) const
+std::string cSavedReportSurveyorAiConfused::getText () const
 {
-	element.SetAttribute ("msg", translationText.c_str ());
-	element.SetAttribute ("insert", insertText.c_str ());
-	element.SetAttribute ("alert", bToStr(alert).c_str ());
-
-	cSavedReport::pushInto (element);
-}
-
-//------------------------------------------------------------------------------
-eSavedReportType cSavedReportTranslated::getType () const
-{
-	return eSavedReportType::Translated;
-}
-
-//------------------------------------------------------------------------------
-std::string cSavedReportTranslated::getMessage () const
-{
-	if (insertText.empty ()) return lngPack.i18n (translationText);
-	else return lngPack.i18n (translationText, insertText);
-}
-
-//------------------------------------------------------------------------------
-bool cSavedReportTranslated::isAlert () const
-{
-	return alert;
+	return "Surveyor AI: I'm totally confused. Don't know what to do...";
 }

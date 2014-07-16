@@ -17,20 +17,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_data_reports_savedreporttranslatedH
-#define game_data_reports_savedreporttranslatedH
+#ifndef game_data_reports_special_savedreportlostconnectionH
+#define game_data_reports_special_savedreportlostconnectionH
 
 #include "maxrconfig.h"
 
 #include "game/data/report/savedreport.h"
 
-class cSavedReportTranslated : public cSavedReport
+class cPlayer;
+
+class cSavedReportLostConnection : public cSavedReport
 {
 public:
-	cSavedReportTranslated (std::string translationText, bool isAlert = false);
-	cSavedReportTranslated (std::string translationText, std::string insertText, bool isAlert = false);
-	explicit cSavedReportTranslated (cNetMessage& message);
-	explicit cSavedReportTranslated (const tinyxml2::XMLElement& element);
+	cSavedReportLostConnection (const cPlayer& player);
+	explicit cSavedReportLostConnection (cNetMessage& message);
+	explicit cSavedReportLostConnection (const tinyxml2::XMLElement& element);
+
+	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
+	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual eSavedReportType getType () const MAXR_OVERRIDE_FUNCTION;
 
@@ -38,14 +42,8 @@ public:
 
 	virtual bool isAlert () const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void pushInto (cNetMessage& message) const MAXR_OVERRIDE_FUNCTION;
-	virtual void pushInto (tinyxml2::XMLElement& element) const MAXR_OVERRIDE_FUNCTION;
-
 private:
-	std::string translationText;
-	std::string insertText;
-
-	bool alert;
+	std::string playerName;
 };
 
-#endif // game_data_reports_savedreporttranslatedH
+#endif // game_data_reports_special_savedreportlostconnectionH

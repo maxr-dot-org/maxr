@@ -45,7 +45,8 @@ struct sHudStateContainer;
 // 0.2 - ?
 // 0.3 - ?
 // 0.4 - changed game settings format (from sSettings to cGameSettings)
-#define SAVE_FORMAT_VERSION		((std::string)"0.4")
+// 0.5 - changed reports format
+#define SAVE_FORMAT_VERSION		((std::string)"0.5")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad

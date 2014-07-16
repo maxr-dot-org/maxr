@@ -290,7 +290,6 @@ private:
 	void HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);

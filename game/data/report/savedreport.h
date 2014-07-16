@@ -26,14 +26,62 @@
 #include "tinyxml2.h"
 
 class cNetMessage;
+class cSoundManager;
+class cPosition;
+struct sID;
 
 enum class eSavedReportType
 {
-	// fixed numbers for chat backward-compatibility
-	Simple     = 0,
-	Unit       = 1,
-	Chat       = 2,
-	Translated = 3
+	// fixed numbers for save backward-compatibility
+	// Simple reports
+	MetalInsufficient    = 0,
+	FuelInsufficient     = 1,
+	GoldInsufficient     = 2,
+	EnergyInsufficient   = 3,
+	TeamInsufficient     = 4,
+
+	MetalLow             = 5,
+	FuelLow              = 6,
+	GoldLow              = 7,
+	EnergyLow            = 8,
+	TeamLow              = 9,
+
+	EnergyToLow          = 10,
+	EnergyIsNeeded       = 11,
+
+	BuildingDisabled     = 12,
+
+	ProducingError       = 13,
+
+	TurnWait             = 14,
+	TurnAutoMove         = 15,
+
+	// Special reports
+	HostCommand          = 16,
+
+	ResourceChanged      = 17,
+
+	LostConnection       = 18,
+
+	PlayerEndedTurn      = 19,
+	PlayerDefeated       = 20,
+	PlayerLeft           = 21,
+	Upgraded             = 22,
+	TurnStart            = 23,
+
+	// Unit reports
+	Attacked             = 24,
+	AttackingEnemy       = 25,
+	CapturedByEnemy      = 26,
+	Destroyed            = 27,
+	Detected             = 28,
+	Disabled             = 29,
+	PathInterrupted      = 30,
+	SurveyorAiConfused   = 31,
+	SurveyorAiSenseless  = 32,
+
+	// Chat report
+	Chat                 = 33
 };
 
 class cSavedReport
@@ -46,6 +94,14 @@ public:
 	virtual std::string getMessage () const = 0;
 
 	virtual bool isAlert () const = 0;
+
+	virtual bool hasUnitId () const;
+	virtual const sID& getUnitId () const;
+
+	virtual bool hasPosition () const;
+	virtual const cPosition& getPosition () const;
+
+	virtual void playSound (cSoundManager& soundManager) const;
 
 	virtual void pushInto (cNetMessage& message) const;
 	virtual void pushInto (tinyxml2::XMLElement& element) const;

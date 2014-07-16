@@ -43,8 +43,15 @@
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
-#include "game/data/report/savedreporttranslated.h"
-#include "game/data/report/savedreportunit.h"
+#include "game/data/report/unit/savedreportdisabled.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
+#include "game/data/report/unit/savedreportcapturedbyenemy.h"
+#include "game/data/report/unit/savedreportdetected.h"
+#include "game/data/report/unit/savedreportpathinterrupted.h"
+#include "game/data/report/special/savedreportplayerendedturn.h"
+#include "game/data/report/special/savedreportplayerdefeated.h"
+#include "game/data/report/special/savedreportplayerleft.h"
+#include "game/data/report/special/savedreportupgraded.h"
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"
 
@@ -501,8 +508,7 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 
 	if (playerNumber != ActivePlayer->getNr())
 	{
-		//string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName ()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay / 100));
-		ActivePlayer->addSavedReport (std::make_unique<cSavedReportTranslated> ("Text~Multiplayer~Player_Turn_End", player->getName ()));
+		ActivePlayer->addSavedReport (std::make_unique<cSavedReportPlayerEndedTurn> (*player));
 	}
 }
 
@@ -594,8 +600,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		{
 			if (Vehicle->isDisabled())
 			{
-				const std::string msg = Vehicle->getDisplayName () + " " + lngPack.i18n ("Text~Comp~Disabled");
-				ActivePlayer->addSavedReport (std::make_unique<cSavedReportUnit>(*Vehicle, msg));
+				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled>(*Vehicle));
 				unitDisabled (*Vehicle);
 			}
 			Vehicle->owner->doScan();
@@ -626,8 +631,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		{
 			if (Building->isDisabled())
 			{
-				const std::string msg = Building->getDisplayName () + " " + lngPack.i18n ("Text~Comp~Disabled");
-				ActivePlayer->addSavedReport (std::make_unique<cSavedReportUnit> (*Building, msg));
+				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled> (*Building));
 				unitDisabled (*Building);
 			}
 			Building->owner->doScan();
@@ -829,13 +833,11 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 		{
 			if (!Vehicle->BuildPath)
 			{
-				const string msgString = lngPack.i18n ("Text~Comp~Producing_Err");
-				ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (msgString));
+				ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (eSavedReportType::ProducingError));
 			}
 			else if (Vehicle->bandPosition != Vehicle->getPosition())
 			{
-				const string msgString = lngPack.i18n ("Text~Comp~Path_interrupted");
-				ActivePlayer->addSavedReport (std::make_unique<cSavedReportUnit> (*Vehicle, msgString));
+				ActivePlayer->addSavedReport (std::make_unique<cSavedReportPathInterrupted> (*Vehicle));
 			}
 		}
 		Vehicle->setBuildTurns(0);
@@ -974,79 +976,6 @@ void cClient::HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message
 	Building->MaxMetalProd = message.popInt16();
 	Building->MaxOilProd = message.popInt16();
 	Building->MaxGoldProd = message.popInt16();
-}
-
-void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_TURN_REPORT);
-
-	string sReportMsg = "";
-	int iCount = 0;
-	bool playVoice = false;
-
-	const int iReportAnz = message.popInt16();
-	for (int i = 0; i != iReportAnz; ++i)
-	{
-		const sID Type = message.popID();
-		const int iAnz = message.popInt16();
-		if (iCount) sReportMsg += ", ";
-		iCount += iAnz;
-		const string sTmp = iToStr (iAnz) + " " + Type.getUnitDataOriginalVersion()->name;
-		sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->name;
-		if (Type.getUnitDataOriginalVersion()->surfacePosition == sUnitData::SURFACE_POS_GROUND) playVoice = true;
-	}
-
-	//FIXME: gameGUI - voices
-
-	const int nrResearchAreasFinished = message.popChar();
-	const bool bFinishedResearch = (nrResearchAreasFinished > 0);
-	//if ((iCount == 0 || !playVoice) && !bFinishedResearch) PlayVoice (VoiceData.VOIStartNone);
-	if (iCount == 1)
-	{
-		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished") + ".";
-		//if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartOne);
-	}
-	else if (iCount > 1)
-	{
-		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
-		//if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartMore);
-	}
-	string researchMsgString = "";
-	if (bFinishedResearch)
-	{
-		ActivePlayer->researchFinished = true;
-		//PlayVoice (VoiceData.VOIResearchComplete);
-
-		// build research finished string
-		const string themeNames[8] =
-		{
-			lngPack.i18n ("Text~Others~Attack"),
-			lngPack.i18n ("Text~Others~Shots"),
-			lngPack.i18n ("Text~Others~Range"),
-			lngPack.i18n ("Text~Others~Armor"),
-			lngPack.i18n ("Text~Others~Hitpoints"),
-			lngPack.i18n ("Text~Others~Speed"),
-			lngPack.i18n ("Text~Others~Scan"),
-			lngPack.i18n ("Text~Others~Costs")
-		};
-
-		researchMsgString = lngPack.i18n ("Text~Others~Research") + " " + lngPack.i18n ("Text~Comp~Finished") + ": ";
-		for (int i = 0; i < nrResearchAreasFinished; i++)
-		{
-			const int area = message.popChar();
-			if (0 <= area && area < 8)
-			{
-				researchMsgString += themeNames[area];
-				if (i + 1 < nrResearchAreasFinished) researchMsgString += ", ";
-			}
-		}
-	}
-
-	// Save the report
-	string msgString = lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (turnClock->getTurn());
-	if (sReportMsg.length () > 0) msgString += "\n" + sReportMsg;
-	if (bFinishedResearch) msgString += "\n" + researchMsgString;
-	ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (msgString));
 }
 
 void cClient::HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message)
@@ -1244,8 +1173,7 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 		return;
 	}
 	Player->isDefeated = true;
-	string msgString = lngPack.i18n ("Text~Multiplayer~Player") + " " + Player->getName () + " " + lngPack.i18n ("Text~Comp~Defeated");
-	ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (msgString));
+	ActivePlayer->addSavedReport (std::make_unique<cSavedReportPlayerDefeated> (*Player));
 #if 0
 	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
 	{
@@ -1289,8 +1217,7 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 	{
 		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
 	}
-	const string msgString = lngPack.i18n ("Text~Multiplayer~Player_Left", Player->getName());
-	ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (msgString));
+	ActivePlayer->addSavedReport (std::make_unique<cSavedReportPlayerLeft> (*Player));
 
 	deletePlayer (Player);
 }
@@ -1454,7 +1381,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	const int totalCosts = message.popInt16();
 	if (buildingsInMsg <= 0) return;
 
-	string buildingName;
+	const sUnitData* unitData = nullptr;
 	bool scanNecessary = false;
 	for (int i = 0; i < buildingsInMsg; i++)
 	{
@@ -1471,13 +1398,11 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 		building->upgradeToCurrentVersion();
 		if (i == 0)
 		{
-			buildingName = building->data.name;
+			unitData = &building->data;
 		}
 	}
-	ostringstream os;
-	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
-	string sTmp (os.str());
-	ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (sTmp));
+	assert (unitData != nullptr);
+	ActivePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, buildingsInMsg, totalCosts));
 	if (scanNecessary)
 		ActivePlayer->doScan();
 }
@@ -1491,7 +1416,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 	const unsigned int storingBuildingID = message.popInt32();
 	if (vehiclesInMsg <= 0) return;
 
-	string vehicleName;
+	const sUnitData* unitData = nullptr;
 	for (int i = 0; i < vehiclesInMsg; i++)
 	{
 		const int vehicleID = message.popInt32();
@@ -1504,14 +1429,11 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 		vehicle->upgradeToCurrentVersion();
 		if (i == 0)
 		{
-			vehicleName = vehicle->data.name;
+			unitData = &vehicle->data;
 		}
 	}
-	ostringstream os;
-	os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName) << " (" << lngPack.i18n ("Text~Others~Costs") << ": " << totalCosts << ")";
-
-	string printStr (os.str());
-	ActivePlayer->addSavedReport (std::make_unique<cSavedReportSimple> (printStr));
+	assert (unitData != nullptr);
+	ActivePlayer->addSavedReport (std::make_unique<cSavedReportUpgraded> (unitData->ID, vehiclesInMsg, totalCosts));
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message)
@@ -1749,7 +1671,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_SUBBASE_VALUES: HandleNetMessage_GAME_EV_SUBBASE_VALUES (message); break;
 		case GAME_EV_BUILDLIST: HandleNetMessage_GAME_EV_BUILDLIST (message); break;
 		case GAME_EV_MINE_PRODUCE_VALUES: HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (message); break;
-		case GAME_EV_TURN_REPORT: HandleNetMessage_GAME_EV_TURN_REPORT (message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (message); break;
 		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (message); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (message); break;
@@ -1806,14 +1727,12 @@ void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bI
 
 	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
-		const std::string msg = lngPack.i18n ("Text~Comp~CapturedByEnemy", addedVehicle.getDisplayName ());
-		ActivePlayer->addSavedReport (std::make_unique<cSavedReportUnit> (addedVehicle, msg));
+		ActivePlayer->addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (addedVehicle));
 		unitStolen (addedVehicle);
 	}
 	else if (addedVehicle.owner != ActivePlayer)
 	{
-		const string message = addedVehicle.getDisplayName () + " (" + addedVehicle.owner->getName () + ") " + lngPack.i18n ("Text~Comp~Detected");
-		ActivePlayer->addSavedReport (std::make_unique<cSavedReportUnit> (addedVehicle, message));
+		ActivePlayer->addSavedReport (std::make_unique<cSavedReportDetected> (addedVehicle));
 		unitDetected (addedVehicle);
 	}
 }

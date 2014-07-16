@@ -187,6 +187,12 @@
     <Filter Include="maxr\ui\sound\effects">
       <UniqueIdentifier>{b8d6316d-d682-4ec8-9a03-551821a1dc86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="maxr\game\data\report\unit">
+      <UniqueIdentifier>{27f7758a-e40e-4da9-bb16-2ab58e77abe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\data\report\special">
+      <UniqueIdentifier>{1a74911c-6d08-4664-83c2-92da6757cf49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\attackJobs.cpp">
@@ -699,9 +705,6 @@
     <ClCompile Include="..\..\game\data\report\savedreportsimple.cpp">
       <Filter>maxr\game\data\report</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\game\data\report\savedreporttranslated.cpp">
-      <Filter>maxr\game\data\report</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ui\graphical\shortcut.cpp">
       <Filter>maxr\ui\graphical</Filter>
     </ClCompile>
@@ -788,6 +791,57 @@
     </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\unitlocklist.cpp">
       <Filter>maxr\ui\graphical\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportcapturedbyenemy.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportattacked.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportdestroyed.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportdetected.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportpathinterrupted.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportattackingenemy.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportdisabled.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportsurveyoraisenseless.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\unit\savedreportsurveyoraiconfused.cpp">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportresourcechanged.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreporthostcommand.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportlostconnection.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportplayerendedturn.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportturnstart.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportplayerdefeated.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportplayerleft.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\report\special\savedreportupgraded.cpp">
+      <Filter>maxr\game\data\report\special</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1514,9 +1568,6 @@
     <ClInclude Include="..\..\game\data\report\savedreportsimple.h">
       <Filter>maxr\game\data\report</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\data\report\savedreporttranslated.h">
-      <Filter>maxr\game\data\report</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ui\graphical\shortcut.h">
       <Filter>maxr\ui\graphical</Filter>
     </ClInclude>
@@ -1630,6 +1681,57 @@
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\unitlocklist.h">
       <Filter>maxr\ui\graphical\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportattacked.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportcapturedbyenemy.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportdestroyed.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportdetected.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportpathinterrupted.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportattackingenemy.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportdisabled.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportsurveyoraisenseless.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\unit\savedreportsurveyoraiconfused.h">
+      <Filter>maxr\game\data\report\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportresourcechanged.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportturnstart.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportlostconnection.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportplayerendedturn.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreporthostcommand.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportplayerdefeated.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportplayerleft.h">
+      <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\report\special\savedreportupgraded.h">
+      <Filter>maxr\game\data\report\special</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

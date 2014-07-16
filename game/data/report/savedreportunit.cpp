@@ -23,17 +23,15 @@
 #include "unit.h"
 
 //------------------------------------------------------------------------------
-cSavedReportUnit::cSavedReportUnit (const cUnit& unit, std::string text_) :
+cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :
 	unitId (unit.data.ID),
-	position (unit.getPosition()),
-	text (std::move (text_))
+	position (unit.getPosition())
 {}
 
 
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (cNetMessage& message)
 {
-	text = message.popString ();
 	position = message.popPosition ();
 	unitId = message.popID ();
 }
@@ -41,7 +39,6 @@ cSavedReportUnit::cSavedReportUnit (cNetMessage& message)
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const tinyxml2::XMLElement& element)
 {
-	text = element.Attribute("msg");
 	position.x () = element.IntAttribute ("xPos");
 	position.y () = element.IntAttribute ("yPos");
 	unitId.generate (element.Attribute ("id"));
@@ -52,7 +49,6 @@ void cSavedReportUnit::pushInto (cNetMessage& message) const
 {
 	message.pushID (unitId);
 	message.pushPosition (position);
-	message.pushString (text);
 
 	cSavedReport::pushInto (message);
 }
@@ -60,7 +56,6 @@ void cSavedReportUnit::pushInto (cNetMessage& message) const
 //------------------------------------------------------------------------------
 void cSavedReportUnit::pushInto (tinyxml2::XMLElement& element) const
 {
-	element.SetAttribute ("msg", text.c_str ());
 	element.SetAttribute ("xPos", iToStr (position.x()).c_str ());
 	element.SetAttribute ("yPos", iToStr (position.y()).c_str ());
 	element.SetAttribute ("id", unitId.getText ().c_str ());
@@ -69,9 +64,9 @@ void cSavedReportUnit::pushInto (tinyxml2::XMLElement& element) const
 }
 
 //------------------------------------------------------------------------------
-const cPosition& cSavedReportUnit::getPosition () const
+bool cSavedReportUnit::hasUnitId () const
 {
-	return position;
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -81,15 +76,21 @@ const sID& cSavedReportUnit::getUnitId () const
 }
 
 //------------------------------------------------------------------------------
-eSavedReportType cSavedReportUnit::getType () const
+bool cSavedReportUnit::hasPosition () const
 {
-	return eSavedReportType::Unit;
+	return true;
+}
+
+//------------------------------------------------------------------------------
+const cPosition& cSavedReportUnit::getPosition () const
+{
+	return position;
 }
 
 //------------------------------------------------------------------------------
 std::string cSavedReportUnit::getMessage () const
 {
-	return "[" + iToStr (position.x ()) + ", " + iToStr (position.y ()) + "] " + text;
+	return "[" + iToStr (position.x ()) + ", " + iToStr (position.y ()) + "] " + getText();
 }
 
 //------------------------------------------------------------------------------

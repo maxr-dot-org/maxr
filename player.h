@@ -189,6 +189,12 @@ public:
 
 	bool mayHaveOffensiveUnit() const;
 
+	void addTurnReportUnit (const sID& unitId);
+	void resetTurnReportData ();
+	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports () const;
+
+	const std::vector<int>& getCurrentTurnResearchAreasFinished () const;
+
 	mutable cSignal<void (const cSavedReport&)> reportAdded;
 private:
 	/**
@@ -231,7 +237,7 @@ private:
 	int landingPosX;
 	int landingPosY;
 	cPosition mapSize; // Width and Height of the map.
-private:
+
 	std::vector<char> ScanMap;            // seen Map tile.
 	std::vector<char> ResourceMap;        // Map with explored resources.
 	std::vector<char> SentriesMapAir;     /**< the covered air area */
@@ -246,10 +252,7 @@ public:
 	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	AutoPtr<sHudStateContainer> savedHud;
-	std::vector<sTurnstartReport*> ReportVehicles; // Reportlisten.
-	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
-	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
 	bool bFinishedTurn;     // true when player send his turn end
 	bool isDefeated;        // true if the player has been defeated
 	bool isRemovedFromGame; // true if the player has been removed from the game.
@@ -258,6 +261,9 @@ public:
 	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 private:
 	int clan;
+
+	std::vector<sTurnstartReport> currentTurnUnitReports;
+	std::vector<int> currentTurnResearchAreasFinished;
 };
 
 #endif

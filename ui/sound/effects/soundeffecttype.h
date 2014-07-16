@@ -46,7 +46,11 @@ enum class eSoundEffectType
 	VoiceDisabled,
 	VoiceStolenByEnemy,
 	VoiceDetected,
-	VoiceUnitStatus
+	VoiceUnitStatus,
+	VoiceAttacking,
+	VoiceAttackingUs,
+	VoiceDestroyed,
+	VoiceTurnStartReport
 };
 
 #endif // ui_sound_effects_soundeffecttypeH

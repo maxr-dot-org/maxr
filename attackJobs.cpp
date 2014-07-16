@@ -35,7 +35,9 @@
 #include "settings.h"
 #include "vehicles.h"
 #include "sound.h"
-#include "game/data/report/savedreportunit.h"
+#include "game/data/report/unit/savedreportattackingenemy.h"
+#include "game/data/report/unit/savedreportdestroyed.h"
+#include "game/data/report/unit/savedreportattacked.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
 #include "utility/random.h"
@@ -634,9 +636,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 	if (sentryReaction && unit && unit->owner == &client->getActivePlayer())
 	{
 		const string name = unit->getDisplayName();
-		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*unit, lngPack.i18n ("Text~Comp~AttackingEnemy", name)));
-		//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
-		cSoundDevice::getInstance ().getFreeVoiceChannel ().play (getRandom (VoiceData.VOIAttackingEnemy));
+		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportAttackingEnemy> (*unit));
 	}
 }
 
@@ -859,7 +859,6 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 	bool ownUnit = false;
 	bool destroyed = false;
 	bool isAir = false;
-	string name;
 	int offX = 0;
 	int offY = 0;
 
@@ -878,7 +877,6 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 
 			Log.write (" Client: vehicle '" + targetVehicle->getDisplayName () + "' (ID: " + iToStr (targetVehicle->iID) + ") hit. Remaining HP: " + iToStr (targetVehicle->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
 
-			name = targetVehicle->getDisplayName();
 			if (targetVehicle->owner == &client.getActivePlayer()) ownUnit = true;
 
 			if (targetVehicle->data.getHitpoints() <= 0)
@@ -901,7 +899,6 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 
 			Log.write (" Client: building '" + targetBuilding->getDisplayName () + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
 
-			name = targetBuilding->getDisplayName();
 			if (targetBuilding->owner == &client.getActivePlayer()) ownUnit = true;
 
 			if (targetBuilding->data.getHitpoints () <= 0)
@@ -925,21 +922,16 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 	if (ownUnit)
 	{
 		string message;
+		assert (targetUnit != nullptr);
 
 		if (destroyed)
 		{
-			message = name + " " + lngPack.i18n ("Text~Comp~Destroyed");
-			//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
-			cSoundDevice::getInstance ().getFreeVoiceChannel ().play (getRandom (VoiceData.VOIDestroyedUs));
+			client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportDestroyed> (*targetUnit));
 		}
 		else
 		{
-			message = name + " " + lngPack.i18n ("Text~Comp~Attacked");
-			//FIXME: do not play sound at this place! Do play in gameGui! Do play through SoundManager!
-			cSoundDevice::getInstance ().getFreeVoiceChannel ().play (getRandom (VoiceData.VOIAttackingUs));
+			client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportAttacked> (*targetUnit));
 		}
-		assert (targetUnit != nullptr);
-		client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportUnit> (*targetUnit, message));
 	}
 
 	// clean up
