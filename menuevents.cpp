@@ -32,7 +32,7 @@ using namespace std;
 namespace {
 
 //------------------------------------------------------------------------------
-void sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player = nullptr, int fromPlayerNr = -1)
+void sendMessage (cTCP& network, cNetMessage* message, const cPlayerBasicData* player = nullptr, int fromPlayerNr = -1)
 {
 	// Attention: The playernumber will only be the real player number
 	// when it is passed to this function explicitly.
@@ -48,7 +48,7 @@ void sendMessage (cTCP& network, cNetMessage* message, const sPlayer* player = n
 
 }
 
-void sendMenuChatMessage (cTCP& network, const string& chatMsg, const sPlayer* player, int fromPlayerNr, bool translationText)
+void sendMenuChatMessage (cTCP& network, const string& chatMsg, const cPlayerBasicData* player, int fromPlayerNr, bool translationText)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_CHAT);
 	message->pushString (chatMsg);
@@ -56,7 +56,7 @@ void sendMenuChatMessage (cTCP& network, const string& chatMsg, const sPlayer* p
 	sendMessage (network, message, player, fromPlayerNr);
 }
 
-void sendRequestIdentification (cTCP& network, const sPlayer& player)
+void sendRequestIdentification (cTCP& network, const cPlayerBasicData& player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_REQ_IDENTIFIKATION);
 	message->pushInt16 (player.getNr());
@@ -64,20 +64,20 @@ void sendRequestIdentification (cTCP& network, const sPlayer& player)
 	sendMessage (network, message, &player);
 }
 
-void sendPlayerNumber (cTCP& network, const sPlayer& player)
+void sendPlayerNumber (cTCP& network, const cPlayerBasicData& player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYER_NUMBER);
 	message->pushInt16 (player.getNr ());
 	sendMessage (network, message, &player);
 }
 
-void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>& players)
+void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBasicData>>& players)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);
 
 	for (int i = (int) players.size() - 1; i >= 0; i--)
 	{
-		const sPlayer& player = *players[i];
+		const cPlayerBasicData& player = *players[i];
 		message->pushInt16 (player.getNr());
 		message->pushBool (player.isReady());
 		message->pushInt16 (player.getColor().getIndex());
@@ -87,7 +87,7 @@ void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>&
 	sendMessage (network, message);
 }
 
-void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const sPlayer* player)
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const cPlayerBasicData* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
@@ -110,7 +110,7 @@ void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* se
 	sendMessage (network, message, player);
 }
 
-void sendIdentification (cTCP& network, const sPlayer& player)
+void sendIdentification (cTCP& network, const cPlayerBasicData& player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_IDENTIFIKATION);
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
@@ -121,7 +121,7 @@ void sendIdentification (cTCP& network, const sPlayer& player)
 	sendMessage (network, message);
 }
 
-void sendGameIdentification (cTCP& network, const sPlayer& player, int socket)
+void sendGameIdentification (cTCP& network, const cPlayerBasicData& player, int socket)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_IDENTIFICATION);
 	message->pushInt16 (socket);
@@ -145,7 +145,7 @@ void sendGo (cTCP& network)
 }
 
 //------------------------------------------------------------------------------
-void sendLandingState (cTCP& network, eLandingPositionState state, const sPlayer& player)
+void sendLandingState (cTCP& network, eLandingPositionState state, const cPlayerBasicData& player)
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_LANDING_STATE);
 	msg->pushInt32 (toUnderlyingType (state));
@@ -161,7 +161,7 @@ void sendAllLanded (cTCP& network)
 }
 
 //------------------------------------------------------------------------------
-void sendLandingPosition (cTCP& network, const cPosition& position, const sPlayer& player)
+void sendLandingPosition (cTCP& network, const cPosition& position, const cPlayerBasicData& player)
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_LANDING_POSITION);
 	msg->pushPosition (position);

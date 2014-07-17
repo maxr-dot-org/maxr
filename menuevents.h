@@ -27,7 +27,7 @@
 
 class cTCP;
 class cStaticMap;
-class sPlayer;
+class cPlayerBasicData;
 class cGameSettings;
 class cPosition;
 
@@ -52,28 +52,28 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,          // all players have selected there landing points and clients can start game
 };
 
-void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const sPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false);
+void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const cPlayerBasicData* player = NULL, int fromPlayerNr = -1, bool translationText = false);
 
-void sendRequestIdentification (cTCP& network, const sPlayer& player);
+void sendRequestIdentification (cTCP& network, const cPlayerBasicData& player);
 
-void sendPlayerNumber (cTCP& network, const sPlayer& player);
+void sendPlayerNumber (cTCP& network, const cPlayerBasicData& player);
 
-void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<sPlayer>>& players);
+void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBasicData>>& players);
 
-void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const sPlayer* player = NULL);
+void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const cPlayerBasicData* player = NULL);
 
-void sendIdentification (cTCP& network, const sPlayer& player);
+void sendIdentification (cTCP& network, const cPlayerBasicData& player);
 
-void sendGameIdentification (cTCP& network, const sPlayer& player, int socket);
+void sendGameIdentification (cTCP& network, const cPlayerBasicData& player, int socket);
 
 void sendRequestMap (cTCP& network, const std::string& mapName, int playerNr);
 
 void sendGo (cTCP& network);
 
-void sendLandingState (cTCP& network, eLandingPositionState state, const sPlayer& player);
+void sendLandingState (cTCP& network, eLandingPositionState state, const cPlayerBasicData& player);
 
 void sendAllLanded (cTCP& network);
 
-void sendLandingPosition (cTCP& network, const cPosition& position, const sPlayer& player);
+void sendLandingPosition (cTCP& network, const cPosition& position, const cPlayerBasicData& player);
 
 #endif // menueventsH

@@ -243,9 +243,9 @@ string cSavegame::loadMapName()
 }
 
 //--------------------------------------------------------------------------
-std::vector<sPlayer> cSavegame::loadPlayers ()
+std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 {
-	std::vector<sPlayer> playerNames;
+	std::vector<cPlayerBasicData> playerNames;
 
 	if (!loadFile ()) return playerNames;
 
@@ -261,7 +261,7 @@ std::vector<sPlayer> cSavegame::loadPlayers ()
 			const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
 			const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
 
-			playerNames.push_back(sPlayer(name, cPlayerColor(colorIndex), number));
+			playerNames.push_back(cPlayerBasicData(name, cPlayerColor(colorIndex), number));
 			playernum++;
 			playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str ());
 		}
@@ -490,7 +490,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	const string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 	const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
 	const int colorIndex  = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
-	auto Player = std::make_unique<cPlayer> (sPlayer (name, cPlayerColor(colorIndex), number));
+	auto Player = std::make_unique<cPlayer> (cPlayerBasicData (name, cPlayerColor(colorIndex), number));
 	Player->initMaps (map);
 
 	const XMLElement* landingPosNode = playerNode->FirstChildElement ("LandingPos");

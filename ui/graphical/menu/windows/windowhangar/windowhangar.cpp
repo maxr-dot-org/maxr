@@ -33,7 +33,7 @@
 //------------------------------------------------------------------------------
 cWindowHangar::cWindowHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan) :
 	cWindow (std::move(surface)),
-	temporaryPlayer (new cPlayer (sPlayer ("unnamed", std::move(playerColor), 0))),
+	temporaryPlayer (new cPlayer (cPlayerBasicData ("unnamed", std::move(playerColor), 0))),
 	player (*temporaryPlayer)
 {
 	if (playerClan != -1) temporaryPlayer->setClan (playerClan);

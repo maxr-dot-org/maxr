@@ -39,7 +39,7 @@
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	localPlayer (std::make_shared<sPlayer> (cSettings::getInstance ().getPlayerName (), cPlayerColor(cSettings::getInstance ().getPlayerColor ()), 0, MAX_CLIENTS)),
+	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance ().getPlayerName (), cPlayerColor(cSettings::getInstance ().getPlayerColor ()), 0, MAX_CLIENTS)),
 	saveGameNumber (-1)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 11), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -218,7 +218,7 @@ void cWindowNetworkLobby::addInfoEntry (const std::string& message)
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
+void cWindowNetworkLobby::addPlayer (const std::shared_ptr<cPlayerBasicData>& player)
 {
 	auto item = playersList->addItem (std::make_unique<cLobbyPlayerListViewItem> (player));
 	if (player == localPlayer)
@@ -232,7 +232,7 @@ void cWindowNetworkLobby::addPlayer (const std::shared_ptr<sPlayer>& player)
 }
 
 //------------------------------------------------------------------------------
-void cWindowNetworkLobby::removePlayer (const sPlayer& player)
+void cWindowNetworkLobby::removePlayer (const cPlayerBasicData& player)
 {
 	if (&player == localPlayer.get()) return; // do never remove the local player
 
@@ -331,15 +331,15 @@ int cWindowNetworkLobby::getSaveGameNumber () const
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<sPlayer>& cWindowNetworkLobby::getLocalPlayer () const
+const std::shared_ptr<cPlayerBasicData>& cWindowNetworkLobby::getLocalPlayer () const
 {
 	return localPlayer;
 }
 
 //------------------------------------------------------------------------------
-std::vector<std::shared_ptr<sPlayer>> cWindowNetworkLobby::getPlayers () const
+std::vector<std::shared_ptr<cPlayerBasicData>> cWindowNetworkLobby::getPlayers () const
 {
-	std::vector<std::shared_ptr<sPlayer>> result;
+	std::vector<std::shared_ptr<cPlayerBasicData>> result;
 	for (size_t i = 0; i < playersList->getItemsCount (); ++i)
 	{
 		const auto& item = playersList->getItem (i);

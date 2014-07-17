@@ -165,7 +165,7 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
-	auto player = std::make_shared<sPlayer> ("unidentified", cPlayerColor(0), menuPlayers.size(), message.popInt16());
+	auto player = std::make_shared<cPlayerBasicData> ("unidentified", cPlayerColor(0), menuPlayers.size(), message.popInt16());
 	menuPlayers.push_back (player);
 	sendMenuChatMessage (*network, "type --server help for dedicated server help", player.get());
 	sendRequestIdentification (*network, *player);
@@ -358,7 +358,7 @@ void cServerGame::handleNetMessage (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
-void cServerGame::configRessources (vector<string>& tokens, sPlayer* senderPlayer)
+void cServerGame::configRessources (vector<string>& tokens, cPlayerBasicData* senderPlayer)
 {
 	if (tokens[0].compare ("res") == 0)
 	{

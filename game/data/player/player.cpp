@@ -34,7 +34,7 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-sPlayer::sPlayer (const string& name_, cPlayerColor color_, int nr_, int socketIndex_) :
+cPlayerBasicData::cPlayerBasicData (const string& name_, cPlayerColor color_, int nr_, int socketIndex_) :
 	name (name_),
 	color (std::move(color_)),
 	Nr (nr_),
@@ -43,7 +43,7 @@ sPlayer::sPlayer (const string& name_, cPlayerColor color_, int nr_, int socketI
 {}
 
 //------------------------------------------------------------------------------
-sPlayer::sPlayer (const sPlayer& other) :
+cPlayerBasicData::cPlayerBasicData (const cPlayerBasicData& other) :
 	name (other.name),
 	color (other.color),
 	Nr (other.Nr),
@@ -52,7 +52,7 @@ sPlayer::sPlayer (const sPlayer& other) :
 {}
 
 //------------------------------------------------------------------------------
-sPlayer& sPlayer::operator=(const sPlayer& other)
+cPlayerBasicData& cPlayerBasicData::operator=(const cPlayerBasicData& other)
 {
 	name = other.name;
 	color = other.color;
@@ -63,58 +63,58 @@ sPlayer& sPlayer::operator=(const sPlayer& other)
 }
 
 //------------------------------------------------------------------------------
-const std::string& sPlayer::getName () const
+const std::string& cPlayerBasicData::getName () const
 {
 	return name;
 }
 
 //------------------------------------------------------------------------------
-void sPlayer::setName (std::string name_)
+void cPlayerBasicData::setName (std::string name_)
 {
 	std::swap (name, name_);
 	if (name != name_) nameChanged ();
 }
 
 //------------------------------------------------------------------------------
-int sPlayer::getNr () const
+int cPlayerBasicData::getNr () const
 {
 	return Nr;
 }
 
 //------------------------------------------------------------------------------
-void sPlayer::setNr (int nr)
+void cPlayerBasicData::setNr (int nr)
 {
 	std::swap (Nr, nr);
 	if (Nr != nr) numberChanged ();
 }
 
 //------------------------------------------------------------------------------
-int sPlayer::getSocketIndex () const
+int cPlayerBasicData::getSocketIndex () const
 {
 	return socketIndex;
 }
 
 //------------------------------------------------------------------------------
-void sPlayer::setSocketIndex (int index)
+void cPlayerBasicData::setSocketIndex (int index)
 {
 	std::swap (socketIndex, index);
 	if (socketIndex != index) socketIndexChanged ();
 }
 
 //------------------------------------------------------------------------------
-void sPlayer::setLocal()
+void cPlayerBasicData::setLocal()
 {
 	socketIndex = MAX_CLIENTS;
 }
 
 //------------------------------------------------------------------------------
-bool sPlayer::isLocal() const
+bool cPlayerBasicData::isLocal() const
 {
 	return socketIndex == MAX_CLIENTS;
 }
 
 //------------------------------------------------------------------------------
-void sPlayer::onSocketIndexDisconnected (int socketIndex_)
+void cPlayerBasicData::onSocketIndexDisconnected (int socketIndex_)
 {
 	if (isLocal() || socketIndex == -1) return;
 	if (socketIndex == socketIndex_)
@@ -127,21 +127,21 @@ void sPlayer::onSocketIndexDisconnected (int socketIndex_)
 	}
 }
 //------------------------------------------------------------------------------
-void sPlayer::setColor (cPlayerColor color_)
+void cPlayerBasicData::setColor (cPlayerColor color_)
 {
 	std::swap(color, color_);
 	if (color != color_) colorChanged ();
 }
 
 //------------------------------------------------------------------------------
-void sPlayer::setReady (bool ready_)
+void cPlayerBasicData::setReady (bool ready_)
 {
 	std::swap (ready, ready_);
 	if (ready != ready_) readyChanged ();
 }
 
 //------------------------------------------------------------------------------
-bool sPlayer::isReady () const
+bool cPlayerBasicData::isReady () const
 {
 	return ready;
 }
@@ -151,7 +151,7 @@ bool sPlayer::isReady () const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cPlayer::cPlayer (const sPlayer& splayer_) :
+cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 	splayer (splayer_),
 	landingPosX (-1),
 	landingPosY (-1),

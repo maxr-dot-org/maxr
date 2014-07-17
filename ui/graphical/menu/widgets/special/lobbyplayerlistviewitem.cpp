@@ -23,7 +23,7 @@
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
-cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> player_) :
+cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player_) :
 	cAbstractListViewItem (cPosition (50, 0)),
 	player (std::move (player_))
 {
@@ -47,7 +47,7 @@ cLobbyPlayerListViewItem::cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> pla
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<sPlayer>& cLobbyPlayerListViewItem::getPlayer () const
+const std::shared_ptr<cPlayerBasicData>& cLobbyPlayerListViewItem::getPlayer () const
 {
 	return player;
 }

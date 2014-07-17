@@ -70,7 +70,7 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	server->addPlayer (std::make_unique<cPlayer> (player));
 	//server->changeStateToInitGame ();
 
-	std::vector<sPlayer> players;
+	std::vector<cPlayerBasicData> players;
 	players.push_back (player);
 	client->setPlayers (players, 0);
 
@@ -166,9 +166,9 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 }
 
 //------------------------------------------------------------------------------
-sPlayer cLocalSingleplayerGameNew::createPlayer ()
+cPlayerBasicData cLocalSingleplayerGameNew::createPlayer ()
 {
-	sPlayer player(cSettings::getInstance ().getPlayerName (), cPlayerColor(0), 0);
+	cPlayerBasicData player(cSettings::getInstance ().getPlayerName (), cPlayerColor(0), 0);
 
 	player.setLocal ();
 

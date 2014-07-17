@@ -42,7 +42,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 	server = std::make_unique<cServer> (network);
 	localClient = std::make_unique<cClient> (server.get(), nullptr);
 
-	std::vector<sPlayer> clientPlayers;
+	std::vector<cPlayerBasicData> clientPlayers;
 	for (size_t i = 0; i < players.size (); ++i)
 	{
 		server->addPlayer (std::make_unique<cPlayer>(*players[i]));
@@ -113,10 +113,10 @@ void cNetworkHostGameNew::start (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameNew::setPlayers (std::vector<std::shared_ptr<sPlayer>> players_, const sPlayer& localPlayer)
+void cNetworkHostGameNew::setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<sPlayer>& player){ return player->getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == localPlayer.getNr (); });
 	assert (localPlayerIter != players.end());
 	localPlayerIndex = localPlayerIter - players.begin ();
 }
@@ -170,13 +170,13 @@ const std::shared_ptr<cStaticMap>& cNetworkHostGameNew::getStaticMap ()
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::shared_ptr<sPlayer>>& cNetworkHostGameNew::getPlayers ()
+const std::vector<std::shared_ptr<cPlayerBasicData>>& cNetworkHostGameNew::getPlayers ()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<sPlayer>& cNetworkHostGameNew::getLocalPlayer ()
+const std::shared_ptr<cPlayerBasicData>& cNetworkHostGameNew::getLocalPlayer ()
 {
 	return players[localPlayerIndex];
 }

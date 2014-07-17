@@ -217,7 +217,7 @@ void cMenuControllerMultiplayerHost::handleLocalPlayerAttributesChanged ()
 	sendPlayerList (*network, windowNetworkLobby->getPlayers());
 }
 
-void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (sPlayer& player)
+void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (cPlayerBasicData& player)
 {
 	if (!network || !windowNetworkLobby) return;
 
@@ -258,7 +258,7 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 	}
 
 	auto players = windowNetworkLobby->getPlayers ();
-	auto notReadyPlayerIter = std::find_if (players.begin (), players.end (), [ ](const std::shared_ptr<sPlayer>& player) { return !player->isReady (); });
+	auto notReadyPlayerIter = std::find_if (players.begin (), players.end (), [ ](const std::shared_ptr<cPlayerBasicData>& player) { return !player->isReady (); });
 
 	if (notReadyPlayerIter != players.end ())
 	{
@@ -282,7 +282,7 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 		// check whether all necessary players are connected
 		for (size_t i = 0; i < savegamePlayers.size (); ++i)
 		{
-			auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [&](const std::shared_ptr<sPlayer>& player) { return player->getName () == savegamePlayers[i].getName (); });
+			auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [&](const std::shared_ptr<cPlayerBasicData>& player) { return player->getName () == savegamePlayers[i].getName (); });
 			if (iter == menuPlayers.end ())
 			{
 				windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
@@ -294,7 +294,7 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 		for (auto i = menuPlayers.begin(); i < menuPlayers.end ();)
 		{
 			auto menuPlayer = *i;
-			auto iter = std::find_if (savegamePlayers.begin (), savegamePlayers.end (), [&](const sPlayer& player) { return player.getName () == menuPlayer->getName (); });
+			auto iter = std::find_if (savegamePlayers.begin (), savegamePlayers.end (), [&](const cPlayerBasicData& player) { return player.getName () == menuPlayer->getName (); });
 
 			if (iter == savegamePlayers.end ())
 			{
@@ -434,7 +434,7 @@ void cMenuControllerMultiplayerHost::startLandingPositionSelection ()
 		landingPositionManager->setLandingPosition (*newGame->getLocalPlayer (), landingPosition);
 	});
 
-	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this, windowLandingPositionSelection](const sPlayer& player, eLandingPositionState state)
+	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this, windowLandingPositionSelection](const cPlayerBasicData& player, eLandingPositionState state)
 	{
 		if (&player == newGame->getLocalPlayer ().get ())
 		{
@@ -520,7 +520,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cNetMessage& 
 	if (!network || !windowNetworkLobby) return;
 
 	auto players = windowNetworkLobby->getPlayers ();
-	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<sPlayer>& player){ return player->getNr () == message.iPlayerNr; });
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == message.iPlayerNr; });
 	if (iter == players.end ()) return;
 
 	const auto& player = **iter;
@@ -549,7 +549,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_ACCEPT (cNetMessage& m
 
 	if (!network || !windowNetworkLobby) return;
 
-	auto newPlayer = std::make_shared<sPlayer> (UNIDENTIFIED_PLAYER_NAME, cPlayerColor(0), nextPlayerNumber++, message.popInt16 ());
+	auto newPlayer = std::make_shared<cPlayerBasicData> (UNIDENTIFIED_PLAYER_NAME, cPlayerColor(0), nextPlayerNumber++, message.popInt16 ());
 	windowNetworkLobby->addPlayer (newPlayer);
 	sendRequestIdentification (*network, *newPlayer);
 }
@@ -566,7 +566,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE (cNetMessage& me
 
 	// delete player
 	auto players = windowNetworkLobby->getPlayers ();
-	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<sPlayer>& player){ return player->getSocketIndex () == socket; });
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getSocketIndex () == socket; });
 	if (iter == players.end ()) return;
 
 	auto playerToRemove = *iter;
@@ -602,7 +602,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cNe
 	const auto playerNr = message.popInt16 ();
 
 	auto players = windowNetworkLobby->getPlayers ();
-	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<sPlayer>& player){ return player->getNr () == playerNr; });
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
 	if (iter == players.end ()) return;
 
 	auto& player = **iter;
@@ -674,7 +674,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_LANDING_POSITION (c
 
 	auto players = windowNetworkLobby->getPlayers ();
 
-	auto iter = std::find_if (players.begin (), players.end (), [playerNr](const std::shared_ptr<sPlayer>& player){ return player->getNr () == playerNr; });
+	auto iter = std::find_if (players.begin (), players.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
 	if (iter == players.end ()) return;
 
 	auto& player = **iter;

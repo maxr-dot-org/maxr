@@ -334,7 +334,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_CHAT (cNetMessage
 	if (!network || !windowNetworkLobby) return;
 
 	auto players = windowNetworkLobby->getPlayers ();
-	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<sPlayer>& player){ return player->getNr () == message.iPlayerNr; });
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == message.iPlayerNr; });
 	if (iter == players.end ()) return;
 
 	const auto& player = **iter;
@@ -397,7 +397,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYERLIST (cNetM
 		}
 		else
 		{
-			auto newPlayer = std::make_shared<sPlayer> (name, cPlayerColor(colorIndex), nr);
+			auto newPlayer = std::make_shared<cPlayerBasicData> (name, cPlayerColor(colorIndex), nr);
 			newPlayer->setReady (ready);
 			windowNetworkLobby->addPlayer (std::move (newPlayer));
 		}
@@ -569,15 +569,15 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 
 		int playerCount = message.popInt16 ();
 
-		std::vector<std::shared_ptr<sPlayer>> players;
-		players.push_back (std::make_shared<sPlayer> (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor(localPlayerColorIndex), localPlayerNumber));
+		std::vector<std::shared_ptr<cPlayerBasicData>> players;
+		players.push_back (std::make_shared<cPlayerBasicData> (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor(localPlayerColorIndex), localPlayerNumber));
 		auto& localPlayer = *players.back ();
 		while (playerCount > 1)
 		{
 			const auto playerName = message.popString ();
 			const int playerColorIndex = message.popInt16 ();
 			const int playerNr = message.popInt16 ();
-			players.push_back (std::make_shared<sPlayer> (playerName, cPlayerColor(playerColorIndex), playerNr));
+			players.push_back (std::make_shared<cPlayerBasicData> (playerName, cPlayerColor(playerColorIndex), playerNr));
 			playerCount--;
 		}
 

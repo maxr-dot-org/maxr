@@ -46,13 +46,13 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	const int player = 0;
 
 	// Following may be simplified according to serverGame::loadGame
-	std::vector<sPlayer> clientPlayerList;
+	std::vector<cPlayerBasicData> clientPlayerList;
 
 	// copy players for client
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)
 	{
 		const auto& p = *serverPlayerList[i];
-		clientPlayerList.push_back (sPlayer (p.getName (), p.getColor (), p.getNr (), p.getSocketNum ()));
+		clientPlayerList.push_back (cPlayerBasicData (p.getName (), p.getColor (), p.getNr (), p.getSocketNum ()));
 	}
 	client->setPlayers (clientPlayerList, player);
 

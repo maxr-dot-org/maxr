@@ -163,7 +163,7 @@ public:
 	}
 };
 
-void cClient::setPlayers (const std::vector<sPlayer>& splayers, size_t activePlayerIndex)
+void cClient::setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex)
 {
 	assert (activePlayerIndex < splayers.size ());
 

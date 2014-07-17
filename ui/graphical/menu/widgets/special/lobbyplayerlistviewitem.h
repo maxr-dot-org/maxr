@@ -29,14 +29,14 @@
 
 class cImage;
 class cLabel;
-class sPlayer;
+class cPlayerBasicData;
 
 class cLobbyPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-	explicit cLobbyPlayerListViewItem (std::shared_ptr<sPlayer> player);
+	explicit cLobbyPlayerListViewItem (std::shared_ptr<cPlayerBasicData> player);
 
-	const std::shared_ptr<sPlayer>& getPlayer () const;
+	const std::shared_ptr<cPlayerBasicData>& getPlayer () const;
 
 	cSignal<void ()> readyClicked;
 
@@ -48,7 +48,7 @@ private:
 	cImage* colorImage;
 	cImage* readyImage;
 
-	std::shared_ptr<sPlayer> player;
+	std::shared_ptr<cPlayerBasicData> player;
 
 	void updatePlayerName ();
 	void updatePlayerColor ();

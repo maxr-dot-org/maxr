@@ -27,7 +27,7 @@
 
 class cImage;
 class cLabel;
-class sPlayer;
+class cPlayerBasicData;
 
 class cLobbyChatBoxListViewItem : public cAbstractListViewItem
 {

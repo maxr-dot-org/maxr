@@ -33,7 +33,7 @@
 class cApplication;
 class cStaticMap;
 class cGameSettings;
-class sPlayer;
+class cPlayerBasicData;
 class cPlayer;
 class cPosition;
 class cUnitUpgrade;
@@ -48,7 +48,7 @@ public:
 
 	void start (cApplication& application);
 
-	void setPlayers (std::vector<std::shared_ptr<sPlayer>> players, const sPlayer& localPlayer);
+	void setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players, const cPlayerBasicData& localPlayer);
 
 	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 
@@ -64,8 +64,8 @@ public:
 
 	const std::shared_ptr<cGameSettings>& getGameSettings ();
 	const std::shared_ptr<cStaticMap>& getStaticMap ();
-	const std::vector<std::shared_ptr<sPlayer>>& getPlayers ();
-	const std::shared_ptr<sPlayer>& getLocalPlayer ();
+	const std::vector<std::shared_ptr<cPlayerBasicData>>& getPlayers ();
+	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer ();
 
 	int getLocalPlayerClan () const;
 
@@ -74,7 +74,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	size_t localPlayerIndex;
-	std::vector<std::shared_ptr<sPlayer>> players;
+	std::vector<std::shared_ptr<cPlayerBasicData>> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;

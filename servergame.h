@@ -32,7 +32,7 @@ class cNetMessage;
 class cPlayer;
 class cServer;
 class cTCP;
-class sPlayer;
+class cPlayerBasicData;
 class cStaticMap;
 
 int serverGameThreadFunction (void* data);
@@ -82,10 +82,10 @@ protected:
 
 	void terminateServer();
 
-	std::vector<std::shared_ptr<sPlayer>> menuPlayers;
+	std::vector<std::shared_ptr<cPlayerBasicData>> menuPlayers;
 
 private:
-	void configRessources (std::vector<std::string>& tokens, sPlayer* senderPlayer);
+	void configRessources (std::vector<std::string>& tokens, cPlayerBasicData* senderPlayer);
 
 	//------------------------------------------------------------------------
 	cConcurrentQueue<std::unique_ptr<cNetMessage>> eventQueue;

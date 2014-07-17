@@ -32,7 +32,7 @@
 class cApplication;
 class cStaticMap;
 class cGameSettings;
-class sPlayer;
+class cPlayerBasicData;
 class cPlayer;
 class cPosition;
 class cUnitUpgrade;
@@ -59,7 +59,7 @@ public:
 
 	void setLandingPosition (const cPosition& landingPosition);
 
-	sPlayer createPlayer ();
+	cPlayerBasicData createPlayer ();
 private:
 	cSignalConnectionManager signalConnectionManager;
 

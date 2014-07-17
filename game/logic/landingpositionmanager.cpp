@@ -26,7 +26,7 @@ const double cLandingPositionManager::warningDistance = 28;
 const double cLandingPositionManager::tooCloseDistance = 10;
 
 //------------------------------------------------------------------------------
-cLandingPositionManager::sLandingPositionData::sLandingPositionData (std::shared_ptr<sPlayer> player) :
+cLandingPositionManager::sLandingPositionData::sLandingPositionData (std::shared_ptr<cPlayerBasicData> player) :
 	landingPosition (0, 0),
 	lastLandingPosition (0, 0),
 	state (eLandingPositionState::Waiting),
@@ -34,7 +34,7 @@ cLandingPositionManager::sLandingPositionData::sLandingPositionData (std::shared
 {}
 
 //------------------------------------------------------------------------------
-cLandingPositionManager::cLandingPositionManager (const std::vector<std::shared_ptr<sPlayer>>& players)
+cLandingPositionManager::cLandingPositionManager (const std::vector<std::shared_ptr<cPlayerBasicData>>& players)
 {
 	for (size_t i = 0; i < players.size (); ++i)
 	{
@@ -43,7 +43,7 @@ cLandingPositionManager::cLandingPositionManager (const std::vector<std::shared_
 }
 
 //------------------------------------------------------------------------------
-void cLandingPositionManager::setLandingPosition (const sPlayer& player, const cPosition& landingPosition)
+void cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition)
 {
 	auto& playerData = getLandingPositionData (player);
 
@@ -87,7 +87,7 @@ void cLandingPositionManager::setLandingPosition (const sPlayer& player, const c
 }
 
 //------------------------------------------------------------------------------
-void cLandingPositionManager::checkPlayerState (const sPlayer& player)
+void cLandingPositionManager::checkPlayerState (const cPlayerBasicData& player)
 {
 	auto& playerData = getLandingPositionData (player);
 
@@ -167,7 +167,7 @@ void cLandingPositionManager::checkPlayerState (const sPlayer& player)
 }
 
 //------------------------------------------------------------------------------
-cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const sPlayer& player)
+cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const cPlayerBasicData& player)
 {
 	auto iter = std::find_if (landingPositions.begin (), landingPositions.end (), [&](const sLandingPositionData& data){ return data.player->getNr () == player.getNr (); });
 	assert (iter != landingPositions.end ());

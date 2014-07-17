@@ -47,7 +47,7 @@ class cPlayer;
 class cServer;
 class cStaticMap;
 class cTCP;
-class sPlayer;
+class cPlayerBasicData;
 class cGameSettings;
 class cPosition;
 class cTurnClock;
@@ -70,7 +70,7 @@ public:
 	~cClient();
 
 	void setMap (std::shared_ptr<cStaticMap> staticMap);
-	void setPlayers (const std::vector<sPlayer>& splayers, size_t activePlayerIndex);
+	void setPlayers (const std::vector<cPlayerBasicData>& splayers, size_t activePlayerIndex);
 
 	// Return local server if any.
 	// TODO: should be const cServer*

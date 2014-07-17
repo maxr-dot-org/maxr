@@ -54,12 +54,12 @@ typedef std::vector<int> PointsHistory;
 /**
  * a structure that includes all information needed in pre-game.
  */
-class sPlayer
+class cPlayerBasicData
 {
 public:
-	sPlayer (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
-	sPlayer (const sPlayer& other);
-	sPlayer& operator=(const sPlayer& other);
+	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
+	cPlayerBasicData (const cPlayerBasicData& other);
+	cPlayerBasicData& operator=(const cPlayerBasicData& other);
 
 	const std::string& getName () const;
 	void setName (std::string name);
@@ -97,7 +97,7 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) MAXR_DELETE_FUNCTION;
 public:
-	cPlayer (const sPlayer& splayer);
+	cPlayer (const cPlayerBasicData& splayer);
 	~cPlayer();
 
 	const std::string& getName() const { return splayer.getName(); }
@@ -232,7 +232,7 @@ private:
 	cVehicle* getPrevVehicle (cVehicle* start) const;
 
 private:
-	sPlayer splayer;
+	cPlayerBasicData splayer;
 public:
 	std::vector<sUnitData> VehicleData; // Current version of vehicles.
 	std::vector<sUnitData> BuildingData; // Current version of buildings.

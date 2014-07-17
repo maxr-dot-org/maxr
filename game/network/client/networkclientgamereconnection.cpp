@@ -35,7 +35,7 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 {
 	localClient = std::make_unique<cClient> (nullptr, network);
 
-	std::vector<sPlayer> clientPlayers;
+	std::vector<cPlayerBasicData> clientPlayers;
 	for (size_t i = 0; i < players.size (); ++i)
 	{
 		clientPlayers.push_back (*players[i]);
@@ -83,10 +83,10 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGameReconnection::setPlayers (std::vector<std::shared_ptr<sPlayer>> players_, const sPlayer& localPlayer)
+void cNetworkClientGameReconnection::setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<sPlayer>& player){ return player->getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == localPlayer.getNr (); });
 	assert (localPlayerIter != players.end());
 	localPlayerIndex = localPlayerIter - players.begin ();
 }
@@ -104,13 +104,13 @@ const std::shared_ptr<cStaticMap>& cNetworkClientGameReconnection::getStaticMap 
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::shared_ptr<sPlayer>>& cNetworkClientGameReconnection::getPlayers ()
+const std::vector<std::shared_ptr<cPlayerBasicData>>& cNetworkClientGameReconnection::getPlayers ()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<sPlayer>& cNetworkClientGameReconnection::getLocalPlayer ()
+const std::shared_ptr<cPlayerBasicData>& cNetworkClientGameReconnection::getLocalPlayer ()
 {
 	return players[localPlayerIndex];
 }

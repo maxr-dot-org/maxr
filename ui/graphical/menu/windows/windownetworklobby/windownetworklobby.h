@@ -32,7 +32,7 @@ class cLineEdit;
 template<typename T> class cListView;
 class cLobbyChatBoxListViewItem;
 class cLobbyPlayerListViewItem;
-class sPlayer;
+class cPlayerBasicData;
 class cStaticMap;
 class cGameSettings;
 class cTCP;
@@ -45,8 +45,8 @@ public:
 	void addChatEntry (const std::string& playerName, const std::string& message);
 	void addInfoEntry (const std::string& message);
 
-	void addPlayer (const std::shared_ptr<sPlayer>& player);
-	void removePlayer (const sPlayer& player);
+	void addPlayer (const std::shared_ptr<cPlayerBasicData>& player);
+	void removePlayer (const cPlayerBasicData& player);
 	void removeNonLocalPlayers ();
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
@@ -57,8 +57,8 @@ public:
 	const std::shared_ptr<cGameSettings>& getGameSettings () const;
 	int getSaveGameNumber () const;
 
-	const std::shared_ptr<sPlayer>& getLocalPlayer () const;
-	std::vector<std::shared_ptr<sPlayer>> getPlayers () const;
+	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer () const;
+	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers () const;
 
 	unsigned short getPort () const;
 	const std::string& getIp () const;
@@ -91,13 +91,13 @@ private:
 
 	cImage* colorImage;
 
-	std::shared_ptr<sPlayer> localPlayer;
+	std::shared_ptr<cPlayerBasicData> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 
 	int saveGameNumber;
 	std::string saveGameName;
-	std::vector<sPlayer> saveGamePlayers;
+	std::vector<cPlayerBasicData> saveGamePlayers;
 
 	void updateSettingsText ();
 	void updateMap ();

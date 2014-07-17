@@ -28,7 +28,7 @@
 class cResearch;
 class cMap;
 class cPlayer;
-class sPlayer;
+class cPlayerBasicData;
 class cGameSettings;
 class cVehicle;
 class cBuilding;
@@ -84,7 +84,7 @@ public:
 	void loadHeader (std::string* name, std::string* type, std::string* time);
 
 	std::string loadMapName();
-	std::vector<sPlayer> loadPlayers();
+	std::vector<cPlayerBasicData> loadPlayers();
 	cGameSettings loadGameSettings ();
 
 	/**

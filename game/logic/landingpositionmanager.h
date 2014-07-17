@@ -27,38 +27,38 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
-class sPlayer;
+class cPlayerBasicData;
 
 class cLandingPositionManager
 {
 	struct sLandingPositionData
 	{
-		sLandingPositionData (std::shared_ptr<sPlayer> player);
+		sLandingPositionData (std::shared_ptr<cPlayerBasicData> player);
 
 		cPosition landingPosition;
 		cPosition lastLandingPosition;
 
 		eLandingPositionState state;
 
-		std::shared_ptr<sPlayer> player;
+		std::shared_ptr<cPlayerBasicData> player;
 	};
 public:
 	static const double warningDistance;
 	static const double tooCloseDistance;
 
-	cLandingPositionManager (const std::vector<std::shared_ptr<sPlayer>>& players);
+	cLandingPositionManager (const std::vector<std::shared_ptr<cPlayerBasicData>>& players);
 
-	void setLandingPosition (const sPlayer& player, const cPosition& landingPosition);
+	void setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition);
 
-	cSignal<void (const sPlayer&, eLandingPositionState)> landingPositionStateChanged;
+	cSignal<void (const cPlayerBasicData&, eLandingPositionState)> landingPositionStateChanged;
 	cSignal<void ()> allPositionsValid;
 
 private:
 	std::vector<sLandingPositionData> landingPositions;
 
-	sLandingPositionData& getLandingPositionData (const sPlayer& player);
+	sLandingPositionData& getLandingPositionData (const cPlayerBasicData& player);
 
-	void checkPlayerState (const sPlayer& player);
+	void checkPlayerState (const cPlayerBasicData& player);
 };
 
 #endif // game_logic_landingpositionmanagerH

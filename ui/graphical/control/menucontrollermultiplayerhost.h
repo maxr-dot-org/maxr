@@ -31,7 +31,7 @@ class cApplication;
 class cWindowNetworkLobbyHost;
 class cNetworkHostGameNew;
 class cNetMessage;
-class sPlayer;
+class cPlayerBasicData;
 class cLandingPositionManager;
 
 class cTCP;
@@ -79,7 +79,7 @@ private:
 
 	void startHost ();
 
-	void checkTakenPlayerAttributes (sPlayer& player);
+	void checkTakenPlayerAttributes (cPlayerBasicData& player);
 
 	void checkGameStart ();
 
