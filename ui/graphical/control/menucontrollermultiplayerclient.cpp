@@ -187,6 +187,13 @@ void cMenuControllerMultiplayerClient::startSavedGame ()
 	savedGame->setPlayers (windowNetworkLobby->getPlayers (), *windowNetworkLobby->getLocalPlayer());
 
 	savedGame->start (application);
+
+	signalConnectionManager.connect (savedGame->terminated, [&]()
+	{
+		application.closeTill (*windowNetworkLobby);
+		windowNetworkLobby->close ();
+		windowNetworkLobby = nullptr;
+	});
 }
 
 //------------------------------------------------------------------------------
@@ -579,6 +586,14 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 		reconnectionGame->setPlayers (players, localPlayer);
 
 		reconnectionGame->start (application);
+
+
+		signalConnectionManager.connect (reconnectionGame->terminated, [&]()
+		{
+			application.closeTill (*windowNetworkLobby);
+			windowNetworkLobby->close ();
+			windowNetworkLobby = nullptr;
+		});
 	}
 	else
 	{
