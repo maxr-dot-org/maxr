@@ -28,7 +28,7 @@
 #include "ui/graphical/application.h"
 #include "pcx.h"
 #include "vehicles.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :

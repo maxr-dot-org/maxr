@@ -27,7 +27,7 @@
 #include "clist.h"
 #include "hud.h"
 #include "movejobs.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "vehicles.h"
 #include "map.h"
 #include "game/data/report/unit/savedreportsurveyoraisenseless.h"

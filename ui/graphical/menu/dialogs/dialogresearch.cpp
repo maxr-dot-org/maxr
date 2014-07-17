@@ -24,7 +24,7 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "pcx.h"
 #include "main.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "video.h"
 
 //------------------------------------------------------------------------------

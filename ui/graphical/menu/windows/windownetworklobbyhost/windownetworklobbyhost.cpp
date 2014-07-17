@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windownetworklobbyhost/windownetworklobbyhost.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "main.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost () :

@@ -24,7 +24,7 @@
 #include "client.h"
 #include "hud.h"
 #include "main.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "video.h"
 #include "sound.h"
 #include "utility/random.h"

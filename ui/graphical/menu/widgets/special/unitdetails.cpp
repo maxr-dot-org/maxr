@@ -21,7 +21,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "video.h"
 #include "upgradecalculator.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cUnitDetails::cUnitDetails (const cPosition& position) :

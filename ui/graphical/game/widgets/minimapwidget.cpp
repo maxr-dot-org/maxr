@@ -21,7 +21,7 @@
 #include "ui/graphical/application.h"
 #include "map.h"
 #include "video.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "buildings.h"
 #include "vehicles.h"
 #include "input/mouse/mouse.h"

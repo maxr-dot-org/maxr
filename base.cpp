@@ -25,7 +25,7 @@
 #include "log.h"
 #include "map.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "server.h"
 #include "serverevents.h"
 #include "game/data/report/savedreportsimple.h"

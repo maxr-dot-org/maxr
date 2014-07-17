@@ -22,7 +22,7 @@
 #include "log.h"
 #include "mapdownload.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "serverevents.h"
 #include "map.h"
 #include "utility/tounderlyingtype.h"

@@ -19,7 +19,7 @@
 
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "map.h" // RES_XYZ
 
 //------------------------------------------------------------------------------

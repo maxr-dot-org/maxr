@@ -18,7 +18,7 @@
  ***************************************************************************/
 #include <cmath>
 
-#include "player.h"
+#include "game/data/player/player.h"
 
 #include "buildings.h"
 #include "client.h"

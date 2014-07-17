@@ -21,7 +21,7 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "main.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cUnitListViewItemCargo::cUnitListViewItemCargo (unsigned int width, const sID& unitId, const cPlayer& owner) :

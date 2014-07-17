@@ -45,7 +45,7 @@
 #include "mveplayer.h"
 #include "network.h"
 #include "pcx.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "savegame.h"
 #include "settings.h"
 #include "sound.h"

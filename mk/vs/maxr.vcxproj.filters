@@ -193,6 +193,9 @@
     <Filter Include="maxr\game\data\report\special">
       <UniqueIdentifier>{1a74911c-6d08-4664-83c2-92da6757cf49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="maxr\game\data\player">
+      <UniqueIdentifier>{46e5777e-7c69-4ee5-98b4-b6b008943424}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\attackJobs.cpp">
@@ -280,9 +283,6 @@
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\pcx.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\player.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\savegame.cpp">
@@ -747,9 +747,6 @@
     <ClCompile Include="..\..\game\logic\turnclock.cpp">
       <Filter>maxr\game\logic</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\game\data\playercolor.cpp">
-      <Filter>maxr\game\data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\utility\color.cpp">
       <Filter>maxr\utility</Filter>
     </ClCompile>
@@ -842,6 +839,12 @@
     </ClCompile>
     <ClCompile Include="..\..\game\data\report\special\savedreportupgraded.cpp">
       <Filter>maxr\game\data\report\special</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\player\playercolor.cpp">
+      <Filter>maxr\game\data\player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\player\player.cpp">
+      <Filter>maxr\game\data\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -954,9 +957,6 @@
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\pcx.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\player.h">
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\resource.h">
@@ -1628,9 +1628,6 @@
     <ClInclude Include="..\..\game\logic\turnclock.h">
       <Filter>maxr\game\logic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\data\playercolor.h">
-      <Filter>maxr\game\data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\utility\flatset.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
@@ -1732,6 +1729,12 @@
     </ClInclude>
     <ClInclude Include="..\..\game\data\report\special\savedreportupgraded.h">
       <Filter>maxr\game\data\report\special</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\player\playercolor.h">
+      <Filter>maxr\game\data\player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\player\player.h">
+      <Filter>maxr\game\data\player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

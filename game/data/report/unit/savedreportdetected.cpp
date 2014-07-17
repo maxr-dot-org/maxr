@@ -19,7 +19,7 @@
 
 #include "game/data/report/unit/savedreportdetected.h"
 #include "unit.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "netmessage.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectvoice.h"

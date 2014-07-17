@@ -19,7 +19,7 @@
 
 #include "game/data/report/special/savedreportupgraded.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cSavedReportUpgraded::cSavedReportUpgraded (const sID& unitId_, int unitsCount_, int costs_) :

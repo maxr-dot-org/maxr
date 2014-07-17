@@ -41,7 +41,7 @@
 #include "settings.h"
 #include "video.h"
 #include "main.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "vehicles.h"
 #include "buildings.h"
 #include "keys.h"

@@ -19,7 +19,7 @@
 
 #include "game/data/report/special/savedreportplayerendedturn.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPlayerEndedTurn::cSavedReportPlayerEndedTurn (const cPlayer& player) :

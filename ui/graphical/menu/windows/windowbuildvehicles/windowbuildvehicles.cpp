@@ -30,7 +30,7 @@
 #include "ui/graphical/application.h"
 #include "pcx.h"
 #include "buildings.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "map.h"
 
 //------------------------------------------------------------------------------

@@ -25,7 +25,7 @@
 #include "client.h"
 #include "hud.h"
 #include "loaddata.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "settings.h"
 #include "vehicles.h"
 #include "map.h"

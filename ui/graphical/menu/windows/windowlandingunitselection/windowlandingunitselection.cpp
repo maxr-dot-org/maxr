@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windowlandingunitselection/windowlandingunitselection.h"
 #include "main.h"
 #include "pcx.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "menus.h" // for sLandingUnit
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"

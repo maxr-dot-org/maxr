@@ -21,7 +21,7 @@
 
 #include "defines.h"
 #include "main.h" // OtherData
-#include "game/data/playercolor.h"
+#include "game/data/player/playercolor.h"
 
 //------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor (size_t index_) :

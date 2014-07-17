@@ -28,7 +28,7 @@
 #include "movejobs.h"
 #include "netmessage.h"
 #include "network.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "server.h"
 #include "upgradecalculator.h"
 #include "vehicles.h"

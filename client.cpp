@@ -34,7 +34,7 @@
 #include "log.h"
 #include "main.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "server.h"
 #include "serverevents.h"
 #include "settings.h"

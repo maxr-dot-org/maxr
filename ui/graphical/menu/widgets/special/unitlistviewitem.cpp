@@ -23,7 +23,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "buildings.h"
 #include "vehicles.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "utility/drawing.h"
 
 //------------------------------------------------------------------------------

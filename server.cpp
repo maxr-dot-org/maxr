@@ -37,7 +37,7 @@
 #include "movejobs.h"
 #include "netmessage.h"
 #include "network.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "savegame.h"
 #include "serverevents.h"
 #include "settings.h"

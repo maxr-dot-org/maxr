@@ -23,7 +23,7 @@
 #include "ui/graphical/game/gamegui.h"
 #include "client.h"
 #include "server.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "clientevents.h"
 
 //------------------------------------------------------------------------------

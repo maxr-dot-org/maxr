@@ -25,7 +25,7 @@
 #include "video.h"
 #include "buildings.h"
 #include "vehicles.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "map.h"
 #include "utility/random.h"
 #include "utility/drawing.h"

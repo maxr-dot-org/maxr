@@ -26,7 +26,7 @@
 #include "loaddata.h"
 #include "log.h"
 #include "movejobs.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "server.h"
 #include "settings.h"
 #include "upgradecalculator.h"

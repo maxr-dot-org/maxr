@@ -26,7 +26,7 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "pcx.h"
 #include "main.h"
 #include "network.h"

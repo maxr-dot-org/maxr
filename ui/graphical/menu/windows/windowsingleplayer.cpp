@@ -35,7 +35,7 @@
 
 #include "main.h"
 #include "network.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "settings.h"
 #include "client.h"
 #include "server.h"

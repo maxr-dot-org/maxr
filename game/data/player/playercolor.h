@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_data_playercolorH
-#define game_data_playercolorH
+#ifndef game_data_player_playercolorH
+#define game_data_player_playercolorH
 
 #include <SDL.h>
 #include "utility/color.h"
@@ -41,4 +41,4 @@ private:
 	SDL_Surface* texture;
 };
 
-#endif // game_data_playercolorH
+#endif // game_data_player_playercolorH

@@ -16,8 +16,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef playerH
-#define playerH
+
+#ifndef game_data_player_playerH
+#define game_data_player_playerH
 
 #include <SDL.h>
 #include <cassert>
@@ -33,7 +34,7 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"
-#include "game/data/playercolor.h"
+#include "game/data/player/playercolor.h"
 
 class cBuilding;
 class cHud;
@@ -273,4 +274,4 @@ private:
 	bool hasFinishedTurn;
 };
 
-#endif
+#endif // game_data_player_playerH

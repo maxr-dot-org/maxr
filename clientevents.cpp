@@ -25,7 +25,7 @@
 #include "log.h"
 #include "netmessage.h"
 #include "network.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "vehicles.h"
 #include "utility/position.h"
 #include "game/data/report/savedreport.h"

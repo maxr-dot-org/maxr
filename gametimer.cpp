@@ -7,7 +7,7 @@
 #include "files.h"
 #include "log.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "server.h"
 #include "vehicles.h"
 

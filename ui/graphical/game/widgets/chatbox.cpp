@@ -24,7 +24,7 @@
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
 
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cChatBox::cChatBox (const cBox<cPosition>& area) :

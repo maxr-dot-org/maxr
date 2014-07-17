@@ -178,7 +178,8 @@
     <ClCompile Include="..\..\files.cpp" />
     <ClCompile Include="..\..\fxeffects.cpp" />
     <ClCompile Include="..\..\gametimer.cpp" />
-    <ClCompile Include="..\..\game\data\playercolor.cpp" />
+    <ClCompile Include="..\..\game\data\player\player.cpp" />
+    <ClCompile Include="..\..\game\data\player\playercolor.cpp" />
     <ClCompile Include="..\..\game\data\report\savedreport.cpp" />
     <ClCompile Include="..\..\game\data\report\savedreportchat.cpp" />
     <ClCompile Include="..\..\game\data\report\savedreportsimple.cpp" />
@@ -353,7 +354,6 @@
     <ClCompile Include="..\..\output\sound\soundchunk.cpp" />
     <ClCompile Include="..\..\output\sound\sounddevice.cpp" />
     <ClCompile Include="..\..\pcx.cpp" />
-    <ClCompile Include="..\..\player.cpp" />
     <ClCompile Include="..\..\savegame.cpp" />
     <ClCompile Include="..\..\SDL_flic.c" />
     <ClCompile Include="..\..\server.cpp" />
@@ -421,7 +421,8 @@
     <ClInclude Include="..\..\files.h" />
     <ClInclude Include="..\..\fxeffects.h" />
     <ClInclude Include="..\..\gametimer.h" />
-    <ClInclude Include="..\..\game\data\playercolor.h" />
+    <ClInclude Include="..\..\game\data\player\player.h" />
+    <ClInclude Include="..\..\game\data\player\playercolor.h" />
     <ClInclude Include="..\..\game\data\report\savedreport.h" />
     <ClInclude Include="..\..\game\data\report\savedreportchat.h" />
     <ClInclude Include="..\..\game\data\report\savedreportsimple.h" />
@@ -615,7 +616,6 @@
     <ClInclude Include="..\..\output\sound\soundchunk.h" />
     <ClInclude Include="..\..\output\sound\sounddevice.h" />
     <ClInclude Include="..\..\pcx.h" />
-    <ClInclude Include="..\..\player.h" />
     <ClInclude Include="..\..\resource.h" />
     <ClInclude Include="..\..\savegame.h" />
     <ClInclude Include="..\..\SDL_flic.h" />

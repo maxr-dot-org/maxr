@@ -33,7 +33,7 @@
 #include "map.h"
 #include "menus.h"
 #include "pcx.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "server.h"
 #include "settings.h"
 #include "video.h"

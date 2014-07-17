@@ -22,7 +22,7 @@
 #include "log.h"
 #include "menuevents.h"
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "savegame.h"
 #include "serverevents.h"
 #include "map.h"

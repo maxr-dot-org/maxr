@@ -23,7 +23,7 @@
 #include "main.h"
 #include "video.h"
 #include "unit.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "buildings.h"
 
 //------------------------------------------------------------------------------

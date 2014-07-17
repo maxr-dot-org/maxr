@@ -23,7 +23,7 @@
 #include "clist.h"
 #include "files.h"
 #include "log.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "settings.h"
 #include "vehicles.h"
 #include "video.h"

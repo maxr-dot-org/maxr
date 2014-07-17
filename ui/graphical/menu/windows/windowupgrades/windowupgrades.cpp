@@ -25,7 +25,7 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "pcx.h"
 #include "main.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :

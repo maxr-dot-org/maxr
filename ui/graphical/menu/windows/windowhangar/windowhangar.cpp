@@ -21,7 +21,7 @@
 #include "main.h"
 #include "vehicles.h"
 #include "buildings.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/image.h"

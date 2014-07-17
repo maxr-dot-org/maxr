@@ -56,7 +56,7 @@
 #include "ui/graphical/menu/windows/windowload/savegamedata.h"
 
 #include "keys.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "map.h"
 #include "vehicles.h"
 #include "buildings.h"

@@ -20,7 +20,7 @@
 #include <algorithm>
 
 #include "game/logic/landingpositionmanager.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 const double cLandingPositionManager::warningDistance = 28;
 const double cLandingPositionManager::tooCloseDistance = 10;

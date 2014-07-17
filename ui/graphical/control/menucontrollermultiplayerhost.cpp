@@ -35,7 +35,7 @@
 #include "game/logic/landingpositionmanager.h"
 #include "main.h"
 #include "map.h"
-#include "player.h"
+#include "game/data/player/player.h"
 #include "menus.h"
 #include "network.h"
 #include "log.h"

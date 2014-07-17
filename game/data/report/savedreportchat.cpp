@@ -20,7 +20,7 @@
 #include "game/data/report/savedreportchat.h"
 
 #include "netmessage.h"
-#include "player.h"
+#include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
