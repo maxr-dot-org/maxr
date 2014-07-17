@@ -28,20 +28,19 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 	player (&player_)
 {
 	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
-	signalConnectionManager.connect (readyImage->clicked, [&](){ readyClicked(); });
 
 	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
 
 	updatePlayerColor ();
-	updatePlayerReady ();
+	updatePlayerFinishedTurn ();
 
 	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), getPosition () + cPosition (getSize ().x () - readyImage->getSize ().x (), readyImage->getSize ().y ())), player->getName ()));
 
 	fitToChildren ();
 
-    //signalConnectionManager.connect (player->nameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
-    //signalConnectionManager.connect (player->colorChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerColor, this));
-    //signalConnectionManager.connect (player->readyChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerReady, this));
+	signalConnectionManager.connect (player->nameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
+	signalConnectionManager.connect (player->colorChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerColor, this));
+	signalConnectionManager.connect (player->hasFinishedTurnChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerFinishedTurn, this));
 }
 
 //------------------------------------------------------------------------------
@@ -68,13 +67,12 @@ void cChatBoxPlayerListViewItem::updatePlayerColor ()
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerReady ()
+void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn ()
 {
-	SDL_Rect src = {/*player->isReady ()*/ false ? 10 : 0, 0, 10, 10};
+	SDL_Rect src = {player->getHasFinishedTurn () ? 10 : 0, 0, 10, 10};
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_SetColorKey (readySurface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (readySurface.get (), NULL, 0xFF00FF);
+	SDL_SetColorKey (readySurface.get (), SDL_TRUE, cColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
 	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), NULL);
 
 	readyImage->setImage (readySurface.get ());

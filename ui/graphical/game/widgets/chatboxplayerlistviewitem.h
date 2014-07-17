@@ -38,8 +38,6 @@ public:
 
     const cPlayer& getPlayer () const;
 
-	cSignal<void ()> readyClicked;
-
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
@@ -52,7 +50,7 @@ private:
 
 	void updatePlayerName ();
 	void updatePlayerColor ();
-	void updatePlayerReady ();
+	void updatePlayerFinishedTurn ();
 };
 
 #endif // ui_graphical_menu_widgets_special_lobbyplayerlistviewitemH

@@ -120,11 +120,11 @@ void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, i
 }
 
 //------------------------------------------------------------------------------
-void sendTurnFinished (cServer& server, int playerNum, const cPlayer* receiver)
+void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_TURN));
 
-	message->pushInt16 (playerNum);
+	message->pushInt16 (playerWhoEndedTurn.getNr());
 
 	server.sendNetMessage (message, receiver);
 }

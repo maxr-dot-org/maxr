@@ -173,6 +173,9 @@ public:
 	void setClan (int newClan);
 	int getClan() const { return clan; }
 
+	bool getHasFinishedTurn () const;
+	void setHasFinishedTurn (bool value);
+
 	void exploreResource (const cPosition& pos) { ResourceMap[getOffset (pos)] = 1; }
 	bool hasResourceExplored (const cPosition& pos) const { return ResourceMap[getOffset (pos)] != 0; }
 	bool hasSentriesAir (const cPosition& pos) const { return SentriesMapAir[getOffset (pos)] != 0; }
@@ -195,7 +198,10 @@ public:
 
 	const std::vector<int>& getCurrentTurnResearchAreasFinished () const;
 
+	mutable cSignal<void ()> nameChanged;
+	mutable cSignal<void ()> colorChanged;
 	mutable cSignal<void (const cSavedReport&)> reportAdded;
+	mutable cSignal<void ()> hasFinishedTurnChanged;
 private:
 	/**
 	* draws a circle on the map for the fog
@@ -253,7 +259,6 @@ public:
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	AutoPtr<sHudStateContainer> savedHud;
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
-	bool bFinishedTurn;     // true when player send his turn end
 	bool isDefeated;        // true if the player has been defeated
 	bool isRemovedFromGame; // true if the player has been removed from the game.
 	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.
@@ -264,6 +269,8 @@ private:
 
 	std::vector<sTurnstartReport> currentTurnUnitReports;
 	std::vector<int> currentTurnResearchAreasFinished;
+
+	bool hasFinishedTurn;
 };
 
 #endif

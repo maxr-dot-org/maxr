@@ -471,7 +471,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 		Log.write ("######### Round " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
 		for (unsigned int i = 0; i < getPlayerList().size(); i++)
 		{
-			getPlayerList() [i]->bFinishedTurn = false;
+			getPlayerList() [i]->setHasFinishedTurn(false);
 		}
 		finishedTurnEndProcess ();
 	}
@@ -510,6 +510,8 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	{
 		ActivePlayer->addSavedReport (std::make_unique<cSavedReportPlayerEndedTurn> (*player));
 	}
+
+	player->setHasFinishedTurn (true);
 }
 
 void cClient::HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message)

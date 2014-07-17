@@ -158,7 +158,8 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 	savedHud (new sHudStateContainer),
 	numEcos (0),
 	lastDeletedUnit (0),
-	clan (-1)
+	clan (-1),
+	hasFinishedTurn (false)
 {
 	// get the default (no clan) unit data
 	VehicleData = UnitsData.getUnitData_Vehicles (-1);
@@ -171,9 +172,11 @@ cPlayer::cPlayer (const sPlayer& splayer_) :
 
 	isDefeated = false;
 	isRemovedFromGame = false;
-	bFinishedTurn = false;
 
 	researchFinished = false;
+
+	splayer.nameChanged.connect ([this](){ nameChanged (); });
+	splayer.colorChanged.connect ([this](){ colorChanged (); });
 }
 
 //------------------------------------------------------------------------------
@@ -1141,3 +1144,16 @@ const std::vector<std::unique_ptr<cSavedReport>>& cPlayer::getSavedReports () co
 {
 	return savedReportsList;
 };
+
+//------------------------------------------------------------------------------
+bool cPlayer::getHasFinishedTurn () const
+{
+	return hasFinishedTurn;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::setHasFinishedTurn (bool value)
+{
+	std::swap (hasFinishedTurn, value);
+	if (hasFinishedTurn != value) hasFinishedTurnChanged ();
+}

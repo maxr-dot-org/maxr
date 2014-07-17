@@ -138,12 +138,8 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiv
 *       at his turn beginning.
 */
 void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, const cPlayer& receiver);
-/**
-* Information for other clients that one player has finished his turn
-*@author alzi alias DoctorDeath
-*@param iPlayerNum Number of player who has finished his turn.
-*/
-void sendTurnFinished (cServer& server, int iPlayerNum, const cPlayer* receiver = nullptr);
+
+void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* receiver = nullptr);
 
 void sendTurnStartTime (cServer& server, unsigned int gameTime);
 

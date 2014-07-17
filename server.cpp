@@ -2846,7 +2846,7 @@ void cServer::handleEnd (const cPlayer& player)
 
 	if (gameType == GAME_TYPE_SINGLE)
 	{
-		sendTurnFinished (*this, player.getNr());
+		sendTurnFinished (*this, player);
 		if (checkEndActions (&player))
 		{
 			iWantPlayerEndNum = player.getNr();
@@ -2939,7 +2939,7 @@ void cServer::handleEnd (const cPlayer& player)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				sendTurnFinished (*this, player.getNr());
+				sendTurnFinished (*this, player);
 				if (gameSettings->isTurnEndDeadlineActive ())
 				{
 					turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
@@ -2948,7 +2948,7 @@ void cServer::handleEnd (const cPlayer& player)
 			}
 			else
 			{
-				sendTurnFinished (*this, player.getNr ());
+				sendTurnFinished (*this, player);
 			}
 		}
 
