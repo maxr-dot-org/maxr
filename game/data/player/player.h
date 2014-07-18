@@ -34,7 +34,7 @@
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"
-#include "game/data/player/playercolor.h"
+#include "game/data/player/playerbasicdata.h"
 
 class cBuilding;
 class cHud;
@@ -50,47 +50,6 @@ struct sUnitData;
 class cSavedReport;
 
 typedef std::vector<int> PointsHistory;
-
-/**
- * a structure that includes all information needed in pre-game.
- */
-class cPlayerBasicData
-{
-public:
-	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
-	cPlayerBasicData (const cPlayerBasicData& other);
-	cPlayerBasicData& operator=(const cPlayerBasicData& other);
-
-	const std::string& getName () const;
-	void setName (std::string name);
-	const cPlayerColor& getColor () const { return color; }
-	void setColor (cPlayerColor color);
-	int getNr () const;
-	void setNr (int index);
-	int getSocketIndex () const;
-	void setSocketIndex (int index);
-	void setLocal();
-	bool isLocal() const;
-	void onSocketIndexDisconnected (int socketIndex);
-	void setReady (bool ready);
-	bool isReady () const;
-
-	mutable cSignal<void ()> nameChanged;
-	mutable cSignal<void ()> numberChanged;
-	mutable cSignal<void ()> colorChanged;
-	mutable cSignal<void ()> socketIndexChanged;
-	mutable cSignal<void ()> readyChanged;
-private:
-	std::string name;
-	cPlayerColor color;
-	int Nr;
-
-	// Index in socket array of cServer::network
-	// if MAX_CLIENTS it's the local connected player
-	// -1 for unknown
-	int socketIndex;
-	bool ready;
-};
 
 // the Player class //////////////////////////////
 class cPlayer

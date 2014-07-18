@@ -846,6 +846,9 @@
     <ClCompile Include="..\..\game\data\player\player.cpp">
       <Filter>maxr\game\data\player</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\data\player\playerbasicdata.cpp">
+      <Filter>maxr\game\data\player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\attackJobs.h">
@@ -1734,6 +1737,9 @@
       <Filter>maxr\game\data\player</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\data\player\player.h">
+      <Filter>maxr\game\data\player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\player\playerbasicdata.h">
       <Filter>maxr\game\data\player</Filter>
     </ClInclude>
   </ItemGroup>

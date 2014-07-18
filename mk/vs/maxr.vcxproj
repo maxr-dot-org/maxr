@@ -179,6 +179,7 @@
     <ClCompile Include="..\..\fxeffects.cpp" />
     <ClCompile Include="..\..\gametimer.cpp" />
     <ClCompile Include="..\..\game\data\player\player.cpp" />
+    <ClCompile Include="..\..\game\data\player\playerbasicdata.cpp" />
     <ClCompile Include="..\..\game\data\player\playercolor.cpp" />
     <ClCompile Include="..\..\game\data\report\savedreport.cpp" />
     <ClCompile Include="..\..\game\data\report\savedreportchat.cpp" />
@@ -422,6 +423,7 @@
     <ClInclude Include="..\..\fxeffects.h" />
     <ClInclude Include="..\..\gametimer.h" />
     <ClInclude Include="..\..\game\data\player\player.h" />
+    <ClInclude Include="..\..\game\data\player\playerbasicdata.h" />
     <ClInclude Include="..\..\game\data\player\playercolor.h" />
     <ClInclude Include="..\..\game\data\report\savedreport.h" />
     <ClInclude Include="..\..\game\data\report\savedreportchat.h" />
