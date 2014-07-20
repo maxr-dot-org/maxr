@@ -80,6 +80,7 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
 
+	GAME_EV_WANT_KICK_PLAYER,
 	GAME_EV_REQ_RECON_IDENT,        // a server of a running game requests an identification of a player who wants to reconnect
 	GAME_EV_RECONNECT_ANSWER,       // a server returns an answer for the reconnect
 

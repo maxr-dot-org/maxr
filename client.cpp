@@ -1221,7 +1221,7 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 	}
 	ActivePlayer->addSavedReport (std::make_unique<cSavedReportPlayerLeft> (*Player));
 
-	deletePlayer (Player);
+	deletePlayer (*Player);
 }
 
 void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
@@ -1999,60 +1999,51 @@ void cClient::destroyUnit (cBuilding& building)
 }
 
 //------------------------------------------------------------------------------
-void cClient::deletePlayer (cPlayer* player)
+void cClient::deletePlayer (cPlayer& player)
 {
-	player->isRemovedFromGame = true;
-
-	// TODO: We do not really delete the player
-	// because he may is still referenced somewhere
-	// (e.g. in the playersInfo in the gameGUI)
-	// or we may need him for some statistics.
-	// uncomment this if we can make sure all references have been removed or
-	// at least been set to NULL.
-#if 0
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
-	{
-		if (player == (*getPlayerList()) [i])
-		{
-			delete (*getPlayerList()) [i];
-			getPlayerList()->Delete (i);
-		}
-	}
-#endif
+	player.setIsRemovedFromGame (true);
+	playerList.erase (std::remove_if (playerList.begin (), playerList.end (), [&player](const std::shared_ptr<cPlayer>& entry){ return entry.get () == &player; }), playerList.end ());
 }
 
+//------------------------------------------------------------------------------
 void cClient::addJob (cJob* job)
 {
 	helperJobs.addJob (*job);
 }
 
+//------------------------------------------------------------------------------
 void cClient::runJobs()
 {
 	helperJobs.run (*gameTimer);
 }
 
+//------------------------------------------------------------------------------
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
 	freezeModes.enable (mode, playerNumber);
 	freezeModeChanged ();
 }
 
+//------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
 	freezeModes.disable (mode);
 	freezeModeChanged ();
 }
 
+//------------------------------------------------------------------------------
 bool cClient::isFreezed() const
 {
 	return freezeModes.isFreezed();
 }
 
+//------------------------------------------------------------------------------
 bool cClient::getFreezeMode (eFreezeMode mode) const
 {
 	return freezeModes.isEnable (mode);
 }
 
+//------------------------------------------------------------------------------
 void cClient::handleChatMessage (const std::string& message)
 {
     if (message.empty ()) return;

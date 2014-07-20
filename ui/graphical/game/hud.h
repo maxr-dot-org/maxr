@@ -38,6 +38,7 @@ class cAnimationTimer;
 class cPlayer;
 class cTurnClock;
 class cTurnTimeClock;
+class cGameSettings;
 
 class cHud : public cWidget
 {
@@ -54,6 +55,7 @@ public:
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
+	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
 	static AutoSurface generateSurface ();
 

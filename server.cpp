@@ -1564,7 +1564,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	// delete disconnected players
 	for (size_t i = 0; i != DisconnectedPlayerList.size(); ++i)
 	{
-		deletePlayer (DisconnectedPlayerList[i]);
+		deletePlayer (*DisconnectedPlayerList[i]);
 	}
 	DisconnectedPlayerList.clear();
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
@@ -2138,6 +2138,16 @@ void cServer::handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 }
 
 //------------------------------------------------------------------------------
+void cServer::handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message)
+{
+	assert (message.iType == GAME_EV_WANT_KICK_PLAYER);
+
+	auto& player = getPlayerFromNumber (message.popInt32 ());
+
+	kickPlayer (player);
+}
+
+//------------------------------------------------------------------------------
 int cServer::handleNetMessage (cNetMessage& message)
 {
 	if (message.iType != NET_GAME_TIME_CLIENT)
@@ -2203,6 +2213,7 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_SELFDESTROY: handleNetMessage_GAME_EV_WANT_SELFDESTROY (message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (message); break;
 		case GAME_EV_END_MOVE_ACTION: handleNetMessage_GAME_EV_END_MOVE_ACTION (message); break;
+		case GAME_EV_WANT_KICK_PLAYER: handleNetMessage_GAME_EV_WANT_KICK_PLAYER (message); break;
 		case NET_GAME_TIME_CLIENT: gameTimer->handleSyncMessage (message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message.getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
@@ -2787,10 +2798,10 @@ bool cServer::isPlayerDisconnected (const cPlayer& player) const
 }
 
 //------------------------------------------------------------------------------
-void cServer::kickPlayer (cPlayer* player)
+void cServer::kickPlayer (cPlayer& player)
 {
 	// close the socket
-	const int socketIndex = player->getSocketNum();
+	const int socketIndex = player.getSocketNum();
 	if (network) network->close (socketIndex);
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
@@ -3703,15 +3714,15 @@ void cServer::deleteRubble (cBuilding* rubble)
 }
 
 //------------------------------------------------------------------------------
-void cServer::deletePlayer (cPlayer* player)
+void cServer::deletePlayer (cPlayer& player)
 {
 	//remove units
-	const auto& vehicles = player->getVehicles ();
+	const auto& vehicles = player.getVehicles ();
     while (!vehicles.empty())
 	{
         deleteUnit (vehicles.begin()->get());
 	}
-    const auto& buildings = player->getVehicles ();
+    const auto& buildings = player.getVehicles ();
     while (!buildings.empty ())
     {
         deleteUnit (buildings.begin ()->get ());
@@ -3721,20 +3732,20 @@ void cServer::deletePlayer (cPlayer* player)
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
 		cPlayer* unitPlayer = playerList[i].get();
-		if (unitPlayer == player) continue;
+		if (unitPlayer == &player) continue;
 
 		const auto& vehicles = unitPlayer->getVehicles ();
 		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 		{
 			const auto& vehicle = *i;
-			if (vehicle->data.isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (player)) vehicle->resetDetectedByPlayer (*this, player);
+			if (vehicle->data.isStealthOn != TERRAIN_NONE && vehicle->isDetectedByPlayer (&player)) vehicle->resetDetectedByPlayer (*this, &player);
 		}
 	}
 	// delete the player
-	sendDeletePlayer (*this, *player, nullptr);
+	sendDeletePlayer (*this, player, nullptr);
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
-		if (player == playerList[i].get ())
+		if (&player == playerList[i].get ())
 		{
 			playerList.erase (playerList.begin () + i);
 			break;

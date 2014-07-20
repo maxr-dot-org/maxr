@@ -484,7 +484,7 @@ void cPlot<T, U>::draw ()
 	// draw markers
 	for (auto marker = xMarkers.begin (); marker != xMarkers.end (); ++marker)
 	{
-		if (marker->getValue () < xAxis.getMinValue () && marker->getValue () > xAxis.getMaxValue ()) continue;
+		if (marker->getValue () < xAxis.getMinValue () || marker->getValue () > xAxis.getMaxValue ()) continue;
 
 		const auto pixelX = toPixelX (marker->getValue ());
 		drawLine (cVideo::buffer, getPosition () + origin + cPosition (pixelX, 0), getPosition () + origin + cPosition (pixelX, -yPixelWidth), marker->getColor ());
@@ -494,12 +494,12 @@ void cPlot<T, U>::draw ()
 
 	for (auto marker = yMarkers.begin (); marker != yMarkers.end (); ++marker)
 	{
-		if (marker->getValue () < yAxis.getMinValue () && marker->getValue () > yAxis.getMaxValue ()) continue;
+		if (marker->getValue () < yAxis.getMinValue () || marker->getValue () > yAxis.getMaxValue ()) continue;
 
 		const auto pixelY = toPixelY (marker->getValue ());
 		drawLine (cVideo::buffer, getPosition () + origin + cPosition (0, -pixelY), getPosition () + origin + cPosition (xPixelWidth, -pixelY), marker->getColor ());
 
-		font->showText (getPosition () + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (yAxis.getMaxValue ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (getPosition () + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (marker->getValue ()), FONT_LATIN_SMALL_WHITE);
 	}
 	cWidget::draw ();
 }

@@ -25,13 +25,13 @@
 #include "unit.h"
 #include "game/data/player/player.h"
 #include "buildings.h"
+#include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
 	cWidget (area),
 	drawLines (drawLines_),
-	unit (nullptr),
-	player (nullptr)
+	unit (nullptr)
 {
 	const auto size = getSize ();
 	if (size.y () < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
@@ -49,10 +49,21 @@ cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) 
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsHud::setUnit (const cUnit* unit_, const cPlayer* player_)
+void cUnitDetailsHud::setUnit (const cUnit* unit_)
 {
 	unit = unit_;
+}
+
+//------------------------------------------------------------------------------
+void cUnitDetailsHud::setPlayer (const cPlayer* player_)
+{
 	player = player_;
+}
+
+//------------------------------------------------------------------------------
+void cUnitDetailsHud::setGameSettings (std::shared_ptr<const cGameSettings> gameSettings_)
+{
+	gameSettings = std::move (gameSettings_);
 }
 
 //------------------------------------------------------------------------------
@@ -100,8 +111,7 @@ void cUnitDetailsHud::reset ()
 		assert (unit->data.ID.isABuilding ()); // currently only buildings can score
 		const auto unitScore = static_cast<const cBuilding*>(unit)->points;
 		const auto totalScore = unit->owner->getScore ();
-		// FIXME: get game settings in here
-		const auto goalScore = totalScore;// (gameSettings.victoryType == SETTINGS_VICTORY_POINTS) ? gameSetting.duration : tot;
+		const auto goalScore = (gameSettings && gameSettings->getVictoryCondition () == eGameSettingsVictoryCondition::Points) ? gameSettings->getVictoryPoints () : totalScore;
 
 		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Text~Others~Score"));
 		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Text~Others~Total"));

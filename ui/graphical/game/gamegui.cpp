@@ -164,8 +164,10 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_) :
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&]()
 	{
+		if (player) return;
+
 		auto vehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
-		if (vehicle) vehicle->makeReport (*soundManager);
+		if (vehicle && vehicle->owner == player.get()) vehicle->makeReport (*soundManager);
 	});
 
 	signalConnectionManager.connect (gameMap->triggeredUnitHelp, std::bind (&cGameGui::showUnitHelpWindow, this, _1));
@@ -325,6 +327,7 @@ void cGameGui::setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeC
 void cGameGui::setGameSettings (std::shared_ptr<const cGameSettings> gameSettings_)
 {
 	gameSettings = std::move (gameSettings_);
+	hud->setGameSettings (gameSettings);
 }
 
 //------------------------------------------------------------------------------
@@ -408,16 +411,16 @@ void cGameGui::connectToClient (cClient& client)
 					messageList->addMessage ("Wrong parameter");
 					return;
 				}
-				cPlayer* player = server->getPlayerFromString (command.substr (6, command.length ()));
+				const cPlayer* player = client.getPlayerFromString (command.substr (6, command.length ()));
 
 				// server can not be kicked
-				if (!player || player->getNr () == 0)
+				if (!player)
 				{
 					messageList->addMessage ("Wrong parameter");
 					return;
 				}
 
-				server->kickPlayer (player);
+				sentWantKickPlayer (client, *player);
 			}
 			else if (command.compare (0, 9, "/credits ") == 0)
 			{
@@ -443,6 +446,7 @@ void cGameGui::connectToClient (cClient& client)
 				}
 				const int credits = atoi (creditsStr.c_str ());
 
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				player->Credits = credits;
 
 				sendCredits (*server, credits, *player);
@@ -493,6 +497,7 @@ void cGameGui::connectToClient (cClient& client)
 					return;
 				}
 
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				if (i >= 0)
 				{
 					server->setTurnEndDeadline (std::chrono::seconds(i));
@@ -524,6 +529,7 @@ void cGameGui::connectToClient (cClient& client)
 					return;
 				}
 
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				if (i > 0)
 				{
 					server->setTurnLimit (std::chrono::seconds (i));
@@ -599,6 +605,7 @@ void cGameGui::connectToClient (cClient& client)
 				{
 					serverPlayer = &server->getPlayerFromNumber (client.getActivePlayer ().getNr ());
 				}
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				if (serverPlayer)
 				{
 					serverPlayer->revealMap ();
@@ -622,6 +629,7 @@ void cGameGui::connectToClient (cClient& client)
 					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				server->enableFreezeMode (FREEZE_PAUSE);
 			}
 			else if (command.compare (0, 7, "/resume") == 0)
@@ -631,6 +639,7 @@ void cGameGui::connectToClient (cClient& client)
 					messageList->addMessage ("Command can only be used by Host");
 					return;
 				}
+				// FIXME: do not do changes on server data that are not synchronized with the server thread!
 				server->disableFreezeMode (FREEZE_PAUSE);
 			}
 			if (server)

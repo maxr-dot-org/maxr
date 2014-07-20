@@ -136,6 +136,9 @@ public:
 	bool getHasFinishedTurn () const;
 	void setHasFinishedTurn (bool value);
 
+	bool getIsRemovedFromGame () const;
+	void setIsRemovedFromGame (bool value);
+
 	void exploreResource (const cPosition& pos) { ResourceMap[getOffset (pos)] = 1; }
 	bool hasResourceExplored (const cPosition& pos) const { return ResourceMap[getOffset (pos)] != 0; }
 	bool hasSentriesAir (const cPosition& pos) const { return SentriesMapAir[getOffset (pos)] != 0; }
@@ -162,6 +165,7 @@ public:
 	mutable cSignal<void ()> colorChanged;
 	mutable cSignal<void (const cSavedReport&)> reportAdded;
 	mutable cSignal<void ()> hasFinishedTurnChanged;
+	mutable cSignal<void ()> isRemovedFromGameChanged;
 private:
 	/**
 	* draws a circle on the map for the fog
@@ -220,7 +224,6 @@ public:
 	AutoPtr<sHudStateContainer> savedHud;
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
 	bool isDefeated;        // true if the player has been defeated
-	bool isRemovedFromGame; // true if the player has been removed from the game.
 	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.
 	bool researchFinished;
 	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
@@ -231,6 +234,7 @@ private:
 	std::vector<int> currentTurnResearchAreasFinished;
 
 	bool hasFinishedTurn;
+	bool isRemovedFromGame;
 };
 
 #endif // game_data_player_playerH

@@ -46,7 +46,8 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 	numEcos (0),
 	lastDeletedUnit (0),
 	clan (-1),
-	hasFinishedTurn (false)
+	hasFinishedTurn (false),
+	isRemovedFromGame (false)
 {
 	// get the default (no clan) unit data
 	VehicleData = UnitsData.getUnitData_Vehicles (-1);
@@ -58,7 +59,6 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 	Credits = 0;
 
 	isDefeated = false;
-	isRemovedFromGame = false;
 
 	researchFinished = false;
 
@@ -68,9 +68,7 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 
 //------------------------------------------------------------------------------
 cPlayer::~cPlayer()
-{
-	removeAllUnits ();
-}
+{}
 
 //------------------------------------------------------------------------------
 void cPlayer::setClan (int newClan)
@@ -518,7 +516,7 @@ cVehicle* cPlayer::getPrevVehicle (cVehicle* start) const
 	if (vehicles.empty ()) return nullptr;
 
 	auto it = (start == nullptr) ? vehicles.end ()-1 : vehicles.find (*start);
-	if (start != nullptr && it != vehicles.end ()) --it;
+	if (start != nullptr && it != vehicles.begin () && it != vehicles.end ()) --it;
 	for (; it != vehicles.end (); --it)
 	{
 		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
@@ -537,7 +535,7 @@ cBuilding* cPlayer::getPrevBuilding (cBuilding* start) const
 	if (buildings.empty ()) return nullptr;
 
 	auto it = (start == nullptr) ? buildings.end ()-1 : buildings.find (*start);
-	if (start != nullptr && it != buildings.end ()) --it;
+	if (start != nullptr && it != buildings.begin () && it != buildings.end ()) --it;
 	for (; it != buildings.end (); --it)
 	{
 		if (!(*it)->isMarkedAsDone () && !(*it)->isUnitWorking () && !(*it)->isSentryActive ()
@@ -1030,7 +1028,7 @@ void cPlayer::addSavedReport (std::unique_ptr<cSavedReport> savedReport)
 const std::vector<std::unique_ptr<cSavedReport>>& cPlayer::getSavedReports () const
 {
 	return savedReportsList;
-};
+}
 
 //------------------------------------------------------------------------------
 bool cPlayer::getHasFinishedTurn () const
@@ -1043,4 +1041,17 @@ void cPlayer::setHasFinishedTurn (bool value)
 {
 	std::swap (hasFinishedTurn, value);
 	if (hasFinishedTurn != value) hasFinishedTurnChanged ();
+}
+
+//------------------------------------------------------------------------------
+bool cPlayer::getIsRemovedFromGame () const
+{
+	return isRemovedFromGame;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::setIsRemovedFromGame (bool value)
+{
+	std::swap (isRemovedFromGame, value);
+	if (isRemovedFromGame != value) isRemovedFromGameChanged ();
 }

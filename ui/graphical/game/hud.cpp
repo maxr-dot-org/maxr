@@ -100,8 +100,6 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	miniMapZoomFactorButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 387), eCheckBoxType::Hud2x, false, &SoundData.SNDHudSwitch));
 	signalConnectionManager.connect (miniMapZoomFactorButton->toggled, [&](){ miniMapZoomFactorToggled (); });
 
-	//auto playersButton = addChild (std::make_unique<cCheckBox> (cPosition (136, 439), eCheckBoxType::HudPlayers, false, &SoundData.SNDHudSwitch));
-
 	auto helpButton = addChild (std::make_unique<cPushButton> (cPosition (20, 250), ePushButtonType::HudHelp));
 	signalConnectionManager.connect (helpButton->clicked, [&](){ helpClicked (); });
 	auto centerButton = addChild (std::make_unique<cPushButton> (cPosition (4, 227), ePushButtonType::HudCenter));
@@ -156,7 +154,8 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 void cHud::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
 	player = std::move(player_);
-	unitRenameWidget->setPlayer (player.get());
+	unitRenameWidget->setPlayer (player.get ());
+	unitDetails->setPlayer (player.get ());
 }
 
 //------------------------------------------------------------------------------
@@ -179,6 +178,12 @@ void cHud::setTurnClock (std::shared_ptr<const cTurnClock> turnClock_)
 void cHud::setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock)
 {
 	turnTimeClockWidget->setTurnTimeClock (std::move (turnTimeClock));
+}
+
+//------------------------------------------------------------------------------
+void cHud::setGameSettings (std::shared_ptr<const cGameSettings> gameSettings)
+{
+	unitDetails->setGameSettings (std::move (gameSettings));
 }
 
 //------------------------------------------------------------------------------
@@ -433,5 +438,5 @@ void cHud::setActiveUnit (const cUnit* unit)
 {
 	unitRenameWidget->setUnit (unit);
 	unitVideo->setUnit (unit);
-	unitDetails->setUnit (unit, player.get());
+	unitDetails->setUnit (unit);
 }

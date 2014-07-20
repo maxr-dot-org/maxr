@@ -618,3 +618,10 @@ void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMo
 	message->pushInt32 (vehicleID);
 	client.sendNetMessage (message);
 }
+
+void sentWantKickPlayer (const cClient& client, const cPlayer& player)
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_KICK_PLAYER);
+	message->pushInt32 (player.getNr());
+	client.sendNetMessage (message);
+}

@@ -286,4 +286,6 @@ void sendWantChangeUnitName (const cClient& client, const std::string& newName, 
 
 void sendEndMoveAction (const cClient& client, int vehicleID, int destID, eEndMoveActionType type);
 
+void sentWantKickPlayer (const cClient& client, const cPlayer& player);
+
 #endif // clienteventsH

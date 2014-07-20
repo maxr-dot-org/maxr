@@ -267,9 +267,9 @@ public:
 	* deletes a player and all his units
 	*@author alzi alias DoctorDeath
 	*/
-	void deletePlayer (cPlayer* Player);
+	void deletePlayer (cPlayer& Player);
 
-	void kickPlayer (cPlayer* player);
+	void kickPlayer (cPlayer& player);
 
 	void sideStepStealthUnit (const cPosition& position, const cVehicle& vehicle, const cPosition& bigOffset = cPosition(-1,-1));
 	void sideStepStealthUnit (const cPosition& position, const sUnitData& vehicleData, cPlayer* vehicleOwner, const cPosition& bigOffset = cPosition(-1,-1));
@@ -367,6 +367,7 @@ private:
 	void handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
+	void handleNetMessage_GAME_EV_WANT_KICK_PLAYER (cNetMessage& message);
 
 	/**
 	* lands the vehicle at a free position in the radius

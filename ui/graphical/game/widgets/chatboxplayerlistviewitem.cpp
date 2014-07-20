@@ -41,6 +41,7 @@ cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) 
 	signalConnectionManager.connect (player->nameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
 	signalConnectionManager.connect (player->colorChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerColor, this));
 	signalConnectionManager.connect (player->hasFinishedTurnChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerFinishedTurn, this));
+	signalConnectionManager.connect (player->isRemovedFromGameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
 }
 
 //------------------------------------------------------------------------------
@@ -52,7 +53,9 @@ const cPlayer& cChatBoxPlayerListViewItem::getPlayer () const
 //------------------------------------------------------------------------------
 void cChatBoxPlayerListViewItem::updatePlayerName ()
 {
-	nameLabel->setText (player->getName ());
+	// TODO: find better way to show removed/lost/may be waiting/... players
+	// TODO: else at least: translate
+	nameLabel->setText (player->getIsRemovedFromGame() ? player->getName () + " (out)" : player->getName());
 }
 
 //------------------------------------------------------------------------------

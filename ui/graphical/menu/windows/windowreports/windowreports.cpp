@@ -136,7 +136,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	const auto playerNameStartXPos = cReportDisadvantagesListViewItem::unitImageWidth + cReportDisadvantagesListViewItem::unitNameWidth;
 	for (size_t i = 0; i < players.size (); ++i)
 	{
-		const auto& player = players[0];
+		const auto& player = players[i];
 
 		const int row = static_cast<int>(i / cReportDisadvantagesListViewItem::maxItemsInRow);
 		const int col = static_cast<int>(i % cReportDisadvantagesListViewItem::maxItemsInRow);
@@ -161,13 +161,14 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition () + cPosition (5, 5), scoreFrame->getPosition () + cPosition (5 + 450, 5 + font->getFontHeight ())), gameEndString));
 	for (size_t i = 0; i < players.size (); ++i)
 	{
-		const auto& player = players[0];
+		const auto& player = players[i];
 
 		std::string playerText = player->getName () + ": " + plural (player->getScore (turnClock->getTurn ()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->numEcos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
 		AutoSurface colorSurface(SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth (), 0, 0, 0, 0));
+		const auto c = player->getColor ().getColor ().toMappedSdlRGBAColor (colorSurface->format);
 		SDL_FillRect (colorSurface.get (), nullptr, player->getColor().getColor().toMappedSdlRGBAColor (colorSurface->format));
-		scoreFrame->addChild (std::make_unique<cImage> (scoreFrame->getPosition () + cPosition (5, 20), colorSurface.get ()));
+		scoreFrame->addChild (std::make_unique<cImage> (scoreFrame->getPosition () + cPosition (5, 20 + font->getFontHeight () * i), colorSurface.get ()));
 
 		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition () + cPosition (16, 20 + font->getFontHeight () * i), scoreFrame->getPosition () + cPosition (16 + 435, 20 + font->getFontHeight () * (i+1))), playerText));
 	}
@@ -431,9 +432,9 @@ void cWindowReports::initializeScorePlot ()
 		else return p.getScore (c) + p.numEcos * (t-c);
 	};
 
-	const int displayTurns = 100;
+	const int displayTurns = 50;
 
-	auto maxTurns = turnClock->getTurn () + 40;
+	auto maxTurns = turnClock->getTurn () + 20;
 	auto minTurns = maxTurns - displayTurns;
 
 	if (minTurns < 1)

@@ -173,7 +173,7 @@ public:
 	void destroyUnit (cVehicle& vehicle);
 	void destroyUnit (cBuilding& building);
 
-    void deletePlayer (cPlayer* player);
+    void deletePlayer (cPlayer& player);
 
     void handleChatMessage (const std::string& message);
 
@@ -187,7 +187,6 @@ public:
 	std::shared_ptr<const cTurnTimeClock> getTurnTimeClock () const { return turnTimeClock; }
 
 	const std::vector<std::shared_ptr<cPlayer>>& getPlayerList() const { return playerList; }
-	std::vector<std::shared_ptr<cPlayer>>& getPlayerList () { return playerList; }
 
 	const cPlayer& getActivePlayer() const { return *ActivePlayer; }
 	cPlayer& getActivePlayer() { return *ActivePlayer; }

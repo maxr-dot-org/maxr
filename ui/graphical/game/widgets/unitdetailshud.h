@@ -29,6 +29,7 @@
 class cLabel;
 class cUnit;
 class cPlayer;
+class cGameSettings;
 
 class cUnitDetailsHud : public cWidget
 {
@@ -37,7 +38,11 @@ public:
 
 	virtual void draw () MAXR_OVERRIDE_FUNCTION;
 
-	void setUnit (const cUnit* unit, const cPlayer* player = nullptr);
+	void setUnit (const cUnit* unit);
+
+	void setPlayer (const cPlayer* player);
+
+	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
 	// TODO: find nice place for these functions
 	static void drawSmallSymbols (SDL_Surface* destination, int rowHeight, eUnitDataSymbolType symbolType, const cPosition& position, int value1, int value2);
@@ -59,6 +64,7 @@ private:
 
 	const cUnit* unit;
 	const cPlayer* player;
+	std::shared_ptr<const cGameSettings> gameSettings;
 };
 
 #endif // ui_graphical_game_widgets_unitdetailshudH

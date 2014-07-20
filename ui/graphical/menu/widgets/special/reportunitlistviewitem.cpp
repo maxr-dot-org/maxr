@@ -54,7 +54,8 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 	else surface = NULL;
 
 	auto unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (unitImageSize+3+75+3, 0), cPosition (unitImageSize+3+75+3 + 155, 48)), true));
-	unitDetails->setUnit (&unit, unit.owner);
+	unitDetails->setPlayer (unit.owner);
+	unitDetails->setUnit (&unit);
 
 	unitImage = addChild (std::make_unique<cImage> (cPosition (0, (unitDetails->getSize ().y () - unitImageSize)/2), surface));
 	unitImage->setConsumeClick (false);
