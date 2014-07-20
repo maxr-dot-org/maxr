@@ -288,10 +288,10 @@
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Se han hecho ajustes: Producción de oro incrementada en "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Se han hecho ajustes: Producción de metal incrementada en "/>
 			<Attacked ENG="is under attack" localized="está bajo ataque"/>
-			
-			
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s está atacando al enemigo"/>
+			<AttackingStatusStr ENG="attacking" localized="atacando"/>
 			<Building_Disabled ENG="Building disabled" localized="Edificio desactivado"/>
-			
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s ha sido capturado por el enemigo"/>
 			<Cheat ENG="used cheat" localized="Se ha usado un truco"/>
 			<Clearing ENG="Clearing" localized="limpiando"/>
 			<Clearing_Fin ENG="clearing done" localized="limpieza completada"/>
@@ -299,7 +299,7 @@
 			<CommandoRank_Average ENG="Average" localized="Intermedio"/>
 			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
 			<CommandoRank_Expert ENG="Expert" localized="Experto"/>
-			
+			<CommandoRank_GrandMaster ENG="Grand Master" localized="Gran Maestro"/>
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Novato"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veterano"/>
 			<Dated ENG="dated" localized="a fecha de"/>
@@ -322,24 +322,24 @@
 			<GameEndsAt ENG="Game ends at" localized="El juego finaliza en"/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="No se puede encender, se necesita oro"/>
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Se necesita más oro, refinería apagada."/>
-			
+			<IsBeeingAttacked ENG="Is beeing attacked" localized="Está siendo atacado"/>
 			<Labs ENG="Labs" localized="Laboratorios"/>
-			
+			<Landing_Select ENG="Please select starting location." localized="Por favor selecciona lugar de inicio."/>
 			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"/>
 			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"/>
 			<Laying ENG="placing mines" localized="colocando minas"/>
 			<Metal_Insufficient ENG="Cannot start, metal needed." localized="No se puede encender, se necesita metal"/>
 			<Metal_Low ENG="More raw material needed, building turned off." localized="Se necesitan más materiales, edificio apagado"/>
 			<Moving ENG="moving" localized="moviendose"/>
-			
+			<MovingToAttack ENG="moving to attack" localized="moviendose para atacar"/>
 			<NoLimit ENG="Fight to the death!" localized="Lucha a muerte"/>
-			
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="No puede continuarse la trayectoria de construcción"/>
 			<Point ENG="point" localized="punto"/>
 			<Points ENG="points" localized="puntos"/>
 			<Producing ENG="Building" localized="Edificio"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Posición de construcción incorrecta o recursos insuficientes" />
 			<Producing_Fin ENG="finished building" localized="edificio terminado"/>
-			
+			<ReactionFireOff ENG="Reaction Fire Off" localized="Disparo de auto-defensa apagado"/>
 			<Repeat ENG="Again" localized="De nuevo"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
@@ -468,6 +468,7 @@
 			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
 			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
 			<Editor name="Kuan_Ji" time="2014-07-14 18:41:00"/>
+			<Editor name="Kuan_Ji" time="2014-07-20 10:32:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Footer>
