@@ -5,125 +5,125 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="spa" encoding="utf8" direction="left-to-right">
+<MAX_Language_File lang="cat" encoding="utf8" direction="left-to-right">
 	<Text>
 		<Main>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedición por DoctorDeath)"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original por Interplay)"/>
-			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and Exploration" localized="M.A.X.R. basado en Mechanized Assault and Exploration de Interplay"/>
+			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedició per DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original per Interplay)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and Exploration" localized="M.A.X.R. basat en Mechanized Assault and Exploration de Interplay"/>
 			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
-			<Version ENG="version v%s" localized="versión v%s"/>
+			<Version ENG="version v%s" localized="versió v%s"/>
 			<Remarks>
-				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*)no implementando todavía"/>
+				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) encara no implementat"/>
 			</Remarks>
 		</Main>
 		<Init>
-			<Buildings ENG="Loading buildings..." localized="Cargando edificios..."/>
-			<Clans ENG="Loading clans..." localized="Cargando clanes..."/>
-			<Effects ENG="Loading effects..." localized="Cargando efectos..."/>
-			<Fonts ENG="Loading fonts..." localized="Cargando fuentes..."/>
-			<GFX ENG="Loading graphics..." localized="Cargando gráficos..."/>
-			<Keys ENG="Loading keys..." localized="Cargando claves..."/>
-			<Lang ENG="Loading language pack..." localized="Cargando paquete de idioma..."/>
-			<Music ENG="Loading music..." localized="Cargando música..."/>
-			<Sounds ENG="Loading sounds..." localized="Cargando sonidos..."/>
-			<Terrain ENG="Loading terrain..." localized="Cargando terreno..."/>
-			<Vehicles ENG="Loading vehicles..." localized="Cargando vehículos..."/>
-			<Voices ENG="Loading voices..." localized="Cargando voces..."/>
+			<Buildings ENG="Loading buildings..." localized="Carregant edificis..."/>
+			<Clans ENG="Loading clans..." localized="Carregant clans..."/>
+			<Effects ENG="Loading effects..." localized="Carregant efectes..."/>
+			<Fonts ENG="Loading fonts..." localized="Carregant fonts..."/>
+			<GFX ENG="Loading graphics..." localized="Carregant gràfics..."/>
+			<Keys ENG="Loading keys..." localized="Carregant claus..."/>
+			<Lang ENG="Loading language pack..." localized="Carregant paquet d'idioma..."/>
+			<Music ENG="Loading music..." localized="Carregant música..."/>
+			<Sounds ENG="Loading sounds..." localized="Carregant sons..."/>
+			<Terrain ENG="Loading terrain..." localized="Carregant terreny..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Carregant vehícles..."/>
+			<Voices ENG="Loading voices..." localized="Carregant veus..."/>
 		</Init>
 		<Title>
-			<Alien_Tech ENG="Alien technology" localized="Tecnologia alien"/>
+			<Alien_Tech ENG="Alien technology" localized="Tecnologia aliena"/>
 			<BridgeHead ENG="Starting base" localized="Base inicial"/>
-			<Build_Factory ENG="Factory Menu" localized="Menú de Fabrica"/>
-			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcción/>
+			<Build_Factory ENG="Factory Menu" localized="Menú de Fàbrica"/>
+			<Build_Vehicle ENG="Construction Menu" localized="Menú de Construcció/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
-			<Choose_Clan ENG="Choose Clan" localized="Elige Clan"/>
-			<Choose_Planet ENG="Choose Planet" localized="Elige planeta"/>
-			<Choose_Units ENG="Choose Units" localized="Elige Unidades"/>
-			<Clans ENG="Clans" localized="Clanes"/>
+			<Choose_Clan ENG="Choose Clan" localized="Escull Clan"/>
+			<Choose_Planet ENG="Choose Planet" localized="Escull planeta"/>
+			<Choose_Units ENG="Choose Units" localized="Escull Unitats"/>
+			<Clans ENG="Clans" localized="Clans"/>
 			<Color ENG="Color:" localized="Color:"/>
-			<Computer ENG="Computer" localized="Ordenador (IA)"/>
+			<Computer ENG="Computer" localized="Ordinador (IA)"/>
 			<Connect ENG="Connect" localized="Conectar"/>
-			<Credits ENG="Credits" localized="Créditos"/>
-			<Credits_start ENG="Credit at gamestart" localized="Créditos al comienzo/>
-			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
-			<Gold ENG="Gold" localized="Oro"/>
+			<Credits ENG="Credits" localized="Crèdits"/>
+			<Credits_start ENG="Credit at gamestart" localized="Crèdits al començar"/>
+			<Game_Type ENG="Game Type" localized="Tipus de partida"/>
+			<Gold ENG="Gold" localized="Or"/>
 			<HotSeat ENG="Hot Seat" =localized="Hot Seat"/>
-			<Human ENG="Human" localized="Humano"/>
+			<Human ENG="Human" localized="Humà"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
-			<Load ENG="Load Menú" localized="Menú Cargar"/>
-			<LoadSave ENG="Load/Save Menú" localized="Menú Cargar/Guardar"/>
+			<Load ENG="Load Menú" localized="Menú Carregar"/>
+			<LoadSave ENG="Load/Save Menú" localized="Menú Carregar/Guardar"/>
 			<MainMenu ENG="Main Menu" localized="Menú principal"/>
 			<Map ENG="Map" localized="Mapa"/>
-			<Metal ENG="Materials" localized="Materiales"/>
-			<Mine ENG="Minemanager" localized="Redistribuir minas"/>
-			<Nobody ENG="Nobody" localized="Nadie"/>
+			<Metal ENG="Materials" localized="Materials"/>
+			<Mine ENG="Minemanager" localized="Redistribuir mines"/>
+			<Nobody ENG="Nobody" localized="Ningú"/>
 			<Oil ENG="Fuel" localized="Combustible"/>
-			<Options ENG="Options" localized="Opciones"/>
-			<Player_Name ENG="Playername:" localized="Nombre:"/>
-			<Player_Select ENG="Player options" localized="Opciones de jugador"/>
-			<Players ENG="Players:" localized="Jugadores:"/>
-			<Port ENG="Port" localized="Puerto"/>
-			<Resource ENG="Resource density" localized="Densidad de recursos"/>
-			<Resource_Density ENG="Resources frequency" localized="Frecuencia de recursos"/>
+			<Options ENG="Options" localized="Opcions"/>
+			<Player_Name ENG="Playername:" localized="Nom del jugador:"/>
+			<Player_Select ENG="Player options" localized="Opcions de jugador"/>
+			<Players ENG="Players:" localized="Jugadors:"/>
+			<Port ENG="Port" localized="Port"/>
+			<Resource ENG="Resource density" localized="Densitat de recursos"/>
+			<Resource_Density ENG="Resources frequency" localized="Frecuència de recursos"/>
 			<Savegame ENG="Savegame" localized="Guardar Partida"/>
 			<Send ENG="Send" localized="Enviar"/>
-			<Team ENG="Team" localized="Equipo"/>
-			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
+			<Team ENG="Team" localized="Equip"/>
+			<Unitinfo ENG="Unit status screen" localized="Pantalla de estat d'unitat"/>
 			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
 		</Title>
 		<Others>
 			<Active ENG="Active" localized="Activar"/>
 			<Active_7 ENG="Activ." localized="Activar"/>
-			<ActiveAll_9 ENG="Activ All" localized="Activar todos"/>
-			<Air_Units ENG="Airunits" localized="Unidades aéreas"/>
-			<Ammo ENG="Ammunition" localized="Munición"/>
+			<ActiveAll_9 ENG="Activ All" localized="Activar tots"/>
+			<Air_Units ENG="Airunits" localized="Unidades aèries"/>
+			<Ammo ENG="Ammunition" localized="Munició"/>
 			<Ammo_7 ENG="Ammo" localized="Munic"/>
-			<Armor_7 ENG="Armor" localized="Escudo"/>
+			<Armor_7 ENG="Armor" localized="Escut"/>
 			<Attack ENG="Attack" localized="Atacar"/>
 			<Attack_7 ENG="Attack" localized="Atacar"/>
 			<Auto_7 ENG="Auto" localized="Auto"/>
-			<Back ENG="Back" localized="Atras"/>
+			<Back ENG="Back" localized="Enrere"/>
 			<Build_7 ENG="Build" localized="Construir"/>
 			<Buy ENG="Buy" localized="Comprar"/>
 			<Cancel ENG="Cancel" localized="Cancelar"/>
-			<Cargo_7 ENG="Cargo" localized="Carga"/>
+			<Cargo_7 ENG="Cargo" localized="Carrega"/>
 			<Chat ENG="Chat" localized="Chat"/>
-			<Clear_7 ENG="Clear" localized="Limpiar"/>
+			<Clear_7 ENG="Clear" localized="Netejar"/>
 			<Color ENG="Color" localized="Color"/>
-			<Costs ENG="Costs" localized="Costes"/>
-			<Damaged_Units ENG="Damaged units" localized="Unidades dañadas"/>
+			<Costs ENG="Costs" localized="Costs"/>
+			<Damaged_Units ENG="Damaged units" localized="Unitats danyades"/>
 			<Destroy_7 ENG="Delete" localized="Borrar"/>
 			<Disable_7 ENG="Disable" localized="Desactivar"/>
-			<Disadvantages_8cut ENG="Disadvantages" localized="Desventajas"/>
+			<Disadvantages_8cut ENG="Disadvantages" localized="Desavantatges"/>
 			<Distribution_7 ENG="Distr." localized="Ajustar"/>
-			<Done ENG="Done" localized="Hecho"/>
-			<Done_7 ENG="Done" localized="Hecho"/>
-			<End ENG="End" localized="Finalizar"/>
-			<Exit ENG="Exit" localized="Salir"/>
-			<Fight_Units ENG="Fighting units" localized="Unidades de combate"/>
-			<Files ENG="Files" localized="Ficheros"/>
-			<Fog ENG="Fog" localized="Niebla"/>
-			<Game_Load ENG="Load Game" localized="Cargar partida"/>
-			<Game_New ENG="New Game" localized="Nueva Partida"/>
-			<Game_Options ENG="Game Options" localized="Opciones de juego"/>
+			<Done ENG="Done" localized="Fet"/>
+			<Done_7 ENG="Done" localized="Fet"/>
+			<End ENG="End" localized="Finalitzar"/>
+			<Exit ENG="Exit" localized="Sortir"/>
+			<Fight_Units ENG="Fighting units" localized="Unitats de combat"/>
+			<Files ENG="Files" localized="Fitxers"/>
+			<Fog ENG="Fog" localized="Boira"/>
+			<Game_Load ENG="Load Game" localized="Carregar partida"/>
+			<Game_New ENG="New Game" localized="Nova Partida"/>
+			<Game_Options ENG="Game Options" localized="Opcions de joc"/>
 			<Grid ENG="Grid" localized="Cuadrícula"/>
-			<Ground_Units ENG="Landunits" localized="Unidades de tierra"/>
+			<Ground_Units ENG="Landunits" localized="Unitats de terra"/>
 			<Hitpoints ENG="Hitpoints" localized="Vida"/>
 			<Hitpoints_7 ENG="Hits" localized="Vida"/>
 			<Host_Start ENG="Start Host" localized="Iniciar Servidor"/>
-			<Hot ENG="Hot" localized="Caliente"/>
-			<HotSeat_Load ENG="Load Hot Seat" localized="Cargar Hot Seat"/>
+			<Hot ENG="Hot" localized="Calent"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Carregar Hot Seat"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Nuevo Hot Seat"/>
-			<Included ENG="Included" localized="Incluido"/>
+			<Included ENG="Included" localized="Inclos"/>
 			<Info_7 ENG="Info" localized="Info"/>
-			<Limited_To ENG="Limited to" localized="Limitado a"/>
-			<Load ENG="Load" localized="Cargar"/>
-			<Load_7 ENG="Load" localized="Cargar"/>
+			<Limited_To ENG="Limited to" localized="Limitat a"/>
+			<Load ENG="Load" localized="Carregar"/>
+			<Load_7 ENG="Load" localized="Carregar"/>
 			<Log ENG="Log" localized="Log"/>
-			<Mani ENG="Manifestation" localized="Licenca"/>
+			<Mani ENG="Manifestation" localized="Llicencia"/>
 			<ManualFireMode_7 ENG="Manual" localized="Manual" />
 			<Multi_Player ENG="Multiplayer" localized="Multijugador"/>
 			<No ENG="No" localized="No"/>
@@ -131,91 +131,91 @@
 			<Path ENG="Path" localized="Ruta"/>
 			<Power ENG="Power" localized="Energía"/>
 			<Proceed_4 ENG="Do" localized="OK"/> <!-- it's for the " « [DO] » "above the log-button -->
-			<Produce_7 ENG="Produces" localized="Producción"/>
-			<Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
-			<Range ENG="Range" localized="Alcance"/>
-			<Range_7 ENG="Range" localized="Alcance"/>
-			<Reload ENG="Reload" localized="Recargar"/>
-			<Reload_7 ENG="Reload" localized="Recargar"/>
-			<ReloadAll_9 ENG="Reload All" localized="Rec. Todos"/>
-			<Repair ENG="Repair" localized="Reparar"/>
-			<Repair_7 ENG="Repair" localized="Reparar"/>
-			<RepairAll_9 ENG="Rep. All" localized="Rep. Todos/>
+			<Produce_7 ENG="Produces" localized="Producció"/>
+			<Produce_Units ENG="Producing units" localized="Unitats produint-se"/>
+			<Range ENG="Range" localized="Alcanç"/>
+			<Range_7 ENG="Range" localized="Alcanç"/>
+			<Reload ENG="Reload" localized="Recarregar"/>
+			<Reload_7 ENG="Reload" localized="Recarregar"/>
+			<ReloadAll_9 ENG="Reload All" localized="Rec. Tots"/>
+			<Repair ENG="Repair" localized="Arreglar"/>
+			<Repair_7 ENG="Repair" localized="Arreglar"/>
+			<RepairAll_9 ENG="Rep. All" localized="Arr. Tots/>
 			<Reports ENG="Reports" localized="Reportes"/>
 			<Research ENG="Research" localized="Investigar"/>
 			<Save ENG="Save" localized="Guardar"/>
 			<Scan ENG="Scan" localized="Radar"/>
 			<Scan_7 ENG="Scan" localized="Radar"/>
-			<Score ENG="Score" localized="Puntuación"/>
-			<Sea_Units ENG="Seaunits" localized="Unidades de mar"/>
+			<Score ENG="Score" localized="Puntuació"/>
+			<Sea_Units ENG="Seaunits" localized="Unitats de mar"/>
 			<Seed ENG="Seed" localized="Plantar"/>
 			<Seed_7 ENG="Seed" localized="Plantar"/>
 			<Sentry ENG="Sentry" localized="Alerta"/>
-			<Settings ENG="Settings" localized="Opciones"/>
-			<Shots ENG="Shoots" localized="Disparos"/>
-			<Shots_7 ENG="Shots" localized="Disparo"/>
-			<Single_Player ENG="Singleplayer (No AI)" localized="Un jugador (Sin IA)"/>
-			<Speed ENG="Speed" localized="Velocidad"/>
+			<Settings ENG="Settings" localized="Opcions"/>
+			<Shots ENG="Shoots" localized="Dispars"/>
+			<Shots_7 ENG="Shots" localized="Dispar"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Un jugador (Sense IA)"/>
+			<Speed ENG="Speed" localized="Velocitat"/>
 			<Speed_7 ENG="Speed" localized="Veloc."/>
-			<Start_7 ENG="Start" localized="Empezar"/>
-			<Stationary_Units ENG="Stationary Units" localized="Unidades estáticas"/>
-			<Status ENG="Status" localized="Estado"/>
-			<Steal_7 ENG="Steal" localized="Robar"/>
-			<Stealth_Units ENG="Stealth units" localized="Unidades ocultas"/>
+			<Start_7 ENG="Start" localized="Començar"/>
+			<Stationary_Units ENG="Stationary Units" localized="Unitats estàtiques"/>
+			<Status ENG="Status" localized="Estat"/>
+			<Steal_7 ENG="Steal" localized="Furtar"/>
+			<Stealth_Units ENG="Stealth units" localized="Unitats amagades"/>
 			<Stop_7 ENG="Stop" localized="Parar"/>
 			<Survey ENG="Survey" localized="Recursos"/>
 			<TCPIP_Client ENG="TCP/IP Client" localized="Unirse a partida TCP/IP"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="Crear partida TCP/IP"/>
-			<Teams_7 ENG="Teams" localized="Equipos"/>
+			<Teams_7 ENG="Teams" localized="Equips"/>
 			<Total ENG="Total" localized="Total"/>
 			<Transfer_7 ENG="X-fer" localized="Transferir"/>
-			<Units ENG="Units" localized="Unidades"/>
+			<Units ENG="Units" localized="Unitats"/>
 			<Upgrade ENG="Upgrade" localized="Actualizar"/>
-			<UpgradeAll_7 ENG="Up.all" localized="Mej.Todo"/>
-			<UpgradeAll_9 ENG="Upgrd.All" localized="Mej. Todo"/>
-			<Upgrademenu_7 ENG="Up.Menu" localized="Mejoras"/>
-			<Upgradethis_7 ENG="Upgrade" localized="Actual."/>
-			<Usage_7 ENG="Usage" localized="Uso"/>
+			<UpgradeAll_7 ENG="Up.all" localized="Mill.Tot"/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="Mill. Tot"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="Millores"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Actualitzar"/>
+			<Usage_7 ENG="Usage" localized="Us"/>
 			<Yes ENG="Yes" localized="Si"/>
 		</Others>
 		<Option>
-			<Definite ENG="Built (original)" localized="Construido (original)"/>
-			<Dense ENG="Dense" localized="Denso"/>
-			<High ENG="High" localized="Alto"/>
-			<Limited ENG="Limited" localized="Bajo"/>
-			<Low ENG="Low" localized="Muy bajo"/>
-			<Mobile ENG="Must built" localized="Debes construir"/>
-			<More ENG="More" localized="Muy alto"/>
-			<None ENG="None" localized="Nada"/>
+			<Definite ENG="Built (original)" localized="Construït (original)"/>
+			<Dense ENG="Dense" localized="Dens"/>
+			<High ENG="High" localized="Alt"/>
+			<Limited ENG="Limited" localized="Baix"/>
+			<Low ENG="Low" localized="Molt baix"/>
+			<Mobile ENG="Must built" localized="Deus construïr"/>
+			<More ENG="More" localized="Molt alt"/>
+			<None ENG="None" localized="No res"/>
 			<Normal ENG="Normal" localized="Normal"/>
-			<Off ENG="off" localized="Apagado"/>
-			<On ENG="on" localized="Encendido"/>
-			<Sparse ENG="Sparse" localized="Disperso"/>
-			<TooMuch ENG="Too Much!" localized="El máximo"/>
-			<Type_Simu ENG="Simultaneous" localized="Simultáneo"/>
-			<Type_Turns ENG="Turn based" localized="Turnos"/>
+			<Off ENG="off" localized="Apagat"/>
+			<On ENG="on" localized="Encés"/>
+			<Sparse ENG="Sparse" localized="Dispers"/>
+			<TooMuch ENG="Too Much!" localized="El màxim"/>
+			<Type_Simu ENG="Simultaneous" localized="Simultáni"/>
+			<Type_Turns ENG="Turn based" localized="Torns"/>
 		</Option>
 		<Settings>
-			<Alphaeffects ENG="Alphaeffects" localized="Efectos alpha"/>
-			<Animation ENG="Animations" localized="Animaciones"/>
-			<Autosave ENG="Autosave" localized="Autoguardado"/>
+			<Alphaeffects ENG="Alphaeffects" localized="Efectes alpha"/>
+			<Animation ENG="Animations" localized="Animacions"/>
+			<Autosave ENG="Autosave" localized="Autoguardat"/>
 			<Disable ENG="Disable" localized="Desactivar"/>
-			<Effects ENG="Effects" localized="Efectos"/>
+			<Effects ENG="Effects" localized="Efectes"/>
 			<Intro ENG="Show intro" localized="Mostrar intro"/>
 			<Music ENG="Music" localized="Música"/>
-			<Preferences ENG="Preferences" localized="Preferéncias"/>
-			<Resolution ENG="Resolution" localized="Resolución"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Desplazamiento"/>
-			<Shadows ENG="Shadows" localized="Sombras"/>
-			<ShowDamage ENG="Buildingdamage" localized="Daño en los edificios"/>
-			<ShowDamageVehicle ENG="Vehicledamage" localized="Daño en los vehículos"/>
-			<Tracks ENG="Vehicletracks" localized="Marca de neumaticos"/>
-			<Voices ENG="Voices" localized="Voces"/>
-			<Volume ENG="Volume" localized="Volumen"/>
-			<Window ENG="Windowed" localized="En ventana"/>
+			<Preferences ENG="Preferences" localized="Preferències"/>
+			<Resolution ENG="Resolution" localized="Resolució"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Desplaçament"/>
+			<Shadows ENG="Shadows" localized="Sombres"/>
+			<ShowDamage ENG="Buildingdamage" localized="Dany als edificis"/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized="Dany en los vehícles"/>
+			<Tracks ENG="Vehicletracks" localized="Marca de neumatics"/>
+			<Voices ENG="Voices" localized="Veus"/>
+			<Volume ENG="Volume" localized="Volum"/>
+			<Window ENG="Windowed" localized="En finestra"/>
 		</Settings>
 		<Multiplayer>
-			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, presiona F2 para dejar de esperar."/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, prem F2 per a deixar d'esperar."/>
 			<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
 			<Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Serás desconectado porque no estás listado en la partida guardada"/>
