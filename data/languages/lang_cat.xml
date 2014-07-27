@@ -284,90 +284,90 @@
 			<Waiting ENG="Waiting for other players..." localized="Esperando a otros jugadores..."/>
 		</Multiplayer>
 		<Comp>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Se han hecho ajustes: Producción de combustible incrementada en "/>
-			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Se han hecho ajustes: Producción de oro incrementada en "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Se han hecho ajustes: Producción de metal incrementada en "/>
-			<Attacked ENG="is under attack" localized="está bajo ataque"/>
-			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s está atacando al enemigo"/>
-			<AttackingStatusStr ENG="attacking" localized="atacando"/>
-			<Building_Disabled ENG="Building disabled" localized="Edificio desactivado"/>
-			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s ha sido capturado por el enemigo"/>
-			<Cheat ENG="used cheat" localized="Se ha usado un truco"/>
-			<Clearing ENG="Clearing" localized="limpiando"/>
-			<Clearing_Fin ENG="clearing done" localized="limpieza completada"/>
-			<Clearing_Mine ENG="clearing mines" localized="quitando minas"/>
-			<CommandoRank_Average ENG="Average" localized="Intermedio"/>
-			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
-			<CommandoRank_Expert ENG="Expert" localized="Experto"/>
-			<CommandoRank_GrandMaster ENG="Grand Master" localized="Gran Maestro"/>
-			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Novato"/>
-			<CommandoRank_Veteran ENG="Veteran" localized="Veterano"/>
-			<Dated ENG="dated" localized="a fecha de"/>
-			<Defeated ENG="defeated" localized="derrotado"/>
-			<Description ENG="Description" localized="Descripción"/>
-			<Destroyed ENG="destroyed" localized="destruido"/>
-			<Detected ENG="detected" localized="detectado"/>
-			<Disabled ENG="disabled" localized="desactivado"/>
-			<EcoSphere ENG="eco-sphere" localized="Invernadero"/>
-			<EcoSpheres ENG="eco-spheres" localized="Invernaderos"/>
-			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Confirmar salida \n\nLos datos no guardados se perderán."/>
-			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="No se puede encender, se necesita energía"/>
-			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No se puede encender, se necesita energía"/>
-			<Energy_Low ENG="Power needed, building turned off." localized="Se necesita energía, edificio apagado."/>
-			<Energy_ToLow ENG="More power needed, generator turned on." localized="Se necesita más energía, generador encendido"/>
-			<Finished ENG="is finished" localized="se ha terminado"/>
-			<Finished2 ENG="are finished" localized="se han terminado"/>
-			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No se puede encender, se necesita combustible"/>
-			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Se necesita combustible, generador apagado."/>
-			<GameEndsAt ENG="Game ends at" localized="El juego finaliza en"/>
-			<Gold_Insufficient ENG="Cannot start, gold needed." localized="No se puede encender, se necesita oro"/>
-			<Gold_Low ENG="More gold needed, refinery turned off." localized="Se necesita más oro, refinería apagada."/>
-			<IsBeeingAttacked ENG="Is beeing attacked" localized="Está siendo atacado"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="S'han fet ajusts: Producció de combustible incrementada en "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="S'han fet ajusts: Producció d'or incrementada en "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="S'han fet ajusts: Producció de metall incrementada en "/>
+			<Attacked ENG="is under attack" localized="està sota atac"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s està atacant a l'enemic"/>
+			<AttackingStatusStr ENG="attacking" localized="atacant"/>
+			<Building_Disabled ENG="Building disabled" localized="Edifici desactivat"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s ha sigut capturat per l'enemic"/>
+			<Cheat ENG="used cheat" localized="Se ha utilitzat un truc"/>
+			<Clearing ENG="Clearing" localized="Netejant"/>
+			<Clearing_Fin ENG="clearing done" localized="Neteja complerta"/>
+			<Clearing_Mine ENG="clearing mines" localized="Traient mines"/>
+			<CommandoRank_Average ENG="Average" localized="Intermig"/>
+			<CommandoRank_Elite ENG="Elite" localized="Elit"/>
+			<CommandoRank_Expert ENG="Expert" localized="Expert"/>
+			<CommandoRank_GrandMaster ENG="Grand Master" localized="Gran Mestre"/>
+			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Novel"/>
+			<CommandoRank_Veteran ENG="Veteran" localized="Veterà"/>
+			<Dated ENG="dated" localized="a data de"/>
+			<Defeated ENG="defeated" localized="derrotat"/>
+			<Description ENG="Description" localized="Descripció"/>
+			<Destroyed ENG="destroyed" localized="destruït"/>
+			<Detected ENG="detected" localized="detectat"/>
+			<Disabled ENG="disabled" localized="desactivat"/>
+			<EcoSphere ENG="eco-sphere" localized="Hivernacle"/>
+			<EcoSpheres ENG="eco-spheres" localized="Hivernacles"/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Confirmar sortida \n\nLes dades no guardades es perdràn."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="No es pot engegar, es necessita energía"/>
+			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No es pot engegar, es necessita energía"/>
+			<Energy_Low ENG="Power needed, building turned off." localized="Es necessita energía, edifici apagat."/>
+			<Energy_ToLow ENG="More power needed, generator turned on." localized="Es necessita més energía, generador encendido"/>
+			<Finished ENG="is finished" localized="s'ha acabat"/>
+			<Finished2 ENG="are finished" localized="s'han acabat"/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No es pot engegar, es necessita combustible"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Es necessita combustible, generador apagat."/>
+			<GameEndsAt ENG="Game ends at" localized="El joc acaba en"/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="No es pot engegar, es necessita or"/>
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Es necessita más or, refinería apagada."/>
+			<IsBeeingAttacked ENG="Is beeing attacked" localized="Está sent atacat"/>
 			<Labs ENG="Labs" localized="Laboratorios"/>
-			<Landing_Select ENG="Please select starting location." localized="Por favor selecciona lugar de inicio."/>
-			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"/>
-			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"/>
-			<Laying ENG="placing mines" localized="colocando minas"/>
-			<Metal_Insufficient ENG="Cannot start, metal needed." localized="No se puede encender, se necesita metal"/>
-			<Metal_Low ENG="More raw material needed, building turned off." localized="Se necesitan más materiales, edificio apagado"/>
-			<Moving ENG="moving" localized="moviendose"/>
-			<MovingToAttack ENG="moving to attack" localized="moviendose para atacar"/>
-			<NoLimit ENG="Fight to the death!" localized="Lucha a muerte"/>
-			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="No puede continuarse la trayectoria de construcción"/>
-			<Point ENG="point" localized="punto"/>
-			<Points ENG="points" localized="puntos"/>
-			<Producing ENG="Building" localized="Edificio"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Posición de construcción incorrecta o recursos insuficientes" />
-			<Producing_Fin ENG="finished building" localized="edificio terminado"/>
-			<ReactionFireOff ENG="Reaction Fire Off" localized="Disparo de auto-defensa apagado"/>
-			<Repeat ENG="Again" localized="De nuevo"/>
+			<Landing_Select ENG="Please select starting location." localized="Per favor selecciona lloc de començament."/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="El lloc triat coincideix amb la d'altre jugador. Per favor, escull-ne altra posició"/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posició triada está massa a prop d'altre jugador. Per favor, confirmala fent clic en el cercle roig o seleccina altra posició"/>
+			<Laying ENG="placing mines" localized="colocant mines"/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="No es pot engegar, es necessita metal"/>
+			<Metal_Low ENG="More raw material needed, building turned off." localized="Es necesitan més materials, edifici apagat"/>
+			<Moving ENG="moving" localized="movent-se"/>
+			<MovingToAttack ENG="moving to attack" localized="movent-se per a atacar"/>
+			<NoLimit ENG="Fight to the death!" localized="Lluita a mort"/>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="No pot continuarse la trajectoria de construcció"/>
+			<Point ENG="point" localized="punt"/>
+			<Points ENG="points" localized="punts"/>
+			<Producing ENG="Building" localized="Edifici"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Posició de construcció incorrecta o recursos insuficients" />
+			<Producing_Fin ENG="finished building" localized="edifici acabat"/>
+			<ReactionFireOff ENG="Reaction Fire Off" localized="Dispar de auto-defensa apagat"/>
+			<Repeat ENG="Again" localized="De nou"/>
 			<Reserve ENG="Reserve" localized="Reserva"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
-			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Cuidado: Modo de video no soportado en la configuración"/>
-			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pantallazo guardado a %s"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Per favor reinicia 'Mechanized Assault and eXploration Reloaded' per a que els canvis en el mode de vídeo surtin efecte"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Amb compte: Mode de video no suportat en la configuració"/>
+			<Screenshot_Done ENG="Screenshot saved to %s" localized="Captura de pantalla guardada a %s"/>
 			<Sentry ENG="on sentry" localized="en alerta"/>
-			<Stolen ENG="stolen" localized="robado"/>
-			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="El primer jugador en aumentar su puntuación gana!"/>
-			<Surveying ENG="surveying" localized="explorando"/>
-			<Team_Insufficient ENG="Cannot start, workers needed." localized="No se puede encender, se necesitan trabajadores"/>
-			<Team_Low ENG="Workers needed, building turned off." localized="Se necesitan trabajadores, edificio apagado."/>
-			<Themes ENG="Themes" localized="Temas"/>
-			<Turn_5 ENG="Turn" localized="Turno"/>
-			<Turn_Automove ENG="Executing remaining movements" localized="Ejecutando movimientos restantes"/>
-			<Turn_Start ENG="Start turn" localized="Comienza el turno"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Por favor espera hasta que todos los movimientos se hayan completado"/>
-			<Turns ENG="Turns" localized="Turnos"/>
-			<Upgrades_Done ENG="Upgraded" localized="Actualizado"/>
-			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unidad(es) de tipo %s"/>
-			<Waits ENG="waiting" localized="esperando"/>
-			<Working ENG="working" localized="trabajando"/>
+			<Stolen ENG="stolen" localized="robat"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="El primer jugador en augmentar la seva puntuació guanya!"/>
+			<Surveying ENG="surveying" localized="explorant"/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="No es pot engegar, es necessiten treballadors"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Es necessiten treballadors, edifici apagat."/>
+			<Themes ENG="Themes" localized="Temes"/>
+			<Turn_5 ENG="Turn" localized="Torn"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Executant movimients restants"/>
+			<Turn_Start ENG="Start turn" localized="Comença el torn"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Per favor espera fins que tots els movimients s'hagin completat"/>
+			<Turns ENG="Turns" localized="Torns"/>
+			<Upgrades_Done ENG="Upgraded" localized="Actualitzat"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unitat(s) de tipus %s"/>
+			<Waits ENG="waiting" localized="esperant"/>
+			<Working ENG="working" localized="treballant"/>
 		</Comp>
 		<Error_Messages>
-			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichero no encontrado: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Error cargando mapa"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducción perdida: %s"/>
-			<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma está ahora inicializado"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="No implementado todavía"/>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fitxer no trobat: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map" localized="Error carregant mapa"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducció perduda: %s"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma està ara inicialitzant-se"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="No implementat encara"/>
 		</Error_Messages>
 	</Text>
 	<Units>
@@ -443,14 +443,14 @@
 		<Unit ID="1 35" localized="Invernadero">Invernadero\n\nTu principal objetivo es la construcción de invernaderos. Cada invernadero te da un punto de colonia por turno. \n\nDefiende bien tus invernadores, ya que si te rompen uno, perderás todos los puntos que este te haya dado.</Unit>
 	</Units>
 	<Clans>
-		<Clan ID="0" localized="The Chosen">Mejores unidades aéreas</Clan>
-		<Clan ID="1" localized="Crimson Path">Mejores unidades maritimas</Clan>
-		<Clan ID="2" localized="Von Griffin">Espionaje mejorado</Clan>
-		<Clan ID="3" localized="Ayer's Hand">Mejores unidades lanzamisiles</Clan>
-		<Clan ID="4" localized="Musashi">Mejores vehiculos blindados</Clan>
-		<Clan ID="5" localized="Sacred Eights">Mejores unidades rápidas</Clan>
-		<Clan ID="6" localized="7 Knights">Mejores defensas</Clan>
-		<Clan ID="7" localized="Axis Inc.">Constructores e ingenieros extra (depende del mapa) </Clan>
+		<Clan ID="0" localized="The Chosen">Millors unitats aèries</Clan>
+		<Clan ID="1" localized="Crimson Path">Millors unitats maritimes</Clan>
+		<Clan ID="2" localized="Von Griffin">Espionaje millorat</Clan>
+		<Clan ID="3" localized="Ayer's Hand">Millors unitats llençamissils</Clan>
+		<Clan ID="4" localized="Musashi">Millors vehiculos blindats</Clan>
+		<Clan ID="5" localized="Sacred Eights">Millors unitats ràpides</Clan>
+		<Clan ID="6" localized="7 Knights">Millors defenses</Clan>
+		<Clan ID="7" localized="Axis Inc.">Constructors i enginyers extra (depen del presupost) </Clan>
 	</Clans>
 	<Graphic>
 		<Dummy/>
@@ -459,8 +459,10 @@
 		<Dummy/>
 	</Speech>
 	<Footer>
-		<Author name="kuan_ji@hotmail.es">
-			<Editor name="Kuan_Ji" time="2014-07-22 19:51:00"/>
+		<Author name="kuan_ji@maxr.org">
+			<Editor name="Kuan_Ji" time="2014-07-20 19:51:00"/>
+			<Editor name="Kuan_Ji" time="2014-07-22 21:43:00"/>
+			<Editor name="Kuan_Ji" time="2014-07-27 11:56:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Footer>
