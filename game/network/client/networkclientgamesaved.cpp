@@ -35,12 +35,7 @@ void cNetworkClientGameSaved::start (cApplication& application)
 {
 	localClient = std::make_unique<cClient> (nullptr, network);
 
-	std::vector<cPlayerBasicData> clientPlayers;
-	for (size_t i = 0; i < players.size (); ++i)
-	{
-		clientPlayers.push_back (*players[i]);
-	}
-	localClient->setPlayers (clientPlayers, localPlayerIndex);
+	localClient->setPlayers (players, localPlayerIndex);
 	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
@@ -84,10 +79,10 @@ void cNetworkClientGameSaved::start (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkClientGameSaved::setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players_, const cPlayerBasicData& localPlayer)
+void cNetworkClientGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
 	assert (localPlayerIter != players.end());
 	localPlayerIndex = localPlayerIter - players.begin ();
 }
@@ -118,13 +113,13 @@ const std::shared_ptr<cStaticMap>& cNetworkClientGameSaved::getStaticMap ()
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::shared_ptr<cPlayerBasicData>>& cNetworkClientGameSaved::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkClientGameSaved::getPlayers ()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cPlayerBasicData>& cNetworkClientGameSaved::getLocalPlayer ()
+const cPlayerBasicData& cNetworkClientGameSaved::getLocalPlayer ()
 {
 	return players[localPlayerIndex];
 }

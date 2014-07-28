@@ -26,6 +26,7 @@
 class cPlayerColor
 {
 public:
+	cPlayerColor ();
 	explicit cPlayerColor (size_t index);
 
 	//assert (colorIndex < PLAYERCOLORS);

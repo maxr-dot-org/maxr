@@ -36,7 +36,7 @@
  * A very important feature of this class is that it supports (a part of)
  * N3657 - "Adding heterogeneous comparison lookup to associative containers" of C++14.
  * This means the key type of .find() is a template which allows to look up elements in the set
- * without the construction of a value_type of the set, as long as the Compare-Predicated supports the
+ * without the construction of a value_type of the set, as long as the Compare-Predicate supports the
  * comparison with the passed key type.
  *
  * TODO: add check for is_transparent in Compare for the template versions of find/upper_bound/lower_bound.

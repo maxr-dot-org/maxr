@@ -21,6 +21,10 @@
 #include "network.h"
 
 //------------------------------------------------------------------------------
+cPlayerBasicData::cPlayerBasicData ()
+{}
+
+//------------------------------------------------------------------------------
 cPlayerBasicData::cPlayerBasicData (const std::string& name_, cPlayerColor color_, int nr_, int socketIndex_) :
 	name (name_),
 	color (std::move(color_)),

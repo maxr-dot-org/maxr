@@ -44,20 +44,18 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	if (serverPlayerList.empty ()) return;
 
 	// Following may be simplified according to serverGame::loadGame
-	std::vector<cPlayerBasicData> clientPlayerList;
-
 	size_t serverListLocalPlayerIndex = 0;
 	// copy players for client
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)
 	{
 		auto& serverPlayer = *serverPlayerList[i];
 
-		auto iter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == serverPlayer.getNr (); });
+		auto iter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == serverPlayer.getNr (); });
 
 		assert (iter != players.end ());
-		const auto& listPlayer = **iter;
+		const auto& listPlayer = *iter;
 
-		if (&listPlayer == players[localPlayerIndex].get ())
+		if (listPlayer.getNr() == players[localPlayerIndex].getNr())
 		{
 			serverPlayer.setLocal ();
 			serverListLocalPlayerIndex = i;
@@ -66,10 +64,8 @@ void cNetworkHostGameSaved::start (cApplication& application)
 		{
 			serverPlayer.setSocketIndex (listPlayer.getSocketIndex ());
 		}
-
-		clientPlayerList.push_back (cPlayerBasicData (serverPlayer.getName (), serverPlayer.getColor (), serverPlayer.getNr (), serverPlayer.getSocketNum ()));
 	}
-	localClient->setPlayers (clientPlayerList, serverListLocalPlayerIndex);
+	localClient->setPlayers (players, serverListLocalPlayerIndex);
 
 	server->start ();
 
@@ -138,22 +134,22 @@ void cNetworkHostGameSaved::setSaveGameNumber (int saveGameNumber_)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameSaved::setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players_, const cPlayerBasicData& localPlayer)
+void cNetworkHostGameSaved::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
 	assert (localPlayerIter != players.end ());
 	localPlayerIndex = localPlayerIter - players.begin ();
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::shared_ptr<cPlayerBasicData>>& cNetworkHostGameSaved::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkHostGameSaved::getPlayers ()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cPlayerBasicData>& cNetworkHostGameSaved::getLocalPlayer ()
+const cPlayerBasicData& cNetworkHostGameSaved::getLocalPlayer ()
 {
 	return players[localPlayerIndex];
 }

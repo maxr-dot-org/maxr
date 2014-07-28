@@ -145,20 +145,24 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	}
 
 	scoreFrame = addChild (std::make_unique<cFrame> (frameArea));
-	std::string gameEndString;
-	switch (gameSettings->getVictoryCondition())
+
+	if (gameSettings)
 	{
-	case eGameSettingsVictoryCondition::Turns:
-		gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->getVictoryTurns(), "Text~Comp~Turn_5", "Text~Comp~Turns");
-		break;
-	case eGameSettingsVictoryCondition::Points:
-		gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->getVictoryPoints (), "Text~Comp~Point", "Text~Comp~Points");
-		break;
-	case eGameSettingsVictoryCondition::Death:
-		gameEndString = lngPack.i18n ("Text~Comp~NoLimit");
-		break;
+		std::string gameEndString;
+		switch (gameSettings->getVictoryCondition ())
+		{
+		case eGameSettingsVictoryCondition::Turns:
+			gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->getVictoryTurns (), "Text~Comp~Turn_5", "Text~Comp~Turns");
+			break;
+		case eGameSettingsVictoryCondition::Points:
+			gameEndString = lngPack.i18n ("Text~Comp~GameEndsAt") + " " + plural (gameSettings->getVictoryPoints (), "Text~Comp~Point", "Text~Comp~Points");
+			break;
+		case eGameSettingsVictoryCondition::Death:
+			gameEndString = lngPack.i18n ("Text~Comp~NoLimit");
+			break;
+		}
+		scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition () + cPosition (5, 5), scoreFrame->getPosition () + cPosition (5 + 450, 5 + font->getFontHeight ())), gameEndString));
 	}
-	scoreFrame->addChild (std::make_unique<cLabel> (cBox<cPosition> (scoreFrame->getPosition () + cPosition (5, 5), scoreFrame->getPosition () + cPosition (5 + 450, 5 + font->getFontHeight ())), gameEndString));
 	for (size_t i = 0; i < players.size (); ++i)
 	{
 		const auto& player = players[i];
@@ -399,6 +403,8 @@ void cWindowReports::rebuildDisadvantagesList ()
 void cWindowReports::rebuildReportsList ()
 {
 	if (!reportsListDirty) return;
+
+	if (!localPlayer) return;
 
 	reportsList->clearItems ();
 

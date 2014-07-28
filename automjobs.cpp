@@ -68,8 +68,8 @@ static std::vector<cAutoMJob*> autoMJobs;
 		::autoMJobs[i]->DoAutoMove (::autoMJobs, i);
 		if (::autoMJobs[i]->isFinished())
 		{
-			delete ::autoMJobs[i];
-			--i;
+			//delete ::autoMJobs[i];
+			//--i;
 		}
 	}
 }

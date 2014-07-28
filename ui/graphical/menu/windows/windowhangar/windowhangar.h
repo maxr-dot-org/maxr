@@ -46,7 +46,7 @@ public:
 	~cWindowHangar ();
 
 	cSignal<void ()> done;
-
+	cSignal<void ()> canceled;
 protected:
 	cUnitListViewItemBuy& addSelectionUnit (const sID& unitId);
 	void setSelectedSelectionItem (const cUnitListViewItemBuy& item);

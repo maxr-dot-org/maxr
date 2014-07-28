@@ -84,7 +84,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -202,6 +202,8 @@
     <ClCompile Include="..\..\game\data\report\unit\savedreportpathinterrupted.cpp" />
     <ClCompile Include="..\..\game\data\report\unit\savedreportsurveyoraiconfused.cpp" />
     <ClCompile Include="..\..\game\data\report\unit\savedreportsurveyoraisenseless.cpp" />
+    <ClCompile Include="..\..\game\local\hotseat\localhotseatgame.cpp" />
+    <ClCompile Include="..\..\game\local\hotseat\localhotseatgamenew.cpp" />
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergame.cpp" />
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamenew.cpp" />
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamesaved.cpp" />
@@ -218,6 +220,7 @@
     <ClCompile Include="..\..\ui\graphical\application.cpp" />
     <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.cpp" />
     <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.cpp" />
+    <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhotseat.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\gamegui.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\hud.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\temp\animationtimer.cpp" />
@@ -319,6 +322,7 @@
     <ClCompile Include="..\..\ui\graphical\menu\windows\windownetworklobbyclient\windownetworklobbyclient.cpp" />
     <ClCompile Include="..\..\ui\graphical\menu\windows\windownetworklobbyhost\windownetworklobbyhost.cpp" />
     <ClCompile Include="..\..\ui\graphical\menu\windows\windownetworklobby\windownetworklobby.cpp" />
+    <ClCompile Include="..\..\ui\graphical\menu\windows\windowplayerselection\windowplayerselection.cpp" />
     <ClCompile Include="..\..\ui\graphical\menu\windows\windowreports\windowreports.cpp" />
     <ClCompile Include="..\..\ui\graphical\menu\windows\windowresourcedistribution\windowresourcedistribution.cpp" />
     <ClCompile Include="..\..\ui\graphical\menu\windows\windowsingleplayer.cpp" />
@@ -447,6 +451,8 @@
     <ClInclude Include="..\..\game\data\report\unit\savedreportsurveyoraiconfused.h" />
     <ClInclude Include="..\..\game\data\report\unit\savedreportsurveyoraisenseless.h" />
     <ClInclude Include="..\..\game\game.h" />
+    <ClInclude Include="..\..\game\local\hotseat\localhotseatgame.h" />
+    <ClInclude Include="..\..\game\local\hotseat\localhotseatgamenew.h" />
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergame.h" />
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamenew.h" />
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamesaved.h" />
@@ -465,6 +471,7 @@
     <ClInclude Include="..\..\ui\graphical\application.h" />
     <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.h" />
     <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.h" />
+    <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhotseat.h" />
     <ClInclude Include="..\..\ui\graphical\game\gamegui.h" />
     <ClInclude Include="..\..\ui\graphical\game\hud.h" />
     <ClInclude Include="..\..\ui\graphical\game\temp\animationtimer.h" />
@@ -574,6 +581,7 @@
     <ClInclude Include="..\..\ui\graphical\menu\windows\windownetworklobbyclient\windownetworklobbyclient.h" />
     <ClInclude Include="..\..\ui\graphical\menu\windows\windownetworklobbyhost\windownetworklobbyhost.h" />
     <ClInclude Include="..\..\ui\graphical\menu\windows\windownetworklobby\windownetworklobby.h" />
+    <ClInclude Include="..\..\ui\graphical\menu\windows\windowplayerselection\windowplayerselection.h" />
     <ClInclude Include="..\..\ui\graphical\menu\windows\windowreports\windowreports.h" />
     <ClInclude Include="..\..\ui\graphical\menu\windows\windowresourcedistribution\windowresourcedistribution.h" />
     <ClInclude Include="..\..\ui\graphical\menu\windows\windowsingleplayer.h" />

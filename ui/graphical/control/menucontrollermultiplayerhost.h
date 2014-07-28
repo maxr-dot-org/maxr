@@ -26,13 +26,13 @@
 #include "network.h"
 #include "utility/runnable.h"
 #include "utility/concurrentqueue.h"
+#include "game/logic/landingpositionmanager.h"
 
 class cApplication;
 class cWindowNetworkLobbyHost;
 class cNetworkHostGameNew;
 class cNetMessage;
 class cPlayerBasicData;
-class cLandingPositionManager;
 
 class cTCP;
 

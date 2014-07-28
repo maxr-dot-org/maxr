@@ -17,39 +17,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#ifndef game_local_hotseat_localhotseatgameH
+#define game_local_hotseat_localhotseatgameH
 
 #include <memory>
+#include <string>
 #include <vector>
 
-#include "game/network/host/networkhostgame.h"
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
+#include "game/game.h"
+#include "maxrconfig.h"
 
-class cApplication;
-class cPlayerBasicData;
+class cClient;
+class cServer;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+class cLocalHotSeatGame : public cGame
 {
 public:
-	void start (cApplication& application);
+	~cLocalHotSeatGame ();
 
-	void setSaveGameNumber (int saveGameNumber);
+	virtual void run () MAXR_OVERRIDE_FUNCTION;
 
-    void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 
-    const std::vector<cPlayerBasicData>& getPlayers ();
-    const cPlayerBasicData& getLocalPlayer ();
-
-	cSignal<void ()> terminated;
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-    size_t localPlayerIndex;
-    std::vector<cPlayerBasicData> players;
-
-	int saveGameNumber;
+protected:
+	std::vector<std::unique_ptr<cClient>> clients;
+	std::unique_ptr<cServer> server;
 };
 
-#endif // game_network_host_networkhostgamesavedH
+#endif // game_local_hotseat_localhotseatgameH

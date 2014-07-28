@@ -23,9 +23,9 @@
 enum class eLandingPositionState
 {
 	/**
-	 * waiting for new landing position state
+	 * player has not selected any position yet
 	 */
-	Waiting,
+	Unknown,
 	/**
 	 * there are no other players near the position
 	 */

@@ -668,8 +668,6 @@ void cGameMapWidget::setMouseInputMode (std::unique_ptr<cMouseMode> newMouseMode
 //------------------------------------------------------------------------------
 void cGameMapWidget::toggleMouseInputMode (eMouseModeType mouseModeType)
 {
-	assert (dynamicMap != nullptr);
-
 	if (mouseMode->getType () == mouseModeType)
 	{
 		setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
@@ -1930,7 +1928,7 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 {
 	if (!isAt (mouse.getPosition ())) return;
 
-	if (!dynamicMap || (unitMenu->isEnabled () && !unitMenu->isHidden () && unitMenu->isAt (mouse.getPosition ())))
+	if (!staticMap || (unitMenu->isEnabled () && !unitMenu->isHidden () && unitMenu->isAt (mouse.getPosition ())))
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 	}

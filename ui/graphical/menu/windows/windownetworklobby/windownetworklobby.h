@@ -59,6 +59,7 @@ public:
 
 	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer () const;
 	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers () const;
+	std::vector<cPlayerBasicData> getPlayersNotShared () const;
 
 	unsigned short getPort () const;
 	const std::string& getIp () const;

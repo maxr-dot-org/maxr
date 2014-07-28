@@ -25,8 +25,8 @@
 #include "main.h"
 
 //------------------------------------------------------------------------------
-cDialogOk::cDialogOk (const std::string& text) :
-	cWindow (LoadPCX (GFXOD_DIALOG2), eWindowBackgrounds::Alpha)
+cDialogOk::cDialogOk (const std::string& text, eWindowBackgrounds backgroundType) :
+	cWindow (LoadPCX (GFXOD_DIALOG2), backgroundType)
 {
 	auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 35), getPosition () + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
 	textLabel->setWordWrap (true);
@@ -43,5 +43,6 @@ cDialogOk::~cDialogOk ()
 //------------------------------------------------------------------------------
 void cDialogOk::okClicked ()
 {
+	done ();
 	close ();
 }

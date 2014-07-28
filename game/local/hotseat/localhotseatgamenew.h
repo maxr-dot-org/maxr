@@ -17,39 +17,74 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#ifndef game_local_hotseat_localhotseatgamenewH
+#define game_local_hotseat_localhotseatgamenewH
 
 #include <memory>
 #include <vector>
+#include <utility>
 
-#include "game/network/host/networkhostgame.h"
+#include "game/local/hotseat/localhotseatgame.h"
+#include "game/data/player/playerbasicdata.h"
+#include "maxrconfig.h"
+#include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cApplication;
-class cPlayerBasicData;
+class cStaticMap;
+class cGameSettings;
+class cPlayerColor;
+class cPosition;
+class cUnitUpgrade;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+struct sLandingUnit;
+struct sID;
+
+class cLocalHotSeatGameNew : public cLocalHotSeatGame
 {
+	struct sPlayerData
+	{
+		cPlayerBasicData basicData;
+		int clan;
+		std::vector<sLandingUnit> landingUnits;
+		std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades;
+		cPosition landingPosition;
+	};
 public:
+	cLocalHotSeatGameNew ();
+
 	void start (cApplication& application);
 
-	void setSaveGameNumber (int saveGameNumber);
+	void setGameSettings (std::shared_ptr<cGameSettings> gameSettings);
 
-    void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
-    const std::vector<cPlayerBasicData>& getPlayers ();
-    const cPlayerBasicData& getLocalPlayer ();
+	void setPlayers (const std::vector<cPlayerBasicData>& players);
+
+	void setPlayerClan (size_t playerIndex, int clan);
+
+	void setLandingUnits (size_t playerIndex, std::vector<sLandingUnit> landingUnits);
+
+	void setUnitUpgrades (size_t playerIndex, std::vector<std::pair<sID, cUnitUpgrade>> unitUpgrades);
+
+	void setLandingPosition (size_t playerIndex, const cPosition& landingPosition);
+
+	const std::shared_ptr<cStaticMap>& getStaticMap ();
+	const std::shared_ptr<cGameSettings>& getGameSettings ();
+
+	size_t getPlayerCount () const;
+	const cPlayerBasicData& getPlayer (size_t playerIndex) const;
+	int getPlayerClan (size_t playerIndex) const;
 
 	cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-    size_t localPlayerIndex;
-    std::vector<cPlayerBasicData> players;
+	std::shared_ptr<cStaticMap> staticMap;
+	std::shared_ptr<cGameSettings> gameSettings;
 
-	int saveGameNumber;
+	std::vector<sPlayerData> playersData;
 };
 
-#endif // game_network_host_networkhostgamesavedH
+#endif // game_local_hotseat_localhotseatgamenewH

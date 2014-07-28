@@ -17,39 +17,37 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#include "game/local/hotseat/localhotseatgame.h"
+#include "client.h"
+#include "server.h"
+#include "savegame.h"
+#include "loaddata.h"
 
-#include <memory>
-#include <vector>
-
-#include "game/network/host/networkhostgame.h"
-#include "utility/signal/signal.h"
-#include "utility/signal/signalconnectionmanager.h"
-
-class cApplication;
-class cPlayerBasicData;
-
-class cNetworkHostGameSaved : public cNetworkHostGame
+//------------------------------------------------------------------------------
+cLocalHotSeatGame::~cLocalHotSeatGame ()
 {
-public:
-	void start (cApplication& application);
+	if (server)
+	{
+		server->stop ();
+		reloadUnitValues ();
+	}
+}
 
-	void setSaveGameNumber (int saveGameNumber);
+//------------------------------------------------------------------------------
+void cLocalHotSeatGame::run ()
+{
+	for (size_t i = 0; i < clients.size (); ++i)
+	{
+		clients[i]->getGameTimer ()->run ();
+	}
+}
 
-    void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
+//------------------------------------------------------------------------------
+void cLocalHotSeatGame::save (int saveNumber, const std::string& saveName)
+{
+	if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
 
-    const std::vector<cPlayerBasicData>& getPlayers ();
-    const cPlayerBasicData& getLocalPlayer ();
-
-	cSignal<void ()> terminated;
-private:
-	cSignalConnectionManager signalConnectionManager;
-
-    size_t localPlayerIndex;
-    std::vector<cPlayerBasicData> players;
-
-	int saveGameNumber;
-};
-
-#endif // game_network_host_networkhostgamesavedH
+	cSavegame savegame (saveNumber);
+	savegame.save (*server, saveName);
+	server->makeAdditionalSaveRequest (saveNumber);
+}

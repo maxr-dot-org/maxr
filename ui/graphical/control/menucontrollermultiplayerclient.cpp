@@ -184,7 +184,7 @@ void cMenuControllerMultiplayerClient::startSavedGame ()
 	savedGame->setNetwork (network);
 	savedGame->setStaticMap (windowNetworkLobby->getStaticMap());
 	savedGame->setGameSettings (windowNetworkLobby->getGameSettings());
-	savedGame->setPlayers (windowNetworkLobby->getPlayers (), *windowNetworkLobby->getLocalPlayer());
+	savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared (), *windowNetworkLobby->getLocalPlayer());
 
 	savedGame->start (application);
 
@@ -206,7 +206,7 @@ void cMenuControllerMultiplayerClient::startGamePreparation ()
 
 	newGame = std::make_shared<cNetworkClientGameNew> ();
 
-	newGame->setPlayers (windowNetworkLobby->getPlayers (), *windowNetworkLobby->getLocalPlayer ());
+	newGame->setPlayers (windowNetworkLobby->getPlayersNotShared (), *windowNetworkLobby->getLocalPlayer ());
 	newGame->setGameSettings (gameSettings);
 	newGame->setStaticMap (staticMap);
 	newGame->setNetwork (network);
@@ -228,6 +228,7 @@ void cMenuControllerMultiplayerClient::startClanSelection ()
 
 	auto windowClanSelection = application.show (std::make_shared<cWindowClanSelection> ());
 
+	signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close (); });
 	signalConnectionManager.connect (windowClanSelection->done, [this, windowClanSelection]()
 	{
 		newGame->setLocalPlayerClan (windowClanSelection->getSelectedClan ());
@@ -245,6 +246,7 @@ void cMenuControllerMultiplayerClient::startLandingUnitSelection ()
 
 	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
 
+	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
 	{
 		newGame->setLocalPlayerLandingUnits (windowLandingUnitSelection->getLandingUnits ());
@@ -257,16 +259,17 @@ void cMenuControllerMultiplayerClient::startLandingUnitSelection ()
 //------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::startLandingPositionSelection ()
 {
-	if (!newGame || !newGame->getStaticMap () || !newGame->getLocalPlayer () || !network) return;
+	if (!newGame || !newGame->getStaticMap () || !network) return;
 
 	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (newGame->getStaticMap ());
 	application.show (windowLandingPositionSelection);
 
+	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this]() { windowLandingPositionSelection->close (); });
 	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this](cPosition landingPosition)
 	{
-		newGame->setLocalPlayerLandingPosition (windowLandingPositionSelection->getSelectedPosition ());
+		newGame->setLocalPlayerLandingPosition (landingPosition);
 
-		sendLandingPosition (*network, landingPosition, *newGame->getLocalPlayer());
+		sendLandingPosition (*network, landingPosition, newGame->getLocalPlayer());
 	});
 }
 
@@ -569,15 +572,15 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 
 		int playerCount = message.popInt16 ();
 
-		std::vector<std::shared_ptr<cPlayerBasicData>> players;
-		players.push_back (std::make_shared<cPlayerBasicData> (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor(localPlayerColorIndex), localPlayerNumber));
-		auto& localPlayer = *players.back ();
+		std::vector<cPlayerBasicData> players;
+		players.push_back (cPlayerBasicData (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor(localPlayerColorIndex), localPlayerNumber));
+		auto& localPlayer = players.back ();
 		while (playerCount > 1)
 		{
 			const auto playerName = message.popString ();
 			const int playerColorIndex = message.popInt16 ();
 			const int playerNr = message.popInt16 ();
-			players.push_back (std::make_shared<cPlayerBasicData> (playerName, cPlayerColor(playerColorIndex), playerNr));
+			players.push_back (cPlayerBasicData (playerName, cPlayerColor(playerColorIndex), playerNr));
 			playerCount--;
 		}
 

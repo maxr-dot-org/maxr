@@ -25,6 +25,7 @@
 
 class cMenuControllerMultiplayerHost;
 class cMenuControllerMultiplayerClient;
+class cMenuControllerMultiplayerHotSeat;
 
 class cWindowMultiPlayer : public cWindowMain
 {
@@ -43,6 +44,7 @@ private:
 
 	std::shared_ptr<cMenuControllerMultiplayerHost> multiplayerHostController;
 	std::shared_ptr<cMenuControllerMultiplayerClient> multiplayerClientController;
+	std::shared_ptr<cMenuControllerMultiplayerHotSeat> multiplayerHotSeatController;
 };
 
 #endif // ui_graphical_menu_windows_windowmultiplayerH

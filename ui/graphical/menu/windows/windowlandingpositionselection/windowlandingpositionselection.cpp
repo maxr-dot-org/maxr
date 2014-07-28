@@ -99,14 +99,24 @@ void cWindowLandingPositionSelection::setInfoMessage (const std::string& message
 void cWindowLandingPositionSelection::allowSelection ()
 {
 	selectionAllowed = true;
-	handleMouseMoved (*getActiveApplication(), *getActiveMouse(), getActiveMouse()->getPosition());
+	auto application = getActiveApplication ();
+	auto mouse = getActiveMouse ();
+	if (application && mouse)
+	{
+		handleMouseMoved (*application, *mouse, mouse->getPosition ());
+	}
 }
 
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::disallowSelection ()
 {
 	selectionAllowed = false;
-	handleMouseMoved (*getActiveApplication (), *getActiveMouse (), getActiveMouse ()->getPosition ());
+	auto application = getActiveApplication ();
+	auto mouse = getActiveMouse ();
+	if (application && mouse)
+	{
+		handleMouseMoved (*application, *mouse, mouse->getPosition ());
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -167,7 +177,7 @@ AutoSurface cWindowLandingPositionSelection::createHudSurface ()
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::backClicked ()
 {
-	close ();
+	canceled ();
 }
 
 //------------------------------------------------------------------------------

@@ -349,6 +349,18 @@ std::vector<std::shared_ptr<cPlayerBasicData>> cWindowNetworkLobby::getPlayers (
 }
 
 //------------------------------------------------------------------------------
+std::vector<cPlayerBasicData> cWindowNetworkLobby::getPlayersNotShared () const
+{
+	std::vector<cPlayerBasicData> result;
+	for (size_t i = 0; i < playersList->getItemsCount (); ++i)
+	{
+		const auto& item = playersList->getItem (i);
+		result.push_back (*item.getPlayer ());
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
 unsigned short cWindowNetworkLobby::getPort () const
 {
 	return atoi (portLineEdit->getText ().c_str());

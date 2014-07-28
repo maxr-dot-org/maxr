@@ -23,6 +23,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/control/menucontrollermultiplayerhost.h"
 #include "ui/graphical/control/menucontrollermultiplayerclient.h"
+#include "ui/graphical/control/menucontrollermultiplayerhotseat.h"
 #include "ui/graphical/application.h"
 #include "main.h"
 #include "netmessage.h"
@@ -80,6 +81,12 @@ void cWindowMultiPlayer::tcpClientClicked ()
 //------------------------------------------------------------------------------
 void cWindowMultiPlayer::newHotSeatClicked ()
 {
+	auto application = getActiveApplication ();
+
+	if (!application) return;
+
+	multiplayerHotSeatController = std::make_shared<cMenuControllerMultiplayerHotSeat> (*application);
+	multiplayerHotSeatController->start ();
 }
 
 //------------------------------------------------------------------------------

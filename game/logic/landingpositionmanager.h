@@ -24,6 +24,7 @@
 #include <memory>
 
 #include "game/logic/landingpositionstate.h"
+#include "game/data/player/playerbasicdata.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 
@@ -33,26 +34,59 @@ class cLandingPositionManager
 {
 	struct sLandingPositionData
 	{
-		sLandingPositionData (std::shared_ptr<cPlayerBasicData> player);
+		sLandingPositionData (cPlayerBasicData player);
 
 		cPosition landingPosition;
 		cPosition lastLandingPosition;
 
 		eLandingPositionState state;
 
-		std::shared_ptr<cPlayerBasicData> player;
+		cPlayerBasicData player;
+
+		bool needNewPosition;
 	};
 public:
 	static const double warningDistance;
 	static const double tooCloseDistance;
 
-	cLandingPositionManager (const std::vector<std::shared_ptr<cPlayerBasicData>>& players);
+	/**
+	 * Initializes the manager with a list of players.
+	 *
+	 * @param players The players whose landings should be managed by this object.
+	 */
+	cLandingPositionManager (const std::vector<cPlayerBasicData>& players);
 
-	void setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition);
+	/**
+	 * Sets a new landing position for the given player.
+	 *
+	 * The landing position of the player will be checked against the positions of all other players
+	 * that have been set before.
+	 * The first check will be performed when all players have selected a position at least once.
+	 *
+	 * This method will invoke the signals @ref landingPositionStateChanged and @ref allPositionsValid.
+	 *
+	 * @param player The player to set a new landing position for.
+	 * @param landingPosition The new landing position to set for the player.
+	 * @return true if the passed player was the last one that had an uninitialized or
+	 *         invalid landing position and and now all positions are valid.
+	 *         false if a player needs to select a new landing position, which is the case when
+	 *         he has not selected any position yet, or his last position was in conflict with
+	 *         the position of an other player.
+	 */
+	bool setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition);
 
+	/**
+	 * Will be triggered by @ref setLandingPosition when the landing position of a player has changed.
+	 * The arguments are the players whose state has changed and his new state.
+	 * If the new state is not @ref eLandingPositionState::Clear or @ref eLandingPositionState::Confirmed
+	 * The player needs to select a new landing position.
+	 */
 	cSignal<void (const cPlayerBasicData&, eLandingPositionState)> landingPositionStateChanged;
+	/**
+	 * Will be triggered by @ref setLandingPosition when the last player has selected his position and
+	 * none of the positions are in conflict.
+	 */
 	cSignal<void ()> allPositionsValid;
-
 private:
 	std::vector<sLandingPositionData> landingPositions;
 

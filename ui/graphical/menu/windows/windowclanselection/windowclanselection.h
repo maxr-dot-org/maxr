@@ -36,6 +36,7 @@ public:
 	~cWindowClanSelection ();
 
 	cSignal<void ()> done;
+	cSignal<void ()> canceled;
 
 	unsigned int getSelectedClan () const;
 private:

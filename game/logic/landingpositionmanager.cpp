@@ -26,15 +26,16 @@ const double cLandingPositionManager::warningDistance = 28;
 const double cLandingPositionManager::tooCloseDistance = 10;
 
 //------------------------------------------------------------------------------
-cLandingPositionManager::sLandingPositionData::sLandingPositionData (std::shared_ptr<cPlayerBasicData> player) :
+cLandingPositionManager::sLandingPositionData::sLandingPositionData (cPlayerBasicData player_) :
 	landingPosition (0, 0),
 	lastLandingPosition (0, 0),
-	state (eLandingPositionState::Waiting),
-	player (std::move (player))
+	state (eLandingPositionState::Unknown),
+	player (player_),
+	needNewPosition (true)
 {}
 
 //------------------------------------------------------------------------------
-cLandingPositionManager::cLandingPositionManager (const std::vector<std::shared_ptr<cPlayerBasicData>>& players)
+cLandingPositionManager::cLandingPositionManager (const std::vector<cPlayerBasicData>& players)
 {
 	for (size_t i = 0; i < players.size (); ++i)
 	{
@@ -43,39 +44,36 @@ cLandingPositionManager::cLandingPositionManager (const std::vector<std::shared_
 }
 
 //------------------------------------------------------------------------------
-void cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition)
+bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition)
 {
 	auto& playerData = getLandingPositionData (player);
 
 	playerData.lastLandingPosition = playerData.landingPosition;
 	playerData.landingPosition = landingPosition;
 
-	if (playerData.state == eLandingPositionState::Waiting)
-	{
-		playerData.state = eLandingPositionState::Clear;
-	}
+	playerData.needNewPosition = false;
 
 	// wait for all players to choose at least ones
 	for (size_t i = 0; i != landingPositions.size (); ++i)
 	{
-		if (landingPositions[i].state == eLandingPositionState::Waiting) return;
+		if (landingPositions[i].needNewPosition) return false;
 	}
 
 	// update all states
 	for (size_t i = 0; i != landingPositions.size (); ++i)
 	{
-		checkPlayerState (*landingPositions[i].player);
+		checkPlayerState (landingPositions[i].player);
 	}
 
-	// test if all states are valid now.
-	// remove invalid states
+	// test if all states are valid now
+	// mark players with invalid states that they need to select a new position.
 	bool allValid = true;
 	for (size_t i = 0; i != landingPositions.size (); ++i)
 	{
 		const auto state = landingPositions[i].state;
 		if (state == eLandingPositionState::Warning || state == eLandingPositionState::TooClose)
 		{
-			landingPositions[i].state = eLandingPositionState::Waiting;
+			landingPositions[i].needNewPosition = true;
 			allValid = false;
 		}
 	}
@@ -83,7 +81,9 @@ void cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 	if (allValid)
 	{
 		allPositionsValid ();
+		return true;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------
@@ -97,8 +97,8 @@ void cLandingPositionManager::checkPlayerState (const cPlayerBasicData& player)
 	for (size_t i = 0; i != landingPositions.size (); ++i)
 	{
 		const auto& data = landingPositions[i];
-		if (data.state == eLandingPositionState::Waiting) continue;
-		if (data.player->getNr () == player.getNr()) continue;
+		if (data.state == eLandingPositionState::Unknown) continue;
+		if (data.player.getNr () == player.getNr()) continue;
 
 		const auto distance = (playerData.landingPosition - data.landingPosition).l2Norm ();
 
@@ -115,7 +115,7 @@ void cLandingPositionManager::checkPlayerState (const cPlayerBasicData& player)
 	// now set the new landing state,
 	// depending on the last state, the last position, the current position,
 	//  positionTooClose and positionWarning
-	auto newState = eLandingPositionState::Waiting;
+	auto newState = eLandingPositionState::Unknown;
 
 	if (positionTooClose)
 	{
@@ -153,6 +153,9 @@ void cLandingPositionManager::checkPlayerState (const cPlayerBasicData& player)
 	{
 		if (playerData.state == eLandingPositionState::Confirmed)
 		{
+			// if the player has confirmed a warning already we let him stay in the confirmed state
+			// so that he does not need to confirm the position again if an other player selects a
+			// position that would put this player into a warning state again.
 			newState = eLandingPositionState::Confirmed;
 		}
 		else
@@ -160,6 +163,7 @@ void cLandingPositionManager::checkPlayerState (const cPlayerBasicData& player)
 			newState = eLandingPositionState::Clear;
 		}
 	}
+	assert (newState != eLandingPositionState::Unknown);
 
 	std::swap (playerData.state, newState);
 
@@ -169,7 +173,7 @@ void cLandingPositionManager::checkPlayerState (const cPlayerBasicData& player)
 //------------------------------------------------------------------------------
 cLandingPositionManager::sLandingPositionData& cLandingPositionManager::getLandingPositionData (const cPlayerBasicData& player)
 {
-	auto iter = std::find_if (landingPositions.begin (), landingPositions.end (), [&](const sLandingPositionData& data){ return data.player->getNr () == player.getNr (); });
+	auto iter = std::find_if (landingPositions.begin (), landingPositions.end (), [&](const sLandingPositionData& data){ return data.player.getNr () == player.getNr (); });
 	assert (iter != landingPositions.end ());
 	return *iter;
 }

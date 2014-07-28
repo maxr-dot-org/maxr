@@ -31,6 +31,7 @@
 class cPlayerBasicData
 {
 public:
+	cPlayerBasicData ();
 	cPlayerBasicData (const std::string& name_, cPlayerColor color, int Nr_, int socketIndex_ = -1);
 	cPlayerBasicData (const cPlayerBasicData& other);
 	cPlayerBasicData& operator=(const cPlayerBasicData& other);

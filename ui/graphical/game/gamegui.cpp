@@ -1439,6 +1439,7 @@ void cGameGui::showBuildBuildingsWindow (const cVehicle& vehicle)
 
 	auto buildWindow = application->show (std::make_shared<cWindowBuildBuildings> (vehicle, turnTimeClock));
 
+	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close (); });
 	buildWindow->done.connect ([&, buildWindow]()
 	{
 		if (buildWindow->getSelectedUnitId ())
@@ -1490,6 +1491,7 @@ void cGameGui::showBuildVehiclesWindow (const cBuilding& building)
 
 	auto buildWindow = application->show (std::make_shared<cWindowBuildVehicles> (building, *dynamicMap, turnTimeClock));
 
+	buildWindow->canceled.connect ([buildWindow]() { buildWindow->close (); });
 	buildWindow->done.connect ([&, buildWindow]()
 	{
 		buildVehiclesTriggered (building, buildWindow->getBuildList (), buildWindow->getSelectedBuildSpeed (), buildWindow->isRepeatActive ());

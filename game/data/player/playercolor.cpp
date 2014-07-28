@@ -24,6 +24,16 @@
 #include "game/data/player/playercolor.h"
 
 //------------------------------------------------------------------------------
+cPlayerColor::cPlayerColor ()
+{
+	texture = OtherData.colors[0].get ();
+
+	const auto pixel = static_cast<Uint32*> (texture->pixels)[0];
+
+	SDL_GetRGBA (pixel, texture->format, &color.r, &color.g, &color.b, &color.a);
+}
+
+//------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor (size_t index_) :
 	index (index_)
 {

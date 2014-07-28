@@ -17,39 +17,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#ifndef ui_graphical_menu_windows_windowplayerselection_windowplayerselectionH
+#define ui_graphical_menu_windows_windowplayerselection_windowplayerselectionH
 
-#include <memory>
-#include <vector>
+#include <array>
 
-#include "game/network/host/networkhostgame.h"
+#include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "autosurface.h"
 
-class cApplication;
-class cPlayerBasicData;
+class cImage;
+class cPushButton;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+enum class ePlayerType
 {
+	Human,
+	Ai,
+	None
+};
+
+class cWindowPlayerSelection : public cWindow
+{
+	const static size_t maxPlayers = 4;
 public:
-	void start (cApplication& application);
+	cWindowPlayerSelection ();
 
-	void setSaveGameNumber (int saveGameNumber);
+	const std::array<ePlayerType, maxPlayers>& getPlayerTypes() const;
 
-    void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
-    const std::vector<cPlayerBasicData>& getPlayers ();
-    const cPlayerBasicData& getLocalPlayer ();
-
-	cSignal<void ()> terminated;
+	cSignal<void ()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
-    size_t localPlayerIndex;
-    std::vector<cPlayerBasicData> players;
+	cPushButton* okButton;
 
-	int saveGameNumber;
+	std::array<ePlayerType, maxPlayers> playerTypes;
+
+	std::array<cImage*, maxPlayers> humanPlayerImages;
+	std::array<cImage*, maxPlayers> aiPlayerImages;
+	std::array<cImage*, maxPlayers> noPlayerImages;
+
+	AutoSurface humanPlayerSurface;
+	AutoSurface aiPlayerSurface;
+	AutoSurface noPlayerSurface;
+	AutoSurface dummySurface;
+
+	void setPlayerType (size_t playerIndex, ePlayerType playerType);
 };
 
-#endif // game_network_host_networkhostgamesavedH
+#endif // ui_graphical_menu_windows_windowplayerselection_windowplayerselectionH

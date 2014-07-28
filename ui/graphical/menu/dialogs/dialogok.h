@@ -21,14 +21,16 @@
 #define ui_graphical_menu_dialogs_dialogokH
 
 #include "ui/graphical/window.h"
+#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
 class cDialogOk : public cWindow
 {
 public:
-	cDialogOk (const std::string& text);
+	explicit cDialogOk (const std::string& text, eWindowBackgrounds backgroundType = eWindowBackgrounds::Alpha);
 	~cDialogOk ();
 
+	cSignal<void ()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

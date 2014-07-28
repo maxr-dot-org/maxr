@@ -17,39 +17,55 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_network_host_networkhostgamesavedH
-#define game_network_host_networkhostgamesavedH
+#ifndef ui_graphical_control_menucontrollermultiplayerhotseatH
+#define ui_graphical_control_menucontrollermultiplayerhotseatH
 
-#include <memory>
 #include <vector>
 
-#include "game/network/host/networkhostgame.h"
-#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "game/logic/landingpositionmanager.h"
 
 class cApplication;
+class cLocalHotSeatGameNew;
+class cWindowPlayerSelection;
+class cWindowLandingPositionSelection;
+class cWindow;
+class cLandingPositionManager;
 class cPlayerBasicData;
 
-class cNetworkHostGameSaved : public cNetworkHostGame
+class cMenuControllerMultiplayerHotSeat
 {
 public:
-	void start (cApplication& application);
+	cMenuControllerMultiplayerHotSeat (cApplication& application);
 
-	void setSaveGameNumber (int saveGameNumber);
-
-    void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
-
-    const std::vector<cPlayerBasicData>& getPlayers ();
-    const cPlayerBasicData& getLocalPlayer ();
-
-	cSignal<void ()> terminated;
+	void start ();
 private:
-	cSignalConnectionManager signalConnectionManager;
+	cApplication& application;
 
-    size_t localPlayerIndex;
-    std::vector<cPlayerBasicData> players;
+	cWindowPlayerSelection* windowPlayerSelection;
+	cWindow* firstWindow;
 
-	int saveGameNumber;
+	std::shared_ptr<cLocalHotSeatGameNew> game;
+
+	std::unique_ptr<cLandingPositionManager> landingPositionManager;
+
+	std::vector<std::pair<size_t, eLandingPositionState>> invalidLandingPositionPlayers;
+	std::vector<std::pair<size_t, eLandingPositionState>> nextInvalidLandingPositionPlayers;
+
+	std::vector<std::shared_ptr<cWindowLandingPositionSelection>> playerLandingSelectionWindows;
+	cSignalConnectionManager landingSelectionWindowConnections;
+
+	void reset ();
+
+	void selectGameSettings ();
+	void selectMap ();
+	void selectPlayers ();
+	void startNextPlayerGamePreperation (size_t playerIndex);
+	void selectClan (size_t playerIndex, bool firstForPlayer);
+	void selectLandingUnits (size_t playerIndex, bool firstForPlayer);
+	void selectLandingPosition (size_t playerIndex);
+	void reselectLandingPosition (size_t playerIndex);
+	void checkAllLandingPositions ();
 };
 
-#endif // game_network_host_networkhostgamesavedH
+#endif // ui_graphical_control_menucontrollermultiplayerhotseatH

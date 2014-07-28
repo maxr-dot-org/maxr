@@ -42,13 +42,11 @@ void cNetworkHostGameNew::start (cApplication& application)
 	server = std::make_unique<cServer> (network);
 	localClient = std::make_unique<cClient> (server.get(), nullptr);
 
-	std::vector<cPlayerBasicData> clientPlayers;
 	for (size_t i = 0; i < players.size (); ++i)
 	{
-		server->addPlayer (std::make_unique<cPlayer>(*players[i]));
-		clientPlayers.push_back (*players[i]);
+		server->addPlayer (std::make_unique<cPlayer>(players[i]));
 	}
-	localClient->setPlayers (clientPlayers, localPlayerIndex);
+	localClient->setPlayers (players, localPlayerIndex);
 
 	server->setMap (staticMap);
 	localClient->setMap (staticMap);
@@ -113,10 +111,10 @@ void cNetworkHostGameNew::start (cApplication& application)
 }
 
 //------------------------------------------------------------------------------
-void cNetworkHostGameNew::setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players_, const cPlayerBasicData& localPlayer)
+void cNetworkHostGameNew::setPlayers (std::vector<cPlayerBasicData> players_, const cPlayerBasicData& localPlayer)
 {
 	players = players_;
-	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == localPlayer.getNr (); });
+	auto localPlayerIter = std::find_if (players.begin (), players.end (), [&](const cPlayerBasicData& player){ return player.getNr () == localPlayer.getNr (); });
 	assert (localPlayerIter != players.end());
 	localPlayerIndex = localPlayerIter - players.begin ();
 }
@@ -170,13 +168,13 @@ const std::shared_ptr<cStaticMap>& cNetworkHostGameNew::getStaticMap ()
 }
 
 //------------------------------------------------------------------------------
-const std::vector<std::shared_ptr<cPlayerBasicData>>& cNetworkHostGameNew::getPlayers ()
+const std::vector<cPlayerBasicData>& cNetworkHostGameNew::getPlayers ()
 {
 	return players;
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<cPlayerBasicData>& cNetworkHostGameNew::getLocalPlayer ()
+const cPlayerBasicData& cNetworkHostGameNew::getLocalPlayer ()
 {
 	return players[localPlayerIndex];
 }

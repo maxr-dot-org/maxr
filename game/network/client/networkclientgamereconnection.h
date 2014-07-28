@@ -41,20 +41,20 @@ public:
 
 	void start (cApplication& application);
 
-	void setPlayers (std::vector<std::shared_ptr<cPlayerBasicData>> players, const cPlayerBasicData& localPlayer);
+	void setPlayers (std::vector<cPlayerBasicData> players, const cPlayerBasicData& localPlayer);
 
 	void setStaticMap (std::shared_ptr<cStaticMap> staticMap);
 
 	const std::shared_ptr<cStaticMap>& getStaticMap ();
-	const std::vector<std::shared_ptr<cPlayerBasicData>>& getPlayers ();
-	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer ();
+	const std::vector<cPlayerBasicData>& getPlayers ();
+	const cPlayerBasicData& getLocalPlayer ();
 
 	cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 
 	size_t localPlayerIndex;
-	std::vector<std::shared_ptr<cPlayerBasicData>> players;
+	std::vector<cPlayerBasicData> players;
 
 	std::shared_ptr<cStaticMap> staticMap;
 };

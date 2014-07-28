@@ -56,6 +56,7 @@ public:
 	void unlockBack ();
 
 	cSignal<void (const cPosition&)> selectedPosition;
+	cSignal<void ()> canceled;
 
 	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
 

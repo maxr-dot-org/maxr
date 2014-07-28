@@ -41,8 +41,8 @@
 enum
 {
 	cl_red = 0,
-	cl_blue = 1,
-	cl_green = 2,
+	cl_green = 1,
+	cl_blue = 2,
 	cl_grey = 3,
 	cl_orange = 4,
 	cl_yellow = 5,

@@ -157,6 +157,7 @@ void cWindowSinglePlayer::newGameClicked ()
 			{
 				auto windowClanSelection = application->show (std::make_shared<cWindowClanSelection> ());
 
+				signalConnectionManager.connect (windowClanSelection->canceled, [windowClanSelection]() { windowClanSelection->close (); });
 				windowClanSelection->done.connect ([=]()
 				{
 					game->setPlayerClan (windowClanSelection->getSelectedClan ());
@@ -165,6 +166,7 @@ void cWindowSinglePlayer::newGameClicked ()
 
 					auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), windowClanSelection->getSelectedClan (), initialLandingUnits, gameSettings->getStartCredits ()));
 
+					signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
 					windowLandingUnitSelection->done.connect ([=]()
 					{
 						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
@@ -172,6 +174,7 @@ void cWindowSinglePlayer::newGameClicked ()
 
 						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
 
+						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close (); });
 						windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
 						{
 							game->setLandingPosition (landingPosition);
@@ -193,6 +196,7 @@ void cWindowSinglePlayer::newGameClicked ()
 
 				auto windowLandingUnitSelection = application->show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), -1, initialLandingUnits, gameSettings->getStartCredits ()));
 
+				signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
 				windowLandingUnitSelection->done.connect ([=]()
 				{
 					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
@@ -200,6 +204,7 @@ void cWindowSinglePlayer::newGameClicked ()
 
 					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
 
+					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close (); });
 					windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
 					{
 						game->setLandingPosition (landingPosition);
