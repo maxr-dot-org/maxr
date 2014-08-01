@@ -26,6 +26,7 @@
 
 #include "game/game.h"
 #include "maxrconfig.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
 class cServer;
@@ -40,8 +41,10 @@ public:
 	virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 
 protected:
-	std::vector<std::unique_ptr<cClient>> clients;
+	std::vector<std::shared_ptr<cClient>> clients;
 	std::unique_ptr<cServer> server;
+
+	std::unique_ptr<cGameGuiController> gameGuiController;
 };
 
 #endif // game_local_hotseat_localhotseatgameH

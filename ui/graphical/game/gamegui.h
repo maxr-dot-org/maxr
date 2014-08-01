@@ -52,27 +52,35 @@ class cGameSettings;
 class cSoundManager;
 class cSoundEffect;
 struct sID;
-struct cBuildListItem;
+class cBuildListItem;
 
 class cGameGui : public cWindow
 {
 public:
-	explicit cGameGui (std::shared_ptr<const cStaticMap> staticMap);
+	cGameGui (std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<cAnimationTimer> animationTimer);
 
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);
 	void setPlayers (std::vector<std::shared_ptr<const cPlayer>> players);
-	void setCasualtiesTracker (std::shared_ptr<const cCasualtiesTracker> casualties);
 	void setTurnClock (std::shared_ptr<const cTurnClock> turnClock);
 	void setTurnTimeClock (std::shared_ptr<const cTurnTimeClock> turnTimeClock);
 	void setGameSettings (std::shared_ptr<const cGameSettings> gameSettings);
 
-	void connectToClient (cClient& client);
-	void disconnectCurrentClient ();
+	cHud& getHud ();
+	const cHud& getHud () const;
 
-	void centerAt (const cPosition& position);
+	cGameMapWidget& getGameMap ();
+	const cGameMapWidget& getGameMap () const;
+
+	cChatBox& getChatBox ();
+	const cChatBox& getChatBox () const;
+
+	cGameMessageListView& getGameMessageList ();
+	const cGameMessageListView& getGameMessageList () const;
 
 	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
+
+	void exit ();
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;
@@ -81,19 +89,15 @@ public:
 	virtual void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool wantsCentered () const MAXR_OVERRIDE_FUNCTION;
-
-	cSignal<void (int saveNumber, const std::string& name)> triggeredSave;
 protected:
 
 	virtual std::unique_ptr<cMouseCursor> getDefaultCursor () const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
-	cSignalConnectionManager clientSignalConnectionManager;
-	cSignalConnectionManager playerSignalConnectionManager;
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager moveJobSignalConnectionManager;
-	cSignalConnectionManager buildPositionSelectionConnectionManager;
 	cSignalConnectionManager panelSignalConnectionManager;
+	cSignalConnectionManager selectedUnitConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	std::shared_ptr<cSoundManager> soundManager;
@@ -101,11 +105,6 @@ private:
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMap> dynamicMap;
 	std::shared_ptr<const cPlayer> player;
-	std::shared_ptr<const cCasualtiesTracker> casualtiesTracker;
-	std::shared_ptr<const cTurnClock> turnClock;
-	std::shared_ptr<const cTurnTimeClock> turnTimeClock;
-	std::shared_ptr<const cGameSettings> gameSettings;
-	std::vector<std::shared_ptr<const cPlayer>> players;
 
 	cHud* hud;
 	cHudPanels* hudPanels;
@@ -118,7 +117,6 @@ private:
 	cLabel* additionalInfoLabel;
 
 	cPosition mouseScrollDirection;
-	std::pair<bool, cPosition> savedReportPosition;
 
 	std::shared_ptr<cSoundEffect> selectedUnitSoundLoop;
 
@@ -127,67 +125,25 @@ private:
 	void startOpenPanel ();
 	void startClosePanel ();
 
-	void exit ();
-
 	void resetMiniMapViewWindow ();
 
-	void showFilesWindow ();
-	void showPreferencesDialog ();
-	void showReportsWindow ();
-
     void toggleChatBox ();
-
-	void showUnitHelpWindow (const cUnit& unit);
-	void showUnitTransferDialog (const cUnit& sourceUnit, const cUnit& destinationUnit);
-	void showBuildBuildingsWindow (const cVehicle& vehicle);
-	void showBuildVehiclesWindow (const cBuilding& building);
-	void showResourceDistributionDialog (const cUnit& unit);
-	void showResearchDialog (const cUnit& unit);
-	void showUpgradesWindow (const cUnit& unit);
-	void showStorageWindow (const cUnit& unit);
-	void showSelfDestroyDialog (const cUnit& unit);
 
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);
 
-	void updateSelectedUnitIdleSound ();
-	void updateSelectedUnitMoveSound ();
-
-    void startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound);
-	void stopSelectedUnitSound ();
-
+	void connectSelectedUnit ();
 	void connectMoveJob (const cVehicle& vehicle);
-
-	void handleChatCommand (const std::string& command);
 
 	void initShortcuts ();
 
-	void handleReport (const cSavedReport& report);
-
 	void handleResolutionChange ();
 
-	void selectNextUnit ();
-	void selectPreviousUnit ();
-	void markSelectedUnitAsDone ();
+	void updateSelectedUnitIdleSound ();
+	void updateSelectedUnitMoveSound ();
 
-	void centerSelectedUnit ();
-
-	cSignal<void (const cUnit&, const cUnit&, int, int)> transferTriggered;
-	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingTriggered;
-	cSignal<void (const cVehicle&, const cPosition&, const sID&, int)> buildBuildingPathTriggered;
-	cSignal<void (const cBuilding&, const std::vector<cBuildListItem>&, int, bool)> buildVehiclesTriggered;
-	cSignal<void (const cUnit& unit, size_t index, const cPosition& position)> activateAtTriggered;
-	cSignal<void (const cUnit&, const cUnit&)> reloadTriggered;
-	cSignal<void (const cUnit&, const cUnit&)> repairTriggered;
-	cSignal<void (const cUnit&, size_t index)> upgradeTriggered;
-	cSignal<void (const cUnit&)> upgradeAllTriggered;
-	cSignal<void (const cBuilding&, int, int, int)> changeResourceDistributionTriggered;
-	cSignal<void (const std::array<int, cResearch::kNrResearchAreas>&)> changeResearchSettingsTriggered;
-	cSignal<void (const std::vector<std::pair<sID, cUnitUpgrade>>&)> takeUnitUpgradesTriggered;
-	cSignal<void (const std::string&)> chatCommandTriggered;
-	cSignal<void (const cUnit&)> selfDestructionTriggered;
-	cSignal<void (const cUnit&)> resumeMoveJobTriggered;
-	cSignal<void ()> resumeAllMoveJobsTriggered;
+	void startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound);
+	void stopSelectedUnitSound ();
 };
 
 #endif // ui_graphical_game_gameguiH

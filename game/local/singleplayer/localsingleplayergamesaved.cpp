@@ -20,7 +20,6 @@
 #include "game/local/singleplayer/localsingleplayergamesaved.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/application.h"
-#include "ui/graphical/game/gamegui.h"
 #include "client.h"
 #include "server.h"
 #include "game/data/player/player.h"
@@ -32,7 +31,7 @@
 void cLocalSingleplayerGameSaved::start (cApplication& application)
 {
 	server = std::make_unique<cServer> (nullptr);
-	client = std::make_unique<cClient> (server.get (), nullptr);
+	client = std::make_shared<cClient> (server.get (), nullptr);
 
 	cSavegame savegame (saveGameNumber);
 	if (savegame.load (*server) == false) return;
@@ -81,36 +80,18 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	// TODO: save/load game time
 	server->startTurnTimers ();
 
-	auto gameGui = std::make_shared<cGameGui> (staticMap);
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	gameGui->setDynamicMap (client->getMap ());
+	gameGuiController->setClient (client);
 
-	std::vector<std::shared_ptr<const cPlayer>> guiPlayers;
-	for (size_t i = 0; i < client->getPlayerList ().size (); ++i)
-	{
-		const auto& player = client->getPlayerList ()[i];
-		guiPlayers.push_back (player);
-		if (player.get () == &client->getActivePlayer ())
-		{
-			gameGui->setPlayer (player);
-		}
-	}
-	gameGui->setPlayers (guiPlayers);
-	gameGui->setCasualtiesTracker (client->getCasualtiesTracker ());
-	gameGui->setTurnClock (client->getTurnClock ());
-	gameGui->setTurnTimeClock (client->getTurnTimeClock ());
-	gameGui->setGameSettings (client->getGameSettings ());
-
-	gameGui->connectToClient (*client);
+	gameGuiController->start ();
 
 	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGui->triggeredSave, std::bind (&cLocalSingleplayerGameSaved::save, this, _1, _2));
-
-	application.show (gameGui);
+	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameSaved::save, this, _1, _2));
 
 	application.addRunnable (shared_from_this ());
 
-	signalConnectionManager.connect (gameGui->terminated, [&]()
+	signalConnectionManager.connect (gameGuiController->terminated, [&]()
 	{
 		// me pointer ensures that game object stays alive till this call has terminated
 		auto me = application.removeRunnable (*this);

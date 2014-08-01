@@ -30,7 +30,7 @@ class cMap;
 class cBuildSpeedHandlerWidget;
 class cUnitListViewItemBuild;
 class cTurnTimeClock;
-struct cBuildListItem;
+class cBuildListItem;
 
 class cWindowBuildVehicles : public cWindowAdvancedHangar<cUnitListViewItemBuild>
 {

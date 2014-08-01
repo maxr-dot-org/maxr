@@ -26,7 +26,7 @@
 #include "serverevents.h"
 #include "upgradecalculator.h"
 
-struct cBuildListItem;
+class cBuildListItem;
 class cUnit;
 class cClient;
 class cPosition;
@@ -276,7 +276,7 @@ void sendSetAutoStatus (const cClient& client, int vehicleID, bool set);
 void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bool destIsVehicle, bool steal);
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
-void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings, int ownerNr);
+void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);
 void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID);
 void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID);
 void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID);

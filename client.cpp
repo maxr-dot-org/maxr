@@ -241,19 +241,19 @@ void cClient::sendNetMessage (cNetMessage* message_) const
 	}
 }
 
-int cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group)
+bool cClient::addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group)
 {
 	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle.getPosition(), destination, vehicle, group);
 	if (path)
 	{
 		sendMoveJob (*this, path, vehicle.iID);
 		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle.iID) + ", SrcX: " + iToStr (vehicle.getPosition().x()) + ", SrcY: " + iToStr (vehicle.getPosition().y()) + ", DestX: " + iToStr (destination.x()) + ", DestY: " + iToStr (destination.y()), cLog::eLOG_TYPE_NET_DEBUG);
-		return 1;
+		return true;
 	}
 	else
 	{
 		moveJobBlocked (vehicle);
-		return 0;
+		return false;
 	}
 }
 
@@ -669,11 +669,6 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Data->speedMax = message.popInt16();
 
 		Vehicle->setFlightHeight(message.popInt16 ());
-
-		if (bWasBuilding && !Vehicle->isUnitBuildingABuilding ())
-		{
-			unitStoppedBuilding (*Vehicle);
-		}
 	}
 }
 
@@ -703,8 +698,6 @@ void cClient::HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message)
 		return;
 	}
 	building->clientStartWork ();
-
-	unitStartedWorking (*building);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
@@ -720,8 +713,6 @@ void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message)
 		return;
 	}
 	building->clientStopWork ();
-
-	unitStoppedWorking (*building);
 }
 
 void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
@@ -745,8 +736,6 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (message)) return;
 	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer->gameTime), cLog::eLOG_TYPE_NET_DEBUG);
-
-	moveJobCreated (*Vehicle);
 }
 
 void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
@@ -878,8 +867,6 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	Vehicle->setBuildingABuilding(true);
 	addJob (new cStartBuildJob (*Vehicle, oldPosition, buildBig));
 
-	unitStartedBuilding (*Vehicle);
-
 	if (Vehicle->getClientMoveJob ()) Vehicle->getClientMoveJob ()->release ();
 }
 
@@ -907,8 +894,6 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 
 	Vehicle->setBuildingABuilding(false);
 	Vehicle->BuildPath = false;
-
-	unitStoppedBuilding (*Vehicle);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message)
@@ -1116,8 +1101,6 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			}
 			Vehicle->setClearing(true);
 			addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x () >= 0 && bigPosition.y () >= 0)));
-
-			unitStartedClearing (*Vehicle);
 		}
 		break;
 		case 1:
@@ -1152,8 +1135,6 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	}
 	Vehicle->setClearing(false);
 	Vehicle->setClearingTurns(0);
-
-	unitStoppedClearing (*Vehicle);
 }
 
 void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)

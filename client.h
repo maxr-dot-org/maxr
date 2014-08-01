@@ -104,7 +104,7 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = NULL);
+	bool addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = NULL);
 	void startGroupMove(const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
 	/**
 	* adds a new movejob
@@ -201,15 +201,6 @@ public:
 
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
 
-	mutable cSignal<void (const cUnit&)> unitStartedWorking;
-	mutable cSignal<void (const cUnit&)> unitStoppedWorking;
-
-	mutable cSignal<void (const cUnit&)> unitStartedBuilding;
-	mutable cSignal<void (const cUnit&)> unitStoppedBuilding;
-
-	mutable cSignal<void (const cUnit&)> unitStartedClearing;
-	mutable cSignal<void (const cUnit&)> unitStoppedClearing;
-
 	mutable cSignal<void (const cUnit&, const cUnit&)> unitStored; // storing, stored
 	mutable cSignal<void (const cUnit&, const cUnit&)> unitActivated; // storing, stored
 
@@ -228,7 +219,6 @@ public:
 
 	mutable cSignal<void (const cUnit&)> unitDetected;
 
-	mutable cSignal<void (const cVehicle&)> moveJobCreated;
 	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&)> addedEffect;

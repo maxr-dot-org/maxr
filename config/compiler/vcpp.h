@@ -36,7 +36,7 @@
 #endif
 
 #ifndef MAXR_NO_NOEXCEPT
-#   if _MSC_FULL_VER < 180021114 // Nov 2013 CTP
+#   if _MSC_VER < 1900 && _MSC_FULL_VER != 180021114 // Nov 2013 CTP
 #       define MAXR_NO_NOEXCEPT            1
 #   endif
 #endif

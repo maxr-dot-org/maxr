@@ -221,6 +221,7 @@
     <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.cpp" />
     <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.cpp" />
     <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhotseat.cpp" />
+    <ClCompile Include="..\..\ui\graphical\game\control\gameguicontroller.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\gamegui.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\hud.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\temp\animationtimer.cpp" />
@@ -472,6 +473,7 @@
     <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.h" />
     <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.h" />
     <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhotseat.h" />
+    <ClInclude Include="..\..\ui\graphical\game\control\gameguicontroller.h" />
     <ClInclude Include="..\..\ui\graphical\game\gamegui.h" />
     <ClInclude Include="..\..\ui\graphical\game\hud.h" />
     <ClInclude Include="..\..\ui\graphical\game\temp\animationtimer.h" />

@@ -86,38 +86,38 @@ public:
 
 	void resizeToResolution ();
 
-	cSignal<void ()> zoomChanged;
+	mutable cSignal<void ()> zoomChanged;
 
-	cSignal<void ()> surveyToggled;
-	cSignal<void ()> hitsToggled;
-	cSignal<void ()> scanToggled;
-	cSignal<void ()> statusToggled;
-	cSignal<void ()> ammoToggled;
-	cSignal<void ()> gridToggled;
-	cSignal<void ()> colorToggled;
-	cSignal<void ()> rangeToggled;
-	cSignal<void ()> fogToggled;
-	cSignal<void ()> lockToggled;
+	mutable cSignal<void ()> surveyToggled;
+	mutable cSignal<void ()> hitsToggled;
+	mutable cSignal<void ()> scanToggled;
+	mutable cSignal<void ()> statusToggled;
+	mutable cSignal<void ()> ammoToggled;
+	mutable cSignal<void ()> gridToggled;
+	mutable cSignal<void ()> colorToggled;
+	mutable cSignal<void ()> rangeToggled;
+	mutable cSignal<void ()> fogToggled;
+	mutable cSignal<void ()> lockToggled;
 
-	cSignal<void ()> centerClicked;
-	cSignal<void ()> helpClicked;
+	mutable cSignal<void ()> centerClicked;
+	mutable cSignal<void ()> helpClicked;
 
-    cSignal<void ()> reportsClicked;
-    cSignal<void ()> chatClicked;
+	mutable cSignal<void ()> reportsClicked;
+	mutable cSignal<void ()> chatClicked;
 
-	cSignal<void ()> miniMapZoomFactorToggled;
-	cSignal<void ()> miniMapAttackUnitsOnlyToggled;
+	mutable cSignal<void ()> miniMapZoomFactorToggled;
+	mutable cSignal<void ()> miniMapAttackUnitsOnlyToggled;
 
-	cSignal<void ()> endClicked;
+	mutable cSignal<void ()> endClicked;
 
-	cSignal<void ()> filesClicked;
-	cSignal<void ()> preferencesClicked;
+	mutable cSignal<void ()> filesClicked;
+	mutable cSignal<void ()> preferencesClicked;
 
-	cSignal<void ()> nextClicked;
-	cSignal<void ()> prevClicked;
-	cSignal<void ()> doneClicked;
+	mutable cSignal<void ()> nextClicked;
+	mutable cSignal<void ()> prevClicked;
+	mutable cSignal<void ()> doneClicked;
 
-	cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
+	mutable cSignal<void (const cUnit&, const std::string&)> triggeredRenameUnit;
 
 	void setActiveUnit (const cUnit* unit);
 

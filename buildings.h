@@ -104,8 +104,9 @@ enum eSymbolsBig {SBSpeed, SBHits, SBAmmo, SBAttack, SBShots, SBRange, SBArmor, 
 //--------------------------------------------------------------------------
 /** struct for the building order list */
 //--------------------------------------------------------------------------
-struct cBuildListItem
+class cBuildListItem
 {
+public:
 	cBuildListItem ();
 	cBuildListItem (sID type, int remainingMetal);
 	cBuildListItem (const cBuildListItem& other);

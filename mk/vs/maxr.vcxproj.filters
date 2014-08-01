@@ -199,6 +199,9 @@
     <Filter Include="maxr\ui\graphical\menu\windows\windowplayerselection">
       <UniqueIdentifier>{450d208e-52ef-4b78-b7b3-3bbc8fb3a5ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="maxr\ui\graphical\game\control">
+      <UniqueIdentifier>{f59148d9-bc6f-4350-81fd-4132648e1c1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\attackJobs.cpp">
@@ -863,6 +866,9 @@
     </ClCompile>
     <ClCompile Include="..\..\game\local\hotseat\localhotseatgame.cpp">
       <Filter>maxr\game\local\hotseat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\control\gameguicontroller.cpp">
+      <Filter>maxr\ui\graphical\game\control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1768,6 +1774,9 @@
     </ClInclude>
     <ClInclude Include="..\..\game\local\hotseat\localhotseatgame.h">
       <Filter>maxr\game\local\hotseat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\control\gameguicontroller.h">
+      <Filter>maxr\ui\graphical\game\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

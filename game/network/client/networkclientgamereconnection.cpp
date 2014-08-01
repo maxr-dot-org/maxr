@@ -20,7 +20,6 @@
 #include "game/network/client/networkclientgamereconnection.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/application.h"
-#include "ui/graphical/game/gamegui.h"
 #include "client.h"
 #include "server.h"
 #include "game/data/player/player.h"
@@ -40,36 +39,18 @@ void cNetworkClientGameReconnection::start (cApplication& application)
 
 	sendReconnectionSuccess (*localClient);
 
-	auto gameGui = std::make_shared<cGameGui> (staticMap);
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	gameGui->setDynamicMap (localClient->getMap ());
+	gameGuiController->setClient (localClient);
 
-	std::vector<std::shared_ptr<const cPlayer>> guiPlayers;
-	for (size_t i = 0; i < localClient->getPlayerList ().size (); ++i)
-	{
-		const auto& player = localClient->getPlayerList ()[i];
-		guiPlayers.push_back (player);
-		if (player.get () == &localClient->getActivePlayer ())
-		{
-			gameGui->setPlayer (player);
-		}
-	}
-	gameGui->setPlayers (guiPlayers);
-	gameGui->setCasualtiesTracker (localClient->getCasualtiesTracker ());
-	gameGui->setTurnClock (localClient->getTurnClock ());
-	gameGui->setTurnTimeClock (localClient->getTurnTimeClock ());
-	gameGui->setGameSettings (localClient->getGameSettings ());
-
-	gameGui->connectToClient (*localClient);
+	gameGuiController->start ();
 
 	using namespace std::placeholders;
-	signalConnectionManager.connect (gameGui->triggeredSave, std::bind (&cNetworkClientGameReconnection::save, this, _1, _2));
-
-	application.show (gameGui);
+	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameReconnection::save, this, _1, _2));
 
 	application.addRunnable (shared_from_this ());
 
-	signalConnectionManager.connect (gameGui->terminated, [&]()
+	signalConnectionManager.connect (gameGuiController->terminated, [&]()
 	{
         // me pointer ensures that game object stays alive till this call has terminated
 		auto me = application.removeRunnable (*this);

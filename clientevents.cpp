@@ -535,14 +535,15 @@ void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bo
 	client.sendNetMessage (message);
 }
 
-void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings, int ownerNr)
+void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_RESEARCH_CHANGE);
+	const cPlayer& player = client.getActivePlayer ();
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
 		message->pushInt16 (newResearchSettings[i]);
 	}
-	message->pushInt16 (ownerNr);
+	message->pushInt16 (player.getNr());
 	client.sendNetMessage (message);
 }
 

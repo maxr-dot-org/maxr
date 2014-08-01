@@ -25,6 +25,7 @@
 
 #include "game/game.h"
 #include "maxrconfig.h"
+#include "ui/graphical/game/control/gameguicontroller.h"
 
 class cClient;
 class cServer;
@@ -43,8 +44,10 @@ public:
 protected:
 	std::shared_ptr<cTCP> network;
 
-	std::unique_ptr<cClient> localClient;
+	std::shared_ptr<cClient> localClient;
 	std::unique_ptr<cServer> server;
+
+	std::unique_ptr<cGameGuiController> gameGuiController;
 };
 
 #endif // game_network_host_networkhostgameH
