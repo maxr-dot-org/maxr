@@ -166,6 +166,8 @@ public:
 	*/
 	cPlayer* getPlayerFromString (const std::string& playerID);
 
+	cPlayer* getActiveTurnPlayer ();
+
 	/**
 	 * returns if the player is on the disconnected players list
 	 *@author pagra

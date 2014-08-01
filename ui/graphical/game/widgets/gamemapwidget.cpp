@@ -409,7 +409,7 @@ cGameMapWidget::~cGameMapWidget()
 //------------------------------------------------------------------------------
 void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 {
-	dynamicMap = std::move(dynamicMap_);
+	std::swap(dynamicMap, dynamicMap_);
 
 	dynamicMapSignalConnectionManager.disconnectAll ();
 
@@ -427,6 +427,11 @@ void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 	if (mouseMode != nullptr)
 	{
 		mouseMode->setMap (dynamicMap.get ());
+	}
+
+	if (dynamicMap != dynamicMap_)
+	{
+		unitSelection.deselectUnits ();
 	}
 }
 

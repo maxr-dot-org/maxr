@@ -202,6 +202,8 @@ void cGameGui::setPlayer (std::shared_ptr<const cPlayer> player_)
 	gameMap->setPlayer (player);
 	miniMap->setPlayer (player);
 	hud->setPlayer (player);
+
+	messageList->clear ();
 }
 
 //------------------------------------------------------------------------------

@@ -42,7 +42,7 @@ void cNetworkClientGameSaved::start (cApplication& application)
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	gameGuiController->setClient (localClient);
+	gameGuiController->setSingleClient (localClient);
 
 	gameGuiController->start ();
 

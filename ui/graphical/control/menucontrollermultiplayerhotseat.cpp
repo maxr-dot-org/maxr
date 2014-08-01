@@ -68,8 +68,8 @@ void cMenuControllerMultiplayerHotSeat::selectGameSettings ()
 {
 	if (!game) return;
 
-	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings> ());
-	windowGameSettings->applySettings (cGameSettings ());
+	auto windowGameSettings = application.show (std::make_shared<cWindowGameSettings> (true));
+	windowGameSettings->applySettings (cGameSettings());
 
 	windowGameSettings->terminated.connect (std::bind (&cMenuControllerMultiplayerHotSeat::reset, this));
 

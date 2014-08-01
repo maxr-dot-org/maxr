@@ -459,46 +459,30 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MAKE_TURNEND);
 
-	const int iNextPlayerNum = message.popInt16();
-	const bool bWaitForNextPlayer = message.popBool();
-	const bool bEndTurn = message.popBool();
-
-	if (bEndTurn)
+	turnClock->increaseTurn ();
+	bWantToEnd = false;
+	ActivePlayer->clearDone();
+	Log.write ("######### Round " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		turnClock->increaseTurn ();
-		bWantToEnd = false;
-		ActivePlayer->clearDone();
-		Log.write ("######### Round " + iToStr (turnClock->getTurn()) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
-		for (unsigned int i = 0; i < getPlayerList().size(); i++)
-		{
-			getPlayerList() [i]->setHasFinishedTurn(false);
-		}
-		finishedTurnEndProcess ();
+		getPlayerList() [i]->setHasFinishedTurn(false);
 	}
-
-	if (bWaitForNextPlayer)
-	{
-		if (iNextPlayerNum != ActivePlayer->getNr())
-		{
-			enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, iNextPlayerNum);
-		}
-		else
-		{
-			disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-		}
-	}
-	else if (iNextPlayerNum != -1)
-	{
-		//makeHotSeatEnd (iNextPlayerNum);
-	}
+	finishedTurnEndProcess ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FINISHED_TURN);
 
-	const int playerNumber = message.popInt16();
+	const int playerNumber = message.popInt16 ();
 	cPlayer* player = getPlayerFromNumber (playerNumber);
+
+	const bool hasNextPlayerInfo = message.popBool ();
+	int nextPlayerNumber = -1;
+	if (hasNextPlayerInfo)
+	{
+		nextPlayerNumber = message.popInt16 ();
+	}
 
 	if (player == nullptr)
 	{
@@ -512,6 +496,8 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	}
 
 	player->setHasFinishedTurn (true);
+
+	playerFinishedTurn (playerNumber, nextPlayerNumber);
 }
 
 void cClient::HandleNetMessage_GAME_EV_TURN_START_TIME (cNetMessage& message)
@@ -1851,7 +1837,6 @@ void cClient::handleMoveJobs()
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			delete MoveJob;
-			if(Vehicle) unitFinishedMoveJob(*Vehicle);
 			continue;
 		}
 		if (MoveJob->bEndForNow)
@@ -1863,7 +1848,6 @@ void cClient::handleMoveJobs()
 				Vehicle->setMoving (false);
 			}
 			ActiveMJobs.erase (ActiveMJobs.begin () + i);
-			if(Vehicle) unitPausedMoveJob(*Vehicle);
 			continue;
 		}
 

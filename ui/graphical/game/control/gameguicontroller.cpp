@@ -98,17 +98,45 @@ cGameGuiController::~cGameGuiController ()
 void cGameGuiController::start ()
 {
 	application.show (gameGui);
+
+	if (activeClient)
+	{
+		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer ().getName ()), eWindowBackgrounds::Black));
+	}
 }
 
 //------------------------------------------------------------------------------
 void cGameGuiController::start (const cPosition& centerPosition)
 {
-	application.show (gameGui);
+	start ();
 	gameGui->getGameMap ().centerAt (centerPosition);
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::setClient (std::shared_ptr<cClient> client_)
+void cGameGuiController::setSingleClient (std::shared_ptr<cClient> client)
+{
+	std::vector<std::shared_ptr<cClient>> clients;
+	int activePlayerNumber = 0;
+	if (client != nullptr)
+	{
+		clients.push_back (client);
+		activePlayerNumber = client->getActivePlayer ().getNr ();
+	}
+	setClients (std::move (clients), activePlayerNumber);
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clients_, int activePlayerNumber)
+{
+	clients = std::move (clients_);
+
+	auto iter = std::find_if (clients.begin (), clients.end (), [=](const std::shared_ptr<cClient>& client){ return client->getActivePlayer ().getNr () == activePlayerNumber; });
+	if (iter != clients.end()) setActiveClient (*iter);
+	else setActiveClient (nullptr);
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 {
 	activeClient = std::move (client_);
 
@@ -171,6 +199,8 @@ void cGameGuiController::initShortcuts ()
 void cGameGuiController::connectGuiStaticCommands ()
 {
 	using namespace std::placeholders;
+
+	signalConnectionManager.connect (gameGui->terminated, [this](){ terminated (); });
 
 	signalConnectionManager.connect (gameGui->getChatBox ().commandEntered, std::bind (&cGameGuiController::handleChatCommand, this, _1));
 
@@ -542,6 +572,21 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (client.finishedTurnEndProcess, [&]()
 	{
 		gameGui->getHud ().unlockEndButton ();
+	});
+
+	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&](int currentPlayerNumber, int nextPlayerNumber)
+	{
+		if (currentPlayerNumber != client.getActivePlayer ().getNr ()) return;
+
+		gameGui->getHud ().unlockEndButton ();
+
+		auto iter = std::find_if (clients.begin (), clients.end (), [=](const std::shared_ptr<cClient>& client){ return client->getActivePlayer ().getNr () == nextPlayerNumber; });
+		if (iter != clients.end ())
+		{
+			setActiveClient (*iter);
+			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer ().getName()), eWindowBackgrounds::Black));
+		}
+		else setActiveClient (nullptr);
 	});
 
 	clientSignalConnectionManager.connect (client.freezeModeChanged, [&](eFreezeMode mode)

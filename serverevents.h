@@ -127,20 +127,10 @@ void sendAddRubble (cServer& server, const cBuilding& building, const cPlayer& r
 *@param player The player who should receive this event
 */
 void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiver);
-/**
-* A client has to make a turnend
-*@author alzi alias DoctorDeath
-*@param bEndTurn True if the turnnumber has to be increased
-*@param bWaitForNextPlayer True if the receiver has to wait for an other player.
-*       (Only if he isn't the next player himselves)
-*@param iNextPlayerNum The number of the player who has to make his turn next.
-*@param sReport The turn start report for this player.
-*@param iVoiceNum Number of voice with the player has to play
-*       at his turn beginning.
-*/
-void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, const cPlayer& receiver);
 
-void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* receiver = nullptr);
+void sendMakeTurnEnd (cServer& server, const cPlayer* receiver = nullptr);
+
+void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* nextPlayer, const cPlayer* receiver = nullptr);
 
 void sendTurnStartTime (cServer& server, unsigned int gameTime);
 

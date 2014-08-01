@@ -29,7 +29,7 @@
 #include "ui/graphical/menu/widgets/tools/validatorint.h"
 
 //------------------------------------------------------------------------------
-cWindowGameSettings::cWindowGameSettings () :
+cWindowGameSettings::cWindowGameSettings (bool forHotSeatGame) :
 	cWindow (LoadPCX (GFXOD_OPTIONS))
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 13), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 23)), lngPack.i18n ("Text~Others~Game_Options"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -89,8 +89,7 @@ cWindowGameSettings::cWindowGameSettings () :
 	//
 	// Game type
 	//
-	const bool hotSeat = false;
-	if (!hotSeat)
+	if (!forHotSeatGame)
 	{
 		addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (64, currentLine), getPosition () + cPosition (230, currentLine + 10)), lngPack.i18n ("Text~Title~Game_Type") + ":", FONT_LATIN_NORMAL, eAlignmentType::Left));
 		auto gameTypeRadioGroup = addChild (std::make_unique<cRadioGroup> ());
@@ -412,7 +411,7 @@ cGameSettings cWindowGameSettings::getGameSettings () const
 	else gameSettings.setBridgeheadType (eGameSettingsBridgeheadType::Definite);
 
 	if (gameTypeTurnsCheckBox == nullptr || gameTypeSimultaneousCheckBox == nullptr) gameSettings.setGameType (eGameSettingsGameType::HotSeat);
-	if (gameTypeTurnsCheckBox->isChecked ()) gameSettings.setGameType (eGameSettingsGameType::Turns);
+	else if (gameTypeTurnsCheckBox->isChecked ()) gameSettings.setGameType (eGameSettingsGameType::Turns);
 	else gameSettings.setGameType (eGameSettingsGameType::Simultaneous);
 
 	gameSettings.setClansEnabled (clansOnCheckBox->isChecked ());

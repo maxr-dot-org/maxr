@@ -198,6 +198,11 @@ void cServer::addPlayer (std::unique_ptr<cPlayer> player)
 	if(Map != nullptr) player->initMaps (*Map);
 
 	playerList.push_back (std::move(player));
+
+	if ((isTurnBasedGame() || gameSettings->getGameType() == eGameSettingsGameType::HotSeat) && !activeTurnPlayer)
+	{
+		activeTurnPlayer = playerList.front ().get ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -2851,28 +2856,37 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 }
 
 //------------------------------------------------------------------------------
+cPlayer* cServer::getActiveTurnPlayer ()
+{
+	return activeTurnPlayer;
+}
+
+//------------------------------------------------------------------------------
 void cServer::handleEnd (const cPlayer& player)
 {
 	const eGameTypes gameType = getGameType();
 
 	if (gameType == GAME_TYPE_SINGLE)
 	{
-		sendTurnFinished (*this, player);
+		sendTurnFinished (*this, player, nullptr);
 		if (checkEndActions (&player))
 		{
 			iWantPlayerEndNum = player.getNr();
 			return;
 		}
+		
+		iWantPlayerEndNum = -1;
 		makeTurnEnd();
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
 	{
-		const bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && isTurnBasedGame());
 		if (checkEndActions (&player))
 		{
 			iWantPlayerEndNum = player.getNr();
 			return;
 		}
+
+		iWantPlayerEndNum = -1;
 
 		// select next player
 		auto nextPlayerIter = std::find_if (playerList.begin (), playerList.end (), [this](const std::unique_ptr<cPlayer>& player){return player.get() == activeTurnPlayer; });
@@ -2884,40 +2898,12 @@ void cServer::handleEnd (const cPlayer& player)
 			activeTurnPlayer = playerList.front ().get ();
 
 			makeTurnEnd();
-
-			if (gameType == GAME_TYPE_HOTSEAT)
-			{
-				sendMakeTurnEnd (*this, true, bWaitForPlayer, activeTurnPlayer->getNr (), player);
-			}
-			else
-			{
-				for (size_t i = 0; i != playerList.size (); ++i)
-				{
-					sendMakeTurnEnd (*this, true, bWaitForPlayer, activeTurnPlayer->getNr (), *playerList[i]);
-				}
-			}
 		}
 		else
 		{
 			activeTurnPlayer = nextPlayerIter->get ();
-
-			if (gameType == GAME_TYPE_HOTSEAT)
-			{
-				sendMakeTurnEnd (*this, false, bWaitForPlayer, activeTurnPlayer->getNr (), player);
-				// TODO: in hotseat:
-				// maybe send information to client about the next player
-			}
-			else
-			{
-				for (size_t i = 0; i != playerList.size (); ++i)
-				{
-					sendMakeTurnEnd (*this, false, bWaitForPlayer, activeTurnPlayer->getNr (), *playerList[i]);
-				}
-			}
 		}
-		// send report to next player
-		sendSavedReport (*this, cSavedReportTurnStart (*activeTurnPlayer, turnClock->getTurn()), activeTurnPlayer);
-		activeTurnPlayer->resetTurnReportData ();
+		sendTurnFinished (*this, player, activeTurnPlayer);
 	}
 	else // it's a simultaneous TCP/IP multiplayer game
 	{
@@ -2945,21 +2931,18 @@ void cServer::handleEnd (const cPlayer& player)
 
 		if (iWantPlayerEndNum == -1)
 		{
+			sendTurnFinished (*this, player, nullptr);
+
 			// When playing with dedicated server
 			// where a player is not connected, play without a deadline,
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				sendTurnFinished (*this, player);
 				if (gameSettings->isTurnEndDeadlineActive ())
 				{
 					turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
 					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
 				}
-			}
-			else
-			{
-				sendTurnFinished (*this, player);
 			}
 		}
 
@@ -2970,6 +2953,8 @@ void cServer::handleEnd (const cPlayer& player)
 				iWantPlayerEndNum = player.getNr ();
 				return;
 			}
+
+			iWantPlayerEndNum = -1;
 
 			PlayerEndList.clear();
 
@@ -2989,22 +2974,33 @@ void cServer::handleWantEnd()
 	// and we can start the new turn simultaneously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
-		for (size_t i = 0; i != playerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size (); ++i)
 		{
 			cPlayer& player = *playerList[i];
 			if (!isPlayerDisconnected (player) && gameTimer->getReceivedTime (i) <= lastTurnEnd)
 				return;
 		}
 
-		// send reports to all players
-		for (size_t i = 0; i != playerList.size (); ++i)
+		if (getGameType () == GAME_TYPE_HOTSEAT || isTurnBasedGame ())
 		{
-			sendMakeTurnEnd (*this, true, false, -1, *playerList[i]);
+			sendSavedReport (*this, cSavedReportTurnStart (*activeTurnPlayer, turnClock->getTurn ()), activeTurnPlayer);
+			activeTurnPlayer->resetTurnReportData ();
+
+			// when it's the turn of the first player again, we start the next turn
+			if (activeTurnPlayer == playerList.front ().get ())
+			{
+				sendMakeTurnEnd (*this);
+			}
 		}
-		for (size_t i = 0; i != playerList.size (); ++i)
+		else
 		{
-			sendSavedReport (*this, cSavedReportTurnStart (*playerList[i], turnClock->getTurn ()), playerList[i].get ());
-			playerList[i]->resetTurnReportData ();
+			// send reports to all players
+			for (size_t i = 0; i != playerList.size (); ++i)
+			{
+				sendSavedReport (*this, cSavedReportTurnStart (*playerList[i], turnClock->getTurn ()), playerList[i].get ());
+				playerList[i]->resetTurnReportData ();
+			}
+			sendMakeTurnEnd (*this);
 		}
 
 		// begin the new turn
@@ -3040,8 +3036,11 @@ bool cServer::checkEndActions (const cPlayer* player)
 	{
 		for (size_t i = 0; i != playerList.size (); ++i)
 		{
-			cPlayer& player = *playerList[i];
-			const auto& vehicles = player.getVehicles ();
+			cPlayer& checkPlayer = *playerList[i];
+
+			if (player != nullptr && player != &checkPlayer) continue;
+
+			const auto& vehicles = checkPlayer.getVehicles ();
 			for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 			{
 				const auto& vehicle = *i;
@@ -3216,8 +3215,6 @@ void cServer::makeTurnEnd()
 #endif
 
 	checkDefeats();
-
-	iWantPlayerEndNum = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -3353,6 +3350,10 @@ void cServer::checkDeadline()
 	{
 		iWantPlayerEndNum = -2;
 		return;
+	}
+	else
+	{
+		iWantPlayerEndNum = -1;
 	}
 
 	PlayerEndList.clear();

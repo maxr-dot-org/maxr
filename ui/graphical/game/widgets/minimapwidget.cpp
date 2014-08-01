@@ -56,12 +56,16 @@ void cMiniMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 		dynamicMapSignalConnectionManager.connect (dynamicMap->removedUnit, [&](const cUnit&){ surfaceOutdated = true; });
 		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cVehicle&){ surfaceOutdated = true; });
 	}
+
+	surfaceOutdated = true;
 }
 
 //------------------------------------------------------------------------------
 void cMiniMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 {
-	player = std::move(player_);
+	player = std::move (player_);
+
+	surfaceOutdated = true;
 }
 
 //------------------------------------------------------------------------------

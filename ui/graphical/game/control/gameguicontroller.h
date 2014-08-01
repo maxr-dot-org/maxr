@@ -64,7 +64,8 @@ public:
 	void start ();
 	void start (const cPosition& centerPosition);
 
-	void setClient (std::shared_ptr<cClient> client);
+	void setSingleClient (std::shared_ptr<cClient> clients);
+	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
 
 	mutable cSignal<void (int saveNumber, const std::string& name)> triggeredSave;
 	mutable cSignal<void ()> terminated;
@@ -81,12 +82,15 @@ private:
 
 	std::shared_ptr<cGameGui> gameGui;
 	std::shared_ptr<cClient> activeClient;
+	std::vector<std::shared_ptr<cClient>> clients;
 
 	std::pair<bool, cPosition> savedReportPosition;
 
 	void initShortcuts ();
 
 	void connectGuiStaticCommands ();
+
+	void setActiveClient (std::shared_ptr<cClient> client);
 
 	void connectClient (cClient& client);
 

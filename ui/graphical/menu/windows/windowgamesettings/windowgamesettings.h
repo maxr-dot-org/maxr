@@ -32,7 +32,7 @@ class cLineEdit;
 class cWindowGameSettings : public cWindow
 {
 public:
-	cWindowGameSettings ();
+	explicit cWindowGameSettings (bool forHotSeatGame = false);
 	~cWindowGameSettings ();
 
 	void applySettings (const cGameSettings& gameSettings);

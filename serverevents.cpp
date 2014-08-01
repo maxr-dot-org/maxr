@@ -108,22 +108,27 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, const cPlayer& receiv
 }
 
 //------------------------------------------------------------------------------
-void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, const cPlayer& receiver)
+void sendMakeTurnEnd (cServer& server, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_MAKE_TURNEND));
 
-	message->pushBool (bEndTurn);
-	message->pushBool (bWaitForNextPlayer);
-	message->pushInt16 (iNextPlayerNum);
-
-	server.sendNetMessage (message, &receiver);
+	server.sendNetMessage (message, receiver);
 }
 
 //------------------------------------------------------------------------------
-void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* receiver)
+void sendTurnFinished (cServer& server, const cPlayer& playerWhoEndedTurn, const cPlayer* nextPlayer, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_TURN));
 
+	if (nextPlayer)
+	{
+		message->pushInt16 (nextPlayer->getNr ());
+		message->pushBool (true);
+	}
+	else
+	{
+		message->pushBool (false);
+	}
 	message->pushInt16 (playerWhoEndedTurn.getNr());
 
 	server.sendNetMessage (message, receiver);

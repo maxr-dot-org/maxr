@@ -35,6 +35,8 @@ public:
 
 	void removeOldMessages ();
 
+	void clear ();
+
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;

@@ -199,6 +199,8 @@ public:
 	mutable cSignal<void ()> startedTurnEndProcess;
 	mutable cSignal<void ()> finishedTurnEndProcess;
 
+	mutable cSignal<void (int, int)> playerFinishedTurn;
+
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
 
 	mutable cSignal<void (const cUnit&, const cUnit&)> unitStored; // storing, stored
@@ -207,9 +209,6 @@ public:
 	mutable cSignal<void (const cUnit&)> unitHasStolenSuccessfully;
 	mutable cSignal<void (const cUnit&)> unitHasDisabledSuccessfully;
 	mutable cSignal<void (const cUnit&)> unitStealDisableFailed;
-
-	mutable cSignal<void (const cVehicle&)> unitFinishedMoveJob;
-	mutable cSignal<void (const cVehicle&)> unitPausedMoveJob;
 
 	mutable cSignal<void (const cUnit&)> unitSuppliedWithAmmo;
 	mutable cSignal<void (const cUnit&)> unitRepaired;

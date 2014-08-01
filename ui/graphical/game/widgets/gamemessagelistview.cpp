@@ -48,6 +48,12 @@ void cGameMessageListView::removeOldMessages ()
 }
 
 //------------------------------------------------------------------------------
+void cGameMessageListView::clear ()
+{
+	listView->clearItems ();
+}
+
+//------------------------------------------------------------------------------
 bool cGameMessageListView::isAt (const cPosition& position) const
 {
 	return false; // fully transparent. Do not take any input events

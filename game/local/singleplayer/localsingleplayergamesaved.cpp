@@ -82,7 +82,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	gameGuiController->setClient (client);
+	gameGuiController->setSingleClient (client);
 
 	gameGuiController->start ();
 

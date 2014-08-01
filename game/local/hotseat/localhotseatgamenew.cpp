@@ -56,7 +56,9 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 		players.push_back (playersData[i].basicData);
 
-		server->addPlayer (std::make_unique<cPlayer> (playersData[i].basicData));
+		auto serverPlayer = std::make_unique<cPlayer> (playersData[i].basicData);
+		serverPlayer->setLocal ();
+		server->addPlayer (std::move (serverPlayer));
 	}
 
 	server->start ();
@@ -81,9 +83,12 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 
 	server->startTurnTimers ();
 
+	auto activePlayer = server->getActiveTurnPlayer ();
+	assert (activePlayer != nullptr);
+
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
-	//gameGuiController->setClient (localClient);
+	gameGuiController->setClients (clients, activePlayer->getNr ());
 
 	gameGuiController->start ();
 
