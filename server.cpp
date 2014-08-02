@@ -3608,6 +3608,8 @@ void cServer::destroyUnit (cBuilding& b)
 	int rubble = 0;
 	bool big = false;
 
+	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
+
 	cBuilding* topBuilding = Map->getField(position).getTopBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
@@ -3623,8 +3625,6 @@ void cServer::destroyUnit (cBuilding& b)
 		buildings = &Map->getField(position + cPosition(1, 1)).getBuildings();
 		rubble += deleteBuildings (*buildings);
 	}
-
-	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
 
 	auto buildings = &Map->getField(position).getBuildings();
 	rubble += deleteBuildings (*buildings);

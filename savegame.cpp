@@ -284,6 +284,10 @@ cGameSettings cSavegame::loadGameSettings ()
 	{
 		gameSetting.setGameType (eGameSettingsGameType::Turns);
 	}
+	if (XMLElement* const element = gameInfoNode->FirstChildElement ("HotSeat"))
+	{
+		gameSetting.setGameType (eGameSettingsGameType::HotSeat);
+	}
 
 	if (version < cVersion (0, 4))
 	{
@@ -445,6 +449,19 @@ void cSavegame::loadGameInfo (cServer& server)
 	{
 		XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns");
 		server.activeTurnPlayer = &server.getPlayerFromNumber (element->IntAttribute ("activeplayer"));
+	}
+	if (server.gameSettings->getGameType () == eGameSettingsGameType::HotSeat)
+	{
+		XMLElement* const element = gameInfoNode->FirstChildElement ("HotSeat");
+
+		if (element)
+		{
+			server.activeTurnPlayer = &server.getPlayerFromNumber (element->IntAttribute ("activeplayer"));
+		}
+		else
+		{
+			server.activeTurnPlayer = server.playerList[0].get ();
+		}
 	}
 }
 
@@ -1303,7 +1320,8 @@ void cSavegame::writeGameInfo (const cServer& server)
 	XMLElement* gameinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
 	addAttributeElement (gameinfoNode, "Turn", "num", iToStr (server.getTurnClock ()->getTurn ()));
-	if (server.isTurnBasedGame()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.activeTurnPlayer->getNr()));
+	if (server.isTurnBasedGame ()) addAttributeElement (gameinfoNode, "PlayTurns", "activeplayer", iToStr (server.activeTurnPlayer->getNr ()));
+	if (server.getGameSettings()->getGameType() == eGameSettingsGameType::HotSeat) addAttributeElement (gameinfoNode, "HotSeat", "activeplayer", iToStr (server.activeTurnPlayer->getNr ()));
 
 	const auto& gameSetting = *server.getGameSettings();
 

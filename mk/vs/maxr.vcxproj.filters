@@ -873,6 +873,9 @@
     <ClCompile Include="..\..\ui\graphical\game\gameguistate.cpp">
       <Filter>maxr\ui\graphical\game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\local\hotseat\localhotseatgamesaved.cpp">
+      <Filter>maxr\game\local\hotseat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\attackJobs.h">
@@ -1783,6 +1786,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\gameguistate.h">
       <Filter>maxr\ui\graphical\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\local\hotseat\localhotseatgamesaved.h">
+      <Filter>maxr\game\local\hotseat</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

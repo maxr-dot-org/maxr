@@ -27,9 +27,9 @@
 #include "game/game.h"
 #include "maxrconfig.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
+#include "server.h"
 
 class cClient;
-class cServer;
 
 class cLocalHotSeatGame : public cGame
 {

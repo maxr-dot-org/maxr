@@ -204,6 +204,7 @@
     <ClCompile Include="..\..\game\data\report\unit\savedreportsurveyoraisenseless.cpp" />
     <ClCompile Include="..\..\game\local\hotseat\localhotseatgame.cpp" />
     <ClCompile Include="..\..\game\local\hotseat\localhotseatgamenew.cpp" />
+    <ClCompile Include="..\..\game\local\hotseat\localhotseatgamesaved.cpp" />
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergame.cpp" />
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamenew.cpp" />
     <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamesaved.cpp" />
@@ -455,6 +456,7 @@
     <ClInclude Include="..\..\game\game.h" />
     <ClInclude Include="..\..\game\local\hotseat\localhotseatgame.h" />
     <ClInclude Include="..\..\game\local\hotseat\localhotseatgamenew.h" />
+    <ClInclude Include="..\..\game\local\hotseat\localhotseatgamesaved.h" />
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergame.h" />
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamenew.h" />
     <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamesaved.h" />

@@ -21,10 +21,12 @@
 
 #include "ui/graphical/menu/windows/windowmultiplayer.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/windows/windowload/windowload.h"
 #include "ui/graphical/control/menucontrollermultiplayerhost.h"
 #include "ui/graphical/control/menucontrollermultiplayerclient.h"
 #include "ui/graphical/control/menucontrollermultiplayerhotseat.h"
 #include "ui/graphical/application.h"
+#include "game/local/hotseat/localhotseatgamesaved.h"
 #include "main.h"
 #include "netmessage.h"
 
@@ -92,6 +94,19 @@ void cWindowMultiPlayer::newHotSeatClicked ()
 //------------------------------------------------------------------------------
 void cWindowMultiPlayer::loadHotSeatClicked ()
 {
+	if (!getActiveApplication ()) return;
+
+	auto application = getActiveApplication ();
+
+	auto windowLoad = getActiveApplication ()->show (std::make_shared<cWindowLoad> ());
+	windowLoad->load.connect ([=](int saveGameNumber)
+	{
+		auto game = std::make_shared<cLocalHotSeatGameSaved> ();
+		game->setSaveGameNumber (saveGameNumber);
+		game->start (*application);
+
+		windowLoad->close ();
+	});
 }
 
 //------------------------------------------------------------------------------
