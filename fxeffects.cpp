@@ -180,7 +180,7 @@ cFxExploSmall::cFxExploSmall (const cPosition& position_) :
 
 void cFxExploSmall::playSound (cSoundManager& soundManager) const
 {
-    soundManager.playSound (std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), position));
+    soundManager.playSound (std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), position / 64));
 }
 
 //------------------------------------------------------------------------------
@@ -197,11 +197,11 @@ void cFxExploBig::playSound (cSoundManager& soundManager) const
 {
 	if (onWater)
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBigWet), position));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBigWet), position / 64));
 	}
 	else
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBig), position));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBig), position / 64));
 	}
 }
 
@@ -215,7 +215,7 @@ cFxExploAir::cFxExploAir (const cPosition& position_) :
 
 void cFxExploAir::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), position));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), position / 64));
 }
 
 //------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ cFxExploWater::cFxExploWater (const cPosition& position_) :
 
 void cFxExploWater::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmallWet), position));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmallWet), position / 64));
 }
 
 //------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ cFxAbsorb::cFxAbsorb (const cPosition& position_) :
 
 void cFxAbsorb::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDAbsorb, position));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDAbsorb, position / 64));
 }
 
 //------------------------------------------------------------------------------
