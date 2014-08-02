@@ -65,7 +65,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)
 	{
 		sendGameSettings (*server, *serverPlayerList[i]);
-		sendHudSettings (*server, *serverPlayerList[i]);
+		sendGameGuiState (*server, server->getPlayerGameGuiState (*serverPlayerList[i]), *serverPlayerList[i]);
 		auto& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size (); ++j)
 		{

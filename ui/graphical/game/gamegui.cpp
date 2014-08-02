@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include "ui/graphical/game/gamegui.h"
+#include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/widgets/minimapwidget.h"
@@ -62,6 +63,7 @@
 #include "game/data/report/special/savedreporthostcommand.h"
 #include "game/logic/turnclock.h"
 #include "utility/random.h"
+#include "utility/indexiterator.h"
 
 //------------------------------------------------------------------------------
 cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<cAnimationTimer> animationTimer_) :
@@ -304,6 +306,104 @@ void cGameGui::exit ()
 		close ();
 	});
 	startClosePanel ();
+}
+
+//------------------------------------------------------------------------------
+cGameGuiState cGameGui::getCurrentState () const
+{
+	cGameGuiState state;
+	state.setMapPosition (gameMap->getMapCenterOffset ());
+
+	state.setMapZoomFactor (hud->getZoomFactor ());
+	state.setSurveyActive (hud->getSurveyActive ());
+	state.setHitsActive (hud->getHitsActive ());
+	state.setScanActive (hud->getScanActive ());
+	state.setStatusActive (hud->getStatusActive ());
+	state.setAmmoActive (hud->getAmmoActive ());
+	state.setGridActive (hud->getGridActive ());
+	state.setColorActive (hud->getColorActive ());
+	state.setRangeActive (hud->getRangeActive ());
+	state.setFogActive (hud->getFogActive ());
+	state.setLockActive (hud->getLockActive ());
+	state.setMiniMapZoomFactorActive (hud->getMiniMapZoomFactorActive ());
+	state.setMiniMapAttackUnitsOnly (hud->getMiniMapAttackUnitsOnly ());
+	state.setUnitVideoPlaying (hud->isUnitVideoPlaying ());
+
+	state.setSelectedUnits (gameMap->getUnitSelection ());
+	state.setLockedUnits (gameMap->getUnitLockList ());
+
+	return state;
+}
+
+//------------------------------------------------------------------------------
+void cGameGui::restoreState (const cGameGuiState& state)
+{
+	gameMap->centerAt (state.getMapPosition ());
+
+	hud->setZoomFactor (state.getMapZoomFactor ());
+	hud->setSurveyActive (state.getSurveyActive ());
+	hud->setHitsActive (state.getHitsActive ());
+	hud->setScanActive (state.getScanActive ());
+	hud->setStatusActive (state.getStatusActive ());
+	hud->setAmmoActive (state.getAmmoActive ());
+	hud->setGridActive (state.getGridActive ());
+	hud->setColorActive (state.getColorActive ());
+	hud->setRangeActive (state.getRangeActive ());
+	hud->setFogActive (state.getFogActive ());
+	hud->setLockActive (state.getLockActive ());
+	hud->setMiniMapZoomFactorActive (state.getMiniMapZoomFactorActive ());
+	hud->setMiniMapAttackUnitsOnly (state.getMiniMapAttackUnitsOnly ());
+	if (state.getUnitVideoPlaying ()) hud->startUnitVideo ();
+	else hud->stopUnitVideo ();
+
+	gameMap->getUnitSelection ().deselectUnits ();
+	gameMap->getUnitLockList ().unlockAll ();
+
+	auto selectedUnitIds = state.getSelectedUnitIds ();
+	auto lockedUnitIds = state.getLockedUnitIds ();
+
+	if (dynamicMap)
+	{
+		// TODO: this may be very inefficient!
+		//       we go over all map fields to find the units on the map that need to be selected.
+		//       we may should think about a more efficient way to find specific units on the map
+		for (auto i = makeIndexIterator (cPosition(0,0), dynamicMap->getSize()); i.hasMore (); i.next ())
+		{
+			if (selectedUnitIds.empty () && lockedUnitIds.empty ()) break;
+
+			const auto& field = dynamicMap->getField (*i);
+
+			const auto& fieldUnits = field.getUnits ();
+
+			for (size_t j = 0; j < fieldUnits.size (); ++j)
+			{
+				for (auto k = selectedUnitIds.begin(); k != selectedUnitIds.end (); )
+				{
+					if (fieldUnits[j]->iID == *k)
+					{
+						gameMap->getUnitSelection ().selectUnit (*fieldUnits[j], true);
+						k = selectedUnitIds.erase (k);
+					}
+					else
+					{
+						++k;
+					}
+				}
+				for (auto k = lockedUnitIds.begin (); k != lockedUnitIds.end ();)
+				{
+					if (fieldUnits[j]->iID == *k)
+					{
+						gameMap->getUnitLockList ().lockUnit (*fieldUnits[j]);
+						k = lockedUnitIds.erase (k);
+					}
+					else
+					{
+						++k;
+					}
+				}
+			}
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

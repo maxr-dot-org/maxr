@@ -45,6 +45,8 @@ public:
 	void start ();
 	void stop ();
 
+	bool isPlaying () const;
+
 	void setUnit (const cUnit* unit);
 private:
 	cImage* currentFrameImage;

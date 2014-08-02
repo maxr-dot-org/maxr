@@ -85,3 +85,27 @@ const cUnit* cUnitLockList::getLockedUnit (size_t index) const
 {
 	return lockedUnits[index].first;
 }
+
+//------------------------------------------------------------------------------
+void cUnitLockList::unlockAll ()
+{
+	lockedUnits.clear ();
+}
+
+//------------------------------------------------------------------------------
+void cUnitLockList::lockUnit (const cUnit& unit)
+{
+	auto iter = std::find_if (lockedUnits.begin (), lockedUnits.end (), [&unit](const std::pair<const cUnit*, cSignalConnectionManager>& entry){ return entry.first == &unit; });
+	if (iter == lockedUnits.end ())
+	{
+		lockedUnits.push_back (std::make_pair (&unit, cSignalConnectionManager ()));
+		lockedUnits.back ().second.connect (unit.destroyed, [this, &unit]()
+		{
+			auto iter = std::find_if (lockedUnits.begin (), lockedUnits.end (), [&unit](const std::pair<const cUnit*, cSignalConnectionManager>& entry){ return entry.first == &unit; });
+			if (iter != lockedUnits.end ())
+			{
+				lockedUnits.erase (iter);
+			}
+		});
+	}
+}

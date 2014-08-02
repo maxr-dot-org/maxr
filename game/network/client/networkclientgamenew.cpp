@@ -60,7 +60,11 @@ void cNetworkClientGameNew::start (cApplication& application)
 
 	gameGuiController->setSingleClient (localClient);
 
-	gameGuiController->start (localPlayerLandingPosition);
+	cGameGuiState playerGameGuiState;
+	playerGameGuiState.setMapPosition (localPlayerLandingPosition);
+	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
+
+	gameGuiController->start ();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cNetworkClientGameNew::save, this, _1, _2));

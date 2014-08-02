@@ -60,6 +60,7 @@ public:
 	static AutoSurface generateSurface ();
 
 	void setMinimalZoomFactor (float zoomFactor);
+	void setZoomFactor (float zoomFactor);
 	float getZoomFactor () const;
 	void increaseZoomFactor (double percent);
 	void decreaseZoomFactor (double percent);
@@ -67,22 +68,48 @@ public:
 	void lockEndButton ();
 	void unlockEndButton ();
 
+	void setSurveyActive (bool value);
 	bool getSurveyActive () const;
+
+	void setHitsActive (bool value);
 	bool getHitsActive () const;
+
+	void setScanActive (bool value);
 	bool getScanActive () const;
+
+	void setStatusActive (bool value);
 	bool getStatusActive () const;
+
+	void setAmmoActive (bool value);
 	bool getAmmoActive () const;
+
+	void setGridActive (bool value);
 	bool getGridActive () const;
+
+	void setColorActive (bool value);
 	bool getColorActive () const;
+
+	void setRangeActive (bool value);
 	bool getRangeActive () const;
+
+	void setFogActive (bool value);
 	bool getFogActive () const;
+
+	void setLockActive (bool value);
 	bool getLockActive () const;
 
+	void setMiniMapZoomFactorActive (bool value);
 	bool getMiniMapZoomFactorActive () const;
+
+	void setMiniMapAttackUnitsOnly (bool value);
 	bool getMiniMapAttackUnitsOnly () const;
 
 	void setCoordinatesText (const std::string& text);
 	void setUnitNameText (const std::string& text);
+
+	void startUnitVideo ();
+	void stopUnitVideo ();
+	bool isUnitVideoPlaying ();
 
 	void resizeToResolution ();
 

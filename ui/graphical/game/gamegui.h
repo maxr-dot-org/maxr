@@ -51,6 +51,7 @@ class cTurnTimeClock;
 class cGameSettings;
 class cSoundManager;
 class cSoundEffect;
+class cGameGuiState;
 struct sID;
 class cBuildListItem;
 
@@ -81,6 +82,9 @@ public:
 	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
 
 	void exit ();
+
+	cGameGuiState getCurrentState () const;
+	void restoreState (const cGameGuiState& state);
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseWheelMoved (cApplication& application, cMouse& mouse, const cPosition& amount) MAXR_OVERRIDE_FUNCTION;

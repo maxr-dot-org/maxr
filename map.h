@@ -72,6 +72,9 @@ public:
 	/** returns the planes on this field */
 	const std::vector<cVehicle*>& getPlanes () const;
 
+	/** returns all units on this field */
+	std::vector<cUnit*> getUnits () const;
+
 	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding() const;
 	/** returns a pointer to the top building or NULL if the first building is a base type */

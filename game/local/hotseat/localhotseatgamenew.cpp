@@ -57,11 +57,20 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		players.push_back (playersData[i].basicData);
 
 		auto serverPlayer = std::make_unique<cPlayer> (playersData[i].basicData);
+		auto& playerRef = *serverPlayer;
+
 		serverPlayer->setLocal ();
 		server->addPlayer (std::move (serverPlayer));
+
+		if (i == 0)
+		{
+			server->setActiveTurnPlayer (playerRef);
+		}
 	}
 
 	server->start ();
+
+	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	for (size_t i = 0; i < playersData.size (); ++i)
 	{
@@ -79,14 +88,16 @@ void cLocalHotSeatGameNew::start (cApplication& application)
 		sendLandingCoords (*clients[i], playersData[i].landingPosition);
 
 		sendReadyToStart (*clients[i]);
+
+		cGameGuiState gameGuiState;
+		gameGuiState.setMapPosition (playersData[i].landingPosition);
+		gameGuiController->addPlayerGameGuiState (clientPlayer, gameGuiState);
 	}
 
 	server->startTurnTimers ();
 
 	auto activePlayer = server->getActiveTurnPlayer ();
 	assert (activePlayer != nullptr);
-
-	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 
 	gameGuiController->setClients (clients, activePlayer->getNr ());
 

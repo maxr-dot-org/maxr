@@ -624,6 +624,18 @@ const cUnitSelection& cGameMapWidget::getUnitSelection () const
 }
 
 //------------------------------------------------------------------------------
+cUnitLockList& cGameMapWidget::getUnitLockList ()
+{
+	return unitLockList;
+}
+
+//------------------------------------------------------------------------------
+const cUnitLockList& cGameMapWidget::getUnitLockList () const
+{
+	return unitLockList;
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::toggleUnitContextMenu (const cUnit* unit)
 {
 	unitContextMenuSignalConnectionManager.disconnectAll ();

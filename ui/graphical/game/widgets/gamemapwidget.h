@@ -58,6 +58,9 @@ public:
 	cUnitSelection& getUnitSelection ();
 	const cUnitSelection& getUnitSelection () const;
 
+	cUnitLockList& getUnitLockList ();
+	const cUnitLockList& getUnitLockList () const;
+
 	/**
 	 * Scrolls the map by a given offset.
 	 *

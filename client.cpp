@@ -41,6 +41,7 @@
 #include "vehicles.h"
 #include "video.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/game/gameguistate.h"
 #include "game/data/report/savedreportchat.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/unit/savedreportdisabled.h"
@@ -1200,33 +1201,10 @@ void cClient::HandleNetMessage_GAME_EV_TURN (cNetMessage& message)
 
 void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
 {
-	//TODO: gameGUI
-	//assert (message.iType == GAME_EV_HUD_SETTINGS);
+	cGameGuiState state;
+	state.popFrom (message);
 
-	//const int unitID = message.popInt16();
-	//cUnit* unit = getVehicleFromID (unitID);
-	//if (!unit) unit = getBuildingFromID (unitID);
-
-	//if (unit) gameGUI->selectUnit (*unit);
-
-	//const int x = message.popInt16();
-	//const int y = message.popInt16();
-	//gameGUI->setOffsetPosition (x, y);
-	//gameGUI->setZoom (message.popFloat(), true, false);
-	//gameGUI->setColor (message.popBool());
-	//gameGUI->setGrid (message.popBool());
-	//gameGUI->setAmmo (message.popBool());
-	//gameGUI->setFog (message.popBool());
-	//gameGUI->setTwoX (message.popBool());
-	//gameGUI->setRange (message.popBool());
-	//gameGUI->setScan (message.popBool());
-	//gameGUI->setStatus (message.popBool());
-	//gameGUI->setSurvey (message.popBool());
-	//gameGUI->setLock (message.popBool());
-	//gameGUI->setHits (message.popBool());
-	//gameGUI->setTNT (message.popBool());
-
-	//gameGUI->setStartup (false);
+	gameGuiStateReceived (state);
 }
 
 void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
@@ -1481,9 +1459,8 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
 
 	const int saveingID = message.popInt16();
-	//TODO: gameGUI
-	//if (gameGUI->getSelectedUnit()) sendSaveHudInfo (*this, gameGUI->getSelectedUnit()->iID, ActivePlayer->getNr(), saveingID);
-	//else sendSaveHudInfo (*this, -1, ActivePlayer->getNr(), saveingID);
+
+	additionalSaveInfoRequested (saveingID);
 
 	const auto& savedReports = ActivePlayer->savedReportsList;
 	for (size_t i = std::max<int> (0, savedReports.size() - 50); i != savedReports.size(); ++i)

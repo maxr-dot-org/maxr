@@ -33,6 +33,7 @@ class cNetMessage;
 class cResearch;
 class cUnit;
 class cSavedReport;
+class cGameGuiState;
 struct sSubBase;
 
 enum SERVER_EVENT_TYPES
@@ -274,7 +275,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber);
 void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
 
 void sendTurn (cServer& server, int turn, const cPlayer& receiver);
-void sendHudSettings (cServer& server, const cPlayer& player);
+void sendGameGuiState (cServer& server, const cGameGuiState& state, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, const cPlayer& receiver);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, const cPosition& position, const cPlayer& receiver);
 void sendDeleteEverything (cServer& server, const cPlayer& receiver);

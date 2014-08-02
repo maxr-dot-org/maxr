@@ -74,6 +74,17 @@ const std::vector<cVehicle*>& cMapField::getPlanes () const
 	return planes;
 }
 
+std::vector<cUnit*> cMapField::getUnits () const
+{
+	std::vector<cUnit*> units;
+	units.reserve(vehicles.size () + buildings.size () + planes.size ());
+	std::copy (vehicles.begin (), vehicles.end (), std::back_inserter (units));
+	std::copy (buildings.begin (), buildings.end (), std::back_inserter (units));
+	std::copy (planes.begin (), planes.end (), std::back_inserter (units));
+
+	return units;
+}
+
 cBuilding* cMapField::getBuilding() const
 {
 	if (buildings.empty()) return NULL;

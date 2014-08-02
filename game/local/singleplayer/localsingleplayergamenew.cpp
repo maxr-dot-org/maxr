@@ -94,7 +94,11 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 
 	gameGuiController->setSingleClient (client);
 
-	gameGuiController->start (landingPosition);
+	cGameGuiState playerGameGuiState;
+	playerGameGuiState.setMapPosition (landingPosition);
+	gameGuiController->addPlayerGameGuiState (clientPlayer, std::move (playerGameGuiState));
+
+	gameGuiController->start ();
 
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameNew::save, this, _1, _2));

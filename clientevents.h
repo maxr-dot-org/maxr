@@ -31,6 +31,7 @@ class cUnit;
 class cClient;
 class cPosition;
 class cSavedReport;
+class cGameGuiState;
 
 enum CLIENT_EVENT_TYPES
 {
@@ -277,7 +278,7 @@ void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bo
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient& client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient& client, const std::array<int, cResearch::kNrResearchAreas>& newResearchSettings);
-void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID);
+void sendGameGuiState (const cClient& client, const cGameGuiState& gameGuiState, const cPlayer& owner, int savingID);
 void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID);
 void sendFinishedSendSaveInfo (const cClient& client, int ownerNr, int savingID);
 

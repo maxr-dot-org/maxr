@@ -19,34 +19,4 @@
 #ifndef hudH
 #define hudH
 
-struct sHudStateContainer
-{
-	bool tntChecked;
-	bool hitsChecked;
-	bool lockChecked;
-	bool surveyChecked;
-	bool statusChecked;
-	bool scanChecked;
-	bool rangeChecked;
-	bool twoXChecked;
-	bool fogChecked;
-	bool ammoChecked;
-	bool gridChecked;
-	bool colorsChecked;
-	float zoom;
-	int offX, offY;
-	int selUnitID;
-
-	sHudStateContainer() : tntChecked (false), hitsChecked (false), lockChecked (false), surveyChecked (false),
-		statusChecked (false), scanChecked (false), rangeChecked (false), twoXChecked (false), fogChecked (false),
-		ammoChecked (false), gridChecked (false), colorsChecked (false),
-		zoom (0.0f), offX (0), offY (0), selUnitID (0) {}
-};
-
-struct sHudPosition
-{
-	int offsetX, offsetY;
-	sHudPosition() : offsetX (-1), offsetY (-1) {}
-};
-
 #endif

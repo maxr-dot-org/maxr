@@ -29,6 +29,8 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/position.h"
 
+#include "ui/graphical/game/gameguistate.h"
+
 #include "upgradecalculator.h"
 
 class cGameGui;
@@ -62,7 +64,8 @@ public:
 	~cGameGuiController ();
 
 	void start ();
-	void start (const cPosition& centerPosition);
+
+	void addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState);
 
 	void setSingleClient (std::shared_ptr<cClient> clients);
 	void setClients (std::vector<std::shared_ptr<cClient>> clients, int activePlayerNumber);
@@ -73,6 +76,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager guiSignalConnectionManager;
 	cSignalConnectionManager clientSignalConnectionManager;
+	cSignalConnectionManager allClientsSignalConnectionManager;
 	cSignalConnectionManager buildPositionSelectionConnectionManager;
 
 	cApplication& application;
@@ -84,6 +88,8 @@ private:
 	std::shared_ptr<cClient> activeClient;
 	std::vector<std::shared_ptr<cClient>> clients;
 
+	std::map<int, cGameGuiState> playerGameGuiStates;
+
 	std::pair<bool, cPosition> savedReportPosition;
 
 	void initShortcuts ();
@@ -93,6 +99,8 @@ private:
 	void setActiveClient (std::shared_ptr<cClient> client);
 
 	void connectClient (cClient& client);
+
+	void showNextPlayerDialog ();
 
 	void showFilesWindow ();
 	void showPreferencesDialog ();

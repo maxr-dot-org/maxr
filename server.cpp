@@ -44,6 +44,7 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/game/gameguistate.h"
 #include "game/data/report/savedreport.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
@@ -198,11 +199,6 @@ void cServer::addPlayer (std::unique_ptr<cPlayer> player)
 	if(Map != nullptr) player->initMaps (*Map);
 
 	playerList.push_back (std::move(player));
-
-	if ((isTurnBasedGame() || gameSettings->getGameType() == eGameSettingsGameType::HotSeat) && !activeTurnPlayer)
-	{
-		activeTurnPlayer = playerList.front ().get ();
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -2048,22 +2044,7 @@ void cServer::handleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 	if (msgSaveingID != savingID) return;
 	cPlayer& player = getPlayerFromNumber (message.popInt16());
 
-	player.savedHud->selUnitID = message.popInt16();
-	player.savedHud->offX = message.popInt16();
-	player.savedHud->offY = message.popInt16();
-	player.savedHud->zoom = message.popFloat();
-	player.savedHud->colorsChecked = message.popBool();
-	player.savedHud->gridChecked = message.popBool();
-	player.savedHud->ammoChecked = message.popBool();
-	player.savedHud->fogChecked = message.popBool();
-	player.savedHud->twoXChecked = message.popBool();
-	player.savedHud->rangeChecked = message.popBool();
-	player.savedHud->scanChecked = message.popBool();
-	player.savedHud->statusChecked = message.popBool();
-	player.savedHud->surveyChecked = message.popBool();
-	player.savedHud->lockChecked = message.popBool();
-	player.savedHud->hitsChecked = message.popBool();
-	player.savedHud->tntChecked = message.popBool();
+	playerGameGuiStates[player.getNr()].popFrom (message);
 }
 
 //------------------------------------------------------------------------------
@@ -2088,7 +2069,7 @@ void cServer::handleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
 	auto& player = getPlayerFromNumber (message.popInt16());
 
 	cSavegame savegame (savingIndex);
-	savegame.writeAdditionalInfo (*player.savedHud, player.savedReportsList, &player);
+	savegame.writeAdditionalInfo (playerGameGuiStates[player.getNr()], player.savedReportsList, &player);
 }
 
 //------------------------------------------------------------------------------
@@ -2853,6 +2834,18 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 	// try to find player by name
 	auto iter = std::find_if (playerList.begin (), playerList.end (), [&playerID](const std::unique_ptr<cPlayer>& player){ return player->getName () == playerID; });
 	return iter == playerList.end () ? nullptr : iter->get ();
+}
+
+//------------------------------------------------------------------------------
+void cServer::setActiveTurnPlayer (const cPlayer& player)
+{
+	for (size_t i = 0; i < playerList.size (); ++i)
+	{
+		if (playerList[i]->getNr () == player.getNr ())
+		{
+			activeTurnPlayer = playerList[i].get ();
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -3873,8 +3866,7 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 		}
 	}
 
-	// send Hud setting
-	sendHudSettings (*this, player);
+	sendGameGuiState (*this, getPlayerGameGuiState (player), player);
 
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
@@ -4110,7 +4102,6 @@ void cServer::addJob (cJob* job)
 {
 	helperJobs.addJob (*job);
 }
-
 void cServer::runJobs()
 {
 	helperJobs.run (*gameTimer);
@@ -4155,4 +4146,9 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 	{
 		gameTimer->start();
 	}
+}
+
+const cGameGuiState& cServer::getPlayerGameGuiState (const cPlayer& player)
+{
+	return playerGameGuiStates[player.getNr ()];
 }

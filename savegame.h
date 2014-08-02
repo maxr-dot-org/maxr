@@ -35,10 +35,10 @@ class cBuilding;
 class cServer;
 class cTCP;
 class cSavedReport;
+class cGameGuiState;
 struct sResources;
 struct sUnitData;
 struct sID;
-struct sHudStateContainer;
 
 //
 // 0.1 - ?
@@ -46,7 +46,8 @@ struct sHudStateContainer;
 // 0.3 - ?
 // 0.4 - changed game settings format (from sSettings to cGameSettings)
 // 0.5 - changed reports format
-#define SAVE_FORMAT_VERSION		((std::string)"0.5")
+// 0.6 - changed gui state format
+#define SAVE_FORMAT_VERSION		((std::string)"0.6")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad
@@ -87,11 +88,24 @@ public:
 	std::vector<cPlayerBasicData> loadPlayers();
 	cGameSettings loadGameSettings ();
 
+	void writeAdditionalInfo (const cGameGuiState& gameGuiState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player);
+
+
 	/**
-	* ---
+	* adds an node without undernodes
 	*@author alzi alias DoctorDeath
 	*/
-	void writeAdditionalInfo (sHudStateContainer hudState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player);
+	static tinyxml2::XMLElement* addMainElement (tinyxml2::XMLElement* node, const std::string& nodename);
+	/**
+	* adds an attribute with given value to the node
+	*@author alzi alias DoctorDeath
+	*/
+	static void addAttribute (tinyxml2::XMLElement* element, const std::string& attributename, const std::string& value);
+	/**
+	* adds an node with maximal two attributes and there values
+	*@author alzi alias DoctorDeath
+	*/
+	static void addAttributeElement (tinyxml2::XMLElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "");
 
 	//--------------------------------------------------------------------------
 private:
@@ -197,7 +211,7 @@ private:
 	* loads a player
 	*@author alzi alias DoctorDeath
 	*/
-	std::unique_ptr<cPlayer> loadPlayer (tinyxml2::XMLElement* playerNode, cMap& map);
+	std::unique_ptr<cPlayer> loadPlayer (tinyxml2::XMLElement* playerNode, cMap& map, cGameGuiState& gameGuiState);
 	/**
 	* loads the upgrade values of a unit in the players data
 	*@author alzi alias DoctorDeath
@@ -275,22 +289,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void convertStringToScanMap (const std::string& str, cPlayer& player);
-
-	/**
-	* adds an node without undernodes
-	*@author alzi alias DoctorDeath
-	*/
-	tinyxml2::XMLElement* addMainElement (tinyxml2::XMLElement* node, const std::string& nodename);
-	/**
-	* adds an attribute with given value to the node
-	*@author alzi alias DoctorDeath
-	*/
-	void addAttribute (tinyxml2::XMLElement* element, const std::string& attributename, const std::string& value);
-	/**
-	* adds an node with maximal two attributes and there values
-	*@author alzi alias DoctorDeath
-	*/
-	void addAttributeElement (tinyxml2::XMLElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "");
 };
 
 /**

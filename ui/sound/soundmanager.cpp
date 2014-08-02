@@ -75,13 +75,46 @@ void cSoundManager::setGameTimer (std::shared_ptr<const cGameTimer> gameTimer_)
 void cSoundManager::mute ()
 {
 	muted = true;
-	stopAllSounds ();
+
+	cMutex::Lock playingSoundsLock (playingSoundsMutex);
+	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
+	{
+		if (!i->active) continue;
+
+		auto channel = i->sound->getChannel ();
+		if (channel)
+		{
+			// Loop sounds are just muted so that they can be continued later on.
+			// Normal effects are stopped entirely, so that we do not get cut sounds
+			// on unmuting.
+			if (channel->isLooping ())
+			{
+				channel->mute ();
+			}
+			else
+			{
+				i->sound->stop ();
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
 void cSoundManager::unmute ()
 {
 	muted = false;
+
+	cMutex::Lock playingSoundsLock (playingSoundsMutex);
+	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
+	{
+		if (!i->active) continue;
+
+		auto channel = i->sound->getChannel ();
+		if (channel)
+		{
+			channel->unmute ();
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -103,7 +136,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 {
 	if (!sound) return;
 
-	if (muted) return;
+	if (muted && !loop) return;
 
 	cMutex::Lock playingSoundsLock (playingSoundsMutex);
 

@@ -292,9 +292,16 @@ AutoSurface cHud::generateSurface ()
 	return std::move(surface);
 }
 
+//------------------------------------------------------------------------------
 void cHud::setMinimalZoomFactor (float zoomFactor)
 {
 	zoomSlider->setMaxValue ((int)std::ceil(100. - 100. * zoomFactor));
+}
+
+//------------------------------------------------------------------------------
+void cHud::setZoomFactor (float zoomFactor)
+{
+	zoomSlider->setValue (static_cast<int>(100. - zoomFactor * 100));
 }
 
 //------------------------------------------------------------------------------
@@ -328,9 +335,21 @@ void cHud::unlockEndButton ()
 }
 
 //------------------------------------------------------------------------------
+void cHud::setSurveyActive (bool value)
+{
+	surveyButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getSurveyActive () const
 {
 	return surveyButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setHitsActive (bool value)
+{
+	hitsButton->setChecked (value);
 }
 
 //------------------------------------------------------------------------------
@@ -340,9 +359,21 @@ bool cHud::getHitsActive () const
 }
 
 //------------------------------------------------------------------------------
+void cHud::setScanActive (bool value)
+{
+	scanButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getScanActive () const
 {
 	return scanButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setStatusActive (bool value)
+{
+	statusButton->setChecked (value);
 }
 
 //------------------------------------------------------------------------------
@@ -352,9 +383,21 @@ bool cHud::getStatusActive () const
 }
 
 //------------------------------------------------------------------------------
+void cHud::setAmmoActive (bool value)
+{
+	ammoButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getAmmoActive () const
 {
 	return ammoButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setGridActive (bool value)
+{
+	gridButton->setChecked (value);
 }
 
 //------------------------------------------------------------------------------
@@ -364,9 +407,21 @@ bool cHud::getGridActive () const
 }
 
 //------------------------------------------------------------------------------
+void cHud::setColorActive (bool value)
+{
+	colorButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getColorActive () const
 {
 	return colorButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setRangeActive (bool value)
+{
+	rangeButton->setChecked (value);
 }
 
 //------------------------------------------------------------------------------
@@ -376,9 +431,21 @@ bool cHud::getRangeActive () const
 }
 
 //------------------------------------------------------------------------------
+void cHud::setFogActive (bool value)
+{
+	fogButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getFogActive () const
 {
 	return fogButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setLockActive (bool value)
+{
+	lockButton->setChecked (value);
 }
 
 //------------------------------------------------------------------------------
@@ -388,9 +455,21 @@ bool cHud::getLockActive () const
 }
 
 //------------------------------------------------------------------------------
+void cHud::setMiniMapZoomFactorActive (bool value)
+{
+	miniMapZoomFactorButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
 bool cHud::getMiniMapZoomFactorActive () const
 {
 	return miniMapZoomFactorButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setMiniMapAttackUnitsOnly (bool value)
+{
+	miniMapAttackUnitsOnlyButton->setChecked (value);
 }
 
 //------------------------------------------------------------------------------
@@ -409,6 +488,24 @@ void cHud::setCoordinatesText (const std::string& text)
 void cHud::setUnitNameText (const std::string& text)
 {
 	unitNameLabel->setText (text);
+}
+
+//------------------------------------------------------------------------------
+void cHud::startUnitVideo ()
+{
+	unitVideo->start ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::stopUnitVideo ()
+{
+	unitVideo->stop ();
+}
+
+//------------------------------------------------------------------------------
+bool cHud::isUnitVideoPlaying ()
+{
+	return unitVideo->isPlaying ();
 }
 
 //------------------------------------------------------------------------------

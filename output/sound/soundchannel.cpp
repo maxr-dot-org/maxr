@@ -33,7 +33,9 @@ void cSoundChannel::channelFinishedCallback (int channel)
 
 //--------------------------------------------------------------------------
 cSoundChannel::cSoundChannel (int sdlChannelId_) :
-	sdlChannelId (sdlChannelId_)
+	sdlChannelId (sdlChannelId_),
+	muted (false),
+	looping (false)
 {
 	static bool initialized = false;
 	if (!initialized)
@@ -42,12 +44,16 @@ cSoundChannel::cSoundChannel (int sdlChannelId_) :
 		initialized = true;
 	}
 	signalConnectionManager.connect (channelFinished, [this](int channel){ if(channel == sdlChannelId) stopped (); });
+
+	volume = Mix_Volume (sdlChannelId, -1);
 }
 
 //--------------------------------------------------------------------------
 void cSoundChannel::play (const cSoundChunk& chunk, bool loop)
 {
 	if (chunk.getSdlSound () == nullptr) return;
+
+	if (muted) unmute ();
 
 	if (Mix_PlayChannel (sdlChannelId, chunk.getSdlSound (), loop ? -1 : 0) < 0)
 	{
@@ -56,6 +62,7 @@ void cSoundChannel::play (const cSoundChunk& chunk, bool loop)
 	}
 	else
 	{
+		looping = loop;
 		started ();
 	}
 }
@@ -83,6 +90,20 @@ void cSoundChannel::stop ()
 }
 
 //--------------------------------------------------------------------------
+void cSoundChannel::mute ()
+{
+	Mix_Volume (sdlChannelId, 0);
+	muted = true;
+}
+
+//--------------------------------------------------------------------------
+void cSoundChannel::unmute ()
+{
+	Mix_Volume (sdlChannelId, volume);
+	muted = false;
+}
+
+//--------------------------------------------------------------------------
 bool cSoundChannel::isPlaying () const
 {
 	return Mix_Playing (sdlChannelId) != 0;
@@ -95,15 +116,31 @@ bool cSoundChannel::isPlaying (const cSoundChunk& chunk) const
 }
 
 //--------------------------------------------------------------------------
+bool cSoundChannel::isLooping () const
+{
+	return looping;
+}
+
+//--------------------------------------------------------------------------
 bool cSoundChannel::isPaused () const
 {
 	return Mix_Paused (sdlChannelId) != 0;
 }
 
 //--------------------------------------------------------------------------
-void cSoundChannel::setVolume (int volume)
+bool cSoundChannel::isMuted () const
 {
-	Mix_Volume (sdlChannelId, volume);
+	return muted;
+}
+
+//--------------------------------------------------------------------------
+void cSoundChannel::setVolume (int volume_)
+{
+	volume = volume_;
+	if (!muted)
+	{
+		Mix_Volume (sdlChannelId, volume);
+	}
 }
 
 //--------------------------------------------------------------------------

@@ -38,10 +38,17 @@ public:
 
 	void stop ();
 
+	void mute ();
+	void unmute ();
+
 	bool isPlaying () const;
 	bool isPlaying (const cSoundChunk& chunk) const;
 
+	bool isLooping () const;
+
 	bool isPaused () const;
+
+	bool isMuted () const;
 
 	void setVolume (int volume);
 
@@ -58,6 +65,11 @@ public:
 	cSignal<void ()> resumed;
 private:
 	int sdlChannelId;
+
+	bool muted;
+	int volume;
+
+	bool looping;
 
 	cSignalConnectionManager signalConnectionManager;
 

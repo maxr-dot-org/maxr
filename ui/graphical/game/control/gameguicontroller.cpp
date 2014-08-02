@@ -101,15 +101,23 @@ void cGameGuiController::start ()
 
 	if (activeClient)
 	{
-		application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer ().getName ()), eWindowBackgrounds::Black));
+		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer ().getNr ());
+		if (iter != playerGameGuiStates.end ())
+		{
+			gameGui->restoreState (iter->second);
+		}
+
+		if (activeClient->getGameSettings ()->getGameType () == eGameSettingsGameType::HotSeat)
+		{
+			showNextPlayerDialog ();
+		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cGameGuiController::start (const cPosition& centerPosition)
+void cGameGuiController::addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState)
 {
-	start ();
-	gameGui->getGameMap ().centerAt (centerPosition);
+	playerGameGuiStates[player.getNr ()] = std::move (playerGameGuiState);
 }
 
 //------------------------------------------------------------------------------
@@ -128,11 +136,38 @@ void cGameGuiController::setSingleClient (std::shared_ptr<cClient> client)
 //------------------------------------------------------------------------------
 void cGameGuiController::setClients (std::vector<std::shared_ptr<cClient>> clients_, int activePlayerNumber)
 {
+	allClientsSignalConnectionManager.disconnectAll ();
+
 	clients = std::move (clients_);
 
 	auto iter = std::find_if (clients.begin (), clients.end (), [=](const std::shared_ptr<cClient>& client){ return client->getActivePlayer ().getNr () == activePlayerNumber; });
 	if (iter != clients.end()) setActiveClient (*iter);
 	else setActiveClient (nullptr);
+
+	for (size_t i = 0; i < clients.size (); ++i)
+	{
+		auto client = clients[i].get();
+		allClientsSignalConnectionManager.connect (clients[i]->additionalSaveInfoRequested, [this, client](int saveingId)
+		{
+			if (client == activeClient.get ())
+			{
+				sendGameGuiState (*client, gameGui->getCurrentState (), client->getActivePlayer (), saveingId);
+			}
+			else
+			{
+				sendGameGuiState (*client, playerGameGuiStates[client->getActivePlayer ().getNr ()], client->getActivePlayer (), saveingId);
+			}
+		});
+
+		allClientsSignalConnectionManager.connect (clients[i]->gameGuiStateReceived, [this, client](const cGameGuiState& state)
+		{
+			playerGameGuiStates[client->getActivePlayer ().getNr ()] = state;
+			if (client == activeClient.get ())
+			{
+				gameGui->restoreState (state);
+			}
+		});
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -150,6 +185,11 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	if (activeClient != nullptr)
 	{
 		connectClient (*activeClient);
+		auto iter = playerGameGuiStates.find (activeClient->getActivePlayer ().getNr ());
+		if (iter != playerGameGuiStates.end ())
+		{
+			gameGui->restoreState (iter->second);
+		}
 	}
 	else
 	{
@@ -578,15 +618,21 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		if (currentPlayerNumber != client.getActivePlayer ().getNr ()) return;
 
-		gameGui->getHud ().unlockEndButton ();
-
-		auto iter = std::find_if (clients.begin (), clients.end (), [=](const std::shared_ptr<cClient>& client){ return client->getActivePlayer ().getNr () == nextPlayerNumber; });
-		if (iter != clients.end ())
+		if (client.getGameSettings ()->getGameType () == eGameSettingsGameType::HotSeat)
 		{
-			setActiveClient (*iter);
-			application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer ().getName()), eWindowBackgrounds::Black));
+			gameGui->getHud ().unlockEndButton ();
+
+			auto iter = std::find_if (clients.begin (), clients.end (), [=](const std::shared_ptr<cClient>& client){ return client->getActivePlayer ().getNr () == nextPlayerNumber; });
+			if (iter != clients.end ())
+			{
+				playerGameGuiStates[currentPlayerNumber] = gameGui->getCurrentState ();
+
+				setActiveClient (*iter);
+
+				showNextPlayerDialog ();
+			}
+			else setActiveClient (nullptr);
 		}
-		else setActiveClient (nullptr);
 	});
 
 	clientSignalConnectionManager.connect (client.freezeModeChanged, [&](eFreezeMode mode)
@@ -675,7 +721,6 @@ void cGameGuiController::connectClient (cClient& client)
 		gameGui->getGameMap ().addEffect (effect);
 	});
 
-
 	//
 	// client player to GUI
 	//
@@ -683,6 +728,17 @@ void cGameGuiController::connectClient (cClient& client)
 
 	using namespace std::placeholders;
 	clientSignalConnectionManager.connect (player.reportAdded, std::bind (&cGameGuiController::handleReport, this, _1));
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::showNextPlayerDialog ()
+{
+	soundManager->mute ();
+	auto dialog = application.show (std::make_shared<cDialogOk> (lngPack.i18n ("Text~Multiplayer~Player_Turn", activeClient->getActivePlayer ().getName ()), eWindowBackgrounds::Black));
+	signalConnectionManager.connect (dialog->done, [this]()
+	{
+		soundManager->unmute ();
+	});
 }
 
 //------------------------------------------------------------------------------

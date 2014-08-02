@@ -33,6 +33,7 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/game/gameguistate.h"
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------
@@ -687,27 +688,12 @@ void sendTurn (cServer& server, int turn, const cPlayer& receiver)
 }
 
 //------------------------------------------------------------------------------
-void sendHudSettings (cServer& server, const cPlayer& player)
+void sendGameGuiState (cServer& server, const cGameGuiState& gameGuiState, const cPlayer& player)
 {
-	const sHudStateContainer& hudStates = *player.savedHud;
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_HUD_SETTINGS));
 
-	message->pushBool (hudStates.tntChecked);
-	message->pushBool (hudStates.hitsChecked);
-	message->pushBool (hudStates.lockChecked);
-	message->pushBool (hudStates.surveyChecked);
-	message->pushBool (hudStates.statusChecked);
-	message->pushBool (hudStates.scanChecked);
-	message->pushBool (hudStates.rangeChecked);
-	message->pushBool (hudStates.twoXChecked);
-	message->pushBool (hudStates.fogChecked);
-	message->pushBool (hudStates.ammoChecked);
-	message->pushBool (hudStates.gridChecked);
-	message->pushBool (hudStates.colorsChecked);
-	message->pushFloat (hudStates.zoom);
-	message->pushInt16 (hudStates.offY);
-	message->pushInt16 (hudStates.offX);
-	message->pushInt16 (hudStates.selUnitID);
+	gameGuiState.pushInto (*message);
+
 	server.sendNetMessage (message, &player);
 }
 

@@ -43,7 +43,6 @@ class cUnit;
 class cVehicle;
 class cPosition;
 
-struct sHudStateContainer;
 struct sTurnstartReport;
 struct sUnitData;
 
@@ -221,7 +220,6 @@ public:
 	int workingResearchCenterCount;  ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
-	AutoPtr<sHudStateContainer> savedHud;
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
 	bool isDefeated;        // true if the player has been defeated
 	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.

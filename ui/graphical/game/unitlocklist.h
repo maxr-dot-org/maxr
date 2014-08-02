@@ -39,6 +39,10 @@ public:
 
 	size_t getLockedUnitsCount () const;
 	const cUnit* getLockedUnit (size_t index) const;
+
+	void unlockAll ();
+
+	void lockUnit (const cUnit& unit);
 private:
 	std::vector<std::pair<const cUnit*, cSignalConnectionManager>> lockedUnits;
 

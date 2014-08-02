@@ -53,6 +53,7 @@ class cPosition;
 class cTurnClock;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
+class cGameGuiState;
 struct sSubBase;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -221,6 +222,9 @@ public:
 	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
 	mutable cSignal<void (const std::shared_ptr<cFx>&)> addedEffect;
+
+	mutable cSignal<void (int)> additionalSaveInfoRequested;
+	mutable cSignal<void (const cGameGuiState&)> gameGuiStateReceived;
 private:
 	void initPlayersWithMap();
 

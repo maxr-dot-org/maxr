@@ -51,6 +51,12 @@ void cUnitVideoWidget::stop ()
 }
 
 //------------------------------------------------------------------------------
+bool cUnitVideoWidget::isPlaying () const
+{
+	return playing;
+}
+
+//------------------------------------------------------------------------------
 void cUnitVideoWidget::setUnit (const cUnit* unit)
 {
 	if (!unit)

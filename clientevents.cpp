@@ -29,6 +29,7 @@
 #include "vehicles.h"
 #include "utility/position.h"
 #include "game/data/report/savedreport.h"
+#include "ui/graphical/game/gameguistate.h"
 
 using namespace std;
 
@@ -547,30 +548,15 @@ void sendWantResearchChange (const cClient& client, const std::array<int, cResea
 	client.sendNetMessage (message);
 }
 
-void sendSaveHudInfo (const cClient& client, int selectedUnitID, int ownerNr, int savingID)
+void sendGameGuiState (const cClient& client, const cGameGuiState& gameGuiState, const cPlayer& owner, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_HUD_INFO);
-	//TODO: gameGUI
-	//const cGameGui& gameGUI = client.getGameGUI();
-	//message->pushBool (gameGUI.tntChecked());
-	//message->pushBool (gameGUI.hitsChecked());
-	//message->pushBool (gameGUI.lockChecked());
-	//message->pushBool (gameGUI.surveyChecked());
-	//message->pushBool (gameGUI.statusChecked());
-	//message->pushBool (gameGUI.scanChecked());
-	//message->pushBool (gameGUI.rangeChecked());
-	//message->pushBool (gameGUI.twoXChecked());
-	//message->pushBool (gameGUI.fogChecked());
-	//message->pushBool (gameGUI.ammoChecked());
-	//message->pushBool (gameGUI.gridChecked());
-	//message->pushBool (gameGUI.colorChecked());
-	//message->pushFloat (gameGUI.getZoom());
-	//message->pushInt16 (gameGUI.getOffsetY());
-	//message->pushInt16 (gameGUI.getOffsetX());
-	//message->pushInt16 (selectedUnitID);
-	//message->pushInt16 (ownerNr);
-	//message->pushInt16 (savingID);
-	//client.sendNetMessage (message);
+
+	gameGuiState.pushInto (*message);
+	message->pushInt16 (owner.getNr());
+	message->pushInt16 (savingID);
+
+	client.sendNetMessage (message);
 }
 
 void sendSaveReportInfo (const cClient& client, const cSavedReport& savedReport, int ownerNr, int savingID)

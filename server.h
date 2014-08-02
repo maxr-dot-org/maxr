@@ -48,6 +48,7 @@ class cUnit;
 class cTurnClock;
 class cTurnTimeClock;
 class cTurnTimeDeadline;
+class cGameGuiState;
 struct sLandingUnit;
 class cGameSettings;
 
@@ -166,6 +167,7 @@ public:
 	*/
 	cPlayer* getPlayerFromString (const std::string& playerID);
 
+	void setActiveTurnPlayer (const cPlayer& player);
 	cPlayer* getActiveTurnPlayer ();
 
 	/**
@@ -295,6 +297,8 @@ public:
 
 	void setTurnLimit (const std::chrono::seconds& deadline);
 	void setTurnLimitActive (bool value);
+
+	const cGameGuiState& getPlayerGameGuiState (const cPlayer& player);
 private:
 	void startNewGame ();
 
@@ -522,6 +526,8 @@ private:
 	std::shared_ptr<cGameSettings> gameSettings;
 	std::shared_ptr<cCasualtiesTracker> casualtiesTracker;
 	sFreezeModes freezeModes;
+
+	std::map<int, cGameGuiState> playerGameGuiStates;
 public:
 	/** the map */
 	AutoPtr<cMap> Map;

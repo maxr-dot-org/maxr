@@ -42,7 +42,6 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 	splayer (splayer_),
 	landingPosX (-1),
 	landingPosY (-1),
-	savedHud (new sHudStateContainer),
 	numEcos (0),
 	lastDeletedUnit (0),
 	clan (-1),

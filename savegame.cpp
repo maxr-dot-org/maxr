@@ -32,6 +32,7 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/game/gameguistate.h"
 #include "utility/tounderlyingtype.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"
@@ -478,14 +479,17 @@ void cSavegame::loadPlayers (cServer& server)
 	XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
 	while (playerNode)
 	{
-		players.push_back (loadPlayer (playerNode, map));
+		cGameGuiState gameGuiState;
+		auto player = loadPlayer (playerNode, map, gameGuiState);
+		server.playerGameGuiStates[player->getNr ()] = gameGuiState;
+		players.push_back (std::move (player));
 		playernum++;
 		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
 	}
 }
 
 //--------------------------------------------------------------------------
-std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& map)
+std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& map, cGameGuiState& gameGuiState)
 {
 	const string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 	const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
@@ -524,23 +528,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	const XMLElement* hudNode = playerNode->FirstChildElement ("Hud");
 	if (hudNode)
 	{
-		// save the loaded hudoptions to the "HotHud" of the player so that the server can send them later to the clients
-		Player->savedHud->offX = hudNode->FirstChildElement ("Offset")->IntAttribute ("x");
-		Player->savedHud->offY = hudNode->FirstChildElement ("Offset")->IntAttribute ("y");
-		Player->savedHud->zoom = hudNode->FirstChildElement ("Zoom")->FloatAttribute ("num");
-		if (hudNode->FirstChildElement ("Colors")) Player->savedHud->colorsChecked = true;
-		if (hudNode->FirstChildElement ("Grid")) Player->savedHud->gridChecked = true;
-		if (hudNode->FirstChildElement ("Ammo")) Player->savedHud->ammoChecked = true;
-		if (hudNode->FirstChildElement ("Fog")) Player->savedHud->fogChecked = true;
-		if (hudNode->FirstChildElement ("Range")) Player->savedHud->rangeChecked = true;
-		if (hudNode->FirstChildElement ("Scan")) Player->savedHud->scanChecked = true;
-		if (hudNode->FirstChildElement ("Status")) Player->savedHud->statusChecked = true;
-		if (hudNode->FirstChildElement ("Survey")) Player->savedHud->surveyChecked = true;
-		if (hudNode->FirstChildElement ("Hitpoints")) Player->savedHud->hitsChecked = true;
-		if (hudNode->FirstChildElement ("MinimapZoom")) Player->savedHud->twoXChecked = true;
-		if (hudNode->FirstChildElement ("TNT")) Player->savedHud->tntChecked = true;
-		if (hudNode->FirstChildElement ("Lock")) Player->savedHud->lockChecked = true;
-		if (hudNode->FirstChildElement ("SelectedUnit")) Player->savedHud->selUnitID = hudNode->FirstChildElement ("SelectedUnit")->IntAttribute ("num");
+		gameGuiState.popFrom (*hudNode, version);
 	}
 
 	// read reports
@@ -1794,7 +1782,7 @@ void cSavegame::writeStandardUnitValues (const sUnitData& Data, int unitnum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player)
+void cSavegame::writeAdditionalInfo (const cGameGuiState& gameGuiState, std::vector<std::unique_ptr<cSavedReport>>& list, const cPlayer* player)
 {
 	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml"; //TODO: private method load()
 	if (SaveFile.LoadFile (fileName.c_str()) != 0) return;
@@ -1816,23 +1804,8 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<st
 	}
 	while (playerNode != NULL);
 
-	// write the hud settings
 	XMLElement* hudNode = addMainElement (playerNode, "Hud");
-	addAttributeElement (hudNode, "SelectedUnit", "num", iToStr (hudState.selUnitID));
-	addAttributeElement (hudNode, "Offset", "x", iToStr (hudState.offX), "y", iToStr (hudState.offY));
-	addAttributeElement (hudNode, "Zoom", "num", fToStr (hudState.zoom));
-	if (hudState.colorsChecked) addMainElement (hudNode, "Colors");
-	if (hudState.gridChecked) addMainElement (hudNode, "Grid");
-	if (hudState.ammoChecked) addMainElement (hudNode, "Ammo");
-	if (hudState.fogChecked) addMainElement (hudNode, "Fog");
-	if (hudState.twoXChecked) addMainElement (hudNode, "MinimapZoom");
-	if (hudState.rangeChecked) addMainElement (hudNode, "Range");
-	if (hudState.scanChecked) addMainElement (hudNode, "Scan");
-	if (hudState.statusChecked) addMainElement (hudNode, "Status");
-	if (hudState.surveyChecked) addMainElement (hudNode, "Survey");
-	if (hudState.lockChecked) addMainElement (hudNode, "Lock");
-	if (hudState.hitsChecked) addMainElement (hudNode, "Hitpoints");
-	if (hudState.tntChecked) addMainElement (hudNode, "TNT");
+	gameGuiState.pushInto (*hudNode);
 
 	// add reports
 	XMLElement* reportsNode = addMainElement (playerNode, "Reports");
