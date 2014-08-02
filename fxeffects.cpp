@@ -27,6 +27,7 @@
 #include "game/data/player/player.h"
 #include "video.h"
 #include "sound.h"
+#include "map.h"
 #include "utility/random.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectposition.h"
@@ -180,7 +181,7 @@ cFxExploSmall::cFxExploSmall (const cPosition& position_) :
 
 void cFxExploSmall::playSound (cSoundManager& soundManager) const
 {
-    soundManager.playSound (std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), position / 64));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), cPosition (position.x () / cStaticMap::tilePixelWidth, position.y () / cStaticMap::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -197,11 +198,11 @@ void cFxExploBig::playSound (cSoundManager& soundManager) const
 {
 	if (onWater)
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBigWet), position / 64));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBigWet), cPosition (position.x () / cStaticMap::tilePixelWidth, position.y () / cStaticMap::tilePixelHeight)));
 	}
 	else
 	{
-		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBig), position / 64));
+		soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPBig), cPosition (position.x () / cStaticMap::tilePixelWidth, position.y () / cStaticMap::tilePixelHeight)));
 	}
 }
 
@@ -215,7 +216,7 @@ cFxExploAir::cFxExploAir (const cPosition& position_) :
 
 void cFxExploAir::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), position / 64));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmall), cPosition (position.x () / cStaticMap::tilePixelWidth, position.y () / cStaticMap::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -228,7 +229,7 @@ cFxExploWater::cFxExploWater (const cPosition& position_) :
 
 void cFxExploWater::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmallWet), position / 64));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, getRandom (SoundData.EXPSmallWet), cPosition (position.x () / cStaticMap::tilePixelWidth, position.y () / cStaticMap::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
@@ -254,7 +255,7 @@ cFxAbsorb::cFxAbsorb (const cPosition& position_) :
 
 void cFxAbsorb::playSound (cSoundManager& soundManager) const
 {
-	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDAbsorb, position / 64));
+	soundManager.playSound (std::make_shared<cSoundEffectPosition> (eSoundEffectType::EffectExplosion, SoundData.SNDAbsorb, cPosition (position.x () / cStaticMap::tilePixelWidth, position.y () / cStaticMap::tilePixelHeight)));
 }
 
 //------------------------------------------------------------------------------
