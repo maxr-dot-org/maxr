@@ -89,13 +89,11 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalSingleplayerGameSaved::save, this, _1, _2));
 
+	terminate = false;
+
 	application.addRunnable (shared_from_this ());
 
-	signalConnectionManager.connect (gameGuiController->terminated, [&]()
-	{
-		// me pointer ensures that game object stays alive till this call has terminated
-		auto me = application.removeRunnable (*this);
-	});
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
 
 void cLocalSingleplayerGameSaved::setSaveGameNumber (int saveGameNumber_)

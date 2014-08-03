@@ -101,11 +101,11 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 
 	application.addRunnable (shared_from_this ());
 
-	signalConnectionManager.connect (gameGuiController->terminated, [&]()
-	{
-		// me pointer ensures that game object stays alive till this call has terminated
-		auto me = application.removeRunnable (*this);
-	});
+	terminate = false;
+
+	application.addRunnable (shared_from_this ());
+
+	signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
 
 void cLocalHotSeatGameSaved::setSaveGameNumber (int saveGameNumber_)

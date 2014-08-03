@@ -41,8 +41,6 @@ public:
 
     const std::vector<cPlayerBasicData>& getPlayers ();
     const cPlayerBasicData& getLocalPlayer ();
-
-	cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

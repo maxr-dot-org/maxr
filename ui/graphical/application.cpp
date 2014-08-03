@@ -112,9 +112,18 @@ void cApplication::execute ()
 	{
 		cEventManager::getInstance ().run ();
 
-		for (auto i = runnables.begin(); i != runnables.end (); ++i)
+		for (auto i = runnables.begin(); i != runnables.end (); /*erase in loop*/)
 		{
-			(*i)->run ();
+			const auto& runnable = *i;
+			if (runnable->wantsToTerminate ())
+			{
+				i = runnables.erase (i);
+			}
+			else
+			{
+				runnable->run ();
+				++i;
+			}
 		}
 
 		const auto activeWindow = getActiveWindow ();

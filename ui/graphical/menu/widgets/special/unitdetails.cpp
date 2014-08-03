@@ -168,7 +168,7 @@ void cUnitDetails::reset ()
 			symbolType = eUnitDataSymbolType::Gold;
 			break;
 		}
-		drawRow (rowIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
+		drawRow (rowIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo_7"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
 	}
 
 	if (unitObjectCurrentData->produceEnergy)

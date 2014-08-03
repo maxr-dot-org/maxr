@@ -240,7 +240,7 @@ void cGameGuiController::connectGuiStaticCommands ()
 {
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect (gameGui->terminated, [this](){ terminated (); });
+	signalConnectionManager.connect (gameGui->terminated, std::bind (&cSignal<void ()>::operator()<>, std::ref(terminated)));
 
 	signalConnectionManager.connect (gameGui->getChatBox ().commandEntered, std::bind (&cGameGuiController::handleChatCommand, this, _1));
 

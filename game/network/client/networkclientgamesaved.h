@@ -60,8 +60,6 @@ public:
 	const cPlayerBasicData& getLocalPlayer ();
 
 	int getLocalPlayerClan () const;
-
-	cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

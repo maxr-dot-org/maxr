@@ -22,13 +22,25 @@
 
 #include <memory>
 #include "utility/runnable.h"
+#include "maxrconfig.h"
 
 class cGame : public cRunnable, public std::enable_shared_from_this<cGame>
 {
 public:
+	cGame () :
+		terminate (false)
+	{}
 	virtual ~cGame () {}
 
 	virtual void save (int saveNumber, const std::string& saveName) = 0;
+
+	virtual bool wantsToTerminate () const MAXR_OVERRIDE_FUNCTION
+	{
+		return terminate;
+	}
+
+protected:
+	bool terminate;
 };
 
 #endif // game_gameH

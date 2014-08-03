@@ -351,14 +351,11 @@ void cMenuControllerMultiplayerHost::startSavedGame ()
     savedGame->setSaveGameNumber (windowNetworkLobby->getSaveGameNumber ());
 	savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared (), *windowNetworkLobby->getLocalPlayer ());
 
-	savedGame->start (application);
+	application.closeTill (*windowNetworkLobby);
+	windowNetworkLobby->close ();
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	signalConnectionManager.connect (savedGame->terminated, [&]()
-	{
-		application.closeTill (*windowNetworkLobby);
-		windowNetworkLobby->close ();
-		windowNetworkLobby = nullptr;
-	});
+	savedGame->start (application);
 }
 
 //------------------------------------------------------------------------------
@@ -463,14 +460,11 @@ void cMenuControllerMultiplayerHost::startNewGame ()
 {
 	if (!newGame) return;
 
-	newGame->start (application);
+	application.closeTill (*windowNetworkLobby);
+	windowNetworkLobby->close ();
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	signalConnectionManager.connect (newGame->terminated, [&]()
-	{
-		application.closeTill (*windowNetworkLobby);
-		windowNetworkLobby->close ();
-		windowNetworkLobby = nullptr;
-	});
+	newGame->start (application);
 }
 
 //------------------------------------------------------------------------------

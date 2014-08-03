@@ -186,14 +186,11 @@ void cMenuControllerMultiplayerClient::startSavedGame ()
 	savedGame->setGameSettings (windowNetworkLobby->getGameSettings());
 	savedGame->setPlayers (windowNetworkLobby->getPlayersNotShared (), *windowNetworkLobby->getLocalPlayer());
 
-	savedGame->start (application);
+	application.closeTill (*windowNetworkLobby);
+	windowNetworkLobby->close ();
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	signalConnectionManager.connect (savedGame->terminated, [&]()
-	{
-		application.closeTill (*windowNetworkLobby);
-		windowNetworkLobby->close ();
-		windowNetworkLobby = nullptr;
-	});
+	savedGame->start (application);
 }
 
 //------------------------------------------------------------------------------
@@ -278,14 +275,11 @@ void cMenuControllerMultiplayerClient::startNewGame ()
 {
 	if (!newGame) return;
 
-	newGame->start (application);
+	application.closeTill (*windowNetworkLobby);
+	windowNetworkLobby->close ();
+	signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
 
-	signalConnectionManager.connect(newGame->terminated, [&]()
-	{
-		application.closeTill (*windowNetworkLobby);
-		windowNetworkLobby->close ();
-		windowNetworkLobby = nullptr;
-	});
+	newGame->start (application);
 }
 
 //------------------------------------------------------------------------------
@@ -588,15 +582,11 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 		reconnectionGame->setStaticMap (staticMap);
 		reconnectionGame->setPlayers (players, localPlayer);
 
+		application.closeTill (*windowNetworkLobby);
+		windowNetworkLobby->close ();
+		signalConnectionManager.connect (windowNetworkLobby->terminated, [&]() { windowNetworkLobby = nullptr; });
+
 		reconnectionGame->start (application);
-
-
-		signalConnectionManager.connect (reconnectionGame->terminated, [&]()
-		{
-			application.closeTill (*windowNetworkLobby);
-			windowNetworkLobby->close ();
-			windowNetworkLobby = nullptr;
-		});
 	}
 	else
 	{
