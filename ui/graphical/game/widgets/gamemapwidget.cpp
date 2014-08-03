@@ -988,7 +988,6 @@ void cGameMapWidget::drawBaseUnits ()
 	{
 		auto& mapField = dynamicMap->getField (*i);
 		const auto& buildings = mapField.getBuildings ();
-		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
 		for (auto it = buildings.rbegin (); it != buildings.rend (); ++it)
 		{
 			if (*it == nullptr) continue; // should never happen
@@ -1001,10 +1000,9 @@ void cGameMapWidget::drawBaseUnits ()
 
 			if (!player || player->canSeeAnyAreaUnder (building))
 			{
-				// Draw big unit only once
-				// FIXME: bug when (x,y) is outside of the drawing screen.
-				if (building.getPosition() == *i)
+				if (shouldDrawUnit (building, *i, tileDrawingRange))
 				{
+					const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition());
 					unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 				}
 			}
@@ -1028,11 +1026,9 @@ void cGameMapWidget::drawTopBuildings ()
 		if (building == nullptr) continue;
 		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND) continue;
 		if (!player || !player->canSeeAnyAreaUnder (*building)) continue;
-		// make sure a big building is drawn only once
-		// FIXME: BUG: when PosX,PosY is outside of drawing screen
-		if (building->getPosition() != *i) continue;
+		if (!shouldDrawUnit(*building, *i, tileDrawingRange)) continue;
 
-		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
+		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building->getPosition());
 		unitDrawingEngine.drawUnit (*building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 
 		//if (debugOutput.debugBaseClient && building->SubBase)
@@ -1077,14 +1073,13 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 	{
 		auto& mapField = dynamicMap->getField (*i);
 
-		auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, *i);
-
 		const auto& buildings = mapField.getBuildings ();
 		for (auto it = buildings.begin (); it != buildings.end (); ++it)
 		{
 			const auto& building = *(*it);
 			if (building.data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition ());
 				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 			}
 		}
@@ -1093,6 +1088,7 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 			const auto& building = *(*it);
 			if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, building.getPosition ());
 				unitDrawingEngine.drawUnit (building, drawDestination, getZoomFactor (), &unitSelection, player.get ());
 			}
 		}
@@ -1100,13 +1096,34 @@ void cGameMapWidget::drawAboveSeaBaseUnits ()
 		auto vehicle = mapField.getVehicle();
 		if (vehicle && (vehicle->isUnitClearing () || vehicle->isUnitBuildingABuilding ()) && (player && player->canSeeAnyAreaUnder (*vehicle)))
 		{
-			// make sure a big vehicle is drawn only once
-			// FIXME: BUG: when PosX,PosY is outside of drawing screen
-			if (vehicle->getPosition() == *i)
+			if (shouldDrawUnit(*vehicle, *i, tileDrawingRange))
 			{
+				const auto drawDestination = computeTileDrawingArea (zoomedTileSize, zoomedStartTilePixelOffset, tileDrawingRange.first, vehicle->getPosition ());
 				unitDrawingEngine.drawUnit (*vehicle, drawDestination, getZoomFactor (), *dynamicMap, &unitSelection, player.get ());
 			}
 		}
+	}
+}
+
+//------------------------------------------------------------------------------
+bool cGameMapWidget::shouldDrawUnit (const cUnit& unit, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange)
+{
+	assert (unit.isAbove (visitingPosition));
+
+	if (!unit.data.isBig)
+	{
+		return true;
+	}
+	else
+	{
+		if (unit.getPosition ().x () < tileDrawingRange.first.x () || unit.getPosition ().y () < tileDrawingRange.first.y ())
+		{
+			cBox<cPosition> tileDrawingBox (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
+			auto intersectedArea = tileDrawingBox.intersection (unit.getArea ());
+
+			return visitingPosition == intersectedArea.getMinCorner ();
+		}
+		else return visitingPosition == unit.getPosition ();
 	}
 }
 

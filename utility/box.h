@@ -77,6 +77,8 @@ public:
 	 */
 	bool intersects(const cBox<PointType>& other) const;
 
+	cBox<PointType> intersection (const cBox<PointType>& other) const;
+
 	SDL_Rect toSdlRect () const;
 
 	void fromSdlRect (const SDL_Rect& rect);
@@ -195,13 +197,28 @@ bool cBox<PointType>::withinOrTouches(const PointType& point) const
 
 //------------------------------------------------------------------------------
 template<typename PointType>
-bool cBox<PointType>::intersects(const cBox<PointType>& rhs) const
+bool cBox<PointType>::intersects (const cBox<PointType>& other) const
 {
-	for(size_t d = 0; d < PointType::size(); ++d)
+	for (size_t d = 0; d < PointType::const_size::value; ++d)
 	{
-		if(std::min(maxCorner[d], rhs.getMaxCorner()[d]) < std::max(minCorner[d], rhs.getMinCorner()[d])) return false;
+		if (std::min (maxCorner[d], other.getMaxCorner ()[d]) < std::max (minCorner[d], other.getMinCorner ()[d])) return false;
 	}
 	return true;
+}
+
+//------------------------------------------------------------------------------
+template<typename PointType>
+cBox<PointType> cBox<PointType>::intersection (const cBox<PointType>& other) const
+{
+	assert (intersects (other));
+
+	cBox<PointType> result;
+	for (size_t d = 0; d < PointType::const_size::value; ++d)
+	{
+		result.getMinCorner ()[d] = std::max (minCorner[d], other.getMinCorner ()[d]);
+		result.getMaxCorner ()[d] = std::min (maxCorner[d], other.getMaxCorner ()[d]);
+	}
+	return result;
 }
 
 //------------------------------------------------------------------------------

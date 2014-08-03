@@ -235,6 +235,8 @@ private:
 	void drawExitPointsIf (const cUnit& unit, const std::function<bool (const cPosition&)>& predicate);
 	void drawBuildBand ();
 
+	bool shouldDrawUnit (const cUnit& unit, const cPosition& visitingPosition, const std::pair<cPosition, cPosition>& tileDrawingRange);
+
 	void addEffect ();
 	//
 	// position handling methods

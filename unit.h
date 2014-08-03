@@ -55,6 +55,8 @@ public:
 	const cPosition& getPosition () const;
 	void setPosition (cPosition position);
 
+	cBox<cPosition> getArea () const;
+
 	std::vector<cPosition> getAdjacentPositions () const;
 
 	int calcHealth (int damage) const;
@@ -162,9 +164,6 @@ public: // TODO: make protected/private and make getters/setters
 	cJob* job;
 
 	//-----------------------------------------------------------------------------
-protected:
-	cBox<cPosition> getArea() const;
-
 private:
     cPosition position;
 
