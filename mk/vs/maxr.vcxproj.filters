@@ -879,6 +879,9 @@
     <ClCompile Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerhotseat.cpp">
       <Filter>maxr\ui\graphical\menu\control</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\widgets\debugoutputwidget.cpp">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\attackJobs.h">
@@ -1792,6 +1795,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerhotseat.h">
       <Filter>maxr\ui\graphical\menu\control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\widgets\debugoutputwidget.h">
+      <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

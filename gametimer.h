@@ -22,7 +22,7 @@ class cServer;
 // TODO: comments
 class cGameTimer
 {
-	friend class cDebugOutput;
+	friend class cDebugOutputWidget;
 protected:
 	static Uint32 gameTimerCallback (Uint32 interval, void* arg);
 
@@ -62,7 +62,7 @@ public:
 
 class cGameTimerServer : public cGameTimer
 {
-	friend class cDebugOutput;
+	friend class cDebugOutputWidget;
 private:
 	int waitingForPlayer;
 
@@ -77,7 +77,7 @@ public:
 
 class cGameTimerClient : public cGameTimer
 {
-	friend class cDebugOutput;
+	friend class cDebugOutputWidget;
 private:
 	cClient* client;
 	unsigned int remoteChecksum;

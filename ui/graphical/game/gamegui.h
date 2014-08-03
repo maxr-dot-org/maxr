@@ -35,6 +35,7 @@ class cMiniMapWidget;
 class cGameMessageListView;
 class cChatBox;
 class cLabel;
+class cDebugOutputWidget;
 class cStaticMap;
 class cMap;
 class cPlayer;
@@ -79,6 +80,8 @@ public:
 	cGameMessageListView& getGameMessageList ();
 	const cGameMessageListView& getGameMessageList () const;
 
+	cDebugOutputWidget& getDebugOutput ();
+
 	void setInfoTexts (const std::string& primiaryText, const std::string& additionalText);
 
 	void exit ();
@@ -116,6 +119,7 @@ private:
 	cMiniMapWidget* miniMap;
 	cGameMessageListView* messageList;
     cChatBox* chatBox;
+	cDebugOutputWidget* debugOutput;
 
 	cLabel* primiaryInfoLabel;
 	cLabel* additionalInfoLabel;

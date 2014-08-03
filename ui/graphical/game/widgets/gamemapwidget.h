@@ -40,9 +40,11 @@ class cUnitContextMenuWidget;
 class cFx;
 class cMouseMode;
 class cSoundManager;
+class cDrawingCache;
 
 class cGameMapWidget : public cClickableWidget
 {
+	friend class cDebugOutputWidget;
 public:
 	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager);
 	~cGameMapWidget();
@@ -99,6 +101,9 @@ public:
 
 	void updateMouseCursor ();
 	void updateMouseCursor (cMouse& mouse);
+
+	cDrawingCache& getDrawingCache ();
+	const cDrawingCache& getDrawingCache () const;
 
 	cSignal<void ()> scrolled;
 	cSignal<void ()> zoomFactorChanged;

@@ -357,7 +357,7 @@ std::string iToHex (unsigned int x);
 std::string fToStr (float x);
 /**Converts pointer to string
 */
-std::string pToStr (void* x);
+std::string pToStr (const void* x);
 /**Converts bool to string
 */
 std::string bToStr (bool x);

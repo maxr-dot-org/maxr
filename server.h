@@ -97,7 +97,7 @@ class cServer : public INetMessageReceiver
 {
 	friend class cSavegame;
 	friend class cServerGame;
-	friend class cDebugOutput;
+	friend class cDebugOutputWidget;
 public:
 	/**
 	 * initialises the server class.
@@ -156,10 +156,11 @@ public:
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
+	*@param playerNumber The number of the player.
 	*@return The wanted player.
 	*/
-	cPlayer& getPlayerFromNumber (int number);
+	cPlayer& getPlayerFromNumber (int playerNumber);
+	const cPlayer& getPlayerFromNumber (int playerNumber) const;
 	/**
 	* returns the player identified by playerID
 	*@author eiko

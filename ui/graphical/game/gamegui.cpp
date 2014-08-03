@@ -30,6 +30,7 @@
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
 #include "ui/graphical/game/widgets/hudpanels.h"
 #include "ui/graphical/game/widgets/chatbox.h"
+#include "ui/graphical/game/widgets/debugoutputwidget.h"
 
 #include "ui/graphical/game/temp/animationtimer.h"
 
@@ -89,6 +90,9 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
     chatBox = addChild (std::make_unique<cChatBox> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
 
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
+
+	debugOutput = addChild (std::make_unique<cDebugOutputWidget> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), getSize ().x () - cHud::panelTotalWidth - 8));
+	debugOutput->setGameMap (gameMap);
 
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition (), getSize ().y (), animationTimer));
 
@@ -282,6 +286,12 @@ cGameMessageListView& cGameGui::getGameMessageList ()
 const cGameMessageListView& cGameGui::getGameMessageList () const
 {
 	return *messageList;
+}
+
+//------------------------------------------------------------------------------
+cDebugOutputWidget& cGameGui::getDebugOutput ()
+{
+	return *debugOutput;
 }
 
 //------------------------------------------------------------------------------

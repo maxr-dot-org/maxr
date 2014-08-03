@@ -65,7 +65,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 */
 class cClient : public INetMessageReceiver
 {
-	friend class cDebugOutput;
+	friend class cDebugOutputWidget;
 	friend class cPlayer;
 public:
 	cClient (cServer* server, std::shared_ptr<cTCP> network);

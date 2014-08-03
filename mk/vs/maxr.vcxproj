@@ -230,6 +230,7 @@
     <ClCompile Include="..\..\ui\graphical\game\unitselectionbox.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\chatbox.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\chatboxplayerlistviewitem.cpp" />
+    <ClCompile Include="..\..\ui\graphical\game\widgets\debugoutputwidget.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\gamemapwidget.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\gamemessagelistview.cpp" />
     <ClCompile Include="..\..\ui\graphical\game\widgets\gamemessagelistviewitem.cpp" />
@@ -484,6 +485,7 @@
     <ClInclude Include="..\..\ui\graphical\game\unitselectionbox.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\chatbox.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\chatboxplayerlistviewitem.h" />
+    <ClInclude Include="..\..\ui\graphical\game\widgets\debugoutputwidget.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\gamemapwidget.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\gamemessagelistview.h" />
     <ClInclude Include="..\..\ui\graphical\game\widgets\gamemessagelistviewitem.h" />

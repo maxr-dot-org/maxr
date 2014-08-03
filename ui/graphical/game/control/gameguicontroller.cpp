@@ -25,6 +25,7 @@
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
 #include "ui/graphical/game/widgets/chatbox.h"
+#include "ui/graphical/game/widgets/debugoutputwidget.h"
 
 #include "ui/graphical/game/temp/animationtimer.h"
 
@@ -181,6 +182,9 @@ void cGameGuiController::setActiveClient (std::shared_ptr<cClient> client_)
 	gameGui->setTurnClock (getTurnClock ());
 	gameGui->setTurnTimeClock (getTurnTimeClock ());
 	gameGui->setGameSettings (getGameSettings ());
+
+	gameGui->getDebugOutput ().setClient (activeClient.get ());
+	gameGui->getDebugOutput ().setServer (activeClient->getServer ());
 
 	if (activeClient != nullptr)
 	{
@@ -1066,52 +1070,58 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 		//
 		// commands that control the GUI itself
 		//
-		//if (command.compare ("/fps on") == 0) { debugOutput.showFPS = true; }
-		//else if (command.compare ("/fps off") == 0) { debugOutput.showFPS = false; }
-		//else if (command.compare ("/base client") == 0) { debugOutput.debugBaseClient = true; debugOutput.debugBaseServer = false; }
-		//else if (command.compare ("/base server") == 0) { if (server) debugOutput.debugBaseServer = true; debugOutput.debugBaseClient = false; }
-		//else if (command.compare ("/base off") == 0) { debugOutput.debugBaseServer = false; debugOutput.debugBaseClient = false; }
-		//else if (command.compare ("/sentry server") == 0) { if (server) debugOutput.debugSentry = true; }
-		//else if (command.compare ("/sentry off") == 0) { debugOutput.debugSentry = false; }
-		//else if (command.compare ("/fx on") == 0) { debugOutput.debugFX = true; }
-		//else if (command.compare ("/fx off") == 0) { debugOutput.debugFX = false; }
-		//else if (command.compare ("/trace server") == 0) { if (server) debugOutput.debugTraceServer = true; debugOutput.debugTraceClient = false; }
-		//else if (command.compare ("/trace client") == 0) { debugOutput.debugTraceClient = true; debugOutput.debugTraceServer = false; }
-		//else if (command.compare ("/trace off") == 0) { debugOutput.debugTraceServer = false; debugOutput.debugTraceClient = false; }
-		//else if (command.compare ("/ajobs on") == 0) { debugOutput.debugAjobs = true; }
-		//else if (command.compare ("/ajobs off") == 0) { debugOutput.debugAjobs = false; }
-		//else if (command.compare ("/players on") == 0) { debugOutput.debugPlayers = true; }
-		//else if (command.compare ("/players off") == 0) { debugOutput.debugPlayers = false; }
-		//else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
-		//else if (command.compare (0, 12, "/cache size ") == 0)
-		//{
-		//    int size = atoi (command.substr (12, command.length ()).c_str ());
-		//    // since atoi is too stupid to report an error,
-		//    // do an extra check, when the number is 0
-		//    if (size == 0 && command[12] != '0')
-		//    {
-		//        messageList->addMessage ("Wrong parameter");
-		//        return;
-		//    }
-		//    getDCache ()->setMaxCacheSize (size);
-		//}
-		//else if (command.compare ("/cache flush") == 0)
-		//{
-		//    getDCache ()->flush ();
-		//}
-		//else if (command.compare ("/cache debug on") == 0)
-		//{
-		//    debugOutput.debugCache = true;
-		//}
-		//else if (command.compare ("/cache debug off") == 0)
-		//{
-		//    debugOutput.debugCache = false;
-		//}
+		if (command.compare ("/base client") == 0) { gameGui->getDebugOutput().setDebugBaseClient (true);  gameGui->getDebugOutput().setDebugBaseServer  (false); }
+		else if (command.compare ("/base server") == 0) { gameGui->getDebugOutput().setDebugBaseServer (true);  gameGui->getDebugOutput().setDebugBaseClient  (false); }
+		else if (command.compare ("/base off") == 0) {  gameGui->getDebugOutput().setDebugBaseServer  (false);  gameGui->getDebugOutput().setDebugBaseClient  (false); }
+		else if (command.compare ("/sentry server") == 0) { gameGui->getDebugOutput().setDebugSentry (true); }
+		else if (command.compare ("/sentry off") == 0) {  gameGui->getDebugOutput().setDebugSentry  (false); }
+		else if (command.compare ("/fx on") == 0) {  gameGui->getDebugOutput().setDebugFX (true); }
+		else if (command.compare ("/fx off") == 0) {  gameGui->getDebugOutput().setDebugFX  (false); }
+		else if (command.compare ("/trace server") == 0) { gameGui->getDebugOutput().setDebugTraceServer (true);  gameGui->getDebugOutput().setDebugTraceClient  (false); }
+		else if (command.compare ("/trace client") == 0) {  gameGui->getDebugOutput().setDebugTraceClient (true);  gameGui->getDebugOutput().setDebugTraceServer  (false); }
+		else if (command.compare ("/trace off") == 0) {  gameGui->getDebugOutput().setDebugTraceServer  (false);  gameGui->getDebugOutput().setDebugTraceClient  (false); }
+		else if (command.compare ("/ajobs on") == 0) {  gameGui->getDebugOutput().setDebugAjobs (true); }
+		else if (command.compare ("/ajobs off") == 0) {  gameGui->getDebugOutput().setDebugAjobs  (false); }
+		else if (command.compare ("/players on") == 0) {  gameGui->getDebugOutput().setDebugPlayers (true); }
+		else if (command.compare ("/players off") == 0) {  gameGui->getDebugOutput().setDebugPlayers  (false); }
+		else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
+		else if (command.compare (0, 12, "/cache size ") == 0)
+		{
+		    int size = atoi (command.substr (12, command.length ()).c_str ());
+		    // since atoi is too stupid to report an error,
+		    // do an extra check, when the number is 0
+		    if (size == 0 && command[12] != '0')
+		    {
+				gameGui->getGameMessageList ().addMessage ("Wrong parameter");
+		        return;
+		    }
+		    gameGui->getGameMap().getDrawingCache().setMaxCacheSize (size);
+		}
+		else if (command.compare ("/cache flush") == 0)
+		{
+			gameGui->getGameMap ().getDrawingCache ().flush ();
+		}
+		else if (command.compare ("/cache debug on") == 0)
+		{
+			gameGui->getDebugOutput ().setDebugCache(true);
+		}
+		else if (command.compare ("/cache debug off") == 0)
+		{
+			gameGui->getDebugOutput ().setDebugCache(false);
+		}
+		else if (command.compare ("/sync debug on") == 0)
+		{
+			gameGui->getDebugOutput ().setDebugSync (true);
+		}
+		else if (command.compare ("/sync debug off") == 0)
+		{
+			gameGui->getDebugOutput ().setDebugSync (false);
+		}
 
 		//
 		// Commands for client or server
 		//
-		/*else*/ if (activeClient)
+		else if (activeClient)
 		{
 			auto server = activeClient->getServer ();
 			if (command.compare (0, 6, "/kick ") == 0)

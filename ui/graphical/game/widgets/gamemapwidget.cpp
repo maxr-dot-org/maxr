@@ -1956,6 +1956,18 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 }
 
 //------------------------------------------------------------------------------
+cDrawingCache& cGameMapWidget::getDrawingCache ()
+{
+	return unitDrawingEngine.drawingCache;
+}
+
+//------------------------------------------------------------------------------
+const cDrawingCache& cGameMapWidget::getDrawingCache () const
+{
+	return unitDrawingEngine.drawingCache;
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::runOwnedEffects ()
 {
 	for (size_t i = 0; i < effects.size (); ++i)

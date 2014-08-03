@@ -42,6 +42,9 @@ public:
     bool try_pop(T& destination);
     void clear();
 
+	size_type safe_size () const;
+	bool safe_empty () const;
+
     size_type unsafe_size() const;
     bool unsafe_empty() const;
 
@@ -53,7 +56,7 @@ public:
 private:
     std::deque<T> internalQueue;
 
-    cMutex mutex;
+    mutable cMutex mutex;
 };
 
 //------------------------------------------------------------------------------
@@ -95,6 +98,22 @@ void cConcurrentQueue<T>::clear()
     cMutex::Lock lock(mutex);
 
     internalQueue.clear();
+}
+
+//------------------------------------------------------------------------------
+template<typename T>
+typename cConcurrentQueue<T>::size_type cConcurrentQueue<T>::safe_size() const
+{
+	cMutex::Lock lock (mutex);
+	return unsafe_size ();
+}
+
+//------------------------------------------------------------------------------
+template<typename T>
+bool cConcurrentQueue<T>::safe_empty() const
+{
+	cMutex::Lock lock (mutex);
+	return unsafe_empty ();
 }
 
 //------------------------------------------------------------------------------

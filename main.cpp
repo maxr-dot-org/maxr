@@ -357,7 +357,7 @@ string fToStr (float x)
 	return strStream.str();
 }
 
-std::string pToStr (void* x)
+std::string pToStr (const void* x)
 {
 	stringstream strStream;
 	strStream << x;

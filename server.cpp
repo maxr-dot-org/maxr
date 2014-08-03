@@ -2811,8 +2811,15 @@ void cServer::markAllPlayersAsDisconnected()
 //------------------------------------------------------------------------------
 cPlayer& cServer::getPlayerFromNumber (int playerNumber)
 {
+	const auto& constMe = *this;
+	return const_cast<cPlayer&>(constMe.getPlayerFromNumber (playerNumber));
+}
+
+//------------------------------------------------------------------------------
+const cPlayer& cServer::getPlayerFromNumber (int playerNumber) const
+{
 	auto iter = std::find_if (playerList.begin (), playerList.end (), [playerNumber](const std::unique_ptr<cPlayer>& player){ return player->getNr () == playerNumber; });
-	if (iter == playerList.end ()) throw std::runtime_error ("Could not find player with number '" + iToStr(playerNumber) + "'");
+	if (iter == playerList.end ()) throw std::runtime_error ("Could not find player with number '" + iToStr (playerNumber) + "'");
 
 	auto& player = *iter;
 
