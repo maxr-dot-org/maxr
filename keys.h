@@ -23,6 +23,12 @@
 #include "defines.h"
 #include "input/keyboard/keysequence.h"
 
+enum class eMouseStyle
+{
+	OldSchool,
+	Modern
+};
+
 // Globale Daten /////////////////////////////////////////////////////////////
 class cKeysList
 {
@@ -31,6 +37,8 @@ public:
 
 	void loadFromFile ();
 	void saveToFile ();
+
+	eMouseStyle getMouseStyle () const;
 
 	cKeySequence keyExit;
 	cKeySequence keyJumpToAction;
@@ -149,11 +157,10 @@ private:
 	const static std::string keyUnitMenuUpgradeName;
 	const static std::string keyUnitMenuDestroyName;
 
+	eMouseStyle mouseStyle;
+
 	bool tryLoadSingleKey (const tinyxml2::XMLElement& parentElement, const std::string& elementName, cKeySequence& destination);
 	void saveSingleKey (tinyxml2::XMLElement& parentElement, const std::string& elementName, const cKeySequence& source);
 } EX KeysList;
-
-typedef enum {OldSchool, Modern} eMouseStyle;
-EX eMouseStyle MouseStyle;
 
 #endif // keys_H

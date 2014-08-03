@@ -41,11 +41,11 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 
 	const bool changeAllowed = true; // FIXME: parameter?!
 
-	if (MouseStyle == OldSchool && unitSelection.selectUnitAt (field, false))
+	if (KeysList.getMouseStyle () == eMouseStyle::OldSchool && unitSelection.selectUnitAt (field, false))
 	{
 		/*do nothing here*/
 	}
-	else if (MouseStyle == Modern &&
+	else if (KeysList.getMouseStyle () == eMouseStyle::Modern &&
 		(
 			!changeAllowed ||
 			(

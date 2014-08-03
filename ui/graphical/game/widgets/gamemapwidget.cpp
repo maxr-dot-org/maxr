@@ -1740,7 +1740,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 
 	if (button == eMouseButtonType::Right)
 	{
-		if (MouseStyle == OldSchool && !mouse.isButtonPressed (eMouseButtonType::Left))
+		if (KeysList.getMouseStyle() == eMouseStyle::OldSchool && !mouse.isButtonPressed (eMouseButtonType::Left))
 		{
 			if (selectedUnit && (overVehicle == selectedUnit ||
 								 overPlane == selectedUnit ||
@@ -1755,7 +1755,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			}
 		}
 		else if ((!mouse.isButtonPressed (eMouseButtonType::Left) /*&& rightMouseBox.isTooSmall ()*/) ||
-				 (MouseStyle == OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
+				 (KeysList.getMouseStyle () == eMouseStyle::OldSchool && mouse.isButtonPressed (eMouseButtonType::Left)))
 		{
 			if (mouseMode->getType() == eMouseModeType::Help)
 			{

@@ -191,7 +191,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 							field.getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
 						) ||
 						(
-							MouseStyle == OldSchool &&
+							KeysList.getMouseStyle() == eMouseStyle::OldSchool &&
 							field.getPlane()
 						)
 					) &&
@@ -199,7 +199,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 						selectedVehicle->data.factorAir == 0 ||
 						field.getPlane() ||
 						(
-							MouseStyle == OldSchool &&
+							KeysList.getMouseStyle() == eMouseStyle::OldSchool &&
 							(
 								field.getVehicle() ||
 								(

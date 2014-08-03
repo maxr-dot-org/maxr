@@ -143,7 +143,8 @@ cKeysList::cKeysList () :
 	keyUnitMenuDistribute (cKeyCombination (eKeyModifierType::None, SDLK_d)),
 	keyUnitMenuResearch (cKeyCombination (eKeyModifierType::None, SDLK_r)),
 	keyUnitMenuUpgrade (cKeyCombination (eKeyModifierType::None, SDLK_u)),
-	keyUnitMenuDestroy (cKeyCombination (eKeyModifierType::None, SDLK_d))
+	keyUnitMenuDestroy (cKeyCombination (eKeyModifierType::None, SDLK_d)),
+	mouseStyle (eMouseStyle::Modern)
 {}
 
 //------------------------------------------------------------------------------
@@ -260,15 +261,15 @@ void cKeysList::loadFromFile ()
 		{
 			if (strcmp (attribute->Value (), "OLD_SCHOOL") == 0)
 			{
-				MouseStyle = OldSchool;
+				mouseStyle = eMouseStyle::OldSchool;
 			}
 			else if (strcmp (attribute->Value (), "MODERN") == 0)
 			{
-				MouseStyle = Modern;
+				mouseStyle = eMouseStyle::Modern;
 			}
 			else
 			{
-				MouseStyle = Modern;
+				mouseStyle = eMouseStyle::Modern;
 				Log.write (std::string("Unknown mouse style '") + attribute->Value () + "'. Fall back to modern style.", LOG_TYPE_WARNING);
 			}
 		}
@@ -356,7 +357,7 @@ void cKeysList::saveToFile ()
 	rootElement->LinkEndChild (mouseElement);
 
 	auto mouseStyleElement = mouseElement->GetDocument ()->NewElement ("MOUSE_STYLE");
-	mouseStyleElement->SetAttribute ("Text", MouseStyle == OldSchool ? "OLD_SCHOOL" : "MODERN");
+	mouseStyleElement->SetAttribute ("Text", mouseStyle == eMouseStyle::OldSchool ? "OLD_SCHOOL" : "MODERN");
 	mouseElement->LinkEndChild (mouseStyleElement);
 
 	const auto errorCode = keysXml.SaveFile (KEYS_XMLUsers);
@@ -406,4 +407,10 @@ void cKeysList::saveSingleKey (tinyxml2::XMLElement& parentElement, const std::s
 	keyElement->SetAttribute ("Text", source.toString().c_str());
 
 	parentElement.LinkEndChild (keyElement);
+}
+
+//------------------------------------------------------------------------------
+eMouseStyle cKeysList::getMouseStyle () const
+{
+	return mouseStyle;
 }
