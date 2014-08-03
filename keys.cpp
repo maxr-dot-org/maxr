@@ -59,6 +59,7 @@ const std::string cKeysList::keySurveyName = "KeySurvey";
 const std::string cKeysList::keyCenterUnitName = "KeyCenterUnit";
 const std::string cKeysList::keyUnitDoneName = "KeyUnitDone";
 const std::string cKeysList::keyUnitDoneAndNextName = "KeyUnitDoneAndNext";
+const std::string cKeysList::keyAllDoneAndNextName = "KeyAllDoneAndNext";
 const std::string cKeysList::keyUnitNextName = "KeyUnitNext";
 const std::string cKeysList::keyUnitPrevName = "KeyUnitPrev";
 const std::string cKeysList::keyUnitMenuAttackName = "KeyUnitMenuAttack";
@@ -118,6 +119,7 @@ cKeysList::cKeysList () :
 	keyCenterUnit (cKeyCombination (eKeyModifierType::None, SDLK_f)),
 	keyUnitDone (cKeyCombination (eKeyModifierType::None, SDLK_e)),
 	keyUnitDoneAndNext (cKeyCombination (eKeyModifierType::None, SDLK_SPACE)),
+	keyAllDoneAndNext (cKeyCombination (toEnumFlag(eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_SPACE)),
 	keyUnitNext (cKeyCombination (eKeyModifierType::None, SDLK_w)),
 	keyUnitPrev (cKeyCombination (eKeyModifierType::None, SDLK_q)),
 	keyUnitMenuAttack (cKeyCombination (eKeyModifierType::None, SDLK_a)),
@@ -222,6 +224,7 @@ void cKeysList::loadFromFile ()
 	tryLoadSingleKey (*keysElement, keyCenterUnitName, keyCenterUnit);
 	tryLoadSingleKey (*keysElement, keyUnitDoneName, keyUnitDone);
 	tryLoadSingleKey (*keysElement, keyUnitDoneAndNextName, keyUnitDoneAndNext);
+	tryLoadSingleKey (*keysElement, keyAllDoneAndNextName, keyAllDoneAndNext);
 	tryLoadSingleKey (*keysElement, keyUnitNextName, keyUnitNext);
 	tryLoadSingleKey (*keysElement, keyUnitPrevName, keyUnitPrev);
 	tryLoadSingleKey (*keysElement, keyUnitMenuAttackName, keyUnitMenuAttack);

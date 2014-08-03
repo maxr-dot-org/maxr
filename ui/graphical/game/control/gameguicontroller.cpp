@@ -222,15 +222,14 @@ void cGameGuiController::initShortcuts ()
 	auto doneAndNextShortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyUnitDoneAndNext));
 	signalConnectionManager.connect (doneAndNextShortcut->triggered, [&]()
 	{
-		auto keyboard = application.getActiveKeyboard ();
-		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
-		{
-			resumeAllMoveJobsTriggered ();
-		}
-		else
-		{
-			markSelectedUnitAsDone ();
-		}
+		markSelectedUnitAsDone ();
+		selectNextUnit ();
+	});
+
+	auto allDoneAndNextShortcut = gameGui->addShortcut (std::make_unique<cShortcut> (KeysList.keyAllDoneAndNext));
+	signalConnectionManager.connect (allDoneAndNextShortcut->triggered, [&]()
+	{
+		resumeAllMoveJobsTriggered ();
 		selectNextUnit ();
 	});
 }
@@ -240,7 +239,7 @@ void cGameGuiController::connectGuiStaticCommands ()
 {
 	using namespace std::placeholders;
 
-	signalConnectionManager.connect (gameGui->terminated, std::bind (&cSignal<void ()>::operator()<>, std::ref(terminated)));
+	signalConnectionManager.connect (gameGui->terminated, [this](){ terminated (); });
 
 	signalConnectionManager.connect (gameGui->getChatBox ().commandEntered, std::bind (&cGameGuiController::handleChatCommand, this, _1));
 

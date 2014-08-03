@@ -99,8 +99,6 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 	using namespace std::placeholders;
 	signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalHotSeatGameSaved::save, this, _1, _2));
 
-	application.addRunnable (shared_from_this ());
-
 	terminate = false;
 
 	application.addRunnable (shared_from_this ());

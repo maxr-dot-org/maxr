@@ -64,6 +64,7 @@ public:
 	cKeySequence keyCenterUnit;
 	cKeySequence keyUnitDone;
 	cKeySequence keyUnitDoneAndNext;
+	cKeySequence keyAllDoneAndNext;
 	cKeySequence keyUnitNext;
 	cKeySequence keyUnitPrev;
 	cKeySequence keyUnitMenuAttack;
@@ -122,6 +123,7 @@ private:
 	const static std::string keyCenterUnitName;
 	const static std::string keyUnitDoneName;
 	const static std::string keyUnitDoneAndNextName;
+	const static std::string keyAllDoneAndNextName;
 	const static std::string keyUnitNextName;
 	const static std::string keyUnitPrevName;
 	const static std::string keyUnitMenuAttackName;
