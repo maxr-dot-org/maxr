@@ -30,8 +30,8 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/gamegui.h"
-#include "game/local/singleplayer/localsingleplayergamenew.h"
-#include "game/local/singleplayer/localsingleplayergamesaved.h"
+#include "game/startup/local/singleplayer/localsingleplayergamenew.h"
+#include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
 
 #include "main.h"
 #include "network.h"

@@ -136,29 +136,8 @@
     <Filter Include="maxr\ui\graphical\menu\windows\windownetworklobbyhost">
       <UniqueIdentifier>{416362b4-b3ff-4cac-850a-2f57bfcf2755}</UniqueIdentifier>
     </Filter>
-    <Filter Include="maxr\game\local">
-      <UniqueIdentifier>{1a9ca861-0e91-4994-90b1-e3594a59184c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="maxr\game\network">
-      <UniqueIdentifier>{44a49d4c-ca9d-4169-ac5f-0ac37b171c2b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="maxr\game\local\singleplayer">
-      <UniqueIdentifier>{d8969f77-39bd-4e7c-8a92-482241b3f117}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="maxr\game\local\hotseat">
-      <UniqueIdentifier>{3ad7e2e3-fb1c-4cde-b67e-8f4f16233ac5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="maxr\game\network\host">
-      <UniqueIdentifier>{f3293f3c-b639-43a6-8f86-e084515b9cb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="maxr\game\network\client">
-      <UniqueIdentifier>{8b53c846-f4fb-475d-9b39-90722310cde3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="maxr\game\logic">
       <UniqueIdentifier>{de955a25-911a-4bf4-8806-3070541ddccc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="maxr\ui\graphical\control">
-      <UniqueIdentifier>{a06463be-4a3e-43fe-9845-e2dac75d8ef7}</UniqueIdentifier>
     </Filter>
     <Filter Include="maxr\utility\signal\novariadic">
       <UniqueIdentifier>{fc3abc47-5274-4f10-ae7e-2f6b1d571334}</UniqueIdentifier>
@@ -201,6 +180,30 @@
     </Filter>
     <Filter Include="maxr\ui\graphical\game\control">
       <UniqueIdentifier>{f59148d9-bc6f-4350-81fd-4132648e1c1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup">
+      <UniqueIdentifier>{f5cae0a0-161a-4f4e-baa5-1220af35f559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup\network">
+      <UniqueIdentifier>{44a49d4c-ca9d-4169-ac5f-0ac37b171c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup\network\host">
+      <UniqueIdentifier>{f3293f3c-b639-43a6-8f86-e084515b9cb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup\network\client">
+      <UniqueIdentifier>{8b53c846-f4fb-475d-9b39-90722310cde3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup\local">
+      <UniqueIdentifier>{1a9ca861-0e91-4994-90b1-e3594a59184c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup\local\singleplayer">
+      <UniqueIdentifier>{d8969f77-39bd-4e7c-8a92-482241b3f117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\startup\local\hotseat">
+      <UniqueIdentifier>{3ad7e2e3-fb1c-4cde-b67e-8f4f16233ac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\ui\graphical\menu\control">
+      <UniqueIdentifier>{a06463be-4a3e-43fe-9845-e2dac75d8ef7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -654,44 +657,8 @@
     <ClCompile Include="..\..\ui\graphical\menu\widgets\special\lobbychatboxlistviewitem.cpp">
       <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergame.cpp">
-      <Filter>maxr\game\local\singleplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamenew.cpp">
-      <Filter>maxr\game\local\singleplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\local\singleplayer\localsingleplayergamesaved.cpp">
-      <Filter>maxr\game\local\singleplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\host\networkhostgame.cpp">
-      <Filter>maxr\game\network\host</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\host\networkhostgamenew.cpp">
-      <Filter>maxr\game\network\host</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\host\networkhostgamesaved.cpp">
-      <Filter>maxr\game\network\host</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\game\logic\landingpositionmanager.cpp">
       <Filter>maxr\game\logic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.cpp">
-      <Filter>maxr\ui\graphical\control</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.cpp">
-      <Filter>maxr\ui\graphical\control</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\client\networkclientgame.cpp">
-      <Filter>maxr\game\network\client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\client\networkclientgamenew.cpp">
-      <Filter>maxr\game\network\client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\client\networkclientgamesaved.cpp">
-      <Filter>maxr\game\network\client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\network\client\networkclientgamereconnection.cpp">
-      <Filter>maxr\game\network\client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\widgets\chatbox.cpp">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
@@ -855,17 +822,8 @@
     <ClCompile Include="..\..\game\data\player\playerbasicdata.cpp">
       <Filter>maxr\game\data\player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ui\graphical\control\menucontrollermultiplayerhotseat.cpp">
-      <Filter>maxr\ui\graphical\control</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ui\graphical\menu\windows\windowplayerselection\windowplayerselection.cpp">
       <Filter>maxr\ui\graphical\menu\windows\windowplayerselection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\local\hotseat\localhotseatgamenew.cpp">
-      <Filter>maxr\game\local\hotseat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\local\hotseat\localhotseatgame.cpp">
-      <Filter>maxr\game\local\hotseat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\control\gameguicontroller.cpp">
       <Filter>maxr\ui\graphical\game\control</Filter>
@@ -873,8 +831,53 @@
     <ClCompile Include="..\..\ui\graphical\game\gameguistate.cpp">
       <Filter>maxr\ui\graphical\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\game\local\hotseat\localhotseatgamesaved.cpp">
-      <Filter>maxr\game\local\hotseat</Filter>
+    <ClCompile Include="..\..\game\startup\network\host\networkhostgame.cpp">
+      <Filter>maxr\game\startup\network\host</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\network\host\networkhostgamenew.cpp">
+      <Filter>maxr\game\startup\network\host</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\network\host\networkhostgamesaved.cpp">
+      <Filter>maxr\game\startup\network\host</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\network\client\networkclientgame.cpp">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\network\client\networkclientgamenew.cpp">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\network\client\networkclientgamereconnection.cpp">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\network\client\networkclientgamesaved.cpp">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\local\singleplayer\localsingleplayergame.cpp">
+      <Filter>maxr\game\startup\local\singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\local\singleplayer\localsingleplayergamenew.cpp">
+      <Filter>maxr\game\startup\local\singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\local\singleplayer\localsingleplayergamesaved.cpp">
+      <Filter>maxr\game\startup\local\singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\local\hotseat\localhotseatgame.cpp">
+      <Filter>maxr\game\startup\local\hotseat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\local\hotseat\localhotseatgamenew.cpp">
+      <Filter>maxr\game\startup\local\hotseat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\startup\local\hotseat\localhotseatgamesaved.cpp">
+      <Filter>maxr\game\startup\local\hotseat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerclient.cpp">
+      <Filter>maxr\ui\graphical\menu\control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerhost.cpp">
+      <Filter>maxr\ui\graphical\menu\control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerhotseat.cpp">
+      <Filter>maxr\ui\graphical\menu\control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1301,9 +1304,6 @@
     <ClInclude Include="..\..\utility\indexiterator.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\game.h">
-      <Filter>maxr\game</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\temp\animationtimer.h">
       <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClInclude>
@@ -1517,38 +1517,14 @@
     <ClInclude Include="..\..\ui\graphical\menu\widgets\special\lobbychatboxlistviewitem.h">
       <Filter>maxr\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergame.h">
-      <Filter>maxr\game\local\singleplayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamenew.h">
-      <Filter>maxr\game\local\singleplayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\local\singleplayer\localsingleplayergamesaved.h">
-      <Filter>maxr\game\local\singleplayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\network\host\networkhostgame.h">
-      <Filter>maxr\game\network\host</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\network\host\networkhostgamenew.h">
-      <Filter>maxr\game\network\host</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\network\host\networkhostgamesaved.h">
-      <Filter>maxr\game\network\host</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\game\logic\landingpositionmanager.h">
       <Filter>maxr\game\logic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\concurrentqueue.h">
       <Filter>maxr\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhost.h">
-      <Filter>maxr\ui\graphical\control</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\utility\runnable.h">
       <Filter>maxr\utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerclient.h">
-      <Filter>maxr\ui\graphical\control</Filter>
     </ClInclude>
     <ClInclude Include="..\..\utility\signal\novariadic\signal_0.h">
       <Filter>maxr\utility\signal\novariadic</Filter>
@@ -1565,20 +1541,8 @@
     <ClInclude Include="..\..\utility\signal\novariadic\signal_4.h">
       <Filter>maxr\utility\signal\novariadic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\network\client\networkclientgame.h">
-      <Filter>maxr\game\network\client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\network\client\networkclientgamenew.h">
-      <Filter>maxr\game\network\client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\network\client\networkclientgamesaved.h">
-      <Filter>maxr\game\network\client</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\game\logic\landingpositionstate.h">
       <Filter>maxr\game\logic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\network\client\networkclientgamereconnection.h">
-      <Filter>maxr\game\network\client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\widgets\chatbox.h">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
@@ -1769,17 +1733,8 @@
     <ClInclude Include="..\..\game\data\player\playerbasicdata.h">
       <Filter>maxr\game\data\player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ui\graphical\control\menucontrollermultiplayerhotseat.h">
-      <Filter>maxr\ui\graphical\control</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ui\graphical\menu\windows\windowplayerselection\windowplayerselection.h">
       <Filter>maxr\ui\graphical\menu\windows\windowplayerselection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\local\hotseat\localhotseatgamenew.h">
-      <Filter>maxr\game\local\hotseat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\local\hotseat\localhotseatgame.h">
-      <Filter>maxr\game\local\hotseat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\control\gameguicontroller.h">
       <Filter>maxr\ui\graphical\game\control</Filter>
@@ -1787,8 +1742,56 @@
     <ClInclude Include="..\..\ui\graphical\game\gameguistate.h">
       <Filter>maxr\ui\graphical\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\local\hotseat\localhotseatgamesaved.h">
-      <Filter>maxr\game\local\hotseat</Filter>
+    <ClInclude Include="..\..\game\startup\game.h">
+      <Filter>maxr\game\startup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\host\networkhostgame.h">
+      <Filter>maxr\game\startup\network\host</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\host\networkhostgamenew.h">
+      <Filter>maxr\game\startup\network\host</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\host\networkhostgamesaved.h">
+      <Filter>maxr\game\startup\network\host</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\client\networkclientgame.h">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\client\networkclientgamenew.h">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\client\networkclientgamereconnection.h">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\network\client\networkclientgamesaved.h">
+      <Filter>maxr\game\startup\network\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\local\singleplayer\localsingleplayergame.h">
+      <Filter>maxr\game\startup\local\singleplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\local\singleplayer\localsingleplayergamenew.h">
+      <Filter>maxr\game\startup\local\singleplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\local\singleplayer\localsingleplayergamesaved.h">
+      <Filter>maxr\game\startup\local\singleplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\local\hotseat\localhotseatgame.h">
+      <Filter>maxr\game\startup\local\hotseat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\local\hotseat\localhotseatgamenew.h">
+      <Filter>maxr\game\startup\local\hotseat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\startup\local\hotseat\localhotseatgamesaved.h">
+      <Filter>maxr\game\startup\local\hotseat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerclient.h">
+      <Filter>maxr\ui\graphical\menu\control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerhost.h">
+      <Filter>maxr\ui\graphical\menu\control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\menu\control\menucontrollermultiplayerhotseat.h">
+      <Filter>maxr\ui\graphical\menu\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

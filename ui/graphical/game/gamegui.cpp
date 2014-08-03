@@ -53,7 +53,7 @@
 #include "attackjobs.h"
 #include "log.h"
 #include "netmessage.h"
-#include "game/game.h"
+#include "game/startup/game.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
