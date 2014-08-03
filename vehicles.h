@@ -303,7 +303,8 @@ public:
 
 	cAutoMJob* getAutoMoveJob ();
 	const cAutoMJob* getAutoMoveJob () const;
-	void setAutoMoveJob (std::unique_ptr<cAutoMJob> autoMoveJob);
+	void startAutoMoveJob (cClient& client);
+	void stopAutoMoveJob ();
 
 	/**
 	* return the unit which contains this vehicle
@@ -353,7 +354,7 @@ private:
 	cPosition tileMovementOffset;  // offset within tile during movement
 
 	cClientMoveJob* clientMoveJob;
-	std::unique_ptr<cAutoMJob> autoMoveJob; //the auto move AI of the vehicle
+	std::shared_ptr<cAutoMJob> autoMoveJob; //the auto move AI of the vehicle
 
 	bool loaded;
 	bool moving;

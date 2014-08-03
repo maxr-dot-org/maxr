@@ -1583,11 +1583,11 @@ void cVehicle::executeAutoMoveJobCommand (cClient& client)
 		return;
 	if (!autoMoveJob)
 	{
-		autoMoveJob = std::make_unique<cAutoMJob> (client, this);
+		startAutoMoveJob (client);
 	}
 	else
 	{
-		autoMoveJob = nullptr;
+		stopAutoMoveJob ();
 	}
 }
 
@@ -1827,8 +1827,23 @@ const cAutoMJob* cVehicle::getAutoMoveJob () const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::setAutoMoveJob (std::unique_ptr<cAutoMJob> autoMoveJob_)
+void cVehicle::startAutoMoveJob (cClient& client)
 {
-	std::swap (autoMoveJob, autoMoveJob_);
-	if (autoMoveJob != autoMoveJob_) autoMoveJobChanged ();
+	if (autoMoveJob) return;
+
+	autoMoveJob = std::make_shared<cAutoMJob> (client, *this);
+	client.addAutoMoveJob (autoMoveJob);
+
+	autoMoveJobChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::stopAutoMoveJob ()
+{
+	if (autoMoveJob)
+	{
+		autoMoveJob->stop ();
+		autoMoveJob = nullptr;
+		autoMoveJobChanged ();
+	}
 }

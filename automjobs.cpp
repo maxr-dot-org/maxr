@@ -57,95 +57,60 @@ static const float G = 1.8f; // how important is to go to directions where resou
 static const float MAX_DISTANCE_OP = 19.f; //when the distance to the OP exceeds this value, the OP is changed
 static const float DISTANCE_NEW_OP = 7.f; //the new OP will be between the surveyor and the old OP and has distance of DISTANCE_NEW_OP to the surveyor
 
-static std::vector<cAutoMJob*> autoMJobs;
-
-// static function that calls DoAutoMove for all active auto move jobs
-// this function is periodically called by the engine
-/*static*/ void cAutoMJob::handleAutoMoveJobs()
-{
-	for (size_t i = 0; i != ::autoMJobs.size(); ++i)
-	{
-		::autoMJobs[i]->DoAutoMove (::autoMJobs, i);
-		if (::autoMJobs[i]->isFinished())
-		{
-			//delete ::autoMJobs[i];
-			//--i;
-		}
-	}
-}
-
 //functions of cAutoMJobs
 
-cAutoMJob::cAutoMJob (cClient& client_, cVehicle* vehicle) :
-	client (&client_),
-	vehicle (vehicle)
+cAutoMJob::cAutoMJob (cClient& client_, cVehicle& vehicle_) :
+	client (client_),
+	vehicle (vehicle_)
 {
-	::autoMJobs.push_back (this);
-	lastDestination = vehicle->getPosition();
-	// this is just to prevent,
-	// that possibly all surveyors try to calc their next move in the same frame
-	n = (int) ::autoMJobs.size() % WAIT_FRAMES;
+	lastDestination = vehicle.getPosition();
 	finished = false;
-	operationPoint = vehicle->getPosition();
+	operationPoint = vehicle.getPosition();
 	playerMJob = false;
-}
 
-//destruktor for cAutoMJob
-cAutoMJob::~cAutoMJob()
-{
-	if (!playerMJob)
-	{
-		sendWantStopMove (*client, vehicle->iID);
-	}
-	sendSetAutoStatus (*client, vehicle->iID, false);
-
-	Remove (::autoMJobs, this);
-
-	vehicle->setAutoMoveJob (nullptr);
+	sendSetAutoStatus (client, vehicle.iID, true);
 }
 
 // performs the auto move of a vehicle and
 // adds new mjobs to the engine, if necessary
-void cAutoMJob::DoAutoMove (const std::vector<cAutoMJob*>& jobs, int iNumber)
+void cAutoMJob::doAutoMove (const std::vector<cAutoMJob*>& jobs)
 {
-	if (vehicle->isBeeingAttacked()) return;
-	if (client->isFreezed()) return;
-	if (vehicle->owner != &client->getActivePlayer()) return;
+	if (vehicle.isBeeingAttacked()) return;
+	if (client.isFreezed()) return;
+	if (vehicle.owner != &client.getActivePlayer()) return;
 
-	if (vehicle->getClientMoveJob () == nullptr || vehicle->getClientMoveJob ()->bFinished)
+	if (vehicle.getClientMoveJob () == nullptr || vehicle.getClientMoveJob ()->bFinished)
 	{
-		if (n > WAIT_FRAMES)
-		{
-			changeOP();
-			PlanNextMove (jobs);
-			n = 0;
-		}
-		else
-		{
-			n++;
-		}
+		changeOP();
+		planNextMove (jobs);
 	}
 	else
 	{
-		if (vehicle->getClientMoveJob () && (vehicle->getClientMoveJob ()->destination != lastDestination))
+		if (vehicle.getClientMoveJob () && (vehicle.getClientMoveJob ()->destination != lastDestination))
 		{
 			playerMJob = true;
 		}
-		if (vehicle->getClientMoveJob ()->bSuspended && vehicle->data.speedCur)
+		if (vehicle.getClientMoveJob ()->bSuspended && vehicle.data.speedCur)
 		{
-			client->addMoveJob (*vehicle, vehicle->getClientMoveJob ()->destination);
-			// prevent, that all surveyors try to calc
-			// their next move in the same frame
-			n = iNumber % WAIT_FRAMES;
+			client.addMoveJob (vehicle, vehicle.getClientMoveJob ()->destination);
 		}
 	}
+}
+
+void cAutoMJob::stop ()
+{
+	if (!playerMJob)
+	{
+		sendWantStopMove (client, vehicle.iID);
+	}
+	sendSetAutoStatus (client, vehicle.iID, false);
 }
 
 // think about the next move:
 // the AI looks at all fields next to the surveyor
 // and calculates a factor for each field
 // the surveyor will move to the field with the highest value
-void cAutoMJob::PlanNextMove (const std::vector<cAutoMJob*>& jobs)
+void cAutoMJob::planNextMove (const std::vector<cAutoMJob*>& jobs)
 {
 	// TODO: completely survey a partly explored area with resources,
 	//       like in the org MAX
@@ -156,15 +121,15 @@ void cAutoMJob::PlanNextMove (const std::vector<cAutoMJob*>& jobs)
 	cPosition bestPosition(-1, -1);
 	float maxFactor = FIELD_BLOCKED;
 
-	for(int x = vehicle->getPosition().x() - 1; x <= vehicle->getPosition().x() + 1; ++x)
+	for(int x = vehicle.getPosition().x() - 1; x <= vehicle.getPosition().x() + 1; ++x)
 	{
-		for(int y = vehicle->getPosition().y() - 1; y <= vehicle->getPosition().y() + 1; ++y)
+		for(int y = vehicle.getPosition().y() - 1; y <= vehicle.getPosition().y() + 1; ++y)
 		{
 			const cPosition position(x, y);
 			// skip the surveyor's current position
-			if(vehicle->isAbove(position)) continue;
+			if(vehicle.isAbove(position)) continue;
 
-			const float tempFactor = CalcFactor(position, jobs);
+			const float tempFactor = calcFactor(position, jobs);
 			if (tempFactor > maxFactor)
 			{
 				maxFactor = tempFactor;
@@ -176,11 +141,11 @@ void cAutoMJob::PlanNextMove (const std::vector<cAutoMJob*>& jobs)
 	if (maxFactor == FIELD_BLOCKED)
 	{
 		// no fields to survey next to the surveyor
-		PlanLongMove (jobs);
+		planLongMove (jobs);
 	}
 	else
 	{
-		client->addMoveJob(*vehicle, bestPosition);
+		client.addMoveJob(vehicle, bestPosition);
 		lastDestination = bestPosition;
 	}
 }
@@ -192,20 +157,20 @@ float cAutoMJob::calcScoreDistToOtherSurveyor(const std::vector<cAutoMJob*>& job
 	for (size_t i = 0; i != jobs.size(); ++i)
 	{
 		if (this == jobs[i]) continue;
-		const cVehicle* otherVehicle = jobs[i]->vehicle;
-		if (otherVehicle->owner != vehicle->owner) continue;
-		const auto dist = (position - otherVehicle->getPosition()).l2Norm();
+		const auto& otherVehicle = jobs[i]->vehicle;
+		if (otherVehicle.owner != vehicle.owner) continue;
+		const auto dist = (position - otherVehicle.getPosition()).l2Norm();
 		res += powf (dist, e);
 	}
 	return res;
 }
 
 // calculates an "importance-factor" for a given field
-float cAutoMJob::CalcFactor(const cPosition& position, const std::vector<cAutoMJob*>& jobs)
+float cAutoMJob::calcFactor(const cPosition& position, const std::vector<cAutoMJob*>& jobs)
 {
-	const cMap& map = *client->getMap();
+	const cMap& map = *client.getMap();
 
-	if(!map.possiblePlace(*vehicle, position, true)) return FIELD_BLOCKED;
+	if(!map.possiblePlace(vehicle, position, true)) return FIELD_BLOCKED;
 
 	// calculate some values, on which the "importance-factor" may depend
 
@@ -221,7 +186,7 @@ float cAutoMJob::CalcFactor(const cPosition& position, const std::vector<cAutoMJ
 		{
             const cPosition position(x, y);
 
-            if (!vehicle->owner->hasResourceExplored (position)) //&& !map.isBlocked(position))
+            if (!vehicle.owner->hasResourceExplored (position)) //&& !map.isBlocked(position))
 			{
 				NrSurvFields++;
 			}
@@ -237,7 +202,7 @@ float cAutoMJob::CalcFactor(const cPosition& position, const std::vector<cAutoMJ
             const cPosition position (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-            if (vehicle->owner->hasResourceExplored (position) && map.getResource (position).typ != 0)
+            if (vehicle.owner->hasResourceExplored (position) && map.getResource (position).typ != 0)
 			{
 				NrResFound++;
 			}
@@ -260,11 +225,11 @@ float cAutoMJob::CalcFactor(const cPosition& position, const std::vector<cAutoMJ
 }
 
 // searches the map for a location where the surveyor can resume
-void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
+void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 {
 	cPosition bestPosition(-1, -1);
 	float minValue = 0;
-	const cMap& map = *client->getMap();
+	const cMap& map = *client.getMap();
 
 	for (int x = 0; x < map.getSize().x(); ++x)
 	{
@@ -274,13 +239,13 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 
 			// if field is not passable/walkable or
 			// if it's already has been explored, continue
-            if (!map.possiblePlace (*vehicle, currentPosition)) continue;
-			if(vehicle->owner->hasResourceExplored(currentPosition)) continue;
+            if (!map.possiblePlace (vehicle, currentPosition)) continue;
+			if(vehicle.owner->hasResourceExplored(currentPosition)) continue;
 
 			// calculate the distance to other surveyors
 			const float distancesSurv = calcScoreDistToOtherSurveyor(jobs, currentPosition, EXP2);
 			const float distanceOP = (currentPosition - operationPoint).l2Norm();
-			const float distanceSurv = (currentPosition - vehicle->getPosition()).l2Norm();
+			const float distanceSurv = (currentPosition - vehicle.getPosition()).l2Norm();
 			// TODO: take into account the length of the path to
 			// the coordinates too
 			// (I seen a case, when a surveyor took 7 additional senseless steps
@@ -297,18 +262,18 @@ void cAutoMJob::PlanLongMove (const std::vector<cAutoMJob*>& jobs)
 	}
 	if (minValue == 0)
 	{
-		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportSurveyorAiSenseless> (*vehicle));
+		client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportSurveyorAiSenseless> (vehicle));
 		finished = true;
 	}
 	else
 	{
-		if (client->addMoveJob (*vehicle, bestPosition))
+		if (client.addMoveJob (vehicle, bestPosition))
 		{
 			lastDestination = bestPosition;
 		}
 		else
 		{
-			client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportSurveyorAiConfused> (*vehicle));
+			client.getActivePlayer ().addSavedReport (std::make_unique<cSavedReportSurveyorAiConfused> (vehicle));
 			finished = true;
 		}
 	}
@@ -322,16 +287,16 @@ void cAutoMJob::changeOP()
 {
 	if (playerMJob)
 	{
-		operationPoint = vehicle->getPosition();
+		operationPoint = vehicle.getPosition();
 		playerMJob = false;
 	}
 	else
 	{
-		const int sqDistanceOP = (vehicle->getPosition() - operationPoint).l2NormSquared();
+		const int sqDistanceOP = (vehicle.getPosition() - operationPoint).l2NormSquared();
 
 		if (float (sqDistanceOP) > Square (MAX_DISTANCE_OP))
 		{
-			operationPoint = vehicle->getPosition() + (operationPoint - vehicle->getPosition()) * DISTANCE_NEW_OP / MAX_DISTANCE_OP;
+			operationPoint = vehicle.getPosition() + (operationPoint - vehicle.getPosition()) * DISTANCE_NEW_OP / MAX_DISTANCE_OP;
 		}
 	}
 }

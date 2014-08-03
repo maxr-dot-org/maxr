@@ -31,6 +31,7 @@
 #include "gametimer.h"
 #include "hud.h"
 #include "jobs.h"
+#include "automjobs.h"
 #include "log.h"
 #include "main.h"
 #include "netmessage.h"
@@ -1427,7 +1428,7 @@ void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle)
 	{
-		Vehicle->setAutoMoveJob(std::make_unique<cAutoMJob> (*this, Vehicle));
+		Vehicle->startAutoMoveJob (*this);
 	}
 }
 
@@ -1787,6 +1788,11 @@ void cClient::addActiveMoveJob (cClientMoveJob& MoveJob)
 	ActiveMJobs.push_back (&MoveJob);
 }
 
+void cClient::addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob)
+{
+	autoMoveJobs.push_back (std::move (autoMoveJob));
+}
+
 void cClient::handleMoveJobs()
 {
 	for (int i = ActiveMJobs.size() - 1; i >= 0; i--)
@@ -1850,6 +1856,58 @@ void cClient::handleMoveJobs()
 	}
 }
 
+void cClient::handleAutoMoveJobs ()
+{
+	std::vector<cAutoMJob*> activeAutoMoveJobs;
+
+	// clean up deleted and finished move jobs
+	for (auto i = autoMoveJobs.begin (); i != autoMoveJobs.end (); /*erase in loop*/)
+	{
+		if (i->expired ())
+		{
+			i = autoMoveJobs.erase (i);
+		}
+		else
+		{
+			auto job = i->lock ();
+			if (job->isFinished ())
+			{
+				job->getVehicle ().stopAutoMoveJob ();
+				if (job.use_count() == 1)
+				{
+					i = autoMoveJobs.erase (i);
+				}
+			}
+			else
+			{
+				activeAutoMoveJobs.push_back (job.get ());
+				++i;
+			}
+		}
+	}
+
+	// We do not want to execute all auto move jobs at the same time.
+	// instead we do a round-robin like scheduling for the auto move jobs:
+	// we do executed only a limited number of auto move jobs at a time.
+	// To do so we execute only the first N auto move jobs in the list
+	// and afterwards push them to the end of the list so that they will only be executed
+	// when all the other jobs have been executed once as well.
+	const size_t maxConcurrentJobs = 2;
+
+	auto jobsToExecute = std::min (activeAutoMoveJobs.size (), maxConcurrentJobs);
+
+	while (jobsToExecute > 0)
+	{
+		auto job = autoMoveJobs.front ().lock ();
+		job->doAutoMove (activeAutoMoveJobs);
+
+		autoMoveJobs.pop_front ();
+		autoMoveJobs.push_back (job);
+
+		--jobsToExecute;
+	}
+}
+
 cVehicle* cClient::getVehicleFromID (unsigned int id)
 {
 	for (unsigned int i = 0; i < getPlayerList ().size (); i++)
@@ -1886,7 +1944,9 @@ void cClient::doGameActions ()
 
 	// run surveyor ai
 	if (gameTimer->timer50ms)
-		cAutoMJob::handleAutoMoveJobs();
+	{
+		handleAutoMoveJobs ();
+	}
 
 	runJobs();
 }

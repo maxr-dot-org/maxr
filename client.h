@@ -38,6 +38,7 @@ class cBuilding;
 class cCasualtiesTracker;
 class cClientAttackJob;
 class cClientMoveJob;
+class cAutoMJob;
 class cFx;
 class cFxContainer;
 class cJob;
@@ -113,6 +114,8 @@ public:
 	*@param MJob the movejob to be added
 	*/
 	void addActiveMoveJob (cClientMoveJob& MJob);
+
+	void addAutoMoveJob (std::weak_ptr<cAutoMJob> autoMoveJob);
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath
@@ -244,7 +247,10 @@ private:
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
-	void handleMoveJobs();
+	void handleMoveJobs ();
+
+	void handleAutoMoveJobs ();
+
 	/**
 	* gets the subbase with the id
 	*@author alzi alias DoctorDeath
@@ -358,6 +364,8 @@ private:
 
 	/** lists with all FX-Animation */
 	AutoPtr<cFxContainer> effectsList;
+
+	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs;
 public:
 	/** list with the running clientAttackJobs */
 	std::vector<cClientAttackJob*> attackJobs;
