@@ -17,57 +17,74 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
-#include "ui/graphical/menu/widgets/special/protectionglass.h"
+#include "ui/graphical/game/animations/animationstartupbuildingsite.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "main.h" // GraphicsData
-#include "video.h"
+#include "vehicles.h"
+#include "utility/box.h"
 
 //------------------------------------------------------------------------------
-cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
-	cWidget (position),
-	animationTimer (std::move(animationTimer_)),
-	openStep (100. * 10 / (400)), // open in 400 ms
-	percentClosed (percentClosed_)
+cAnimationStartUpBuildingSite::cAnimationStartUpBuildingSite (cAnimationTimer& animationTimer_, const cVehicle& vehicle_) :
+	animationTimer (animationTimer_),
+	vehicle (&vehicle_)
 {
-	percentClosed = std::max (0., percentClosed);
-	percentClosed = std::min (100., percentClosed);
-
-	assert (animationTimer != nullptr);
-
-	resize (cPosition (GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::open ()
-{
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cProtectionGlass::doOpenStep, this));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::draw ()
-{
-	const auto offset = (int)(getSize ().y () * (100. - percentClosed) / 100);
-
-	SDL_Rect source = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
-
-	SDL_Rect destination = {getPosition ().x (), getPosition ().y (), source.w, source.h};
-	
-	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get (), &source, cVideo::buffer, &destination);
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::doOpenStep ()
-{
-	percentClosed -= openStep;
-
-	if (percentClosed <= 0.)
+	signalConnectionManager.connect (vehicle->buildingChanged, [this]()
 	{
-		percentClosed = std::max (0., percentClosed);
-		signalConnectionManager.disconnectAll ();
-		disable ();
-		hide ();
-		opened ();
+		if (vehicle->isUnitBuildingABuilding ())
+		{
+			activate ();
+		}
+		else if (isRunning ())
+		{
+			animationTimerConnectionManager.disconnectAll ();
+			running = false;
+		}
+	});
+
+	signalConnectionManager.connect (vehicle->destroyed, [this]()
+	{
+		animationTimerConnectionManager.disconnectAll ();
+		vehicle = nullptr;
+		finished = true;
+	});
+}
+
+//------------------------------------------------------------------------------
+cAnimationStartUpBuildingSite::~cAnimationStartUpBuildingSite ()
+{
+	if (isRunning ())
+	{
+		vehicle->bigBetonAlpha = 254;
+	}
+}
+
+//------------------------------------------------------------------------------
+void cAnimationStartUpBuildingSite::activate ()
+{
+	if (!vehicle) return;
+
+	vehicle->bigBetonAlpha = 0;
+
+	running = true;
+	animationTimerConnectionManager.connect (animationTimer.triggered50ms, std::bind (&cAnimationStartUpBuildingSite::run, this));
+}
+
+//------------------------------------------------------------------------------
+bool cAnimationStartUpBuildingSite::isLocatedIn (const cBox<cPosition>& box) const
+{
+	return vehicle && box.intersects (vehicle->getArea ());
+}
+
+//------------------------------------------------------------------------------
+void cAnimationStartUpBuildingSite::run ()
+{
+	if (!vehicle) return;
+
+	vehicle->bigBetonAlpha += 25;
+
+	if (vehicle->bigBetonAlpha >= 254)
+	{
+		vehicle->bigBetonAlpha = 254;
+		animationTimerConnectionManager.disconnectAll ();
+		running = false;
 	}
 }

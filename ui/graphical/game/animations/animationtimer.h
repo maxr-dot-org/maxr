@@ -17,38 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_temp_animationtimerH
-#define ui_graphical_game_temp_animationtimerH
+#ifndef ui_graphical_game_animations_animationtimerH
+#define ui_graphical_game_animations_animationtimerH
 
 #include <SDL_timer.h>
 
 #include "utility/signal/signal.h"
 #include "utility/runnable.h"
-
-// TODO: may remove this classes!
-//       replace it by something a lot more generic and clean
-
-class cAnimationTimeFlags
-{
-public:
-	cAnimationTimeFlags ();
-
-	bool is10ms () const;
-	bool is50ms () const;
-	bool is100ms () const;
-	bool is400ms () const;
-
-	void set10ms (bool flag);
-	void set50ms (bool flag);
-	void set100ms (bool flag);
-	void set400ms (bool flag);
-
-private:
-	bool is10msFlag;
-	bool is50msFlag;
-	bool is100msFlag;
-	bool is400msFlag;
-};
 
 class cAnimationTimer : public cRunnable
 {
@@ -61,12 +36,16 @@ public:
 	unsigned long long getAnimationTime () const;
 
 	virtual void run () MAXR_OVERRIDE_FUNCTION;
-	const cAnimationTimeFlags& getAnimationFlags () const;
 
 	cSignal<void ()> triggered10ms;
 	cSignal<void ()> triggered50ms;
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;
+
+	cSignal<void ()> triggered10msCatchUp;
+	cSignal<void ()> triggered50msCatchUp;
+	cSignal<void ()> triggered100msCatchUp;
+	cSignal<void ()> triggered400msCatchUp;
 private:
 	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;
@@ -77,8 +56,6 @@ private:
 	unsigned long long nextTrigger50msTime;
 	unsigned long long nextTrigger100msTime;
 	unsigned long long nextTrigger400msTime;
-
-	cAnimationTimeFlags animationFlags;
 };
 
-#endif // ui_graphical_game_temp_animationtimerH
+#endif // ui_graphical_game_animations_animationtimerH

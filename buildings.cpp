@@ -124,9 +124,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 
 	RubbleTyp = 0;
 	RubbleValue = 0;
-	EffectAlpha = 0;
-	EffectInc = true;
-	StartUp = 0;
 	researchArea = cResearch::kAttackResearch;
 	uiData = b ? UnitsData.getBuildingUI (b->ID) : 0;
 	points = 0;
@@ -364,8 +361,8 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	{
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 
-		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), StartUp);
+		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
+			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), alphaEffectValue);
 		else
 			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), 254);
 
@@ -374,8 +371,8 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	else
 	{
 		CHECK_SCALING (*UnitsData.ptr_small_beton, *UnitsData.ptr_small_beton_org, zoomFactor);
-		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, StartUp);
+		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
+			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, alphaEffectValue);
 		else
 			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
 
@@ -461,7 +458,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 		render_beton (surface, dest, zoomFactor);
 	}
 	// draw the connector slots:
-	if ((this->SubBase && !StartUp) || data.isConnectorGraphic)
+	if ((this->SubBase && !alphaEffectValue) || data.isConnectorGraphic)
 	{
 		drawConnectors (surface, dest, zoomFactor, drawShadow);
 		if (data.isConnectorGraphic) return;
@@ -471,8 +468,8 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	if (drawShadow)
 	{
 		SDL_Rect tmp = dest;
-		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetSurfaceAlphaMod (uiData->shw.get (), StartUp / 5);
+		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
+			SDL_SetSurfaceAlphaMod (uiData->shw.get (), alphaEffectValue / 5);
 		else
 			SDL_SetSurfaceAlphaMod (uiData->shw.get (), 50);
 
@@ -487,9 +484,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 		frameNr = (animationTime % data.hasFrames);
 	}
 
-	int alpha = 254;
-	if (StartUp && cSettings::getInstance().isAlphaEffects()) alpha = StartUp;
-	render_simple (surface, dest, zoomFactor, frameNr, alpha);
+	render_simple (surface, dest, zoomFactor, frameNr, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
 }
 
 //--------------------------------------------------------------------------
@@ -559,7 +554,7 @@ void cBuilding::drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomF
 	CHECK_SCALING (*UnitsData.ptr_connector, *UnitsData.ptr_connector_org, zoomFactor);
 	CHECK_SCALING (*UnitsData.ptr_connector_shw, *UnitsData.ptr_connector_shw_org, zoomFactor);
 
-	if (StartUp) SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, StartUp);
+	if (alphaEffectValue) SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, alphaEffectValue);
 	else SDL_SetSurfaceAlphaMod (UnitsData.ptr_connector, 254);
 
 	src.y = 0;
@@ -842,7 +837,6 @@ void cBuilding::clientStartWork ()
 	if (isUnitWorking ())
 		return;
 	setWorking(true);
-	EffectAlpha = 0;
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
 }

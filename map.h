@@ -73,7 +73,7 @@ public:
 	const std::vector<cVehicle*>& getPlanes () const;
 
 	/** returns all units on this field */
-	std::vector<cUnit*> getUnits () const;
+	void getUnits (std::vector<cUnit*>& units) const;
 
 	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding() const;
@@ -274,7 +274,7 @@ public:
 
 	mutable cSignal<void (const cUnit&)> addedUnit;
 	mutable cSignal<void (const cUnit&)> removedUnit;
-	mutable cSignal<void (const cVehicle&)> movedVehicle;
+	mutable cSignal<void (const cVehicle&, const cPosition&)> movedVehicle;
 public:
 	std::shared_ptr<cStaticMap> staticMap;
 	/**

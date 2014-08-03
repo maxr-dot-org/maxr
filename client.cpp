@@ -349,7 +349,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	unsigned int ID = message.popInt16();
 	auto& addedBuilding = Player->addNewBuilding(position, UnitID, ID);
 
-	addUnit (position, addedBuilding, Init);
+	addUnit (position, addedBuilding);
 
 	Player->base.addBuilding (&addedBuilding, NULL);
 }
@@ -371,7 +371,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	const bool bAddToMap = message.popBool();
 
 	auto& addedVehicle = Player->addNewVehicle(position, UnitID, ID);
-	addUnit (position, addedVehicle, Init, bAddToMap);
+	addUnit (position, addedVehicle, bAddToMap);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
@@ -434,7 +434,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	auto& addedBuilding = Player->addNewBuilding (position, UnitID, ID);
 
 	addedBuilding.data.setVersion (version);
-	addUnit (position, addedBuilding, false);
+	addUnit (position, addedBuilding);
 
 	if (addedBuilding.data.connectsToBase)
 	{
@@ -835,8 +835,6 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	{
 		getMap()->moveVehicleBig(*Vehicle, buildPosition);
 		Vehicle->owner->doScan();
-
-		Vehicle->BigBetonAlpha = 10;
 	}
 	else
 	{
@@ -1665,12 +1663,10 @@ int cClient::handleNetMessage (cNetMessage& message)
 	return 0;
 }
 
-void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bInit, bool bAddToMap)
+void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bAddToMap)
 {
 	// place the vehicle
 	if (bAddToMap) getMap()->addVehicle (addedVehicle, position);
-
-	if (!bInit) addedVehicle.StartUp = 10;
 
 	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
@@ -1684,12 +1680,10 @@ void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bI
 	}
 }
 
-void cClient::addUnit(const cPosition& position, cBuilding& addedBuilding, bool bInit)
+void cClient::addUnit(const cPosition& position, cBuilding& addedBuilding)
 {
 	// place the building
 	getMap()->addBuilding (addedBuilding, position);
-
-	if (!bInit) addedBuilding.StartUp = 10;
 }
 
 cPlayer* cClient::getPlayerFromNumber (int iNum)

@@ -17,57 +17,83 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
-#include "ui/graphical/menu/widgets/special/protectionglass.h"
+#include "ui/graphical/game/animations/animationwork.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "main.h" // GraphicsData
-#include "video.h"
+#include "buildings.h"
+#include "utility/box.h"
 
 //------------------------------------------------------------------------------
-cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
-	cWidget (position),
-	animationTimer (std::move(animationTimer_)),
-	openStep (100. * 10 / (400)), // open in 400 ms
-	percentClosed (percentClosed_)
+cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuilding& building_) :
+	animationTimer (animationTimer_),
+	building (&building_),
+	incrementEffect (false)
 {
-	percentClosed = std::max (0., percentClosed);
-	percentClosed = std::min (100., percentClosed);
-
-	assert (animationTimer != nullptr);
-
-	resize (cPosition (GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::open ()
-{
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cProtectionGlass::doOpenStep, this));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::draw ()
-{
-	const auto offset = (int)(getSize ().y () * (100. - percentClosed) / 100);
-
-	SDL_Rect source = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
-
-	SDL_Rect destination = {getPosition ().x (), getPosition ().y (), source.w, source.h};
-	
-	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get (), &source, cVideo::buffer, &destination);
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::doOpenStep ()
-{
-	percentClosed -= openStep;
-
-	if (percentClosed <= 0.)
+	if (building->isUnitWorking () || building->data.powerOnGraphic)
 	{
-		percentClosed = std::max (0., percentClosed);
+		activate ();
+	}
+
+	if (!building->data.powerOnGraphic)
+	{
+		signalConnectionManager.connect (building->workingChanged, [this]()
+		{
+			if (!building->isUnitWorking ())
+			{
+				running = false;
+				animationTimerConnectionManager.disconnectAll ();
+			}
+			else
+			{
+				activate ();
+			}
+		});
+	}
+	signalConnectionManager.connect (building->destroyed, [this]()
+	{
 		signalConnectionManager.disconnectAll ();
-		disable ();
-		hide ();
-		opened ();
+		building = nullptr;
+		finished = true;
+	});
+}
+
+//------------------------------------------------------------------------------
+bool cAnimationWork::isLocatedIn (const cBox<cPosition>& box) const
+{
+	return building && box.intersects (building->getArea ());
+}
+
+//------------------------------------------------------------------------------
+void cAnimationWork::activate ()
+{
+	if (!building) return;
+	building->effectAlpha = 0;
+	running = true;
+	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationWork::run, this));
+}
+
+//------------------------------------------------------------------------------
+void cAnimationWork::run ()
+{
+	if (!building) return;
+
+	if (incrementEffect)
+	{
+		building->effectAlpha += 30;
+
+		if (building->effectAlpha > 220)
+		{
+			building->effectAlpha = 254;
+			incrementEffect = false;
+		}
+	}
+	else
+	{
+		building->effectAlpha -= 30;
+
+		if (building->effectAlpha < 30)
+		{
+			building->effectAlpha = 0;
+			incrementEffect = true;
+		}
 	}
 }

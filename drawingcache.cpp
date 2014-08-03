@@ -29,7 +29,7 @@
 #include "settings.h"
 #include "vehicles.h"
 #include "map.h"
-#include "ui/graphical/game/temp/animationtimer.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 
 void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_)
 {
@@ -71,9 +71,9 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	int width  = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->w * zoom, vehicle.uiData->shw_org[vehicle.dir]->w * zoom);
 	if (vehicle.getFlightHeight () > 0)
 	{
-		//int shwOff = ((int) (gameGUI.getTileSize() * (vehicle.FlightHigh / 64.0f)));
-		//height += shwOff;
-		//width  += shwOff;
+		int shwOff = ((int)(Round (vehicle.uiData->img_org[vehicle.dir]->w * zoom) * (vehicle.getFlightHeight () / 64.0f)));
+		height += shwOff;
+		width  += shwOff;
 	}
 	if (vehicle.isUnitClearing () || vehicle.isUnitBuildingABuilding ())
 	{
@@ -321,7 +321,7 @@ void cDrawingCache::flush()
 bool cDrawingCache::canCache (const cBuilding& building)
 {
 	if (!building.owner ||
-		building.StartUp ||
+		building.alphaEffectValue ||
 		building.data.isAnimated)
 	{
 		notCached++;
@@ -338,7 +338,7 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 		return false;
 	}
 
-	if (vehicle.StartUp)
+	if (vehicle.alphaEffectValue)
 	{
 		notCached++;
 		return false;
@@ -350,7 +350,7 @@ bool cDrawingCache::canCache (const cVehicle& vehicle)
 		return false;
 	}
 
-	if (vehicle.isUnitBuildingABuilding () && vehicle.data.isBig && vehicle.BigBetonAlpha < 254u)
+	if (vehicle.isUnitBuildingABuilding () && vehicle.data.isBig && vehicle.bigBetonAlpha < 254)
 	{
 		notCached++;
 		return false;

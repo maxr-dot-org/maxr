@@ -32,7 +32,7 @@
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
 
-#include "ui/graphical/game/temp/animationtimer.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffect.h"
@@ -149,7 +149,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
 
-	signalConnectionManager.connect (animationTimer->triggered10ms, [&]()
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [&]()
 	{
 		if (mouseScrollDirection != cPosition (0, 0))
 		{
@@ -377,13 +377,14 @@ void cGameGui::restoreState (const cGameGuiState& state)
 		// TODO: this may be very inefficient!
 		//       we go over all map fields to find the units on the map that need to be selected.
 		//       we may should think about a more efficient way to find specific units on the map
+		std::vector<cUnit*> fieldUnits;
 		for (auto i = makeIndexIterator (cPosition(0,0), dynamicMap->getSize()); i.hasMore (); i.next ())
 		{
 			if (selectedUnitIds.empty () && lockedUnitIds.empty ()) break;
 
 			const auto& field = dynamicMap->getField (*i);
 
-			const auto& fieldUnits = field.getUnits ();
+			field.getUnits (fieldUnits);
 
 			for (size_t j = 0; j < fieldUnits.size (); ++j)
 			{

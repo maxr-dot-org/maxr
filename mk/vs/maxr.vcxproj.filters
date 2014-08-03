@@ -205,6 +205,9 @@
     <Filter Include="maxr\ui\graphical\menu\control">
       <UniqueIdentifier>{a06463be-4a3e-43fe-9845-e2dac75d8ef7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="maxr\ui\graphical\game\animations">
+      <UniqueIdentifier>{4711575e-ecb1-4bf3-b97e-713533d395a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\attackJobs.cpp">
@@ -458,9 +461,6 @@
     </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\gamegui.cpp">
       <Filter>maxr\ui\graphical\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ui\graphical\game\temp\animationtimer.cpp">
-      <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\temp\unitdrawingengine.cpp">
       <Filter>maxr\ui\graphical\game\temp</Filter>
@@ -881,6 +881,21 @@
     </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\widgets\debugoutputwidget.cpp">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\animations\animationwork.cpp">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\animations\animationstartup.cpp">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\animations\animationdither.cpp">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\animations\animationtimer.cpp">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\graphical\game\animations\animationstartupbuildingsite.cpp">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1306,9 +1321,6 @@
     </ClInclude>
     <ClInclude Include="..\..\utility\indexiterator.h">
       <Filter>maxr\utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ui\graphical\game\temp\animationtimer.h">
-      <Filter>maxr\ui\graphical\game\temp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\temp\unitdrawingengine.h">
       <Filter>maxr\ui\graphical\game\temp</Filter>
@@ -1798,6 +1810,24 @@
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\widgets\debugoutputwidget.h">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\animations\animation.h">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\animations\animationwork.h">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\animations\animationstartup.h">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\animations\animationdither.h">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\animations\animationtimer.h">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\graphical\game\animations\animationstartupbuildingsite.h">
+      <Filter>maxr\ui\graphical\game\animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

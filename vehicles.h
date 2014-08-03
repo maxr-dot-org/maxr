@@ -136,15 +136,14 @@ public:
 	void setMovementOffset(const cPosition& newOffset) { tileMovementOffset = newOffset; }
 
 	const sVehicleUIData* uiData;
+	mutable int ditherX, ditherY;
+	mutable int bigBetonAlpha;
 	cServerMoveJob* ServerMoveJob;
 	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
-	int ditherX, ditherY; // Dithering für Flugzeuge
 	cPosition bandPosition; // X,Y Position für das Band
 	cPosition buildBigSavedPosition; // last position before building has started
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
-	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
-	int StartUp;      // Zähler für die Startupannimation
 	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame; // Frame der Geh-Annimation
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured

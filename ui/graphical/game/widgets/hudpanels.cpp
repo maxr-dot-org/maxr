@@ -25,7 +25,7 @@
 #include "main.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
-#include "ui/graphical/game/temp/animationtimer.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 
 //------------------------------------------------------------------------------
 cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
@@ -48,7 +48,7 @@ void cHudPanels::open ()
 {
     cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDPanelOpen);
 
-	signalConnectionManager.connect (animationTimer->triggered10ms, std::bind (&cHudPanels::doOpenStep, this));
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doOpenStep, this));
 }
 
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ void cHudPanels::close ()
 {
     cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDPanelClose);
 
-	signalConnectionManager.connect (animationTimer->triggered10ms, std::bind (&cHudPanels::doCloseStep, this));
+	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doCloseStep, this));
 }
 
 //------------------------------------------------------------------------------

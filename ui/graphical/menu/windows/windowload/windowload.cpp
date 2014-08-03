@@ -97,7 +97,7 @@ void cWindowLoad::loadSaves ()
 			continue;
 		}
 		int number;
-		if (file.length () < 8 || (number = atoi (file.substr (file.length () - 7, 3).c_str ())) < page || number > page + (int)(rows * columns)) continue;
+		if (file.length () < 8 || (number = atoi (file.substr (file.length () - 7, 3).c_str ())) < page * (int)(columns * rows) || number > page * (int)(columns * rows) + (int)(rows * columns)) continue;
 		// don't add files twice
 		bool found = false;
 		for (unsigned int j = 0; j < saveGames.size (); j++)

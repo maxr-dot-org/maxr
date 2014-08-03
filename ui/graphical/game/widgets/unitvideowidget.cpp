@@ -19,7 +19,7 @@
 
 #include "ui/graphical/game/widgets/unitvideowidget.h"
 
-#include "ui/graphical/game/temp/animationtimer.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 
 #include "ui/graphical/menu/widgets/image.h"
 

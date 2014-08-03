@@ -74,15 +74,13 @@ const std::vector<cVehicle*>& cMapField::getPlanes () const
 	return planes;
 }
 
-std::vector<cUnit*> cMapField::getUnits () const
+void cMapField::getUnits (std::vector<cUnit*>& units) const
 {
-	std::vector<cUnit*> units;
+	units.clear();
 	units.reserve(vehicles.size () + buildings.size () + planes.size ());
 	std::copy (vehicles.begin (), vehicles.end (), std::back_inserter (units));
 	std::copy (buildings.begin (), buildings.end (), std::back_inserter (units));
 	std::copy (planes.begin (), planes.end (), std::back_inserter (units));
-
-	return units;
 }
 
 cBuilding* cMapField::getBuilding() const
@@ -932,7 +930,7 @@ void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height
 
 		getField (position).addVehicle (vehicle, 0);
 	}
-	movedVehicle (vehicle);
+	movedVehicle (vehicle, oldPosition);
 }
 
 void cMap::moveVehicleBig(cVehicle& vehicle, const cPosition& position)
@@ -958,7 +956,7 @@ void cMap::moveVehicleBig(cVehicle& vehicle, const cPosition& position)
 
 	vehicle.data.isBig = true;
 
-	movedVehicle (vehicle);
+	movedVehicle (vehicle, oldPosition);
 }
 
 bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer) const

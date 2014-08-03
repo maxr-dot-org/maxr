@@ -977,6 +977,11 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			Vehicle->setMovementOffset(cPosition(0, 0));
 			setOffset (Vehicle, iNextDir, -64);
 
+			if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight () < 64)
+			{
+				client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
+			}
+
 			moved (*Vehicle);
 		}
 		break;
@@ -1054,6 +1059,11 @@ void cClientMoveJob::moveVehicle()
 		Vehicle->setMovementOffset(cPosition(0, 0));
 		setOffset (Vehicle, iNextDir, -64);
 		Vehicle->setMoving (true);
+
+		if (Vehicle->data.factorAir > 0 && Vehicle->getFlightHeight () < 64)
+		{
+			client->addJob (new cPlaneTakeoffJob (*Vehicle, true));
+		}
 
 		moved (*Vehicle);
 	}
@@ -1161,6 +1171,11 @@ void cClientMoveJob::doEndMoveVehicle()
 	Vehicle->owner->doScan();
 
 	calcNextDir();
+
+	if (Vehicle->canLand (*client->getMap ()) && Vehicle->getFlightHeight() > 0)
+	{
+		client->addJob (new cPlaneTakeoffJob (*Vehicle, false));
+	}
 }
 
 void cClientMoveJob::calcNextDir()

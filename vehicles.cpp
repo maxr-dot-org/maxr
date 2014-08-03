@@ -75,7 +75,6 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	tileMovementOffset = 0;
 	ditherX = 0;
 	ditherY = 0;
-	StartUp = 0;
 	flightHeight = 0;
 	WalkFrame = 0;
 	buildBigSavedPosition = 0;
@@ -87,7 +86,7 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	moving = false;
 	MoveJobActive = false;
 	BuildPath = false;
-	BigBetonAlpha = 0;
+	bigBetonAlpha = 0;
 	lastShots = 0;
 	lastSpeed = 0;
 
@@ -144,10 +143,7 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 		frameNr = animationTime % (uiData->overlay_org->w / uiData->overlay_org->h);
 	}
 
-	int alpha = 254;
-	if (StartUp && cSettings::getInstance().isAlphaEffects())
-		alpha = StartUp;
-	drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alpha);
+	drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
 }
 
 void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
@@ -157,7 +153,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	SDL_Rect tmp = dest;
 	if (isUnitBuildingABuilding () && data.isBig && (!map.isWaterOrCoast (getPosition()) || map.getField(getPosition()).getBaseBuilding ()))
 	{
-		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), BigBetonAlpha);
+		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), bigBetonAlpha);
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
 		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), NULL, surface, &tmp);
 	}
@@ -211,19 +207,18 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 {
 	if (map.isWater (getPosition()) && (data.isStealthOn & TERRAIN_SEA)) return;
 
-    if (StartUp && cSettings::getInstance ().isAlphaEffects ()) SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), StartUp / 5);
+	if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ()) SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), alphaEffectValue / 5);
     else SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), 50);
 	SDL_Rect tmp = dest;
 
 	// draw shadow
 	if (getFlightHeight () > 0)
 	{
-		// TODO: implement
-		//int high = ((int) ((int) (client.getGameGUI().getTileSize()) * (FlightHigh / 64.0f)));
-		//tmp.x += high;
-		//tmp.y += high;
+		int high = ((int)(Round (uiData->shw_org[dir]->w * zoomFactor) * (getFlightHeight () / 64.0f)));
+		tmp.x += high;
+		tmp.y += high;
 
-		//blitWithPreScale (uiData->shw_org[dir], uiData->shw[dir], NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), NULL, surface, &tmp, zoomFactor);
 	}
 	else if (data.animationMovement)
 	{
@@ -296,21 +291,19 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 	int alpha = 254;
 	if (map)
 	{
-		if (StartUp && cSettings::getInstance().isAlphaEffects())
+		if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ())
 		{
-			alpha = StartUp;
+			alpha = alphaEffectValue;
 		}
-		else
-		{
-			bool water = map->isWater (getPosition());
-			// if the vehicle can also drive on land, we have to check,
-			// whether there is a brige, platform, etc.
-			// because the vehicle will drive on the bridge
-			cBuilding* building = map->getField(getPosition()).getBaseBuilding ();
-			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-			if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == activePlayer) alpha = 100;
-		}
+		bool water = map->isWater (getPosition());
+		// if the vehicle can also drive on land, we have to check,
+		// whether there is a brige, platform, etc.
+		// because the vehicle will drive on the bridge
+		cBuilding* building = map->getField(getPosition()).getBaseBuilding ();
+		if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
+
+		if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == activePlayer) alpha = std::min(alpha, 100);
 	}
 	render_simple (surface, dest, zoomFactor, alpha);
 }
@@ -1613,7 +1606,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// normal vehicles are always "landed"
 	if (data.factorAir == 0) return true;
 
-	if (moving || clientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking ()) return false;     //vehicle busy?
+	if (moving || (clientMoveJob && clientMoveJob->Waypoints && clientMoveJob->Waypoints->next)  || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || isAttacking ()) return false;     //vehicle busy?
 
 	// landing pad there?
 	const std::vector<cBuilding*>& buildings = map.getField(getPosition()).getBuildings();
@@ -1792,7 +1785,7 @@ void cVehicle::setFlightHeight (int value)
 {
 	value = std::min (std::max (value, 0), 64);
 	std::swap (flightHeight, value);
-	if (flightHeight != value) flightHeightChanged;
+	if (flightHeight != value) flightHeightChanged ();
 }
 
 //-----------------------------------------------------------------------------

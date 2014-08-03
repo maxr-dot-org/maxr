@@ -163,6 +163,8 @@ public: // TODO: make protected/private and make getters/setters
 	// e.g. rotating to a specific direction
 	cJob* job;
 
+	mutable int alphaEffectValue;
+
 	//-----------------------------------------------------------------------------
 private:
     cPosition position;

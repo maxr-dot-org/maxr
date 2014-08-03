@@ -33,9 +33,14 @@
 #include "ui/graphical/game/widgets/mousemode/mousemodesupplyammo.h"
 #include "ui/graphical/game/widgets/mousemode/mousemodetransfer.h"
 #include "ui/graphical/game/widgets/mouseaction/mouseaction.h"
+#include "ui/graphical/game/animations/animation.h"
+#include "ui/graphical/game/animations/animationwork.h"
+#include "ui/graphical/game/animations/animationstartup.h"
+#include "ui/graphical/game/animations/animationstartupbuildingsite.h"
+#include "ui/graphical/game/animations/animationdither.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/sound/soundmanager.h"
-#include "ui/graphical/game/temp/animationtimer.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/application.h"
 #include "map.h"
 #include "settings.h"
@@ -79,6 +84,18 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	assert (staticMap != nullptr);
 	assert (animationTimer != nullptr);
 	assert (soundManager != nullptr);
+
+	signalConnectionManager.connect (cSettings::getInstance ().animationsChanged, [this]()
+	{
+		if (cSettings::getInstance ().isAnimations ())
+		{
+			updateActiveAnimations ();
+		}
+		else
+		{
+			animations.clear ();
+		}
+	});
 
 	setMouseInputMode (std::make_unique<cMouseModeDefault> (dynamicMap.get (), unitSelection, player.get ()));
 
@@ -422,6 +439,31 @@ void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 				unitSelection.deselectUnit (unit);
 			}
 		});
+		dynamicMapSignalConnectionManager.connect (dynamicMap->addedUnit, [&](const cUnit& unit)
+		{
+			if (!cSettings::getInstance ().isAnimations ()) return;
+
+			const auto tileDrawingRange = computeTileDrawingRange ();
+			const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
+
+			if (tileDrawingArea.intersects (unit.getArea ()))
+			{
+				addAnimationsForUnit (unit);
+				animations.push_back (std::make_unique<cAnimationStartUp> (*animationTimer, unit));
+			}
+		});
+		dynamicMapSignalConnectionManager.connect (dynamicMap->movedVehicle, [&](const cUnit& unit, const cPosition& oldPosition)
+		{
+			if (!cSettings::getInstance ().isAnimations ()) return;
+
+			const auto tileDrawingRange = computeTileDrawingRange ();
+			const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition (1, 1));
+
+			if (tileDrawingArea.intersects (unit.getArea ()) && !tileDrawingArea.intersects (cBox<cPosition>(oldPosition, oldPosition + unit.getArea().getSize() - cPosition(1,1))))
+			{
+				addAnimationsForUnit (unit);
+			}
+		});
 	}
 
 	if (mouseMode != nullptr)
@@ -433,6 +475,8 @@ void cGameMapWidget::setDynamicMap (std::shared_ptr<const cMap> dynamicMap_)
 	{
 		unitSelection.deselectUnits ();
 	}
+
+	updateActiveAnimations ();
 }
 
 //------------------------------------------------------------------------------
@@ -500,7 +544,8 @@ void cGameMapWidget::draw ()
 //------------------------------------------------------------------------------
 void cGameMapWidget::setZoomFactor (float zoomFactor_, bool center)
 {
-	const auto oldZoom = getZoomFactor();
+	const auto oldZoom = getZoomFactor ();
+	const auto oldTileDrawingRange = computeTileDrawingRange ();
 
 	internalZoomFactor = zoomFactor_;
 
@@ -511,6 +556,8 @@ void cGameMapWidget::setZoomFactor (float zoomFactor_, bool center)
 
 	if (oldZoom != newZoom)
 	{
+		updateActiveAnimations (oldTileDrawingRange);
+
 		zoomFactorChanged ();
 
 		cPosition scrollOffset (0, 0);
@@ -743,7 +790,8 @@ void cGameMapWidget::scroll (const cPosition& offset)
 		oldTileUnderMouse = getMapTilePosition (activeMouse->getPosition ());
 	}
 
-	auto oldPixelOffset = pixelOffset;
+	const auto oldPixelOffset = pixelOffset;
+	const auto oldTileDrawingRange = computeTileDrawingRange ();
 
 	pixelOffset += offset;
 
@@ -764,6 +812,8 @@ void cGameMapWidget::scroll (const cPosition& offset)
 		}
 
 		if (newTileUnderMouse != oldTileUnderMouse) tileUnderMouseChanged (newTileUnderMouse);
+
+		updateActiveAnimations (oldTileDrawingRange);
 
 		scrolled ();
 	}
@@ -1901,6 +1951,86 @@ cPosition cGameMapWidget::getScreenPosition (const cUnit& unit, bool movementOff
 	position.y() = getPosition ().y () - ((int)((pixelOffset.y () - offsetY) * getZoomFactor ())) + getZoomedTileSize ().y () * unit.getPosition().y();
 
 	return position;
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::updateActiveAnimations ()
+{
+	animations.clear ();
+	updateActiveAnimations (std::make_pair (cPosition (-1, -1), cPosition (-1, -1)));
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange)
+{
+	if (!cSettings::getInstance ().isAnimations ()) return;
+
+	const auto tileDrawingRange = computeTileDrawingRange ();
+
+	const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition(1,1));
+	const auto oldTileDrawingArea = cBox<cPosition> (oldTileDrawingRange.first, oldTileDrawingRange.second - cPosition (1, 1));
+
+	for (auto i = animations.begin (); i != animations.end (); /*erase in loop*/)
+	{
+		auto& animation = **i;
+		if (animation.isFinished() || !animation.isLocatedIn (tileDrawingArea))
+		{
+			i = animations.erase (i);
+		}
+		else
+		{
+			++i;
+		}
+	}
+
+	if (dynamicMap)
+	{
+		std::vector<cUnit*> units;
+		for (auto i = makeIndexIterator (tileDrawingRange.first, tileDrawingRange.second); i.hasMore (); i.next ())
+		{
+			const auto position = *i;
+			const auto& field = dynamicMap->getField (position);
+
+			field.getUnits (units);
+
+			for (size_t j = 0; j < units.size (); ++j)
+			{
+				const auto& unit = *units[j];
+				if (shouldDrawUnit (unit, position, tileDrawingRange) && !oldTileDrawingArea.intersects (unit.getArea ()))
+				{
+					addAnimationsForUnit (unit);
+				}
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::addAnimationsForUnit (const cUnit& unit)
+{
+	if (!cSettings::getInstance ().isAnimations ()) return;
+
+	if (unit.data.powerOnGraphic || unit.data.canWork)
+	{
+		assert (unit.data.ID.isABuilding());
+		auto& building = static_cast<const cBuilding&>(unit);
+
+		animations.push_back (std::make_unique<cAnimationWork> (*animationTimer, building));
+	}
+	if (unit.data.factorAir > 0)
+	{
+		assert (unit.data.ID.isAVehicle ());
+		auto& vehicle = static_cast<const cVehicle&>(unit);
+
+		animations.push_back (std::make_unique<cAnimationDither> (*animationTimer, vehicle));
+	}
+	if (unit.data.canBuild.compare ("BigBuilding") == 0)
+	{
+		assert (unit.data.ID.isAVehicle ());
+		auto& vehicle = static_cast<const cVehicle&>(unit);
+
+		animations.push_back (std::make_unique<cAnimationStartUpBuildingSite> (*animationTimer, vehicle));
+	}
 }
 
 //------------------------------------------------------------------------------

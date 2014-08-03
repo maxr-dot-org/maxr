@@ -238,10 +238,9 @@ private:
 	*@param iPosY The Y were the unit should be added.
 	*@param addedVehicle Vehicle which should be added.
 	*@param addedBuilding Building which should be added.
-	*@param bInit true if this is an initialisation call.
 	*/
-	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool bInit = false, bool bAddToMap = true);
-	void addUnit (const cPosition& position, cBuilding& addedBuilding, bool bInit = false);
+	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool bAddToMap = true);
+	void addUnit (const cPosition& position, cBuilding& addedBuilding);
 
 	/**
 	* handles all active movejobs

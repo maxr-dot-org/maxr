@@ -23,6 +23,7 @@
 #include <SDL.h>
 #include "tinyxml2.h"
 #include "cmutex.h"
+#include "utility/signal/signal.h"
 
 /**
  * cSettings class stores all settings for the game and handles reading
@@ -212,6 +213,9 @@ public:
 
 	const std::string& getMvePath() const;
 	void setMvePath (const char* mvePath, bool save = true);
+
+	mutable cSignal<void ()> animationsChanged;
+	// TODO: add signals for other settings
 private:
 
 	/**

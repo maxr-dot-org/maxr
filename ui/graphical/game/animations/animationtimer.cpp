@@ -17,63 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/temp/animationtimer.h"
-
-//--------------------------------------------------------------------------
-cAnimationTimeFlags::cAnimationTimeFlags () :
-	is10msFlag (false),
-	is50msFlag (false),
-	is100msFlag (false),
-	is400msFlag (false)
-{}
-
-//--------------------------------------------------------------------------
-bool cAnimationTimeFlags::is10ms () const
-{
-	return is10msFlag;
-}
-
-//--------------------------------------------------------------------------
-bool cAnimationTimeFlags::is50ms () const
-{
-	return is50msFlag;
-}
-
-//--------------------------------------------------------------------------
-bool cAnimationTimeFlags::is100ms () const
-{
-	return is100msFlag;
-}
-
-//--------------------------------------------------------------------------
-bool cAnimationTimeFlags::is400ms () const
-{
-	return is400msFlag;
-}
-
-//--------------------------------------------------------------------------
-void  cAnimationTimeFlags::set10ms (bool flag)
-{
-	is10msFlag = flag;
-}
-
-//--------------------------------------------------------------------------
-void  cAnimationTimeFlags::set50ms (bool flag)
-{
-	is50msFlag = flag;
-}
-
-//--------------------------------------------------------------------------
-void  cAnimationTimeFlags::set100ms (bool flag)
-{
-	is100msFlag = flag;
-}
-
-//--------------------------------------------------------------------------
-void  cAnimationTimeFlags::set400ms (bool flag)
-{
-	is400msFlag = flag;
-}
+#include "ui/graphical/game/animations/animationtimer.h"
 
 namespace {
 
@@ -120,44 +64,40 @@ unsigned long long cAnimationTimer::getAnimationTime () const
 //--------------------------------------------------------------------------
 void cAnimationTimer::run ()
 {
-	animationFlags.set10ms (false);
-	animationFlags.set50ms (false);
-	animationFlags.set100ms (false);
-	animationFlags.set400ms (false);
-
 	if (timerTime >= nextTrigger10msTime)
 	{
-		animationFlags.set10ms (true);
-		nextTrigger10msTime += 10 / sdlTimerInterval;
-		if (nextTrigger10msTime <= timerTime) nextTrigger10msTime = timerTime + 10 / sdlTimerInterval;
+		triggered10ms ();
+		do
+		{
+			triggered10msCatchUp ();
+		}
+		while ((nextTrigger10msTime += 10 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger50msTime)
 	{
-		animationFlags.set50ms (true);
-		nextTrigger50msTime += 50 / sdlTimerInterval;
-		if (nextTrigger50msTime <= timerTime) nextTrigger50msTime = timerTime + 50 / sdlTimerInterval;
+		triggered50ms ();
+		do
+		{
+			triggered50msCatchUp ();
+		}
+		while ((nextTrigger50msTime += 50 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger100msTime)
 	{
-		animationFlags.set100ms (true);
-		nextTrigger100msTime += 100 / sdlTimerInterval;
-		if (nextTrigger100msTime <= timerTime) nextTrigger100msTime = timerTime + 100 / sdlTimerInterval;
+		triggered100ms ();
+		do
+		{
+			triggered100msCatchUp ();
+		}
+		while ((nextTrigger100msTime += 100 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger400msTime)
 	{
-		animationFlags.set400ms (true);
-		nextTrigger400msTime += 400 / sdlTimerInterval;
-		if (nextTrigger400msTime <= timerTime) nextTrigger400msTime = timerTime + 400 / sdlTimerInterval;
+		triggered400ms ();
+		do
+		{
+			triggered400msCatchUp ();
+		}
+		while ((nextTrigger400msTime += 400 / sdlTimerInterval) < timerTime);
 	}
-
-	if (animationFlags.is10ms ()) triggered10ms ();
-	if (animationFlags.is50ms ()) triggered50ms ();
-	if (animationFlags.is100ms ()) triggered100ms ();
-	if (animationFlags.is400ms ()) triggered400ms ();
-}
-
-//--------------------------------------------------------------------------
-const cAnimationTimeFlags& cAnimationTimer::getAnimationFlags () const
-{
-	return animationFlags;
 }

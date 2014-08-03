@@ -149,14 +149,13 @@ public:
 	virtual bool isABuilding() const { return true; }
 
 	const sBuildingUIData* uiData;
+	mutable int effectAlpha; // alpha value for the effect
+
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
-	int StartUp;     // counter for the startup animation
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
 	struct sSubBase* SubBase;     // the subbase to which this building belongs
-	int EffectAlpha; // alpha value for the effect
-	bool EffectInc;  // is the effect counted upwards or dounwards?
 	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik

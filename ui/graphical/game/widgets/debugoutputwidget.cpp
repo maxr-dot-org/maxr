@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/animations/animation.h"
 #include "game/data/player/player.h"
 #include "input/mouse/mouse.h"
 #include "client.h"
@@ -38,11 +39,11 @@ cDebugOutputWidget::cDebugOutputWidget (const cPosition& position, int width) :
 	debugBaseServer (false),
 	debugBaseClient (false),
 	debugSentry (false),
-	debugFX (false),
+	debugFX (true),
 	debugTraceServer (false),
 	debugTraceClient (false),
 	debugPlayers (false),
-	debugCache (false),
+	debugCache (true),
 	debugSync (false)
 {
 	resize (cPosition (width, 0));
@@ -216,12 +217,18 @@ void cDebugOutputWidget::draw ()
 
 	if (debugFX)
 	{
-#if 0
-		font->showText (drawPositionX, drawPositionY, "fx-count: " + iToStr ((int)FXList.size () + (int)FXListBottom.size ()), FONT_LATIN_SMALL_WHITE);
+		if(gameMap)
+		{
+			font->showText (drawPositionX, drawPositionY, "animations-count: " + iToStr (gameMap->animations.size()), FONT_LATIN_SMALL_WHITE);
+			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+			const auto finishedAnimations = std::count_if(gameMap->animations.cbegin(), gameMap->animations.cend(), [](const std::unique_ptr<cAnimation>& animation){ return animation->isFinished(); });
+			font->showText (drawPositionX, drawPositionY, "finished-animations-count: " + iToStr (finishedAnimations), FONT_LATIN_SMALL_WHITE);
+			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+			font->showText (drawPositionX, drawPositionY, "gui-fx-count: " + iToStr (gameMap->effects.size()), FONT_LATIN_SMALL_WHITE);
+			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		}
+		font->showText (drawPositionX, drawPositionY, "client-fx-count: " + iToStr (client->effectsList->size()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (drawPositionX, drawPositionY, "wind-dir: " + iToStr ((int)(fWindDir * 57.29577f)), FONT_LATIN_SMALL_WHITE);
-		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-#endif
 	}
 	if (debugTraceServer || debugTraceClient)
 	{
@@ -231,15 +238,15 @@ void cDebugOutputWidget::draw ()
 	{
 		const auto& drawingCache = gameMap->getDrawingCache();
 
-		font->showText (getPosition ().x (), drawPositionY, "Max cache size: " + iToStr (drawingCache.getMaxCacheSize ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "Max cache size: " + iToStr (drawingCache.getMaxCacheSize ()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (getPosition ().x (), drawPositionY, "cache size: " + iToStr (drawingCache.getCacheSize ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "cache size: " + iToStr (drawingCache.getCacheSize ()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (getPosition ().x (), drawPositionY, "cache hits: " + iToStr (drawingCache.getCacheHits ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "cache hits: " + iToStr (drawingCache.getCacheHits ()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (getPosition ().x (), drawPositionY, "cache misses: " + iToStr (drawingCache.getCacheMisses ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "cache misses: " + iToStr (drawingCache.getCacheMisses ()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (getPosition ().x (), drawPositionY, "not cached: " + iToStr (drawingCache.getNotCached ()), FONT_LATIN_SMALL_WHITE);
+		font->showText (drawPositionX, drawPositionY, "not cached: " + iToStr (drawingCache.getNotCached ()), FONT_LATIN_SMALL_WHITE);
 		drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 

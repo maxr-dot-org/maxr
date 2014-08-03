@@ -27,7 +27,7 @@
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
 
-#include "ui/graphical/game/temp/animationtimer.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
@@ -1070,20 +1070,20 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 		//
 		// commands that control the GUI itself
 		//
-		if (command.compare ("/base client") == 0) { gameGui->getDebugOutput().setDebugBaseClient (true);  gameGui->getDebugOutput().setDebugBaseServer  (false); }
-		else if (command.compare ("/base server") == 0) { gameGui->getDebugOutput().setDebugBaseServer (true);  gameGui->getDebugOutput().setDebugBaseClient  (false); }
-		else if (command.compare ("/base off") == 0) {  gameGui->getDebugOutput().setDebugBaseServer  (false);  gameGui->getDebugOutput().setDebugBaseClient  (false); }
-		else if (command.compare ("/sentry server") == 0) { gameGui->getDebugOutput().setDebugSentry (true); }
-		else if (command.compare ("/sentry off") == 0) {  gameGui->getDebugOutput().setDebugSentry  (false); }
-		else if (command.compare ("/fx on") == 0) {  gameGui->getDebugOutput().setDebugFX (true); }
-		else if (command.compare ("/fx off") == 0) {  gameGui->getDebugOutput().setDebugFX  (false); }
-		else if (command.compare ("/trace server") == 0) { gameGui->getDebugOutput().setDebugTraceServer (true);  gameGui->getDebugOutput().setDebugTraceClient  (false); }
-		else if (command.compare ("/trace client") == 0) {  gameGui->getDebugOutput().setDebugTraceClient (true);  gameGui->getDebugOutput().setDebugTraceServer  (false); }
-		else if (command.compare ("/trace off") == 0) {  gameGui->getDebugOutput().setDebugTraceServer  (false);  gameGui->getDebugOutput().setDebugTraceClient  (false); }
-		else if (command.compare ("/ajobs on") == 0) {  gameGui->getDebugOutput().setDebugAjobs (true); }
-		else if (command.compare ("/ajobs off") == 0) {  gameGui->getDebugOutput().setDebugAjobs  (false); }
-		else if (command.compare ("/players on") == 0) {  gameGui->getDebugOutput().setDebugPlayers (true); }
-		else if (command.compare ("/players off") == 0) {  gameGui->getDebugOutput().setDebugPlayers  (false); }
+		if (command.compare ("/base client") == 0) { gameGui->getDebugOutput ().setDebugBaseClient (true);  gameGui->getDebugOutput ().setDebugBaseServer (false); }
+		else if (command.compare ("/base server") == 0) { gameGui->getDebugOutput ().setDebugBaseServer (true);  gameGui->getDebugOutput ().setDebugBaseClient (false); }
+		else if (command.compare ("/base off") == 0) { gameGui->getDebugOutput ().setDebugBaseServer (false);  gameGui->getDebugOutput ().setDebugBaseClient (false); }
+		else if (command.compare ("/sentry server") == 0) { gameGui->getDebugOutput ().setDebugSentry (true); }
+		else if (command.compare ("/sentry off") == 0) { gameGui->getDebugOutput ().setDebugSentry (false); }
+		else if (command.compare ("/fx on") == 0) { gameGui->getDebugOutput ().setDebugFX (true); }
+		else if (command.compare ("/fx off") == 0) { gameGui->getDebugOutput ().setDebugFX (false); }
+		else if (command.compare ("/trace server") == 0) { gameGui->getDebugOutput ().setDebugTraceServer (true);  gameGui->getDebugOutput ().setDebugTraceClient (false); }
+		else if (command.compare ("/trace client") == 0) { gameGui->getDebugOutput ().setDebugTraceClient (true);  gameGui->getDebugOutput ().setDebugTraceServer (false); }
+		else if (command.compare ("/trace off") == 0) { gameGui->getDebugOutput ().setDebugTraceServer (false);  gameGui->getDebugOutput ().setDebugTraceClient (false); }
+		else if (command.compare ("/ajobs on") == 0) { gameGui->getDebugOutput ().setDebugAjobs (true); }
+		else if (command.compare ("/ajobs off") == 0) { gameGui->getDebugOutput ().setDebugAjobs (false); }
+		else if (command.compare ("/players on") == 0) { gameGui->getDebugOutput ().setDebugPlayers (true); }
+		else if (command.compare ("/players off") == 0) { gameGui->getDebugOutput ().setDebugPlayers (false); }
 		else if (command.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep; }
 		else if (command.compare (0, 12, "/cache size ") == 0)
 		{

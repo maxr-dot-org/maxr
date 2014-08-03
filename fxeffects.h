@@ -39,6 +39,7 @@ class cFxContainer
 public:
 	void push_back (std::shared_ptr<cFx> fx);
 	void push_front (std::shared_ptr<cFx> fx);
+	size_t size () const;
 	void run();
 private:
 	std::vector<std::shared_ptr<cFx>> fxs;

@@ -17,57 +17,56 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <algorithm>
-
-#include "ui/graphical/menu/widgets/special/protectionglass.h"
+#include "ui/graphical/game/animations/animationstartup.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "main.h" // GraphicsData
-#include "video.h"
+#include "unit.h"
+#include "utility/box.h"
 
 //------------------------------------------------------------------------------
-cProtectionGlass::cProtectionGlass (const cPosition& position, std::shared_ptr<cAnimationTimer> animationTimer_, double percentClosed_) :
-	cWidget (position),
-	animationTimer (std::move(animationTimer_)),
-	openStep (100. * 10 / (400)), // open in 400 ms
-	percentClosed (percentClosed_)
+cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cUnit& unit_) :
+	animationTimer (animationTimer_),
+	unit (&unit_)
 {
-	percentClosed = std::max (0., percentClosed);
-	percentClosed = std::min (100., percentClosed);
+	unit->alphaEffectValue = 10;
 
-	assert (animationTimer != nullptr);
+	running = true;
+	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationStartUp::run, this));
 
-	resize (cPosition (GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::open ()
-{
-	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cProtectionGlass::doOpenStep, this));
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::draw ()
-{
-	const auto offset = (int)(getSize ().y () * (100. - percentClosed) / 100);
-
-	SDL_Rect source = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
-
-	SDL_Rect destination = {getPosition ().x (), getPosition ().y (), source.w, source.h};
-	
-	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get (), &source, cVideo::buffer, &destination);
-}
-
-//------------------------------------------------------------------------------
-void cProtectionGlass::doOpenStep ()
-{
-	percentClosed -= openStep;
-
-	if (percentClosed <= 0.)
+	signalConnectionManager.connect (unit->destroyed, [this]()
 	{
-		percentClosed = std::max (0., percentClosed);
-		signalConnectionManager.disconnectAll ();
-		disable ();
-		hide ();
-		opened ();
+		animationTimerConnectionManager.disconnectAll ();
+		unit = nullptr;
+		finished = true;
+	});
+}
+
+//------------------------------------------------------------------------------
+cAnimationStartUp::~cAnimationStartUp ()
+{
+	if (isRunning ())
+	{
+		unit->alphaEffectValue = 0;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool cAnimationStartUp::isLocatedIn (const cBox<cPosition>& box) const
+{
+	return unit && box.intersects (unit->getArea ());
+}
+
+//------------------------------------------------------------------------------
+void cAnimationStartUp::run ()
+{
+	if (!unit) return;
+
+	unit->alphaEffectValue += 25;
+
+	if (unit->alphaEffectValue >= 255)
+	{
+		unit->alphaEffectValue = 0;
+		animationTimerConnectionManager.disconnectAll ();
+		finished = true;
+		running = false;
 	}
 }

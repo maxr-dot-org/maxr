@@ -36,7 +36,7 @@ void cJobContainer::addJob (cJob& job)
 	//only one job per unit
 	if (job.vehicle->job)
 	{
-		std::vector<cJob*>::iterator it = std::find (jobs.begin(), jobs.end(), &job);
+		std::vector<cJob*>::iterator it = std::find (jobs.begin (), jobs.end (), job.vehicle->job);
 		releaseJob (it);
 	}
 

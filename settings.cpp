@@ -1126,8 +1126,9 @@ bool cSettings::isAnimations() const
 //------------------------------------------------------------------------------
 void cSettings::setAnimations (bool animations, bool save)
 {
-	this->animations = animations;
-	if (save) saveSetting ("Options~Game~EnableAnimations", animations);
+	std::swap(this->animations, animations);
+	if (save) saveSetting ("Options~Game~EnableAnimations", this->animations);
+	if (this->animations != animations) animationsChanged ();
 }
 
 //------------------------------------------------------------------------------

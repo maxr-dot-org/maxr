@@ -41,6 +41,7 @@ class cFx;
 class cMouseMode;
 class cSoundManager;
 class cDrawingCache;
+class cAnimation;
 
 class cGameMapWidget : public cClickableWidget
 {
@@ -189,6 +190,8 @@ private:
 
 	std::vector<std::shared_ptr<cFx>> effects;
 
+	std::vector<std::unique_ptr<cAnimation>> animations;
+
 	//
 	// drawing information data
 	//
@@ -255,6 +258,10 @@ private:
 
 	cPosition getMapTilePosition (const cPosition& pixelPosition) const;
 	cPosition getScreenPosition (const cUnit& unit, bool movementOffset = true) const;
+
+	void updateActiveAnimations ();
+	void updateActiveAnimations (const std::pair<cPosition, cPosition>& oldTileDrawingRange);
+	void addAnimationsForUnit (const cUnit& unit);
 
 	void updateUnitMenuPosition ();
 

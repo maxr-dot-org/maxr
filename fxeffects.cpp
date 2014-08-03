@@ -76,6 +76,11 @@ void cFxContainer::push_front (std::shared_ptr<cFx> fx)
 	fxs.insert (fxs.begin (), std::move (fx));
 }
 
+size_t cFxContainer::size () const
+{
+	return fxs.size ();
+}
+
 void cFxContainer::run()
 {
 	for (auto it = fxs.begin(); it != fxs.end();)
