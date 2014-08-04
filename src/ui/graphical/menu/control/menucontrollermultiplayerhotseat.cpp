@@ -277,14 +277,11 @@ void cMenuControllerMultiplayerHotSeat::checkAllLandingPositions ()
 	}
 	else
 	{
-		game->start (application);
+		application.closeTill (*firstWindow);
+		firstWindow->close ();
+		signalConnectionManager.connect (firstWindow->terminated, [&]() { firstWindow = nullptr; });
 
-		game->terminated.connect ([&]()
-		{
-			application.closeTill (*firstWindow);
-			firstWindow->close ();
-			firstWindow = nullptr;
-		});
+		game->start (application);
 	}
 }
 

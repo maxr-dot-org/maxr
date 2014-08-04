@@ -76,8 +76,6 @@ public:
 	size_t getPlayerCount () const;
 	const cPlayerBasicData& getPlayer (size_t playerIndex) const;
 	int getPlayerClan (size_t playerIndex) const;
-
-	cSignal<void ()> terminated;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

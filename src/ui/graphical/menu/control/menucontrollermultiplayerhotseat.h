@@ -40,6 +40,8 @@ public:
 
 	void start ();
 private:
+	cSignalConnectionManager signalConnectionManager;
+
 	cApplication& application;
 
 	cWindowPlayerSelection* windowPlayerSelection;

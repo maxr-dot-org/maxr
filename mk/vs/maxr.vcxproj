@@ -90,7 +90,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild />
       <AdditionalOptions>/w34189 /w34701 /w34389 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

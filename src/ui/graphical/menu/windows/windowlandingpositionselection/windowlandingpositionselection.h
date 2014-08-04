@@ -33,6 +33,7 @@ class cLabel;
 class cPosition;
 class cLandingPositionSelectionMap;
 class cStaticMap;
+class cAnimationTimer;
 
 struct sTerrain;
 
@@ -59,18 +60,26 @@ public:
 	cSignal<void ()> canceled;
 
 	virtual void handleActivated (cApplication& application, bool firstTime) MAXR_OVERRIDE_FUNCTION;
+	virtual void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager circleAnimationConnectionManager;
 
 	std::shared_ptr<cStaticMap> staticMap;
 
+	std::shared_ptr<cAnimationTimer> animationTimer;
+
 	bool selectionAllowed;
+
+	eLandingPositionState reselectionState;
 
 	cPushButton* backButton;
 	cLabel* infoLabel;
 	cImage* circlesImage;
+
+	float circleAnimationState;
 
 	cLandingPositionSelectionMap* mapWidget;
 
@@ -80,7 +89,10 @@ private:
 
 	void backClicked ();
 	void mapClicked (const cPosition& tilePosition);
-	void updateLandingPositionCircles (const cPosition& tilePosition);
+	void updateLandingPositionCircles (const cPosition& tilePosition, float radiusFactor);
+
+	void startCircleAnimation (const cPosition& tilePosition);
+	void runCircleAnimation (const cPosition& tilePosition);
 };
 
 #endif // ui_graphical_menu_windows_windowlandingpositionselection_windowlandingpositionselectionH

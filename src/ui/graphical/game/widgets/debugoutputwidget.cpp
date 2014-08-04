@@ -39,11 +39,11 @@ cDebugOutputWidget::cDebugOutputWidget (const cPosition& position, int width) :
 	debugBaseServer (false),
 	debugBaseClient (false),
 	debugSentry (false),
-	debugFX (true),
+	debugFX (false),
 	debugTraceServer (false),
 	debugTraceClient (false),
 	debugPlayers (false),
-	debugCache (true),
+	debugCache (false),
 	debugSync (false)
 {
 	resize (cPosition (width, 0));
@@ -219,8 +219,10 @@ void cDebugOutputWidget::draw ()
 	{
 		if(gameMap)
 		{
-			font->showText (drawPositionX, drawPositionY, "animations-count: " + iToStr (gameMap->animations.size()), FONT_LATIN_SMALL_WHITE);
+			font->showText (drawPositionX, drawPositionY, "total-animations-count: " + iToStr (gameMap->animations.size()), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+			const auto runningAnimations = std::count_if (gameMap->animations.cbegin (), gameMap->animations.cend (), [ ](const std::unique_ptr<cAnimation>& animation){ return animation->isRunning (); });
+			font->showText (drawPositionX, drawPositionY, "running-animations-count: " + iToStr (runningAnimations), FONT_LATIN_SMALL_WHITE);
 			const auto finishedAnimations = std::count_if(gameMap->animations.cbegin(), gameMap->animations.cend(), [](const std::unique_ptr<cAnimation>& animation){ return animation->isFinished(); });
 			font->showText (drawPositionX, drawPositionY, "finished-animations-count: " + iToStr (finishedAnimations), FONT_LATIN_SMALL_WHITE);
 			drawPositionY += font->getFontHeight (FONT_LATIN_SMALL_WHITE);

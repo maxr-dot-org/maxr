@@ -23,6 +23,8 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/landingpositionselectionmap.h"
 #include "ui/graphical/game/hud.h"
+#include "ui/graphical/application.h"
+#include "ui/graphical/game/animations/animationtimer.h"
 #include "sound.h"
 #include "video.h"
 #include "main.h"
@@ -38,7 +40,9 @@
 cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_) :
 	cWindow (nullptr),
 	staticMap (std::move(staticMap_)),
+	animationTimer (std::make_shared<cAnimationTimer> ()),
 	selectionAllowed (true),
+	reselectionState (eLandingPositionState::Unknown),
 	lastSelectedPosition (0, 0)
 {
 	using namespace std::placeholders;
@@ -79,6 +83,8 @@ const cPosition& cWindowLandingPositionSelection::getSelectedPosition () const
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionState state)
 {
+	reselectionState = state;
+
 	if (state == eLandingPositionState::Clear || state == eLandingPositionState::Confirmed) lockBack ();
 	else unlockBack ();
 
@@ -135,7 +141,15 @@ void cWindowLandingPositionSelection::unlockBack ()
 void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
     if (firstTime) cSoundDevice::getInstance ().getFreeVoiceChannel().play (getRandom (VoiceData.VOILanding));
+	application.addRunnable (animationTimer);
 	cWindow::handleActivated (application, firstTime);
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::handleDeactivated (cApplication& application, bool removed)
+{
+	application.removeRunnable (*animationTimer);
+	cWindow::handleDeactivated (application, removed);
 }
 
 //------------------------------------------------------------------------------
@@ -185,13 +199,46 @@ void cWindowLandingPositionSelection::mapClicked (const cPosition& tilePosition)
 {
 	if (!selectionAllowed) return;
 
-	updateLandingPositionCircles (tilePosition);
+	cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDMenuButton);
 
-	selectedPosition (tilePosition);
+	if (reselectionState == eLandingPositionState::Warning && (tilePosition - lastSelectedPosition).l2Norm () < cLandingPositionManager::tooCloseDistance)
+	{
+		selectedPosition (lastSelectedPosition);
+	}
+	else
+	{
+		startCircleAnimation (tilePosition);
+	}
 }
 
 //------------------------------------------------------------------------------
-void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosition& tilePosition)
+void cWindowLandingPositionSelection::startCircleAnimation (const cPosition& tilePosition)
+{
+	circleAnimationConnectionManager.disconnectAll ();
+	circleAnimationState = 0.;
+
+	circleAnimationConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cWindowLandingPositionSelection::runCircleAnimation, this, tilePosition));
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::runCircleAnimation (const cPosition& tilePosition)
+{
+	const float circleAnimationStep = 0.02;
+
+	circleAnimationState += circleAnimationStep;
+
+	updateLandingPositionCircles (tilePosition, std::min (circleAnimationState, 1.0f));
+
+	if (circleAnimationState >= 1.0)
+	{
+		circleAnimationConnectionManager.disconnectAll ();
+
+		selectedPosition (tilePosition);
+	}
+}
+
+//------------------------------------------------------------------------------
+void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosition& tilePosition, float radiusFactor)
 {
 	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize ().x (), mapWidget->getSize ().y(), Video.getColDepth (), 0, 0, 0, 0));
 	SDL_FillRect (circleSurface.get (), NULL, 0xFF00FF);
@@ -201,10 +248,12 @@ void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosit
 
 	// for non 4:3 screen resolutions, the size of the circles is
 	// only correct in x dimension, because I don't draw an ellipse
-	const int warningRadius = static_cast<int>((cLandingPositionManager::warningDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ());
-	const int tooCloseRadius = static_cast<int>((cLandingPositionManager::tooCloseDistance / 2) * mapWidget->getSize ().x () / staticMap->getSize ().x ());
-	drawCircle (pixelPosition.x (), pixelPosition.y(), warningRadius, SCAN_COLOR, *circleSurface);
-	drawCircle (pixelPosition.x (), pixelPosition.y(), tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
+	const int fullWarningRadius = static_cast<int>(cLandingPositionManager::warningDistance * mapWidget->getSize ().x () / staticMap->getSize ().x ());
+	const int fullTooCloseRadius = static_cast<int>(cLandingPositionManager::tooCloseDistance * mapWidget->getSize ().x () / staticMap->getSize ().x ());
+	const int warningRadius = (int)(fullWarningRadius * radiusFactor);
+	const int tooCloseRadius = std::min (warningRadius-1, fullTooCloseRadius);
+	drawCircle (pixelPosition.x (), pixelPosition.y (), warningRadius, SCAN_COLOR, *circleSurface);
+	drawCircle (pixelPosition.x (), pixelPosition.y (), tooCloseRadius, RANGE_GROUND_COLOR, *circleSurface);
 
 	circlesImage->setImage (circleSurface.get());
 }
