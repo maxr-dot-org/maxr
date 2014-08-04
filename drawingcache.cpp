@@ -21,14 +21,13 @@
 
 #include "drawingcache.h"
 
-#include "buildings.h"
-#include "client.h"
-#include "hud.h"
+#include "game/data/units/building.h"
+#include "game/logic/client.h"
 #include "loaddata.h"
 #include "game/data/player/player.h"
 #include "settings.h"
-#include "vehicles.h"
-#include "map.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/map/map.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 
 void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_)

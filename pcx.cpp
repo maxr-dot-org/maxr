@@ -20,8 +20,8 @@
 #include <algorithm>
 
 #include "pcx.h"
-#include "log.h"
-#include "files.h"
+#include "utility/log.h"
+#include "utility/files.h"
 #include "settings.h"
 #include "main.h"
 #include "video.h"

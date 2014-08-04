@@ -20,9 +20,9 @@
 #include "ui/graphical/game/widgets/mouseaction/mouseactionrepair.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/unitselection.h"
-#include "map.h"
-#include "vehicles.h"
-#include "buildings.h"
+#include "game/data/map/map.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 

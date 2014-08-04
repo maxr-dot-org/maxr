@@ -20,11 +20,11 @@
 #include "game/startup/local/singleplayer/localsingleplayergamesaved.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/application.h"
-#include "client.h"
-#include "server.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
 #include "game/data/player/player.h"
-#include "clientevents.h"
-#include "savegame.h"
+#include "game/logic/clientevents.h"
+#include "game/logic/savegame.h"
 #include "game/data/report/savedreport.h"
 
 //------------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #include "maxrconfig.h"
 
 #include "game/data/report/savedreport.h"
-#include "server.h" // sTurnstartReport
+#include "game/logic/server.h" // sTurnstartReport
 
 class cPlayer;
 

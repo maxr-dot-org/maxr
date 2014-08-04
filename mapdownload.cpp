@@ -27,8 +27,8 @@
 #include <cassert>
 
 #include "defines.h"
-#include "files.h"
-#include "log.h"
+#include "utility/files.h"
+#include "utility/log.h"
 #include "menuevents.h"
 #include "netmessage.h"
 #include "settings.h"

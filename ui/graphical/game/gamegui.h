@@ -26,7 +26,7 @@
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "sound.h"
-#include "upgradecalculator.h"
+#include "game/logic/upgradecalculator.h"
 #include "ui/graphical/game/unitselection.h"
 
 class cHud;

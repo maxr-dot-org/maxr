@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/data/report/unit/savedreportdetected.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 #include "game/data/player/player.h"
 #include "netmessage.h"
 #include "ui/sound/soundmanager.h"

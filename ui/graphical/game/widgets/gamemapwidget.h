@@ -28,7 +28,7 @@
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "maxrconfig.h"
 #include "utility/signal/signal.h"
-#include "fxeffects.h"
+#include "game/logic/fxeffects.h"
 
 struct SDL_Surface;
 

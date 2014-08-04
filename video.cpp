@@ -29,10 +29,10 @@
 #include "video.h"
 
 #include "defines.h"
-#include "log.h"
+#include "utility/log.h"
 #include "pcx.h"
 #include "unifonts.h"
-#include "files.h"
+#include "utility/files.h"
 #include "input/keyboard/keyboard.h"
 
 cVideo Video;

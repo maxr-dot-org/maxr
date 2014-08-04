@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 #include "ui/graphical/game/unitlocklist.h"
-#include "map.h"
-#include "buildings.h"
-#include "vehicles.h"
+#include "game/data/map/map.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
 cUnitLockList::cUnitLockList () :

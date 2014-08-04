@@ -23,7 +23,7 @@
 #include <chrono>
 
 #include "ui/graphical/menu/widgets/abstractlistviewitem.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 
 class cLabel;
 

@@ -19,11 +19,11 @@
 
 #include "ui/graphical/game/widgets/minimapwidget.h"
 #include "ui/graphical/application.h"
-#include "map.h"
+#include "game/data/map/map.h"
 #include "video.h"
 #include "game/data/player/player.h"
-#include "buildings.h"
-#include "vehicles.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 #include "input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------

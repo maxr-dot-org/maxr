@@ -28,8 +28,8 @@
 #include "mveplayer.h"
 
 #include "main.h"
-#include "autoptr.h"
-#include "autosurface.h"
+#include "utility/autoptr.h"
+#include "utility/autosurface.h"
 #include "video.h"
 
 #include <SDL.h>

@@ -35,7 +35,7 @@
 #include "video.h"
 #include "pcx.h"
 #include "main.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 #include "keys.h"
 #include "game/logic/turnclock.h"
 #include "game/logic/turntimeclock.h"

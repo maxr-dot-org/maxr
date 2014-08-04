@@ -20,14 +20,13 @@
 
 #include "game/data/player/player.h"
 
-#include "buildings.h"
-#include "client.h"
-#include "clist.h"
-#include "hud.h"
+#include "game/data/units/building.h"
+#include "game/logic/client.h"
+#include "utility/listhelpers.h"
 #include "netmessage.h"
-#include "server.h"
-#include "serverevents.h"
-#include "vehicles.h"
+#include "game/logic/server.h"
+#include "game/logic/serverevents.h"
+#include "game/data/units/vehicle.h"
 #include "game/data/report/savedreport.h"
 #include "game/logic/turnclock.h"
 

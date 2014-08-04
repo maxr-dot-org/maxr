@@ -29,9 +29,9 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/application.h"
 #include "pcx.h"
-#include "buildings.h"
+#include "game/data/units/building.h"
 #include "game/data/player/player.h"
-#include "map.h"
+#include "game/data/map/map.h"
 
 //------------------------------------------------------------------------------
 cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :

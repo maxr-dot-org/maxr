@@ -19,7 +19,7 @@
 
 #include "ui/graphical/game/animations/animationwork.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "buildings.h"
+#include "game/data/units/building.h"
 #include "utility/box.h"
 
 //------------------------------------------------------------------------------

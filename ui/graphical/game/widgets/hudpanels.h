@@ -23,7 +23,7 @@
 #include <memory>
 
 #include "ui/graphical/widget.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
 

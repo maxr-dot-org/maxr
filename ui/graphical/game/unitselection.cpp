@@ -21,9 +21,9 @@
 
 #include "ui/graphical/game/unitselection.h"
 
-#include "map.h"
-#include "vehicles.h"
-#include "buildings.h"
+#include "game/data/map/map.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 #include "utility/box.h"
 
 //------------------------------------------------------------------------------

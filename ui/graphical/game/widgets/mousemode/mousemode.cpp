@@ -19,7 +19,7 @@
 
 #include "ui/graphical/game/widgets/mousemode/mousemode.h"
 #include "ui/graphical/game/unitselection.h"
-#include "map.h"
+#include "game/data/map/map.h"
 
 //------------------------------------------------------------------------------
 cMouseMode::cMouseMode (const cMap* map_, const cUnitSelection& unitSelection_, const cPlayer* player_) :

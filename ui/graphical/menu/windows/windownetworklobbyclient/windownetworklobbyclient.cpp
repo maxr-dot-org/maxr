@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "main.h"
 #include "network.h"
-#include "log.h"
+#include "utility/log.h"
 #include "game/data/player/player.h"
 #include "netmessage.h"
 #include "menuevents.h"

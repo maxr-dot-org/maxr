@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/windows/windowresourcedistribution/windowresourcedistribution.h"
 #include "pcx.h"
 #include "main.h"
-#include "base.h"
+#include "game/data/base/base.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"

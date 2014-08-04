@@ -26,11 +26,11 @@
 #include <vector>
 
 #include "defines.h"
-#include "autoptr.h"
-#include "base.h"
+#include "utility/autoptr.h"
+#include "game/data/base/base.h"
 #include "main.h" // for sID
-#include "unit.h" // sUnitLess
-#include "upgradecalculator.h"
+#include "game/data/units/unit.h" // sUnitLess
+#include "game/logic/upgradecalculator.h"
 #include "utility/position.h"
 #include "utility/signal/signal.h"
 #include "utility/flatset.h"

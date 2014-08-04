@@ -20,10 +20,10 @@
 #include "game/startup/network/client/networkclientgamenew.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/application.h"
-#include "client.h"
-#include "server.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
 #include "game/data/player/player.h"
-#include "clientevents.h"
+#include "game/logic/clientevents.h"
 
 // TODO: remove
 void applyUnitUpgrades (cPlayer& player, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades);

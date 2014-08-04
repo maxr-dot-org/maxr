@@ -19,12 +19,12 @@
 
 #include "menuevents.h"
 
-#include "log.h"
+#include "utility/log.h"
 #include "mapdownload.h"
 #include "netmessage.h"
 #include "game/data/player/player.h"
-#include "serverevents.h"
-#include "map.h"
+#include "game/logic/serverevents.h"
+#include "game/data/map/map.h"
 #include "utility/tounderlyingtype.h"
 
 using namespace std;

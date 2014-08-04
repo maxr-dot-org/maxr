@@ -22,7 +22,7 @@
 
 #include <memory>
 
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "main.h" // for sID
 
 class cPlayer;

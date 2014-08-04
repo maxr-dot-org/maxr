@@ -35,9 +35,9 @@
 
 #include <vector>
 #include <SDL.h>
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "defines.h"
-#include "language.h"
+#include "utility/language.h"
 
 // Predeclarations
 class cPlayer;

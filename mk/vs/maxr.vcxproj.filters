@@ -208,32 +208,17 @@
     <Filter Include="maxr\ui\graphical\game\animations">
       <UniqueIdentifier>{4711575e-ecb1-4bf3-b97e-713533d395a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="maxr\game\data\base">
+      <UniqueIdentifier>{3f3290ec-e095-4dfc-8132-ca5a8fd29b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\data\map">
+      <UniqueIdentifier>{3f485473-ddb5-483a-84ab-baa9723d79a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maxr\game\data\units">
+      <UniqueIdentifier>{cce322e8-56e0-4ce8-a6e6-9fad75147777}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\attackJobs.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\automjobs.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\base.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\buildings.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\casualtiestracker.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\clans.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\client.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\clientevents.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dedicatedserver.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
@@ -243,43 +228,19 @@
     <ClCompile Include="..\..\extendedtinyxml.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\files.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\fxeffects.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\gametimer.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\jobs.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\keys.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\language.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\loaddata.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\log.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\main.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\map.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\mapdownload.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\menuevents.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\movejobs.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\mveplayer.cpp">
@@ -297,15 +258,6 @@
     <ClCompile Include="..\..\pcx.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\savegame.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\server.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\serverevents.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\servergame.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
@@ -316,15 +268,6 @@
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\unifonts.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\unit.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\upgradecalculator.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\vehicles.cpp">
       <Filter>maxr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\video.cpp">
@@ -615,9 +558,6 @@
     <ClCompile Include="..\..\ui\graphical\menu\windows\windowresourcedistribution\windowresourcedistribution.cpp">
       <Filter>maxr\ui\graphical\menu\windows\windowresourcedistribution</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\unitdata.cpp">
-      <Filter>maxr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ui\graphical\game\widgets\unitdetailsstored.cpp">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClCompile>
@@ -897,47 +837,77 @@
     <ClCompile Include="..\..\ui\graphical\game\animations\animationstartupbuildingsite.cpp">
       <Filter>maxr\ui\graphical\game\animations</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\logic\automjobs.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\casualtiestracker.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\client.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\fxeffects.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\gametimer.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\jobs.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\movejobs.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\savegame.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\server.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\upgradecalculator.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\units\unit.cpp">
+      <Filter>maxr\game\data\units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\units\unitdata.cpp">
+      <Filter>maxr\game\data\units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\map\map.cpp">
+      <Filter>maxr\game\data\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\base\base.cpp">
+      <Filter>maxr\game\data\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\units\building.cpp">
+      <Filter>maxr\game\data\units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\units\vehicle.cpp">
+      <Filter>maxr\game\data\units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\attackjobs.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\serverevents.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\logic\clientevents.cpp">
+      <Filter>maxr\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\data\player\clans.cpp">
+      <Filter>maxr\game\data\player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utility\files.cpp">
+      <Filter>maxr\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utility\language.cpp">
+      <Filter>maxr\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\utility\log.cpp">
+      <Filter>maxr\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\attackJobs.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\automjobs.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\autoobj.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\autoptr.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\autosurface.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\base.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\buildings.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\casualtiestracker.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\clans.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\client.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\clientevents.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\clist.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\cmutex.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\dedicatedserver.h">
       <Filter>maxr</Filter>
     </ClInclude>
@@ -950,37 +920,16 @@
     <ClInclude Include="..\..\extendedtinyxml.h">
       <Filter>maxr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\files.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\fxeffects.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gametimer.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\hud.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\jobs.h">
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\keys.h">
       <Filter>maxr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\language.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\loaddata.h">
       <Filter>maxr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\log.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\main.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\map.h">
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\mapdownload.h">
@@ -990,9 +939,6 @@
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\menus.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\movejobs.h">
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\mveplayer.h">
@@ -1013,16 +959,7 @@
     <ClInclude Include="..\..\resource.h">
       <Filter>maxr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\savegame.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\SDL_flic.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\server.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\serverevents.h">
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\servergame.h">
@@ -1041,15 +978,6 @@
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\unifonts.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\unit.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\upgradecalculator.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\vehicles.h">
       <Filter>maxr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\video.h">
@@ -1493,9 +1421,6 @@
     <ClInclude Include="..\..\ui\graphical\menu\windows\windowresourcedistribution\windowresourcedistribution.h">
       <Filter>maxr\ui\graphical\menu\windows\windowresourcedistribution</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\unitdata.h">
-      <Filter>maxr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\widgets\unitdetailsstored.h">
       <Filter>maxr\ui\graphical\game\widgets</Filter>
     </ClInclude>
@@ -1828,6 +1753,90 @@
     </ClInclude>
     <ClInclude Include="..\..\ui\graphical\game\animations\animationstartupbuildingsite.h">
       <Filter>maxr\ui\graphical\game\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\automjobs.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\casualtiestracker.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\client.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\fxeffects.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\gametimer.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\jobs.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\movejobs.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\savegame.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\server.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\upgradecalculator.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\units\unit.h">
+      <Filter>maxr\game\data\units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\units\unitdata.h">
+      <Filter>maxr\game\data\units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\map\map.h">
+      <Filter>maxr\game\data\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\base\base.h">
+      <Filter>maxr\game\data\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\units\building.h">
+      <Filter>maxr\game\data\units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\units\vehicle.h">
+      <Filter>maxr\game\data\units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\attackjobs.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\serverevents.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\logic\clientevents.h">
+      <Filter>maxr\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\data\player\clans.h">
+      <Filter>maxr\game\data\player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\autoobj.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\autoptr.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\autosurface.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\files.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\language.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\log.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\listhelpers.h">
+      <Filter>maxr\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\utility\mutex.h">
+      <Filter>maxr\utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

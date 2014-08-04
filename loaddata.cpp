@@ -36,20 +36,20 @@
 
 #include "loaddata.h"
 
-#include "autosurface.h"
-#include "buildings.h"
-#include "clans.h"
+#include "utility/autosurface.h"
+#include "game/data/units/building.h"
+#include "game/data/player/clans.h"
 #include "extendedtinyxml.h"
-#include "files.h"
+#include "utility/files.h"
 #include "keys.h"
-#include "log.h"
+#include "utility/log.h"
 #include "main.h"
 #include "pcx.h"
 #include "settings.h"
 #include "sound.h"
 #include "tinyxml2.h"
 #include "unifonts.h"
-#include "vehicles.h"
+#include "game/data/units/vehicle.h"
 #include "video.h"
 
 #ifdef WIN32

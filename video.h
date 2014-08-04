@@ -20,7 +20,7 @@
 #ifndef videoH
 #define videoH
 
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

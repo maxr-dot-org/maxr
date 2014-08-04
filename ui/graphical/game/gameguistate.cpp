@@ -20,10 +20,10 @@
 #include "ui/graphical/game/gameguistate.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitlocklist.h"
-#include "unit.h"
-#include "savegame.h"
+#include "game/data/units/unit.h"
+#include "game/logic/savegame.h"
 #include "netmessage.h"
-#include "clientevents.h"
+#include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
 cGameGuiState::cGameGuiState () :

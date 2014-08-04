@@ -21,8 +21,8 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/radiogroup.h"
 #include "ui/graphical/menu/widgets/checkbox.h"
-#include "unit.h"
-#include "map.h"
+#include "game/data/units/unit.h"
+#include "game/data/map/map.h"
 
 //------------------------------------------------------------------------------
 cUnitContextMenuWidget::cUnitContextMenuWidget () :

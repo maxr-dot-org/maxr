@@ -21,7 +21,7 @@
 
 #include "output/sound/soundchannel.h"
 #include "output/sound/soundchunk.h"
-#include "log.h"
+#include "utility/log.h"
 
 cSignal<void (int)> cSoundChannel::channelFinished;
 

@@ -27,7 +27,7 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "ui/graphical/application.h"
 #include "pcx.h"
-#include "vehicles.h"
+#include "game/data/units/vehicle.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

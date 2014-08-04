@@ -30,9 +30,9 @@
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "game/startup/local/hotseat/localhotseatgamenew.h"
 #include "game/data/player/playerbasicdata.h"
-#include "map.h"
+#include "game/data/map/map.h"
 #include "menus.h"
-#include "upgradecalculator.h"
+#include "game/logic/upgradecalculator.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp

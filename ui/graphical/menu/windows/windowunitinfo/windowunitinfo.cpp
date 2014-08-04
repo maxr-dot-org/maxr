@@ -23,8 +23,8 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 #include "pcx.h"
-#include "vehicles.h"
-#include "buildings.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 
 //------------------------------------------------------------------------------
 cWindowUnitInfo::cWindowUnitInfo (const sUnitData& unitData, const cPlayer& owner) :

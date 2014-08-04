@@ -21,9 +21,9 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/game/widgets/unitdetailshud.h"
-#include "unit.h"
-#include "vehicles.h"
-#include "buildings.h"
+#include "game/data/units/unit.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 #include "utility/drawing.h"
 #include "utility/color.h"
 

@@ -20,8 +20,8 @@
 #include "tinyxml2.h"
 
 #include "keys.h"
-#include "files.h"
-#include "log.h"
+#include "utility/files.h"
+#include "utility/log.h"
 #include "main.h" // iToStr
 #include "extendedtinyxml.h"
 

@@ -19,7 +19,7 @@
 
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchunk.h"
-#include "log.h"
+#include "utility/log.h"
 #include "sound.h"
 #include "utility/random.h"
 

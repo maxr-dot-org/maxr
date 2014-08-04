@@ -24,7 +24,7 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/widget.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 

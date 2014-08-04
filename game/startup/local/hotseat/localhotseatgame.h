@@ -27,7 +27,7 @@
 #include "game/startup/game.h"
 #include "maxrconfig.h"
 #include "ui/graphical/game/control/gameguicontroller.h"
-#include "server.h"
+#include "game/logic/server.h"
 
 class cClient;
 

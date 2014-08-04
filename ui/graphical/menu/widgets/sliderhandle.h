@@ -23,7 +23,7 @@
 #include "maxrconfig.h"
 #include "ui/graphical/widget.h"
 #include "ui/graphical/orientation.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 
 struct SDL_Surface;

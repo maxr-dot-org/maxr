@@ -22,12 +22,12 @@
 #include "ui/graphical/game/animations/animation.h"
 #include "game/data/player/player.h"
 #include "input/mouse/mouse.h"
-#include "client.h"
-#include "server.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
 #include "video.h"
 #include "unifonts.h"
-#include "buildings.h"
-#include "vehicles.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
 cDebugOutputWidget::cDebugOutputWidget (const cPosition& position, int width) :

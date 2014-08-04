@@ -30,9 +30,9 @@
 #include "pcx.h"
 #include "main.h"
 #include "network.h"
-#include "map.h"
+#include "game/data/map/map.h"
 #include "video.h"
-#include "savegame.h"
+#include "game/logic/savegame.h"
 #include "network.h"
 #include "menuevents.h"
 

@@ -24,7 +24,7 @@
 
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "cmutex.h"
+#include "utility/mutex.h"
 
 class cSoundEffect;
 class cSoundChannel;

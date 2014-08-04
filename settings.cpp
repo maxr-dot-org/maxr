@@ -32,8 +32,8 @@
 #include "settings.h"
 
 #include "extendedtinyxml.h"
-#include "files.h"
-#include "log.h"
+#include "utility/files.h"
+#include "utility/log.h"
 #include "main.h"
 #include "tinyxml2.h"
 #include "video.h"

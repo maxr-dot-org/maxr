@@ -29,7 +29,7 @@
 #include "input/mouse/mousebuttontype.h"
 #include "utility/box.h"
 #include "utility/position.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "maxrconfig.h"
 #include "ui/graphical/shortcut.h"
 

@@ -25,8 +25,8 @@
 #include "ui/graphical/game/widgets/turntimeclockwidget.h"
 #include "pcx.h"
 #include "main.h"
-#include "files.h"
-#include "savegame.h"
+#include "utility/files.h"
+#include "game/logic/savegame.h"
 
 //------------------------------------------------------------------------------
 cWindowLoad::cWindowLoad (std::shared_ptr<const cTurnTimeClock> turnTimeClock) :

@@ -23,7 +23,7 @@
 #include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "ui/graphical/orientation.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "sound.h"
 #include "utility/signal/signal.h"
 

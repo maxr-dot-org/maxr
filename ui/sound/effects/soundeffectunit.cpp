@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "ui/sound/effects/soundeffectunit.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 
 //--------------------------------------------------------------------------
 cSoundEffectUnit::cSoundEffectUnit (eSoundEffectType type, const cSoundChunk& sound, const cUnit& unit_) :

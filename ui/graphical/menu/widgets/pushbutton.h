@@ -24,7 +24,7 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/menu/widgets/clickablewidget.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 #include "unifonts.h"
 #include "sound.h"

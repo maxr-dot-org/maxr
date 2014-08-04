@@ -20,7 +20,7 @@
 #include "game/data/report/savedreportunit.h"
 
 #include "netmessage.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
 cSavedReportUnit::cSavedReportUnit (const cUnit& unit) :

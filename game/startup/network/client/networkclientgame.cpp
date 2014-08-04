@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 #include "game/startup/network/client/networkclientgame.h"
-#include "client.h"
-#include "savegame.h"
+#include "game/logic/client.h"
+#include "game/logic/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------

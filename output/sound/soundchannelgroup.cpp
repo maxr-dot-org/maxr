@@ -23,7 +23,7 @@
 
 #include "output/sound/soundchannelgroup.h"
 #include "output/sound/soundchannel.h"
-#include "log.h"
+#include "utility/log.h"
 #include "main.h" // iToStr
 
 //--------------------------------------------------------------------------

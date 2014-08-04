@@ -25,7 +25,7 @@
 #include "ui/graphical/application.h"
 #include "pcx.h"
 #include "main.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
 cDialogSelfDestruction::cDialogSelfDestruction (const cUnit& unit, std::shared_ptr<cAnimationTimer> animationTimer) :

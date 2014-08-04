@@ -24,7 +24,7 @@
 #include "output/sound/soundchannel.h"
 
 #include "settings.h"
-#include "gametimer.h"
+#include "game/logic/gametimer.h"
 
 //--------------------------------------------------------------------------
 cSoundManager::sStoredSound::sStoredSound (std::shared_ptr<cSoundEffect> sound_, unsigned int startGameTime_, bool active_) :

@@ -21,9 +21,9 @@
 
 #include "main.h"
 #include "video.h"
-#include "unit.h"
-#include "map.h"
-#include "attackjobs.h"
+#include "game/data/units/unit.h"
+#include "game/data/map/map.h"
+#include "game/logic/attackjobs.h"
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 
-#include "unit.h"
+#include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
 cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :

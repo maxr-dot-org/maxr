@@ -23,7 +23,7 @@
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 #include "ui/graphical/menu/widgets/special/resourcebar.h"
 
 class cUnit;

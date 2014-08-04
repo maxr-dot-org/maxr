@@ -19,8 +19,8 @@
 
 #include "ui/graphical/menu/windows/windowhangar/windowhangar.h"
 #include "main.h"
-#include "vehicles.h"
-#include "buildings.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 #include "game/data/player/player.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"

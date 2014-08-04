@@ -20,7 +20,7 @@
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "netmessage.h"
 #include "game/data/player/player.h"
-#include "map.h" // RES_XYZ
+#include "game/data/map/map.h" // RES_XYZ
 
 //------------------------------------------------------------------------------
 cSavedReportResourceChanged::cSavedReportResourceChanged (int resourceType_, int amount_, bool increase_) :

@@ -22,9 +22,9 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "main.h"
 #include "video.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 #include "game/data/player/player.h"
-#include "buildings.h"
+#include "game/data/units/building.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 
 //------------------------------------------------------------------------------

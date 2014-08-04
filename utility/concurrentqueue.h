@@ -22,7 +22,7 @@
 
 #include <deque>
 
-#include "cmutex.h"
+#include "utility/mutex.h"
 
 template<typename T>
 class cConcurrentQueue

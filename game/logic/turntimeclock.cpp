@@ -20,7 +20,7 @@
 #include <algorithm>
 
 #include "game/logic/turntimeclock.h"
-#include "gametimer.h"
+#include "game/logic/gametimer.h"
 
 
 //------------------------------------------------------------------------------

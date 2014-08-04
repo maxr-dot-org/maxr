@@ -19,15 +19,15 @@
 
 #include "dedicatedserver.h"
 
-#include "clientevents.h"
-#include "clist.h"
+#include "game/logic/clientevents.h"
+#include "utility/listhelpers.h"
 #include "defines.h"
-#include "files.h"
+#include "utility/files.h"
 #include "menuevents.h"
 #include "netmessage.h"
 #include "network.h"
-#include "savegame.h"
-#include "serverevents.h"
+#include "game/logic/savegame.h"
+#include "game/logic/serverevents.h"
 #include "servergame.h"
 
 #include <algorithm>

@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 #include "game/startup/local/hotseat/localhotseatgame.h"
-#include "client.h"
-#include "server.h"
-#include "savegame.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
+#include "game/logic/savegame.h"
 #include "loaddata.h"
 
 //------------------------------------------------------------------------------

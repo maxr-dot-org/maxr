@@ -19,7 +19,7 @@
 #ifndef unifontsH
 #define unifontsH
 
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include <SDL.h>
 #include <string>
 #include "defines.h"

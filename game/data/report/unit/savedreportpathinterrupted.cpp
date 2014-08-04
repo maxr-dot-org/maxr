@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/data/report/unit/savedreportpathinterrupted.h"
-#include "unit.h"
+#include "game/data/units/unit.h"
 
 //------------------------------------------------------------------------------
 cSavedReportPathInterrupted::cSavedReportPathInterrupted (const cUnit& unit) :

@@ -20,8 +20,8 @@
 #include "ui/graphical/game/widgets/mousemode/mousemodeselectbuildposition.h"
 #include "ui/graphical/game/widgets/mouseaction/mouseactionselectbuildposition.h"
 #include "ui/graphical/game/unitselection.h"
-#include "map.h"
-#include "unit.h"
+#include "game/data/map/map.h"
+#include "game/data/units/unit.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 

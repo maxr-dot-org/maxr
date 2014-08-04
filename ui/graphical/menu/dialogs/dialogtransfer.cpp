@@ -26,12 +26,12 @@
 #include "ui/graphical/application.h"
 #include "pcx.h"
 #include "main.h"
-#include "unit.h"
-#include "buildings.h"
-#include "vehicles.h"
-#include "map.h"
+#include "game/data/units/unit.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/map/map.h"
 #include "video.h"
-#include "base.h"
+#include "game/data/base/base.h"
 
 //------------------------------------------------------------------------------
 cNewDialogTransfer::cNewDialogTransfer (const cUnit& sourceUnit, const cUnit& destinationUnit) :

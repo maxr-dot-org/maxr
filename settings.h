@@ -22,7 +22,7 @@
 #include <string>
 #include <SDL.h>
 #include "tinyxml2.h"
-#include "cmutex.h"
+#include "utility/mutex.h"
 #include "utility/signal/signal.h"
 
 /**

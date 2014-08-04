@@ -37,11 +37,11 @@
 #include "network.h"
 #include "game/data/player/player.h"
 #include "settings.h"
-#include "client.h"
-#include "server.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
 #include "menus.h"
 
-#include "clientevents.h"
+#include "game/logic/clientevents.h"
 
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer () :

@@ -24,7 +24,7 @@
 
 #include "ui/graphical/widget.h"
 #include "maxrconfig.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 
 class cMouseCursor;

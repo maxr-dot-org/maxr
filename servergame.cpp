@@ -19,14 +19,14 @@
 
 #include "servergame.h"
 
-#include "log.h"
+#include "utility/log.h"
 #include "menuevents.h"
 #include "netmessage.h"
 #include "game/data/player/player.h"
-#include "savegame.h"
-#include "serverevents.h"
-#include "map.h"
-#include "server.h"
+#include "game/logic/savegame.h"
+#include "game/logic/serverevents.h"
+#include "game/data/map/map.h"
+#include "game/logic/server.h"
 #include "game/logic/turnclock.h"
 
 #include <algorithm>

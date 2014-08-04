@@ -19,7 +19,7 @@
 
 #include "ui/graphical/game/animations/animationdither.h"
 #include "ui/graphical/game/animations/animationtimer.h"
-#include "vehicles.h"
+#include "game/data/units/vehicle.h"
 #include "utility/box.h"
 #include "utility/random.h"
 

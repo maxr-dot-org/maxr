@@ -21,7 +21,7 @@
 
 #include "maxrconfig.h"
 #include "network.h"
-#include "log.h"
+#include "utility/log.h"
 #include "main.h"
 #include "netmessage.h"
 

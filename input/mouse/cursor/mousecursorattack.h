@@ -22,7 +22,7 @@
 
 #include "input/mouse/cursor/mousecursor.h"
 #include "maxrconfig.h"
-#include "autosurface.h"
+#include "utility/autosurface.h"
 
 class cUnit;
 class cPosition;

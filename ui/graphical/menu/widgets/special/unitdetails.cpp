@@ -20,7 +20,7 @@
 #include "ui/graphical/menu/widgets/special/unitdetails.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "video.h"
-#include "upgradecalculator.h"
+#include "game/logic/upgradecalculator.h"
 #include "game/data/player/player.h"
 
 //------------------------------------------------------------------------------

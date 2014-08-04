@@ -33,16 +33,16 @@
 #include "game/startup/network/host/networkhostgamenew.h"
 #include "game/startup/network/host/networkhostgamesaved.h"
 #include "main.h"
-#include "map.h"
+#include "game/data/map/map.h"
 #include "game/data/player/player.h"
 #include "menus.h"
 #include "network.h"
-#include "log.h"
+#include "utility/log.h"
 #include "menuevents.h"
 #include "netmessage.h"
-#include "savegame.h"
-#include "client.h"
-#include "server.h"
+#include "game/logic/savegame.h"
+#include "game/logic/client.h"
+#include "game/logic/server.h"
 
 // TODO: remove
 std::vector<std::pair<sID, int>> createInitialLandingUnitsList (int clan, const cGameSettings& gameSettings); // defined in windowsingleplayer.cpp

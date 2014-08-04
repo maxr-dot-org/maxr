@@ -26,7 +26,7 @@
 #include "sound.h"
 #include "video.h"
 #include "main.h"
-#include "map.h"
+#include "game/data/map/map.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "game/logic/landingpositionmanager.h"

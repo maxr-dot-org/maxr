@@ -19,12 +19,12 @@
 
 #include "netmessage.h"
 
-#include "clientevents.h"
-#include "log.h"
+#include "game/logic/clientevents.h"
+#include "utility/log.h"
 #include "main.h"
 #include "menuevents.h"
 #include "network.h"
-#include "serverevents.h"
+#include "game/logic/serverevents.h"
 
 using namespace std;
 

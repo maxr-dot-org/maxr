@@ -24,7 +24,7 @@
 
 #include <SDL.h>
 
-#include "autosurface.h"
+#include "utility/autosurface.h"
 
 /** Loads an image to a surface
  * @param name path to img

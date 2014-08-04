@@ -20,8 +20,8 @@
 #include "ui/graphical/menu/widgets/special/reportdisadvantageslistviewitem.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
-#include "buildings.h"
-#include "vehicles.h"
+#include "game/data/units/building.h"
+#include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
 cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& unitId_, std::vector<int> disadvantages_) :

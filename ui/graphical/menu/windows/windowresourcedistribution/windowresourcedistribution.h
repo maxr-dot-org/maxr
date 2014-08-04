@@ -25,7 +25,7 @@
 #include "ui/graphical/window.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/signal/signal.h"
-#include "base.h"
+#include "game/data/base/base.h"
 
 class cResourceBar;
 class cLabel;

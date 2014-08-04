@@ -31,7 +31,7 @@
 
 #include "ui/graphical/game/gameguistate.h"
 
-#include "upgradecalculator.h"
+#include "game/logic/upgradecalculator.h"
 
 class cGameGui;
 class cClient;

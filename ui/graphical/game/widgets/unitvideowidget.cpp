@@ -23,9 +23,9 @@
 
 #include "ui/graphical/menu/widgets/image.h"
 
-#include "vehicles.h"
-#include "buildings.h"
-#include "files.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
+#include "utility/files.h"
 
 //------------------------------------------------------------------------------
 cUnitVideoWidget::cUnitVideoWidget (const cBox<cPosition>& area, std::shared_ptr<cAnimationTimer> animationTimer) :

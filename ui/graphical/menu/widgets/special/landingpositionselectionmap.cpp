@@ -19,7 +19,7 @@
 
 #include "ui/graphical/menu/widgets/special/landingpositionselectionmap.h"
 
-#include "map.h"
+#include "game/data/map/map.h"
 #include "settings.h"
 #include "video.h"
 #include "input/mouse/mouse.h"

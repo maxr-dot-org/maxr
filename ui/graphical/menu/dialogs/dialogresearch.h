@@ -25,7 +25,7 @@
 #include "ui/graphical/window.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "upgradecalculator.h"
+#include "game/logic/upgradecalculator.h"
 
 class cLabel;
 class cSlider;
