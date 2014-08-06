@@ -1311,8 +1311,8 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			{
 				int cl = 0;
 				sscanf (command.c_str (), "/color %d", &cl);
-				cl %= 8;
-				activeClient->getActivePlayer ().setColor (cPlayerColor (cl));
+				cl %= cPlayerColor::predefinedColorsCount;
+				activeClient->getActivePlayer ().setColor (cPlayerColor (cPlayerColor::predefinedColors[cl]));
 			}
 			else if (command.compare (0, 8, "/fog off") == 0)
 			{

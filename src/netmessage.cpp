@@ -360,6 +360,22 @@ cPosition cNetMessage::popPosition ()
 	return position;
 }
 
+void cNetMessage::pushColor (const cColor& color)
+{
+	pushInt16 (color.r);
+	pushInt16 (color.g);
+	pushInt16 (color.b);
+}
+
+cColor cNetMessage::popColor ()
+{
+	cColor color;
+	color.b = popInt16 ();
+	color.g = popInt16 ();
+	color.r = popInt16 ();
+	return color;
+}
+
 string cNetMessage::getTypeAsString() const
 {
 	//find the string representation of the message type for

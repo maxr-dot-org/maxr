@@ -664,12 +664,12 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 		const auto& secondPlayer = *playerList[i];
 		if (&player == &secondPlayer) continue;
 		message.pushInt16 (secondPlayer.getNr ());
-		message.pushInt16 (secondPlayer.getColor ().getIndex());
+		message.pushColor (secondPlayer.getColor ().getColor ());
 		message.pushString (secondPlayer.getName ());
 	}
 	message.pushInt16 ((int) playerList.size());
-	message.pushString (server.Map->getName());
-	message.pushInt16 (player.getColor().getIndex());
+	message.pushString (server.Map->getName ());
+	message.pushColor (player.getColor ().getColor ());
 	message.pushInt16 (player.getNr());
 
 	message.pushBool (true);

@@ -24,6 +24,7 @@
 #include "tinyxml2.h"
 #include "utility/mutex.h"
 #include "utility/signal/signal.h"
+#include "utility/color.h"
 
 /**
  * cSettings class stores all settings for the game and handles reading
@@ -121,8 +122,8 @@ public:
 	const std::string& getPlayerName() const;
 	void setPlayerName (const char* playerName, bool save = true);
 
-	int getPlayerColor() const;
-	void setPlayerColor (int color, bool save = true);
+	const cColor& getPlayerColor () const;
+	void setPlayerColor (const cColor& color, bool save = true);
 
 	bool isSoundEnabled() const;
 	void setSoundEnabled (bool soundEnabled, bool save = true);
@@ -303,7 +304,7 @@ private:
 	/** Last/default player's name used for network game */
 	std::string playerName;
 	/** Last color chosen by player */
-	int playerColor;
+	cColor playerColor;
 
 	// SOUND
 	/** sound enabled */

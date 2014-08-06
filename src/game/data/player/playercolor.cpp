@@ -22,28 +22,66 @@
 #include "defines.h"
 #include "main.h" // OtherData
 #include "game/data/player/playercolor.h"
+#include "utility/random.h"
+
+const cColor cPlayerColor::predefinedColors[predefinedColorsCount] =
+{
+	cColor (0xFF, 0x00, 0x00), // red
+	cColor (0x00, 0xFF, 0x00), // green
+	cColor (0x00, 0x00, 0xFF), // blue
+	cColor (0x7F, 0x7F, 0x7F), // gray
+	cColor (0xFF, 0x7F, 0x00), // orange
+	cColor (0xFF, 0xFF, 0x00), // yellow
+	cColor (0xFF, 0x00, 0xFE), // purple
+	cColor (0x00, 0xFF, 0xFF)  // aqua
+};
 
 //------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor ()
 {
-	texture = OtherData.colors[0].get ();
-
-	const auto pixel = static_cast<Uint32*> (texture->pixels)[0];
-
-	SDL_GetRGBA (pixel, texture->format, &color.r, &color.g, &color.b, &color.a);
+	color = cColor::red ();
+	createTexture ();
 }
 
 //------------------------------------------------------------------------------
-cPlayerColor::cPlayerColor (size_t index_) :
-	index (index_)
+cPlayerColor::cPlayerColor (const cColor& color_) :
+	color (color_)
 {
-	assert (index < PLAYERCOLORS);
+	createTexture ();
+}
 
-	texture = OtherData.colors[index].get ();
+//------------------------------------------------------------------------------
+cPlayerColor::cPlayerColor (const cPlayerColor& other) :
+	color (other.color),
+	texture (AutoSurface (other.texture.get ()))
+{
+	++texture->refcount;
+}
 
-	const auto pixel = static_cast<Uint32*> (texture->pixels)[0];
+//------------------------------------------------------------------------------
+cPlayerColor::cPlayerColor (cPlayerColor&& other) :
+	color (std::move (other.color)),
+	texture (std::move (other.texture))
+{}
 
-	SDL_GetRGBA (pixel, texture->format, &color.r, &color.g, &color.b, &color.a);
+//------------------------------------------------------------------------------
+cPlayerColor& cPlayerColor::operator=(const cPlayerColor& other)
+{
+	color = other.color;
+
+	texture = AutoSurface (other.texture.get ());
+	++texture->refcount;
+
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+cPlayerColor& cPlayerColor::operator=(cPlayerColor&& other)
+{
+	color = std::move (other.color);
+	texture = std::move (other.texture);
+
+	return *this;
 }
 
 //------------------------------------------------------------------------------
@@ -55,19 +93,78 @@ const cColor& cPlayerColor::getColor () const
 //------------------------------------------------------------------------------
 SDL_Surface* cPlayerColor::getTexture () const
 {
-	return texture;
+	return texture.get();
 }
 
 //------------------------------------------------------------------------------
-size_t cPlayerColor::getIndex () const
+void cPlayerColor::createTexture ()
 {
-	return index;
+	texture = AutoSurface(SDL_CreateRGBSurface (0, 128, 128, 32, 0, 0, 0, 0));
+
+	SDL_FillRect (texture.get (), nullptr, color.toMappedSdlRGBAColor (texture->format));
+
+	unsigned short h;
+	unsigned char s, v;
+	color.toHsv (h, s, v);
+
+	const size_t boxes = 400;
+
+	std::array<cColor, 7> randomColors;
+
+	randomColors[0] = color;
+
+	for (size_t i = 1; i < randomColors.size (); ++i)
+	{
+		do
+		{
+			const auto hChange = random (0, 5);
+			const auto sChange = random (10, 30);
+			const auto vChange = random (10, 30);
+
+			unsigned short changedH;
+			unsigned char changedS, changedV;
+
+			if ((int)(h)+hChange >= 360 || ((int)(h)-hChange >= 0 && randomBernoulli ())) changedH = h - (unsigned short)hChange;
+			else changedH = h + (unsigned short)hChange;
+
+			if ((int)(s)+sChange > 100 || ((int)(s)-sChange >= 0 && randomBernoulli ())) changedS = s - (unsigned char)sChange;
+			else changedS = s + (unsigned char)sChange;
+
+			if ((int)(v)+vChange > 100 || ((int)(v)-vChange >= 0 && randomBernoulli ())) changedV = v - (unsigned char)vChange;
+			else changedV = v + (unsigned char)vChange;
+
+			randomColors[i] = cColor::fromHsv (changedH, changedS, changedV);
+		}
+		while (randomColors[i] == cColor (0xFF, 0, 0xFF)); // 0xFF00FF is our "transparent color". Hence we do not want to select this color as player color.
+	}
+
+	for (size_t j = 0; j < boxes; ++j)
+	{
+		int width = random (7, 20);
+		int height = random (7, 20);
+		int xPos = random (-5, 128);
+		int yPos = random (-5, 128);
+
+		if (xPos < 0)
+		{
+			width += xPos;
+			xPos = 0;
+		}
+		if (yPos < 0)
+		{
+			height += yPos;
+			yPos = 0;
+		}
+		SDL_Rect dest = {xPos, yPos, width, height};
+
+		SDL_FillRect (texture.get (), &dest, getRandom(randomColors).toMappedSdlRGBAColor (texture->format));
+	}
 }
 
 //------------------------------------------------------------------------------
 bool cPlayerColor::operator==(const cPlayerColor& other) const
 {
-	return color == other.color && texture == other.texture;
+	return color == other.color;
 }
 
 //------------------------------------------------------------------------------

@@ -80,7 +80,7 @@ void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBas
 		const cPlayerBasicData& player = *players[i];
 		message->pushInt16 (player.getNr());
 		message->pushBool (player.isReady());
-		message->pushInt16 (player.getColor().getIndex());
+		message->pushColor (player.getColor().getColor());
 		message->pushString (player.getName());
 	}
 	message->pushInt16 ((int) players.size());
@@ -116,7 +116,7 @@ void sendIdentification (cTCP& network, const cPlayerBasicData& player)
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
 	message->pushBool (player.isReady());
 	message->pushString (player.getName());
-	message->pushInt16 (player.getColor().getIndex());
+	message->pushColor (player.getColor().getColor());
 	message->pushInt16 (player.getNr());
 	sendMessage (network, message);
 }

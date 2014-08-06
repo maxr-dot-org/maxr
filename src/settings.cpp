@@ -38,6 +38,7 @@
 #include "tinyxml2.h"
 #include "video.h"
 #include "utility/string/tolower.h"
+#include "game/data/player/playercolor.h"
 
 using namespace tinyxml2;
 
@@ -991,8 +992,8 @@ void cSettings::initialize()
 	}
 
 	// =========================================================================
-	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "PlayerName", NULL);
-	if (!xmlElement || !xmlElement->Attribute ("Text"))
+	auto playerXmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "PlayerName", NULL);
+	if (!playerXmlElement || !playerXmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load player name from config file: using default value", LOG_TYPE_WARNING);
 
@@ -1011,19 +1012,28 @@ void cSettings::initialize()
 	}
 	else
 	{
-		setPlayerName (xmlElement->Attribute ("Text"));
+		setPlayerName (playerXmlElement->Attribute ("Text"));
 	}
 
 	// =========================================================================
-	if (!xmlElement || !xmlElement->Attribute ("Num"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "PlayerColor", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("red") || !xmlElement->Attribute ("green") || !xmlElement->Attribute ("blue"))
 	{
-		Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);
-		setPlayerColor (0);
+		// try to load color by index for downward compatibility
+		if (playerXmlElement && playerXmlElement->Attribute ("Num"))
+		{
+			const auto colorIndex = playerXmlElement->IntAttribute ("Num") % cPlayerColor::predefinedColorsCount;
+			playerColor = cColor (cPlayerColor::predefinedColors[colorIndex]);
+		}
+		else
+		{
+			Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);
+			setPlayerColor (cColor::red ());
+		}
 	}
 	else
-
 	{
-		playerColor = xmlElement->IntAttribute ("Num");
+		playerColor = cColor (xmlElement->IntAttribute ("red"), xmlElement->IntAttribute ("green"), xmlElement->IntAttribute ("blue"));
 	}
 
 	initialized = true;
@@ -1262,16 +1272,21 @@ void cSettings::setPlayerName (const char* playerName, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getPlayerColor() const
+const cColor& cSettings::getPlayerColor() const
 {
 	return playerColor;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setPlayerColor (int color, bool save)
+void cSettings::setPlayerColor (const cColor& color, bool save)
 {
 	this->playerColor = color;
-	if (save) saveSetting ("Options~Game~Net~PlayerName", color);
+	if (save)
+	{
+		saveSetting ("Options~Game~Net~PlayerColor", color.r, "red");
+		saveSetting ("Options~Game~Net~PlayerColor", color.g, "green");
+		saveSetting ("Options~Game~Net~PlayerColor", color.b, "blue");
+	}
 }
 
 //------------------------------------------------------------------------------

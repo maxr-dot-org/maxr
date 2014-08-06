@@ -261,7 +261,19 @@ std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 			const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
 			const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
 
-			playerNames.push_back(cPlayerBasicData(name, cPlayerColor(colorIndex), number));
+			cColor playerColor;
+			if (version < cVersion (0, 7))
+			{
+				const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
+				playerColor = cPlayerColor::predefinedColors[colorIndex % cPlayerColor::predefinedColorsCount];
+			}
+			else
+			{
+				const auto colorElement = playerNode->FirstChildElement ("Color");
+				playerColor = cColor (colorElement->IntAttribute ("red"), colorElement->IntAttribute ("green"), colorElement->IntAttribute ("blue"));
+			}
+
+			playerNames.push_back (cPlayerBasicData (name, cPlayerColor (playerColor), number));
 			playernum++;
 			playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str ());
 		}
@@ -509,8 +521,20 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 {
 	const string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 	const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
-	const int colorIndex  = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
-	auto Player = std::make_unique<cPlayer> (cPlayerBasicData (name, cPlayerColor(colorIndex), number));
+
+	cColor playerColor;
+	if (version < cVersion (0, 7))
+	{
+		const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
+		playerColor = cPlayerColor::predefinedColors[colorIndex % cPlayerColor::predefinedColorsCount];
+	}
+	else
+	{
+		const auto colorElement = playerNode->FirstChildElement ("Color");
+		playerColor = cColor (colorElement->IntAttribute ("red"), colorElement->IntAttribute ("green"), colorElement->IntAttribute ("blue"));
+	}
+
+	auto Player = std::make_unique<cPlayer> (cPlayerBasicData (name, cPlayerColor (playerColor), number));
 	Player->initMaps (map);
 
 	const XMLElement* landingPosNode = playerNode->FirstChildElement ("LandingPos");
@@ -1372,7 +1396,12 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	addAttributeElement (playerNode, "Name", "string", Player.getName());
 	addAttributeElement (playerNode, "Credits", "num", iToStr (Player.Credits));
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player.getClan()));
-	addAttributeElement (playerNode, "Color", "num", iToStr (Player.getColor().getIndex()));
+
+	XMLElement* colorElement = addMainElement (playerNode, "Color");
+	colorElement->SetAttribute ("red", iToStr(Player.getColor().getColor().r).c_str());
+	colorElement->SetAttribute ("green", iToStr (Player.getColor ().getColor ().g).c_str ());
+	colorElement->SetAttribute ("blue", iToStr (Player.getColor ().getColor ().b).c_str ());
+
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player.getNr()));
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player));
 

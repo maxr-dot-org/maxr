@@ -21,6 +21,8 @@
 #define utility_colorH
 
 #include <random>
+#include <algorithm>
+#include <cassert>
 
 #include <SDL.h>
 
@@ -39,6 +41,92 @@ public:
 	SDL_Color toSdlColor () const;
 	Uint32 toMappedSdlRGBColor (const SDL_PixelFormat* format) const;
 	Uint32 toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
+
+	void toHsv (unsigned short& h, unsigned char& s, unsigned char& v) const
+	{
+		const auto maxValue = std::max (r, std::max (g, b));
+		const auto minValue = std::min (r, std::min (g, b));
+
+		const auto delta = maxValue - minValue;
+
+		short hTemp = 0;
+		if (maxValue == minValue) hTemp = 0;
+		else if (maxValue == r) hTemp = (      60 * ((int)g-b) / delta);
+		else if (maxValue == g) hTemp = (120 + 60 * ((int)b-r) / delta);
+		else if (maxValue == b) hTemp = (240 + 60 * ((int)r-g) / delta);
+
+		if (hTemp < 0) hTemp += 360;
+
+		h = (unsigned short)hTemp;
+
+		if (maxValue == 0) s = 0;
+		else s = delta * 100 / maxValue;
+
+		v = maxValue * 100 / 255;
+
+		assert (h >= 0 && h < 360);
+		assert (s >= 0 && s <= 100);
+		assert (v >= 0 && v <= 100);
+	}
+	static cColor fromHsv (unsigned short h, unsigned char s, unsigned char v)
+	{
+		assert (h >= 0 && h < 360);
+		assert (s >= 0 && s <= 100);
+		assert (v >= 0 && v <= 100);
+
+		cColor result;
+		if (s == 0)
+		{
+			result.r = result.g = result.b = (unsigned char)v * 255 / 100;
+		}
+		else
+		{
+			const auto hh = (double)h / 60;
+			const auto i = (int)hh;
+
+			const auto f = hh - i;
+
+			const auto p = v * (100 - s) * 255 / 10000;
+			const auto q = v * (100 - (s * f)) * 255 / 10000;
+			const auto t = v * (100 - (s * (1. - f))) * 255 / 10000;
+
+			switch (i)
+			{
+			default:
+			case 0:
+				result.r = (unsigned char)v * 255 / 100;
+				result.g = (unsigned char)t;
+				result.b = (unsigned char)p;
+				break;
+			case 1:
+				result.r = (unsigned char)q;
+				result.g = (unsigned char)v * 255 / 100;
+				result.b = (unsigned char)p;
+				break;
+			case 2:
+				result.r = (unsigned char)p;
+				result.g = (unsigned char)v * 255 / 100;
+				result.b = (unsigned char)t;
+				break;
+			case 3:
+				result.r = (unsigned char)p;
+				result.g = (unsigned char)q;
+				result.b = (unsigned char)v * 255 / 100;
+				break;
+			case 4:
+				result.r = (unsigned char)t;
+				result.g = (unsigned char)p;
+				result.b = (unsigned char)v * 255 / 100;
+				break;
+			case 5:
+				result.r = (unsigned char)v * 255 / 100;
+				result.g = (unsigned char)p;
+				result.b = (unsigned char)q;
+				break;
+			}
+		}
+		return result;
+	}
 
 	cColor exchangeRed (unsigned char red) const;
 	cColor exchangeGreen (unsigned char green) const;

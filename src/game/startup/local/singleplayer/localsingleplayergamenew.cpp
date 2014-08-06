@@ -149,7 +149,7 @@ void cLocalSingleplayerGameNew::setLandingPosition (const cPosition& landingPosi
 //------------------------------------------------------------------------------
 cPlayerBasicData cLocalSingleplayerGameNew::createPlayer ()
 {
-	cPlayerBasicData player(cSettings::getInstance ().getPlayerName (), cPlayerColor(0), 0);
+	cPlayerBasicData player(cSettings::getInstance ().getPlayerName (), cPlayerColor(), 0);
 
 	player.setLocal ();
 

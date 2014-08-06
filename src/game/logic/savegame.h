@@ -49,7 +49,8 @@ struct sID;
 // 0.4 - changed game settings format (from sSettings to cGameSettings)
 // 0.5 - changed reports format
 // 0.6 - changed gui state format
-#define SAVE_FORMAT_VERSION		((std::string)"0.6")
+// 0.7 - changed saving player color
+#define SAVE_FORMAT_VERSION		((std::string)"0.7")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad

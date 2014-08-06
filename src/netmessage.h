@@ -25,6 +25,7 @@
 
 struct sID;
 class cPosition;
+class cColor;
 
 enum eNetStatusMsg
 {
@@ -164,6 +165,9 @@ public:
 
 	void pushPosition (const cPosition& position);
 	cPosition popPosition ();
+
+	void pushColor (const cColor& color);
+	cColor popColor ();
 
 	/** returns the string representation of iType
 	* this is only for better readability of the netlog

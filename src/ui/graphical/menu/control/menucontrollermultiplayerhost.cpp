@@ -406,7 +406,7 @@ void cMenuControllerMultiplayerHost::startLandingUnitSelection ()
 
 	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan (), *newGame->getGameSettings ());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
@@ -545,7 +545,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_ACCEPT (cNetMessage& m
 
 	if (!network || !windowNetworkLobby) return;
 
-	auto newPlayer = std::make_shared<cPlayerBasicData> (UNIDENTIFIED_PLAYER_NAME, cPlayerColor(0), nextPlayerNumber++, message.popInt16 ());
+	auto newPlayer = std::make_shared<cPlayerBasicData> (UNIDENTIFIED_PLAYER_NAME, cPlayerColor(), nextPlayerNumber++, message.popInt16 ());
 	windowNetworkLobby->addPlayer (newPlayer);
 	sendRequestIdentification (*network, *newPlayer);
 }
@@ -604,7 +604,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cNe
 	auto& player = **iter;
 
 	bool freshJoined = (player.getName ().compare (UNIDENTIFIED_PLAYER_NAME) == 0);
-	player.setColor (cPlayerColor(message.popInt16 ()));
+	player.setColor (cPlayerColor(message.popColor ()));
 	player.setName (message.popString ());
 	player.setReady (message.popBool ());
 

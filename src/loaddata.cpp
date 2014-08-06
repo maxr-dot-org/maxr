@@ -819,12 +819,6 @@ static int LoadGraphics (const char* path)
 	FileExists (GraphicsData.Dialog2Path.c_str ());
 	FileExists (GraphicsData.Dialog3Path.c_str ());
 
-	// load colors even for dedicated server
-	// Colors:
-	Log.write ("Colourgraphics...", LOG_TYPE_DEBUG);
-
-	OtherData.loadColors (path);
-
 	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
 	// Shadow:
 	createShadowGfx ();
@@ -849,21 +843,6 @@ static int LoadGraphics (const char* path)
 	Log.write ("Resourcegraphics...", LOG_TYPE_DEBUG);
 	ResourceData.load (path);
 	return 1;
-}
-
-void cOtherData::loadColors (const char* path)
-{
-	LoadGraphicToSurface (colors[cl_red], path, "cl_red.pcx");
-	LoadGraphicToSurface (colors[cl_blue], path, "cl_blue.pcx");
-	LoadGraphicToSurface (colors[cl_green], path, "cl_green.pcx");
-	LoadGraphicToSurface (colors[cl_grey], path, "cl_grey.pcx");
-	LoadGraphicToSurface (colors[cl_orange], path, "cl_orange.pcx");
-	LoadGraphicToSurface (colors[cl_yellow], path, "cl_yellow.pcx");
-	LoadGraphicToSurface (colors[cl_purple], path, "cl_purple.pcx");
-	LoadGraphicToSurface (colors[cl_aqua], path, "cl_aqua.pcx");
-
-	for (int i = 0; i != PLAYERCOLORS; ++i)
-		colors_org[i] = CloneSDLSurface (*colors[i]);
 }
 
 void cOtherData::loadWayPoints()

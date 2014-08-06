@@ -134,7 +134,7 @@ void cMenuControllerMultiplayerHotSeat::selectPlayers ()
 		{
 			if (playerTypes[i] == ePlayerType::Human)
 			{
-				cPlayerBasicData player (lngPack.i18n (playerNames[i]), cPlayerColor (i), playerNum++);
+				cPlayerBasicData player (lngPack.i18n (playerNames[i]), cPlayerColor (cPlayerColor::predefinedColors[i]), playerNum++);
 				players.push_back (player);
 			}
 		}

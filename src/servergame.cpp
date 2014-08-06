@@ -165,7 +165,7 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
-	auto player = std::make_shared<cPlayerBasicData> ("unidentified", cPlayerColor(0), menuPlayers.size(), message.popInt16());
+	auto player = std::make_shared<cPlayerBasicData> ("unidentified", cPlayerColor(), menuPlayers.size(), message.popInt16());
 	menuPlayers.push_back (player);
 	sendMenuChatMessage (*network, "type --server help for dedicated server help", player.get());
 	sendRequestIdentification (*network, *player);
@@ -219,7 +219,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 	const auto& player = menuPlayers[playerNr];
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
-	player->setColor (cPlayerColor(message.popInt16()));
+	player->setColor (cPlayerColor(message.popColor()));
 	player->setName (message.popString());
 	player->setReady (message.popBool());
 
@@ -282,8 +282,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 
 					server->setMap (map);
 					server->setGameSettings (settings);
-					//server->changeStateToInitGame();
-					//sendGo (*server);
+					sendGo (*network);
 				}
 				else
 					sendMenuChatMessage (*network, "Not all players are ready...", senderPlayer.get());
@@ -431,9 +430,9 @@ std::string cServerGame::getGameState() const
 	std::stringstream result;
 	result << "GameState: ";
 
-	//if (server == NULL || server->serverState == SERVER_STATE_ROOM)
-	//	result << "Game is open for new players" << endl;
-	/*else*/ if (server->serverState == SERVER_STATE_INITGAME)
+	if (server == NULL)
+		result << "Game is open for new players" << endl;
+	else if (server->serverState == SERVER_STATE_INITGAME)
 		result << "Game has started, players are setting up" << endl;
 	else if (server->serverState == SERVER_STATE_INGAME)
 		result << "Game is active" << endl;

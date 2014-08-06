@@ -83,10 +83,29 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	playersList->setEndMargin (cPosition (10, 10));
 	playersList->setItemDistance (cPosition (0, 4));
 
+	// try to find selected color in predefined colors
+	localPlayerColorIndex = 0;
+	for (size_t i = 0; i < cPlayerColor::predefinedColorsCount; ++i)
+	{
+		if (localPlayer->getColor ().getColor () == cPlayerColor::predefinedColors[i])
+		{
+			localPlayerColorIndex = i;
+			break;
+		}
+	}
+
 	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (prevColorButton->clicked, [&]() { localPlayer->setColor (cPlayerColor ((localPlayer->getColor ().getIndex () + 1) % PLAYERCOLORS)); });
+	signalConnectionManager.connect (prevColorButton->clicked, [&]()
+	{
+		localPlayerColorIndex = (localPlayerColorIndex + 1) % cPlayerColor::predefinedColorsCount;
+		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
+	});
 	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (nextColorButton->clicked, [&]() { localPlayer->setColor (cPlayerColor ((localPlayer->getColor ().getIndex () + PLAYERCOLORS - 1) % PLAYERCOLORS)); });
+	signalConnectionManager.connect (nextColorButton->clicked, [&]()
+	{
+		localPlayerColorIndex = (localPlayerColorIndex + cPlayerColor::predefinedColorsCount - 1) % cPlayerColor::predefinedColorsCount;
+		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
+	});
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));

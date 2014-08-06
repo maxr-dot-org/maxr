@@ -241,7 +241,7 @@ void cMenuControllerMultiplayerClient::startLandingUnitSelection ()
 
 	auto initialLandingUnits = createInitialLandingUnitsList (newGame->getLocalPlayerClan(), *newGame->getGameSettings());
 
-	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(0), newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
+	auto windowLandingUnitSelection = application.show (std::make_shared<cWindowLandingUnitSelection> (cPlayerColor(), newGame->getLocalPlayerClan (), initialLandingUnits, newGame->getGameSettings ()->getStartCredits ()));
 
 	signalConnectionManager.connect (windowLandingUnitSelection->canceled, [windowLandingUnitSelection]() { windowLandingUnitSelection->close (); });
 	signalConnectionManager.connect (windowLandingUnitSelection->done, [this, windowLandingUnitSelection]()
@@ -382,19 +382,19 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYERLIST (cNetM
 	for (int i = 0; i < playerCount; i++)
 	{
 		auto name = message.popString ();
-		auto colorIndex = message.popInt16 ();
+		auto color = message.popColor ();
 		auto ready = message.popBool ();
 		auto nr = message.popInt16 ();
 
 		if (nr == localPlayer->getNr ())
 		{
 			localPlayer->setName (name);
-			localPlayer->setColor (cPlayerColor(colorIndex));
+			localPlayer->setColor (cPlayerColor(color));
 			localPlayer->setReady (ready);
 		}
 		else
 		{
-			auto newPlayer = std::make_shared<cPlayerBasicData> (name, cPlayerColor(colorIndex), nr);
+			auto newPlayer = std::make_shared<cPlayerBasicData> (name, cPlayerColor(color), nr);
 			newPlayer->setReady (ready);
 			windowNetworkLobby->addPlayer (std::move (newPlayer));
 		}
@@ -555,7 +555,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 	if (message.popBool ())
 	{
 		const int localPlayerNumber = message.popInt16 ();
-		const int localPlayerColorIndex = message.popInt16 ();
+		const auto localPlayerColor = message.popColor ();
 
 		const auto mapName = message.popString ();
 
@@ -567,14 +567,14 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 		int playerCount = message.popInt16 ();
 
 		std::vector<cPlayerBasicData> players;
-		players.push_back (cPlayerBasicData (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor(localPlayerColorIndex), localPlayerNumber));
+		players.push_back (cPlayerBasicData (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor (localPlayerColor), localPlayerNumber));
 		auto& localPlayer = players.back ();
 		while (playerCount > 1)
 		{
 			const auto playerName = message.popString ();
-			const int playerColorIndex = message.popInt16 ();
+			const auto playerColor = message.popColor ();
 			const int playerNr = message.popInt16 ();
-			players.push_back (cPlayerBasicData (playerName, cPlayerColor(playerColorIndex), playerNr));
+			players.push_back (cPlayerBasicData (playerName, cPlayerColor (playerColor), playerNr));
 			playerCount--;
 		}
 

@@ -22,24 +22,32 @@
 
 #include <SDL.h>
 #include "utility/color.h"
+#include "utility/autosurface.h"
 
 class cPlayerColor
 {
 public:
-	cPlayerColor ();
-	explicit cPlayerColor (size_t index);
+	static const size_t predefinedColorsCount = 8;
+	static const cColor predefinedColors[predefinedColorsCount];
 
-	//assert (colorIndex < PLAYERCOLORS);
+	cPlayerColor ();
+	explicit cPlayerColor (const cColor& color);
+	cPlayerColor (const cPlayerColor& other);
+	cPlayerColor (cPlayerColor&& other);
+
+	cPlayerColor& operator=(const cPlayerColor& other);
+	cPlayerColor& operator=(cPlayerColor&& other);
+
 	const cColor& getColor () const;
 	SDL_Surface* getTexture () const;
-	size_t getIndex () const; // DO NOT USE THIS IN GENERAL. For now it is here for only one reason: Serialization!
 
 	bool operator==(const cPlayerColor& other) const;
 	bool operator!=(const cPlayerColor& other) const;
 private:
 	cColor color;
-	size_t index;
-	SDL_Surface* texture;
+	AutoSurface texture;
+
+	void createTexture ();
 };
 
 #endif // game_data_player_playercolorH

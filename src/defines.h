@@ -37,18 +37,6 @@
 #define MINIMAP_SIZE  112        // the size of the minimap in pixels
 #define MINIMAP_ZOOM_FACTOR 2    // the zoomfactor for minimap zoom switch
 
-// Colors /////////////////////////////////////////////////////////////////////
-enum
-{
-	cl_red = 0,
-	cl_green = 1,
-	cl_blue = 2,
-	cl_grey = 3,
-	cl_orange = 4,
-	cl_yellow = 5,
-	cl_purple = 6,
-	cl_aqua = 7
-};
 #if HAVE_CONFIG_H
 # include "config.h" //created by autotools on linux holding informations like package_string and versions
 #endif
@@ -122,8 +110,6 @@ enum
 #define GFXOD_DESTRUCTION      GFXOD ("destruction.pcx")
 
 // Other Resources /////////////////////////////////////////////////////////////
-#define PLAYERCOLORS 8
-//^-- make sure that given amount of colors is loaded too
 
 #define DEFAULTPORT 58600
 #define MAX_XML "max.xml"

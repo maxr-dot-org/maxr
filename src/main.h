@@ -325,11 +325,8 @@ private:
 class cOtherData
 {
 public:
-	void loadColors (const char* path);
 	void loadWayPoints();
 public:
-	AutoSurface colors[PLAYERCOLORS];
-	AutoSurface colors_org[PLAYERCOLORS];
 	AutoSurface WayPointPfeile[8][60];
 	AutoSurface WayPointPfeileSpecial[8][60];
 } EX OtherData;
