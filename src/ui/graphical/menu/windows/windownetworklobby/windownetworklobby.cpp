@@ -332,6 +332,18 @@ void cWindowNetworkLobby::setSaveGame (int saveGameNumber_)
 }
 
 //------------------------------------------------------------------------------
+void cWindowNetworkLobby::setMapDownloadPercent (int percent)
+{
+	mapNameLabel->setText (lngPack.i18n ("Text~Multiplayer~MapDL_Percent", iToStr (percent)));
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobby::setMapDownloadCanceled ()
+{
+	mapNameLabel->setText (lngPack.i18n ("Text~Multiplayer~MapDL_Cancel"));
+}
+
+//------------------------------------------------------------------------------
 const std::shared_ptr<cGameSettings>& cWindowNetworkLobby::getGameSettings () const
 {
 	return gameSettings;

@@ -40,6 +40,7 @@
 #include "utility/log.h"
 #include "menuevents.h"
 #include "netmessage.h"
+#include "mapdownload.h"
 #include "game/logic/savegame.h"
 #include "game/logic/client.h"
 #include "game/logic/server.h"
@@ -618,26 +619,37 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMe
 
 	if (!network || !windowNetworkLobby) return;
 
-	//if (map == NULL || MapDownload::isMapOriginal (map->getName ())) return;
+	auto& map = windowNetworkLobby->getStaticMap ();
 
-	//const size_t receiverNr = message.popInt16 ();
-	//if (receiverNr >= players.size ()) return;
-	//int socketNr = players[receiverNr]->getSocketIndex ();
-	//// check, if there is already a map sender,
-	//// that uploads to the same socketNr.
-	//// If yes, terminate the old map sender.
-	//for (int i = (int)mapSenders.size () - 1; i >= 0; i--)
-	//{
-	//	if (mapSenders[i] != 0 && mapSenders[i]->getToSocket () == socketNr)
-	//	{
-	//		delete mapSenders[i];
-	//		mapSenders.erase (mapSenders.begin () + i);
-	//	}
-	//}
-	//cMapSender* mapSender = new cMapSender (*network, socketNr, eventHandler.get (), map->getName (), players[receiverNr]->getName ());
-	//mapSenders.push_back (mapSender);
-	//mapSender->runInThread ();
-	//addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->getName ()));
+	if (map == nullptr || MapDownload::isMapOriginal (map->getName ())) return;
+
+	const int playerNr = message.popInt16 ();
+
+	auto players = windowNetworkLobby->getPlayers ();
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
+	if (iter == players.end ()) return;
+
+	auto& player = **iter;
+
+	// check, if there is already a map sender,
+	// that uploads to the same socketNr.
+	// If yes, terminate the old map sender.
+	for (auto i = mapSenders.begin (); i != mapSenders.end (); /*erase in loop*/)
+	{
+		auto& sender = *i;
+		if (sender->getToSocket () == player.getSocketIndex ())
+		{
+			i = mapSenders.erase (i);
+		}
+		else
+		{
+			++i;
+		}
+	}
+	auto mapSender = std::make_unique<cMapSender> (*network, player.getSocketIndex (), map->getName (), player.getName ());
+	mapSender->runInThread ();
+	mapSenders.push_back (std::move(mapSender));
+	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player.getName ()));
 }
 
 void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message)

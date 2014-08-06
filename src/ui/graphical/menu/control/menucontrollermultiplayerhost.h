@@ -33,6 +33,7 @@ class cWindowNetworkLobbyHost;
 class cNetworkHostGameNew;
 class cNetMessage;
 class cPlayerBasicData;
+class cMapSender;
 
 class cTCP;
 
@@ -65,6 +66,8 @@ private:
 	int nextPlayerNumber;
 
 	std::string triedLoadMapName;
+
+	std::vector<std::unique_ptr<cMapSender>> mapSenders;
 
 	void reset ();
 

@@ -53,6 +53,9 @@ public:
 	void setGameSettings (std::unique_ptr<cGameSettings> gameSettings);
 	void setSaveGame (int saveGameNumber);
 
+	void setMapDownloadPercent (int percent);
+	void setMapDownloadCanceled ();
+
 	const std::shared_ptr<cStaticMap>& getStaticMap () const;
 	const std::shared_ptr<cGameSettings>& getGameSettings () const;
 	int getSaveGameNumber () const;
