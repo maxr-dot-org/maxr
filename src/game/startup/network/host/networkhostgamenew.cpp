@@ -49,7 +49,7 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	if (gameSettings->getGameType () == eGameSettingsGameType::Turns)
 	{
-		server->setActiveTurnPlayer (players[0]);
+		server->setActiveTurnPlayer (*server->playerList[0]);
 	}
 
 	server->setMap (staticMap);

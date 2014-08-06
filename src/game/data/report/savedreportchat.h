@@ -30,6 +30,7 @@ class cSavedReportChat : public cSavedReport
 {
 public:
 	cSavedReportChat (const cPlayer& player, std::string text);
+	cSavedReportChat (std::string playerName, std::string text);
 	explicit cSavedReportChat (cNetMessage& message);
 	explicit cSavedReportChat (const tinyxml2::XMLElement& element);
 
@@ -44,6 +45,7 @@ public:
 
 	int getPlayerNumber () const;
 	const std::string& getText () const;
+	const std::string& getPlayerName () const;
 
 private:
 	std::string playerName;

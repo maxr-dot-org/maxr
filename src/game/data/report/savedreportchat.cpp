@@ -30,6 +30,13 @@ cSavedReportChat::cSavedReportChat (const cPlayer& player, std::string text_) :
 {}
 
 //------------------------------------------------------------------------------
+cSavedReportChat::cSavedReportChat (std::string playerName_, std::string text_) :
+	playerName (std::move(playerName)),
+	playerNumber (-1),
+	text (std::move (text_))
+{}
+
+//------------------------------------------------------------------------------
 cSavedReportChat::cSavedReportChat (cNetMessage& message)
 {
 	playerName = message.popString ();
@@ -94,4 +101,10 @@ int cSavedReportChat::getPlayerNumber () const
 const std::string& cSavedReportChat::getText () const
 {
 	return text;
+}
+
+//------------------------------------------------------------------------------
+const std::string& cSavedReportChat::getPlayerName () const
+{
+	return playerName;
 }

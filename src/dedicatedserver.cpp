@@ -28,6 +28,7 @@
 #include "network.h"
 #include "game/logic/savegame.h"
 #include "game/logic/serverevents.h"
+#include "game/data/report/savedreportchat.h"
 #include "servergame.h"
 
 #include <algorithm>
@@ -406,8 +407,11 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 		case GAME_EV_CHAT_CLIENT:
 		case MU_MSG_CHAT:
 		{
-			if (message.getType() == MU_MSG_CHAT)
-				message.popBool();
+			if (message.getType () == MU_MSG_CHAT)
+				message.popBool ();
+			else
+				message.popChar ();
+
 			string chatText = message.popString();
 			message.rewind();
 			int senderSocket = -1;
@@ -427,9 +431,9 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 				{
 					if (tokens[0].compare ("games") == 0)
 					{
-						//sendChatMessage (getGamesString(),
-						//				 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
-						//				 senderSocket);
+						sendChatMessage (getGamesString(),
+										 message.getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
+										 senderSocket);
 						return true;
 					}
 					else if (tokens[0].compare ("maps") == 0)
@@ -439,9 +443,9 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage& message)
 					}
 					else if (tokens[0].compare ("help") == 0)
 					{
-						//sendChatMessage (getServerHelpString(),
-						//				 message.getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
-						//				 senderSocket);
+						sendChatMessage (getServerHelpString(),
+										 message.getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_SAVED_REPORT,
+										 senderSocket);
 						return true;
 					}
 				}
@@ -460,23 +464,22 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 	string line;
 	while (getline (ss, line))
 	{
-		cNetMessage* msg = new cNetMessage (type);
-		//if (msg->getType() == GAME_EV_CHAT_SERVER)
-		//{
-		//	msg->pushString ("");
-		//	msg->pushString (line);
-		//	msg->pushChar (SERVER_INFO_MESSAGE);
-		//}
-		//else
+		cNetMessage msg(type);
+		if (msg.getType () == GAME_EV_SAVED_REPORT)
 		{
-			msg->pushString (line);
-			msg->pushBool (false);
+			cSavedReportChat report ("dedicated_server", line);
+			report.pushInto (msg);
 		}
-		msg->iPlayerNr = -1;
-		if (socket < 0)
-			network->send (msg->iLength, msg->serialize());
 		else
-			network->sendTo (socket, msg->iLength, msg->serialize());
+		{
+			msg.pushString (line);
+			msg.pushBool (false);
+		}
+		msg.iPlayerNr = -1;
+		if (socket < 0)
+			network->send (msg.iLength, msg.serialize());
+		else
+			network->sendTo (socket, msg.iLength, msg.serialize());
 	}
 }
 

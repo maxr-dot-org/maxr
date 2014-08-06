@@ -114,6 +114,13 @@ void cChatBox::addChatMessage (const cPlayer& player, const std::string& message
 }
 
 //------------------------------------------------------------------------------
+void cChatBox::addChatMessage (const std::string& playerName, const std::string& message)
+{
+	auto newItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
+	chatList->scrollToItem (newItem);
+}
+
+//------------------------------------------------------------------------------
 void cChatBox::focus ()
 {
 	auto application = getActiveApplication ();

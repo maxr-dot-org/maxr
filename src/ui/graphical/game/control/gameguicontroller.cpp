@@ -1393,9 +1393,9 @@ void cGameGuiController::handleReport (const cSavedReport& report)
 			gameGui->getChatBox ().addChatMessage (*player, savedChatReport.getText ());
 			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
 		}
-		else // should never happen!
+		else // message from non in-game player (e.g. dedicated server)
 		{
-			gameGui->getGameMessageList().addMessage (savedChatReport.getMessage ());
+			gameGui->getChatBox ().addChatMessage (savedChatReport.getPlayerName (), savedChatReport.getText ());
 		}
 	}
 	else if (report.hasPosition ())

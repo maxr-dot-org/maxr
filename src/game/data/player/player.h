@@ -55,7 +55,7 @@ class cPlayer
 {
 	cPlayer (const cPlayer&) MAXR_DELETE_FUNCTION;
 public:
-	cPlayer (const cPlayerBasicData& splayer);
+	explicit cPlayer (const cPlayerBasicData& splayer);
 	~cPlayer();
 
 	const std::string& getName() const { return splayer.getName(); }

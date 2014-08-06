@@ -28,6 +28,7 @@
 #include "game/data/map/map.h"
 #include "game/logic/server.h"
 #include "game/logic/turnclock.h"
+#include "game/logic/landingpositionmanager.h"
 
 #include <algorithm>
 #include <iostream>
@@ -47,14 +48,13 @@ int serverGameThreadFunction (void* data)
 
 //------------------------------------------------------------------------------
 cServerGame::cServerGame (std::shared_ptr<cTCP> network_) :
-	server (NULL),
 	network (std::move(network_)),
 	thread (NULL),
 	canceled (false),
 	shouldSave (false),
-	saveGameNumber (-1)
-{
-}
+	saveGameNumber (-1),
+	nextPlayerNumber (0)
+{}
 
 //------------------------------------------------------------------------------
 cServerGame::~cServerGame()
@@ -77,7 +77,7 @@ void cServerGame::runInThread()
 bool cServerGame::loadGame (int saveGameNumber)
 {
 	cSavegame savegame (saveGameNumber);
-	server = new cServer (network);
+	server = std::make_unique<cServer> (network);
 	if (savegame.load (*server) == false)
 		return false;
 	server->markAllPlayersAsDisconnected();
@@ -165,7 +165,7 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
-	auto player = std::make_shared<cPlayerBasicData> ("unidentified", cPlayerColor(), menuPlayers.size(), message.popInt16());
+	auto player = std::make_shared<cPlayerBasicData> ("unidentified", cPlayerColor(), nextPlayerNumber++, message.popInt16());
 	menuPlayers.push_back (player);
 	sendMenuChatMessage (*network, "type --server help for dedicated server help", player.get());
 	sendRequestIdentification (*network, *player);
@@ -176,8 +176,6 @@ void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage& message)
 {
 	assert (message.iType == TCP_CLOSE);
 
-	// TODO: this is only ok in cNetwork(Host)Menu.
-	// when server runs already, it must be treated another way
 	int socket = message.popInt16();
 	network->close (socket);
 	string playerName;
@@ -194,18 +192,12 @@ void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage& message)
 	}
 
 	// resort socket numbers
-	for (size_t playerNr = 0; playerNr < menuPlayers.size(); playerNr++)
-	{
-		menuPlayers[playerNr]->onSocketIndexDisconnected (socket);
-	}
-
-	// resort player numbers
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{
-		menuPlayers[i]->setNr (i);
-		sendRequestIdentification (*network, *menuPlayers[i]);
+		menuPlayers[i]->onSocketIndexDisconnected (socket);
 	}
-	//sendPlayerList (*network, menuPlayers);
+
+	sendPlayerList (*network, menuPlayers);
 }
 
 //------------------------------------------------------------------------------
@@ -214,14 +206,16 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 	assert (message.iType == MU_MSG_IDENTIFIKATION);
 
 	unsigned int playerNr = message.popInt16();
-	if (playerNr >= menuPlayers.size())
-		return;
-	const auto& player = menuPlayers[playerNr];
+
+	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
+	if (iter == menuPlayers.end ()) return;
+
+	auto& player = **iter;
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
-	player->setColor (cPlayerColor(message.popColor()));
-	player->setName (message.popString());
-	player->setReady (message.popBool());
+	player.setColor (cPlayerColor(message.popColor()));
+	player.setName (message.popString());
+	player.setReady (message.popBool());
 
 	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message.popString(), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -234,7 +228,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 	sendPlayerList (*network, menuPlayers);
 
 	//sendGameData (*network, map.get(), settings, saveGameString, player);
-	sendGameData (*network, map.get(), &settings, -1, player.get());
+	sendGameData (*network, map.get(), &settings, -1, &player);
 }
 
 //------------------------------------------------------------------------------
@@ -245,10 +239,12 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 	bool translationText = message.popBool();
 	string chatText = message.popString();
 
-	unsigned int senderPlyerNr = message.iPlayerNr;
-	if (senderPlyerNr >= menuPlayers.size())
-		return;
-	const auto& senderPlayer = menuPlayers[senderPlyerNr];
+	unsigned int senderPlayerNr = message.iPlayerNr;
+
+	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [senderPlayerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == senderPlayerNr; });
+	if (iter == menuPlayers.end ()) return;
+
+	auto& senderPlayer = **iter;
 
 	// temporary workaround. TODO: good solution - player, who opened games must have "host" gui and new commands to send options/go to server
 	size_t serverStringPos = chatText.find ("--server");
@@ -273,19 +269,44 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				}
 				if (allReady)
 				{
-					server = new cServer (network);
-					// copy playerlist for server
-					for (size_t i = 0; i != menuPlayers.size(); ++i)
-					{
-						server->addPlayer (std::make_unique<cPlayer> (*menuPlayers[i]));
-					}
+					std::vector<cPlayerBasicData> players;
+					std::transform (menuPlayers.begin (), menuPlayers.end (), std::back_inserter(players), [](const std::shared_ptr<cPlayerBasicData>& player){ return *player; });
+					
+					landingPositionManager = std::make_shared<cLandingPositionManager> (players);
 
-					server->setMap (map);
-					server->setGameSettings (settings);
+					signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this](const cPlayerBasicData& player, eLandingPositionState state)
+					{
+						sendLandingState (*network, state, player);
+					});
+
+					signalConnectionManager.connect (landingPositionManager->allPositionsValid, [this]()
+					{
+						sendAllLanded (*network);
+
+						server = std::make_unique<cServer> (network);
+						// copy playerlist for server
+						for (size_t i = 0; i != menuPlayers.size (); ++i)
+						{
+							server->addPlayer (std::make_unique<cPlayer> (*menuPlayers[i]));
+						}
+
+						if (settings.getGameType () == eGameSettingsGameType::Turns)
+						{
+							server->setActiveTurnPlayer (*server->playerList[0]);
+						}
+
+						server->setMap (map);
+						server->setGameSettings (settings);
+
+						server->start ();
+						server->startTurnTimers ();
+					});
 					sendGo (*network);
 				}
 				else
-					sendMenuChatMessage (*network, "Not all players are ready...", senderPlayer.get());
+				{
+					sendMenuChatMessage (*network, "Not all players are ready...", &senderPlayer);
+				}
 			}
 		}
 		else if (tokens.size() >= 2)
@@ -301,7 +322,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				if (map != NULL && map->loadMap (mapName))
 				{
 					sendGameData (*network, map.get(), &settings, -1);
-					string reply = senderPlayer->getName();
+					string reply = senderPlayer.getName();
 					reply += " changed the map.";
 					sendMenuChatMessage (*network, reply);
 				}
@@ -309,7 +330,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				{
 					string reply = "Could not load map ";
 					reply += mapName;
-					sendMenuChatMessage (*network, reply, senderPlayer.get());
+					sendMenuChatMessage (*network, reply, &senderPlayer);
 				}
 			}
 			if (tokens.size() == 2)
@@ -319,13 +340,13 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 					int credits = atoi (tokens[1].c_str());
 					settings.setStartCredits(credits);
 					sendGameData (*network, map.get(), &settings, -1);
-					string reply = senderPlayer->getName();
+					string reply = senderPlayer.getName();
 					reply += " changed the starting credits.";
 					sendMenuChatMessage (*network, reply);
 				}
 				else if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0
 						 || tokens[0].compare ("res") == 0)
-					configRessources (tokens, senderPlayer.get());
+					configRessources (tokens, &senderPlayer);
 			}
 		}
 	}
@@ -341,6 +362,23 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 	}
 }
 
+void cServerGame::handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message)
+{
+	if (!landingPositionManager) return;
+
+	int playerNr = message.popInt32 ();
+	const auto position = message.popPosition ();
+
+	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
+
+	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
+	if (iter == menuPlayers.end ()) return;
+
+	auto& player = **iter;
+
+	landingPositionManager->setLandingPosition (player, position);
+}
+
 void cServerGame::handleNetMessage (cNetMessage& message)
 {
 	cout << "Msg received: " << message.getTypeAsString() << endl;
@@ -352,6 +390,7 @@ void cServerGame::handleNetMessage (cNetMessage& message)
 		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
 		case MU_MSG_IDENTIFIKATION: handleNetMessage_MU_MSG_IDENTIFIKATION (message); break;
 		case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
+		case MU_MSG_LANDING_POSITION: handleNetMessage_MU_MSG_LANDING_POSITION (message); break;
 		default: break;
 	}
 }
@@ -414,8 +453,7 @@ void cServerGame::configRessources (vector<string>& tokens, cPlayerBasicData* se
 //------------------------------------------------------------------------------
 void cServerGame::terminateServer()
 {
-	delete server;
-	server = NULL;
+	server = nullptr;
 }
 
 //------------------------------------------------------------------------------

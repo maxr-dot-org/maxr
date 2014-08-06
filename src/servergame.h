@@ -26,6 +26,7 @@
 #include <memory>
 #include "utility/autoptr.h"
 #include "utility/concurrentqueue.h"
+#include "utility/signal/signalconnectionmanager.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 
 class cNetMessage;
@@ -34,6 +35,7 @@ class cServer;
 class cTCP;
 class cPlayerBasicData;
 class cStaticMap;
+class cLandingPositionManager;
 
 int serverGameThreadFunction (void* data);
 
@@ -62,7 +64,9 @@ public:
 
 	//------------------------------------------------------------------------
 protected:
-	cServer* server;
+	cSignalConnectionManager signalConnectionManager;
+
+	std::unique_ptr<cServer> server;
 	cGameSettings settings;
 	std::shared_ptr<cStaticMap> map;
 	std::shared_ptr<cTCP> network;
@@ -79,10 +83,14 @@ protected:
 	void handleNetMessage_TCP_CLOSE (cNetMessage& message);
 	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message);
 	void handleNetMessage_MU_MSG_CHAT (cNetMessage& message);
+	void handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message);
 
 	void terminateServer();
 
 	std::vector<std::shared_ptr<cPlayerBasicData>> menuPlayers;
+	std::shared_ptr<cLandingPositionManager> landingPositionManager;
+
+	int nextPlayerNumber;
 
 private:
 	void configRessources (std::vector<std::string>& tokens, cPlayerBasicData* senderPlayer);

@@ -56,6 +56,7 @@ public:
 	const cPlayer* getPlayerFromNumber (int playerNumber);
 
 	void addChatMessage (const cPlayer& player, const std::string& message);
+	void addChatMessage (const std::string& playerName, const std::string& message);
 
 	void focus ();
 

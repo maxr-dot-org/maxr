@@ -332,16 +332,15 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_CHAT (cNetMessage
 
 	auto players = windowNetworkLobby->getPlayers ();
 	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == message.iPlayerNr; });
-	if (iter == players.end ()) return;
-
-	const auto& player = **iter;
+	
+	const auto playerName = iter == players.end () ? "unknown" : (*iter)->getName ();
 
 	bool translationText = message.popBool ();
 	auto chatText = message.popString ();
 	if (translationText) windowNetworkLobby->addInfoEntry (lngPack.i18n (chatText));
 	else
 	{
-		windowNetworkLobby->addChatEntry (player.getName (), chatText);
+		windowNetworkLobby->addChatEntry (playerName, chatText);
 		//PlayFX (SoundData.SNDChat.get ());
 	}
 }

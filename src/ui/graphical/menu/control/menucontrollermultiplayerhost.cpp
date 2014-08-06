@@ -574,13 +574,6 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE (cNetMessage& me
 		players[i]->onSocketIndexDisconnected (socket);
 	}
 
-	// resort player numbers
-	for (size_t i = 0; i != players.size (); ++i)
-	{
-		players[i]->setNr (i);
-		sendRequestIdentification (*network, *players[i]);
-	}
-
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Left", playerToRemove->getName ()));
 
 	sendPlayerList (*network, players);
