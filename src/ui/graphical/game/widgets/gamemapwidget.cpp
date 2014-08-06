@@ -820,6 +820,12 @@ void cGameMapWidget::scroll (const cPosition& offset)
 }
 
 //------------------------------------------------------------------------------
+const cPosition& cGameMapWidget::getPixelOffset () const
+{
+	return pixelOffset;
+}
+
+//------------------------------------------------------------------------------
 void cGameMapWidget::centerAt (const cPosition& position)
 {
 	const auto zoomedTileSize = getZoomedTileSize ();

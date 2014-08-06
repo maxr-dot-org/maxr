@@ -92,6 +92,8 @@ private:
 
 	std::pair<bool, cPosition> savedReportPosition;
 
+	std::array<std::pair<bool, cPosition>, 4> savedPositions;
+
 	void initShortcuts ();
 
 	void connectGuiStaticCommands ();
@@ -125,6 +127,9 @@ private:
 	void markSelectedUnitAsDone ();
 
 	void centerSelectedUnit ();
+
+	void savePosition (size_t index);
+	void jumpToSavedPosition (size_t index);
 
 	std::vector<std::shared_ptr<const cPlayer>> getPlayers () const;
 	std::shared_ptr<const cPlayer> getActivePlayer () const;

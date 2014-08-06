@@ -87,6 +87,11 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	connectGuiStaticCommands ();
 	initShortcuts ();
 	application.addRunnable (animationTimer);
+
+	for (size_t i = 0; i < savedPositions.size (); ++i)
+	{
+		savedPositions[i] = std::make_pair (false, cPosition ());
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -236,6 +241,31 @@ void cGameGuiController::initShortcuts ()
 		resumeAllMoveJobsTriggered ();
 		selectNextUnit ();
 	});
+
+	auto savePosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F5))));
+	signalConnectionManager.connect (savePosition1Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 0));
+
+	auto savePosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F6))));
+	signalConnectionManager.connect (savePosition2Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 1));
+
+	auto savePosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F7))));
+	signalConnectionManager.connect (savePosition3Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 2));
+
+	auto savePosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight, SDLK_F8))));
+	signalConnectionManager.connect (savePosition4Shortcut->triggered, std::bind (&cGameGuiController::savePosition, this, 3));
+
+	auto loadPosition1Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_F5))));
+	signalConnectionManager.connect (loadPosition1Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 0));
+
+	auto loadPosition2Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_F6))));
+	signalConnectionManager.connect (loadPosition2Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 1));
+
+	auto loadPosition3Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_F7))));
+	signalConnectionManager.connect (loadPosition3Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 2));
+
+	auto loadPosition4Shortcut = gameGui->addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (eKeyModifierType::None, SDLK_F8))));
+	signalConnectionManager.connect (loadPosition4Shortcut->triggered, std::bind (&cGameGuiController::jumpToSavedPosition, this, 3));
+
 }
 
 //------------------------------------------------------------------------------
@@ -1466,6 +1496,24 @@ void cGameGuiController::centerSelectedUnit ()
 	const auto player = getActivePlayer ();
 	const auto selectedUnit = gameGui->getGameMap ().getUnitSelection ().getSelectedUnit ();
 	if (selectedUnit) gameGui->getGameMap ().centerAt (selectedUnit->getPosition ());
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::savePosition (size_t index)
+{
+	if (index > savedPositions.size ()) return;
+
+	savedPositions[index] = std::make_pair (true, gameGui->getGameMap ().getMapCenterOffset ());
+}
+
+//------------------------------------------------------------------------------
+void cGameGuiController::jumpToSavedPosition (size_t index)
+{
+	if (index > savedPositions.size ()) return;
+	
+	if (!savedPositions[index].first) return;
+
+	gameGui->getGameMap ().centerAt (savedPositions[index].second);
 }
 
 //------------------------------------------------------------------------------
