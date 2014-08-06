@@ -72,6 +72,7 @@ public:
 	void disablePortEdit ();
 	void disableIpEdit ();
 
+	cSignal<void ()> backClicked;
 	cSignal<void ()> wantLocalPlayerReadyChange;
 	cSignal<void ()> triggeredChatMessage;
 	cSignal<void ()> staticMapChanged;

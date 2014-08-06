@@ -104,6 +104,8 @@ private:
 	void handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage& message);
 	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message);
+
+	void saveOptions ();
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerhostH

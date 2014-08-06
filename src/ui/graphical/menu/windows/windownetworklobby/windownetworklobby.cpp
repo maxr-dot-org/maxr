@@ -102,7 +102,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 
 	auto backButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (50, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~Back")));
-	signalConnectionManager.connect (backButton->clicked, [&]() { close (); });
+	signalConnectionManager.connect (backButton->clicked, [&]() { backClicked (); });
 
 	updateSettingsText ();
 	updateMap ();

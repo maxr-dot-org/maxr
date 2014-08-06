@@ -76,6 +76,11 @@ void cMenuControllerMultiplayerHost::start ()
 	application.addRunnable (shared_from_this ());
 
 	signalConnectionManager.connect (windowNetworkLobby->terminated, std::bind (&cMenuControllerMultiplayerHost::reset, this));
+	signalConnectionManager.connect (windowNetworkLobby->backClicked, [this]()
+	{
+		windowNetworkLobby->close ();
+		saveOptions ();
+	});
 
 	signalConnectionManager.connect (windowNetworkLobby->wantLocalPlayerReadyChange, std::bind (&cMenuControllerMultiplayerHost::handleWantLocalPlayerReadyChange, this));
 	signalConnectionManager.connect (windowNetworkLobby->triggeredChatMessage, std::bind (&cMenuControllerMultiplayerHost::handleChatMessageTriggered, this));
@@ -329,13 +334,15 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 		{
 			sendGameData (*network, staticMap.get(), gameSettings.get(), windowNetworkLobby->getSaveGameNumber (), menuPlayers[i].get ());
 		}
+		saveOptions ();
 
 		sendGo (*network);
-
 		startSavedGame ();
 	}
 	else
 	{
+		saveOptions ();
+
 		sendGo (*network);
 		startGamePreparation ();
 	}
@@ -582,7 +589,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_TCP_CLOSE (cNetMessage& me
 	windowNetworkLobby->removePlayer (*playerToRemove);
 }
 
-
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 {
 	assert (message.iType == MU_MSG_IDENTIFIKATION);
@@ -613,6 +620,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cNe
 	sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber(), &player);
 }
 
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage& message)
 {
 	assert (message.iType == MU_MSG_REQUEST_MAP);
@@ -652,6 +660,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMe
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", player.getName ()));
 }
 
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message)
 {
 	assert (message.iType == MU_MSG_FINISHED_MAP_DOWNLOAD);
@@ -662,6 +671,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLO
 	windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", receivingPlayerName));
 }
 
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message)
 {
 	assert (message.iType == MU_MSG_LANDING_POSITION);
@@ -681,4 +691,14 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_LANDING_POSITION (c
 	auto& player = **iter;
 
 	landingPositionManager->setLandingPosition (player, position);
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerHost::saveOptions ()
+{
+	if (!windowNetworkLobby) return;
+
+	cSettings::getInstance ().setPlayerName (windowNetworkLobby->getLocalPlayer()->getName ().c_str ());
+	cSettings::getInstance ().setPort (windowNetworkLobby->getPort());
+	cSettings::getInstance ().setPlayerColor (windowNetworkLobby->getLocalPlayer()->getColor().getColor());
 }

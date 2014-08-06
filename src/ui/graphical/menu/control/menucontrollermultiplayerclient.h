@@ -101,6 +101,8 @@ private:
 	void receiveMapData (cNetMessage& message);
 	void canceledMapDownload (cNetMessage& message);
 	void finishedMapDownload (cNetMessage& message);
+
+	void saveOptions ();
 };
 
 #endif // ui_graphical_menu_control_menucontrollermultiplayerclientH

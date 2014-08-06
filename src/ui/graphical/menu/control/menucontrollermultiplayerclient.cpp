@@ -63,6 +63,11 @@ void cMenuControllerMultiplayerClient::start ()
 	application.addRunnable (shared_from_this ());
 
 	signalConnectionManager.connect (windowNetworkLobby->terminated, std::bind (&cMenuControllerMultiplayerClient::reset, this));
+	signalConnectionManager.connect (windowNetworkLobby->backClicked, [this]()
+	{
+		windowNetworkLobby->close ();
+		saveOptions ();
+	});
 
 	signalConnectionManager.connect (windowNetworkLobby->wantLocalPlayerReadyChange, std::bind (&cMenuControllerMultiplayerClient::handleWantLocalPlayerReadyChange, this));
 	signalConnectionManager.connect (windowNetworkLobby->triggeredChatMessage, std::bind (&cMenuControllerMultiplayerClient::handleChatMessageTriggered, this));
@@ -487,7 +492,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_GO (cNetMessage& 
 
 	windowLandingPositionSelection = nullptr;
 
-	//saveOptions ();
+	saveOptions ();
 
 	if (windowNetworkLobby->getSaveGameNumber () != -1)
 	{
@@ -653,4 +658,15 @@ void cMenuControllerMultiplayerClient::finishedMapDownload (cNetMessage& message
 	}
 
 	mapReceiver = nullptr;
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::saveOptions ()
+{
+	if (!windowNetworkLobby) return;
+
+	cSettings::getInstance ().setPlayerName (windowNetworkLobby->getLocalPlayer ()->getName ().c_str ());
+	cSettings::getInstance ().setPort (windowNetworkLobby->getPort ());
+	cSettings::getInstance ().setPlayerColor (windowNetworkLobby->getLocalPlayer ()->getColor ().getColor ());
+	cSettings::getInstance ().setIP (windowNetworkLobby->getIp().c_str());
 }
