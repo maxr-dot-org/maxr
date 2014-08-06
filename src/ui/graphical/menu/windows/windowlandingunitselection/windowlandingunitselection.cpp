@@ -21,7 +21,7 @@
 #include "main.h"
 #include "pcx.h"
 #include "game/data/player/player.h"
-#include "menus.h" // for sLandingUnit
+#include "game/data/units/landingunit.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/checkbox.h"

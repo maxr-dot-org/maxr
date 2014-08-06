@@ -20,6 +20,7 @@
 #include "game/logic/clientevents.h"
 
 #include "game/data/units/building.h"
+#include "game/data/units/landingunit.h"
 #include "game/logic/client.h"
 #include "utility/log.h"
 #include "netmessage.h"

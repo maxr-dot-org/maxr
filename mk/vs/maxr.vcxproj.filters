@@ -252,9 +252,6 @@
     <ClCompile Include="..\..\src\network.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\notifications.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\pcx.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -941,9 +938,6 @@
     <ClInclude Include="..\..\src\menuevents.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\menus.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\mveplayer.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -951,9 +945,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\network.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\notifications.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\pcx.h">
@@ -1846,6 +1837,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogcolorpicker.h">
       <Filter>src\ui\graphical\menu\dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\data\units\landingunit.h">
+      <Filter>src\game\data\units</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

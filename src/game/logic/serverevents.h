@@ -23,7 +23,6 @@
 #include <string>
 #include "defines.h"
 #include "main.h" // for sID
-#include "menus.h"
 #include "game/logic/movejobs.h"
 #include "network.h"
 

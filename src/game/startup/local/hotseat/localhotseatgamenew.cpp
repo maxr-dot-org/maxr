@@ -25,6 +25,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
+#include "game/data/units/landingunit.h"
 #include "game/logic/clientevents.h"
 
 // TODO: remove

@@ -30,7 +30,6 @@
 #include "game/logic/fxeffects.h"
 #include "utility/log.h"
 #include "game/data/map/map.h"
-#include "menus.h"
 #include "pcx.h"
 #include "game/data/player/player.h"
 #include "game/logic/server.h"

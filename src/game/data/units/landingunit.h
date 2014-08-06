@@ -16,13 +16,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef menusH
-#define menusH
 
-#include <string>
-#include "main.h"
+#ifndef game_data_units_landingunitH
+#define game_data_units_landingunitH
 
-class cNetMessage;
+#include "main.h" // sID
 
 struct sLandingUnit
 {
@@ -30,4 +28,4 @@ struct sLandingUnit
 	int cargo;
 };
 
-#endif //menusH
+#endif // game_data_units_landingunitH

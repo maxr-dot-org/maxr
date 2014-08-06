@@ -367,7 +367,6 @@
     <ClCompile Include="..\..\src\mveplayer.cpp" />
     <ClCompile Include="..\..\src\netmessage.cpp" />
     <ClCompile Include="..\..\src\network.cpp" />
-    <ClCompile Include="..\..\src\notifications.cpp" />
     <ClCompile Include="..\..\src\output\sound\soundchannel.cpp" />
     <ClCompile Include="..\..\src\output\sound\soundchannelgroup.cpp" />
     <ClCompile Include="..\..\src\output\sound\soundchunk.cpp" />
@@ -448,6 +447,7 @@
     <ClInclude Include="..\..\src\game\data\report\unit\savedreportsurveyoraiconfused.h" />
     <ClInclude Include="..\..\src\game\data\report\unit\savedreportsurveyoraisenseless.h" />
     <ClInclude Include="..\..\src\game\data\units\building.h" />
+    <ClInclude Include="..\..\src\game\data\units\landingunit.h" />
     <ClInclude Include="..\..\src\game\data\units\unit.h" />
     <ClInclude Include="..\..\src\game\data\units\unitdata.h" />
     <ClInclude Include="..\..\src\game\data\units\vehicle.h" />
@@ -635,11 +635,9 @@
     <ClInclude Include="..\..\src\mapdownload.h" />
     <ClInclude Include="..\..\src\maxrconfig.h" />
     <ClInclude Include="..\..\src\menuevents.h" />
-    <ClInclude Include="..\..\src\menus.h" />
     <ClInclude Include="..\..\src\mveplayer.h" />
     <ClInclude Include="..\..\src\netmessage.h" />
     <ClInclude Include="..\..\src\network.h" />
-    <ClInclude Include="..\..\src\notifications.h" />
     <ClInclude Include="..\..\src\output\sound\soundchannel.h" />
     <ClInclude Include="..\..\src\output\sound\soundchannelgroup.h" />
     <ClInclude Include="..\..\src\output\sound\soundchunk.h" />

@@ -32,7 +32,7 @@
 #include "main.h"
 #include "game/data/map/map.h"
 #include "game/data/player/player.h"
-#include "menus.h"
+#include "game/data/units/landingunit.h"
 #include "network.h"
 #include "utility/log.h"
 #include "menuevents.h"

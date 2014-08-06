@@ -41,7 +41,6 @@
 #include "loaddata.h"
 #include "utility/log.h"
 #include "game/data/map/map.h"
-#include "menus.h"
 #include "mveplayer.h"
 #include "network.h"
 #include "pcx.h"

@@ -33,6 +33,7 @@ class cClient;
 class cPosition;
 class cSavedReport;
 class cGameGuiState;
+struct sLandingUnit;
 
 enum CLIENT_EVENT_TYPES
 {

@@ -30,8 +30,8 @@
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
 #include "game/startup/local/hotseat/localhotseatgamenew.h"
 #include "game/data/player/playerbasicdata.h"
+#include "game/data/units/landingunit.h"
 #include "game/data/map/map.h"
-#include "menus.h"
 #include "game/logic/upgradecalculator.h"
 
 // TODO: remove

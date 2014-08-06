@@ -24,6 +24,7 @@
 
 #include "attackJobs.h"
 #include "game/data/units/building.h"
+#include "game/data/units/landingunit.h"
 #include "game/logic/casualtiestracker.h"
 #include "game/logic/client.h"
 #include "game/logic/clientevents.h"
@@ -32,7 +33,6 @@
 #include "game/logic/jobs.h"
 #include "utility/log.h"
 #include "menuevents.h"
-#include "menus.h"
 #include "game/logic/movejobs.h"
 #include "netmessage.h"
 #include "network.h"
