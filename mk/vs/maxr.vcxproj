@@ -285,6 +285,7 @@
     <ClCompile Include="..\..\src\ui\graphical\menu\control\menucontrollermultiplayerclient.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\control\menucontrollermultiplayerhost.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\control\menucontrollermultiplayerhotseat.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialogcolorpicker.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialoglicense.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialogok.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialogpreferences.cpp" />
@@ -295,6 +296,7 @@
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\abstractlistviewitem.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\checkbox.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\clickablewidget.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\menu\widgets\colorpicker.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\combobox.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\frame.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\image.cpp" />
@@ -542,6 +544,7 @@
     <ClInclude Include="..\..\src\ui\graphical\menu\control\menucontrollermultiplayerclient.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\control\menucontrollermultiplayerhost.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\control\menucontrollermultiplayerhotseat.h" />
+    <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogcolorpicker.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialoglicense.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogok.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogpreferences.h" />
@@ -551,6 +554,7 @@
     <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogyesno.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\checkbox.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\clickablewidget.h" />
+    <ClInclude Include="..\..\src\ui\graphical\menu\widgets\colorpicker.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\combobox.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\frame.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\plot.h" />

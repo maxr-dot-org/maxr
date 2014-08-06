@@ -17,37 +17,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef game_data_player_playercolorH
-#define game_data_player_playercolorH
+#ifndef ui_graphical_menu_dialogs_dialogcolorpickerH
+#define ui_graphical_menu_dialogs_dialogcolorpickerH
 
-#include <SDL.h>
-#include "utility/color.h"
-#include "utility/autosurface.h"
+#include "ui/graphical/window.h"
+#include "utility/signal/signal.h"
+#include "utility/signal/signalconnectionmanager.h"
 
-class cPlayerColor
+class cRgbColorPicker;
+class cImage;
+class cLineEdit;
+
+class cRgbColor;
+
+class cDialogColorPicker : public cWindow
 {
 public:
-	static const size_t predefinedColorsCount = 8;
-	static const cRgbColor predefinedColors[predefinedColorsCount];
+	explicit cDialogColorPicker (const cRgbColor& color, eWindowBackgrounds backgroundType = eWindowBackgrounds::Alpha);
+	~cDialogColorPicker ();
 
-	cPlayerColor ();
-	explicit cPlayerColor (const cRgbColor& color);
-	cPlayerColor (const cPlayerColor& other);
-	cPlayerColor (cPlayerColor&& other);
+	cRgbColor getSelectedColor () const;
 
-	cPlayerColor& operator=(const cPlayerColor& other);
-	cPlayerColor& operator=(cPlayerColor&& other);
-
-	const cRgbColor& getColor () const;
-	SDL_Surface* getTexture () const;
-
-	bool operator==(const cPlayerColor& other) const;
-	bool operator!=(const cPlayerColor& other) const;
+	cSignal<void ()> done;
+	cSignal<void ()> canceled;
 private:
-	cRgbColor color;
-	AutoSurface texture;
+	cSignalConnectionManager signalConnectionManager;
 
-	void createTexture ();
+	cRgbColorPicker* colorPicker;
+	cImage* selectedColorImage;
+
+	cLineEdit* redValueLineEdit;
+	cLineEdit* greenValueLineEdit;
+	cLineEdit* blueValueLineEdit;
+
+	AutoSurface createSelectedColorSurface ();
 };
 
-#endif // game_data_player_playercolorH
+#endif // ui_graphical_menu_dialogs_dialogcolorpickerH

@@ -24,27 +24,27 @@
 #include "game/data/player/playercolor.h"
 #include "utility/random.h"
 
-const cColor cPlayerColor::predefinedColors[predefinedColorsCount] =
+const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 {
-	cColor (0xFF, 0x00, 0x00), // red
-	cColor (0x00, 0xFF, 0x00), // green
-	cColor (0x00, 0x00, 0xFF), // blue
-	cColor (0x7F, 0x7F, 0x7F), // gray
-	cColor (0xFF, 0x7F, 0x00), // orange
-	cColor (0xFF, 0xFF, 0x00), // yellow
-	cColor (0xFF, 0x00, 0xFE), // purple
-	cColor (0x00, 0xFF, 0xFF)  // aqua
+	cRgbColor (0xFF, 0x00, 0x00), // red
+	cRgbColor (0x00, 0xFF, 0x00), // green
+	cRgbColor (0x00, 0x00, 0xFF), // blue
+	cRgbColor (0x7F, 0x7F, 0x7F), // gray
+	cRgbColor (0xFF, 0x7F, 0x00), // orange
+	cRgbColor (0xFF, 0xFF, 0x00), // yellow
+	cRgbColor (0xFF, 0x00, 0xFE), // purple
+	cRgbColor (0x00, 0xFF, 0xFF)  // aqua
 };
 
 //------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor ()
 {
-	color = cColor::red ();
+	color = cRgbColor::red ();
 	createTexture ();
 }
 
 //------------------------------------------------------------------------------
-cPlayerColor::cPlayerColor (const cColor& color_) :
+cPlayerColor::cPlayerColor (const cRgbColor& color_) :
 	color (color_)
 {
 	createTexture ();
@@ -85,7 +85,7 @@ cPlayerColor& cPlayerColor::operator=(cPlayerColor&& other)
 }
 
 //------------------------------------------------------------------------------
-const cColor& cPlayerColor::getColor () const
+const cRgbColor& cPlayerColor::getColor () const
 {
 	return color;
 }
@@ -103,13 +103,11 @@ void cPlayerColor::createTexture ()
 
 	SDL_FillRect (texture.get (), nullptr, color.toMappedSdlRGBAColor (texture->format));
 
-	unsigned short h;
-	unsigned char s, v;
-	color.toHsv (h, s, v);
+	auto hsvColor = color.toHsv ();
 
 	const size_t boxes = 400;
 
-	std::array<cColor, 7> randomColors;
+	std::array<cRgbColor, 7> randomColors;
 
 	randomColors[0] = color;
 
@@ -124,18 +122,18 @@ void cPlayerColor::createTexture ()
 			unsigned short changedH;
 			unsigned char changedS, changedV;
 
-			if ((int)(h)+hChange >= 360 || ((int)(h)-hChange >= 0 && randomBernoulli ())) changedH = h - (unsigned short)hChange;
-			else changedH = h + (unsigned short)hChange;
+			if ((int)(hsvColor.h)+hChange >= 360 || ((int)(hsvColor.h)-hChange >= 0 && randomBernoulli ())) changedH = hsvColor.h - (unsigned short)hChange;
+			else changedH = hsvColor.h + (unsigned short)hChange;
 
-			if ((int)(s)+sChange > 100 || ((int)(s)-sChange >= 0 && randomBernoulli ())) changedS = s - (unsigned char)sChange;
-			else changedS = s + (unsigned char)sChange;
+			if ((int)(hsvColor.s)+sChange > 100 || ((int)(hsvColor.s)-sChange >= 0 && randomBernoulli ())) changedS = hsvColor.s - (unsigned char)sChange;
+			else changedS = hsvColor.s + (unsigned char)sChange;
 
-			if ((int)(v)+vChange > 100 || ((int)(v)-vChange >= 0 && randomBernoulli ())) changedV = v - (unsigned char)vChange;
-			else changedV = v + (unsigned char)vChange;
+			if ((int)(hsvColor.v)+vChange > 100 || ((int)(hsvColor.v)-vChange >= 0 && randomBernoulli ())) changedV = hsvColor.v - (unsigned char)vChange;
+			else changedV = hsvColor.v + (unsigned char)vChange;
 
-			randomColors[i] = cColor::fromHsv (changedH, changedS, changedV);
+			randomColors[i] = cHsvColor (changedH, changedS, changedV).toRgb();
 		}
-		while (randomColors[i] == cColor (0xFF, 0, 0xFF)); // 0xFF00FF is our "transparent color". Hence we do not want to select this color as player color.
+		while (randomColors[i] == cRgbColor (0xFF, 0, 0xFF)); // 0xFF00FF is our "transparent color". Hence we do not want to select this color as player color.
 	}
 
 	for (size_t j = 0; j < boxes; ++j)

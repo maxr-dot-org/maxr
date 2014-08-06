@@ -57,7 +57,7 @@ public:
 
 	cSignalConnectionManager signalConnectionManager;
 
-	cColor blinkColor;
+	cRgbColor blinkColor;
 
 	bool shouldDrawHits;
 	bool shouldDrawStatus;

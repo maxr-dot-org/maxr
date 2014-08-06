@@ -454,17 +454,17 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			switch (fonttype)
 			{
 			case FONT_LATIN_NORMAL_RED:
-				replaceColor (*chars[unicodeplace], cColor (214, 189, 148), cColor (250, 0, 0));
-				replaceColor (*chars[unicodeplace], cColor (140, 132, 132), cColor (163, 0, 0));
+				replaceColor (*chars[unicodeplace], cRgbColor (214, 189, 148), cRgbColor (250, 0, 0));
+				replaceColor (*chars[unicodeplace], cRgbColor (140, 132, 132), cRgbColor (163, 0, 0));
 				break;
 			case FONT_LATIN_SMALL_RED:
-				replaceColor (*chars[unicodeplace], cColor (240, 216, 184), cColor (230, 0, 0));
+				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (230, 0, 0));
 				break;
 			case FONT_LATIN_SMALL_GREEN:
-				replaceColor (*chars[unicodeplace], cColor (240, 216, 184), cColor (4, 174, 4));
+				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (4, 174, 4));
 				break;
 			case FONT_LATIN_SMALL_YELLOW:
-				replaceColor (*chars[unicodeplace], cColor (240, 216, 184), cColor (219, 222, 0));
+				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (219, 222, 0));
 				break;
 			}
 

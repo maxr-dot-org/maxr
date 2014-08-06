@@ -22,22 +22,22 @@
 
 #include <SDL.h>
 
-class cColor;
+class cRgbColor;
 class cPosition;
 template<typename> class cBox;
 
-void drawPoint (SDL_Surface* surface, const cPosition& position, const cColor& color);
+void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color);
 
-void drawLine (SDL_Surface* surface, const cPosition& start, const cPosition& end, const cColor& color);
+void drawLine (SDL_Surface* surface, const cPosition& start, const cPosition& end, const cRgbColor& color);
 
-void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int thickness = 1);
+void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int thickness = 1);
 
-void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int cornerSize);
+void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize);
 
 Uint32 getPixel (const SDL_Surface& surface, const cPosition& position);
 
 void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel);
 
-void replaceColor (SDL_Surface& surface, const cColor& sourceColor, const cColor& destinationColor);
+void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRgbColor& destinationColor);
 
 #endif // utility_drawingH

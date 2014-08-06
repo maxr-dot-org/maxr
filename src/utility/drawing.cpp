@@ -24,14 +24,14 @@
 #include "utility/autosurface.h"
 
 //------------------------------------------------------------------------------
-void drawPoint (SDL_Surface* surface, const cPosition& position, const cColor& color)
+void drawPoint (SDL_Surface* surface, const cPosition& position, const cRgbColor& color)
 {
 	SDL_Rect rect = {Sint16 (position.x ()), Sint16 (position.y ()), 1, 1};
 	SDL_FillRect (surface, &rect, color.toMappedSdlRGBAColor (surface->format));
 }
 
 //------------------------------------------------------------------------------
-void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, const cColor& color)
+void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, const cRgbColor& color)
 {
 	auto x0 = start.x ();
 	auto x1 = end.x ();
@@ -70,7 +70,7 @@ void drawLine (SDL_Surface* s, const cPosition& start, const cPosition& end, con
 }
 
 //------------------------------------------------------------------------------
-void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int thickness)
+void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int thickness)
 {
 	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
 
@@ -88,7 +88,7 @@ void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, cons
 }
 
 //------------------------------------------------------------------------------
-void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cColor& color, int cornerSize)
+void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize)
 {
 	const cPosition size = rectangle.getMaxCorner () - rectangle.getMinCorner ();
 
@@ -187,7 +187,7 @@ void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel)
 }
 
 //------------------------------------------------------------------------------
-void replaceColor (SDL_Surface& surface, const cColor& sourceColor, const cColor& destinationColor)
+void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRgbColor& destinationColor)
 {
 	const auto srcMapped = sourceColor.toMappedSdlRGBAColor (surface.format);
 	const auto destMapped = destinationColor.toMappedSdlRGBAColor (surface.format);

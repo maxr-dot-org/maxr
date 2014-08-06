@@ -360,16 +360,16 @@ cPosition cNetMessage::popPosition ()
 	return position;
 }
 
-void cNetMessage::pushColor (const cColor& color)
+void cNetMessage::pushColor (const cRgbColor& color)
 {
 	pushInt16 (color.r);
 	pushInt16 (color.g);
 	pushInt16 (color.b);
 }
 
-cColor cNetMessage::popColor ()
+cRgbColor cNetMessage::popColor ()
 {
-	cColor color;
+	cRgbColor color;
 	color.b = popInt16 ();
 	color.g = popInt16 ();
 	color.r = popInt16 ();

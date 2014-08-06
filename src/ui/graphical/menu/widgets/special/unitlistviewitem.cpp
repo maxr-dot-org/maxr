@@ -77,7 +77,7 @@ void cUnitListViewItem::draw ()
 		auto dest = unitImage->getArea ();
 		dest.getMinCorner () -= cPosition (1, 1);
 		dest.getMaxCorner () += cPosition (1, 1);
-		drawSelectionCorner (*cVideo::buffer, dest, cColor (224, 224, 224), 8);
+		drawSelectionCorner (*cVideo::buffer, dest, cRgbColor (224, 224, 224), 8);
 	}
 }
 

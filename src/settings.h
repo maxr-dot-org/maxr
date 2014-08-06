@@ -122,8 +122,8 @@ public:
 	const std::string& getPlayerName() const;
 	void setPlayerName (const char* playerName, bool save = true);
 
-	const cColor& getPlayerColor () const;
-	void setPlayerColor (const cColor& color, bool save = true);
+	const cRgbColor& getPlayerColor () const;
+	void setPlayerColor (const cRgbColor& color, bool save = true);
 
 	bool isSoundEnabled() const;
 	void setSoundEnabled (bool soundEnabled, bool save = true);
@@ -304,7 +304,7 @@ private:
 	/** Last/default player's name used for network game */
 	std::string playerName;
 	/** Last color chosen by player */
-	cColor playerColor;
+	cRgbColor playerColor;
 
 	// SOUND
 	/** sound enabled */

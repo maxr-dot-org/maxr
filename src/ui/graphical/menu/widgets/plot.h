@@ -44,14 +44,14 @@ public:
 	void setValue (T value);
 	T getValue () const;
 
-	void setColor (cColor color);
-	const cColor& getColor () const;
+	void setColor (cRgbColor color);
+	const cRgbColor& getColor () const;
 private:
 	T value;
 
 	std::string label;
 
-	cColor color;
+	cRgbColor color;
 };
 
 //------------------------------------------------------------------------------
@@ -90,14 +90,14 @@ T cMarker<T>::getValue () const
 
 //------------------------------------------------------------------------------
 template<typename T>
-void cMarker<T>::setColor (cColor color_)
+void cMarker<T>::setColor (cRgbColor color_)
 {
 	color = std::move (color_);
 }
 
 //------------------------------------------------------------------------------
 template<typename T>
-const cColor& cMarker<T>::getColor () const
+const cRgbColor& cMarker<T>::getColor () const
 {
 	return color;
 }
@@ -115,8 +115,8 @@ public:
 	void setLabel (std::string label);
 	const std::string& getLabel () const;
 
-	void setColor (cColor color);
-	const cColor& getColor () const;
+	void setColor (cRgbColor color);
+	const cRgbColor& getColor () const;
 
 	void setInterval (T min, T max);
 
@@ -131,7 +131,7 @@ private:
 
 	std::string label;
 
-	cColor color;
+	cRgbColor color;
 };
 
 //------------------------------------------------------------------------------
@@ -157,14 +157,14 @@ const std::string& cAxis<T>::getLabel () const
 
 //------------------------------------------------------------------------------
 template<typename T>
-void cAxis<T>::setColor (cColor color_)
+void cAxis<T>::setColor (cRgbColor color_)
 {
 	color = std::move (color_);
 }
 
 //------------------------------------------------------------------------------
 template<typename T>
-const cColor& cAxis<T>::getColor () const
+const cRgbColor& cAxis<T>::getColor () const
 {
 	return color;
 }
@@ -220,8 +220,8 @@ public:
 	void setLabel (std::string label);
 	const std::string& getLabel () const;
 
-	void setColor (cColor color);
-	const cColor& getColor () const;
+	void setColor (cRgbColor color);
+	const cRgbColor& getColor () const;
 
 	U evaluate (T x) const;
 private:
@@ -229,7 +229,7 @@ private:
 
 	std::string label;
 
-	cColor color;
+	cRgbColor color;
 };
 
 //------------------------------------------------------------------------------
@@ -254,14 +254,14 @@ const std::string& cGraph<T, U>::getLabel () const
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-void cGraph<T, U>::setColor (cColor color_)
+void cGraph<T, U>::setColor (cRgbColor color_)
 {
 	color = std::move (color_);
 }
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-const cColor& cGraph<T, U>::getColor () const
+const cRgbColor& cGraph<T, U>::getColor () const
 {
 	return color;
 }

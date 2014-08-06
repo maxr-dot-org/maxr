@@ -1023,17 +1023,17 @@ void cSettings::initialize()
 		if (playerXmlElement && playerXmlElement->Attribute ("Num"))
 		{
 			const auto colorIndex = playerXmlElement->IntAttribute ("Num") % cPlayerColor::predefinedColorsCount;
-			playerColor = cColor (cPlayerColor::predefinedColors[colorIndex]);
+			playerColor = cRgbColor (cPlayerColor::predefinedColors[colorIndex]);
 		}
 		else
 		{
 			Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);
-			setPlayerColor (cColor::red ());
+			setPlayerColor (cRgbColor::red ());
 		}
 	}
 	else
 	{
-		playerColor = cColor (xmlElement->IntAttribute ("red"), xmlElement->IntAttribute ("green"), xmlElement->IntAttribute ("blue"));
+		playerColor = cRgbColor (xmlElement->IntAttribute ("red"), xmlElement->IntAttribute ("green"), xmlElement->IntAttribute ("blue"));
 	}
 
 	initialized = true;
@@ -1272,13 +1272,13 @@ void cSettings::setPlayerName (const char* playerName, bool save)
 }
 
 //------------------------------------------------------------------------------
-const cColor& cSettings::getPlayerColor() const
+const cRgbColor& cSettings::getPlayerColor() const
 {
 	return playerColor;
 }
 
 //------------------------------------------------------------------------------
-void cSettings::setPlayerColor (const cColor& color, bool save)
+void cSettings::setPlayerColor (const cRgbColor& color, bool save)
 {
 	this->playerColor = color;
 	if (save)

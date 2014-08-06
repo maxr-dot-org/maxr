@@ -95,7 +95,6 @@ private:
 
 	cImage* colorImage;
 
-	size_t localPlayerColorIndex;
 	std::shared_ptr<cPlayerBasicData> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;

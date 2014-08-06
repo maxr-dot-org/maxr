@@ -35,7 +35,7 @@
 cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_) :
 	animationTimer (std::move (animationTimer_)),
 	drawingCache (animationTimer),
-	blinkColor (cColor::white()),
+	blinkColor (cRgbColor::white()),
 	shouldDrawHits (false),
 	shouldDrawStatus (false),
 	shouldDrawAmmo (false),
@@ -119,7 +119,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	if (building.owner == player && ((!building.isBuildListEmpty() && !building.isUnitWorking () && building.getBuildListItem(0).getRemainingMetal () <= 0) ||
 									 (building.data.canResearch && building.owner->researchFinished)))
 	{
-		const cColor finishedMarkColor = cColor::green();
+		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.data.isBig ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTimer->getAnimationTime () % 0x8)), 3);
@@ -250,7 +250,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// draw indication, when building is complete
 	if (vehicle.isUnitBuildingABuilding () && vehicle.getBuildTurns () == 0 && vehicle.owner == player && !vehicle.BuildPath)
 	{
-		const cColor finishedMarkColor = cColor::green ();
+		const cRgbColor finishedMarkColor = cRgbColor::green ();
 		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTimer->getAnimationTime () % 0x8)), 3);
@@ -267,7 +267,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	// draw the group selected frame if necessary
 	if (unitSelection && unitSelection->getSelectedUnitsCount() > 1 && unitSelection->isSelected (vehicle))
 	{
-		const cColor groupSelectionColor = cColor::yellow ();
+		const cRgbColor groupSelectionColor = cRgbColor::yellow ();
 		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
 		drawRectangle (*cVideo::buffer, d, groupSelectionColor, 1);

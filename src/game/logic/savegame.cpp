@@ -261,7 +261,7 @@ std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 			const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
 			const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
 
-			cColor playerColor;
+			cRgbColor playerColor;
 			if (version < cVersion (0, 7))
 			{
 				const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
@@ -270,7 +270,7 @@ std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 			else
 			{
 				const auto colorElement = playerNode->FirstChildElement ("Color");
-				playerColor = cColor (colorElement->IntAttribute ("red"), colorElement->IntAttribute ("green"), colorElement->IntAttribute ("blue"));
+				playerColor = cRgbColor (colorElement->IntAttribute ("red"), colorElement->IntAttribute ("green"), colorElement->IntAttribute ("blue"));
 			}
 
 			playerNames.push_back (cPlayerBasicData (name, cPlayerColor (playerColor), number));
@@ -522,7 +522,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	const string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 	const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
 
-	cColor playerColor;
+	cRgbColor playerColor;
 	if (version < cVersion (0, 7))
 	{
 		const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
@@ -531,7 +531,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	else
 	{
 		const auto colorElement = playerNode->FirstChildElement ("Color");
-		playerColor = cColor (colorElement->IntAttribute ("red"), colorElement->IntAttribute ("green"), colorElement->IntAttribute ("blue"));
+		playerColor = cRgbColor (colorElement->IntAttribute ("red"), colorElement->IntAttribute ("green"), colorElement->IntAttribute ("blue"));
 	}
 
 	auto Player = std::make_unique<cPlayer> (cPlayerBasicData (name, cPlayerColor (playerColor), number));

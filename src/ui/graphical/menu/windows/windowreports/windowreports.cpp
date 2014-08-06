@@ -466,8 +466,8 @@ void cWindowReports::initializeScorePlot ()
 		maxScore = minScore + 10;
 	}
 
-	const cColor axisColor (164, 164, 164);
-	const cColor limitColor (128, 128, 128);
+	const cRgbColor axisColor (164, 164, 164);
+	const cRgbColor limitColor (128, 128, 128);
 
 	scorePlot->getXAxis ().setInterval (minTurns, maxTurns);
 	scorePlot->getXAxis ().setColor (axisColor);

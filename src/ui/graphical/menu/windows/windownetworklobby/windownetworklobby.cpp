@@ -26,6 +26,7 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
+#include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "game/data/player/player.h"
 #include "pcx.h"
 #include "main.h"
@@ -83,28 +84,20 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	playersList->setEndMargin (cPosition (10, 10));
 	playersList->setItemDistance (cPosition (0, 4));
 
-	// try to find selected color in predefined colors
-	localPlayerColorIndex = 0;
-	for (size_t i = 0; i < cPlayerColor::predefinedColorsCount; ++i)
+	auto selectColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
+	signalConnectionManager.connect (selectColorButton->clicked, [this]()
 	{
-		if (localPlayer->getColor ().getColor () == cPlayerColor::predefinedColors[i])
-		{
-			localPlayerColorIndex = i;
-			break;
-		}
-	}
+		auto application = getActiveApplication ();
 
-	auto prevColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (478, 256), ePushButtonType::ArrowLeftSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (prevColorButton->clicked, [&]()
-	{
-		localPlayerColorIndex = (localPlayerColorIndex + 1) % cPlayerColor::predefinedColorsCount;
-		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
-	});
-	auto nextColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
-	signalConnectionManager.connect (nextColorButton->clicked, [&]()
-	{
-		localPlayerColorIndex = (localPlayerColorIndex + cPlayerColor::predefinedColorsCount - 1) % cPlayerColor::predefinedColorsCount;
-		localPlayer->setColor (cPlayerColor (cPlayerColor::predefinedColors[localPlayerColorIndex]));
+		if (!application) return;
+
+		auto dialog = application->show (std::make_shared<cDialogColorPicker> (localPlayer->getColor ().getColor()));
+		dialog->done.connect ([this, dialog]()
+		{
+			localPlayer->setColor (cPlayerColor(dialog->getSelectedColor ()));
+			dialog->close ();
+		});
+		dialog->canceled.connect ([dialog](){ dialog->close (); });
 	});
 	colorImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (505, 260)));
 

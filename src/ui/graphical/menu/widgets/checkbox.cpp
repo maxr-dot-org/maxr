@@ -97,7 +97,7 @@ void cCheckBox::draw ()
 		font->showText (position.x, position.y, text, fontType);
 		if (checked)
 		{
-			const cColor selectionColor (0xE3, 0xDA, 0xCF);
+			const cRgbColor selectionColor (0xE3, 0xDA, 0xCF);
 			auto dest = getArea ();
 			dest.getMinCorner ().x () -= 3;
 			dest.getMinCorner ().y () -= 2;
