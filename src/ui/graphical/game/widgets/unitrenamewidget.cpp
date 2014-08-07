@@ -19,6 +19,7 @@
 
 #include "ui/graphical/game/widgets/unitrenamewidget.h"
 
+#include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/lineedit.h"
 
@@ -46,6 +47,14 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 		if (activeUnit)
 		{
 			selectedUnitNameEdit->setText (activeUnit->isNameOriginal () ? activeUnit->data.name : activeUnit->getName ());
+		}
+	});
+	signalConnectionManager.connect (selectedUnitNameEdit->textSet, [&]()
+	{
+		auto application = getActiveApplication ();
+		if (application)
+		{
+			application->releaseKeyFocus (*selectedUnitNameEdit);
 		}
 	});
 

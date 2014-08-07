@@ -76,6 +76,11 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	
 	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (353, 260), getPosition () + cPosition (353 + 95, 260 + 10))));
 	nameLineEdit->setText (localPlayer->getName ());
+	signalConnectionManager.connect (nameLineEdit->returnPressed, [this, nameLineEdit]()
+	{
+		auto application = getActiveApplication ();
+		if (application) application->releaseKeyFocus (*nameLineEdit);
+	});
 	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit](eValidatorState){localPlayer->setName (nameLineEdit->getText ()); });
 
 	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition () + cPosition (465, 284), getPosition () + cPosition (465 + 167, 284 + 124))));
@@ -198,19 +203,19 @@ void cWindowNetworkLobby::updatePlayerColor ()
 	colorImage->setImage (colorSurface.get ());
 }
 //------------------------------------------------------------------------------
-void cWindowNetworkLobby::triggerChatMessage (bool refocusChatLine)
+void cWindowNetworkLobby::triggerChatMessage (bool keepFocus)
 {
 	if (!chatLineEdit->getText ().empty ())
 	{
 		triggeredChatMessage ();
 		chatLineEdit->setText ("");
 	}
-	if (refocusChatLine)
+	if (!keepFocus)
 	{
 		auto application = getActiveApplication ();
 		if (application)
 		{
-			application->grapKeyFocus (*chatLineEdit);
+			application->releaseKeyFocus (*chatLineEdit);
 		}
 	}
 }

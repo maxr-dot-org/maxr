@@ -46,7 +46,7 @@ public:
 	~cLineEdit ();
 
 	const std::string& getText ();
-	void setText (const std::string& text);
+	void setText (std::string text);
 
 	void setReadOnly (bool readOnly);
 	void setValidator (std::unique_ptr<cValidator> validator);
@@ -61,6 +61,7 @@ public:
 	virtual bool handleKeyPressed (cApplication& application, cKeyboard& keyboard, SDL_Keycode key) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleTextEntered (cApplication& application, cKeyboard& keyboard, const char* text) MAXR_OVERRIDE_FUNCTION;
 
+	cSignal<void ()> textSet;
 	cSignal<void ()> escapePressed;
 	cSignal<void ()> returnPressed;
 	cSignal<void (eValidatorState)> editingFinished;

@@ -56,9 +56,9 @@ const std::string& cLineEdit::getText ()
 }
 
 //------------------------------------------------------------------------------
-void cLineEdit::setText (const std::string& text_)
+void cLineEdit::setText (std::string text_)
 {
-	text = text_;
+	std::swap(text, text_);
 	if (validator)
 	{
 		const auto state = validator->validate (text);
@@ -68,6 +68,7 @@ void cLineEdit::setText (const std::string& text_)
 		}
 	}
 	resetTextPosition ();
+	textSet ();
 }
 
 //------------------------------------------------------------------------------
@@ -166,9 +167,11 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 //------------------------------------------------------------------------------
 void cLineEdit::handleLooseKeyFocus (cApplication& application)
 {
-	hasKeyFocus = false;
-
-	finishEditingInternal ();
+	if (hasKeyFocus)
+	{
+		hasKeyFocus = false;
+		finishEditingInternal ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -343,7 +346,6 @@ bool cLineEdit::handleKeyPressed (cApplication& application, cKeyboard& keyboard
 	case SDLK_KP_ENTER: // fall through
 	case SDLK_RETURN:
 		returnPressed ();
-		application.releaseKeyFocus (*this);
 		break;
 	case SDLK_LEFT:
 		scrollLeft ();

@@ -108,7 +108,7 @@ private:
 	void updateMap ();
 	void updatePlayerColor ();
 
-	void triggerChatMessage (bool refocusChatLine);
+	void triggerChatMessage (bool keepFocus);
 };
 
 #endif // ui_graphical_menu_windows_windownetworklobby_windownetworklobbyH

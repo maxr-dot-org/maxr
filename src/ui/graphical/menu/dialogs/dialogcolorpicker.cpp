@@ -19,6 +19,7 @@
 
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 
+#include "ui/graphical/application.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/colorpicker.h"
@@ -62,6 +63,21 @@ cDialogColorPicker::cDialogColorPicker (const cRgbColor& color, eWindowBackgroun
 	greenValueLineEdit->setText (iToStr (color.g));
 	blueValueLineEdit->setText (iToStr (color.b));
 
+	signalConnectionManager.connect (redValueLineEdit->returnPressed, [this]()
+	{
+		auto application = getActiveApplication ();
+		if (application) application->releaseKeyFocus (*redValueLineEdit);
+	});
+	signalConnectionManager.connect (greenValueLineEdit->returnPressed, [this]()
+	{
+		auto application = getActiveApplication ();
+		if (application) application->releaseKeyFocus (*redValueLineEdit);
+	});
+	signalConnectionManager.connect (blueValueLineEdit->returnPressed, [this]()
+	{
+		auto application = getActiveApplication ();
+		if (application) application->releaseKeyFocus (*redValueLineEdit);
+	});
 	signalConnectionManager.connect (redValueLineEdit->editingFinished, [this](eValidatorState)
 	{
 		const auto color = colorPicker->getSelectedColor ();
