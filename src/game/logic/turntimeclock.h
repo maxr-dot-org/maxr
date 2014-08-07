@@ -47,6 +47,8 @@ private:
 class cTurnTimeClock
 {
 public:
+	static const std::chrono::seconds alertRemainingTime;
+
 	explicit cTurnTimeClock (std::shared_ptr<cGameTimer> gameTimer);
 
 	void restartFromNow ();
@@ -76,6 +78,7 @@ public:
 
 	mutable cSignal<void ()> secondChanged;
 	mutable cSignal<void ()> deadlinesChanged;
+	mutable cSignal<void ()> alertTimeReached;
 private:
 	cSignalConnectionManager signalConnectionManager;
 

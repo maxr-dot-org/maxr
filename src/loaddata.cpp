@@ -739,9 +739,9 @@ void cVoiceData::load (const char* path)
 	LoadSoundfile (VOISurveying[0], path, "surveying.ogg", true);
 	LoadSoundfile (VOISurveying[1], path, "surveying2.ogg", true);
 	LoadSoundfile (VOITransferDone, path, "transfer_done.ogg", true);
-	LoadSoundfile (VOITurnEnd20Sec[0], path, "turn_end_20_sec1.ogg", true);//not used yet
-	LoadSoundfile (VOITurnEnd20Sec[1], path, "turn_end_20_sec2.ogg", true);//not used yet
-	LoadSoundfile (VOITurnEnd20Sec[2], path, "turn_end_20_sec3.ogg", true);//not used yet
+	LoadSoundfile (VOITurnEnd20Sec[0], path, "turn_end_20_sec1.ogg", true);
+	LoadSoundfile (VOITurnEnd20Sec[1], path, "turn_end_20_sec2.ogg", true);
+	LoadSoundfile (VOITurnEnd20Sec[2], path, "turn_end_20_sec3.ogg", true);
 	LoadSoundfile (VOIUnitDisabled, path, "unit_disabled.ogg", true);
 	LoadSoundfile (VOIUnitDisabledByEnemy[0], path, "unit_disabled_by_enemy1.ogg", true);
 	LoadSoundfile (VOIUnitDisabledByEnemy[1], path, "unit_disabled_by_enemy2.ogg", true);

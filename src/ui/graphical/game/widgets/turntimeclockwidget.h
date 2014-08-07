@@ -31,7 +31,6 @@ class cTurnTimeClock;
 
 class cTurnTimeClockWidget : public cWidget
 {
-	static const std::chrono::seconds alertRemainingTime;
 public:
 	cTurnTimeClockWidget (const cBox<cPosition>& area);
 

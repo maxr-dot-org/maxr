@@ -63,6 +63,7 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/logic/clientevents.h"
+#include "game/logic/turntimeclock.h"
 #include "game/data/units/unit.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
@@ -752,6 +753,11 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect)
 	{
 		gameGui->getGameMap ().addEffect (effect);
+	});
+
+	clientSignalConnectionManager.connect (client.getTurnTimeClock ()->alertTimeReached, [this]()
+	{
+		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceTurnAlertTimeReached, getRandom (VoiceData.VOITurnEnd20Sec)));
 	});
 
 	//

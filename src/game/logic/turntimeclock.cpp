@@ -22,6 +22,7 @@
 #include "game/logic/turntimeclock.h"
 #include "game/logic/gametimer.h"
 
+const std::chrono::seconds cTurnTimeClock::alertRemainingTime (20);
 
 //------------------------------------------------------------------------------
 cTurnTimeDeadline::cTurnTimeDeadline (unsigned int startGameTime_, const std::chrono::milliseconds& deadline_) :
@@ -54,14 +55,25 @@ cTurnTimeClock::cTurnTimeClock (std::shared_ptr<cGameTimer> gameTimer_) :
 	stopped (false),
 	stoppedTicks (0)
 {
-	unsigned int lastCheckedSeconds = 0;
-	signalConnectionManager.connect (gameTimer->gameTimeChanged, [lastCheckedSeconds, this]() mutable
+	std::chrono::seconds lastCheckedSeconds(0);
+	std::chrono::seconds lastTimeTillFirstDeadline (std::numeric_limits<std::chrono::seconds::rep>::max ());
+	signalConnectionManager.connect (gameTimer->gameTimeChanged, [lastCheckedSeconds, lastTimeTillFirstDeadline, this]() mutable
 	{
-		const auto currentSeconds = gameTimer->gameTime / 100;
-		if (currentSeconds > lastCheckedSeconds)
+		const std::chrono::seconds currentSeconds(gameTimer->gameTime / 100);
+		if (currentSeconds != lastCheckedSeconds)
 		{
 			lastCheckedSeconds = currentSeconds;
 			secondChanged ();
+
+			if (hasDeadline ())
+			{
+				const auto currentTimeTillFirstDeadline = std::chrono::duration_cast<std::chrono::seconds>(getTimeTillFirstDeadline ());
+				if (lastTimeTillFirstDeadline > alertRemainingTime && currentTimeTillFirstDeadline <= alertRemainingTime)
+				{
+					alertTimeReached ();
+				}
+				lastTimeTillFirstDeadline = currentTimeTillFirstDeadline;
+			}
 		}
 	});
 }

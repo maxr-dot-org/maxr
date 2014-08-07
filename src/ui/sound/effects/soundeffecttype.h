@@ -50,7 +50,8 @@ enum class eSoundEffectType
 	VoiceAttacking,
 	VoiceAttackingUs,
 	VoiceDestroyed,
-	VoiceTurnStartReport
+	VoiceTurnStartReport,
+	VoiceTurnAlertTimeReached
 };
 
 #endif // ui_sound_effects_soundeffecttypeH

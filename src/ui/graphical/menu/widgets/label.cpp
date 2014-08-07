@@ -60,22 +60,22 @@ const std::string& cLabel::getText () const
 //------------------------------------------------------------------------------
 void cLabel::setFont (eUnicodeFontType fontType_)
 {
-	fontType = fontType_;
-	updateDisplayInformation ();
+	std::swap(fontType, fontType_);
+	if(fontType != fontType_) updateDisplayInformation ();
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setAlignment (AlignmentFlags alignment_)
 {
-	alignment = alignment_;
-	updateDisplayInformation ();
+	std::swap (alignment, alignment_);
+	if (alignment != alignment_) updateDisplayInformation ();
 }
 
 //------------------------------------------------------------------------------
 void cLabel::setWordWrap (bool wordWrap_)
 {
-	wordWrap = wordWrap_;
-	updateDisplayInformation ();
+	std::swap (wordWrap, wordWrap_);
+	if (wordWrap != wordWrap_) updateDisplayInformation ();
 }
 
 //------------------------------------------------------------------------------

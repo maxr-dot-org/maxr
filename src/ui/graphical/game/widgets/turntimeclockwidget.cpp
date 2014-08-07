@@ -24,8 +24,6 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "game/logic/turntimeclock.h"
 
-const std::chrono::seconds cTurnTimeClockWidget::alertRemainingTime (20);
-
 //------------------------------------------------------------------------------
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
 	cWidget (area)
@@ -71,7 +69,7 @@ void cTurnTimeClockWidget::update ()
 
 	textLabel->setText (text.str ());
 
-	if (turnTimeClock->hasDeadline () && time <= alertRemainingTime)
+	if (turnTimeClock->hasDeadline () && std::chrono::duration_cast<std::chrono::seconds>(time) <= cTurnTimeClock::alertRemainingTime)
 	{
 		textLabel->setFont (FONT_LATIN_NORMAL_RED);
 	}
