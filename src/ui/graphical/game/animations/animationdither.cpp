@@ -60,7 +60,7 @@ cAnimationDither::cAnimationDither (cAnimationTimer& animationTimer_, const cVeh
 //------------------------------------------------------------------------------
 cAnimationDither::~cAnimationDither ()
 {
-	if (isRunning ())
+	if (isRunning () && vehicle)
 	{
 		vehicle->ditherX = 0;
 		vehicle->ditherY = 0;

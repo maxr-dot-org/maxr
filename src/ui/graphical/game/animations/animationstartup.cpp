@@ -43,7 +43,7 @@ cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cU
 //------------------------------------------------------------------------------
 cAnimationStartUp::~cAnimationStartUp ()
 {
-	if (isRunning ())
+	if (isRunning () && unit)
 	{
 		unit->alphaEffectValue = 0;
 	}

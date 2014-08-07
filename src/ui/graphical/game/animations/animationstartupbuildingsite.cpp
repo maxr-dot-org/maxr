@@ -51,7 +51,7 @@ cAnimationStartUpBuildingSite::cAnimationStartUpBuildingSite (cAnimationTimer& a
 //------------------------------------------------------------------------------
 cAnimationStartUpBuildingSite::~cAnimationStartUpBuildingSite ()
 {
-	if (isRunning ())
+	if (isRunning () && vehicle)
 	{
 		vehicle->bigBetonAlpha = 254;
 	}
