@@ -958,6 +958,8 @@ void cGameGuiController::showUpgradesWindow (const cUnit& unit)
 	if (!player) return;
 
 	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock ()));
+
+	upgradesWindow->canceled.connect ([upgradesWindow]() { upgradesWindow->close (); });
 	upgradesWindow->done.connect ([&, upgradesWindow]()
 	{
 		takeUnitUpgradesTriggered (upgradesWindow->getUnitUpgrades ());

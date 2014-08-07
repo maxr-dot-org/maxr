@@ -93,7 +93,7 @@
       <AdditionalIncludeDirectories>../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Mixer.lib;SDL2_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
