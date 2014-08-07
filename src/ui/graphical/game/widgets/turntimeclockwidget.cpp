@@ -24,7 +24,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "game/logic/turntimeclock.h"
 
-const std::chrono::seconds cTurnTimeClockWidget::alertRemainingTime (30);
+const std::chrono::seconds cTurnTimeClockWidget::alertRemainingTime (20);
 
 //------------------------------------------------------------------------------
 cTurnTimeClockWidget::cTurnTimeClockWidget (const cBox<cPosition>& area) :
