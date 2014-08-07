@@ -133,6 +133,8 @@ bool cUnitSelection::selectUnit (cUnit& unit, bool add)
 {
 	if (selectedUnits.size () == 1 && selectedUnits[0].first == &unit) return false;
 
+	if (!canSelect(&unit)) return false;
+
 	if (!add) removeAllSelectedUnits();
 
 	if (!isSelected (unit))
@@ -270,4 +272,10 @@ bool cUnitSelection::isSelected (const cUnit& unit) const
 {
 	auto iter = std::find_if (selectedUnits.begin (), selectedUnits.end (), [&unit](const std::pair<cUnit*, cSignalConnection>& entry) { return entry.first == &unit; });
 	return iter != selectedUnits.end ();
+}
+
+//------------------------------------------------------------------------------
+bool cUnitSelection::canSelect (const cUnit* unit) const
+{
+	return unit && unit->getOwner ();
 }

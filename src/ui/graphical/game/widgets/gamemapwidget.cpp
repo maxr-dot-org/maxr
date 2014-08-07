@@ -1847,18 +1847,18 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 
 						if (it == planes.end ())
 						{
-							if (overBuilding) next = overBuilding;
-							else if (overBaseBuilding) next = overBaseBuilding;
-							else if (overPlane) next = overPlane;
+							if (unitSelection.canSelect(overBuilding)) next = overBuilding;
+							else if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
+							else if (unitSelection.canSelect (overPlane)) next = overPlane;
 						}
 						else
 						{
 							++it;
 
 							if (it != planes.end ()) next = *it;
-							else if (overVehicle) next = overVehicle;
-							else if (overBuilding) next = overBuilding;
-							else if (overBaseBuilding) next = overBaseBuilding;
+							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
+							else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
+							else if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
 							else if (planes.size () > 1)
 							{
 								next = planes[0];
@@ -1869,15 +1869,15 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 					{
 						if (overBuilding == selectedBuilding)
 						{
-							if (overBaseBuilding) next = overBaseBuilding;
-							else if (overPlane) next = overPlane;
-							else if (overVehicle) next = overVehicle;
+							if (unitSelection.canSelect (overBaseBuilding)) next = overBaseBuilding;
+							else if (unitSelection.canSelect (overPlane)) next = overPlane;
+							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
 						}
 						else
 						{
-							if (overPlane) next = overPlane;
-							else if (overVehicle) next = overVehicle;
-							else if (overBuilding) next = overBuilding;
+							if (unitSelection.canSelect (overPlane)) next = overPlane;
+							else if (unitSelection.canSelect (overVehicle)) next = overVehicle;
+							else if (unitSelection.canSelect (overBuilding)) next = overBuilding;
 						}
 					}
 

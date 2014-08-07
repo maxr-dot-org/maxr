@@ -60,6 +60,8 @@ public:
 
 	bool isSelected (const cUnit& unit) const;
 
+	bool canSelect (const cUnit* unit) const;
+
 	mutable cSignal<void ()> selectionChanged;
 	mutable cSignal<void ()> mainSelectionChanged;
 	mutable cSignal<void ()> groupSelectionChanged;
