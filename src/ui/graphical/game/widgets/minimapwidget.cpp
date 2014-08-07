@@ -339,11 +339,11 @@ void cMiniMapWidget::renewViewWindowSurface ()
 	for (int y = start.y (); y <= end.y (); ++y)
 	{
 		if (y < 0 || y >= getSize ().y ()) continue;
-		if (start.x () >= 0 && start.x () < MINIMAP_SIZE)
+		if (start.x () >= 0 && start.x () < getSize ().x ())
 		{
 			minimap[y * getSize ().x () + start.x ()] = MINIMAP_COLOR;
 		}
-		if (end.x () >= 0 && end.x () < MINIMAP_SIZE)
+		if (end.x () >= 0 && end.x () < getSize ().x ())
 		{
 			minimap[y * getSize ().x () + end.x ()] = MINIMAP_COLOR;
 		}

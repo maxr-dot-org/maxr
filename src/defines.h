@@ -27,15 +27,10 @@
 #define PFEIL_COLOR        0xFF0000FF // color of a waypointarrow
 #define PFEILS_COLOR       0xFF00FF00 // color of a special waypointarrow
 #define MOVE_SPEED 2     // speed of vehiclemovements
-#define MSG_TICKS  30000 // number of ticks for how long a message will be displayed
 #define MAX_PLANES_PER_FIELD 5
 
 // minimap configuration
 #define MINIMAP_COLOR 0xFFFC0000 // color of the screen borders on the minimap
-#define MINIMAP_POS_X 15         // the position of the map on the screen
-#define MINIMAP_POS_Y 356        // the position of the map on the screen
-#define MINIMAP_SIZE  112        // the size of the minimap in pixels
-#define MINIMAP_ZOOM_FACTOR 2    // the zoomfactor for minimap zoom switch
 
 #if HAVE_CONFIG_H
 # include "config.h" //created by autotools on linux holding informations like package_string and versions
@@ -49,8 +44,6 @@
 #else
 # define EX extern
 #endif
-
-#define MAXPLAYER_HOTSEAT 8
 
 #ifdef _MSC_VER
 # define CHECK_MEMORY //_ASSERTE (_CrtCheckMemory());
