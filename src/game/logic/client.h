@@ -240,7 +240,7 @@ private:
 	*@param addedVehicle Vehicle which should be added.
 	*@param addedBuilding Building which should be added.
 	*/
-	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool bAddToMap = true);
+	void addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap = true);
 	void addUnit (const cPosition& position, cBuilding& addedBuilding);
 
 	/**

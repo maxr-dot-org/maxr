@@ -367,10 +367,10 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	const sID UnitID = message.popID ();
 	const auto position = message.popPosition ();
 	const unsigned int ID = message.popInt16();
-	const bool bAddToMap = message.popBool();
+	const bool addToMap = message.popBool();
 
 	auto& addedVehicle = Player->addNewVehicle(position, UnitID, ID);
-	addUnit (position, addedVehicle, bAddToMap);
+	addUnit (position, addedVehicle, addToMap);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
@@ -413,7 +413,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 
 	addedVehicle.dir = dir;
 	addedVehicle.data.setVersion (version);
-	addUnit (position, addedVehicle, false);
+	addUnit (position, addedVehicle);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
@@ -1662,10 +1662,10 @@ int cClient::handleNetMessage (cNetMessage& message)
 	return 0;
 }
 
-void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bAddToMap)
+void cClient::addUnit (const cPosition& position, cVehicle& addedVehicle, bool addToMap)
 {
 	// place the vehicle
-	if (bAddToMap) getMap()->addVehicle (addedVehicle, position);
+	if (addToMap) getMap ()->addVehicle (addedVehicle, position);
 
 	if (addedVehicle.getOwner () != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
