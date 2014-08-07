@@ -335,7 +335,7 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
 		{
 			const auto& vehicle = *j;
-			if (Contains (vehicle->seenByPlayerList, player) || vehicle->owner == player)
+			if (Contains (vehicle->seenByPlayerList, player) || vehicle->getOwner () == player)
 			{
 				crc = calcCheckSum (vehicle->iID,  crc);
 				crc = calcCheckSum (vehicle->getPosition().x(), crc);

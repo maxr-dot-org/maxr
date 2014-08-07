@@ -45,6 +45,9 @@ public:
 	virtual bool isAVehicle() const = 0;
 	virtual bool isABuilding() const = 0;
 
+	cPlayer* getOwner () const;
+	void setOwner (cPlayer* owner);
+
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const = 0;
 	virtual std::string getStatusStr (const cPlayer* player) const = 0;
@@ -126,6 +129,8 @@ public:
 	//                 Therefor you should not access the unit from a function that connects to this signal!
 	mutable cSignal<void ()> destroyed;
 
+	mutable cSignal<void ()> ownerChanged;
+
 	mutable cSignal<void ()> positionChanged;
 
 	mutable cSignal<void ()> renamed;
@@ -156,7 +161,6 @@ public: // TODO: make protected/private and make getters/setters
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 
-	cPlayer* owner;
 	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit
 	std::vector<cPlayer*> detectedByPlayerList; ///< a list of all players who have detected this unit
 
@@ -168,6 +172,7 @@ public: // TODO: make protected/private and make getters/setters
 
 	//-----------------------------------------------------------------------------
 private:
+	cPlayer* owner;
     cPosition position;
 
 	bool isOriginalName; // indicates whether the name has been changed by the player or not

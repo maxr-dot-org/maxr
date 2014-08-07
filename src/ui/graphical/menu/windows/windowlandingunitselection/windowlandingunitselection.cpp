@@ -179,12 +179,12 @@ void cWindowLandingUnitSelection::setActiveUnit (const sID& unitId)
 		if (unitId.isAVehicle ())
 		{
 			auto index = UnitsData.getVehicleIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getVehicle (index, getPlayer ().getClan ()), getPlayer ().VehicleData[index], getPlayer ().researchLevel);
+			unitUpgrade->init (UnitsData.getVehicle (index, getPlayer ().getClan ()), getPlayer ().VehicleData[index], getPlayer ().getResearchState ());
 		}
 		else
 		{
 			auto index = UnitsData.getBuildingIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getBuilding (index, getPlayer ().getClan ()), getPlayer ().BuildingData[index], getPlayer ().researchLevel);
+			unitUpgrade->init (UnitsData.getBuilding (index, getPlayer ().getClan ()), getPlayer ().BuildingData[index], getPlayer ().getResearchState ());
 		}
 	}
 	else
@@ -405,7 +405,7 @@ void cWindowLandingUnitSelection::upgradeIncreaseClicked (size_t index)
 	if (!activeUnitId) return;
 
 	auto& unitUpgrade = unitUpgrades.at (*activeUnitId);
-	const auto& researchLevel = getPlayer ().researchLevel;
+	const auto& researchLevel = getPlayer ().getResearchState ();
 
 	const auto cost = unitUpgrade.upgrades[index].purchase (researchLevel);
 	goldBar->decrease (cost);
@@ -420,7 +420,7 @@ void cWindowLandingUnitSelection::upgradeDecreaseClicked (size_t index)
 	if (!activeUnitId) return;
 
 	auto& unitUpgrade = unitUpgrades.at (*activeUnitId);
-	const auto& researchLevel = getPlayer ().researchLevel;
+	const auto& researchLevel = getPlayer ().getResearchState ();
 
 	const auto cost = unitUpgrade.upgrades[index].cancelPurchase (researchLevel);
 	goldBar->increase (-cost);

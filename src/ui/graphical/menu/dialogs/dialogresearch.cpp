@@ -85,11 +85,11 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 
 		researchCenterCountLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (24, 72 + 28 * i), getPosition () + cPosition (24 + 38, 72 + 28 * i + 10)), "0", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (236, 72 + 28 * i), getPosition () + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + iToStr (player.researchLevel.getCurResearchLevel (i)) + "%", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+		percentageLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (236, 72 + 28 * i), getPosition () + cPosition (236 + 44, 72 + 28 * i + 10)), "+" + iToStr (player.getResearchState().getCurResearchLevel (i)) + "%", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 		turnsLabels[i] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (291, 72 + 28 * i), getPosition () + cPosition (291 + 44, 72 + 28 * i + 10)), "0", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-		sliders[i] = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (90, 70 + 28 * i), cPosition (90 + 51, 70 + 28 * i + 15)), 0, player.workingResearchCenterCount, eOrientationType::Horizontal, eSliderHandleType::Horizontal, eSliderType::Invisible));
+		sliders[i] = addChild (std::make_unique<cSlider> (cBox<cPosition> (cPosition (90, 70 + 28 * i), cPosition (90 + 51, 70 + 28 * i + 15)), 0, player.getResearchCentersWorkingTotal (), eOrientationType::Horizontal, eSliderHandleType::Horizontal, eSliderType::Invisible));
 		signalConnectionManager.connect (sliders[i]->valueChanged, std::bind (&cDialogResearch::handleSliderValueChanged, this, i));
 
 		decreaseButtons[i] = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (71, 70 + 28 * i), ePushButtonType::ArrowLeftSmall));
@@ -99,10 +99,10 @@ cDialogResearch::cDialogResearch (const cPlayer& player_) :
 		signalConnectionManager.connect (increaseButtons[i]->clicked, [&, i](){ sliders[i]->increase (1);  });
 	}
 
-	unusedResearchCenters = player.workingResearchCenterCount;
+	unusedResearchCenters = player.getResearchCentersWorkingTotal ();
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
-		researchSettings[i] = player.researchCentersWorkingOnArea[i];
+		researchSettings[i] = player.getResearchCentersWorkingOnArea((cResearch::ResearchArea)i);
 		unusedResearchCenters -= researchSettings[i];
 	}
 
@@ -124,7 +124,7 @@ void cDialogResearch::updateWidgets ()
 		researchCenterCountLabels[i]->setText (iToStr (researchSettings[i]));
 		sliders[i]->setValue (researchSettings[i]);
 
-		turnsLabels[i]->setText (iToStr (player.researchLevel.getRemainingTurns (i, researchSettings[i])));
+		turnsLabels[i]->setText (iToStr (player.getResearchState().getRemainingTurns (i, researchSettings[i])));
 
 		if (unusedResearchCenters <= 0) increaseButtons[i]->lock ();
 		else increaseButtons[i]->unlock ();

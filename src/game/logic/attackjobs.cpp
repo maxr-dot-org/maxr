@@ -66,7 +66,7 @@ cUnit* selectTarget(const cPosition& position, char attackMode, const cMap& map)
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetBuilding = mapField.getBuilding();
-		if (targetBuilding && !targetBuilding->owner) targetBuilding = NULL;
+		if (targetBuilding && !targetBuilding->getOwner ()) targetBuilding = NULL;
 	}
 
 	if (targetVehicle) return targetVehicle;
@@ -225,7 +225,7 @@ void cServerAttackJob::sendFireCommand()
 		cPlayer& player = *playerList[i];
 
 		if (player.canSeeAnyAreaUnder (*unit) == false) continue;
-		if (unit->owner == &player) continue;
+		if (unit->getOwner () == &player) continue;
 
 		unit->setDetectedByPlayer (*server, &player);
 	}
@@ -383,7 +383,7 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 			for (unsigned int i = 0; i < playerList.size(); i++)
 			{
 				cPlayer& player = *playerList[i];
-				if (target->owner == &player)
+				if (target->getOwner () == &player)
 					continue;
 				if (!player.canSeeAt(position))
 					continue;
@@ -396,7 +396,7 @@ void cServerAttackJob::makeImpact(const cPosition& position)
 		target->data.setHitpoints(target->calcHealth (damage));
 		remainingHP = target->data.getHitpoints();
 		target->setHasBeenAttacked(true);
-		owner = target->owner;
+		owner = target->getOwner ();
 		Log.write (" Server: unit '" + target->getDisplayName() + "' (ID: " + iToStr (target->iID) + ") hit. Remaining HP: " + iToStr (target->data.getHitpoints()), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
@@ -521,7 +521,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage& message)
 		{
             Log.write(" Client: changed vehicle position to (" + iToStr(position.x()) + ":" + iToStr(position.y()) + ")", cLog::eLOG_TYPE_NET_DEBUG);
             map.moveVehicle(*vehicle, position);
-			vehicle->owner->doScan();
+			vehicle->getOwner ()->doScan ();
 
 			vehicle->setMovementOffset (message.popPosition());
 		}
@@ -632,7 +632,7 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage& message)
 			unit->data.speedCur = message.popInt16();
 	}
 	const bool sentryReaction = message.popBool();
-	if (sentryReaction && unit && unit->owner == &client->getActivePlayer())
+	if (sentryReaction && unit && unit->getOwner () == &client->getActivePlayer ())
 	{
 		const string name = unit->getDisplayName();
 		client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportAttackingEnemy> (*unit));
@@ -876,7 +876,7 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 
 			Log.write (" Client: vehicle '" + targetVehicle->getDisplayName () + "' (ID: " + iToStr (targetVehicle->iID) + ") hit. Remaining HP: " + iToStr (targetVehicle->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if (targetVehicle->owner == &client.getActivePlayer()) ownUnit = true;
+			if (targetVehicle->getOwner () == &client.getActivePlayer ()) ownUnit = true;
 
 			if (targetVehicle->data.getHitpoints() <= 0)
 			{
@@ -898,7 +898,7 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 
 			Log.write (" Client: building '" + targetBuilding->getDisplayName () + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if (targetBuilding->owner == &client.getActivePlayer()) ownUnit = true;
+			if (targetBuilding->getOwner () == &client.getActivePlayer ()) ownUnit = true;
 
 			if (targetBuilding->data.getHitpoints () <= 0)
 			{

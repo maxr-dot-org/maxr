@@ -32,7 +32,7 @@
 
 //------------------------------------------------------------------------------
 cWindowBuildBuildings::cWindowBuildBuildings (const cVehicle& vehicle_, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
-	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), *vehicle_.owner),
+	cWindowHangar (LoadPCX (GFXOD_BUILD_SCREEN), *vehicle_.getOwner()),
 	vehicle (vehicle_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Vehicle"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -81,7 +81,7 @@ void cWindowBuildBuildings::setActiveUnit (const sID& unitId)
 {
 	cWindowHangar::setActiveUnit (unitId);
 
-	const auto& buildingData = *vehicle.owner->getUnitDataCurrentVersion (unitId);
+	const auto& buildingData = *vehicle.getOwner ()->getUnitDataCurrentVersion (unitId);
 	std::array<int, 3> turns;
 	std::array<int, 3> costs;
 	vehicle.calcTurboBuild (turns, costs, buildingData.buildCosts);
@@ -107,7 +107,7 @@ void cWindowBuildBuildings::generateSelectionList (const cVehicle& vehicle)
 			select = false;
 		}
 
-		if (vehicle.data.getStoredResources () < vehicle.owner->BuildingData[i].buildCosts) item.markAsInsufficient ();
+		if (vehicle.data.getStoredResources () < vehicle.getOwner ()->BuildingData[i].buildCosts) item.markAsInsufficient ();
 	}
 }
 

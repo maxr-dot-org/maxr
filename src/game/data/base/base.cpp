@@ -881,8 +881,8 @@ void sSubBase::makeTurnend (cServer& server)
 	// produce credits
 	if (GoldNeed)
 	{
-		owner->Credits += GoldNeed;
-		sendCredits (server, owner->Credits, *owner);
+		owner->setCredits(owner->getCredits() + GoldNeed);
+		sendCredits (server, owner->getCredits (), *owner);
 	}
 
 	// make repairs/build/reload
@@ -1119,7 +1119,7 @@ sSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 	if (map->isValidPosition (position) == false) return NULL;
 	cBuilding* b = map->getField (position).getBuilding ();
 
-	if (b && b->owner == building.owner && b->SubBase)
+	if (b && b->getOwner () == building.getOwner () && b->SubBase)
 	{
 		b->CheckNeighbours (*map);
 		return b->SubBase;
@@ -1160,7 +1160,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	if (NeighbourList.empty())
 	{
 		// no neighbours found, just generate new subbase and add the building
-		sSubBase* NewSubBase = new sSubBase (building->owner);
+		sSubBase* NewSubBase = new sSubBase (building->getOwner ());
 		building->SubBase = NewSubBase;
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
@@ -1185,7 +1185,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		delete SubBase;
 	}
 	NeighbourList.clear();
-	if (server) sendSubbaseValues (*server, *firstNeighbour, *building->owner);
+	if (server) sendSubbaseValues (*server, *firstNeighbour, *building->getOwner ());
 }
 
 void cBase::deleteBuilding (cBuilding* building, cServer* server)
@@ -1242,14 +1242,14 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 	}
 
 	if (building->isUnitWorking () && building->data.canResearch)
-		building->owner->stopAResearch (building->researchArea);
+		building->getOwner ()->stopAResearch (building->getResearchArea ());
 
 	if (server)
 	{
 		// send subbase values to client
 		for (size_t i = 0; i != newSubBases.size(); ++i)
 		{
-			sendSubbaseValues (*server, *newSubBases[i], *building->owner);
+			sendSubbaseValues (*server, *newSubBases[i], *building->getOwner ());
 		}
 	}
 

@@ -46,7 +46,7 @@ bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 		return selectUnit (*topBuilding);
 	}
 	cBuilding* baseBuilding = field.getBaseBuilding ();
-	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->owner != NULL)
+	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->getOwner () != NULL)
 	{
 		return selectUnit (*baseBuilding);
 	}
@@ -106,9 +106,9 @@ bool cUnitSelection::selectVehiclesAt (const cBox<cPosition>& box, const cMap& m
 			const cPosition position (x, y);
 
 			cVehicle* vehicle = map.getField (position).getVehicle ();
-			if (!vehicle ||vehicle->owner != &player) vehicle = map.getField (position).getPlane ();
+			if (!vehicle ||vehicle->getOwner () != &player) vehicle = map.getField (position).getPlane ();
 
-			if (vehicle && vehicle->owner == &player && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing () && !vehicle->isUnitMoving ())
+			if (vehicle && vehicle->getOwner () == &player && !vehicle->isUnitBuildingABuilding () && !vehicle->isUnitClearing () && !vehicle->isUnitMoving ())
 			{
 				if (vehicle == oldSelectedUnit)
 				{

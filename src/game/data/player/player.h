@@ -74,6 +74,9 @@ public:
 	void setLocal() { splayer.setLocal(); }
 	bool isLocal() const { return splayer.isLocal(); }
 
+	int getCredits () const;
+	void setCredits (int credits);
+
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& id);
 	const sUnitData* getUnitDataCurrentVersion (const sID& id) const;
@@ -116,10 +119,7 @@ public:
 
 	void addSentry (cUnit& u);
 	void deleteSentry (cUnit& u);
-	void startAResearch (int researchArea);
-	void stopAResearch (int researchArea);
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
-	void refreshResearchCentersWorkingOnArea();
 	void countEcoSpheres();
 	int getScore (int turn) const;
 	int getScore () const;
@@ -159,12 +159,26 @@ public:
 	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports () const;
 
 	const std::vector<int>& getCurrentTurnResearchAreasFinished () const;
+	
+	const cResearch& getResearchState () const;
+	cResearch& getResearchState ();
+
+	int getResearchCentersWorkingTotal () const;
+	int getResearchCentersWorkingOnArea (cResearch::ResearchArea area) const;
+
+	void startAResearch (cResearch::ResearchArea researchArea);
+	void stopAResearch (cResearch::ResearchArea researchArea);
+
+	void refreshResearchCentersWorkingOnArea ();
 
 	mutable cSignal<void ()> nameChanged;
 	mutable cSignal<void ()> colorChanged;
+	mutable cSignal<void ()> creditsChanged;
 	mutable cSignal<void (const cSavedReport&)> reportAdded;
 	mutable cSignal<void ()> hasFinishedTurnChanged;
 	mutable cSignal<void ()> isRemovedFromGameChanged;
+	mutable cSignal<void (cResearch::ResearchArea)> researchCentersWorkingOnAreaChanged;
+	mutable cSignal<void ()> researchCentersWorkingTotalChanged;
 private:
 	/**
 	* draws a circle on the map for the fog
@@ -215,10 +229,6 @@ private:
 	std::vector<char> DetectSeaMap;       // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
 	std::vector<char> DetectMinesMap;     /** the area where the player can detect mines */
 public:
-	cResearch researchLevel;   ///< stores the current research level of the player
-	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
-	int workingResearchCenterCount;  ///< number of working research centers
-	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
 	bool isDefeated;        // true if the player has been defeated
@@ -228,11 +238,17 @@ public:
 private:
 	int clan;
 
+	int credits;
+
 	std::vector<sTurnstartReport> currentTurnUnitReports;
 	std::vector<int> currentTurnResearchAreasFinished;
 
 	bool hasFinishedTurn;
 	bool isRemovedFromGame;
+
+	cResearch researchState;   ///< stores the current research level of the player
+	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
+	int researchCentersWorkingTotal;  ///< number of working research centers
 };
 
 #endif // game_data_player_playerH

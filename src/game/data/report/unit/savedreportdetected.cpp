@@ -30,7 +30,7 @@
 cSavedReportDetected::cSavedReportDetected (const cUnit& unit) :
 	cSavedReportUnit (unit),
 	unitName (unit.getDisplayName ()),
-	playerName (unit.owner->getName ())
+	playerName (unit.getOwner ()->getName ())
 {}
 
 //------------------------------------------------------------------------------

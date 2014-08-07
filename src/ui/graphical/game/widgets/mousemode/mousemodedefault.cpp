@@ -154,20 +154,20 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
 
 	// Infiltrators: auto selected disable vs. vehicle/building
-	if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, false))
+	if (selectedVehicle && selectedVehicle->getOwner () == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, false))
 	{
 		return eActionType::Disable;
 	}
 	// Infiltrators: auto selected steal vs. vehicle/building
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, true))
+	else if (selectedVehicle && selectedVehicle->getOwner () == player && selectedVehicle->canDoCommandoAction (mapPosition, *map, true))
 	{
 		return eActionType::Steal;
 	}
-	else if (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->canAttackObjectAt (mapPosition, *map, false, false))
+	else if (selectedVehicle && selectedVehicle->getOwner () == player && selectedVehicle->canAttackObjectAt (mapPosition, *map, false, false))
 	{
 		return eActionType::Attack;
 	}
-	else if (selectedBuilding && selectedBuilding->owner == player && selectedBuilding->canAttackObjectAt (mapPosition, *map))
+	else if (selectedBuilding && selectedBuilding->getOwner () == player && selectedBuilding->canAttackObjectAt (mapPosition, *map))
 	{
 		return eActionType::Attack;
 	}
@@ -176,12 +176,12 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 				field.getPlane() ||
 				(
 					field.getBuilding() &&
-					field.getBuilding()->owner
+					field.getBuilding ()->getOwner ()
 				)
 			) &&
 			(
 				!selectedVehicle ||
-				selectedVehicle->owner != player ||
+				selectedVehicle->getOwner () != player ||
 				(
 					(
 						selectedVehicle->data.factorAir > 0 ||
@@ -214,7 +214,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 			) &&
 			(
 				!selectedBuilding ||
-				selectedBuilding->owner != player ||
+				selectedBuilding->getOwner () != player ||
 				(
 					selectedBuilding->isBuildListEmpty() ||
 					selectedBuilding->isUnitWorking () ||
@@ -225,7 +225,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 	{
 		return eActionType::Select;
 	}
-	else if (selectedVehicle && selectedVehicle->owner == player)
+	else if (selectedVehicle && selectedVehicle->getOwner () == player)
 	{
 		if (!selectedVehicle->isUnitBuildingABuilding () && !selectedVehicle->isUnitClearing ())
 		{
@@ -256,7 +256,7 @@ cMouseModeDefault::eActionType cMouseModeDefault::selectAction (const cPosition&
 			}
 		}
 	}
-	else if (selectedBuilding && selectedBuilding->owner == player &&
+	else if (selectedBuilding && selectedBuilding->getOwner () == player &&
 		!selectedBuilding->isBuildListEmpty () &&
 		!selectedBuilding->isUnitWorking () &&
 		selectedBuilding->getBuildListItem (0).getRemainingMetal () <= 0)

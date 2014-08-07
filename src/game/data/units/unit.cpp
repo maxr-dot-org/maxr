@@ -76,6 +76,19 @@ cUnit::~cUnit()
 }
 
 //------------------------------------------------------------------------------
+cPlayer* cUnit::getOwner () const
+{
+	return owner;
+}
+
+//------------------------------------------------------------------------------
+void cUnit::setOwner (cPlayer* owner_)
+{
+	std::swap(owner, owner_);
+	if (owner != owner_) ownerChanged ();
+}
+
+//------------------------------------------------------------------------------
 const cPosition& cUnit::getPosition() const
 {
 	return position;

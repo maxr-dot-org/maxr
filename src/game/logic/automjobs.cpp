@@ -76,7 +76,7 @@ void cAutoMJob::doAutoMove (const std::vector<cAutoMJob*>& jobs)
 {
 	if (vehicle.isBeeingAttacked()) return;
 	if (client.isFreezed()) return;
-	if (vehicle.owner != &client.getActivePlayer()) return;
+	if (vehicle.getOwner () != &client.getActivePlayer ()) return;
 
 	if (vehicle.getClientMoveJob () == nullptr || vehicle.getClientMoveJob ()->bFinished)
 	{
@@ -157,7 +157,7 @@ float cAutoMJob::calcScoreDistToOtherSurveyor(const std::vector<cAutoMJob*>& job
 	{
 		if (this == jobs[i]) continue;
 		const auto& otherVehicle = jobs[i]->vehicle;
-		if (otherVehicle.owner != vehicle.owner) continue;
+		if (otherVehicle.getOwner () != vehicle.getOwner ()) continue;
 		const auto dist = (position - otherVehicle.getPosition()).l2Norm();
 		res += powf (dist, e);
 	}
@@ -185,7 +185,7 @@ float cAutoMJob::calcFactor(const cPosition& position, const std::vector<cAutoMJ
 		{
             const cPosition position(x, y);
 
-            if (!vehicle.owner->hasResourceExplored (position)) //&& !map.isBlocked(position))
+			if (!vehicle.getOwner ()->hasResourceExplored (position)) //&& !map.isBlocked(position))
 			{
 				NrSurvFields++;
 			}
@@ -201,7 +201,7 @@ float cAutoMJob::calcFactor(const cPosition& position, const std::vector<cAutoMJ
             const cPosition position (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-            if (vehicle.owner->hasResourceExplored (position) && map.getResource (position).typ != 0)
+			if (vehicle.getOwner ()->hasResourceExplored (position) && map.getResource (position).typ != 0)
 			{
 				NrResFound++;
 			}
@@ -239,7 +239,7 @@ void cAutoMJob::planLongMove (const std::vector<cAutoMJob*>& jobs)
 			// if field is not passable/walkable or
 			// if it's already has been explored, continue
             if (!map.possiblePlace (vehicle, currentPosition)) continue;
-			if(vehicle.owner->hasResourceExplored(currentPosition)) continue;
+			if (vehicle.getOwner ()->hasResourceExplored (currentPosition)) continue;
 
 			// calculate the distance to other surveyors
 			const float distancesSurv = calcScoreDistToOtherSurveyor(jobs, currentPosition, EXP2);

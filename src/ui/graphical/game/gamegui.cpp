@@ -144,7 +144,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		if (!player) return;
 
 		auto vehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
-		if (vehicle && vehicle->owner == player.get()) vehicle->makeReport (*soundManager);
+		if (vehicle && vehicle->getOwner () == player.get ()) vehicle->makeReport (*soundManager);
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
@@ -437,12 +437,12 @@ void cGameGui::updateHudUnitName (const cPosition& tilePosition)
 		if (field.getVehicle () != nullptr) unit = field.getVehicle ();
 		else if (field.getPlane () != nullptr) unit = field.getPlane ();
 		else if (field.getTopBuilding () != nullptr) unit = field.getTopBuilding ();
-		else if (field.getBaseBuilding () != nullptr && field.getBaseBuilding ()->owner) unit = field.getBaseBuilding ();
+		else if (field.getBaseBuilding () != nullptr && field.getBaseBuilding ()->getOwner ()) unit = field.getBaseBuilding ();
 
 		if (unit != nullptr)
 		{
 			// FIXME: string may be to long.
-			unitNameString = unit->getDisplayName () + " (" + unit->owner->getName () + ")";
+			unitNameString = unit->getDisplayName () + " (" + unit->getOwner ()->getName () + ")";
 		}
 	}
 	hud->setUnitNameText (unitNameString);
@@ -724,7 +724,7 @@ void cGameGui::updateSelectedUnitIdleSound ()
 		bool water = staticMap->isWater (vehicle.getPosition());
 		if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player.get() != vehicle.owner))
+		if (vehicle.isUnitBuildingABuilding () && (vehicle.getBuildTurns () || player.get () != vehicle.getOwner ()))
 		{
 			startSelectedUnitSound (vehicle, SoundData.SNDBuilding);
 		}

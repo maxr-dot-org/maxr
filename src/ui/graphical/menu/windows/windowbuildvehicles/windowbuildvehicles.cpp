@@ -35,7 +35,7 @@
 
 //------------------------------------------------------------------------------
 cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cMap& map, std::shared_ptr<const cTurnTimeClock> turnTimeClock) :
-	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), *building_.owner),
+	cWindowAdvancedHangar (LoadPCX (GFXOD_FAC_BUILD_SCREEN), *building_.getOwner()),
 	building (building_)
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (328, 12), getPosition () + cPosition (328 + 157, 12 + 10)), lngPack.i18n ("Text~Title~Build_Factory"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
@@ -99,7 +99,7 @@ void cWindowBuildVehicles::setActiveUnit (const sID& unitId)
 {
 	cWindowAdvancedHangar::setActiveUnit (unitId);
 
-	const auto& vehicleData = *building.owner->getUnitDataCurrentVersion (unitId);
+	const auto& vehicleData = *building.getOwner ()->getUnitDataCurrentVersion (unitId);
 	auto selectedUnit = selectedUnitList->getSelectedItem ();
 	const auto remainingMetal = selectedUnit ? selectedUnit->getRemainingMetal() : -1;
 	std::array<int, 3> turns;
@@ -117,7 +117,7 @@ void cWindowBuildVehicles::generateSelectionList (const cBuilding& building, con
 	bool select = true;
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 	{
-		sUnitData& unitData = building.owner->VehicleData[i];
+		sUnitData& unitData = building.getOwner ()->VehicleData[i];
 		bool land = false;
 		bool water = false;
 		int x = building.getPosition().x() - 2;

@@ -51,10 +51,10 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 	VehicleData = UnitsData.getUnitData_Vehicles (-1);
 	BuildingData = UnitsData.getUnitData_Buildings (-1);
 
-	workingResearchCenterCount = 0;
+	researchCentersWorkingTotal = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
-	Credits = 0;
+	credits = 0;
 
 	isDefeated = false;
 
@@ -78,6 +78,19 @@ void cPlayer::setClan (int newClan)
 
 	VehicleData = UnitsData.getUnitData_Vehicles (clan);
 	BuildingData = UnitsData.getUnitData_Buildings (clan);
+}
+
+//------------------------------------------------------------------------------
+int cPlayer::getCredits () const
+{
+	return credits;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::setCredits (int credits_)
+{
+	std::swap (credits, credits_);
+	if (credits != credits_) creditsChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -477,7 +490,7 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start) const
 //------------------------------------------------------------------------------
 cUnit* cPlayer::getNextUnit (cUnit* start) const
 {
-	if (start == NULL || start->owner != this)
+	if (start == NULL || start->getOwner () != this)
 	{
 		cVehicle* nextVehicle = getNextVehicle (NULL);
 		if (nextVehicle) return nextVehicle;
@@ -569,7 +582,7 @@ cBuilding* cPlayer::getPrevMiningStation (cBuilding* start) const
 //------------------------------------------------------------------------------
 cUnit* cPlayer::getPrevUnit (cUnit* start) const
 {
-	if (start == NULL || start->owner != this)
+	if (start == NULL || start->getOwner () != this)
 	{
 		cVehicle* prevVehicle = getPrevVehicle (NULL);
 		if (prevVehicle) return prevVehicle;
@@ -610,25 +623,32 @@ bool cPlayer::hasUnits () const
 //------------------------------------------------------------------------------
 /** Starts a research center. */
 //------------------------------------------------------------------------------
-void cPlayer::startAResearch (int researchArea)
+void cPlayer::startAResearch (cResearch::ResearchArea researchArea)
 {
 	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
 	{
-		workingResearchCenterCount++;
-		researchCentersWorkingOnArea[researchArea] += 1;
+		++researchCentersWorkingTotal;
+		++researchCentersWorkingOnArea[researchArea];
+
+		researchCentersWorkingOnAreaChanged (researchArea);
+		researchCentersWorkingTotalChanged ();
 	}
 }
 
 //------------------------------------------------------------------------------
 /** Stops a research center. */
 //------------------------------------------------------------------------------
-void cPlayer::stopAResearch (int researchArea)
+void cPlayer::stopAResearch (cResearch::ResearchArea researchArea)
 {
 	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
 	{
-		workingResearchCenterCount--;
+		--researchCentersWorkingTotal;
 		if (researchCentersWorkingOnArea[researchArea] > 0)
-			researchCentersWorkingOnArea[researchArea] -= 1;
+		{
+			--researchCentersWorkingOnArea[researchArea];
+			researchCentersWorkingOnAreaChanged (researchArea);
+		}
+		researchCentersWorkingTotalChanged ();
 	}
 }
 
@@ -644,7 +664,7 @@ void cPlayer::doResearch (cServer& server)
 	for (int area = 0; area < cResearch::kNrResearchAreas; ++area)
 	{
 		if (researchCentersWorkingOnArea[area] > 0 &&
-			researchLevel.doResearch (researchCentersWorkingOnArea[area], area))
+			researchState.doResearch (researchCentersWorkingOnArea[area], area))
 		{
 			// next level reached
 			areasReachingNextLevel.push_back (area);
@@ -659,7 +679,7 @@ void cPlayer::doResearch (cServer& server)
 		for (size_t i = 0; i != upgradedUnitDatas.size(); ++i)
 			sendUnitUpgrades (server, *upgradedUnitDatas[i], *this);
 	}
-	sendResearchLevel (server, researchLevel, *this);
+	sendResearchLevel (server, researchState, *this);
 }
 
 void cPlayer::accumulateScore (cServer& server)
@@ -747,7 +767,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 		for (size_t areaCounter = 0; areaCounter != areasReachingNextLevel.size(); areaCounter++)
 		{
 			const int researchArea = areasReachingNextLevel[areaCounter];
-			const int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
+			const int newResearchLevel = researchState.getCurResearchLevel (researchArea);
 			int startValue = 0;
 			switch (researchArea)
 			{
@@ -796,7 +816,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 		for (size_t areaCounter = 0; areaCounter != areasReachingNextLevel.size(); areaCounter++)
 		{
 			const int researchArea = areasReachingNextLevel[areaCounter];
-			const int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
+			const int newResearchLevel = researchState.getCurResearchLevel (researchArea);
 
 			int startValue = 0;
 			switch (researchArea)
@@ -841,20 +861,34 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 //------------------------------------------------------------------------------
 void cPlayer::refreshResearchCentersWorkingOnArea()
 {
+	int oldResearchCentersWorkingOnArea[cResearch::kNrResearchAreas];
+
 	int newResearchCount = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+	{
+		oldResearchCentersWorkingOnArea[i] = researchCentersWorkingOnArea[i];
 		researchCentersWorkingOnArea[i] = 0;
+	}
 
 	for (auto i = buildings.begin (); i != buildings.end (); ++i)
 	{
 		const auto& building = *i;
 		if (building->data.canResearch && building->isUnitWorking ())
 		{
-			researchCentersWorkingOnArea[building->researchArea] += 1;
+			researchCentersWorkingOnArea[building->getResearchArea()] += 1;
 			newResearchCount++;
 		}
 	}
-	workingResearchCenterCount = newResearchCount;
+	std::swap(researchCentersWorkingTotal, newResearchCount);
+
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+	{
+		if (oldResearchCentersWorkingOnArea[i] != researchCentersWorkingOnArea[i])
+		{
+			researchCentersWorkingOnAreaChanged ((cResearch::ResearchArea)i);
+		}
+	}
+	if (researchCentersWorkingTotal != newResearchCount) researchCentersWorkingTotalChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -906,6 +940,30 @@ const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports () const
 const std::vector<int>& cPlayer::getCurrentTurnResearchAreasFinished () const
 {
 	return currentTurnResearchAreasFinished;
+}
+
+//------------------------------------------------------------------------------
+const cResearch& cPlayer::getResearchState () const
+{
+	return researchState;
+}
+
+//------------------------------------------------------------------------------
+cResearch& cPlayer::getResearchState ()
+{
+	return researchState;
+}
+
+//------------------------------------------------------------------------------
+int cPlayer::getResearchCentersWorkingTotal () const
+{
+	return researchCentersWorkingTotal;
+}
+
+//------------------------------------------------------------------------------
+int cPlayer::getResearchCentersWorkingOnArea (cResearch::ResearchArea area) const
+{
+	return researchCentersWorkingOnArea[area];
 }
 
 //------------------------------------------------------------------------------

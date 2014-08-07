@@ -567,7 +567,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			{
 				getMap()->moveVehicle (*Vehicle, position);
 				if (bBig) getMap()->moveVehicleBig (*Vehicle, position);
-				Vehicle->owner->doScan();
+				Vehicle->getOwner ()->doScan ();
 			}
 		}
 
@@ -585,14 +585,14 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Vehicle->setSentryActive(message.popBool());
 		Vehicle->setManualFireActive(message.popBool());
 
-		if (Vehicle->isDisabled() != bWasDisabled && Vehicle->owner == ActivePlayer)
+		if (Vehicle->isDisabled () != bWasDisabled && Vehicle->getOwner () == ActivePlayer)
 		{
 			if (Vehicle->isDisabled())
 			{
 				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled>(*Vehicle));
 				unitDisabled (*Vehicle);
 			}
-			Vehicle->owner->doScan();
+			Vehicle->getOwner ()->doScan ();
 		}
 		Data = &Vehicle->data;
 	}
@@ -610,20 +610,20 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		const bool bWasDisabled = Building->isDisabled();
 		Building->setDisabledTurns (message.popInt16 ());
-		Building->researchArea = message.popInt16();
+		Building->setResearchArea ((cResearch::ResearchArea)message.popInt16());
 		Building->setWorking(message.popBool());
 		Building->setSentryActive( message.popBool ());
 		Building->setManualFireActive( message.popBool ());
 		Building->points = message.popInt16();
 
-		if (Building->isDisabled() != bWasDisabled && Building->owner == ActivePlayer)
+		if (Building->isDisabled () != bWasDisabled && Building->getOwner () == ActivePlayer)
 		{
 			if (Building->isDisabled())
 			{
 				ActivePlayer->addSavedReport (std::make_unique<cSavedReportDisabled> (*Building));
 				unitDisabled (*Building);
 			}
-			Building->owner->doScan();
+			Building->getOwner ()->doScan ();
 		}
 		Data = &Building->data;
 	}
@@ -807,7 +807,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (!bOK)
 	{
-		if (Vehicle->owner == ActivePlayer)
+		if (Vehicle->getOwner () == ActivePlayer)
 		{
 			if (!Vehicle->BuildPath)
 			{
@@ -833,15 +833,15 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	if (buildBig)
 	{
 		getMap()->moveVehicleBig(*Vehicle, buildPosition);
-		Vehicle->owner->doScan();
+		Vehicle->getOwner ()->doScan ();
 	}
 	else
 	{
 		getMap()->moveVehicle(*Vehicle, buildPosition);
-		Vehicle->owner->doScan();
+		Vehicle->getOwner ()->doScan ();
 	}
 
-	if (Vehicle->owner == ActivePlayer)
+	if (Vehicle->getOwner () == ActivePlayer)
 	{
 		Vehicle->setBuildingType (message.popID());
 		Vehicle->setBuildTurns (message.popInt16 ());
@@ -874,7 +874,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	if (Vehicle->data.isBig)
 	{
 		getMap()->moveVehicle (*Vehicle, newPosition);
-		Vehicle->owner->doScan();
+		Vehicle->getOwner ()->doScan ();
 	}
 
 	Vehicle->setBuildingABuilding(false);
@@ -1082,7 +1082,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			if (bigPosition.x () >= 0 && bigPosition.y() >= 0)
 			{
 				getMap()->moveVehicleBig (*Vehicle, bigPosition);
-				Vehicle->owner->doScan();
+				Vehicle->getOwner ()->doScan ();
 			}
 			Vehicle->setClearing(true);
 			addJob (new cStartBuildJob (*Vehicle, orgiginalPosition, (bigPosition.x () >= 0 && bigPosition.y () >= 0)));
@@ -1116,7 +1116,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	if (bigPosition.x () >= 0 && bigPosition.y () >= 0)
 	{
 		getMap()->moveVehicle(*Vehicle, bigPosition);
-		Vehicle->owner->doScan();
+		Vehicle->getOwner ()->doScan ();
 	}
 	Vehicle->setClearing(false);
 	Vehicle->setClearingTurns(0);
@@ -1315,7 +1315,7 @@ void cClient::HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CREDITS_CHANGED);
 
-	ActivePlayer->Credits = message.popInt16();
+	ActivePlayer->setCredits(message.popInt16());
 }
 
 void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
@@ -1389,10 +1389,10 @@ void cClient::HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message)
 	for (int i = 0; i < buildingsInMsg; ++i)
 	{
 		const int buildingID = message.popInt32();
-		const int newArea = message.popChar();
+		const cResearch::ResearchArea newArea = (cResearch::ResearchArea)message.popChar ();
 		cBuilding* building = getBuildingFromID (buildingID);
 		if (building && building->data.canResearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
-			building->researchArea = newArea;
+			building->setResearchArea(newArea);
 	}
 	// now update the research center count for the areas
 	ActivePlayer->refreshResearchCentersWorkingOnArea();
@@ -1406,8 +1406,8 @@ void cClient::HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message)
 	{
 		const int newCurPoints = message.popInt16();
 		const int newLevel = message.popInt16();
-		ActivePlayer->researchLevel.setCurResearchLevel (newLevel, area);
-		ActivePlayer->researchLevel.setCurResearchPoints (newCurPoints, area);
+		ActivePlayer->getResearchState().setCurResearchLevel (newLevel, area);
+		ActivePlayer->getResearchState().setCurResearchPoints (newCurPoints, area);
 	}
 }
 
@@ -1667,12 +1667,12 @@ void cClient::addUnit(const cPosition& position, cVehicle& addedVehicle, bool bA
 	// place the vehicle
 	if (bAddToMap) getMap()->addVehicle (addedVehicle, position);
 
-	if (addedVehicle.owner != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
+	if (addedVehicle.getOwner () != ActivePlayer && addedVehicle.iID == ActivePlayer->lastDeletedUnit)
 	{
 		ActivePlayer->addSavedReport (std::make_unique<cSavedReportCapturedByEnemy> (addedVehicle));
 		unitStolen (addedVehicle);
 	}
-	else if (addedVehicle.owner != ActivePlayer)
+	else if (addedVehicle.getOwner () != ActivePlayer)
 	{
 		ActivePlayer->addSavedReport (std::make_unique<cSavedReportDetected> (addedVehicle));
 		unitDetected (addedVehicle);
@@ -1718,7 +1718,7 @@ void cClient::deleteUnit (cBuilding* building)
 
 	getMap ()->deleteBuilding (*building);
 
-	if (!building->owner)
+	if (!building->getOwner ())
 	{
 		auto iter = neutralBuildings.find (*building);
 		assert (iter != neutralBuildings.end());
@@ -1731,7 +1731,7 @@ void cClient::deleteUnit (cBuilding* building)
 		attackJobs[i]->onRemoveUnit (*building);
 	}
 
-	auto owner = building->owner;
+	auto owner = building->getOwner ();
 
 	if (owner == ActivePlayer)
 	{
@@ -1755,7 +1755,7 @@ void cClient::deleteUnit (cVehicle* vehicle)
 	}
 	helperJobs.onRemoveUnit (vehicle);
 
-	auto owner = vehicle->owner;
+	auto owner = vehicle->getOwner ();
 
 	owner->lastDeletedUnit = vehicle->iID;
 

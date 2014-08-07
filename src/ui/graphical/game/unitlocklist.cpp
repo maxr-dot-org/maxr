@@ -37,19 +37,19 @@ void cUnitLockList::setPlayer (const cPlayer* player_)
 void cUnitLockList::toggleLockAt (const cMapField& field)
 {
 	const cUnit* unit = nullptr;
-	if (field.getBaseBuilding () && (!player || field.getBaseBuilding ()->owner != player))
+	if (field.getBaseBuilding () && (!player || field.getBaseBuilding ()->getOwner () != player))
 	{
 		unit = field.getBaseBuilding ();
 	}
-	else if (field.getTopBuilding () && (!player || field.getTopBuilding ()->owner != player))
+	else if (field.getTopBuilding () && (!player || field.getTopBuilding ()->getOwner () != player))
 	{
 		unit = field.getTopBuilding ();
 	}
-	if (field.getVehicle () && (!player || field.getVehicle ()->owner != player))
+	if (field.getVehicle () && (!player || field.getVehicle ()->getOwner () != player))
 	{
 		unit = field.getVehicle ();
 	}
-	if (field.getPlane () && (!player || field.getPlane ()->owner != player))
+	if (field.getPlane () && (!player || field.getPlane ()->getOwner () != player))
 	{
 		unit = field.getPlane ();
 	}

@@ -410,9 +410,9 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	// unset sentry status when moving vehicle
 	if (Vehicle->isSentryActive())
 	{
-		Vehicle->owner->deleteSentry (*Vehicle);
+		Vehicle->getOwner ()->deleteSentry (*Vehicle);
 	}
-	sendUnitData (*server, *Vehicle, *Vehicle->owner);
+	sendUnitData (*server, *Vehicle, *Vehicle->getOwner ());
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 	{
 		sendUnitData (*server, *Vehicle, *Vehicle->seenByPlayerList[i]);
@@ -671,7 +671,7 @@ bool cServerMoveJob::checkMove()
 	sendNextMove (*server, *Vehicle, MJOB_OK);
 
 	Map->moveVehicle (*Vehicle, Waypoints->next->position);
-	Vehicle->owner->doScan();
+	Vehicle->getOwner ()->doScan ();
 	Vehicle->setMovementOffset(cPosition(0, 0));
 	setOffset (Vehicle, iNextDir, -64);
 
@@ -724,7 +724,7 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	// make mines explode if necessary
 	cBuilding* mine = Map->getField(Vehicle->getPosition()).getMine();
-	if (Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner)
+	if (Vehicle->data.factorAir == 0 && mine && mine->getOwner () != Vehicle->getOwner ())
 	{
 		server->AJobs.push_back (new cServerAttackJob (*server, mine, Vehicle->getPosition(), false));
 		bEndForNow = true;
@@ -752,7 +752,7 @@ void cServerMoveJob::doEndMoveVehicle()
 		if (bResult)
 		{
 			// send new unit values
-			sendUnitData (*server, *Vehicle, *Vehicle->owner);
+			sendUnitData (*server, *Vehicle, *Vehicle->getOwner ());
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 			{
 				sendUnitData (*server, *Vehicle, *Vehicle->seenByPlayerList[i]);
@@ -807,7 +807,7 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 	if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 	// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, *vehicle_->owner);
+	sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, *vehicle_->getOwner ());
 }
 
 void cEndMoveAction::executeGetInAction (cServer& server)
@@ -821,14 +821,14 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 		destVehicle->storeVehicle (*vehicle_, *server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, *destVehicle->owner);
+		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, *destVehicle->getOwner ());
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
 		destBuilding->storeVehicle (*vehicle_, *server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		// vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, *destBuilding->owner);
+		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, *destBuilding->getOwner ());
 	}
 }
 
@@ -846,7 +846,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	if (!vehicle_->canAttackObjectAt (position, map, true, true)) return;
 
 	// is the target in sight?
-	if (!vehicle_->owner->canSeeAnyAreaUnder (*destUnit)) return;
+	if (!vehicle_->getOwner ()->canSeeAnyAreaUnder (*destUnit)) return;
 
 	server.AJobs.push_back (new cServerAttackJob (server, vehicle_, position, false));
 }
@@ -1007,7 +1007,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
 			Log.write (" Client: next field is blocked: DestX: " + iToStr (Waypoints->next->position.x()) + ", DestY: " + iToStr (Waypoints->next->position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if (Vehicle->owner != &client->getActivePlayer())
+			if (Vehicle->getOwner () != &client->getActivePlayer ())
 			{
 				bFinished = true;
 				break;
@@ -1054,7 +1054,7 @@ void cClientMoveJob::moveVehicle()
 		}
 
 		Map->moveVehicle (*Vehicle, Waypoints->next->position);
-		Vehicle->owner->doScan();
+		Vehicle->getOwner ()->doScan ();
 		Vehicle->setMovementOffset(cPosition(0, 0));
 		setOffset (Vehicle, iNextDir, -64);
 		Vehicle->setMoving (true);
@@ -1087,7 +1087,7 @@ void cClientMoveJob::moveVehicle()
 	// Ggf Tracks malen:
 	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWaterOrCoast (Vehicle->getPosition()) && !
 		(Waypoints && Waypoints->next && Map->isWater (Waypoints->next->position)) &&
-		(Vehicle->owner == &client->getActivePlayer() || client->getActivePlayer().canSeeAnyAreaUnder (*Vehicle)))
+		(Vehicle->getOwner () == &client->getActivePlayer () || client->getActivePlayer ().canSeeAnyAreaUnder (*Vehicle)))
 	{
 		if (abs (Vehicle->getMovementOffset().x()) == 64 || abs (Vehicle->getMovementOffset().y()) == 64)
 		{
@@ -1167,7 +1167,7 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	Vehicle->setMovementOffset(cPosition(0, 0));
 
-	Vehicle->owner->doScan();
+	Vehicle->getOwner ()->doScan ();
 
 	calcNextDir();
 

@@ -63,10 +63,10 @@ cWindowUpgrades::cWindowUpgrades (const cPlayer& player, std::shared_ptr<const c
 	// Gold Bar
 	//
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (362, 285), getPosition () + cPosition (362 + 40, 285 + 10)), lngPack.i18n ("Text~Title~Credits"), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
-	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition () + cPosition (372, 301), getPosition () + cPosition (372 + 20, 301 + 115)), 0, player.Credits, eResourceBarType::Gold, eOrientationType::Vertical));
+	goldBar = addChild (std::make_unique<cResourceBar> (cBox<cPosition> (getPosition () + cPosition (372, 301), getPosition () + cPosition (372 + 20, 301 + 115)), 0, player.getCredits (), eResourceBarType::Gold, eOrientationType::Vertical));
 	signalConnectionManager.connect (goldBar->valueChanged, std::bind (&cWindowUpgrades::goldChanged, this));
 	goldBar->disable ();
-	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (362, 275), getPosition () + cPosition (362 + 40, 275 + 10)), iToStr (player.Credits), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
+	goldBarAmountLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (362, 275), getPosition () + cPosition (362 + 40, 275 + 10)), iToStr (player.getCredits ()), FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
 	//
 	// Upgrade Buttons
@@ -116,12 +116,12 @@ void cWindowUpgrades::setActiveUnit (const sID& unitId)
 		if (unitId.isAVehicle ())
 		{
 			auto index = UnitsData.getVehicleIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getVehicle (index, getPlayer ().getClan ()), getPlayer ().VehicleData[index], getPlayer ().researchLevel);
+			unitUpgrade->init (UnitsData.getVehicle (index, getPlayer ().getClan ()), getPlayer ().VehicleData[index], getPlayer ().getResearchState());
 		}
 		else
 		{
 			auto index = UnitsData.getBuildingIndexBy (unitId);
-			unitUpgrade->init (UnitsData.getBuilding (index, getPlayer ().getClan ()), getPlayer ().BuildingData[index], getPlayer ().researchLevel);
+			unitUpgrade->init (UnitsData.getBuilding (index, getPlayer ().getClan ()), getPlayer ().BuildingData[index], getPlayer ().getResearchState ());
 		}
 	}
 	else
@@ -252,7 +252,7 @@ void cWindowUpgrades::upgradeIncreaseClicked (size_t index)
 	if (!activeUnitId) return;
 
 	auto& unitUpgrade = unitUpgrades.at (*activeUnitId);
-	const auto& researchLevel = getPlayer ().researchLevel;
+	const auto& researchLevel = getPlayer ().getResearchState ();
 
 	const auto cost = unitUpgrade.upgrades[index].purchase (researchLevel);
 	goldBar->decrease (cost);
@@ -267,7 +267,7 @@ void cWindowUpgrades::upgradeDecreaseClicked (size_t index)
 	if (!activeUnitId) return;
 
 	auto& unitUpgrade = unitUpgrades.at (*activeUnitId);
-	const auto& researchLevel = getPlayer ().researchLevel;
+	const auto& researchLevel = getPlayer ().getResearchState ();
 
 	const auto cost = unitUpgrade.upgrades[index].cancelPurchase (researchLevel);
 	goldBar->increase (-cost);

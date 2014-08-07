@@ -33,7 +33,7 @@
 void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_)
 {
 	dir = vehicle.dir;
-	owner = vehicle.owner;
+	owner = vehicle.getOwner ();
 	isBuilding = vehicle.isUnitBuildingABuilding ();
 	isClearing = vehicle.isUnitClearing ();
 	flightHigh = vehicle.getFlightHeight ();
@@ -57,7 +57,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	{
 		isOnWaterAndNotCoast = false;
 	}
-	if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty () && vehicle.owner == player)
+	if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty () && vehicle.getOwner () == player)
 		stealth = true;
 	else
 		stealth = false;
@@ -95,9 +95,9 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
 	BaseW  = building.BaseW;
 	BaseBW = building.BaseBW;
 	dir = building.dir;
-	owner = building.owner;
+	owner = building.getOwner ();
 	id = building.data.ID;
-	clan = building.owner->getClan();
+	clan = building.getOwner ()->getClan ();
 
 	zoom = zoom_;
 	//lastUsed = gameGUI.getFrame();
@@ -146,7 +146,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 
 		// check whether the entry's properties are equal to the building
 		if (entry.id != building.data.ID) continue;
-		if (entry.owner != building.owner) continue;
+		if (entry.owner != building.getOwner ()) continue;
 		if (building.SubBase)
 		{
 			if (building.BaseN != entry.BaseN ||
@@ -169,7 +169,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 		}
 		if (entry.zoom != zoom) continue;
 
-		if (building.data.hasClanLogos && building.owner->getClan() != entry.clan) continue;
+		if (building.data.hasClanLogos && building.getOwner ()->getClan () != entry.clan) continue;
 
 		//cache hit!
 		cacheHits++;
@@ -192,7 +192,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 
 		// check whether the entry's properties are equal to the building
 		if (entry.id != vehicle.data.ID) continue;
-		if (entry.owner != vehicle.owner) continue;
+		if (entry.owner != vehicle.getOwner ()) continue;
 		if (entry.big != vehicle.data.isBig) continue;
 		if (entry.isBuilding != vehicle.isUnitBuildingABuilding ()) continue;
 		if (entry.isClearing != vehicle.isUnitClearing ()) continue;
@@ -230,7 +230,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 			isOnWaterAndNotCoast = false;
 		}
 
-		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty () && vehicle.owner == player)
+		if ((vehicle.data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle.detectedByPlayerList.empty () && vehicle.getOwner () == player)
 			stealth = true;
 
 		if (entry.stealth != stealth) continue;
@@ -319,7 +319,7 @@ void cDrawingCache::flush()
 
 bool cDrawingCache::canCache (const cBuilding& building)
 {
-	if (!building.owner ||
+	if (!building.getOwner () ||
 		building.alphaEffectValue ||
 		building.data.isAnimated)
 	{

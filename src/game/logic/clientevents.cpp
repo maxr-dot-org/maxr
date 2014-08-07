@@ -512,11 +512,11 @@ void sendWantComAction (const cClient& client, int srcUnitID, int destUnitID, bo
 //------------------------------------------------------------------------
 void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll)
 {
-	if (building.owner == 0)
+	if (building.getOwner () == 0)
 		return;
 
 	const sUnitData& currentVersion = building.data;
-	const sUnitData& upgradedVersion = *building.owner->getUnitDataCurrentVersion (building.data.ID);
+	const sUnitData& upgradedVersion = *building.getOwner ()->getUnitDataCurrentVersion (building.data.ID);
 	if (currentVersion.getVersion () >= upgradedVersion.getVersion ())
 		return; // already uptodate
 

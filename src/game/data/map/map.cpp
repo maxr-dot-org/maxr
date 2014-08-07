@@ -96,7 +96,7 @@ cBuilding* cMapField::getTopBuilding() const
 
 	if ((building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
 		 building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
-		building->owner)
+		 building->getOwner ())
 		return building;
 	return NULL;
 }
@@ -108,7 +108,7 @@ cBuilding* cMapField::getBaseBuilding() const
 		cBuilding* building = buildings[i];
 		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND &&
 			building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
-			building->owner)
+			building->getOwner ())
 		{
 			return building;
 		}
@@ -119,7 +119,7 @@ cBuilding* cMapField::getBaseBuilding() const
 cBuilding* cMapField::getRubble() const
 {
 	for (size_t i = 0; i != buildings.size(); ++i)
-		if (!buildings[i]->owner)
+		if (!buildings[i]->getOwner ())
 			return buildings[i];
 	return NULL;
 }
@@ -801,7 +801,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA) return 7; // bridge
 	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE && data.canBeOverbuild) return 6; // platform
 	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE) return 5; // road
-	if (!building.owner) return 4; // rubble
+	if (!building.getOwner ()) return 4; // rubble
 	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) return 3; // landmine
 
 	return 1; // other buildings
@@ -818,7 +818,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 void cMap::addBuilding(cBuilding& building, const cPosition& position)
 {
 	//big base building are not implemented
-	if (building.data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building.data.isBig && building.owner) return;
+	if (building.data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building.data.isBig && building.getOwner ()) return;
 
 	const int mapLevel = cMap::getMapLevel (building);
 	size_t i = 0;
@@ -961,7 +961,7 @@ void cMap::moveVehicleBig(cVehicle& vehicle, const cPosition& position)
 
 bool cMap::possiblePlace (const cVehicle& vehicle, const cPosition& position, bool checkPlayer) const
 {
-	return possiblePlaceVehicle (vehicle.data, position, vehicle.owner, checkPlayer);
+	return possiblePlaceVehicle (vehicle.data, position, vehicle.getOwner (), checkPlayer);
 }
 
 bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& position, const cPlayer* player, bool checkPlayer) const
@@ -997,7 +997,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
 		}
 		//check for enemy mines
-		if (player && b_it != b_end && (*b_it)->owner != player &&
+		if (player && b_it != b_end && (*b_it)->getOwner () != player &&
 			(*b_it)->data.explodesOnContact &&
 			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
 			return false;
@@ -1013,7 +1013,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
 				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE &&
 				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
-				(*b_it)->owner) return false;
+				(*b_it)->getOwner ()) return false;
 		}
 	}
 	else if (vehicleData.factorSea > 0)
@@ -1024,7 +1024,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, const cPosition& 
 			(!isCoast (position) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
-		if (player && b_it != b_end && (*b_it)->owner != player &&
+		if (player && b_it != b_end && (*b_it)->getOwner () != player &&
 			(*b_it)->data.explodesOnContact && (*b_it)->isDetectedByPlayer (player))
 			return false;
 

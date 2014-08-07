@@ -226,11 +226,6 @@ private:
 	 */
 	void loadResearchLevel (tinyxml2::XMLElement* researchLevelNode, cResearch& researchLevel);
 	/**
-	 * loads the number of research centers of a player that are working on each area
-	 * @author pagra
-	 */
-	void loadResearchCentersWorkingOnArea (tinyxml2::XMLElement* researchCentersWorkingOnAreaNode, cPlayer* player);
-	/**
 	 * loads the casualties of all players
 	 *@author pagra
 	 */

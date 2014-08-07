@@ -40,7 +40,7 @@ void cUnitContextMenuWidget::setUnit (const cUnit* unit_, eMouseModeType mouseIn
 	cBox<cPosition> area (getPosition (), getPosition ());
 	cPosition nextButtonPosition = getPosition ();
 	auto mouseActionGroup = addChild (std::make_unique<cRadioGroup> (true));
-	if (!unit->isDisabled () && unit->owner == player)
+	if (!unit->isDisabled () && unit->getOwner () == player)
 	{
 		// Attack
 		if (unit->data.canAttack && unit->data.getShots ())

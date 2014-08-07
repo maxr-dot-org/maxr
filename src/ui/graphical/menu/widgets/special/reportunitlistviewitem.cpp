@@ -54,7 +54,7 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 	else surface = NULL;
 
 	auto unitDetails = addChild (std::make_unique<cUnitDetailsHud> (cBox<cPosition> (cPosition (unitImageSize+3+75+3, 0), cPosition (unitImageSize+3+75+3 + 155, 48)), true));
-	unitDetails->setPlayer (unit.owner);
+	unitDetails->setPlayer (unit.getOwner ());
 	unitDetails->setUnit (&unit);
 
 	unitImage = addChild (std::make_unique<cImage> (cPosition (0, (unitDetails->getSize ().y () - unitImageSize)/2), surface));
@@ -65,7 +65,7 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 
 	auto positionLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitDetails->getEndPosition ().x ()+5, 0), cPosition (unitDetails->getEndPosition ().x ()+5+50, unitDetails->getEndPosition ().y ())), iToStr (unit.getPosition ().x ()) + "," + iToStr (unit.getPosition ().y ()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::CenterHorizontal) | eAlignmentType::CenterVerical));
 
-	addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition ().x (), 0), cPosition (positionLabel->getEndPosition ().x ()+120, unitDetails->getEndPosition ().y ())), unit.getStatusStr (unit.owner), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
+	addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (positionLabel->getEndPosition ().x (), 0), cPosition (positionLabel->getEndPosition ().x ()+120, unitDetails->getEndPosition ().y ())), unit.getStatusStr (unit.getOwner ()), FONT_LATIN_NORMAL, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
 
 	fitToChildren ();
 }

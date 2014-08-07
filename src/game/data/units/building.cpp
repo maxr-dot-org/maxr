@@ -166,11 +166,12 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 
 	refreshData();
 
-	// TODO: register the following events to trigger the "statusChanged" signal:
-	// - owner credits changed
-	// - research changed
 	buildListChanged.connect ([&](){ statusChanged (); });
 	buildListFirstItemDataChanged.connect ([&](){ statusChanged (); });
+	researchAreaChanged.connect ([&](){ statusChanged (); });
+	ownerChanged.connect ([&](){ registerOwnerEvents (); });
+
+	registerOwnerEvents ();
 }
 
 //--------------------------------------------------------------------------
@@ -193,7 +194,7 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 	if (isUnitWorking () || (factoryHasJustFinishedBuilding () && isDisabled () == false))
 	{
 		// Factory:
-		if (!data.canBuild.empty () && !buildList.empty () && owner == player)
+		if (!data.canBuild.empty () && !buildList.empty () && getOwner () == player)
 		{
 			const cBuildListItem& buildListItem = buildList[0];
 			const string& unitName = buildListItem.getType ().getUnitDataOriginalVersion ()->name;
@@ -234,12 +235,12 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		}
 
 		// Research Center
-		if (data.canResearch && owner == player)
+		if (data.canResearch && getOwner () == player)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 			{
-				if (owner->researchCentersWorkingOnArea[area] > 0)
+				if (getOwner ()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area) > 0)
 				{
 					switch (area)
 					{
@@ -252,19 +253,19 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 						case cResearch::kScanResearch: sText += lngPack.i18n ("Text~Others~Scan"); break;
 						case cResearch::kCostResearch: sText += lngPack.i18n ("Text~Others~Costs"); break;
 					}
-					sText += ": " + iToStr (owner->researchLevel.getRemainingTurns (area, owner->researchCentersWorkingOnArea[area])) + "\n";
+					sText += ": " + iToStr (getOwner ()->getResearchState ().getRemainingTurns (area, getOwner ()->getResearchCentersWorkingOnArea ((cResearch::ResearchArea)area))) + "\n";
 				}
 			}
 			return sText;
 		}
 
 		// Goldraffinerie:
-		if (data.convertsGold && owner == player)
+		if (data.convertsGold && getOwner () == player)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			sText += lngPack.i18n ("Text~Title~Credits") + ": ";
-			sText += iToStr (owner->Credits);
+			sText += iToStr (getOwner ()->getCredits ());
 			return sText;
 		}
 
@@ -304,7 +305,7 @@ int cBuilding::refreshData()
 
 void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (!owner);
+	assert (!getOwner ());
 
 	SDL_Rect src;
 
@@ -398,7 +399,7 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 
 	// blit the players color and building graphic
-	if (data.hasPlayerColor) SDL_BlitSurface (owner->getColor().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	if (data.hasPlayerColor) SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
 	else SDL_FillRect (GraphicsData.gfx_tmp.get (), NULL, 0x00FF00FF);
 
 	if (data.hasFrames)
@@ -418,8 +419,8 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		src.w = (int) (128 * zoomFactor);
 		src.h = (int) (128 * zoomFactor);
 		// select clan image
-		if (owner->getClan() != -1)
-			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
+		if (getOwner ()->getClan () != -1)
+			src.x = (int)((getOwner ()->getClan () + 1) * 128 * zoomFactor);
 		SDL_BlitSurface (uiData->img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
 	}
 	else
@@ -445,7 +446,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 	// make sure to update the caching rules!
 
 	// check, if it is dirt:
-	if (!owner)
+	if (!getOwner ())
 	{
 		render_rubble (surface, dest, zoomFactor, drawShadow);
 		return;
@@ -491,21 +492,21 @@ void cBuilding::updateNeighbours (const cMap& map)
 {
 	if (!data.isBig)
 	{
-		owner->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (1, 0), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (0, 1), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (1, 0), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, 1), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
 	}
 	else
 	{
-		owner->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (1, -1), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (2, 0), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (2, 1), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (0, 2), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (1, 2), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
-		owner->base.checkNeighbour (getPosition () + cPosition (-1, 1), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, -1), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (1, -1), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (2, 0), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (2, 1), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (0, 2), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (1, 2), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (-1, 0), *this);
+		getOwner ()->base.checkNeighbour (getPosition () + cPosition (-1, 1), *this);
 	}
 	CheckNeighbours (map);
 }
@@ -519,7 +520,7 @@ void cBuilding::CheckNeighbours (const cMap& map)
 	if (map.isValidPosition (cPosition(x, y))) \
 	{ \
 		const cBuilding* b = map.getField(cPosition(x, y)).getTopBuilding(); \
-		if (b && b->owner == owner && b->data.connectsToBase) \
+		if (b && b->getOwner() == getOwner() && b->data.connectsToBase) \
 		{m = true;}else{m = false;} \
 	}
 
@@ -673,7 +674,7 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (isDisabled())
 	{
-		sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), owner);
+		sendSavedReport (server, cSavedReportSimple (eSavedReportType::BuildingDisabled), getOwner ());
 		return;
 	}
 
@@ -682,7 +683,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd)
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamInsufficient), getOwner ());
 			return;
 		}
 	}
@@ -692,7 +693,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->getGold())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldInsufficient), getOwner ());
 			return;
 		}
 	}
@@ -702,7 +703,7 @@ void cBuilding::ServerStartWork (cServer& server)
 	{
 		if (SubBase->MetalNeed + std::min (MetalPerRound, buildList[0].getRemainingMetal ()) > SubBase->getMetalProd () + SubBase->getMetal ())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalInsufficient), getOwner ());
 			return;
 		}
 	}
@@ -714,7 +715,7 @@ void cBuilding::ServerStartWork (cServer& server)
 		// (current production + reserves)
 		if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getMaxOilProd())
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelInsufficient), getOwner ());
 			return;
 		}
 		else if (data.needsOil + SubBase->OilNeed > SubBase->getOil () + SubBase->getOilProd ())
@@ -734,11 +735,11 @@ void cBuilding::ServerStartWork (cServer& server)
 			SubBase->setGoldProd (gold);
 			SubBase->setMetalProd (metal);
 
-			sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), owner);
+			sendSavedReport (server, cSavedReportResourceChanged (RES_OIL, missingOil, true), getOwner ());
 			if (SubBase->getMetalProd () < metal)
-				sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd (), false), owner);
+				sendSavedReport (server, cSavedReportResourceChanged (RES_METAL, metal - SubBase->getMetalProd (), false), getOwner ());
 			if (SubBase->getGoldProd () < gold)
-				sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd (), false), owner);
+				sendSavedReport (server, cSavedReportResourceChanged (RES_GOLD, gold - SubBase->getGoldProd (), false), getOwner ());
 		}
 	}
 
@@ -788,10 +789,10 @@ void cBuilding::ServerStartWork (cServer& server)
 					SubBase->setOilProd (min (oil, SubBase->getMaxAllowedOilProd()));
 				}
 
-				sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), owner);
+				sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyInsufficient), getOwner ());
 				return;
 			}
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyToLow), getOwner ());
 		}
 	}
 
@@ -815,16 +816,15 @@ void cBuilding::ServerStartWork (cServer& server)
 	// research building
 	if (data.canResearch)
 	{
-		owner->workingResearchCenterCount++;
-		owner->researchCentersWorkingOnArea[researchArea]++;
+		getOwner ()->startAResearch (researchArea);
 	}
 
 	if (data.canScore)
 	{
-		sendNumEcos (server, *owner);
+		sendNumEcos (server, *getOwner ());
 	}
 
-	sendSubbaseValues (server, *SubBase, *owner);
+	sendSubbaseValues (server, *SubBase, *getOwner ());
 	sendDoStartWork (server, *this);
 }
 
@@ -837,7 +837,7 @@ void cBuilding::clientStartWork ()
 		return;
 	setWorking(true);
 	if (data.canResearch)
-		owner->startAResearch (researchArea);
+		getOwner ()->startAResearch (researchArea);
 }
 
 //--------------------------------------------------------------------------
@@ -856,7 +856,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 	{
 		if (SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override)
 		{
-			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), owner);
+			sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyIsNeeded), getOwner ());
 			return;
 		}
 
@@ -900,16 +900,15 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	if (data.canResearch)
 	{
-		owner->workingResearchCenterCount--;
-		owner->researchCentersWorkingOnArea[researchArea]--;
+		getOwner ()->stopAResearch (researchArea);
 	}
 
 	if (data.canScore)
 	{
-		sendNumEcos (server, *owner);
+		sendNumEcos (server, *getOwner ());
 	}
 
-	sendSubbaseValues (server, *SubBase, *owner);
+	sendSubbaseValues (server, *SubBase, *getOwner ());
 	sendDoStopWork (server, *this);
 }
 
@@ -922,7 +921,7 @@ void cBuilding::clientStopWork ()
 		return;
 	setWorking(false);
 	if (data.canResearch)
-		owner->stopAResearch (researchArea);
+		getOwner ()->stopAResearch (researchArea);
 }
 
 //------------------------------------------------------------
@@ -932,7 +931,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 	{
 		const cVehicle* v = overUnitField.getVehicle ();
 
-		if (v->owner != this->owner)
+		if (v->getOwner () != this->getOwner ())
 			return false;
 
 		if (v->data.storeResType != data.storeResType)
@@ -960,7 +959,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 		if (b->SubBase != SubBase)
 			return false;
 
-		if (b->owner != this->owner)
+		if (b->getOwner () != this->getOwner ())
 			return false;
 
 		if (data.storeResType != b->data.storeResType)
@@ -974,7 +973,7 @@ bool cBuilding::canTransferTo (const cPosition& position, const cMapField& overU
 //--------------------------------------------------------------------------
 bool cBuilding::canExitTo (const cPosition& position, const cMap& map, const sUnitData& vehicleData) const
 {
-	if (!map.possiblePlaceVehicle (vehicleData, position, owner)) return false;
+	if (!map.possiblePlaceVehicle (vehicleData, position, getOwner ())) return false;
 	if (!isNextTo (position)) return false;
 
 	return true;
@@ -1006,7 +1005,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->getClientMoveJob () && (Vehicle->isUnitMoving () || Vehicle->isAttacking () || Vehicle->MoveJobActive)) return false;
 
-	if (Vehicle->owner != owner || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
+	if (Vehicle->getOwner () != getOwner () || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
 
 	if (Vehicle->isBeeingAttacked ()) return false;
 
@@ -1021,7 +1020,7 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 	map.deleteVehicle (vehicle);
 	if (vehicle.isSentryActive())
 	{
-		vehicle.owner->deleteSentry (vehicle);
+		vehicle.getOwner ()->deleteSentry (vehicle);
 	}
 
 	vehicle.setLoaded(true);
@@ -1029,7 +1028,7 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 	storedUnits.push_back (&vehicle);
 	data.setStoredUnits(data.getStoredUnits ()+1);
 
-	owner->doScan();
+	getOwner ()->doScan ();
 }
 
 //-----------------------------------------------------------------------
@@ -1046,7 +1045,7 @@ void cBuilding::exitVehicleTo(cVehicle& vehicle, const cPosition& position, cMap
 
 	vehicle.setLoaded (false);
 
-	owner->doScan();
+	getOwner ()->doScan ();
 }
 
 //-------------------------------------------------------------------------------
@@ -1358,7 +1357,7 @@ void cBuilding::makeDetection (cServer& server)
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			auto& player = *playerList[i];
-			if (&player == owner) continue;
+			if (&player == getOwner ()) continue;
 			if (player.hasMineDetection (getPosition ()))
 			{
 				setDetectedByPlayer (server, &player);
@@ -1447,7 +1446,7 @@ bool cBuilding::buildingCanBeStarted() const
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeUpgraded() const
 {
-	const sUnitData& upgraded = *owner->getUnitDataCurrentVersion (data.ID);
+	const sUnitData& upgraded = *getOwner ()->getUnitDataCurrentVersion (data.ID);
 	return (data.getVersion () != upgraded.getVersion () && SubBase && SubBase->getMetal () >= 2);
 }
 
@@ -1525,4 +1524,37 @@ void cBuilding::setWorking (bool value)
 {
 	std::swap (isWorking, value);
 	if (value != isWorking) workingChanged ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::setResearchArea (cResearch::ResearchArea area)
+{
+	std::swap (researchArea, area);
+	if (researchArea != area) researchAreaChanged ();
+}
+
+//-----------------------------------------------------------------------------
+cResearch::ResearchArea cBuilding::getResearchArea () const
+{
+	return researchArea;
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::registerOwnerEvents ()
+{
+	ownerSignalConnectionManager.disconnectAll ();
+
+	if (getOwner () == nullptr) return;
+
+	if (data.convertsGold)
+	{
+		ownerSignalConnectionManager.connect (getOwner ()->creditsChanged, [&]() { statusChanged (); });
+	}
+
+	if (data.canResearch)
+	{
+		ownerSignalConnectionManager.connect (getOwner ()->researchCentersWorkingOnAreaChanged, [&](cResearch::ResearchArea) { statusChanged (); });
+		ownerSignalConnectionManager.connect (getOwner ()->getResearchState ().neededResearchPointsChanged, [&](cResearch::ResearchArea) { statusChanged (); });
+		ownerSignalConnectionManager.connect (getOwner ()->getResearchState ().currentResearchPointsChanged, [&](cResearch::ResearchArea) { statusChanged (); });
+	}
 }

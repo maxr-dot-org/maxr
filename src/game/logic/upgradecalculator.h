@@ -22,6 +22,8 @@
 
 #include <map>
 
+#include "utility/signal/signal.h"
+
 class cResearch;
 class cUnitUpgrade;
 struct sUnitData;
@@ -298,6 +300,9 @@ public:
 	int getUpgradeCalculatorUpgradeType (int researchArea) const;
 	int getResearchArea (int upgradeCalculatorType) const;
 
+	mutable cSignal<void (ResearchArea)> currentResearchLevelChanged;
+	mutable cSignal<void (ResearchArea)> currentResearchPointsChanged;
+	mutable cSignal<void (ResearchArea)> neededResearchPointsChanged;
 	//-------------------------------------------
 protected:
 	void init();  ///< sets all research information to the initial values

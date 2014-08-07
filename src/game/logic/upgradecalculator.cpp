@@ -1290,11 +1290,26 @@ cResearch::cResearch()
 //--------------------------------------------------
 void cResearch::init()
 {
+	int oldCurResearchLevel[kNrResearchAreas];
+	int oldCurResearchPoints[kNrResearchAreas];
+	int oldNeededResearchPoints[kNrResearchAreas];
+
 	for (int i = 0; i < kNrResearchAreas; i++)
 	{
+		oldCurResearchLevel[i] = curResearchLevel[i];
+		oldCurResearchPoints[i] = curResearchPoints[i];
+		oldNeededResearchPoints[i] = neededResearchPoints[i];
+
 		curResearchLevel[i] = 0;
 		curResearchPoints[i] = 0;
 		neededResearchPoints[i] = cUpgradeCalculator::instance().calcResearchTurns (0, getUpgradeCalculatorUpgradeType (i));
+	}
+
+	for (int i = 0; i < kNrResearchAreas; i++)
+	{
+		if (oldCurResearchLevel[i] != curResearchLevel[i]) currentResearchLevelChanged ((ResearchArea)i);
+		if (oldCurResearchPoints[i] != curResearchPoints[i]) currentResearchPointsChanged ((ResearchArea)i);
+		if (oldNeededResearchPoints[i] != neededResearchPoints[i]) neededResearchPointsChanged ((ResearchArea)i);
 	}
 }
 
@@ -1341,10 +1356,20 @@ void cResearch::setCurResearchLevel (int researchLevel, int researchArea)
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchLevel >= 0 && researchLevel % 10 == 0)
 	{
+		const auto oldLevel = curResearchLevel[researchArea];
+		const auto oldPoints = curResearchPoints[researchArea];
+		const auto oldNeededPoints = neededResearchPoints[researchArea];
+
 		curResearchLevel[researchArea] = researchLevel;
 		neededResearchPoints[researchArea] = cUpgradeCalculator::instance().calcResearchTurns (researchLevel, getUpgradeCalculatorUpgradeType (researchArea));
 		if (curResearchPoints[researchArea] >= neededResearchPoints[researchArea])
+		{
 			curResearchPoints[researchArea] = 0;
+		}
+
+		if (oldLevel != curResearchLevel[researchArea]) currentResearchLevelChanged ((ResearchArea)researchArea);
+		if (oldPoints != curResearchPoints[researchArea]) currentResearchPointsChanged ((ResearchArea)researchArea);
+		if (oldNeededPoints != neededResearchPoints[researchArea]) neededResearchPointsChanged ((ResearchArea)researchArea);
 	}
 }
 
@@ -1352,7 +1377,11 @@ void cResearch::setCurResearchLevel (int researchLevel, int researchArea)
 void cResearch::setCurResearchPoints (int researchPoints, int researchArea)
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints >= 0 && researchPoints < neededResearchPoints[researchArea])
-		curResearchPoints[researchArea] = researchPoints;
+	{
+		std::swap (curResearchPoints[researchArea], researchPoints);
+
+		if (researchPoints != curResearchPoints[researchArea]) currentResearchPointsChanged ((ResearchArea)researchArea);
+	}
 }
 
 //--------------------------------------------------
@@ -1360,15 +1389,28 @@ bool cResearch::doResearch (int researchPoints, int researchArea)
 {
 	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints > 0)
 	{
+		const auto oldPoints = curResearchPoints[researchArea];
+
 		curResearchPoints[researchArea] += researchPoints;
+
 		if (curResearchPoints[researchArea] >= neededResearchPoints [researchArea])
 		{
+			const auto oldLevel = curResearchLevel[researchArea];
+			const auto oldNeededPoints = neededResearchPoints[researchArea];
+
 			curResearchPoints[researchArea] = 0;
 			curResearchLevel[researchArea] += 10;
 			neededResearchPoints[researchArea] = cUpgradeCalculator::instance().calcResearchTurns (curResearchLevel[researchArea],
 												 getUpgradeCalculatorUpgradeType (researchArea));
+
+			if (oldLevel != curResearchLevel[researchArea]) currentResearchLevelChanged ((ResearchArea)researchArea);
+			if (oldPoints != curResearchPoints[researchArea]) currentResearchPointsChanged ((ResearchArea)researchArea);
+			if (oldNeededPoints != neededResearchPoints[researchArea]) neededResearchPointsChanged ((ResearchArea)researchArea);
+
 			return true;
 		}
+
+		if (oldPoints != curResearchPoints[researchArea]) currentResearchPointsChanged ((ResearchArea)researchArea);
 	}
 	return false;
 }

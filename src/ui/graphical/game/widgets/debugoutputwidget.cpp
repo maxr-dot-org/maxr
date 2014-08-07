@@ -375,7 +375,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 {
 	std::string tmpString;
 
-	tmpString = "name: \"" + vehicle.getDisplayName () + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.owner->getName () + "\" posX: +" + iToStr (vehicle.getPosition().x()) + " posY: " + iToStr (vehicle.getPosition().y()) + " offX: " + iToStr (vehicle.getMovementOffset().x()) + " offY: " + iToStr (vehicle.getMovementOffset().y());
+	tmpString = "name: \"" + vehicle.getDisplayName () + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.getOwner ()->getName () + "\" posX: +" + iToStr (vehicle.getPosition ().x ()) + " posY: " + iToStr (vehicle.getPosition ().y ()) + " offX: " + iToStr (vehicle.getMovementOffset ().x ()) + " offY: " + iToStr (vehicle.getMovementOffset ().y ());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
@@ -439,7 +439,7 @@ void cDebugOutputWidget::traceBuilding (const cBuilding& building, cPosition& dr
 {
 	std::string tmpString;
 
-	tmpString = "name: \"" + building.getDisplayName () + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.owner ? building.owner->getName () : "<null>") + "\" posX: +" + iToStr (building.getPosition().x()) + " posY: " + iToStr (building.getPosition().y());
+	tmpString = "name: \"" + building.getDisplayName () + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.getOwner () ? building.getOwner ()->getName () : "<null>") + "\" posX: +" + iToStr (building.getPosition ().x ()) + " posY: " + iToStr (building.getPosition ().y ());
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

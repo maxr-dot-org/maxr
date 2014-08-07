@@ -201,7 +201,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	attackShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canAttack && unit->data.getShots ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canAttack && unit->data.getShots ())
 		{
 			toggleMouseInputMode (eMouseModeType::Attack);
 		}
@@ -211,7 +211,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	buildShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canBuild.empty () == false && unit->isUnitBuildingABuilding () == false)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canBuild.empty () == false && unit->isUnitBuildingABuilding () == false)
 		{
 			triggeredBuild (*unitSelection.getSelectedUnit ());
 		}
@@ -221,7 +221,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	transferShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.storeResType != sUnitData::STORE_RES_NONE && unit->isUnitBuildingABuilding () == false && unit->isUnitClearing () == false)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.storeResType != sUnitData::STORE_RES_NONE && unit->isUnitBuildingABuilding () == false && unit->isUnitClearing () == false)
 		{
 			toggleMouseInputMode (eMouseModeType::Transfer);
 		}
@@ -231,7 +231,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	automoveShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canSurvey)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canSurvey)
 		{
 			triggeredAutoMoveJob (*unitSelection.getSelectedUnit ());
 		}
@@ -241,7 +241,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	startShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canWork && unit->buildingCanBeStarted ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canWork && unit->buildingCanBeStarted ())
 		{
 			triggeredStartWork (*unitSelection.getSelectedUnit ());
 		}
@@ -251,7 +251,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	stopShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->canBeStoppedViaUnitMenu ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->canBeStoppedViaUnitMenu ())
 		{
 			triggeredStopWork (*unitSelection.getSelectedUnit ());
 		}
@@ -261,7 +261,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	clearShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canClearArea && dynamicMap && dynamicMap->getField (unit->getPosition ()).getRubble () && unit->isUnitClearing () == false)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canClearArea && dynamicMap && dynamicMap->getField (unit->getPosition ()).getRubble () && unit->isUnitClearing () == false)
 		{
 			triggeredStartClear (*unitSelection.getSelectedUnit ());
 		}
@@ -271,7 +271,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	sentryShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && (unit->isSentryActive () || unit->data.canAttack || (!unit->isABuilding () && !unit->canBeStoppedViaUnitMenu ())))
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && (unit->isSentryActive () || unit->data.canAttack || (!unit->isABuilding () && !unit->canBeStoppedViaUnitMenu ())))
 		{
 			triggeredSentry (*unitSelection.getSelectedUnit ());
 		}
@@ -281,7 +281,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	manualFireShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && (unit->isManualFireActive () || unit->data.canAttack))
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && (unit->isManualFireActive () || unit->data.canAttack))
 		{
 			triggeredManualFire (*unitSelection.getSelectedUnit ());
 		}
@@ -291,7 +291,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	activateShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.storageUnitsMax > 0)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.storageUnitsMax > 0)
 		{
 			triggeredActivate (*unitSelection.getSelectedUnit ());
 		}
@@ -301,7 +301,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	loadShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.storageUnitsMax > 0)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.storageUnitsMax > 0)
 		{
 			toggleMouseInputMode (eMouseModeType::Load);
 		}
@@ -311,7 +311,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	relaodShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRearm && unit->data.getStoredResources () >= 1)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canRearm && unit->data.getStoredResources () >= 1)
 		{
 			toggleMouseInputMode (eMouseModeType::SupplyAmmo);
 		}
@@ -321,7 +321,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	repairShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canRepair && unit->data.getStoredResources () >= 1)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canRepair && unit->data.getStoredResources () >= 1)
 		{
 			toggleMouseInputMode (eMouseModeType::Repair);
 		}
@@ -331,7 +331,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	layMineShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.getStoredResources () > 0)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canPlaceMines && unit->data.getStoredResources () > 0)
 		{
 			triggeredLayMines (*unitSelection.getSelectedUnit ());
 		}
@@ -341,7 +341,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	clearMineShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canPlaceMines && unit->data.getStoredResources () < unit->data.storageResMax)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canPlaceMines && unit->data.getStoredResources () < unit->data.storageResMax)
 		{
 			triggeredCollectMines (*unitSelection.getSelectedUnit ());
 		}
@@ -351,7 +351,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	disableShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canDisable && unit->data.getShots ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canDisable && unit->data.getShots ())
 		{
 			toggleMouseInputMode (eMouseModeType::Disable);
 		}
@@ -361,7 +361,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	stealShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canCapture && unit->data.getShots ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canCapture && unit->data.getShots ())
 		{
 			toggleMouseInputMode (eMouseModeType::Steal);
 		}
@@ -381,7 +381,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	distributeShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canMineMaxRes > 0 && unit->isUnitWorking ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canMineMaxRes > 0 && unit->isUnitWorking ())
 		{
 			triggeredResourceDistribution (*unitSelection.getSelectedUnit ());
 		}
@@ -391,7 +391,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	researchShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canResearch && unit->isUnitWorking ())
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canResearch && unit->isUnitWorking ())
 		{
 			triggeredResearchMenu (*unitSelection.getSelectedUnit ());
 		}
@@ -401,7 +401,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	upgradeShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.convertsGold)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.convertsGold)
 		{
 			triggeredUpgradesMenu (*unitSelection.getSelectedUnit ());
 		}
@@ -411,7 +411,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	destroyShortcut->triggered.connect ([this]()
 	{
 		auto unit = unitSelection.getSelectedUnit ();
-		if (unit && !unit->isDisabled () && unit->owner == player.get () && unit->data.canSelfDestroy)
+		if (unit && !unit->isDisabled () && unit->getOwner () == player.get () && unit->data.canSelfDestroy)
 		{
 			triggeredSelfDestruction (*unitSelection.getSelectedUnit ());
 		}
@@ -512,7 +512,7 @@ void cGameMapWidget::draw ()
 	drawPlanes ();
 
 	auto selectedVehicle = unitSelection.getSelectedVehicle ();
-	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->owner == player.get() && selectedVehicle->data.canSurvey))
+	if (shouldDrawSurvey || (selectedVehicle && selectedVehicle->getOwner () == player.get () && selectedVehicle->data.canSurvey))
 	{
 		drawResources ();
 	}
@@ -1052,7 +1052,7 @@ void cGameMapWidget::drawBaseUnits ()
 
 			if (building.data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
 				building.data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
-				building.owner) break;
+				building.getOwner ()) break;
 
 			if (!player || player->canSeeAnyAreaUnder (building))
 			{
@@ -1415,7 +1415,7 @@ void cGameMapWidget::drawExitPoints ()
 
 	if (selectedVehicle && selectedVehicle->isDisabled () == false)
 	{
-		if (dynamicMap && selectedVehicle->owner == player.get () &&
+		if (dynamicMap && selectedVehicle->getOwner () == player.get () &&
 			(
 				(selectedVehicle->isUnitBuildingABuilding() && selectedVehicle->getBuildTurns() == 0) ||
 				(selectedVehicle->isUnitClearing () && selectedVehicle->getClearingTurns() == 0)
@@ -1423,7 +1423,7 @@ void cGameMapWidget::drawExitPoints ()
 		{
 			drawExitPointsIf (*selectedVehicle, [&](const cPosition& position){ return dynamicMap->possiblePlace (*selectedVehicle, position); });
 		}
-		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->owner == player.get ())
+		if (mouseMode->getType () == eMouseModeType::Activate && selectedVehicle->getOwner () == player.get ())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get());
 			auto unitToExit = selectedVehicle->storedUnits[activateMouseMode->getVehicleToActivateIndex()]->data;
@@ -1435,12 +1435,12 @@ void cGameMapWidget::drawExitPoints ()
 		if (!selectedBuilding->isBuildListEmpty() &&
 			!selectedBuilding->isUnitWorking () &&
 			selectedBuilding->getBuildListItem(0).getRemainingMetal () <= 0 &&
-			selectedBuilding->owner == player.get ())
+			selectedBuilding->getOwner () == player.get ())
 		{
 			auto unitToExit = selectedBuilding->getBuildListItem (0).getType ().getUnitDataOriginalVersion ();
 			drawExitPointsIf (*selectedBuilding, [&](const cPosition& position){ return selectedBuilding->canExitTo (position, *dynamicMap, *unitToExit); });
 		}
-		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->owner == player.get ())
+		if (mouseMode->getType () == eMouseModeType::Activate && selectedBuilding->getOwner () == player.get ())
 		{
 			auto activateMouseMode = static_cast<cMouseModeActivateLoaded*>(mouseMode.get ());
 			auto unitToExit = selectedBuilding->storedUnits[activateMouseMode->getVehicleToActivateIndex ()]->data;
@@ -1614,7 +1614,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 {
 	auto moveJob = vehicle.getClientMoveJob ();
 
-	if (!moveJob || !moveJob->Waypoints || vehicle.owner != player.get ())
+	if (!moveJob || !moveJob->Waypoints || vehicle.getOwner () != player.get ())
 	{
 		drawBuildPath (vehicle);
 		return;
@@ -1935,7 +1935,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		if (player && lockActive)
 		{
 			const auto newSelectedUnit = unitSelection.getSelectedUnit ();
-			if (newSelectedUnit && newSelectedUnit != selectedUnit && newSelectedUnit->owner != player.get ())
+			if (newSelectedUnit && newSelectedUnit != selectedUnit && newSelectedUnit->getOwner () != player.get ())
 			{
 				unitLockList.toggleLockAt (field);
 			}
@@ -2170,7 +2170,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 {
 	if (building.data.hasDamageEffect &&
 		building.data.getHitpoints () < building.data.hitpointsMax &&
-		(building.owner == player.get () || (!player || player->canSeeAnyAreaUnder (building))))
+		(building.getOwner () == player.get () || (!player || player->canSeeAnyAreaUnder (building))))
 	{
 		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
@@ -2187,7 +2187,7 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 {
 	if (vehicle.data.getHitpoints () < vehicle.data.hitpointsMax &&
-		(vehicle.owner == player.get () || (!player || player->canSeeAnyAreaUnder (vehicle))))
+		(vehicle.getOwner () == player.get () || (!player || player->canSeeAnyAreaUnder (vehicle))))
 	{
 		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));

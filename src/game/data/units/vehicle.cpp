@@ -165,7 +165,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	src.y = 0;
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
     blitWithPreScale (uiData->build_org.get (), uiData->build.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
@@ -190,7 +190,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	src.y = 0;
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
     blitWithPreScale (uiData->clear_small_org.get (), uiData->clear_small.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
@@ -231,7 +231,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
 {
 	// draw player color
-	SDL_BlitSurface (owner->getColor ().getTexture(), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
 
 	// read the size:
 	SDL_Rect src;
@@ -301,7 +301,7 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 		cBuilding* building = map->getField(getPosition()).getBaseBuilding ();
 		if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-		if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty() && owner == activePlayer) alpha = std::min(alpha, 100);
+		if (water && (data.isStealthOn & TERRAIN_SEA) && detectedByPlayerList.empty () && getOwner () == activePlayer) alpha = std::min (alpha, 100);
 	}
 	render_simple (surface, dest, zoomFactor, alpha);
 }
@@ -317,7 +317,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 	if (getBuildTurns () != 0) return true;
 
 	const cMap& map = *server.Map;
-	owner->addTurnReportUnit (getBuildingType ());
+	getOwner ()->addTurnReportUnit (getBuildingType ());
 
 	// handle pathbuilding
 	// here the new building is added (if possible) and
@@ -364,7 +364,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (found_next && server.addMoveJob (getPosition(), nextPosition, this))
 		{
 			setBuildingABuilding (false);
-			server.addBuilding (getPosition(), getBuildingType (), owner);
+			server.addBuilding (getPosition (), getBuildingType (), getOwner ());
 			// Begin the movement immediately,
 			// so no other unit can block the destination field.
 			this->ServerMoveJob->checkMove();
@@ -374,7 +374,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		{
 			if (getBuildingType ().getUnitDataOriginalVersion ()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
 			{
-				server.addBuilding (getPosition(), getBuildingType (), owner);
+				server.addBuilding (getPosition (), getBuildingType (), getOwner ());
 				setBuildingABuilding (false);
 			}
 			BuildPath = false;
@@ -388,7 +388,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		if (getBuildingType ().getUnitDataOriginalVersion ()->surfacePosition != data.surfacePosition)
 		{
 			setBuildingABuilding(false);
-			server.addBuilding (getPosition(), getBuildingType (), owner);
+			server.addBuilding (getPosition (), getBuildingType (), getOwner ());
 		}
 	}
 	return true;
@@ -409,7 +409,7 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	if (data.isBig)
 	{
 		map.moveVehicle (*this, buildBigSavedPosition);
-		sendStopClear (server, *this, buildBigSavedPosition, *owner);
+		sendStopClear (server, *this, buildBigSavedPosition, *getOwner ());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
 			sendStopClear (server, *this, buildBigSavedPosition, *seenByPlayerList[i]);
@@ -417,7 +417,7 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	}
 	else
 	{
-		sendStopClear (server, *this, cPosition(-1, -1), *owner);
+		sendStopClear (server, *this, cPosition (-1, -1), *getOwner ());
 		for (size_t i = 0; i != seenByPlayerList.size(); ++i)
 		{
 			sendStopClear (server, *this, cPosition (-1, -1), *seenByPlayerList[i]);
@@ -474,7 +474,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 		return lngPack.i18n ("Text~Comp~Surveying");
 	else if (isUnitBuildingABuilding ())
 	{
-		if (owner != player)
+		if (getOwner () != player)
 			return lngPack.i18n ("Text~Comp~Producing");
 		else
 		{
@@ -483,7 +483,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing");
 				sText += ": ";
-				sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name + " (";
+				sText += (string)getOwner ()->getUnitDataCurrentVersion (getBuildingType ())->name + " (";
 				sText += iToStr (getBuildTurns ());
 				sText += ")";
 
@@ -491,7 +491,7 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing");
 					sText += ":\n";
-					sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name + " (";
+					sText += (string)getOwner ()->getUnitDataCurrentVersion (getBuildingType ())->name + " (";
 					sText += iToStr (getBuildTurns ());
 					sText += ")";
 				}
@@ -501,13 +501,13 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 			{
 				sText = lngPack.i18n ("Text~Comp~Producing_Fin");
 				sText += ": ";
-				sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name;
+				sText += (string)getOwner ()->getUnitDataCurrentVersion (getBuildingType ())->name;
 
 				if (font->getTextWide (sText) > 126)
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing_Fin");
 					sText += ":\n";
-					sText += (string)owner->getUnitDataCurrentVersion (getBuildingType ())->name;
+					sText += (string)getOwner ()->getUnitDataCurrentVersion (getBuildingType ())->name;
 				}
 				return sText;
 			}
@@ -656,7 +656,7 @@ void cVehicle::doSurvey (const cServer& server)
 		for (int x = minx; x <= maxx; ++x)
 		{
 			const cPosition position (x, y);
-			owner->exploreResource (position);
+			getOwner ()->exploreResource (position);
 		}
 	}
 }
@@ -756,7 +756,7 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 		if (v == this)
 			return false;
 
-		if (v->owner != this->owner)
+		if (v->getOwner () != this->getOwner ())
 			return false;
 
 		if (v->data.storeResType != data.storeResType)
@@ -771,7 +771,7 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 	{
 		const cBuilding* b = overUnitField.getTopBuilding ();
 
-		if (b->owner != this->owner)
+		if (b->getOwner () != this->getOwner ())
 			return false;
 
 		if (!b->SubBase)
@@ -823,7 +823,7 @@ bool cVehicle::InSentryRange (cServer& server)
 	{
 		cPlayer& player = *playerList[i];
 
-		if (&player == owner) continue;
+		if (&player == getOwner ()) continue;
 
 		// Don't attack undiscovered stealth units
 		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (&player)) continue;
@@ -952,7 +952,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
 		cPlayer& player = *playerList[i];
-		if (&player == owner)
+		if (&player == getOwner ())
 			continue;
 
 		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (&player))
@@ -974,7 +974,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 //-----------------------------------------------------------------------------
 bool cVehicle::canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const
 {
-	if (!map.possiblePlaceVehicle (unitData, position, owner)) return false;
+	if (!map.possiblePlaceVehicle (unitData, position, getOwner ())) return false;
 	if (data.factorAir > 0 && (position != getPosition())) return false;
 	if (!isNextTo (position)) return false;
 
@@ -1006,7 +1006,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 
 	if (Vehicle->clientMoveJob && (Vehicle->moving || Vehicle->isAttacking () || Vehicle->MoveJobActive)) return false;
 
-	if (Vehicle->owner != owner || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
+	if (Vehicle->getOwner () != getOwner () || Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing ()) return false;
 
 	if (Vehicle->isBeeingAttacked ()) return false;
 
@@ -1019,7 +1019,7 @@ void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 	map.deleteVehicle (vehicle);
 	if (vehicle.isSentryActive())
 	{
-		vehicle.owner->deleteSentry (vehicle);
+		vehicle.getOwner ()->deleteSentry (vehicle);
 	}
 
 	vehicle.setManualFireActive(false);
@@ -1029,7 +1029,7 @@ void cVehicle::storeVehicle (cVehicle& vehicle, cMap& map)
 	storedUnits.push_back (&vehicle);
 	data.setStoredUnits (data.getStoredUnits ()+1);
 
-	owner->doScan();
+	getOwner ()->doScan ();
 }
 
 //-----------------------------------------------------------------------------
@@ -1048,7 +1048,7 @@ void cVehicle::exitVehicleTo (cVehicle& vehicle, const cPosition& position, cMap
 	vehicle.setLoaded (false);
 	//vehicle.data.shotsCur = 0;
 
-	owner->doScan();
+	getOwner ()->doScan ();
 }
 
 //-----------------------------------------------------------------------------
@@ -1111,12 +1111,12 @@ bool cVehicle::layMine (cServer& server)
 	if (data.factorSea > 0 && data.factorGround == 0)
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), getPosition(), this)) return false;
-		server.addBuilding (getPosition(), UnitsData.specialIDSeaMine, owner, false);
+		server.addBuilding (getPosition (), UnitsData.specialIDSeaMine, getOwner (), false);
 	}
 	else
 	{
 		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), getPosition(), this)) return false;
-		server.addBuilding (getPosition(), UnitsData.specialIDLandMine, owner, false);
+		server.addBuilding (getPosition (), UnitsData.specialIDLandMine, getOwner (), false);
 	}
 	data.setStoredResources (data.getStoredResources ()-1);
 
@@ -1131,7 +1131,7 @@ bool cVehicle::clearMine (cServer& server)
 	const cMap& map = *server.Map;
 	cBuilding* Mine = map.getField(getPosition()).getMine();
 
-	if (!Mine || Mine->owner != owner || data.getStoredResources () >= data.storageResMax) return false;
+	if (!Mine || Mine->getOwner () != getOwner () || data.getStoredResources () >= data.storageResMax) return false;
 	if (Mine->data.factorGround > 0 && data.factorGround == 0) return false;
 	if (Mine->data.factorSea > 0 && data.factorSea == 0) return false;
 
@@ -1174,11 +1174,11 @@ bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
 		return false;
 
 	if (steal == false && unit->isDisabled ()) return false;
-	if (unit->isABuilding () && unit->owner == 0) return false;   // rubble
+	if (unit->isABuilding () && unit->getOwner () == 0) return false;   // rubble
 	if (steal && unit->data.canBeCaptured == false) return false;
 	if (steal == false && unit->data.canBeDisabled == false) return false;
 	if (steal && unit->storedUnits.empty () == false) return false;
-	if (unit->owner == owner) return false;
+	if (unit->getOwner () == getOwner ()) return false;
 	if (unit->isAVehicle () && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->getFlightHeight () > 0) return false;
 
 	return true;
@@ -1316,7 +1316,7 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer& player = *playerList[i];
-			if (&player == owner)
+			if (&player == getOwner ())
 				continue;
 			bool isOnWater = map.isWater (getPosition());
 			bool isOnCoast = map.isCoast (getPosition()) && (isOnWater == false);
@@ -1377,22 +1377,22 @@ void cVehicle::makeDetection (cServer& server)
 			cVehicle* vehicle = map.getField (position).getVehicle ();
 			cBuilding* building = map.getField (position).getMine ();
 
-			if (vehicle && vehicle->owner != owner)
+			if (vehicle && vehicle->getOwner () != getOwner ())
 			{
-				if ((data.canDetectStealthOn & TERRAIN_GROUND) && owner->hasLandDetection (position) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
+				if ((data.canDetectStealthOn & TERRAIN_GROUND) && getOwner ()->hasLandDetection (position) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
 				{
-					vehicle->setDetectedByPlayer (server, owner);
+					vehicle->setDetectedByPlayer (server, getOwner ());
 				}
-				if ((data.canDetectStealthOn & TERRAIN_SEA) && owner->hasSeaDetection (position) && (vehicle->data.isStealthOn & TERRAIN_SEA))
+				if ((data.canDetectStealthOn & TERRAIN_SEA) && getOwner ()->hasSeaDetection (position) && (vehicle->data.isStealthOn & TERRAIN_SEA))
 				{
-					vehicle->setDetectedByPlayer (server, owner);
+					vehicle->setDetectedByPlayer (server, getOwner ());
 				}
 			}
-			if (building && building->owner != owner)
+			if (building && building->getOwner () != getOwner ())
 			{
-				if ((data.canDetectStealthOn & AREA_EXP_MINE) && owner->hasMineDetection (position) && (building->data.isStealthOn & AREA_EXP_MINE))
+				if ((data.canDetectStealthOn & AREA_EXP_MINE) && getOwner ()->hasMineDetection (position) && (building->data.isStealthOn & AREA_EXP_MINE))
 				{
-					building->setDetectedByPlayer (server, owner);
+					building->setDetectedByPlayer (server, getOwner ());
 				}
 			}
 		}
@@ -1520,7 +1520,7 @@ cBuilding* cVehicle::getContainerBuilding()
 {
 	if (!isUnitLoaded ()) return NULL;
 
-    const auto& buildings = owner->getBuildings ();
+	const auto& buildings = getOwner ()->getBuildings ();
     for (auto i = buildings.begin (); i != buildings.end (); ++i)
     {
         const auto& building = *i;
@@ -1534,7 +1534,7 @@ cVehicle* cVehicle::getContainerVehicle()
 {
 	if (!isUnitLoaded()) return NULL;
 
-    const auto& vehicles = owner->getVehicles ();
+	const auto& vehicles = getOwner ()->getVehicles ();
     for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
     {
         const auto& vehicle = *i;
@@ -1629,7 +1629,7 @@ bool cVehicle::canLand (const cMap& map) const
 	// can stay on an enemy landing pad until it is moved
 	if (getFlightHeight () == 0) return true;
 
-	if ((*b_it)->owner != owner) return false;
+	if ((*b_it)->getOwner () != getOwner ()) return false;
 
 	return true;
 }

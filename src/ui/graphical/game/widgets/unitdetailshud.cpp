@@ -110,13 +110,13 @@ void cUnitDetailsHud::reset ()
 	{
 		assert (unit->data.ID.isABuilding ()); // currently only buildings can score
 		const auto unitScore = static_cast<const cBuilding*>(unit)->points;
-		const auto totalScore = unit->owner->getScore ();
+		const auto totalScore = unit->getOwner ()->getScore ();
 		const auto goalScore = (gameSettings && gameSettings->getVictoryCondition () == eGameSettingsVictoryCondition::Points) ? gameSettings->getVictoryPoints () : totalScore;
 
 		drawRow (1, eUnitDataSymbolType::Human, unitScore, unitScore, lngPack.i18n ("Text~Others~Score"));
 		drawRow (2, eUnitDataSymbolType::Human, totalScore, goalScore, lngPack.i18n ("Text~Others~Total"));
 	}
-	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unit->owner == player)
+	else if ((data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0) && unit->getOwner () == player)
 	{
 		if (data.storeResType > 0)
 		{
@@ -175,7 +175,7 @@ void cUnitDetailsHud::reset ()
 	}
 	else if (data.canAttack && !data.explodesOnContact)
 	{
-		if (unit->owner == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo (), data.ammoMax, lngPack.i18n ("Text~Others~Ammo_7"));
+		if (unit->getOwner () == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo (), data.ammoMax, lngPack.i18n ("Text~Others~Ammo_7"));
 
 		drawRow (3, eUnitDataSymbolType::Shots, data.getShots (), data.shotsMax, lngPack.i18n ("Text~Others~Shots_7"));
 	}
@@ -184,7 +184,7 @@ void cUnitDetailsHud::reset ()
 		const auto& building = static_cast<const cBuilding&>(*unit);
 		drawRow (1, eUnitDataSymbolType::Energy, (building.isUnitWorking () ? data.produceEnergy : 0), data.produceEnergy, lngPack.i18n ("Text~Others~Power"));
 
-		if (unit->owner == player)
+		if (unit->getOwner () == player)
 		{
 			drawRow (2, eUnitDataSymbolType::Energy, building.SubBase->EnergyProd, building.SubBase->MaxEnergyProd, lngPack.i18n ("Text~Others~Total"));
 			drawRow (3, eUnitDataSymbolType::Energy, building.SubBase->EnergyNeed, building.SubBase->MaxEnergyNeed, lngPack.i18n ("Text~Others~Usage_7"));
@@ -195,7 +195,7 @@ void cUnitDetailsHud::reset ()
 		const auto& building = static_cast<const cBuilding&>(*unit);
 		drawRow (1, eUnitDataSymbolType::Human, data.produceHumans, data.produceHumans, lngPack.i18n ("Text~Others~Teams_7"));
 
-		if (unit->owner == player)
+		if (unit->getOwner () == player)
 		{
 			drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanProd, building.SubBase->HumanProd, lngPack.i18n ("Text~Others~Total"));
 			drawRow (3, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Usage_7"));
@@ -207,7 +207,7 @@ void cUnitDetailsHud::reset ()
 		if (building.isUnitWorking ()) drawRow (1, eUnitDataSymbolType::Human, data.needsHumans, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 		else drawRow (1, eUnitDataSymbolType::Human, 0, data.needsHumans, lngPack.i18n ("Text~Others~Usage_7"));
 
-		if (unit->owner == player) drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Total"));
+		if (unit->getOwner () == player) drawRow (2, eUnitDataSymbolType::Human, building.SubBase->HumanNeed, building.SubBase->MaxHumanNeed, lngPack.i18n ("Text~Others~Total"));
 	}
 }
 

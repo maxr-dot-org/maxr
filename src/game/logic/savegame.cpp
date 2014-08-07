@@ -191,6 +191,11 @@ bool cSavegame::load (cServer& server)
 	loadCasualties (server);
 
 	recalcSubbases (server);
+	for (size_t i = 0; i < server.playerList.size(); ++i)
+	{
+		auto& player = server.playerList[i];
+		player->refreshResearchCentersWorkingOnArea ();
+	}
 	return true;
 }
 
@@ -259,7 +264,6 @@ std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 		{
 			const auto name = playerNode->FirstChildElement ("Name")->Attribute ("string");
 			const int number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
-			const int colorIndex = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
 
 			cRgbColor playerColor;
 			if (version < cVersion (0, 7))
@@ -541,7 +545,7 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	if (landingPosNode)
 		Player->setLandingPos (landingPosNode->IntAttribute ("x"), landingPosNode->IntAttribute ("y"));
 
-	Player->Credits = playerNode->FirstChildElement ("Credits")->IntAttribute ("num");
+	Player->setCredits (playerNode->FirstChildElement ("Credits")->IntAttribute ("num"));
 
 	if (XMLElement* const e = playerNode->FirstChildElement ("ScoreHistory"))
 	{
@@ -619,13 +623,9 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 	XMLElement* researchNode = playerNode->FirstChildElement ("Research");
 	if (researchNode)
 	{
-		Player->workingResearchCenterCount = researchNode->IntAttribute ("researchCount");
 		XMLElement* researchLevelNode = researchNode->FirstChildElement ("ResearchLevel");
 		if (researchLevelNode)
-			loadResearchLevel (researchLevelNode, Player->researchLevel);
-		XMLElement* researchCentersWorkingOnAreaNode = researchNode->FirstChildElement ("CentersWorkingOnArea");
-		if (researchCentersWorkingOnAreaNode)
-			loadResearchCentersWorkingOnArea (researchCentersWorkingOnAreaNode, Player.get());
+			loadResearchLevel (researchLevelNode, Player->getResearchState());
 	}
 
 	if (XMLElement* const subbasesNode = playerNode->FirstChildElement ("Subbases"))
@@ -697,28 +697,6 @@ void cSavegame::loadResearchLevel (XMLElement* researchLevelNode, cResearch& res
 		const int value = curPoint->IntAttribute (data[i].name);
 		researchLevel.setCurResearchPoints (value, data[i].area);
 	}
-}
-
-//--------------------------------------------------------------------------
-void cSavegame::loadResearchCentersWorkingOnArea (XMLElement* researchCentersWorkingOnAreaNode, cPlayer* player)
-{
-	int value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("attack");
-	player->researchCentersWorkingOnArea[cResearch::kAttackResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("shots");
-	player->researchCentersWorkingOnArea[cResearch::kShotsResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("range");
-	player->researchCentersWorkingOnArea[cResearch::kRangeResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("armor");
-	player->researchCentersWorkingOnArea[cResearch::kArmorResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("hitpoints");
-	player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("speed");
-	player->researchCentersWorkingOnArea[cResearch::kSpeedResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("scan");
-	player->researchCentersWorkingOnArea[cResearch::kScanResearch] = value;
-	value = researchCentersWorkingOnAreaNode->IntAttribute ("cost");
-	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;
 }
 
 //--------------------------------------------------------------------------
@@ -921,7 +899,7 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 	if (unitNode->FirstChildElement ("IsWorking")) building.setWorking(true);
 	if (unitNode->FirstChildElement ("wasWorking")) building.wasWorking = true;
 	if (unitNode->FirstChildElement ("Disabled")) building.setDisabledTurns (unitNode->FirstChildElement ("Disabled")->IntAttribute ("turns"));
-	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->QueryIntAttribute ("area", & (building.researchArea));
+	if (unitNode->FirstChildElement ("ResearchArea")) building.setResearchArea((cResearch::ResearchArea)unitNode->FirstChildElement ("ResearchArea")->IntAttribute ("area"));
 	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building.points));
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
@@ -1394,7 +1372,7 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 
 	// write the main information
 	addAttributeElement (playerNode, "Name", "string", Player.getName());
-	addAttributeElement (playerNode, "Credits", "num", iToStr (Player.Credits));
+	addAttributeElement (playerNode, "Credits", "num", iToStr (Player.getCredits ()));
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player.getClan()));
 
 	XMLElement* colorElement = addMainElement (playerNode, "Color");
@@ -1441,11 +1419,8 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 	}
 
 	XMLElement* researchNode = addMainElement (playerNode, "Research");
-	researchNode->SetAttribute ("researchCount", iToStr (Player.workingResearchCenterCount).c_str());
 	XMLElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
-	writeResearchLevel (researchLevelNode, Player.researchLevel);
-	XMLElement* researchCentersWorkingOnAreaNode = addMainElement (researchNode, "CentersWorkingOnArea");
-	writeResearchCentersWorkingOnArea (researchCentersWorkingOnAreaNode, Player);
+	writeResearchLevel (researchLevelNode, Player.getResearchState());
 
 	// write subbases
 	XMLElement* subbasesNode = addMainElement (playerNode, "Subbases");
@@ -1505,19 +1480,6 @@ void cSavegame::writeResearchLevel (XMLElement* researchLevelNode, const cResear
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeResearchCentersWorkingOnArea (XMLElement* researchCentersWorkingOnAreaNode, const cPlayer& player)
-{
-	researchCentersWorkingOnAreaNode->SetAttribute ("attack", iToStr (player.researchCentersWorkingOnArea[cResearch::kAttackResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("shots", iToStr (player.researchCentersWorkingOnArea[cResearch::kShotsResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("range", iToStr (player.researchCentersWorkingOnArea[cResearch::kRangeResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("armor", iToStr (player.researchCentersWorkingOnArea[cResearch::kArmorResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("hitpoints", iToStr (player.researchCentersWorkingOnArea[cResearch::kHitpointsResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("speed", iToStr (player.researchCentersWorkingOnArea[cResearch::kSpeedResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("scan", iToStr (player.researchCentersWorkingOnArea[cResearch::kScanResearch]).c_str());
-	researchCentersWorkingOnAreaNode->SetAttribute ("cost", iToStr (player.researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str());
-}
-
-//--------------------------------------------------------------------------
 void cSavegame::writeCasualties (const cServer& server)
 {
 	if (server.getCasualtiesTracker() == 0)
@@ -1544,7 +1506,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", vehicle.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (vehicle.iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.owner->getNr()));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.getOwner ()->getNr ()));
 	addAttributeElement (unitNode, "Position", "x", iToStr (vehicle.getPosition().x()), "y", iToStr (vehicle.getPosition().y()));
 	// add information whether the unitname isn't serverdefault,
 	// so that it would be readed when loading
@@ -1553,7 +1515,7 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 
 	// write the standard unit values
 	// which are the same for vehicles and buildings
-	writeUnitValues (unitNode, vehicle.data, *vehicle.owner->getUnitDataCurrentVersion (vehicle.data.ID));
+	writeUnitValues (unitNode, vehicle.data, *vehicle.getOwner ()->getUnitDataCurrentVersion (vehicle.data.ID));
 
 	// add additional status information
 	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
@@ -1624,14 +1586,14 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", building.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (building.iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (building.owner->getNr()));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (building.getOwner ()->getNr ()));
 	addAttributeElement (unitNode, "Position", "x", iToStr (building.getPosition().x()), "y", iToStr (building.getPosition().y()));
 
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	addAttributeElement (unitNode, "Name", "string", building.isNameOriginal() ? building.data.name : building.getName(), "notDefault", building.isNameOriginal() ? "0" : "1");
 
 	// write the standard values
-	writeUnitValues (unitNode, building.data, *building.owner->getUnitDataCurrentVersion (building.data.ID));
+	writeUnitValues (unitNode, building.data, *building.getOwner ()->getUnitDataCurrentVersion (building.data.ID));
 
 	// write additional stauts information
 	if (building.isUnitWorking ()) addMainElement (unitNode, "IsWorking");
@@ -1641,7 +1603,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	if (building.data.canResearch)
 	{
 		XMLElement* researchNode = addMainElement (unitNode, "ResearchArea");
-		researchNode->SetAttribute ("area", iToStr (building.researchArea).c_str());
+		researchNode->SetAttribute ("area", iToStr (building.getResearchArea()).c_str());
 	}
 	if (building.data.canScore)
 	{

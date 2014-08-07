@@ -840,7 +840,7 @@ void cGameGuiController::showReportsWindow ()
 //------------------------------------------------------------------------------
 void cGameGuiController::showUnitHelpWindow (const cUnit& unit)
 {
-	application.show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.owner));
+	application.show (std::make_shared<cWindowUnitInfo> (unit.data, *unit.getOwner ()));
 }
 
 //------------------------------------------------------------------------------
@@ -939,7 +939,7 @@ void cGameGuiController::showResourceDistributionDialog (const cUnit& unit)
 void cGameGuiController::showResearchDialog (const cUnit& unit)
 {
 	const auto player = getActivePlayer ();
-	if (unit.owner != player.get ()) return;
+	if (unit.getOwner () != player.get ()) return;
 	if (!player) return;
 
 	auto researchDialog = application.show (std::make_shared<cDialogResearch> (*player));
@@ -954,7 +954,7 @@ void cGameGuiController::showResearchDialog (const cUnit& unit)
 void cGameGuiController::showUpgradesWindow (const cUnit& unit)
 {
 	const auto player = getActivePlayer ();
-	if (unit.owner != player.get ()) return;
+	if (unit.getOwner () != player.get ()) return;
 	if (!player) return;
 
 	auto upgradesWindow = application.show (std::make_shared<cWindowUpgrades> (*player, getTurnTimeClock ()));
@@ -1204,7 +1204,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				const int credits = atoi (creditsStr.c_str ());
 
 				// FIXME: do not do changes on server data that are not synchronized with the server thread!
-				player->Credits = credits;
+				player->setCredits(credits);
 
 				sendCredits (*server, credits, *player);
 			}
@@ -1484,7 +1484,7 @@ void cGameGuiController::markSelectedUnitAsDone ()
 
 	const auto unit = gameGui->getGameMap ().getUnitSelection ().getSelectedUnit ();
 
-	if (unit && unit->owner == player.get ())
+	if (unit && unit->getOwner () == player.get ())
 	{
 		gameGui->getGameMap ().centerAt (unit->getPosition ());
 		unit->setMarkedAsDone (true);

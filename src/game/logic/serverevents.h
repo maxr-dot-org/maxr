@@ -24,6 +24,7 @@
 #include "defines.h"
 #include "main.h" // for sID
 #include "game/logic/movejobs.h"
+#include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
 #include "network.h"
 
 class cBuilding;
@@ -283,7 +284,7 @@ void sendUnitUpgrades (cServer& server, const sUnitData& Data, const cPlayer& re
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver);
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, const cPlayer& receiver);
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, const cPlayer& receiver);
-void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<int>& newAreasForResearchCenters, const cPlayer& receiver);
+void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<cResearch::ResearchArea>& newAreasForResearchCenters, const cPlayer& receiver);
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver);
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
 void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList);

@@ -32,6 +32,7 @@
 #include "sound.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "game/logic/upgradecalculator.h" // cResearch::ResearchArea
 
 class cBase;
 class cPlayer;
@@ -157,7 +158,6 @@ public:
 	bool BaseN, BaseE, BaseS, BaseW; // is the building connected in this direction?
 	bool BaseBN, BaseBE, BaseBS, BaseBW; // is the building connected in this direction (only for big buildings)
 	struct sSubBase* SubBase;     // the subbase to which this building belongs
-	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	int MaxMetalProd, MaxOilProd, MaxGoldProd; // the maximum possible production of the building
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
@@ -240,10 +240,15 @@ public:
 
 	void setWorking (bool value);
 
+	void setResearchArea (cResearch::ResearchArea area);
+	cResearch::ResearchArea getResearchArea () const;
+
 	cSignal<void ()> buildListChanged;
 	cSignal<void ()> buildListFirstItemDataChanged;
+	cSignal<void ()> researchAreaChanged;
 private:
 	cSignalConnectionManager buildListFirstItemSignalConnectionManager;
+	cSignalConnectionManager ownerSignalConnectionManager;
 
 	/**
 	* draws the connectors onto the given surface
@@ -255,7 +260,11 @@ private:
 
 	bool isWorking;  // is the building currently working?
 
+	cResearch::ResearchArea researchArea; ///< if the building can research, this is the area the building last researched or is researching
+
 	std::vector<cBuildListItem> buildList; // list with the units to be build by this factory
+
+	void registerOwnerEvents ();
 
 	//-----------------------------------------------------------------------------
 protected:

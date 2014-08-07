@@ -103,7 +103,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		dest = destination;
 	}
 
-	if (!building.owner) return;
+	if (!building.getOwner ()) return;
 
 	// draw the effect if necessary
 	if (building.data.powerOnGraphic && cSettings::getInstance ().isAnimations () && (building.isUnitWorking () || !building.data.canWork))
@@ -116,8 +116,8 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw the mark, when a build order is finished
-	if (building.owner == player && ((!building.isBuildListEmpty() && !building.isUnitWorking () && building.getBuildListItem(0).getRemainingMetal () <= 0) ||
-									 (building.data.canResearch && building.owner->researchFinished)))
+	if (building.getOwner () == player && ((!building.isBuildListEmpty () && !building.isUnitWorking () && building.getBuildListItem (0).getRemainingMetal () <= 0) ||
+		(building.data.canResearch && building.getOwner ()->researchFinished)))
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.data.isBig ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
@@ -160,7 +160,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || building.owner == player) && building.data.canAttack && building.data.ammoMax > 0)
+	if (shouldDrawAmmo && (!player || building.getOwner () == player) && building.data.canAttack && building.data.ammoMax > 0)
 	{
 		drawMunBar (building, destination);
 	}
@@ -248,7 +248,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw indication, when building is complete
-	if (vehicle.isUnitBuildingABuilding () && vehicle.getBuildTurns () == 0 && vehicle.owner == player && !vehicle.BuildPath)
+	if (vehicle.isUnitBuildingABuilding () && vehicle.getBuildTurns () == 0 && vehicle.getOwner () == player && !vehicle.BuildPath)
 	{
 		const cRgbColor finishedMarkColor = cRgbColor::green ();
 		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
@@ -261,7 +261,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	{
 		const cBox<cPosition> d (cPosition (destination.x + 1, destination.y + 1), cPosition (destination.x + 1 + (vehicle.data.isBig ? 2 * destination.w - 1 : destination.w - 1), destination.y + 1 + (vehicle.data.isBig ? 2 * destination.h - 1 : destination.h - 1)));
 
-		drawRectangle (*cVideo::buffer, d, vehicle.owner->getColor ().getColor ());
+		drawRectangle (*cVideo::buffer, d, vehicle.getOwner ()->getColor ().getColor ());
 	}
 
 	// draw the group selected frame if necessary
@@ -292,7 +292,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || vehicle.owner == player) && vehicle.data.canAttack)
+	if (shouldDrawAmmo && (!player || vehicle.getOwner () == player) && vehicle.data.canAttack)
 	{
 		drawMunBar (vehicle, destination);
 	}
