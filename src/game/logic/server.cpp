@@ -3708,9 +3708,15 @@ void cServer::deleteRubble (cBuilding* rubble)
 
 	auto iter = neutralBuildings.find (*rubble);
 	assert (iter != neutralBuildings.end ());
-	if (iter != neutralBuildings.end ()) neutralBuildings.erase (iter);
 
-	sendDeleteUnit (*this, *rubble, nullptr);
+	if (iter != neutralBuildings.end ())
+	{
+		auto owningUnitPtr = *iter;
+
+		neutralBuildings.erase (iter);
+
+		sendDeleteUnit (*this, *owningUnitPtr, nullptr);
+	}
 }
 
 //------------------------------------------------------------------------------
