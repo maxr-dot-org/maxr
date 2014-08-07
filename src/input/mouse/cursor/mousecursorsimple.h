@@ -44,8 +44,7 @@ enum eMouseCursorSimpleType
 	Muni,
 	Repair,
 	Activate,
-	MoveDraft,
-	AttackOutOfRange
+	MoveDraft
 };
 
 class cMouseCursorSimple : public cMouseCursor

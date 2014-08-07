@@ -33,7 +33,7 @@ class cMouseCursorAttack : public cMouseCursor
 public:
 	cMouseCursorAttack ();
 	cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map);
-	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_);
+	cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_, bool inRange);
 
 	virtual SDL_Surface* getSurface () const MAXR_OVERRIDE_FUNCTION;
 
@@ -45,6 +45,8 @@ protected:
 private:
 	int currentHealthPercent;
 	int newHealthPercent;
+
+	bool inRange;
 
 	mutable AutoSurface surface;
 

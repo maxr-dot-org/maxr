@@ -72,8 +72,6 @@ SDL_Surface* cMouseCursorSimple::getSurface () const
 		return GraphicsData.gfx_Cactivate.get ();
 	case eMouseCursorSimpleType::MoveDraft:
 		return GraphicsData.gfx_Cmove_draft.get ();
-	case eMouseCursorSimpleType::AttackOutOfRange:
-		return GraphicsData.gfx_Cattackoor.get ();
 	default:
 		assert (false);
 	}

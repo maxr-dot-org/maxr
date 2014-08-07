@@ -29,13 +29,15 @@
 //------------------------------------------------------------------------------
 cMouseCursorAttack::cMouseCursorAttack () :
 	currentHealthPercent (-1),
-	newHealthPercent (-1)
+	newHealthPercent (-1),
+	inRange (true)
 {}
 
 //------------------------------------------------------------------------------
 cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition& targetPosition, const cMap& map) :
 	currentHealthPercent (-1),
-	newHealthPercent (-1)
+	newHealthPercent (-1),
+	inRange (sourceUnit.isInRange (targetPosition))
 {
 	const sUnitData& data = sourceUnit.data;
 	const cUnit* target = selectTarget (targetPosition, data.canAttack, map);
@@ -49,9 +51,10 @@ cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition
 }
 
 //------------------------------------------------------------------------------
-cMouseCursorAttack::cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_) :
+cMouseCursorAttack::cMouseCursorAttack (int currentHealthPercent_, int newHealthPercent_, bool inRange_) :
 	currentHealthPercent (currentHealthPercent_),
-	newHealthPercent (newHealthPercent_)
+	newHealthPercent (newHealthPercent_),
+	inRange (inRange_)
 {
 	assert (currentHealthPercent >= newHealthPercent);
 }
@@ -73,13 +76,13 @@ cPosition cMouseCursorAttack::getHotPoint () const
 bool cMouseCursorAttack::equal (const cMouseCursor& other) const
 {
 	auto other2 = dynamic_cast<const cMouseCursorAttack*>(&other);
-	return other2 && other2->currentHealthPercent == currentHealthPercent && other2->newHealthPercent == newHealthPercent;
+	return other2 && other2->currentHealthPercent == currentHealthPercent && other2->newHealthPercent == newHealthPercent && other2->inRange == inRange;
 }
 
 //------------------------------------------------------------------------------
 void cMouseCursorAttack::generateSurface () const
 {
-	SDL_Surface* sourceSurface = GraphicsData.gfx_Cattack.get ();
+	SDL_Surface* sourceSurface = inRange ? GraphicsData.gfx_Cattack.get () : GraphicsData.gfx_Cattackoor.get();
     surface = AutoSurface (SDL_CreateRGBSurface (0, sourceSurface->w, sourceSurface->h, Video.getColDepth (), 0, 0, 0, 0));
 
 	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
