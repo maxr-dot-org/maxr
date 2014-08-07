@@ -124,7 +124,8 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 			turnTimeClock->removeDeadline (turnEndDeadline);
 			turnEndDeadline = nullptr;
 		}
-		else if (gameSettings->isTurnEndDeadlineActive () && !turnEndDeadline && !PlayerEndList.empty ())
+		else if (gameSettings->getGameType () != eGameSettingsGameType::Turns && gameSettings->getGameType () != eGameSettingsGameType::HotSeat &&
+				 gameSettings->isTurnEndDeadlineActive () && !turnEndDeadline && !PlayerEndList.empty ())
 		{
 			turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
 			sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime ());
@@ -2937,7 +2938,7 @@ void cServer::handleEnd (const cPlayer& player)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
 			{
-				if (gameSettings->isTurnEndDeadlineActive ())
+				if (gameSettings->getGameType () != eGameSettingsGameType::Turns && gameSettings->getGameType () != eGameSettingsGameType::HotSeat && gameSettings->isTurnEndDeadlineActive ())
 				{
 					turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
 					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
@@ -3001,6 +3002,8 @@ void cServer::handleWantEnd()
 			}
 			sendMakeTurnEnd (*this);
 		}
+
+		startTurnTimers ();
 
 		// begin the new turn
 		disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
@@ -3084,7 +3087,6 @@ bool cServer::checkEndActions (const cPlayer* player)
 void cServer::makeTurnEnd()
 {
 	turnClock->increaseTurn ();
-	startTurnTimers ();
 
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	lastTurnEnd = gameTimer->gameTime;
@@ -3345,19 +3347,27 @@ void cServer::checkDeadline()
 
 	if (!turnTimeClock->hasReachedAnyDeadline ()) return;
 
-	if (checkEndActions (nullptr))
+	if (gameSettings->getGameType () == eGameSettingsGameType::Turns || gameSettings->getGameType () == eGameSettingsGameType::HotSeat)
 	{
-		iWantPlayerEndNum = -2;
-		return;
+		handleEnd (*activeTurnPlayer);
 	}
 	else
 	{
-		iWantPlayerEndNum = -1;
+		if (checkEndActions (nullptr))
+		{
+			iWantPlayerEndNum = -2;
+			return;
+		}
+		else
+		{
+			iWantPlayerEndNum = -1;
+		}
+
+		PlayerEndList.clear ();
+
+		makeTurnEnd ();
 	}
-
-	PlayerEndList.clear();
-
-	makeTurnEnd();
+	turnTimeClock->clearAllDeadlines ();
 }
 
 //------------------------------------------------------------------------------
