@@ -151,3 +151,6 @@ HEADERS += $$files(src/utility/signal/novariadic/*.h)
 SOURCES += $$files(src/utility/signal/novariadic/*.cpp)
 HEADERS += $$files(src/utility/string/*.h)
 SOURCES += $$files(src/utility/string/*.cpp)
+
+HEADERS += $$files(src/lua/*.h)
+SOURCES += $$files(src/lua/*.c)
