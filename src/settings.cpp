@@ -966,6 +966,19 @@ void cSettings::initialize()
 		}
 	}
 
+    // =========================================================================
+    xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Scenarios", NULL);
+    if (!xmlElement || !xmlElement->Attribute ("Text"))
+    {
+        Log.write ("Can't load scenarios path from config file: using default value", LOG_TYPE_WARNING);
+        setScenariosPath ("scenarios");
+        scenariosPath = dataDir + "scenarios";
+    }
+    else
+    {
+        scenariosPath = dataDir + xmlElement->Attribute ("Text");
+    }
+
 	// GAME-NET
 	// =========================================================================
 	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "IP", NULL);
@@ -1710,4 +1723,15 @@ void cSettings::setMvePath (const char* mvePath, bool save)
 {
 	this->mvePath = mvePath;
 	if (save) saveSetting ("Options~Game~Paths~MVEs", mvePath);
+}
+
+const std::string &cSettings::getScenariosPath() const
+{
+    return scenariosPath;
+}
+
+void cSettings::setScenariosPath(const char *scenariosPath, bool save)
+{
+    this->scenariosPath = scenariosPath;
+    if (save) saveSetting ("Options~Game~Paths~Scenarios", scenariosPath);
 }

@@ -248,6 +248,8 @@ public: // TODO: private
 	// the standard version without clan modifications
 	std::vector<sUnitData> svehicles;
 	std::vector<sVehicleUIData> vehicleUIs;
+    std::map<std::string, sID> m_vehiclesIDs;
+    std::map<std::string, sID> m_buildingsIDs;
 
 	// Buildings
 	// the standard version without clan modifications

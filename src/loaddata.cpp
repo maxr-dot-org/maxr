@@ -919,6 +919,7 @@ static int LoadVehicles()
 	// read vehicles.xml
 	std::vector<std::string> VehicleList;
 	std::vector<int> IDList;
+    UnitsData.m_vehiclesIDs.clear();
 	xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement)
 	{
@@ -930,9 +931,14 @@ static int LoadVehicles()
 			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
-
-		if (xmlElement->Attribute ("num"))
-			IDList.push_back (xmlElement->IntAttribute ("num"));
+        if (xmlElement->Attribute ("num")) {
+            int elNum = xmlElement->IntAttribute("num");
+            IDList.push_back(elNum);
+            sID unitId;
+            unitId.iFirstPart = 0;
+            unitId.iSecondPart = elNum;
+            UnitsData.m_vehiclesIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+        }
 		else
 		{
 			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
@@ -956,9 +962,15 @@ static int LoadVehicles()
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 
-		if (xmlElement->Attribute ("num"))
-			IDList.push_back (xmlElement->IntAttribute ("num"));
-		else
+        if (xmlElement->Attribute ("num")) {
+            int elNum = xmlElement->IntAttribute("num");
+            IDList.push_back(elNum);
+            sID unitId;
+            unitId.iFirstPart = 0;
+            unitId.iSecondPart = elNum;
+            UnitsData.m_vehiclesIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+        }
+        else
 		{
 			string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
 			Log.write (msg, LOG_TYPE_WARNING);
@@ -1437,6 +1449,7 @@ static int LoadBuildings()
 	}
 	std::vector<std::string> BuildingList;
 	std::vector<int> IDList;
+    UnitsData.m_buildingsIDs.clear();
 	xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement == NULL)
 	{
@@ -1453,8 +1466,14 @@ static int LoadBuildings()
 		Log.write (msg, LOG_TYPE_WARNING);
 	}
 
-	if (xmlElement->Attribute ("num"))
-		IDList.push_back (xmlElement->IntAttribute ("num"));
+    if (xmlElement->Attribute ("num")) {
+        int elNum = xmlElement->IntAttribute("num");
+        IDList.push_back(elNum);
+        sID unitId;
+        unitId.iFirstPart = 1;
+        unitId.iSecondPart = elNum;
+        UnitsData.m_buildingsIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+    }
 	else
 	{
 		string msg = string ("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
@@ -1489,8 +1508,14 @@ static int LoadBuildings()
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
 
-		if (xmlElement->Attribute ("num"))
-			IDList.push_back (xmlElement->IntAttribute ("num"));
+        if (xmlElement->Attribute ("num")) {
+            int elNum = xmlElement->IntAttribute("num");
+            IDList.push_back(elNum);
+            sID unitId;
+            unitId.iFirstPart = 1;
+            unitId.iSecondPart = elNum;
+            UnitsData.m_buildingsIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+        }
 		else
 		{
 			string msg = string ("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";

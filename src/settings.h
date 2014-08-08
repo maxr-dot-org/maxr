@@ -215,7 +215,10 @@ public:
 	const std::string& getMvePath() const;
 	void setMvePath (const char* mvePath, bool save = true);
 
-	mutable cSignal<void ()> animationsChanged;
+    const std::string& getScenariosPath() const;
+    void setScenariosPath (const char* scenariosPath, bool save = true);
+
+    mutable cSignal<void ()> animationsChanged;
 	// TODO: add signals for other settings
 private:
 
@@ -341,6 +344,7 @@ private:
 	std::string vehiclesPath;  // Path to the vehicles
 	std::string buildingsPath; // Path to the buildings
 	std::string mvePath;       // Path to the in-game movies (*.mve)
+    std::string scenariosPath; // Path to the scenarios
 
 	/**
 	 * Gets the platform dependent user paths for the configuration file
