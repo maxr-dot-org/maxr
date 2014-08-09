@@ -22,7 +22,7 @@
 
 #include "game/logic/server.h"
 
-#include "attackJobs.h"
+#include "game/logic/attackjobs.h"
 #include "game/data/units/building.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/casualtiestracker.h"

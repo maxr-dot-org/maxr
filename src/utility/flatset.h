@@ -157,17 +157,17 @@ public:
 	}
 	iterator insert (const_iterator hint, const value_type& value)
 	{
-		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, pos)))
+		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, hint)))
 		{
-			return data.insert (pos, value);
+			return data.insert (hint, value);
 		}
 		return insert (value).first;
 	}
 	iterator insert (const_iterator hint, value_type&& value)
 	{
-		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, pos)))
+		if ((hint == begin () || compare (*(hint-1), value)) && (hint == end () || compare (value, hint)))
 		{
-			return data.insert (pos, std::move(value));
+			return data.insert (hint, std::move(value));
 		}
 		return insert (std::move(value)).first;
 	}
@@ -180,7 +180,7 @@ public:
 
 	// TODO: emplace?!
 
-	iterator erase (const_iterator position) { return data.erase (position); }
+	iterator erase (iterator position) { return data.erase (position); }
 	size_type erase (const key_type& x)
 	{
 		auto i = find (x);

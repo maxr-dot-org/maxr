@@ -21,7 +21,7 @@
 
 #include "game/logic/client.h"
 
-#include "attackJobs.h"
+#include "game/logic/attackjobs.h"
 #include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"

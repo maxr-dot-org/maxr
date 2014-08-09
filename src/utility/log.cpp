@@ -174,7 +174,7 @@ int cLog::writeMessage (const std::string& str)
 	if (logfile)
 	{
 		const int wrote = SDL_RWwrite (logfile, str.c_str(), 1, (int) str.length());
-		std::cout << str;
+		//std::cout << str;
 		if (wrote <= 0)   //sanity check - was file writable?
 		{
 			fprintf (stderr, "Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str());
@@ -194,4 +194,9 @@ int cLog::writeMessage (const std::string& str)
 void cLog::close()
 {
 	SDL_RWclose (logfile);   //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
+}
+
+bool cLog::isInitialized() const
+{
+  return !bFirstRun;
 }

@@ -19,7 +19,7 @@
 
 #include <cmath>
 
-#include "attackJobs.h"
+#include "game/logic/attackjobs.h"
 
 #include "game/data/units/building.h"
 #include "game/logic/client.h"

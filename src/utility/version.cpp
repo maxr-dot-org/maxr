@@ -20,6 +20,14 @@
 #include "utility/version.h"
 #include "main.h" // iToStr
 
+#ifdef major
+#	undef major
+#endif
+
+#ifdef minor
+#	undef minor
+#endif
+
 //------------------------------------------------------------------------------
 cVersion::cVersion () :
 	major (0),

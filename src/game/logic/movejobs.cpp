@@ -21,7 +21,7 @@
 
 #include "game/logic/movejobs.h"
 
-#include "attackJobs.h"
+#include "game/logic/attackjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
 #include "game/logic/clientevents.h"
