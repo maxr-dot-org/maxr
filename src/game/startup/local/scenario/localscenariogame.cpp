@@ -21,6 +21,7 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/logic/savegame.h"
+#include "ui/graphical/menu/dialogs/dialogscenarioend.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/application.h"
@@ -29,6 +30,7 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/map/map.h"
 #include "game/logic/clientevents.h"
+#include "game/logic/turnclock.h"
 #include "utility/files.h"
 #include "utility/log.h"
 #include "loaddata.h"
@@ -41,7 +43,8 @@
 
 cLocalScenarioGame::cLocalScenarioGame(cApplication* application) :
     m_application(application),
-    m_startStatus(Ready)
+    m_startStatus(Ready),
+    m_scenarioFinished(false)
 {
     // Build the server
     m_server = std::make_unique<cServer>(nullptr);
@@ -52,6 +55,9 @@ cLocalScenarioGame::cLocalScenarioGame(cApplication* application) :
     player.setLocal ();
     m_server->addPlayer(std::make_unique<cPlayer>(player));
     m_players.push_back(player);
+
+    // Connect to the new turn signal
+    m_signalConnectionManager.connect(m_server->getTurnClock()->turnChanged, std::bind (&cLocalScenarioGame::turnChanged, this));
 }
 
 cLocalScenarioGame::~cLocalScenarioGame()
@@ -247,29 +253,78 @@ void cLocalScenarioGame::startGame()
     m_server->startTurnTimers();
 
     // Show GUI
-    gameGuiController = std::make_unique<cGameGuiController> (*m_application, m_map);
-    gameGuiController->setSingleClient (m_guiClient);
+    m_gameGuiController = std::make_unique<cGameGuiController> (*m_application, m_map);
+    m_gameGuiController->setSingleClient (m_guiClient);
 
     cGameGuiState playerGameGuiState;
     const auto& player = m_guiClient->getPlayerList()[0];
     playerGameGuiState.setMapPosition (m_guiPosition);
-    gameGuiController->addPlayerGameGuiState (*player, std::move (playerGameGuiState));
+    m_gameGuiController->addPlayerGameGuiState (*player, std::move (playerGameGuiState));
 
-    gameGuiController->start ();
+    m_gameGuiController->start ();
 
     using namespace std::placeholders;
-    m_signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalScenarioGame::save, this, _1, _2));
-    m_signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+    m_signalConnectionManager.connect (m_gameGuiController->triggeredSave, std::bind (&cLocalScenarioGame::save, this, _1, _2));
+    m_signalConnectionManager.connect (m_gameGuiController->terminated, [&]() { terminate = true; });
 }
 
 void cLocalScenarioGame::exit()
 {
-    gameGuiController->exit();
+    m_gameGuiController->exit();
 }
 
 const cClient &cLocalScenarioGame::getClient(int index)
 {
     if (index == 0) return *m_guiClient;
     else return *m_iaClients[index - 1];
+}
+
+void cLocalScenarioGame::turnChanged()
+{
+    if (m_scenarioFinished) return;
+
+    Log.write("New turn begin, will call scenario victory condition script : " + std::to_string(m_server->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
+
+    // Add turn count as a global variable
+    lua_pushinteger(L, m_server->getTurnClock()->getTurn());
+    lua_setglobal(L, "turnCount");
+
+    /* TODO_M: list of other datas that could be added to the context for the victory condition
+     * List vehicles of each player, their position and caracteristics, if disabled
+     * List of buildings of each player, their position and caracteristics, if disabled
+     * Ecosphere count and score of players
+     * Research state of players, player credits
+     * Casualties: les pertes de chaque joueur, afin de savoir combien d'unités chacun s'est fait dégommé, on pourrait demander plus de dommage AI que humain au tour 50 par ex.
+     * /
+
+
+    // Call Lua function "victoryCondition" from scenario; return value
+    // -1 defeat, 0 continue, 1 victory
+    lua_getglobal(L, "victoryCondition");
+    if (lua_pcall(L, 0, 1, 0) != 0) {
+        Log.write("Error calling victoryCondition : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
+        return;
+    }
+
+    // Get result value
+    if (!lua_isnumber(L, -1)) Log.write("Error victoryCondition should return a number: ", cLog::eLOG_TYPE_ERROR);
+    else {
+        int v = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+        Log.write("Victory condition returned : " + std::to_string(v), cLog::eLOG_TYPE_DEBUG);
+
+        // Scenario end !
+        if (v != 0) {
+            // Avoid to display the dialog endlessly in case of user want to continue the game
+            m_scenarioFinished = true;
+
+            // Option to either return to game (endless play) or exit scenario.
+            auto scenarioDialog = m_application->show (std::make_shared<cDialogScenarioEnd> (v > 0));
+            m_signalConnectionManager.connect (scenarioDialog->exitClicked, [&]()
+            {
+                m_gameGuiController->exit ();
+            });
+        }
+    }
 }
 

@@ -59,12 +59,16 @@ public:
 
     const cClient& getClient(int index);
 
+    // Slots:
+    void turnChanged();
+
 
 private:
     cApplication* m_application;
     std::shared_ptr<LuaGame> m_luaGame;
     lua_State* L;
     StartingStatus m_startStatus;
+    bool m_scenarioFinished;
 
     cSignalConnectionManager m_signalConnectionManager;
     std::unique_ptr<cServer> m_server;
@@ -76,7 +80,7 @@ private:
     std::shared_ptr<cStaticMap> m_map;
 
     std::shared_ptr<cGameSettings> m_gameSettings;
-    std::unique_ptr<cGameGuiController> gameGuiController;
+    std::unique_ptr<cGameGuiController> m_gameGuiController;
     cPosition m_guiPosition;
     std::shared_ptr<cWindowClanSelection> m_clanWindow;
 };

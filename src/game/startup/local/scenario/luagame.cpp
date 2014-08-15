@@ -216,8 +216,5 @@ void LuaGame::buildGame()
     // Start definitely the game
     m_game->startGame();
     Log.write("Scenario game started successfully", cLog::eLOG_TYPE_INFO);
-
-    // TODO_M: Handle end of game condition, victory (destruction, ecosphere...) or defeat (destruction, particular unit destruction)
-    // Let a lua function call evaluate this from the script
 }
 
