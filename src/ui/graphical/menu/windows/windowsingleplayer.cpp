@@ -44,14 +44,6 @@
 #include "game/logic/server.h"
 #include "game/logic/clientevents.h"
 
-#include "lua/lua.hpp"
-#include "game/startup/local/scenario/luaposition.h"
-#include "game/startup/local/scenario/luagame.h"
-#include "game/startup/local/scenario/luaplayer.h"
-#include "game/startup/local/scenario/luasettings.h"
-#include "utility/files.h"
-#include "utility/log.h"
-
 //------------------------------------------------------------------------------
 cWindowSinglePlayer::cWindowSinglePlayer () :
 	cWindowMain (lngPack.i18n ("Text~Others~Single_Player"))
@@ -238,69 +230,12 @@ void cWindowSinglePlayer::newScenarioGameClicked()
 {
     if (!getActiveApplication ()) return;
     auto application = getActiveApplication ();
-
+    auto game = std::make_shared<cLocalScenarioGame> (application);
     auto windowScenario = application->show (std::make_shared<cWindowScenario>());
     windowScenario->done.connect ([=]() {
         // Load scenario file
         std::string luaFilename = windowScenario->getSelectedScenario();
-        std::string fullFilename = cSettings::getInstance().getScenariosPath() + PATH_DELIMITER + luaFilename;
-        SDL_RWops* fpLuaFile = SDL_RWFromFile(fullFilename.c_str(), "rb");
-        if (fpLuaFile == NULL)
-        {
-            // now try in the user's map directory
-            std::string userMapsDir = getUserMapsDir();
-            if (!userMapsDir.empty())
-            {
-                fullFilename = userMapsDir + luaFilename;
-                fpLuaFile = SDL_RWFromFile (fullFilename.c_str(), "rb");
-            }
-        }
-        if (fpLuaFile == NULL)
-        {
-            Log.write("Cannot load scenario file: \"" + luaFilename + "\"", cLog::eLOG_TYPE_ERROR);
-            return;
-        }
-        Sint64 fileSize = SDL_RWsize(fpLuaFile);
-        char* luaData = new char[fileSize];
-        SDL_RWread(fpLuaFile, luaData, 1, fileSize);
-        SDL_RWclose (fpLuaFile);
-
-        // Create a lua context and run Lua interpreter
-        lua_State* L = luaL_newstate();
-        luaL_openlibs(L);
-        Lunar<LuaPosition>::Register(L);
-        Lunar<LuaGame>::Register(L);
-        Lunar<LuaPlayer>::Register(L);
-        Lunar<LuaSettings>::Register(L);
-
-        // Create the game in a global variable "game"
-        LuaGame* luaGame = new LuaGame(application);
-        Lunar<LuaGame>::push(L, luaGame);               // luaGame has to be deleted from C++
-        lua_setglobal(L, "game");
-
-        // Load the Lua script
-        int error = luaL_loadbuffer(L, luaData, fileSize, "luaScenario") || lua_pcall(L, 0, 0, 0);
-        if (error) {
-            Log.write("Cannot run scenario file, check lua syntax: \"" + luaFilename + "\"" +
-                      "\nLua Error: \n" + lua_tostring(L, -1), cLog::eLOG_TYPE_ERROR);
-            lua_pop(L, 1);
-        }
-        else {
-            // Load scenario name from global variable of the lua script
-            std::string scenarioName = "Unknown";
-            lua_getglobal (L, "scenarioName");                              // Push global scenarioName var on the stack
-            if (lua_isstring(L, 1)) scenarioName = lua_tostring(L, 1);      // Retreive the value
-            lua_pop(L, 1);                                                  // Pop the value from the stack
-            Log.write("Scenario loaded successfully : " + scenarioName, cLog::eLOG_TYPE_INFO);
-        }
-
-        // Close lua context
-        lua_close(L);
-        delete[] luaData;
-
-        // TODO_M: when to delete luaGame ?
-        // Maybe keep it living for more AI interaction during the game !
-
+        game->loadLuaScript(luaFilename);
         windowScenario->close();
     });
 }

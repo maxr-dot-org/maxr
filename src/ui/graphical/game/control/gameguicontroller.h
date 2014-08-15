@@ -64,6 +64,7 @@ public:
 	~cGameGuiController ();
 
 	void start ();
+    void exit();
 
 	void addPlayerGameGuiState (const cPlayer& player, cGameGuiState playerGameGuiState);
 

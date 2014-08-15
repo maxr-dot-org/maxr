@@ -22,6 +22,7 @@
 #include "game/logic/server.h"
 #include "game/logic/savegame.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/application.h"
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
@@ -32,7 +33,15 @@
 #include "utility/log.h"
 #include "loaddata.h"
 
-cLocalScenarioGame::cLocalScenarioGame()
+#include "lua/lua.hpp"
+#include "game/startup/local/scenario/luaposition.h"
+#include "game/startup/local/scenario/luagame.h"
+#include "game/startup/local/scenario/luaplayer.h"
+#include "game/startup/local/scenario/luasettings.h"
+
+cLocalScenarioGame::cLocalScenarioGame(cApplication* application) :
+    m_application(application),
+    m_startStatus(Ready)
 {
     // Build the server
     m_server = std::make_unique<cServer>(nullptr);
@@ -53,6 +62,9 @@ cLocalScenarioGame::~cLocalScenarioGame()
         m_server->stop ();
         reloadUnitValues ();
     }
+
+    // Close Lua context
+    lua_close(L);
 }
 
 void cLocalScenarioGame::run()
@@ -70,6 +82,89 @@ void cLocalScenarioGame::save(int saveNumber, const std::string &saveName)
     cSavegame savegame(saveNumber);
     savegame.save(*m_server, saveName);
     m_server->makeAdditionalSaveRequest(saveNumber);
+}
+
+void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
+{
+    // Open Lua File
+    std::string fullFilename = cSettings::getInstance().getScenariosPath() + PATH_DELIMITER + luaFilename;
+    SDL_RWops* fpLuaFile = SDL_RWFromFile(fullFilename.c_str(), "rb");
+    if (fpLuaFile == NULL)
+    {
+        // now try in the user's map directory
+        std::string userMapsDir = getUserMapsDir();
+        if (!userMapsDir.empty())
+        {
+            fullFilename = userMapsDir + luaFilename;
+            fpLuaFile = SDL_RWFromFile (fullFilename.c_str(), "rb");
+        }
+    }
+    if (fpLuaFile == NULL)
+    {
+        Log.write("Cannot load scenario file: \"" + luaFilename + "\"", cLog::eLOG_TYPE_ERROR);
+        return;
+    }
+    Sint64 fileSize = SDL_RWsize(fpLuaFile);
+    char* luaData = new char[fileSize];
+    SDL_RWread(fpLuaFile, luaData, 1, fileSize);
+    SDL_RWclose (fpLuaFile);
+
+    // Create a lua context and run Lua interpreter
+    L = luaL_newstate();
+    luaL_openlibs(L);
+    Lunar<LuaPosition>::Register(L);
+    Lunar<LuaGame>::Register(L);
+    Lunar<LuaPlayer>::Register(L);
+    Lunar<LuaSettings>::Register(L);
+
+    // Create the game in a global variable "game"
+    m_luaGame = std::make_shared<LuaGame>(this);
+    Lunar<LuaGame>::push(L, m_luaGame.get());               // luaGame has to be deleted from C++
+    lua_setglobal(L, "game");
+
+    // Load the Lua script
+    int error = luaL_loadbuffer(L, luaData, fileSize, "luaScenario") || lua_pcall(L, 0, 0, 0);
+    if (error) {
+        Log.write("Cannot run scenario file, check lua syntax: \"" + luaFilename + "\"" +
+                  "\nLua Error: \n" + lua_tostring(L, -1), cLog::eLOG_TYPE_ERROR);
+        lua_pop(L, 1);
+    }
+    else {
+        // Load scenario name from global variable of the lua script
+        std::string scenarioName = "Unknown";
+        lua_getglobal (L, "scenarioName");                              // Push global scenarioName var on the stack
+        if (lua_isstring(L, 1)) scenarioName = lua_tostring(L, 1);      // Retreive the value
+        lua_pop(L, 1);                                                  // Pop the value from the stack
+        Log.write("Scenario loaded successfully : " + scenarioName, cLog::eLOG_TYPE_INFO);
+    }
+    delete[] luaData;
+
+    // Add this as a runnable to application
+    terminate = false;
+    m_application->addRunnable (shared_from_this ());
+}
+
+void cLocalScenarioGame::openClanWindow()
+{
+    m_startStatus = WaitingHuman;
+    m_clanWindow = std::make_shared<cWindowClanSelection>();
+    m_application->show (m_clanWindow);
+
+    // Connection to further code: but the functions returns immediately
+    m_clanWindow->done.connect ([&]()
+    {
+        // We go here ONLY after the user clicked the ok button
+        m_luaGame->setHumanClan(m_clanWindow->getSelectedClan());
+        m_startStatus = Ready;
+        m_clanWindow->close ();
+        m_luaGame->gameReady();
+    });
+    m_clanWindow->canceled.connect ([&]()
+    {
+        m_startStatus = Cancelled;
+        m_clanWindow->close ();
+    });
+
 }
 
 bool cLocalScenarioGame::loadMap(std::string mapName)
@@ -146,13 +241,13 @@ void cLocalScenarioGame::startServer()
     m_server->start();
 }
 
-void cLocalScenarioGame::startGame(cApplication &application)
+void cLocalScenarioGame::startGame()
 {
     // Everybody is Ready, let's go !
     m_server->startTurnTimers();
 
     // Show GUI
-    gameGuiController = std::make_unique<cGameGuiController> (application, m_map);
+    gameGuiController = std::make_unique<cGameGuiController> (*m_application, m_map);
     gameGuiController->setSingleClient (m_guiClient);
 
     cGameGuiState playerGameGuiState;
@@ -164,12 +259,12 @@ void cLocalScenarioGame::startGame(cApplication &application)
 
     using namespace std::placeholders;
     m_signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalScenarioGame::save, this, _1, _2));
-
-    terminate = false;
-
-    application.addRunnable (shared_from_this ());
-
     m_signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
+}
+
+void cLocalScenarioGame::exit()
+{
+    gameGuiController->exit();
 }
 
 const cClient &cLocalScenarioGame::getClient(int index)

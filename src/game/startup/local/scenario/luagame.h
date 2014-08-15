@@ -18,8 +18,8 @@ public:
     static Lunar<LuaGame>::RegType methods[];
 
 public:
+    LuaGame(cLocalScenarioGame* game);
     LuaGame(lua_State *L);
-    LuaGame(cApplication *app);
     ~LuaGame();
 
     // Lua interface
@@ -30,18 +30,20 @@ public:
     int setSettings(lua_State *L);
     int start(lua_State *L);
 
+    // C interface
+    void setHumanClan(int clan);
+    void gameReady();
+
 private:
     void buildGame();
 
 private:
-    std::shared_ptr<cLocalScenarioGame> m_game;
+    cLocalScenarioGame* m_game;
     std::vector<std::string> m_availableMaps;
     std::vector<LuaPlayer*> m_players;
 
     bool m_mapLoaded;
-    cApplication *m_application;
     std::shared_ptr<cWindowClanSelection> m_clanWindow;
-    bool m_humanChooseClan;
     int m_humanClan;
 };
 

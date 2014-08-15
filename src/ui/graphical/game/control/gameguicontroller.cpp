@@ -118,7 +118,12 @@ void cGameGuiController::start ()
 		{
 			showNextPlayerDialog ();
 		}
-	}
+    }
+}
+
+void cGameGuiController::exit()
+{
+    gameGui->exit();
 }
 
 //------------------------------------------------------------------------------

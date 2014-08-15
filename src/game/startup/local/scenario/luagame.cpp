@@ -10,7 +10,6 @@
 #include "game/startup/local/scenario/luaposition.h"
 #include "game/startup/local/scenario/luasettings.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
-#include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/gamegui.h"
 #include "loaddata.h"
@@ -29,20 +28,17 @@ Lunar<LuaGame>::RegType LuaGame::methods[] = {
 
 LuaGame::LuaGame(lua_State *L) :
     m_mapLoaded(false),
-    m_game(std::make_shared<cLocalScenarioGame>()),
-    m_humanClan(-1),
-    m_humanChooseClan(false)
+    m_game(00),
+    m_humanClan(-1)
 {
     Log.write("LuaGame construction from Lua, should never happen !", cLog::eLOG_TYPE_ERROR);
 }
 
 // LuaGame needs to be instantiated by C++ code, not by Lua !
-LuaGame::LuaGame(cApplication *app) :
+LuaGame::LuaGame(cLocalScenarioGame *game) :
     m_mapLoaded(false),
-    m_game(std::make_shared<cLocalScenarioGame>()),
-    m_application(app),
-    m_humanClan(-1),
-    m_humanChooseClan(false)
+    m_game(game),
+    m_humanClan(-1)
 {
     // List all available map : this is copy-paste from cWindowMapSelection --> refactoring
     m_availableMaps = getFilesOfDirectory (cSettings::getInstance ().getMapsPath ());
@@ -143,7 +139,7 @@ int LuaGame::setSettings(lua_State *L)
     if (nbParams == 1 && lua_isuserdata(L, 1)) {
         LuaSettings* settings = Lunar<LuaSettings>::check(L, 1);
         m_game->setGameSettings(settings->getGameSettings());
-        m_humanChooseClan = settings->humanChooseClan();
+        if (settings->humanChooseClan()) m_game->openClanWindow();
     }
     return 0;
 }
@@ -154,27 +150,6 @@ int LuaGame::start(lua_State *L)
     // Load the first map by default if it has not been loaded by the script
     if (!m_mapLoaded && m_availableMaps.size() > 0) {
         if (! m_game->loadMap(m_availableMaps.at(0))) return 0;
-    }
-
-    // Let human choose his clan if set from LuaSettings script
-    if (m_humanChooseClan) {
-        m_clanWindow = std::make_shared<cWindowClanSelection> ();
-        m_application->show (m_clanWindow);
-        m_clanWindow->done.connect ([&]()
-        {
-            // humanClan is set when script let user choose its own clan, otherwise script may choose clan as for each player
-            m_humanClan = m_clanWindow->getSelectedClan();
-            buildGame();
-            m_clanWindow->close ();
-        });
-        m_clanWindow->canceled.connect ([&]()
-        {
-            m_clanWindow->close ();
-            // TODO_M: cancel scenatio launch, should delete luaGame
-        });
-    }
-    else {
-        buildGame();
     }
 
     // TODO_M: script unit upgrades from LUA
@@ -190,7 +165,21 @@ int LuaGame::start(lua_State *L)
 //        windowLandingUnitSelection->close();
     }
 
+    if (m_game->startingStatus() == Ready) buildGame();             // Start game immediately
+    if (m_game->startingStatus() == Cancelled) m_game->exit();      // Release ressource
+    if (m_game->startingStatus() == WaitingHuman) { }               // Wait for human to interract (choose clan, ...)
+
     return 0;
+}
+
+void LuaGame::setHumanClan(int clan)
+{
+    m_humanClan = clan;
+}
+
+void LuaGame::gameReady()
+{
+    buildGame();
 }
 
 void LuaGame::buildGame()
@@ -225,7 +214,7 @@ void LuaGame::buildGame()
     m_game->setGuiPosition(m_players[0]->landingPosition());
 
     // Start definitely the game
-    m_game->startGame(*m_application);
+    m_game->startGame();
     Log.write("Scenario game started successfully", cLog::eLOG_TYPE_INFO);
 
     // TODO_M: Handle end of game condition, victory (destruction, ecosphere...) or defeat (destruction, particular unit destruction)
