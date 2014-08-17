@@ -47,7 +47,8 @@ public:
     StartingStatus startingStatus() const { return m_startStatus; }
 
     bool loadMap(std::string mapName);
-    void addPlayer(std::string playerName);
+    cPlayer *humanPlayer();
+    cPlayer *addPlayer(std::string playerName);
     int playerCount() { return m_players.size(); }
     void setGuiPosition(const cPosition& pos) { m_guiPosition = pos; }
     void addUnit(const sID &id, const std::string &playerName, const cPosition &pos);

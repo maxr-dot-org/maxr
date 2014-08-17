@@ -190,7 +190,12 @@ bool cLocalScenarioGame::loadMap(std::string mapName)
     return true;
 }
 
-void cLocalScenarioGame::addPlayer(std::string playerName)
+cPlayer *cLocalScenarioGame::humanPlayer()
+{
+    return m_server->getPlayerFromString(m_players[0].getName());
+}
+
+cPlayer* cLocalScenarioGame::addPlayer(std::string playerName)
 {
     // Create client and player
     std::shared_ptr<cClient> client = std::make_shared<cClient>(m_server.get(), nullptr);
@@ -200,6 +205,7 @@ void cLocalScenarioGame::addPlayer(std::string playerName)
     m_server->addPlayer (std::make_unique<cPlayer>(ia_player));
     m_players.push_back(ia_player);
     m_iaClients.push_back(std::move(client));
+    return m_server->getPlayerFromString(playerName);
 }
 
 void cLocalScenarioGame::addUnit(const sID &id, const std::string &playerName, const cPosition &pos)
@@ -295,7 +301,7 @@ void cLocalScenarioGame::turnChanged()
      * Ecosphere count and score of players
      * Research state of players, player credits
      * Casualties: les pertes de chaque joueur, afin de savoir combien d'unités chacun s'est fait dégommé, on pourrait demander plus de dommage AI que humain au tour 50 par ex.
-     * /
+     */
 
 
     // Call Lua function "victoryCondition" from scenario; return value

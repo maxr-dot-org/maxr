@@ -28,6 +28,12 @@ LuaPosition::LuaPosition(const cPosition &position) :
 {
 }
 
+LuaPosition::LuaPosition(int x, int y) :
+    m_position(x, y)
+{
+
+}
+
 int LuaPosition::x(lua_State *L)
 {
     lua_pushinteger(L, m_position.x());

@@ -24,7 +24,7 @@ public:
 
 public:
     LuaPlayer(lua_State *L);
-    LuaPlayer(std::string name);
+    LuaPlayer(cPlayer* player);
 
     // Lua interface
     int getName(lua_State *L);
@@ -36,17 +36,15 @@ public:
     int addBuilding(lua_State *L);
 
     // C interface
-    std::string getName() const { return m_name; }
-    int getClan() const { return m_clan; }
-    cPosition landingPosition() const { return m_landingPosition; }
+    std::string getName() const;
+    int getClan() const;
+    cPosition landingPosition() const;
     std::vector<sPlayerUnit> getUnits() const { return m_otherUnits; }
     std::vector<sPlayerUnit> getBuildings() const { return m_buildings; }
     void sendInformations(const cClient& client);
 
 private:
-    std::string m_name;
-    int m_clan;
-    cPosition m_landingPosition;
+    cPlayer *m_player;
     std::vector<sLandingUnit> m_landingUnits;
     std::vector<sPlayerUnit> m_otherUnits;
     std::vector<sPlayerUnit> m_buildings;

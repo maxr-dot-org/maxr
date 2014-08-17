@@ -14,9 +14,12 @@ public:
 public:
     LuaPosition(lua_State *L);                      // Build a LuaPosition from lua code
     LuaPosition(const cPosition &position);         // Build a LuaPosition from C code (copy data)
+    LuaPosition(int x, int y);                      // Build a LuaPosition from C code (copy data)
 
     // C interface
     cPosition getPosition() const { return m_position; }
+    int x() const { return m_position.x(); }
+    int y() const { return m_position.y(); }
 
     // Lua interface (can't be const)
     int x(lua_State *L);

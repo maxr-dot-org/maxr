@@ -2,6 +2,7 @@
 
 #include "game/startup/local/scenario/luaposition.h"
 #include "game/logic/clientevents.h"
+#include "game/data/player/player.h"
 #include "game/data/units/unitdata.h"
 #include "utility/log.h"
 #include "main.h"
@@ -20,29 +21,25 @@ Lunar<LuaPlayer>::RegType LuaPlayer::methods[] = {
 };
 
 LuaPlayer::LuaPlayer(lua_State *L) :
-    m_name("__LuaPlayer"),
-    m_clan(-1),
-    m_landingPosition(0, 0)
+    m_player(00)
 {
     // Only here for Lunar registration, should not be created from Lua code
 }
 
-LuaPlayer::LuaPlayer(std::string name) :
-    m_name(name),
-    m_clan(-1),
-    m_landingPosition(0, 0)
+LuaPlayer::LuaPlayer(cPlayer *player) :
+    m_player(player)
 {
 }
 
 int LuaPlayer::getName(lua_State *L)
 {
-    lua_pushstring(L, m_name.c_str());
+    lua_pushstring(L, getName().c_str());
     return 1;
 }
 
 int LuaPlayer::getLandingPosition(lua_State *L)
 {
-    LuaPosition* lpos = new LuaPosition(m_landingPosition);
+    LuaPosition* lpos = new LuaPosition(m_player->getLandingPosX(), m_player->getLandingPosY());
     Lunar<LuaPosition>::push(L, lpos, true);        // true: use the lua gc
     return 1;
 }
@@ -52,12 +49,12 @@ int LuaPlayer::setLandingPosition(lua_State *L)
     int nbParams = lua_gettop(L);
     if (nbParams == 1 && lua_isuserdata(L, 1)) {
         LuaPosition* lpos = Lunar<LuaPosition>::check(L, 1);
-        m_landingPosition = lpos->getPosition();
+        m_player->setLandingPos(lpos->x(), lpos->y());
     }
     if (nbParams == 2 && lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
         int x = (int)lua_tonumber(L, 1);
         int y = (int)lua_tonumber(L, 2);
-        m_landingPosition = cPosition(x, y);
+        m_player->setLandingPos(x, y);
     }
     return 0;
 }
@@ -154,13 +151,28 @@ int LuaPlayer::addBuilding(lua_State *L)
     return 0;
 }
 
+std::string LuaPlayer::getName() const
+{
+    return m_player->getName();
+}
+
+int LuaPlayer::getClan() const
+{
+    return m_player->getClan();
+}
+
+cPosition LuaPlayer::landingPosition() const
+{
+    return cPosition(m_player->getLandingPosX(), m_player->getLandingPosY());
+}
+
 int LuaPlayer::setClan(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams == 1 && lua_isnumber(L, 1)) {
         int clan = (int)lua_tonumber(L, 1);
         if (clan >= 0 && clan < 8) {
-            m_clan = clan;
+            m_player->setClan(clan);
         }
     }
     return 0;
@@ -171,6 +183,6 @@ void LuaPlayer::sendInformations(const cClient &client)
     sendClan(client);
     sendLandingUnits(client, m_landingUnits);
     sendUnitUpgrades(client);
-    sendLandingCoords(client, m_landingPosition);
+    sendLandingCoords(client, cPosition(m_player->getLandingPosX(), m_player->getLandingPosY()));
     sendReadyToStart(client);
 }

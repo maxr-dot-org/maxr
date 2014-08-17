@@ -63,7 +63,7 @@ LuaGame::LuaGame(cLocalScenarioGame *game) :
         }
     }
 
-    LuaPlayer* humanPlayer = new LuaPlayer(cSettings::getInstance().getPlayerName());
+    LuaPlayer* humanPlayer = new LuaPlayer(m_game->humanPlayer());
     m_players.push_back(humanPlayer);
 }
 
@@ -123,10 +123,10 @@ int LuaGame::addPlayer(lua_State *L)
     }
 
     // Add player to the game
-    m_game->addPlayer(playerName);
+    cPlayer *player = m_game->addPlayer(playerName);
 
     // Return a LuaPlayer object
-    LuaPlayer* lp = new LuaPlayer(playerName);
+    LuaPlayer* lp = new LuaPlayer(player);
     Lunar<LuaPlayer>::push(L, lp);      // silent false means we are deleting LuaPlayer from C++
     m_players.push_back(lp);
     return 1;
