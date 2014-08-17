@@ -30,7 +30,7 @@ cDialogScenarioEnd::cDialogScenarioEnd(bool victory) :
     std::string text;
     if (victory) text = "Victory ! Congratulation general\n";
     else text = "Defeat ! Try again\n";
-    text.append("Click on exit to end the scenario, click on continue to continue playing any way");
+    text.append("\n\nClick on exit to end the scenario, click on continue to continue playing any way");
     auto textLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (35, 35), getPosition () + cPosition (267, 173)), text, FONT_LATIN_NORMAL, toEnumFlag(eAlignmentType::CenterHorizontal) | eAlignmentType::Top));
     textLabel->setWordWrap (true);
 

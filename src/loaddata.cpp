@@ -920,7 +920,8 @@ static int LoadVehicles()
 	std::vector<std::string> VehicleList;
 	std::vector<int> IDList;
     UnitsData.m_vehiclesIDs.clear();
-	xmlElement = xmlElement->FirstChildElement();
+    UnitsData.m_vehiclesNames.clear();
+    xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement)
 	{
 		const char* directory = xmlElement->Attribute ("directory");
@@ -938,6 +939,7 @@ static int LoadVehicles()
             unitId.iFirstPart = 0;
             unitId.iSecondPart = elNum;
             UnitsData.m_vehiclesIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+            UnitsData.m_vehiclesNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
         }
 		else
 		{
@@ -969,6 +971,7 @@ static int LoadVehicles()
             unitId.iFirstPart = 0;
             unitId.iSecondPart = elNum;
             UnitsData.m_vehiclesIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+            UnitsData.m_vehiclesNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
         }
         else
 		{
@@ -1450,6 +1453,7 @@ static int LoadBuildings()
 	std::vector<std::string> BuildingList;
 	std::vector<int> IDList;
     UnitsData.m_buildingsIDs.clear();
+    UnitsData.m_buildingsNames.clear();
 	xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement == NULL)
 	{
@@ -1473,6 +1477,7 @@ static int LoadBuildings()
         unitId.iFirstPart = 1;
         unitId.iSecondPart = elNum;
         UnitsData.m_buildingsIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+        UnitsData.m_buildingsNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
     }
 	else
 	{
@@ -1515,6 +1520,7 @@ static int LoadBuildings()
             unitId.iFirstPart = 1;
             unitId.iSecondPart = elNum;
             UnitsData.m_buildingsIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
+            UnitsData.m_buildingsNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
         }
 		else
 		{

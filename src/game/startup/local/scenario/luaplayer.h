@@ -10,6 +10,7 @@
 
 class cClient;
 struct sLandingUnit;
+class cUnit;
 
 struct sPlayerUnit {
     sID unitID;
@@ -29,8 +30,17 @@ public:
     // Lua interface
     int getName(lua_State *L);
     int getLandingPosition(lua_State *L);
-    int setLandingPosition(lua_State *L);
+    int getClan(lua_State *L);
+    int getVehicleCount(lua_State *L);
+    int getVehicleIdList(lua_State *L);
+    int getVehicleById(lua_State *L);
+    int getBuildingCount(lua_State *L);
+    int getBuildingIdList(lua_State *L);
+    int getBuildingById(lua_State *L);
+
+    // Extra interface for scenario construction
     int setClan(lua_State *L);
+    int setLandingPosition(lua_State *L);
     int addLandingUnit(lua_State *L);
     int addUnit(lua_State *L);
     int addBuilding(lua_State *L);
@@ -42,6 +52,9 @@ public:
     std::vector<sPlayerUnit> getUnits() const { return m_otherUnits; }
     std::vector<sPlayerUnit> getBuildings() const { return m_buildings; }
     void sendInformations(const cClient& client);
+
+private:
+    void pushUnitData(lua_State *L, cUnit *unit);
 
 private:
     cPlayer *m_player;

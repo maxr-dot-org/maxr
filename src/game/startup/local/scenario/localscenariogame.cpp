@@ -208,15 +208,16 @@ cPlayer* cLocalScenarioGame::addPlayer(std::string playerName)
     return m_server->getPlayerFromString(playerName);
 }
 
-void cLocalScenarioGame::addUnit(const sID &id, const std::string &playerName, const cPosition &pos)
+unsigned int cLocalScenarioGame::addUnit(const sID &id, const std::string &playerName, const cPosition &pos)
 {
-    m_server->addVehicle(pos, id, m_server->getPlayerFromString(playerName), false);
-    // FUTURE: return vehicle reference into LuaVehicle class for Lua being able to move, attack etc.
+    cVehicle& v = m_server->addVehicle(pos, id, m_server->getPlayerFromString(playerName), false);
+    return v.iID;
 }
 
-void cLocalScenarioGame::addBuilding(const sID &id, const std::string &playerName, const cPosition &pos)
+unsigned int cLocalScenarioGame::addBuilding(const sID &id, const std::string &playerName, const cPosition &pos)
 {
-    m_server->addBuilding(pos, id, m_server->getPlayerFromString(playerName), false);
+    cBuilding& b = m_server->addBuilding(pos, id, m_server->getPlayerFromString(playerName), false);
+    return b.iID;
 }
 
 void cLocalScenarioGame::setPlayerClan(std::string playerName, int clan)
@@ -224,7 +225,7 @@ void cLocalScenarioGame::setPlayerClan(std::string playerName, int clan)
     Log.write (playerName + " set clan : " + std::to_string(clan), cLog::eLOG_TYPE_DEBUG);
     m_server->getPlayerFromString(playerName)->setClan(clan);
     // BUG_M: clan does not seems to work...
-    // They work but only on units added after clan is set ! Not on landing units...
+    // They work but only on units added after clan is set ! Not on landing units... maybe those need to be updated manually ?
 }
 
 void cLocalScenarioGame::startServer()

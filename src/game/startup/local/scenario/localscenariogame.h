@@ -51,8 +51,8 @@ public:
     cPlayer *addPlayer(std::string playerName);
     int playerCount() { return m_players.size(); }
     void setGuiPosition(const cPosition& pos) { m_guiPosition = pos; }
-    void addUnit(const sID &id, const std::string &playerName, const cPosition &pos);
-    void addBuilding(const sID &id, const std::string &playerName, const cPosition &pos);
+    unsigned int addUnit(const sID &id, const std::string &playerName, const cPosition &pos);
+    unsigned int addBuilding(const sID &id, const std::string &playerName, const cPosition &pos);
     void setPlayerClan(std::string playerName, int clan);
     void startServer();
     void startGame();
