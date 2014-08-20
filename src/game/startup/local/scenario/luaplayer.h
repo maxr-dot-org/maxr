@@ -44,6 +44,7 @@ public:
     int addLandingUnit(lua_State *L);
     int addUnit(lua_State *L);
     int addBuilding(lua_State *L);
+    int setIaScript(lua_State *L);
 
     // C interface
     std::string getName() const;
@@ -51,6 +52,7 @@ public:
     cPosition landingPosition() const;
     std::vector<sPlayerUnit> getUnits() const { return m_otherUnits; }
     std::vector<sPlayerUnit> getBuildings() const { return m_buildings; }
+    std::string getIaScript() const { return m_iaScriptName; }
     void sendInformations(const cClient& client);
 
 private:
@@ -61,6 +63,7 @@ private:
     std::vector<sLandingUnit> m_landingUnits;
     std::vector<sPlayerUnit> m_otherUnits;
     std::vector<sPlayerUnit> m_buildings;
+    std::string m_iaScriptName;
 };
 
 #endif // LUAPLAYER_H

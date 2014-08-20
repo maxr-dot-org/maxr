@@ -40,6 +40,7 @@
 #include "game/startup/local/scenario/luagame.h"
 #include "game/startup/local/scenario/luaplayer.h"
 #include "game/startup/local/scenario/luasettings.h"
+#include "game/startup/local/scenario/luaintelligence.h"
 
 cLocalScenarioGame::cLocalScenarioGame(cApplication* application) :
     m_application(application),
@@ -278,6 +279,18 @@ void cLocalScenarioGame::startGame()
 void cLocalScenarioGame::exit()
 {
     m_gameGuiController->exit();
+}
+
+void cLocalScenarioGame::loadAiScript(std::string playerName, std::string luaFileName)
+{
+    // Search the client that has this player as active player
+    for (size_t i = 0; i != m_iaClients.size(); ++i) {
+        if (m_iaClients[i]->getActivePlayer().getName() != playerName) continue;
+        std::shared_ptr<LuaIntelligence> ai = std::make_shared<LuaIntelligence>(m_iaClients[i]);
+        m_intelligences.push_back(ai);
+        ai->openLuaFile(luaFileName);
+        break;
+    }
 }
 
 const cClient &cLocalScenarioGame::getClient(int index)

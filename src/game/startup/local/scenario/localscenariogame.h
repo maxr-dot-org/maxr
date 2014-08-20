@@ -10,6 +10,7 @@
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "maxrconfig.h"
+#include "game/data/player/playerbasicdata.h"
 
 class cApplication;
 class cStaticMap;
@@ -22,6 +23,7 @@ class cClient;
 class LuaGame;
 struct lua_State;
 class cWindowClanSelection;
+class LuaIntelligence;
 
 enum StartingStatus {
     WaitingHuman,
@@ -57,6 +59,7 @@ public:
     void startServer();
     void startGame();
     void exit();
+    void loadAiScript(std::string playerName, std::string luaFileName);
 
     const cClient& getClient(int index);
 
@@ -76,6 +79,7 @@ private:
     std::shared_ptr<cClient> m_guiClient;
     std::vector< std::shared_ptr<cClient> > m_iaClients;
     std::vector<cPlayerBasicData> m_players;        // First one is the GUI player
+    std::vector< std::shared_ptr<LuaIntelligence> > m_intelligences;
 
     std::vector<std::string> m_availableMaps;
     std::shared_ptr<cStaticMap> m_map;

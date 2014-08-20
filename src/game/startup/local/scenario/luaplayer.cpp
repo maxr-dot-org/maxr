@@ -26,6 +26,7 @@ Lunar<LuaPlayer>::RegType LuaPlayer::methods[] = {
     LUNAR_DECLARE_METHOD(LuaPlayer, setClan),
     LUNAR_DECLARE_METHOD(LuaPlayer, addUnit),
     LUNAR_DECLARE_METHOD(LuaPlayer, addBuilding),
+    LUNAR_DECLARE_METHOD(LuaPlayer, setIaScript),
     {0,0}
 };
 
@@ -329,6 +330,15 @@ int LuaPlayer::addBuilding(lua_State *L)
         m_buildings.push_back(pu);
     }
 
+    return 0;
+}
+
+int LuaPlayer::setIaScript(lua_State *L)
+{
+    int nbParams = lua_gettop(L);
+    if (nbParams == 1 && lua_isstring(L, 1)) {
+        m_iaScriptName = lua_tostring(L, 1);
+    }
     return 0;
 }
 

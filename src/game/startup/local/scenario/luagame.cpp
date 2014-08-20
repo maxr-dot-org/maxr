@@ -209,6 +209,9 @@ void LuaGame::buildGame()
 
         // Send player informations: landing units etc...
         lp->sendInformations(m_game->getClient(i));
+
+        // Load AI scripts for each player
+        if (lp->getIaScript() != "") m_game->loadAiScript(lp->getName(), lp->getIaScript());
     }
 
     m_game->setGuiPosition(m_players[0]->landingPosition());

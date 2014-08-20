@@ -14,10 +14,15 @@ public:
 public:
     // Lua interface
     LuaSettings(lua_State *L);
+    LuaSettings(std::shared_ptr<const cGameSettings> settings);
+    ~LuaSettings();
     int setHumanChooseClan(lua_State *L);
     int setStartingCredits(lua_State *L);
     int setClansEnabled(lua_State *L);
     int setBridgeHeadDefinite(lua_State *L);
+    int getStartingCredits(lua_State *L);
+    int getClansEnabled(lua_State *L);
+    int getBridgeHeadDefinite(lua_State *L);
 
     // C++ interface
     std::shared_ptr<cGameSettings> getGameSettings() const { return m_gameSettings; }
@@ -25,6 +30,7 @@ public:
 
 private:
     std::shared_ptr<cGameSettings> m_gameSettings;
+    std::shared_ptr<const cGameSettings> m_constSettings;
     bool m_humanChooseClan;
 };
 
