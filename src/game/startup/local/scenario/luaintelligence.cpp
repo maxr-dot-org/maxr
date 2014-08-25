@@ -1,5 +1,6 @@
 #include "luaintelligence.h"
 
+#include "game/data/player/player.h"
 #include "game/logic/client.h"
 #include "utility/files.h"
 #include "utility/log.h"
@@ -73,6 +74,27 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     // Create the global variable "game" that will point to this
     Lunar<LuaIntelligence>::push(L, this);
     lua_setglobal(L, "game");
+
+    // Add the AI player (that is us, the active player from the client) and others to the Lua script.
+    const std::vector<std::shared_ptr<cPlayer>>& players = m_client->getPlayerList();
+    lua_newtable(L);
+    for (unsigned int i = 0; i < players.size(); i++) {
+        LuaPlayer *lp = new LuaPlayer(players[i].get());
+        if (players[i]->getNr() == m_client->getActivePlayer().getNr()) {
+            Lunar<LuaPlayer>::push(L, lp, true);
+            lua_setglobal(L, "ai");
+        }
+        else {
+            lua_pushstring(L, lp->getName().c_str());
+            Lunar<LuaPlayer>::push(L, lp, true);
+            lua_settable(L, -3);
+        }
+    }
+    lua_setglobal(L, "ennemies");
+
+    // Add signal slots for game turn event reaction and log into tha AI script
+
+    // Try to understand where to begin to make a unit move :p
 
     // Load the Lua script
     int error = luaL_loadbuffer(L, luaData, fileSize, "luaIntelligence") || lua_pcall(L, 0, 0, 0);

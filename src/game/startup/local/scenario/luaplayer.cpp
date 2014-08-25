@@ -200,6 +200,7 @@ int LuaPlayer::getBuildingCount(lua_State *L)
     return 1;
 }
 
+// Return table {iID, unitName}
 int LuaPlayer::getBuildingIdList(lua_State *L)
 {
     lua_newtable(L);
