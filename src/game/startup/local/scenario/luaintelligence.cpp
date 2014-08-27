@@ -2,6 +2,7 @@
 
 #include "game/data/player/player.h"
 #include "game/logic/client.h"
+#include "game/logic/turnclock.h"
 #include "utility/files.h"
 #include "utility/log.h"
 
@@ -22,6 +23,9 @@ LuaIntelligence::LuaIntelligence(std::shared_ptr<cClient> client) :
     m_client(client)
 {
 //    Log.write("Lua Intelligence construction *****************************************************************", cLog::eLOG_TYPE_DEBUG);
+
+    // Connect to the new turn signal
+    m_signalConnectionManager.connect(m_client->finishedTurnEndProcess, std::bind (&LuaIntelligence::newTurn, this));
 }
 
 LuaIntelligence::LuaIntelligence(lua_State *L)
@@ -92,7 +96,7 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     }
     lua_setglobal(L, "ennemies");
 
-    // Add signal slots for game turn event reaction and log into tha AI script
+    // TODO_M: should schedule the call to newTurn to be able to react on first game turn
 
     // Try to understand where to begin to make a unit move :p
 
@@ -115,4 +119,20 @@ int LuaIntelligence::getSettings(lua_State *L)
     LuaSettings *ls = new LuaSettings(m_client->getGameSettings());
     Lunar<LuaSettings>::push(L, ls, true);
     return 1;
+}
+
+void LuaIntelligence::newTurn()
+{
+    Log.write("New turn begin, will call ai script : " + std::to_string(m_client->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
+
+    // Add turn count as a global variable
+    lua_pushinteger(L, m_client->getTurnClock()->getTurn());
+    lua_setglobal(L, "turnCount");
+
+    // Call Lua function "newTurn" from ai;
+    lua_getglobal(L, "newTurn");
+    if (lua_pcall(L, 0, 1, 0) != 0) {
+        Log.write("Error calling newTurn : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
+        return;
+    }
 }

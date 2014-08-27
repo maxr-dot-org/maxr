@@ -26,6 +26,8 @@ public:
     int getSettings(lua_State *L);
 
 private:
+    void newTurn();
+
 
 private:
     cSignalConnectionManager m_signalConnectionManager;
