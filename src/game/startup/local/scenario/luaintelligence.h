@@ -7,6 +7,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "lua/lunar.h"
 
+class cPosition;
 class cClient;
 struct lua_State;
 
@@ -24,10 +25,14 @@ public:
 
     // Lua interface
     int getSettings(lua_State *L);
+    int move(lua_State *L);
 
+    // SLOTS
 private:
     void newTurn();
 
+private:
+    cPosition popPosition(lua_State *L, int index);
 
 private:
     cSignalConnectionManager m_signalConnectionManager;

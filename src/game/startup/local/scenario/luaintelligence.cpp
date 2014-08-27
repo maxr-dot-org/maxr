@@ -1,5 +1,6 @@
 #include "luaintelligence.h"
 
+#include "game/data/units/vehicle.h"
 #include "game/data/player/player.h"
 #include "game/logic/client.h"
 #include "game/logic/turnclock.h"
@@ -16,6 +17,7 @@ const char LuaIntelligence::className[] = "LuaIntelligence";
 
 Lunar<LuaIntelligence>::RegType LuaIntelligence::methods[] = {
     LUNAR_DECLARE_METHOD(LuaIntelligence, getSettings),
+    LUNAR_DECLARE_METHOD(LuaIntelligence, move),
     {0,0}
 };
 
@@ -121,8 +123,52 @@ int LuaIntelligence::getSettings(lua_State *L)
     return 1;
 }
 
+// Take iID and destination as argument (LuaPosition or x, y)
+int LuaIntelligence::move(lua_State *L)
+{
+    int nbParams = lua_gettop(L);
+    if (nbParams < 2 || !lua_isnumber(L, 1)) {
+        lua_pushboolean(L, false);
+        lua_pushstring(L, "Move needs at least 2 args and first is number");
+        return 2;
+    }
+
+    unsigned int iID = (unsigned int)lua_tointeger(L, 1);
+    cPosition pos = popPosition(L, 2);
+    cVehicle *v = m_client->getVehicleFromID(iID);
+    if (pos.size() == 0 || v == 00) {
+        lua_pushboolean(L, false);
+        lua_pushstring(L, "Move could not get vehicle or position");
+        return 2;
+    }
+
+    bool success = m_client->addMoveJob(*v, pos);
+    lua_pushboolean(L, success);
+    if (success) return 1;
+    else {
+        lua_pushstring(L, "Move client addMoveJob error");
+        return 2;
+    }
+}
+
+// Pops position as LuaPosition or x, y from index in the L stack
+cPosition LuaIntelligence::popPosition(lua_State *L, int index)
+{
+    if (lua_isuserdata(L, index)) {
+        LuaPosition* lpos = Lunar<LuaPosition>::check(L, index);
+        return lpos->getPosition();
+    }
+    else if (lua_isnumber(L, index) && lua_isnumber(L, index + 1)) {
+        int x = (int)lua_tonumber(L, index);
+        int y = (int)lua_tonumber(L, index + 1);
+        return cPosition(x, y);
+    }
+    else return cPosition();
+}
+
 void LuaIntelligence::newTurn()
 {
+    Log.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", cLog::eLOG_TYPE_DEBUG);
     Log.write("New turn begin, will call ai script : " + std::to_string(m_client->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
 
     // Add turn count as a global variable
@@ -132,7 +178,10 @@ void LuaIntelligence::newTurn()
     // Call Lua function "newTurn" from ai;
     lua_getglobal(L, "newTurn");
     if (lua_pcall(L, 0, 1, 0) != 0) {
-        Log.write("Error calling newTurn : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
+        // TODO_M: find better way for visibility of Lua Errors: should popup a dialog in MAXR
+        Log.write("****************************************************************************************************************************************************** \n"
+                  "Error calling newTurn : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
         return;
     }
 }
+
