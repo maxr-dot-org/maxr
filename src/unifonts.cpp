@@ -466,6 +466,11 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			case FONT_LATIN_SMALL_YELLOW:
 				replaceColor (*chars[unicodeplace], cRgbColor (240, 216, 184), cRgbColor (219, 222, 0));
 				break;
+			case FONT_LATIN_NORMAL:
+			case FONT_LATIN_BIG:
+			case FONT_LATIN_BIG_GOLD:
+			case FONT_LATIN_SMALL_WHITE:
+				break;
 			}
 
 			// goto next character

@@ -52,8 +52,8 @@ void cTurnTimeDeadline::changeDeadline (const std::chrono::milliseconds& deadlin
 cTurnTimeClock::cTurnTimeClock (std::shared_ptr<cGameTimer> gameTimer_) :
 	gameTimer (std::move(gameTimer_)),
 	startTurnGameTime (0),
-	stopped (false),
-	stoppedTicks (0)
+	stoppedTicks (0),
+	stopped (false)
 {
 	std::chrono::seconds lastCheckedSeconds(0);
 	std::chrono::seconds lastTimeTillFirstDeadline (std::numeric_limits<std::chrono::seconds::rep>::max ());

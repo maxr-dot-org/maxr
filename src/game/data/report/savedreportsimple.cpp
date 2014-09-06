@@ -77,6 +77,7 @@ std::string cSavedReportSimple::getMessage () const
 		return lngPack.i18n ("Text~Comp~Turn_Wait");
 	case eSavedReportType::TurnAutoMove:
 		return lngPack.i18n ("Text~Comp~Turn_Automove");
+	default: break;
 	}
 	return "";
 }

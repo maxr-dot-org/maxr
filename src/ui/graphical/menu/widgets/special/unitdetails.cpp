@@ -103,7 +103,7 @@ void cUnitDetails::drawRow (size_t index, eUnitDataSymbolType symbolType, int am
 
 	if (index != 0)
 	{
-		SDL_Rect dest = {0, rowHeight * index - 3, surface->w, 1};
+		SDL_Rect dest = {0, int(rowHeight * index - 3), surface->w, 1};
 		SDL_FillRect (surface.get (), &dest, 0xFFFC0000);
 	}
 
@@ -167,6 +167,7 @@ void cUnitDetails::reset ()
 		case sUnitData::STORE_RES_GOLD:
 			symbolType = eUnitDataSymbolType::Gold;
 			break;
+		case sUnitData::STORE_RES_NONE: break;
 		}
 		drawRow (rowIndex++, symbolType, unitObjectCurrentData->storageResMax, lngPack.i18n ("Text~Others~Cargo_7"), unitObjectCurrentData->storageResMax, playerOriginalData->storageResMax);
 	}

@@ -33,7 +33,7 @@ cUnitDetailsStored::cUnitDetailsStored (const cBox<cPosition>& area) :
 	unit (nullptr)
 {
 	const auto size = getSize ();
-	if (size.y () < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
+	if (std::size_t(size.y ()) < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
 
 	for (size_t i = 0; i < maxRows; ++i)
 	{
@@ -81,7 +81,7 @@ void cUnitDetailsStored::reset ()
 	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
-	for (int i = 0; i < maxRows; ++i)
+	for (std::size_t i = 0; i < maxRows; ++i)
 	{
 		amountLabels[i]->hide ();
 		nameLabels[i]->hide ();

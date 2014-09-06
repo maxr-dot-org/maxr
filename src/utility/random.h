@@ -73,7 +73,7 @@ T random (const T max)
 	return random(T(0), max);
 }
 
-static bool randomBernoulli ()
+inline bool randomBernoulli ()
 {
 	return random (2) == 1;
 }
