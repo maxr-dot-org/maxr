@@ -49,21 +49,14 @@ int LuaPlayer::getName(lua_State *L)
 
 int LuaPlayer::getLandingPosition(lua_State *L)
 {
-    LuaPosition* lpos = new LuaPosition(m_player->getLandingPosX(), m_player->getLandingPosY());
-    Lunar<LuaPosition>::push(L, lpos, true);        // true: use the lua gc
+    LuaPosition::pushPosition(L, m_player->getLandingPosX(), m_player->getLandingPosY());
     return 1;
 }
 
 int LuaPlayer::setLandingPosition(lua_State *L)
 {
-    int nbParams = lua_gettop(L);
-    if (nbParams == 1 && lua_isuserdata(L, 1)) {
-        LuaPosition* lpos = Lunar<LuaPosition>::check(L, 1);
-        m_player->setLandingPos(lpos->x(), lpos->y());
-    }
-    if (nbParams == 2 && lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
-        int x = (int)lua_tonumber(L, 1);
-        int y = (int)lua_tonumber(L, 2);
+    int x, y;
+    if (LuaPosition::getPosition(L, x, y)) {
         m_player->setLandingPos(x, y);
     }
     return 0;
@@ -116,82 +109,62 @@ int LuaPlayer::getVehicleById(lua_State *L)
 
 void LuaPlayer::pushUnitData(lua_State *L, cUnit *unit)
 {
-    lua_pushstring(L, "owner");
     lua_pushstring(L, m_player->getName().c_str());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "owner");
 
-    lua_pushstring(L, "pos");
-    LuaPosition* lpos = new LuaPosition(unit->getPosition());
-    Lunar<LuaPosition>::push(L, lpos, true);        // true: use the lua gc
-    lua_settable(L, -3);
+    LuaPosition::pushPosition(L, unit->getPosition());
+    lua_setfield(L, -2, "pos");
 
-    lua_pushstring(L, "disabled");
     lua_pushboolean(L, unit->isDisabled());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "disabled");
 
-    lua_pushstring(L, "name");
     lua_pushstring(L, unit->getName().c_str());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "name");
 
-    lua_pushstring(L, "disabledTurns");
     lua_pushinteger(L, unit->getDisabledTurns());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "disabledTurns");
 
-    lua_pushstring(L, "iID");
     lua_pushinteger(L, unit->iID);
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "iID");
 
-    lua_pushstring(L, "hitPoints");
     lua_pushinteger(L, unit->data.getHitpoints());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "hitPoints");
 
-    lua_pushstring(L, "hitPointsMax");
     lua_pushinteger(L, unit->data.hitpointsMax);
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "hitPointsMax");
 
-    lua_pushstring(L, "speed");
     lua_pushinteger(L, unit->data.speedCur);
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "speed");
 
-    lua_pushstring(L, "speedMax");
     lua_pushinteger(L, unit->data.speedMax);
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "speedMax");
 
-    lua_pushstring(L, "scan");
     lua_pushinteger(L, unit->data.getScan());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "scan");
 
-    lua_pushstring(L, "range");
     lua_pushinteger(L, unit->data.getRange());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "range");
 
-    lua_pushstring(L, "shots");
     lua_pushinteger(L, unit->data.getShots());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "shots");
 
-    lua_pushstring(L, "ammo");
     lua_pushinteger(L, unit->data.getAmmo());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "ammo");
 
-    lua_pushstring(L, "ammoMax");
     lua_pushinteger(L, unit->data.ammoMax);
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "ammoMax");
 
-    lua_pushstring(L, "damage");
     lua_pushinteger(L, unit->data.getDamage());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "damage");
 
-    lua_pushstring(L, "armor");
     lua_pushinteger(L, unit->data.getArmor());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "armor");
 
-    lua_pushstring(L, "storedRessources");
     lua_pushinteger(L, unit->data.getStoredResources());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "storedRessources");
 
-    lua_pushstring(L, "storedUnits");
     lua_pushinteger(L, unit->data.getStoredUnits());
-    lua_settable(L, -3);
+    lua_setfield(L, -2, "storedUnits");
 }
 
 int LuaPlayer::getBuildingCount(lua_State *L)
@@ -285,15 +258,7 @@ int LuaPlayer::addUnit(lua_State *L)
         unitName = lua_tostring(L, 1);
 
         sPlayerUnit pu;
-        if (nbParams == 2 && lua_isuserdata(L, 2)) {
-            LuaPosition* lpos = Lunar<LuaPosition>::check(L, 2);
-            pu.position = lpos->getPosition();
-        }
-        else if (lua_isnumber(L, 2) && lua_isnumber(L, 3)) {
-            pu.position.x() = (int)lua_tonumber(L, 2);
-            pu.position.y() = (int)lua_tonumber(L, 3);
-        }
-        else {
+        if (!LuaPosition::getPosition(L, pu.position)) {
             Log.write("addUnit parameters error ", cLog::eLOG_TYPE_WARNING);
             return 0;
         }
@@ -314,16 +279,8 @@ int LuaPlayer::addBuilding(lua_State *L)
         buildingName = lua_tostring(L, 1);
 
         sPlayerUnit pu;
-        if (nbParams == 2 && lua_isuserdata(L, 2)) {
-            LuaPosition* lpos = Lunar<LuaPosition>::check(L, 2);
-            pu.position = lpos->getPosition();
-        }
-        else if (lua_isnumber(L, 2) && lua_isnumber(L, 3)) {
-            pu.position.x() = (int)lua_tonumber(L, 2);
-            pu.position.y() = (int)lua_tonumber(L, 3);
-        }
-        else {
-            Log.write("addUnit parameters error ", cLog::eLOG_TYPE_WARNING);
+        if (!LuaPosition::getPosition(L, pu.position)) {
+            Log.write("addBuilding parameters error ", cLog::eLOG_TYPE_WARNING);
             return 0;
         }
 

@@ -12,7 +12,7 @@ game:setSettings(settings)
 
 -- Set human player position
 human = game:getHumanPlayer()
-human:setLandingPosition(50, 50)
+human:setLandingPosition( {x=50, y=50} )
 
 -- Add human player landing units (use name from vehicles directory of the game)
 -- Note only Land and Air units are accepted, for sea units use addUnit(name, x, y) and ensure you place them in water
@@ -51,7 +51,7 @@ billy:setClan(5)
 
 -- AI player landing positions
 billy:setLandingPosition(36, 53)
-theoPosition = LuaPosition(55, 36)
+theoPosition = {x=55, y=36}
 theo:setLandingPosition(theoPosition)
 raul:setLandingPosition(60, 65)
 

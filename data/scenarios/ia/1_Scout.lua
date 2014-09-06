@@ -56,8 +56,8 @@ function newTurn()
         io.write("Moving unit ", i2, " to position ", ennemyVehicle["pos"]:x(), " - ", ennemyVehicle["pos"]:y(), "\n")
         --CAUTION: cannot move ON the unit, or you should attack the unit !
         --local success, error = game:move(i2, ennemyVehicle["pos"])
-        local success, error = game:move(i2, LuaPosition(20, 45))
-        if success == true then io.write("Moved with success!\n") else io.write(error, "\n") end       
+        local success, errstr = game:move(i2, 20, 45)
+        if success == true then io.write("Moved with success!\n") else io.write(errstr, "\n") end       
       end
   end
   

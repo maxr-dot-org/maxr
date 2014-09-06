@@ -6,7 +6,7 @@ settings:setBridgeHeadDefinite(true)  -- default to mobile (no landing mining st
 game:setSettings(settings)
 
 human = game:getHumanPlayer()
-human:setLandingPosition(35, 60)
+human:setLandingPosition( {x=35, y=60} )
 human:setClan(4)
 for i=1,6 do human:addLandingUnit("assault") end
 for i=1,6 do human:addUnit("tank", 33 + i, 50 + i) end
@@ -17,7 +17,7 @@ game:loadMap(mapName)
 
 billy = game:addPlayer("Billy")
 billy:setClan(6)
-billy:setLandingPosition(50, 37)
+billy:setLandingPosition( {x=50, y=37} )
 billy:addLandingUnit("missel")
 billy:addLandingUnit("missel")
 billy:addLandingUnit("missel")

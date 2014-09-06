@@ -119,7 +119,6 @@ void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
     // Create a lua context and run Lua interpreter
     L = luaL_newstate();
     luaL_openlibs(L);
-    Lunar<LuaPosition>::Register(L);
     Lunar<LuaGame>::Register(L);
     Lunar<LuaPlayer>::Register(L);
     Lunar<LuaSettings>::Register(L);

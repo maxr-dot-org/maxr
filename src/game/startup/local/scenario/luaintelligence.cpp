@@ -72,7 +72,6 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     // Create a lua context and run Lua interpreter
     L = luaL_newstate();
     luaL_openlibs(L);
-    Lunar<LuaPosition>::Register(L);
     Lunar<LuaPlayer>::Register(L);
     Lunar<LuaSettings>::Register(L);
     Lunar<LuaIntelligence>::Register(L);
@@ -134,9 +133,11 @@ int LuaIntelligence::move(lua_State *L)
     }
 
     unsigned int iID = (unsigned int)lua_tointeger(L, 1);
-    cPosition pos = popPosition(L, 2);
+
+    cPosition pos;
+    bool posOk = LuaPosition::getPosition(L, pos);
     cVehicle *v = m_client->getVehicleFromID(iID);
-    if (pos.size() == 0 || v == 00) {
+    if (!posOk || v == 00) {
         lua_pushboolean(L, false);
         lua_pushstring(L, "Move could not get vehicle or position");
         return 2;
@@ -149,21 +150,6 @@ int LuaIntelligence::move(lua_State *L)
         lua_pushstring(L, "Move client addMoveJob error");
         return 2;
     }
-}
-
-// Pops position as LuaPosition or x, y from index in the L stack
-cPosition LuaIntelligence::popPosition(lua_State *L, int index)
-{
-    if (lua_isuserdata(L, index)) {
-        LuaPosition* lpos = Lunar<LuaPosition>::check(L, index);
-        return lpos->getPosition();
-    }
-    else if (lua_isnumber(L, index) && lua_isnumber(L, index + 1)) {
-        int x = (int)lua_tonumber(L, index);
-        int y = (int)lua_tonumber(L, index + 1);
-        return cPosition(x, y);
-    }
-    else return cPosition();
 }
 
 void LuaIntelligence::newTurn()
@@ -184,4 +170,3 @@ void LuaIntelligence::newTurn()
         return;
     }
 }
-
