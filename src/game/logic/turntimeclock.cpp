@@ -172,6 +172,8 @@ void cTurnTimeClock::removeDeadline (const std::shared_ptr<cTurnTimeDeadline>& d
 //------------------------------------------------------------------------------
 std::chrono::milliseconds cTurnTimeClock::getTimeSinceStart () const
 {
+	if (startTurnGameTime > gameTimer->gameTime) return std::chrono::milliseconds (0);
+
 	const auto ticksSinceStart = gameTimer->gameTime - startTurnGameTime;
 	const auto ticksStopped = stoppedTicks + (stopped ? gameTimer->gameTime - stoppedAtTime : 0);
 	assert (ticksSinceStart >= ticksStopped);
