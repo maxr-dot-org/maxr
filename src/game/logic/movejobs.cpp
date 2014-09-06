@@ -853,9 +853,9 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 
 cClientMoveJob::cClientMoveJob (cClient& client_, const cPosition& source_, const cPosition& destination_, cVehicle* Vehicle) :
 	client (&client_),
+	endMoveAction (nullptr),
 	destination(destination_),
-	Waypoints (nullptr),
-	endMoveAction (nullptr)
+	Waypoints (nullptr)
 {
 	init (source_, Vehicle);
 }

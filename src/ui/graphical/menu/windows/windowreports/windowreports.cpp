@@ -89,24 +89,24 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	groundCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 218 + 18), lngPack.i18n ("Text~Others~Ground_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	seaCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 218 + 18 * 2), lngPack.i18n ("Text~Others~Sea_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	stationaryCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 218 + 18 * 3), lngPack.i18n ("Text~Others~Stationary_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	
+
 	planesCheckBox->setChecked (true);
 	groundCheckBox->setChecked (true);
 	seaCheckBox->setChecked (true);
 	stationaryCheckBox->setChecked (true);
-	
+
 	signalConnectionManager.connect (planesCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 	signalConnectionManager.connect (groundCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 	signalConnectionManager.connect (seaCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 	signalConnectionManager.connect (stationaryCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
-	
+
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (497, 299), getPosition () + cPosition (497 + 100, 299 + font->getFontHeight ())), lngPack.i18n ("Text~Others~Limited_To") + ":"));
 
 	produceCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 312), lngPack.i18n ("Text~Others~Produce_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	fightCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 312 + 18), lngPack.i18n ("Text~Others~Fight_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	damagedCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 312 + 18 * 2), lngPack.i18n ("Text~Others~Damaged_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
 	stealthCheckBox = addChild (std::make_unique<cCheckBox> (getPosition () + cPosition (496, 312 + 18 * 3), lngPack.i18n ("Text~Others~Stealth_Units"), FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Right, eCheckBoxType::Standard));
-	
+
 	signalConnectionManager.connect (produceCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 	signalConnectionManager.connect (fightCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
 	signalConnectionManager.connect (damagedCheckBox->toggled, std::bind (&cWindowReports::handleFilterChanged, this));
@@ -170,7 +170,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 		std::string playerText = player->getName () + ": " + plural (player->getScore (turnClock->getTurn ()), "Text~Comp~Point", "Text~Comp~Points") + ", " + plural (player->numEcos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
 		AutoSurface colorSurface(SDL_CreateRGBSurface (0, 8, 8, Video.getColDepth (), 0, 0, 0, 0));
-		const auto c = player->getColor ().getColor ().toMappedSdlRGBAColor (colorSurface->format);
+		player->getColor ().getColor ().toMappedSdlRGBAColor (colorSurface->format);
 		SDL_FillRect (colorSurface.get (), nullptr, player->getColor().getColor().toMappedSdlRGBAColor (colorSurface->format));
 		scoreFrame->addChild (std::make_unique<cImage> (scoreFrame->getPosition () + cPosition (5, 20 + font->getFontHeight () * i), colorSurface.get ()));
 
@@ -326,7 +326,7 @@ void cWindowReports::handleFilterChanged ()
 //------------------------------------------------------------------------------
 void cWindowReports::rebuildUnitList ()
 {
-	// TODO: if this turns out to be a real performance problem we may need to 
+	// TODO: if this turns out to be a real performance problem we may need to
 	//       implement filter support directly into cListView.
 
 	if (!unitListDirty) return;

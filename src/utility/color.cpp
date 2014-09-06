@@ -89,8 +89,8 @@ cRgbColor cRgbColor::exchangeAlpha (unsigned char alpha_) const
 //------------------------------------------------------------------------------
 cHsvColor cRgbColor::toHsv () const
 {
-	const auto maxValue = std::max (r, std::max (g, b));
-	const auto minValue = std::min (r, std::min (g, b));
+	const auto maxValue = std::max ({r, g, b});
+	const auto minValue = std::min ({r, g, b});
 
 	const auto delta = maxValue - minValue;
 
@@ -111,9 +111,9 @@ cHsvColor cRgbColor::toHsv () const
 
 	result.v = maxValue * 100 / 255;
 
-	assert (result.h >= 0 && result.h < 360);
-	assert (result.s >= 0 && result.s <= 100);
-	assert (result.v >= 0 && result.v <= 100);
+	assert (result.h < 360);
+	assert (result.s <= 100);
+	assert (result.v <= 100);
 
 	return result;
 }
@@ -149,9 +149,9 @@ bool cHsvColor::operator!=(const cHsvColor& other) const
 //------------------------------------------------------------------------------
 cRgbColor cHsvColor::toRgb () const
 {
-	assert (h >= 0 && h < 360);
-	assert (s >= 0 && s <= 100);
-	assert (v >= 0 && v <= 100);
+	assert (h < 360);
+	assert (s <= 100);
+	assert (v <= 100);
 
 	cRgbColor result;
 	if (s == 0)

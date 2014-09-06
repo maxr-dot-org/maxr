@@ -205,7 +205,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 {
 	assert (message.iType == MU_MSG_IDENTIFIKATION);
 
-	unsigned int playerNr = message.popInt16();
+	int playerNr = message.popInt16();
 
 	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
 	if (iter == menuPlayers.end ()) return;
@@ -239,7 +239,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 	bool translationText = message.popBool();
 	string chatText = message.popString();
 
-	unsigned int senderPlayerNr = message.iPlayerNr;
+	int senderPlayerNr = message.iPlayerNr;
 
 	auto iter = std::find_if (menuPlayers.begin (), menuPlayers.end (), [senderPlayerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == senderPlayerNr; });
 	if (iter == menuPlayers.end ()) return;
@@ -271,7 +271,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				{
 					std::vector<cPlayerBasicData> players;
 					std::transform (menuPlayers.begin (), menuPlayers.end (), std::back_inserter(players), [](const std::shared_ptr<cPlayerBasicData>& player){ return *player; });
-					
+
 					landingPositionManager = std::make_shared<cLandingPositionManager> (players);
 
 					signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this](const cPlayerBasicData& player, eLandingPositionState state)

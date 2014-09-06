@@ -80,10 +80,10 @@
 //------------------------------------------------------------------------------
 cGameGuiController::cGameGuiController (cApplication& application_, std::shared_ptr<const cStaticMap> staticMap) :
 	application (application_),
-	savedReportPosition (false, cPosition ()),
 	soundManager (std::make_shared<cSoundManager> ()),
 	animationTimer (std::make_shared<cAnimationTimer> ()),
-	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer))
+	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer)),
+	savedReportPosition (false, cPosition ())
 {
 	connectGuiStaticCommands ();
 	initShortcuts ();
@@ -1518,7 +1518,7 @@ void cGameGuiController::savePosition (size_t index)
 void cGameGuiController::jumpToSavedPosition (size_t index)
 {
 	if (index > savedPositions.size ()) return;
-	
+
 	if (!savedPositions[index].first) return;
 
 	gameGui->getGameMap ().centerAt (savedPositions[index].second);

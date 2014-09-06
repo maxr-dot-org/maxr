@@ -176,7 +176,6 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 					for (auto i = playingSounds.begin (); i != playingSounds.end () && conflicts > sound->getMaxConcurrentConflictedCount (); /*erase in loop*/)
 					{
 						const auto playingSound = i->sound; // copy so that we get an owning pointer in this scope
-						const auto& soundGameTime = i->startGameTime;
 
 						if ((!sound->hasConflictAtSameGameTimeOnly () || i->startGameTime == currentGameTime) && sound->isInConflict (*playingSound))
 						{
@@ -192,6 +191,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 					}
 				}
 				break;
+			case eSoundConflictHandlingType::PlayAnyway: break;
 			}
 		}
 	}
@@ -268,7 +268,7 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 
 	// Fade volume down when distance comes close to the maximum listening distance
 	const auto soundDistance = static_cast<unsigned char>(std::min (static_cast<int>(distance / maxListeningDistance * std::numeric_limits<unsigned char>::max ()), (int)std::numeric_limits<unsigned char>::max ()));
-	
+
 	channel->setDistance (soundDistance);
 
 	// compute panning
