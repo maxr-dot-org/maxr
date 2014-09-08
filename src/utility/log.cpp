@@ -22,7 +22,7 @@
 
 #include "utility/log.h"
 
-#include "utility/mutex.h"
+#include "utility/thread/mutex.h"
 #include "utility/files.h"
 #include "settings.h"
 
@@ -123,7 +123,7 @@ int cLog::write (const char* str, int TYPE)
 int cLog::write (const std::string& s, int TYPE)
 {
 	std::string str (s);
-	cMutex::Lock l (mutex);
+	cLockGuard<cMutex> l (mutex);
 
 	if ((TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug())     //in case debug is disabled we skip message
 	{
@@ -157,7 +157,7 @@ int cLog::write (const char* str)
 
 void cLog::mark()
 {
-	cMutex::Lock l (mutex);
+	cLockGuard<cMutex> l (mutex);
 
 	std::string str = "==============================(MARK)==============================";
 	str += TEXT_FILE_LF;

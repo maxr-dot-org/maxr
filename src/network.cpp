@@ -103,7 +103,7 @@ cTCP::~cTCP()
 //------------------------------------------------------------------------
 int cTCP::create (int iPort)
 {
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 	if (SDLNet_ResolveHost (&ipaddr, NULL, iPort) == -1) { return -1; }
 
 	const int iNum = getFreeSocket();
@@ -127,7 +127,7 @@ int cTCP::create (int iPort)
 //------------------------------------------------------------------------
 int cTCP::connect (const std::string& sIP, int iPort)
 {
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 	if (SDLNet_ResolveHost (&ipaddr, sIP.c_str(), iPort) == -1) { return -1; }
 
 	const int socketIndex = getFreeSocket();
@@ -157,7 +157,7 @@ bool cTCP::isConnected (unsigned int socketIndex) const
 //------------------------------------------------------------------------
 int cTCP::sendTo (unsigned int iClientNumber, unsigned int iLength, const char* buffer)
 {
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 
 	if (iClientNumber >= iLast_Socket ||
 		isConnected (iClientNumber) == false ||
@@ -190,7 +190,7 @@ int cTCP::sendTo (unsigned int iClientNumber, unsigned int iLength, const char* 
 //------------------------------------------------------------------------
 int cTCP::send (unsigned int iLength, const char* buffer)
 {
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 	int iReturnVal = 0;
 	for (int i = 0; i < getSocketCount(); i++)
 	{
@@ -214,7 +214,7 @@ void cTCP::HandleNetworkThread_STATE_NEW (unsigned int socketIndex)
 {
 	sSocket& socket = Sockets[socketIndex];
 	assert (socket.iState == STATE_NEW);
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 	if (SDLNet_TCP_AddSocket (SocketSet, socket.socket) != -1)
 	{
 		socket.iState = STATE_READY;
@@ -228,7 +228,7 @@ void cTCP::HandleNetworkThread_STATE_NEW (unsigned int socketIndex)
 void cTCP::HandleNetworkThread_SERVER (unsigned int socketIndex)
 {
 	assert (Sockets[socketIndex].iType == SERVER_SOCKET);
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 	TCPsocket socket = SDLNet_TCP_Accept (Sockets[socketIndex].socket);
 
 	if (socket == NULL) return;
@@ -255,7 +255,7 @@ void cTCP::HandleNetworkThread_CLIENT (unsigned int socketIndex)
 	sSocket& s = Sockets[socketIndex];
 	assert (s.iType == CLIENT_SOCKET && s.iState == STATE_READY);
 	{
-		cMutex::Lock tl (TCPMutex);
+		cLockGuard<cMutex> tl (TCPMutex);
 
 		//read available data from the socket to the buffer
 		int recvlength;
@@ -338,7 +338,7 @@ void cTCP::HandleNetworkThread()
 			else if (Sockets[i].iState == STATE_DELETE)
 			{
 				// there has to be deleted a socket
-				cMutex::Lock tl (TCPMutex);
+				cLockGuard<cMutex> tl (TCPMutex);
 				SDLNet_TCP_DelSocket (SocketSet, Sockets[i].socket);
 				deleteSocket (i);
 				i--;
@@ -379,7 +379,7 @@ void cTCP::pushEventTCP_Close (unsigned int socketIndex)
 //------------------------------------------------------------------------
 void cTCP::close (unsigned int iClientNumber)
 {
-	cMutex::Lock tl (TCPMutex);
+	cLockGuard<cMutex> tl (TCPMutex);
 	if (iClientNumber < iLast_Socket && (Sockets[iClientNumber].iType == CLIENT_SOCKET || Sockets[iClientNumber].iType == SERVER_SOCKET))
 	{
 		Sockets[iClientNumber].iState = STATE_DELETE;
@@ -405,7 +405,7 @@ void cTCP::deleteSocket (int iNum)
 //------------------------------------------------------------------------
 void cTCP::setMessageReceiver (INetMessageReceiver* messageReceiver_)
 {
-	cMutex::Lock lock (TCPMutex);
+	cLockGuard<cMutex> lock (TCPMutex);
 
 	this->messageReceiver = messageReceiver_;
 }

@@ -22,6 +22,7 @@
 
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "utility/thread/recursivemutex.h"
 
 class cSoundChunk;
 class cPosition;
@@ -59,10 +60,10 @@ public:
 	int getSdlChannelId () const;
 
 	cSignal<void ()> started;
-	cSignal<void ()> stopped;
+	cSignal<void (), cRecursiveMutex> stopped;
 
-	cSignal<void ()> paused;
-	cSignal<void ()> resumed;
+	cSignal<void (), cRecursiveMutex> paused;
+	cSignal<void (), cRecursiveMutex> resumed;
 private:
 	int sdlChannelId;
 
@@ -74,7 +75,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	static void channelFinishedCallback (int channelId);
-	static cSignal<void (int)> channelFinished;
+	static cSignal<void (int), cRecursiveMutex> channelFinished;
 };
 
 #endif // output_sound_soundchannelH

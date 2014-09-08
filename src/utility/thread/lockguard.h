@@ -17,57 +17,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_signal_signalcalliteratorH
-#define utility_signal_signalcalliteratorH
+#ifndef utility_thread_lockguardH
+#define utility_thread_lockguardH
 
-#include "utility/invoke.h"
+#include <SDL_mutex.h>
+#include <stdexcept>
 
-template<typename ResultType, typename ArgumentPackType, typename IterType>
-struct sSignalCallIterator
+template<typename MutexType>
+class cLockGuard
 {
-	typedef ResultType value_type;
-
-	sSignalCallIterator (const ArgumentPackType& arguments_, IterType iter_, IterType end_) :
-		arguments (arguments_),
-		iter (iter_),
-		end (end_)
+public:
+	cLockGuard (MutexType& m) :
+		mutex (m)
 	{
-		if (iter != end && iter->disconnected) ++(*this); // skip disconnected slots in the beginning
+		mutex.lock ();
 	}
 
-	bool operator==(const sSignalCallIterator& other)
+	~cLockGuard ()
 	{
-		return iter == other.iter;
-	}
-	bool operator!=(const sSignalCallIterator& other)
-	{
-		return !(*this == other);
-	}
-
-	value_type operator*() const
-	{
-		return invoke (iter->function, arguments);
-	}
-	//pointer operator->() const;
-
-	sSignalCallIterator& operator++()
-	{
-		++iter;
-		while (iter != end && iter->disconnected) ++iter; // skip disconnected slots
-		return *this;
-	}
-
-	sSignalCallIterator operator++(int)
-	{
-		sSignalCallIterator tmp (*this);
-		++*this;
-		return tmp;
+		mutex.unlock ();
 	}
 
 private:
-	const ArgumentPackType& arguments;
-	IterType iter;
-	IterType end;
+	MutexType& mutex;
 };
 
-#endif // utility_signal_signalcalliteratorH
+#endif // utility_thread_lockguardH

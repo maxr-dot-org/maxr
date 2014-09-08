@@ -27,26 +27,33 @@ class cSignalReference;
 /**
  * A signal connection that can be used to disconnect an
  * established connection.
- *
- * Make sure the signal that has created the connection object
- * outlives the connection object!
  */
 class cSignalConnection
 {
 public:
-	template<typename F, typename C>
+	template<typename F, typename M, typename C>
 	friend class cSignal;
 
+	/**
+	 * Returns whether this two signal connection object to reference
+	 * the same signal-slot-connection.
+	 *
+	 * If one of the signals of the signal connections involved in the comparison
+	 * does not live anymore this function will always return false.
+	 */
 	bool operator==(const cSignalConnection& other) const;
 
 	/**
 	 * Disconnects the connection in the signal that created this connection.
+	 *
+	 * If the signal that created this connection is not alive anymore this function just
+	 * does nothing.
 	 */
 	void disconnect ();
 private:
-	cSignalConnection (unsigned int identifier_, std::weak_ptr<cSignalReference>& signalReference);
+	cSignalConnection (unsigned long long identifier_, std::weak_ptr<cSignalReference>& signalReference);
 
-	unsigned int identifier;
+	unsigned long long identifier;
 	std::weak_ptr<cSignalReference> signalReference;
 };
 

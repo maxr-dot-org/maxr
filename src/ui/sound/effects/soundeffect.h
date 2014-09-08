@@ -28,6 +28,8 @@
 
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "utility/thread/recursivemutex.h"
+#include "utility/thread/mutex.h"
 
 class cSoundChannel;
 class cPosition;
@@ -36,6 +38,16 @@ class cSoundEffect
 {
 public:
 	cSoundEffect (eSoundEffectType type, const cSoundChunk& sound);
+
+	/**
+	 * Destructor of the sound effect.
+	 *
+	 * The destructor should never be called while the sound is still playing.
+	 *
+	 * If you do so anyway you risk to produce a deadlock or race condition
+	 * because the channel may stop by itself while the destructor is being
+	 * executed.
+	 */
 	virtual ~cSoundEffect ();
 
 	virtual eSoundChannelType getChannelType () const;
@@ -61,14 +73,16 @@ public:
 	virtual const cPosition& getPosition () const;
 
 	cSignal<void ()> started;
-	cSignal<void ()> stopped;
+	cSignal<void (), cRecursiveMutex> stopped;
 
-	cSignal<void ()> paused;
-	cSignal<void ()> resumed;
+	cSignal<void (), cRecursiveMutex> paused;
+	cSignal<void (), cRecursiveMutex> resumed;
 
 	cSignal<void ()> positionChanged;
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	mutable cMutex channelMutex;
 
 	eSoundEffectType type;
 	const cSoundChunk* sound;

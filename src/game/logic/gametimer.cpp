@@ -77,7 +77,7 @@ void cGameTimer::stop()
 void cGameTimer::timerCallback()
 {
 	//increase event counter and let the event handler increase the gametime
-	cMutex::Lock lock (mutex);
+	cLockGuard<cMutex> lock (mutex);
 
 	if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
 	{
@@ -87,7 +87,7 @@ void cGameTimer::timerCallback()
 
 bool cGameTimer::popEvent()
 {
-	cMutex::Lock lock (mutex);
+	cLockGuard<cMutex> lock (mutex);
 
 	if (eventCounter > 0)
 	{
@@ -117,7 +117,7 @@ void cGameTimer::handleTimer()
 
 void cGameTimer::setReceivedTime (unsigned int time, unsigned int nr)
 {
-	cMutex::Lock lock (mutex);
+	cLockGuard<cMutex> lock (mutex);
 
 	while (receivedTime.size() <= nr)
 		receivedTime.push_back (0);
@@ -127,7 +127,7 @@ void cGameTimer::setReceivedTime (unsigned int time, unsigned int nr)
 
 unsigned int cGameTimer::getReceivedTime (unsigned int nr)
 {
-	cMutex::Lock lock (mutex);
+	cLockGuard<cMutex> lock (mutex);
 
 	if (receivedTime.size() <= nr)
 		return 0;

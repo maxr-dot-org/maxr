@@ -17,37 +17,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_mutexH
-#define utility_mutexH
+#ifndef utility_thread_dummymutexH
+#define utility_thread_dummymutexH
 
-#include <SDL_mutex.h>
-#include <stdexcept>
-
-class cMutex
+class cDummyMutex
 {
 public:
-	cMutex() : mutex_ (SDL_CreateMutex())
-	{
-		if (!mutex_) throw std::runtime_error ("Failed to create mutex");
-	}
+	void lock () {}
 
-	~cMutex() { SDL_DestroyMutex (mutex_); }
+	bool tryLock () { return true; }
 
-	operator SDL_mutex* () { return mutex_; }
-
-	class Lock
-	{
-	public:
-		Lock (cMutex& m) : mutex_ (m.mutex_) { SDL_mutexP (mutex_); }
-
-		~Lock() { SDL_mutexV (mutex_); }
-
-	private:
-		SDL_mutex* const mutex_;
-	};
-
-private:
-	SDL_mutex* const mutex_;
+	void unlock () {}
 };
 
-#endif // utility_mutexH
+#endif // utility_thread_dummymutexH

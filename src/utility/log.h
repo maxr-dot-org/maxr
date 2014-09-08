@@ -22,7 +22,7 @@
 
 #include <SDL_rwops.h>
 #include "defines.h"
-#include "utility/mutex.h"
+#include "utility/thread/mutex.h"
 
 enum
 {

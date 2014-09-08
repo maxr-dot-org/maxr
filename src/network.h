@@ -22,7 +22,7 @@
 #include <string>
 #include <memory>
 #include "defines.h"
-#include "utility/mutex.h"
+#include "utility/thread/mutex.h"
 
 class cNetMessage;
 

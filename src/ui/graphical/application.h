@@ -27,7 +27,7 @@
 #include <memory>
 
 #include "input/keyboard/keysequence.h"
-#include "utility/concurrentqueue.h"
+#include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "input/mouse/mousebuttontype.h"
 

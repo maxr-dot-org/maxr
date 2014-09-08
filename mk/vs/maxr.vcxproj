@@ -129,7 +129,7 @@
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -664,7 +664,6 @@
     <ClInclude Include="..\..\src\utility\autosurface.h" />
     <ClInclude Include="..\..\src\utility\box.h" />
     <ClInclude Include="..\..\src\utility\color.h" />
-    <ClInclude Include="..\..\src\utility\concurrentqueue.h" />
     <ClInclude Include="..\..\src\utility\dependentfalse.h" />
     <ClInclude Include="..\..\src\utility\deref.h" />
     <ClInclude Include="..\..\src\utility\drawing.h" />
@@ -678,7 +677,6 @@
     <ClInclude Include="..\..\src\utility\language.h" />
     <ClInclude Include="..\..\src\utility\listhelpers.h" />
     <ClInclude Include="..\..\src\utility\log.h" />
-    <ClInclude Include="..\..\src\utility\mutex.h" />
     <ClInclude Include="..\..\src\utility\position.h" />
     <ClInclude Include="..\..\src\utility\random.h" />
     <ClInclude Include="..\..\src\utility\runnable.h" />
@@ -700,6 +698,11 @@
     <ClInclude Include="..\..\src\utility\string\tolower.h" />
     <ClInclude Include="..\..\src\utility\string\toupper.h" />
     <ClInclude Include="..\..\src\utility\string\trim.h" />
+    <ClInclude Include="..\..\src\utility\thread\concurrentqueue.h" />
+    <ClInclude Include="..\..\src\utility\thread\dummymutex.h" />
+    <ClInclude Include="..\..\src\utility\thread\lockguard.h" />
+    <ClInclude Include="..\..\src\utility\thread\mutex.h" />
+    <ClInclude Include="..\..\src\utility\thread\recursivemutex.h" />
     <ClInclude Include="..\..\src\utility\tounderlyingtype.h" />
     <ClInclude Include="..\..\src\utility\version.h" />
     <ClInclude Include="..\..\src\video.h" />

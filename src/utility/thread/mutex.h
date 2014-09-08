@@ -17,57 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_signal_signalcalliteratorH
-#define utility_signal_signalcalliteratorH
+#ifndef utility_thread_mutexH
+#define utility_thread_mutexH
 
-#include "utility/invoke.h"
+#include "utility/thread/recursivemutex.h"
 
-template<typename ResultType, typename ArgumentPackType, typename IterType>
-struct sSignalCallIterator
-{
-	typedef ResultType value_type;
+// Since SDL does not provide a non-recursive mutex, we just forward mutex to the recursive mutex.
+typedef cRecursiveMutex cMutex;
 
-	sSignalCallIterator (const ArgumentPackType& arguments_, IterType iter_, IterType end_) :
-		arguments (arguments_),
-		iter (iter_),
-		end (end_)
-	{
-		if (iter != end && iter->disconnected) ++(*this); // skip disconnected slots in the beginning
-	}
-
-	bool operator==(const sSignalCallIterator& other)
-	{
-		return iter == other.iter;
-	}
-	bool operator!=(const sSignalCallIterator& other)
-	{
-		return !(*this == other);
-	}
-
-	value_type operator*() const
-	{
-		return invoke (iter->function, arguments);
-	}
-	//pointer operator->() const;
-
-	sSignalCallIterator& operator++()
-	{
-		++iter;
-		while (iter != end && iter->disconnected) ++iter; // skip disconnected slots
-		return *this;
-	}
-
-	sSignalCallIterator operator++(int)
-	{
-		sSignalCallIterator tmp (*this);
-		++*this;
-		return tmp;
-	}
-
-private:
-	const ArgumentPackType& arguments;
-	IterType iter;
-	IterType end;
-};
-
-#endif // utility_signal_signalcalliteratorH
+#endif // utility_thread_utexH
