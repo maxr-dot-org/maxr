@@ -21,8 +21,8 @@
 #define utility_signal_novariadic_signal_0H
 
 
-template<typename R, typename ResultCombinerType>
-class cSignal<R (), ResultCombinerType> : public cSignalBase
+template<typename R, typename MutexType, typename ResultCombinerType>
+class cSignal<R (), MutexType, ResultCombinerType> : public cSignalBase
 {
     typedef cSlot<R ()> SlotType;
 	typedef std::list<SlotType> SlotsContainerType;
@@ -93,6 +93,10 @@ private:
 
 	bool isInvoking;
 
+	std::shared_ptr<cSignalReference> thisReference;
+
+	MutexType mutex;
+
     void cleanUpConnections ()
 	{
         if (isInvoking) return; // it is not safe to clean up yet
@@ -109,8 +113,6 @@ private:
             }
         }
     }
-
-	std::shared_ptr<cSignalReference> thisReference;
 };
 
 #endif // utility_signal_novariadic_signal_0H

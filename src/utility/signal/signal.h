@@ -42,13 +42,18 @@
  * Basic signal class. This class should never be instantiated directly.
  * It has a specialization for function types.
  *
- * @tparam F Should be a function type.
- * @tparam C The result combiner.
+ * @tparam FunctionSignatureType Should be a function signature type.
+ * @tparam MutexType Type of the mutex to be used in the signal class.
+ *                   Can be a dummy mutex if you do not need this signal to be thread safe
+ *                   and/or you can not effort the cost of e.g. creating the mutex.
+ *                   If a working mutex is used, it should be a recursive mutex to make sure no
+ *                   deadlocks arise when a slot functions tries to access the signal recursively.
+ * @tparam ResultCombinerType The result combiner to be used.
  */
-template<typename F, typename M = cDummyMutex, typename C = sSignalResultCombinerLast<typename sFunctionTraits<F>::result_type>>
+template<typename FunctionSignatureType, typename MutexType = cDummyMutex, typename ResultCombinerType = sSignalResultCombinerLast<typename sFunctionTraits<FunctionSignatureType>::result_type>>
 class cSignal
 {
-	static_assert(sDependentFalse<F>::value, "cSignal not allowed with this template arguments!");
+	static_assert(sDependentFalse<FunctionSignatureType>::value, "cSignal not allowed with this template arguments!");
 };
 
 /**
