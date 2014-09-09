@@ -9,7 +9,8 @@ local P = require "position"
 local game = game
 local ai = ai
 
-module(...)
+local M = {}
+_ENV = M
 
 -- Private: table to store path
 local paths = {}
@@ -78,9 +79,11 @@ function nextSteps()
             end
            
             -- move to next step
+            io.write("Move unit ", i, " on path to ", P.toString(nextPosition), "\n") 
             game:move(i, nextPosition)
          end         
       end
    end
 end
 
+return M

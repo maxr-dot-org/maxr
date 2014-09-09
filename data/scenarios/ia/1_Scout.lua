@@ -1,3 +1,6 @@
+local P = require("position")
+local M = require("move")
+
 -- IA file : this file will run in the context of the AI player, will have access to data limited to the data the the user can see.
 io.output("1_Scout_intel.log")
 io.write("Loading AI for scout scenario.\n")
@@ -27,12 +30,28 @@ end
 io.write("\n")
 io.flush()
 
+-- Patrol path
+M.addPath("Patrol", {{x=32, y=19}, {x=32, y=29}, {x=43, y=31}, {x=43, y=19}})
+count = 1
+
 -- Turn begin callback
 function newTurn()
   io.write("********* NEW TURN : ", turnCount, " ****************\n")
+ 
+  -- Initialize 4 units on the path 
+  io.write("AI vehicle count: ", ai:getVehicleCount(), "\n")
+  for i, v in pairs(ai:getVehicleIdList()) do
+     if count == 5 then break end
+     io.write("Set unit on patrol ", i, "\n")
+     M.setUnitOnPath(i, "Patrol", true, count)
+     count = count + 1   
+  end
+ 
+  -- Makes unit on path moving to their next position
+  M.nextSteps()
   
   local vCount = ennemy:getVehicleCount() 
-  if vCount > 0 then
+  if vCount < 0 then
       io.write("Ennemi vehicles in sight: ", vCount, "\n")
       
       -- Get table that list ennemy units
@@ -52,11 +71,11 @@ function newTurn()
       -- Move all units through ennemy position
       io.write("AI vehicle count: ", ai:getVehicleCount(), "\n")
       local myVehicles = ai:getVehicleIdList()
-      for i2, v2 in pairs(myVehicles) do
-        io.write("Moving unit ", i2, " to position ", ennemyVehicle["pos"]:x(), " - ", ennemyVehicle["pos"]:y(), "\n")
+      for i, v in pairs(myVehicles) do
+        io.write("Moving unit ", i, " to position ", P.toString(ennemyVehicle.pos), "\n")
         --CAUTION: cannot move ON the unit, or you should attack the unit !
-        --local success, error = game:move(i2, ennemyVehicle["pos"])
-        local success, errstr = game:move(i2, 20, 45)
+        --local success, error = game:move(i, ennemyVehicle["pos"])
+        local success, errstr = game:move(i, 20, 45)
         if success == true then io.write("Moved with success!\n") else io.write(errstr, "\n") end       
       end
   end

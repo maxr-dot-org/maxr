@@ -51,6 +51,7 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     SDL_RWops* fpLuaFile = SDL_RWFromFile(fullFilename.c_str(), "rb");
     if (fpLuaFile == NULL)
     {
+        // TODO_M: hugh seems like a bad copy paste, we can't find scenarios in map directory !
         // now try in the user's map directory
         std::string userMapsDir = getUserMapsDir();
         if (!userMapsDir.empty())
@@ -80,6 +81,18 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     Lunar<LuaIntelligence>::push(L, this);
     lua_setglobal(L, "game");
 
+    // Set the path to the AI modules
+    lua_getglobal( L, "package" );
+    lua_getfield( L, -1, "path" );
+    std::string curPath = lua_tostring(L, -1);
+    std::string aiPath = cSettings::getInstance().getScenariosPath() + "/ia/?.lua;";
+    std::string newPath = aiPath + curPath;
+    lua_pop(L, 1);      // pops last path value
+    lua_pushstring(L, newPath.c_str());
+    lua_setfield(L, -2, "path");
+    lua_pop(L, 1);     // pops the package table
+
+
     // Add the AI player (that is us, the active player from the client) and others to the Lua script.
     const std::vector<std::shared_ptr<cPlayer>>& players = m_client->getPlayerList();
     lua_newtable(L);
@@ -99,12 +112,11 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
 
     // TODO_M: should schedule the call to newTurn to be able to react on first game turn
 
-    // Try to understand where to begin to make a unit move :p
-
     // Load the Lua script
     int error = luaL_loadbuffer(L, luaData, fileSize, "luaIntelligence") || lua_pcall(L, 0, 0, 0);
     if (error) {
-        Log.write("Cannot run intelligence file, check lua syntax: \"" + luaFilename + "\"" +
+        Log.write("//------------------------------------------------------------------------------------------------\n"
+                  "Cannot run intelligence file, check lua syntax: \"" + luaFilename + "\"" +
                   "\nLua Error: \n" + lua_tostring(L, -1), cLog::eLOG_TYPE_ERROR);
         lua_pop(L, 1);
     }

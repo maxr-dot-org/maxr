@@ -2,7 +2,8 @@ local io = io
 local math = math
 local ipairs = ipairs
 
-module(...)
+local M = {}
+_ENV = M
 
 -- A position is defined by a table with an x, y indexes: { x=1, y=2 }
 function new(x, y) return { x=x, y=y } end
@@ -34,6 +35,9 @@ function round(p) return { x = math.floor(p.x + 0.5), y = math.floor(p.y + 0.5) 
 -- Abs value of coordinates
 function abs(p) return { x = math.abs(p.x), y = math.abs(p.y) } end
 
+-- Return string value of the position
+function toString(p) return "(" .. p.x .. "/" .. p.y .. ")" end
+
 -- Shortest between p and list of positions (that is a table of positions)
 function shortest(p, plist)
    min = math.huge
@@ -57,3 +61,6 @@ function waypoint(from, to, speed)
    if move.y > 0 then move.y = math.floor(move.y) else move.y = math.ceil(move.y) end   
    return add(from, move)
 end
+
+
+return M
