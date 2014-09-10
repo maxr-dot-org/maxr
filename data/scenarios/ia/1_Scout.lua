@@ -82,3 +82,11 @@ function newTurn()
   
   io.flush()
 end
+
+-- Moves end callback
+function movesFinished()
+  io.write("Move finished\n")
+  
+  -- Makes unit on path moving to their next position
+  M.nextSteps()
+end

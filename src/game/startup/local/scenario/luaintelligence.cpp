@@ -26,8 +26,9 @@ LuaIntelligence::LuaIntelligence(std::shared_ptr<cClient> client) :
 {
 //    Log.write("Lua Intelligence construction *****************************************************************", cLog::eLOG_TYPE_DEBUG);
 
-    // Connect to the new turn signal
+    // Connect to the client signals
     m_signalConnectionManager.connect(m_client->finishedTurnEndProcess, std::bind (&LuaIntelligence::newTurn, this));
+    m_signalConnectionManager.connect(m_client->moveJobsFinished, std::bind (&LuaIntelligence::moveJobsFinished, this));
 }
 
 LuaIntelligence::LuaIntelligence(lua_State *L)
@@ -179,6 +180,18 @@ void LuaIntelligence::newTurn()
         // TODO_M: find better way for visibility of Lua Errors: should popup a dialog in MAXR
         Log.write("****************************************************************************************************************************************************** \n"
                   "Error calling newTurn : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
+        return;
+    }
+}
+
+void LuaIntelligence::moveJobsFinished()
+{
+    // Call Lua function "movesFinished" from ai;
+    lua_getglobal(L, "movesFinished");
+    if (lua_pcall(L, 0, 1, 0) != 0) {
+        // TODO_M: find better way for visibility of Lua Errors: should popup a dialog in MAXR
+        Log.write("****************************************************************************************************************************************************** \n"
+                  "Error calling movesFinished : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
         return;
     }
 }

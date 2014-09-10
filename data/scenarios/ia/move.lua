@@ -77,10 +77,16 @@ function nextSteps()
                nextPosition = paths[v.pathName][v.nextPositionIndex]
                assert(nextPosition, "Next Steps position incremented is nil")
             end
+            
+            -- TODO : check if next position is busy on map, then choose a free neighbour !
            
             -- move to next step
-            io.write("Move unit ", i, " on path to ", P.toString(nextPosition), "\n") 
-            game:move(i, nextPosition)
+            local success, errstr = game:move(i, nextPosition)
+            if success then 
+               io.write("Move unit ", i, " from ", P.toString(vehicle.pos), " on path to ", P.toString(nextPosition), "\n")
+            else 
+               io.write("Move error: ", errstr, "\n") 
+            end
          end         
       end
    end

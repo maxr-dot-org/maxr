@@ -1813,6 +1813,7 @@ void cClient::handleMoveJobs()
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			delete MoveJob;
+            if (ActiveMJobs.size() == 0) moveJobsFinished();
 			continue;
 		}
 		if (MoveJob->bEndForNow)

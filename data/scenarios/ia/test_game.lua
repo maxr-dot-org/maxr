@@ -14,7 +14,7 @@ game = {}
 
 function game:move(id, position)
    v = aiVehicles[id]
-   if v == nil then return end
+   if v == nil then return false, "Can't get vehicle" end
    
    old = v.pos
    v.pos = P.waypoint(v.pos, position, v.speed)
@@ -22,6 +22,7 @@ function game:move(id, position)
    v.speed = v.speed - math.ceil(d)
 
    io.write("Move unit ", id, " to the position ", v.pos.x, "-", v.pos.y, "\n")
+   return true
 end
 
 -- Simulates a new turn, refill units with their max speed

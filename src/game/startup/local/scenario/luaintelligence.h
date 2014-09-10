@@ -29,6 +29,7 @@ public:
     // SLOTS
 private:
     void newTurn();
+    void moveJobsFinished();
 
 private:
     cSignalConnectionManager m_signalConnectionManager;
