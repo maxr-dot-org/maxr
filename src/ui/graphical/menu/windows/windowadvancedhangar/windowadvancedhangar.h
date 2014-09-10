@@ -24,12 +24,14 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "ui/graphical/menu/widgets/special/unitlistviewitembuy.h"
 
+#include "game/data/player/playercolor.h"
+
 template<typename SelectedUnitItemType>
 class cWindowAdvancedHangar : public cWindowHangar
 {
 public:
 	cWindowAdvancedHangar (AutoSurface surface, cPlayerColor playerColor, int playerClan);
-    cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player);
+	cWindowAdvancedHangar (AutoSurface surface, const cPlayer& player);
 	~cWindowAdvancedHangar ();
 
 protected:

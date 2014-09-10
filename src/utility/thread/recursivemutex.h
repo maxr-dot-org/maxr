@@ -17,57 +17,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef utility_signal_signalcalliteratorH
-#define utility_signal_signalcalliteratorH
+#ifndef utility_thread_recursivemutexH
+#define utility_thread_recursivemutexH
 
-#include "utility/invoke.h"
+#include <SDL_mutex.h>
+#include <stdexcept>
 
-template<typename ResultType, typename ArgumentPackType, typename IterType>
-struct sSignalCallIterator
+class cRecursiveMutex
 {
-	typedef ResultType value_type;
-
-	sSignalCallIterator (const ArgumentPackType& arguments_, IterType iter_, IterType end_) :
-		arguments (arguments_),
-		iter (iter_),
-		end (end_)
+public:
+	cRecursiveMutex () :
+		sdlMutex (SDL_CreateMutex ())
 	{
-		if (iter != end && iter->disconnected) ++(*this); // skip disconnected slots in the beginning
+		if (!sdlMutex) throw std::runtime_error ("Failed to create mutex");
 	}
 
-	bool operator==(const sSignalCallIterator& other)
+	~cRecursiveMutex ()
 	{
-		return iter == other.iter;
-	}
-	bool operator!=(const sSignalCallIterator& other)
-	{
-		return !(*this == other);
+		SDL_DestroyMutex (sdlMutex);
 	}
 
-	value_type operator*() const
+	void lock ()
 	{
-		return invoke (iter->function, arguments);
-	}
-	//pointer operator->() const;
-
-	sSignalCallIterator& operator++()
-	{
-		++iter;
-		while (iter != end && iter->disconnected) ++iter; // skip disconnected slots
-		return *this;
+		const auto result = SDL_LockMutex (sdlMutex);
+		if (result != 0)
+		{
+			throw std::runtime_error ("Could not lock mutex");
+		}
 	}
 
-	sSignalCallIterator operator++(int)
+	bool tryLock ()
 	{
-		sSignalCallIterator tmp (*this);
-		++*this;
-		return tmp;
+		const auto result = SDL_TryLockMutex (sdlMutex);
+		if (result == -1)
+		{
+			throw std::runtime_error ("Error while trying to lock mutex");
+		}
+		return result == 0;
+	}
+
+	void unlock ()
+	{
+		SDL_UnlockMutex (sdlMutex);
 	}
 
 private:
-	const ArgumentPackType& arguments;
-	IterType iter;
-	IterType end;
+	SDL_mutex* const sdlMutex;
 };
 
-#endif // utility_signal_signalcalliteratorH
+#endif // utility_thread_recursivemutexH

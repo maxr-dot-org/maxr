@@ -28,11 +28,11 @@ class cCasualtiesTracker;
 class cReportDisadvantagesListViewItem : public cAbstractListViewItem
 {
 public:
-	static const int unitImageWidth = 32;
-	static const int unitImageHeight = 32;
-	static const int unitNameWidth = 110;
-	static const int casualityLabelWidth = 75;
-	static const int maxItemsInRow = 4;
+	static const int unitImageWidth;
+	static const int unitImageHeight;
+	static const int unitNameWidth;
+	static const int casualityLabelWidth;
+	static const int maxItemsInRow;
 
 	cReportDisadvantagesListViewItem (const sID& unitId, std::vector<int> disadvantages);
 

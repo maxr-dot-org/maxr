@@ -34,7 +34,7 @@ cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) 
 	unit (nullptr)
 {
 	const auto size = getSize ();
-	if (size.y () < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
+	if (std::size_t(size.y ()) < maxRows*rowHeight) resize (cPosition (getSize ().x (), maxRows*rowHeight));
 
 	for (size_t i = 0; i < maxRows; ++i)
 	{
@@ -86,11 +86,11 @@ void cUnitDetailsHud::reset ()
 	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
-	for (int i = 0; i < maxRows; ++i)
+	for (std::size_t i = 0; i < maxRows; ++i)
 	{
 		if (drawLines)
 		{
-			SDL_Rect lineRect = {2, 14 + 12*i, getSize ().x (), 1};
+			SDL_Rect lineRect = {2, int(14 + 12*i), getSize ().x (), 1};
 			SDL_FillRect (surface.get (), &lineRect, 0xFF743904);
 		}
 
@@ -132,6 +132,7 @@ void cUnitDetailsHud::reset ()
 			case sUnitData::STORE_RES_GOLD:
 				symbolType = eUnitDataSymbolType::Gold;
 				break;
+			case sUnitData::STORE_RES_NONE: break;
 			}
 
 			drawRow (1, symbolType, data.getStoredResources (), data.storageResMax, lngPack.i18n ("Text~Others~Cargo_7"));
@@ -150,6 +151,7 @@ void cUnitDetailsHud::reset ()
 				case sUnitData::STORE_RES_GOLD:
 					drawRow (2, symbolType, building.SubBase->getGold (), building.SubBase->MaxGold, lngPack.i18n ("Text~Others~Total"));
 					break;
+				case sUnitData::STORE_RES_NONE: break;
 				}
 			}
 		}
@@ -168,6 +170,7 @@ void cUnitDetailsHud::reset ()
 			case sUnitData::STORE_UNIT_IMG_HUMAN:
 				symbolType = eUnitDataSymbolType::Human;
 				break;
+			case sUnitData::STORE_UNIT_IMG_NONE: break;
 			}
 
 			drawRow (1, symbolType, data.getStoredUnits (), data.storageUnitsMax, lngPack.i18n ("Text~Others~Cargo_7"));

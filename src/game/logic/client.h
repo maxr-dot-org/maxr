@@ -30,7 +30,7 @@
 #include "main.h"
 #include "network.h"
 #include "game/data/units/unit.h" // sUnitLess
-#include "utility/concurrentqueue.h"
+#include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "utility/flatset.h"

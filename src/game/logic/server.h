@@ -35,7 +35,7 @@
 #include "network.h"
 #include "game/data/units/unit.h" // sUnitLess
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/concurrentqueue.h"
+#include "utility/thread/concurrentqueue.h"
 #include "utility/flatset.h"
 
 class cBuilding;

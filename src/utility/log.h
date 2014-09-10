@@ -22,7 +22,7 @@
 
 #include <SDL_rwops.h>
 #include "defines.h"
-#include "utility/mutex.h"
+#include "utility/thread/mutex.h"
 
 enum
 {
@@ -112,6 +112,8 @@ public:
 	* Writes a marker into logfile - please use only veeeery few times!
 	*/
 	void mark();
+	
+	bool isInitialized() const;
 } EX Log;
 
 #endif // utility_logH

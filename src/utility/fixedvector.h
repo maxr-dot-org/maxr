@@ -118,7 +118,7 @@ template<typename T, std::size_t D>
 template<typename U>
 cFixedVector<T, D>::cFixedVector (const cFixedVector<U, D>& other)
 {
-	for (size_t d = 0; d < D; ++d)
+	for (std::size_t d = 0; d < D; ++d)
 	{
 		data_[d] = other[d];
 	}

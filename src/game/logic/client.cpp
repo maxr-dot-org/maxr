@@ -21,7 +21,7 @@
 
 #include "game/logic/client.h"
 
-#include "attackJobs.h"
+#include "game/logic/attackjobs.h"
 #include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
@@ -336,7 +336,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_BUILDING);
 
-	const bool Init = message.popBool();
+	/*const bool Init =*/ message.popBool();
 	cPlayer* Player = getPlayerFromNumber (message.popInt16());
 	if (!Player)
 	{
@@ -357,7 +357,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_VEHICLE);
 
-	const bool Init = message.popBool();
+	/*const bool Init =*/ message.popBool();
 	cPlayer* Player = getPlayerFromNumber (message.popInt16());
 	if (!Player)
 	{
@@ -538,7 +538,6 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 	Log.write (" Client: Received Unit Data: Vehicle: " + iToStr ((int) bVehicle) + ", ID: " + iToStr (iID) + ", XPos: " + iToStr (position.x()) + ", YPos: " + iToStr (position.y()), cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle* Vehicle = NULL;
 	sUnitData* Data = NULL;
-	bool bWasBuilding = false;
 	// unit is a vehicle
 	if (bVehicle)
 	{
@@ -578,7 +577,6 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Vehicle->setDisabledTurns(message.popInt16 ());
 		Vehicle->setCommandoRank(message.popInt16());
 		Vehicle->setClearing(message.popBool());
-		bWasBuilding = Vehicle->isUnitBuildingABuilding ();
 		Vehicle->setBuildingABuilding(message.popBool());
 		Vehicle->setBuildTurns(message.popInt16());
 		Vehicle->setClearingTurns(message.popInt16());
@@ -978,7 +976,7 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 		}
 		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(message.popInt16());
 		else DestVehicle->data.setHitpoints(message.popInt16());
-		
+
 		//if (DestVehicle->isUnitLoaded ())
 		//{
 		//	// get the building which has loaded the unit
@@ -1358,7 +1356,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 
 	const int vehiclesInMsg = message.popInt16();
 	const int totalCosts = message.popInt16();
-	const unsigned int storingBuildingID = message.popInt32();
+	/*const unsigned int storingBuildingID =*/ message.popInt32();
 	if (vehiclesInMsg <= 0) return;
 
 	const sUnitData* unitData = nullptr;

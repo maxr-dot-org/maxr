@@ -23,7 +23,7 @@
 #include "output/sound/soundchunk.h"
 #include "utility/log.h"
 
-cSignal<void (int)> cSoundChannel::channelFinished;
+cSignal<void (int),cRecursiveMutex> cSoundChannel::channelFinished;
 
 //--------------------------------------------------------------------------
 void cSoundChannel::channelFinishedCallback (int channel)

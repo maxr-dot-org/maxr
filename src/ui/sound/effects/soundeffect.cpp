@@ -32,10 +32,22 @@ cSoundEffect::cSoundEffect (eSoundEffectType type_, const cSoundChunk& sound_) :
 cSoundEffect::~cSoundEffect ()
 {
 	signalConnectionManager.disconnectAll ();
-	if (channel)
+
+	// do not let an exception escape the destructor
+	try
 	{
-		channel->stop ();
+		cLockGuard<cRecursiveMutex> lock (channelMutex);
+		if (channel)
+		{
+			channel->stop ();
+		}
 	}
+	catch (...)
+	{
+		// How should we recover here?
+		// If the mutex could not be locked we simple do not stop
+		// the channel seams to be the best option here.
+	} 
 }
 
 //--------------------------------------------------------------------------
@@ -49,18 +61,29 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 {
 	stop ();
 
-	channel = &channel_;
-
-	channel->play (*sound, loop);
-
-	signalConnectionManager.connect (channel->stopped, [this]()
 	{
-		signalConnectionManager.disconnectAll ();
-		channel = nullptr;
-		stopped ();
-	});
-	signalConnectionManager.connect (channel->paused, [this](){ paused (); });
-	signalConnectionManager.connect (channel->resumed, [this](){ resumed (); });
+		cLockGuard<cRecursiveMutex> lock (channelMutex);
+
+		channel = &channel_;
+
+		channel->play (*sound, loop);
+
+		signalConnectionManager.connect (channel->stopped, [this]()
+		{
+			bool hadChannel = false;
+			{
+				cLockGuard<cRecursiveMutex> lock (channelMutex);
+				if (channel)
+				{
+					signalConnectionManager.disconnectAll ();
+					channel = nullptr;
+				}
+			}
+			if (hadChannel) stopped ();
+		});
+		signalConnectionManager.connect (channel->paused, [this](){ paused (); });
+		signalConnectionManager.connect (channel->resumed, [this](){ resumed (); });
+	}
 
 	started ();
 }
@@ -68,41 +91,47 @@ void cSoundEffect::play (cSoundChannel& channel_, bool loop)
 //--------------------------------------------------------------------------
 void cSoundEffect::stop ()
 {
-	signalConnectionManager.disconnectAll ();
-	if (channel)
+	bool hadChannel = false;
 	{
-		channel->stop ();
-		channel = nullptr;
+		cLockGuard<cRecursiveMutex> lock (channelMutex);
+		if (channel)
+		{
+			signalConnectionManager.disconnectAll ();
 
-		stopped ();
+			channel->stop ();
+			channel = nullptr;
+
+			hadChannel = true;
+		}
 	}
+
+	if (hadChannel) stopped ();
 }
 
 //--------------------------------------------------------------------------
 void cSoundEffect::pause ()
 {
+	cLockGuard<cRecursiveMutex> lock (channelMutex);
 	if (channel)
 	{
 		channel->pause ();
-
-		paused ();
 	}
 }
 
 //--------------------------------------------------------------------------
 void cSoundEffect::resume ()
 {
+	cLockGuard<cRecursiveMutex> lock (channelMutex);
 	if (channel)
 	{
 		channel->resume ();
-
-		resumed ();
 	}
 }
 
 //--------------------------------------------------------------------------
 cSoundChannel* cSoundEffect::getChannel () const
 {
+	cLockGuard<cRecursiveMutex> lock (channelMutex);
 	return channel;
 }
 

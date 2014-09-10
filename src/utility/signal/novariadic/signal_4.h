@@ -20,8 +20,8 @@
 #ifndef utility_signal_novariadic_signal_4H
 #define utility_signal_novariadic_signal_4H
 
-template<typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename ResultCombinerType>
-class cSignal<R (Arg1, Arg2, Arg3, Arg4), ResultCombinerType> : public cSignalBase
+template<typename R, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename MutexType, typename ResultCombinerType>
+class cSignal<R (Arg1, Arg2, Arg3, Arg4), MutexType, ResultCombinerType> : public cSignalBase
 {
     typedef cSlot<R (Arg1, Arg2, Arg3, Arg4)> SlotType;
 	typedef std::list<SlotType> SlotsContainerType;
@@ -40,7 +40,9 @@ public:
 
 	template<typename F>
     cSignalConnection connect (F&& f)
-    {
+	{
+		cLockGuard<cMutex> lock (mutex);
+
         cSignalConnection connection (nextIdentifer++, std::weak_ptr<cSignalReference> (thisReference));
         assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
 
@@ -53,7 +55,9 @@ public:
     }
 
     virtual void disconnect (const cSignalConnection& connection) MAXR_OVERRIDE_FUNCTION
-    {
+	{
+		cLockGuard<cMutex> lock (mutex);
+
         for (auto& slot : slots)
         {
             if (slot.connection == connection)
@@ -65,19 +69,17 @@ public:
 
     template<typename Args21, typename Args22, typename Args23, typename Args24>
     result_type operator()(Args21&& arg1, Args22&& arg2, Args23&& arg3, Args24&& arg4)
-    {
-        cleanUpConnections ();
+	{
+		cLockGuard<cMutex> lock (mutex);
 
         auto arguments = ArgumentsContainerType (std::forward<Args21> (arg1), std::forward<Args22> (arg2), std::forward<Args23> (arg3), std::forward<Args24> (arg4));
 
         auto wasInvoking = isInvoking;
         isInvoking = true;
-        auto resetter = makeScopedOperation ([&](){ isInvoking = wasInvoking; });
+		auto resetter = makeScopedOperation ([&](){ isInvoking = wasInvoking; cleanUpConnections (); });
 
         CallIteratorType begin (arguments, slots.begin (), slots.end ());
         CallIteratorType end (arguments, slots.end (), slots.end ());
-
-        if (slots.begin () != slots.end () && slots.begin ()->disconnected) ++begin; // skips all disconnected slots in the beginning
 
         return ResultCombinerType () (begin, end);
     }
@@ -87,9 +89,13 @@ private:
 
 	SlotsContainerType slots;
 
-	unsigned int nextIdentifer;
+	unsigned long long nextIdentifer;
 
 	bool isInvoking;
+
+	std::shared_ptr<cSignalReference> thisReference;
+
+	MutexType mutex;
 
     void cleanUpConnections ()
     {
@@ -107,8 +113,6 @@ private:
             }
         }
     }
-
-	std::shared_ptr<cSignalReference> thisReference;
 };
 
 #endif // utility_signal_novariadic_signal_3H

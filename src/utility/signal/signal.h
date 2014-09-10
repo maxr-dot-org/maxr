@@ -30,6 +30,8 @@
 #include "utility/deref.h"
 #include "utility/scopedoperation.h"
 #include "utility/functiontraits.h"
+#include "utility/thread/lockguard.h"
+#include "utility/thread/dummymutex.h"
 
 #include "utility/signal/signalconnection.h"
 #include "utility/signal/signalresultcombinerlast.h"
@@ -40,13 +42,18 @@
  * Basic signal class. This class should never be instantiated directly.
  * It has a specialization for function types.
  *
- * @tparam F Should be a function type.
- * @tparam C The result combiner.
+ * @tparam FunctionSignatureType Should be a function signature type.
+ * @tparam MutexType Type of the mutex to be used in the signal class.
+ *                   Can be a dummy mutex if you do not need this signal to be thread safe
+ *                   and/or you can not effort the cost of e.g. creating the mutex.
+ *                   If a working mutex is used, it should be a recursive mutex to make sure no
+ *                   deadlocks arise when a slot functions tries to access the signal recursively.
+ * @tparam ResultCombinerType The result combiner to be used.
  */
-template<typename F, typename C = sSignalResultCombinerLast<typename sFunctionTraits<F>::result_type>>
+template<typename FunctionSignatureType, typename MutexType = cDummyMutex, typename ResultCombinerType = sSignalResultCombinerLast<typename sFunctionTraits<FunctionSignatureType>::result_type>>
 class cSignal
 {
-	static_assert(sDependentFalse<F>::value, "cSignal not allowed with this template arguments!");
+	static_assert(sDependentFalse<FunctionSignatureType>::value, "cSignal not allowed with this template arguments!");
 };
 
 /**
@@ -111,8 +118,8 @@ private:
  * @tparam ...Args The arguments of the signal function.
  * @tparam ResultCombinerType
  */
-template<typename R, typename... Args, typename ResultCombinerType>
-class cSignal<R (Args...), ResultCombinerType> : public cSignalBase
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
+class cSignal<R (Args...), MutexType, ResultCombinerType> : public cSignalBase
 {
 	typedef cSlot<R (Args...)> SlotType;
 	typedef std::list<SlotType> SlotsContainerType;
@@ -179,18 +186,21 @@ private:
 	// NOTE: may could be implemented as kind of "identifier pool" but it seems kind of
 	//       overkill here for me since I don't think we will ever create as many
 	//       connections as an integer can represent numbers.
-	unsigned int nextIdentifer;
+	unsigned long long nextIdentifer;
 
 	bool isInvoking;
 
-	void cleanUpConnections ();
-
 	std::shared_ptr<cSignalReference> thisReference;
+
+	// NOTE: is important that this one is a recursive mutex (as e.g the SDL_Mutex or std::recursive_mutex).
+	MutexType mutex;
+
+	void cleanUpConnections ();
 };
 
 //------------------------------------------------------------------------------
-template<typename R, typename... Args, typename ResultCombinerType>
-cSignal<R (Args...), ResultCombinerType>::cSignal () :
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
+cSignal<R (Args...), MutexType, ResultCombinerType>::cSignal () :
 	nextIdentifer (0),
 	isInvoking (false)
 {
@@ -198,11 +208,13 @@ cSignal<R (Args...), ResultCombinerType>::cSignal () :
 }
 
 //------------------------------------------------------------------------------
-template<typename R, typename... Args, typename ResultCombinerType>
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
 template<typename F>
-cSignalConnection cSignal<R (Args...), ResultCombinerType>::connect (F&& f)
+cSignalConnection cSignal<R (Args...), MutexType, ResultCombinerType>::connect (F&& f)
 {
-	std::weak_ptr<cSignalReference> weakSignalRef(thisReference);
+	cLockGuard<MutexType> lock (mutex);
+
+	std::weak_ptr<cSignalReference> weakSignalRef (thisReference);
 	cSignalConnection connection (nextIdentifer++, weakSignalRef);
 	assert (nextIdentifer < std::numeric_limits<unsigned int>::max ());
 
@@ -215,9 +227,9 @@ cSignalConnection cSignal<R (Args...), ResultCombinerType>::connect (F&& f)
 }
 
 //------------------------------------------------------------------------------
-template<typename R, typename... Args, typename ResultCombinerType>
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
 template<typename F>
-void cSignal<R (Args...), ResultCombinerType>::disconnect (const F& f)
+void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const F& f)
 {
 	typedef typename std::conditional<std::is_function<F>::value, typename std::add_pointer<F>::type, F>::type test_type;
 
@@ -232,6 +244,8 @@ void cSignal<R (Args...), ResultCombinerType>::disconnect (const F& f)
 		>::type,
 		std::false_type
 	>::type should_deref;
+
+	cLockGuard<MutexType> lock (mutex);
 
 	for (auto& slot : slots)
 	{
@@ -255,9 +269,11 @@ void cSignal<R (Args...), ResultCombinerType>::disconnect (const F& f)
 }
 
 //------------------------------------------------------------------------------
-template<typename R, typename... Args, typename ResultCombinerType>
-void cSignal<R (Args...), ResultCombinerType>::disconnect (const cSignalConnection& connection)
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
+void cSignal<R (Args...), MutexType, ResultCombinerType>::disconnect (const cSignalConnection& connection)
 {
+	cLockGuard<MutexType> lock (mutex);
+
 	for (auto& slot : slots)
 	{
 		if (slot.connection == connection)
@@ -266,33 +282,31 @@ void cSignal<R (Args...), ResultCombinerType>::disconnect (const cSignalConnecti
 		}
 	}
 
-	if (!isInvoking) cleanUpConnections ();
+	cleanUpConnections ();
 }
 
 //------------------------------------------------------------------------------
-template<typename R, typename... Args, typename ResultCombinerType>
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
 template<typename... Args2>
-typename cSignal<R (Args...), ResultCombinerType>::result_type cSignal<R (Args...), ResultCombinerType>::operator()(Args2&&... args)
+typename cSignal<R (Args...), MutexType, ResultCombinerType>::result_type cSignal<R (Args...), MutexType, ResultCombinerType>::operator()(Args2&&... args)
 {
-	cleanUpConnections ();
+	cLockGuard<MutexType> lock (mutex);
 
-	auto arguments = ArgumentsContainerType(std::forward<Args2>(args)...);
+	auto arguments = ArgumentsContainerType (std::forward<Args2> (args)...);
 
 	auto wasInvoking = isInvoking;
 	isInvoking = true;
-	auto resetter = makeScopedOperation ([&](){ isInvoking = wasInvoking; });
+	auto resetter = makeScopedOperation ([&](){ isInvoking = wasInvoking; cleanUpConnections (); });
 
 	CallIteratorType begin (arguments, slots.begin (), slots.end ());
 	CallIteratorType end (arguments, slots.end (), slots.end ());
-
-	if (slots.begin () != slots.end () && slots.begin ()->disconnected) ++begin; // skips all disconnected slots in the beginning
 
 	return ResultCombinerType () (begin, end);
 }
 
 //------------------------------------------------------------------------------
-template<typename R, typename... Args, typename ResultCombinerType>
-void cSignal<R (Args...), ResultCombinerType>::cleanUpConnections ()
+template<typename R, typename... Args, typename MutexType, typename ResultCombinerType>
+void cSignal<R (Args...), MutexType, ResultCombinerType>::cleanUpConnections ()
 {
 	if (isInvoking) return; // it is not safe to clean up yet
 

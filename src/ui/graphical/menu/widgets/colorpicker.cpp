@@ -27,8 +27,8 @@
 cRgbColorPicker::cRgbColorPicker (const cBox<cPosition>& area, const cRgbColor& color) :
 	cWidget (area),
 	currentColor (color.toHsv()),
-	startedPressInBar (false),
-	startedPressInColor (false)
+	startedPressInColor (false),
+	startedPressInBar (false)
 {
 	colorsImage = addChild (std::make_unique<cImage> (getPosition ()));
 	colorsImage->setImage (createColorsSurface ().get ());

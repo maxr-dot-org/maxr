@@ -217,6 +217,9 @@
     <Filter Include="src\output\sound">
       <UniqueIdentifier>{f4f0949f-4133-4f67-ab8c-031b5b5833ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\utility\thread">
+      <UniqueIdentifier>{c6c39d9d-6bcb-4151-9d1a-2a92eff327ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\dedicatedserver.cpp">
@@ -1454,9 +1457,6 @@
     <ClInclude Include="..\..\src\game\logic\landingpositionmanager.h">
       <Filter>src\game\logic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\utility\concurrentqueue.h">
-      <Filter>src\utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\utility\runnable.h">
       <Filter>src\utility</Filter>
     </ClInclude>
@@ -1829,9 +1829,6 @@
     <ClInclude Include="..\..\src\utility\listhelpers.h">
       <Filter>src\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\utility\mutex.h">
-      <Filter>src\utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\colorpicker.h">
       <Filter>src\ui\graphical\menu\widgets</Filter>
     </ClInclude>
@@ -1840,6 +1837,21 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\data\units\landingunit.h">
       <Filter>src\game\data\units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utility\thread\dummymutex.h">
+      <Filter>src\utility\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utility\thread\lockguard.h">
+      <Filter>src\utility\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utility\thread\recursivemutex.h">
+      <Filter>src\utility\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utility\thread\mutex.h">
+      <Filter>src\utility\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utility\thread\concurrentqueue.h">
+      <Filter>src\utility\thread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

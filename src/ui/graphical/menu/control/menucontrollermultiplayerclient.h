@@ -25,7 +25,8 @@
 #include "utility/signal/signalconnectionmanager.h"
 #include "network.h"
 #include "utility/runnable.h"
-#include "utility/concurrentqueue.h"
+#include "utility/thread/concurrentqueue.h"
+#include "mapdownload.h"
 
 class cApplication;
 class cWindowNetworkLobbyClient;

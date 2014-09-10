@@ -28,7 +28,7 @@ template<typename F>
 class cSlot
 {
 public:
-	template<typename F2, typename C>
+	template<typename F2, typename M, typename C>
 	friend class cSignal;
 
 	typedef std::function<F> function_type;

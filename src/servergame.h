@@ -25,7 +25,7 @@
 #include <vector>
 #include <memory>
 #include "utility/autoptr.h"
-#include "utility/concurrentqueue.h"
+#include "utility/thread/concurrentqueue.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 

@@ -21,10 +21,11 @@
 #define ui_sound_soundmanagerH
 
 #include <set>
+#include <list>
 
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
-#include "utility/mutex.h"
+#include "utility/thread/mutex.h"
 
 class cSoundEffect;
 class cSoundChannel;
@@ -35,6 +36,7 @@ class cSoundManager
 {
 public:
 	cSoundManager ();
+	~cSoundManager ();
 
 	void setGameTimer (std::shared_ptr<const cGameTimer> gameTimer);
 
@@ -69,8 +71,8 @@ private:
 
 	std::shared_ptr<const cGameTimer> gameTimer;
 
-	cMutex playingSoundsMutex;
-	std::vector<sStoredSound> playingSounds;
+	cRecursiveMutex playingSoundsMutex;
+	std::list<sStoredSound> playingSounds;
 
 	cPosition listenerPosition;
 	int maxListeningDistance;

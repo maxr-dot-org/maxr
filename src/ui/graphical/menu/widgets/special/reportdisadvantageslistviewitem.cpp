@@ -23,6 +23,12 @@
 #include "game/data/units/building.h"
 #include "game/data/units/vehicle.h"
 
+const int cReportDisadvantagesListViewItem::unitImageWidth = 32;
+const int cReportDisadvantagesListViewItem::unitImageHeight = 32;
+const int cReportDisadvantagesListViewItem::unitNameWidth = 110;
+const int cReportDisadvantagesListViewItem::casualityLabelWidth = 75;
+const int cReportDisadvantagesListViewItem::maxItemsInRow = 4;
+	
 //------------------------------------------------------------------------------
 cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& unitId_, std::vector<int> disadvantages_) :
 	unitId (unitId_),

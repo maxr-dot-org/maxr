@@ -19,7 +19,7 @@
 
 #include <cmath>
 
-#include "attackJobs.h"
+#include "game/logic/attackjobs.h"
 
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
@@ -858,8 +858,6 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 	bool ownUnit = false;
 	bool destroyed = false;
 	bool isAir = false;
-	int offX = 0;
-	int offY = 0;
 
 	// no target found
 	if (!targetBuilding && !targetVehicle)
@@ -887,8 +885,6 @@ void cClientAttackJob::makeImpact (cClient& client, const cPosition& position, i
 			else
 			{
 				playImpact = true;
-				offX = targetVehicle->getMovementOffset().x();
-				offY = targetVehicle->getMovementOffset().y();
 			}
 		}
 		else

@@ -66,6 +66,17 @@ cSoundManager::cSoundManager () :
 {}
 
 //--------------------------------------------------------------------------
+cSoundManager::~cSoundManager ()
+{
+	signalConnectionManager.disconnectAll ();
+	cLockGuard<cMutex> playingSoundsLock (playingSoundsMutex);
+	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
+	{
+		i->sound->stop ();
+	}
+}
+
+//--------------------------------------------------------------------------
 void cSoundManager::setGameTimer (std::shared_ptr<const cGameTimer> gameTimer_)
 {
 	gameTimer = gameTimer_;
@@ -76,7 +87,7 @@ void cSoundManager::mute ()
 {
 	muted = true;
 
-	cMutex::Lock playingSoundsLock (playingSoundsMutex);
+	cLockGuard<cMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
 	{
 		if (!i->active) continue;
@@ -104,7 +115,7 @@ void cSoundManager::unmute ()
 {
 	muted = false;
 
-	cMutex::Lock playingSoundsLock (playingSoundsMutex);
+	cLockGuard<cMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
 	{
 		if (!i->active) continue;
@@ -138,7 +149,9 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	if (muted && !loop) return;
 
-	cMutex::Lock playingSoundsLock (playingSoundsMutex);
+	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
+
+	playingSounds.remove_if ([](const sStoredSound& storedSound){ return !storedSound.active; });
 
 	const unsigned int currentGameTime = gameTimer ? gameTimer->gameTime : 0;
 
@@ -146,23 +159,13 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	if (soundConflictHandlingType != eSoundConflictHandlingType::PlayAnyway)
 	{
-		// count conflicts and erase sounds that are no longer active
-		unsigned int conflicts = 0;
-		for (auto i = playingSounds.begin (); i != playingSounds.end (); /*erase in loop*/)
+		const auto isInConflict = [&sound, currentGameTime](const sStoredSound& storedSound)
 		{
-			if (!i->active)
-			{
-				i = playingSounds.erase (i);
-			}
-			else
-			{
-				if ((!sound->hasConflictAtSameGameTimeOnly () || i->startGameTime == currentGameTime) && sound->isInConflict (*i->sound))
-				{
-					++conflicts;
-				}
-				++i;
-			}
-		}
+			return (!sound->hasConflictAtSameGameTimeOnly () || storedSound.startGameTime == currentGameTime) && sound->isInConflict (*storedSound.sound);
+		};
+
+		// count conflicts and erase sounds that are no longer active
+		auto conflicts = std::count_if (playingSounds.begin (), playingSounds.end (), isInConflict);
 
 		if (conflicts > sound->getMaxConcurrentConflictedCount ())
 		{
@@ -173,25 +176,17 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 			case eSoundConflictHandlingType::StopOld:
 				{
 					// stop oldest sounds that are in conflict (list is sorted by start game time)
-					for (auto i = playingSounds.begin (); i != playingSounds.end () && conflicts > sound->getMaxConcurrentConflictedCount (); /*erase in loop*/)
+					for (auto i = playingSounds.begin (); i != playingSounds.end () && conflicts > sound->getMaxConcurrentConflictedCount (); ++i)
 					{
-						const auto playingSound = i->sound; // copy so that we get an owning pointer in this scope
-						const auto& soundGameTime = i->startGameTime;
-
-						if ((!sound->hasConflictAtSameGameTimeOnly () || i->startGameTime == currentGameTime) && sound->isInConflict (*playingSound))
+						if (isInConflict(*i))
 						{
-							// first remove from list and than stop by method to avoid conflicts with "finished" callback.
-							i = playingSounds.erase (i);
-							playingSound->stop ();
+							i->sound->stop ();
 							--conflicts;
-						}
-						else
-						{
-							++i;
 						}
 					}
 				}
 				break;
+			case eSoundConflictHandlingType::PlayAnyway: break;
 			}
 		}
 	}
@@ -216,13 +211,11 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 //--------------------------------------------------------------------------
 void cSoundManager::stopAllSounds ()
 {
-	cMutex::Lock playingSoundsLock(playingSoundsMutex);
+	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 	for (auto i = playingSounds.begin (); i != playingSounds.end (); ++i)
 	{
 		i->sound->stop ();
 	}
-
-	playingSounds.clear ();
 }
 
 //--------------------------------------------------------------------------
@@ -241,7 +234,7 @@ cSoundChannel& cSoundManager::getChannelForSound (cSoundEffect& sound)
 //--------------------------------------------------------------------------
 void cSoundManager::finishedSound (cSoundEffect& sound)
 {
-	cMutex::Lock playingSoundsLock (playingSoundsMutex);
+	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 
 	auto iter = std::find_if (playingSounds.begin (), playingSounds.end (), [&sound](const sStoredSound& entry){ return entry.sound.get () == &sound; });
 
@@ -268,7 +261,7 @@ void cSoundManager::updateSoundPosition (cSoundEffect& sound)
 
 	// Fade volume down when distance comes close to the maximum listening distance
 	const auto soundDistance = static_cast<unsigned char>(std::min (static_cast<int>(distance / maxListeningDistance * std::numeric_limits<unsigned char>::max ()), (int)std::numeric_limits<unsigned char>::max ()));
-	
+
 	channel->setDistance (soundDistance);
 
 	// compute panning
