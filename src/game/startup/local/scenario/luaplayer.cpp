@@ -94,6 +94,7 @@ int LuaPlayer::getVehicleById(lua_State *L)
     if (nbParams < 1 || !lua_isnumber(L, 1)) return 0;
     unsigned int iID = lua_tointeger(L, 1);
     cVehicle *v = m_player->getVehicleFromId(iID);
+    if (v == 00) return 0;
 
     // Build a table with all vehicle data inside
     lua_newtable(L);

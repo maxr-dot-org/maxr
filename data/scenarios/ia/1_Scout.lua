@@ -66,17 +66,19 @@ function newTurn()
       
       -- Get full unit description
       ennemyVehicle = ennemy:getVehicleById(vID)
-      --io.write("DEBUG: ennemy position: ", ennemyVehicle["pos"], "\n")
-            
-      -- Move all units through ennemy position
-      io.write("AI vehicle count: ", ai:getVehicleCount(), "\n")
-      local myVehicles = ai:getVehicleIdList()
-      for i, v in pairs(myVehicles) do
-        io.write("Moving unit ", i, " to position ", P.toString(ennemyVehicle.pos), "\n")
-        --CAUTION: cannot move ON the unit, or you should attack the unit !
-        --local success, error = game:move(i, ennemyVehicle["pos"])
-        local success, errstr = game:move(i, 20, 45)
-        if success == true then io.write("Moved with success!\n") else io.write(errstr, "\n") end       
+      if ennemyVehicle then
+        --io.write("DEBUG: ennemy position: ", ennemyVehicle["pos"], "\n")
+              
+        -- Move all units through ennemy position
+        io.write("AI vehicle count: ", ai:getVehicleCount(), "\n")
+        local myVehicles = ai:getVehicleIdList()
+        for i, v in pairs(myVehicles) do
+          io.write("Moving unit ", i, " to position ", P.toString(ennemyVehicle.pos), "\n")
+          --CAUTION: cannot move ON the unit, or you should attack the unit !
+          --local success, error = game:move(i, ennemyVehicle["pos"])
+          local success, errstr = game:move(i, 20, 45)
+          if success == true then io.write("Moved with success!\n") else io.write(errstr, "\n") end       
+        end
       end
   end
   

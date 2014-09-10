@@ -62,7 +62,7 @@ function nextSteps()
    for i, v in pairs(unitsPath) do
       if (v.pause == false and paths[v.pathName]) then
          vehicle = ai:getVehicleById(i)
-         if (vehicle.speed > 0) then      -- check if it has remaining movements
+         if (vehicle and vehicle.speed > 0) then      -- check if it has remaining movements
             -- check if next step is reached
             nextPosition = paths[v.pathName][v.nextPositionIndex]
             assert(nextPosition, "Next Steps position is nil")
