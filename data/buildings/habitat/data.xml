@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 19" name="habitat">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Habitat\n\nHabitats house colonists. Each habitat houses enough colonists to operate three research centers, training halls or eco-spheres. The colonist buildings must be connected to the habitat before they can operate.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="20"/>
+    <Build_As String="BigBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+
+    <Needs_Humans Num="-3"/>
+
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

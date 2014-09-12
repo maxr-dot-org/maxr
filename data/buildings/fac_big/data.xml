@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 11" name="bigfactory">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Heavy Vehicle Plant\n\nBuilds construtors, mobile scanners, and the heavy fighting units: tanks, assult guns, rocket launchers and missile crawlers. A heavy vehicle factory needs three raw materials a turn to operate, and power.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="40"/>
+    <Can_Build String="BigGroundVehicle"/>
+    <Build_As String="BigBuilding"/>
+    <Max_Build_Factor Num="3"/>
+    <Can_Build_Repeat YN="Yes"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+
+    <Needs_Energy Num="1"/>
+    <Needs_Metal Num="3"/>
+
+    <Is_Activatable YN="Yes"/>
+
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

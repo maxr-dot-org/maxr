@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 27" name="scout">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Scout\n\nHigh speed scouting vehical for exploration and spotting enemy units. Can cross water without a bridge, but is faster an land.\n\nVery fast and good scan range, but much weaker than most combat units.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Small"/>
+    <Ammo_Quantity Num="10"/>
+    <Can_Attack Num="6"/>
+    <Shots Num="1"/>
+    <Range Num="3"/>
+    <Damage Num="12"/>
+    <Can_Drive_And_Fire YN="Yes"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="9"/>
+    <Build_As String="SmallGroundVehicle"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="12"/>
+    <Factor_Ground Num="1"/>
+    <Factor_Sea Num="3"/>
+    <Factor_Coast Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="4"/>
+    <Hitpoints Num="16"/>
+    <Scan_Range Num="9"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Ground"/>
+  </Storage>
+</Unit>

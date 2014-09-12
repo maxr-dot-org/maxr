@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 32" name="tank">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Tank\n\nHeavily armored fighting vehical. Best used in the frontline to prevent enemy units from reaching lightly-armored support units such as assult guns and rocket launchers.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Big"/>
+    <Ammo_Quantity Num="14"/>
+    <Can_Attack Num="6"/>
+    <Shots Num="2"/>
+    <Range Num="4"/>
+    <Damage Num="16"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="12"/>
+    <Build_As String="BigGroundVehicle"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="6"/>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="10"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="4"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Ground"/>
+  </Storage>
+</Unit>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 15" name="escort">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Escort\n\nHigh speed boat with good radar and rapid fire anti aircraft cannon. Escorts are the eyes of a fleet, and a fleet's protection from planes.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Med_Long"/>
+    <Ammo_Quantity Num="24"/>
+    <Can_Attack Num="1"/>
+    <Shots Num="1"/>
+    <Range Num="7"/>
+    <Damage Num="22"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="18"/>
+    <Build_As String="Ship"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="9"/>
+    <Factor_Sea Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="6"/>
+    <Hitpoints Num="32"/>
+    <Scan_Range Num="9"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Ship"/>
+  </Storage>
+</Unit>

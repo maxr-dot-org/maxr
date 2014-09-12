@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 34" name="training">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Training Hall\n\nTrains infiltrators who can disable or capture enemy units, and infantry to guard against infiltrators. A training hall requires colonists from a habitat and power to operate.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="20"/>
+    <Can_Build String="Human"/>
+    <Build_As String="BigBuilding"/>
+    <Max_Build_Factor Num="1"/>
+    <Can_Build_Repeat YN="Yes"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+
+    <Needs_Energy Num="1"/>
+    <Needs_Metal Num="1"/>
+    <Needs_Humans Num="1"/>
+
+    <Is_Activatable YN="Yes"/>
+
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

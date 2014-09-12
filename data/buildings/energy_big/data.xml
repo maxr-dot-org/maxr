@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 7" name="Energy_Big">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Power Station\n\nA power station consumes six fuel each turn, and provides enough power for six factories or mining stations.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="24"/>
+    <Build_As String="BigBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+
+    <Needs_Energy Num="-6"/>
+    <Needs_Oil Num="6"/>
+
+    <Is_Activatable YN="Yes"/>
+
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

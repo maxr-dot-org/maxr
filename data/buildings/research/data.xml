@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 27" name="research">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Research Center\n\nResearch centers investigate ways to improve your units. Unlike upgrades purcased with refined gold, research takes time, and the improvements are small. Hovever, research affects all of your units instead of just one type, and doesn't require a source of gold ore. A research center requires colonists from a habitat to operate, and power.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="24"/>
+    <Build_As String="BigBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+
+    <Can_Research YN="Yes"/>
+    <Needs_Energy Num="1"/>
+    <Needs_Humans Num="1"/>
+
+    <Is_Activatable YN="Yes"/>
+
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

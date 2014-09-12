@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 29" name="seamine">
+  <Header>
+    <Author name="DoctorDeath">
+      <Editor name="DoctorDeath" time="2007-10-31 00:13:00"/>
+    </Author>
+    <Game_Version text="00.00.00.00"/>
+  </Header>
+  <Description lang="ENG">
+    Sea Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it.
+  </Description>
+
+  <Weapon>
+    <Can_Attack Num="22"/>
+    <Damage Num="28"/>
+  </Weapon>
+
+  <Movement>
+    <Factor_Sea Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="1"/>
+    <Hitpoints Num="2"/>
+    <Scan_Range Num="1"/>
+    <Can_Self_Destroy YN="Yes"/>
+    <Can_Be_Overbuild Const="YesNRemove"/>
+    <Is_Stealth_On Num="32"/>
+    <Surface_Position Const="BeneathSea"/>
+    <Explodes_On_Contact YN="Yes"/>
+  </Abilities>
+</Unit>
+
+
