@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 33" name="storage-oil">
+  <Header>
+    <Author name="DoctorDeath">
+      <Editor name="DoctorDeath" time="2007-10-30 22:40:00"/>
+    </Author>
+    <Game_Version text="00.00.00.00"/>
+  </Header>
+  <Description lang="ENG">
+    Fuel Tank\n\nHolds fuel reserves. Minig stations produce fuel every turn. To save extra fuel, a mining station must be connected to a fuel tank.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="4"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="14"/>
+    <Scan_Range Num="3"/>
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Capacity_Resources Num="50"/>
+    <Capacity_Res_Type Const="Oil"/>
+  </Storage>
+</Unit>
+
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 24" name="pionier">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Small construktion vehical for creating small buildings and stationary weapons.
+  </Description>
+  <Production>
+    <Built_Costs Num="18"/>
+    <Can_Build String="SmallBuilding"/>
+    <Build_As String="SmallGroundVehicle"/>
+    <Max_Build_Factor Num="3"/>
+    <Can_Build_Path YN="Yes"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="6"/>
+    <Factor_Ground Num="1"/>
+    <Factor_Sea Num="3"/>
+    <Factor_Coast Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="4"/>
+    <Hitpoints Num="14"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Needs_Metal Num="2"/>
+  </Abilities>
+
+  <Storage>
+    <Capacity_Resources Num="40"/>
+    <Capacity_Res_Type Const="Metal"/>
+    <Is_Storage_Type String="Ground"/>
+  </Storage>
+  
+  <Graphic>
+    <Has_Overlay YN="No"/>
+    <Animations>
+      <Build_Up YN="Yes"/>
+      <Movement YN="No"/>
+      <Power_On YN="No"/>
+    </Animations>
+  </Graphic>
+</Unit>

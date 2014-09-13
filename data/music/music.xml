@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+
+<Music>
+	<Menus>
+		<main Text="main.ogg"/>
+		<credits Text="credits.ogg"/>
+	</Menus>
+	<Game>
+		<bkg1 Text="bkg1.ogg"/>
+		<bkg2 Text="bkg2.ogg"/>
+		<bkg3 Text="bkg3.ogg"/>
+		<bkg4 Text="bkg4.ogg"/>
+		<bkg5 Text="bkg5.ogg"/>
+		<bkg6 Text="bkg6.ogg"/>
+		<bkg7 Text="crtr.ogg"/>
+		<bkg8 Text="dsrt.ogg"/>
+		<bkg9 Text="gren.ogg"/>
+		<bkg10 Text="lose.ogg"/>
+		<bkg11 Text="snow.ogg"/>
+		<bkg12 Text="winr.ogg"/>
+		<bkg13 Text="main.ogg"/>
+		<bkgcount Num="13"/>
+	</Game>
+</Music>

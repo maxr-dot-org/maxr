@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 21" name="missel">
+  <Header>
+    <Author name="Someone">
+    <Editor name="Rocky" time="2007-10-25 14:00:00"/>
+    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="00.00.00.00"/>
+  </Header>
+  <Description lang="ENG">
+    Missile Crawler\n\nMissile launcher on an lightly armored chassis. This mobile launcher is slightly less sturdy than the stationary version, and requires more material tu build. However, the ability to move makes it much more flexible.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Rocket"/>
+    <Ammo_Quantity Num="6"/>
+    <Can_Attack Num="6"/>
+    <Shots Num="1"/>
+    <Range Num="10"/>
+    <Damage Num="22"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="36"/>
+    <Build_As String="BigGroundVehicle"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="6"/>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="4"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="4"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Ground"/>
+  </Storage>
+</Unit>

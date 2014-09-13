@@ -1,0 +1,237 @@
+Mechanized Assault & eXploration Reloaded 0.2.9
+=======================================================================
+-migrated from sdl to sdl2
+
+Mechanized Assault & eXploration Reloaded 0.2.8
+=======================================================================
+-implemented reaction fire 
+-Implemented "statistics" feature 
+-implemented missing voice messages
+-implemented multiple planes per field
+-implement save/load of disabled turns and "wasWorking" for buildings
+-implemented Shift+Done shortcut
+-vehicles can not drive onto mines anymore
+-set ability to detect mines to mine layer and sea mine layer
+-rightClick in miniMap for setting paths now works
+-fixed upgrade costs for "Rocketlauncher, attack, Clan Ayer's Hand". Thanks to nonsinn for researching the missing values!
+-fixed behavior of Prev, Next and Done Button
+-fixed resource allocation when adding or removing buildings
+-fixed crash, when disabling vehicles with an infiltrator
+-fixed non original infiltrator behavior
+-fixed many bugs in the reports menu
+-fixed non original behavior of stealth vehicles
+-tons of bugs and crashes fixed
+
+
+
+Mechanized Assault & eXploration Reloaded 0.2.7
+=======================================================================
+-implemented ecospheres/biodomes
+-implemented new victory condition with points system
+-implemented new server commands "/freeze" and "/unfreeze
+-implemented unit renaming
+-implemented self destruction
+-seperated rendering code from engine => real fps possible now
+-improved #196 Research report message now tells which research finished 
+-improved unit group handling (hotkeys work for all selected units now)
+-improved zooming with mouse wheel now centers to mouse cursor position
+-improved ingame chatbox
+-improved quit events (ALT+F4 should work now)
+-improved video mode selection
+-improved movejobs
+-improved #420 confirmation dialog to exit button in loadsave menu
+-improved source towards command line based dedicated server
+-improved "info" menu for enemy units
+-improved message when a unit gets disabled
+-improved autorestart of buildings when the recover from being disabled
+-improved using the "My Documents" folder on windows.
+-improved system for reading and writing config values
+-fixed #294 calculation remaining movment points 
+-fixed #422 build land units in a vehicle plant, surrounded by platforms
+-fixed #380 freezed clients after reconnect
+-fixed #438 lost network messages
+-fixed #417 endless loop on exit
+-fixed multiplayer lobby: double names or colors no longer possible
+-fixed surveyor ai
+-fixed context menu of stopped factories with queue 
+-fixed displaying enemy mines
+-fixed build cost formula
+-fixed displaying upgrades in build menu
+-fixed various graphic problems
+-fixed /ready command in multiplayer lobby
+-fixed infiltrators
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.6
+=======================================================================
+-new features:
+	*8 clans
+	*mapdownload from server
+	*reports dialog
+	*automove for attacking and loading
+-complete new code for menus
+-new structure for unit data.xmls
+-fixed infiltrators
+-fixed mine distribution-algo
+-fixed energy, fuel, human, etc. management
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.5
+=======================================================================
+-new features:
+	*gold upgrades
+	*research centers
+	*commando stealing
+	*commando disabling
+	*group selection
+-improved graphic engine for better performance
+-fixed stealth
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.4
+=======================================================================
+-added player overview "P" (formally hack /players on)
+-improved input event system
+	*input doesn't get lost any more between 2 frames
+	*fixed a lot of input lag
+	*changed input system to utf8
+	*fixed most keyboard shortcuts
+	*added screenshot function ALT+C
+	*console commands has new syntax: /<command>
+-improved config and safe format
+	*automoves are now saved too
+	*more options like player color are saved now
+-fixed landing zones
+-fixed race conditions in network- and loggerclass
+-fixed several ingame commands (like /fps on)
+-fixed map previews in several menus
+-fixed gamedata path detection on linux
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.3
+=======================================================================
+new features:
+	*implemented loading of units (depots, transporters)
+	*implemented selfrearming, selfrepairing of buildings
+	*implemented resync command
+	*implemented players on command
+	*implemented minimap zoom
+-deactivated landing zones for release (still buggy)
+-fixed reconnecting of disconnected players
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.2
+=======================================================================
+-added load/safe
+-added load/safe multiplayer
+-added landing zones
+-added mve player for original intro movie
+-added new settings for preferences
+-added reconnecting
+-changed licence to dual licence GPL and GFDL (see COPYING.README)
+-finalized free alternative graphic set (see COPYING.README)
+-fixed MacOSX support
+-fixed upgrade system (pre game start)
+-fixed most HUD buttons
+-fixed stealh units
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.1
+=======================================================================
+new features:
+	*implemented rearming
+	*implemented repairing
+	*implemented reloading
+-implemented new pathfinding algorithm (A*)
+-fixed detection and hiding of stealth units, e. g. submarines, infiltrators
+-fixed upgrades in landing selection menu on gamestart
+-removed fuel storage at game start
+-overworked turn end handling
+-fixed sentry mode
+-tons of crashes fixed
+-tons of 'out of sync'-situations fixed
+
+Mechanized Assault & eXploration Reloaded 0.2.0
+=======================================================================
+-added support for original WRL mapfiles
+-added TCP/IP network code
+-changed game engine to server-client structure
+	*implemented attacking
+	*implemented building
+	*implemented moving
+	*implemented building
+-fixed muzzletypes in vehicle xml files
+-disabled support for old map format
+-disabled hotseat games for release
+-disabled loading/saving
+-disabled all other functions that are not yet ready for new structure
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.1.5
+=======================================================================
+-added new language hungarian (HUN)
+-added iso-8559-2 fonts
+-fixed bug seg fault exiting game having units in depot
+-fixed buggy menus/dialogs
+-fixed memleak during network game
+-disabled network games for release (not fully implemented yet)
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.1.4
+=======================================================================
+-added new language russian (RUS)
+-added sentry mode for turrets
+-added new menu for playerselection in hotseat
+-fixed upgrade bug (alien units still buggy)
+-fixed buggy menus/dialogs
+-fixed segfault exiting game in hotseat
+-overworked save format (incompatible with old saves!)
+-some more bugs fixed
+
+
+Mechanized Assault & eXploration Reloaded 0.1.3
+=======================================================================
+-added unique TCP/IP msg ids and resend system
+-implemented nearly all networking messages (not playable yet)
+-rewritten fontsystem for support of latin1 - latin5 charsets
+-overworked translations for eng and ger
+-overworked dialogs
+-overworked save format (incompatible with old saves!)
+-fixed many memoryleaks and improved memoryusage
+-improved surveyor AI
+-tons of bugs fixed
+
+
+Mechanized Assault & eXploration Reloaded 0.1.2
+=======================================================================
+-surveyor AI for automoves added
+-overworked menu, dialog, cursor and intro graphics
+-save games no longer need saves.xml but get read from disc
+	*works only on win32 and linux - MAC supported planned
+	*due changes in save-format are old saves useless
+	*autosave improved, fixed
+-almost everything translated to english and german
+-almost every menu works now on resolutions over 640x480
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.1.1
+=======================================================================
+-more translations (e.g. preferences menu)
+-net.log support (extra log for network debugging)
+-TCP/IP connect and chatting works now (NOT playing!)
+-manifestation avaible in main menu
+-claymores fixed
+-movements on roads/bridges fixed
+-attackcursor fixed (calculation of remaining hitpoints)
+-problem with Win32 version related to static sdl.dlls fixed
+-tons of bugs fixed
+
+Mechanized Assault & eXploration Reloaded 0.1.0
+=======================================================================
+-MM's MAX 0.52 goes opensource (See ABOUT)
+-SDL only support, removed WinAPI
+-XML support, removed INI support
+-translations support
+	*only latin charset so far
+-max.log support
+-tons of bugs fixed

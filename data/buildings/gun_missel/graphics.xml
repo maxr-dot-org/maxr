@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 17" name="rocketlauncher">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+
+  <Graphic>
+    <Has_Damage_Effect YN="Yes"/>
+    <Has_Beton_Underground YN="Yes"/>
+    <Has_Player_Color YN="Yes"/>
+  </Graphic>
+</Unit>
+
+

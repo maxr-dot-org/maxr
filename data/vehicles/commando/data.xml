@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 13" name="commando">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Infiltrator\n\nCommando trained in the arts of stealth and electronic warfare. Infiltrators can disable or capture enemy units. Infiltrators are normally invisible until they make a mistake trying to capture enemy units, or until spotted by infantery or infiltrators.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Sniper"/>
+    <Ammo_Quantity Num="12"/>
+    <Can_Attack Num="6"/>
+    <Shots Num="1"/>
+    <Range Num="4"/>
+    <Damage Num="6"/>
+    <Can_Drive_And_Fire YN="Yes"/>
+  </Weapon>
+  
+  <Production>
+    <Built_Costs Num="9"/>
+    <Build_As String="Human"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="5"/>
+    <Factor_Ground Num="1"/>
+    <Factor_Coast Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="2"/>
+    <Hitpoints Num="8"/>
+    <Scan_Range Num="4"/>
+    <Is_Human YN="Yes"/>
+
+    <Can_Disable YN="Yes"/>
+    <Can_Capture YN="Yes"/>
+
+    <Is_Stealth_On Num="12"/>
+    <Can_Detect_Stealth_On Num="44"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Human"/>
+  </Storage>
+</Unit>

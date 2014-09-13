@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 35" name="trans_oil">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Fuel Truck\n\nTruck for moving fuel.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="12"/>
+    <Build_As String="SmallGroundVehicle"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="7"/>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="4"/>
+    <Hitpoints Num="20"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Capacity_Resources Num="50"/>
+    <Capacity_Res_Type Const="Oil"/>
+    <Is_Storage_Type String="Ground"/>
+  </Storage>
+</Unit>

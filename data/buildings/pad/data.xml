@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 24" name="pad">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Landing Pad\n\nLanding facility for planes. Does not repair, resupply or refuel planes. To resupply a plane on a landing pad, use a nearby truck or storage unit.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="4"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="8"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="3"/>
+    <Can_Self_Destroy YN="Yes"/>
+    <Can_Be_Landed_On YN="Yes"/>
+  </Abilities>
+</Unit>
+
+
