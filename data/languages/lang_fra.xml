@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
 <!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
@@ -108,7 +108,8 @@
 			<Files ENG="Files" localized="Fichiers"/>
 			<Fog ENG="Fog" localized="Brouillard"/>
 			<Game_Load ENG="Load Game" localized="Charger jeu"/>
-			<Game_New ENG="New Game" localized="Nouveau jeu"/>
+		  <Game_NewScenario ENG="New Scenario" localized="Nouveau scénario"/>
+    	<Game_New ENG="New Game" localized="Nouveau jeu"/>
 			<Game_Options ENG="Game Options" localized="Options jeu"/>
 			<Grid ENG="Grid" localized="Grille"/>
 			<Ground_Units ENG="Landunits" localized="Unités terrestres"/>
