@@ -19,7 +19,7 @@ public:
 
 public:
     LuaGame(cLocalScenarioGame* game);
-    LuaGame(lua_State *L);
+    LuaGame(lua_State *);
     ~LuaGame();
 
     // Lua interface
@@ -28,7 +28,7 @@ public:
     int getHumanPlayer(lua_State *L);
     int addPlayer(lua_State *L);
     int setSettings(lua_State *L);
-    int start(lua_State *L);
+    int start(lua_State *);
 
     // C interface
     void setHumanClan(int clan);

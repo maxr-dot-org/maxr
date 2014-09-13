@@ -26,7 +26,7 @@ Lunar<LuaGame>::RegType LuaGame::methods[] = {
     {0,0}
 };
 
-LuaGame::LuaGame(lua_State *L) :
+LuaGame::LuaGame(lua_State *) :
     m_mapLoaded(false),
     m_game(00),
     m_humanClan(-1)
@@ -145,7 +145,7 @@ int LuaGame::setSettings(lua_State *L)
 }
 
 // Start the game
-int LuaGame::start(lua_State *L)
+int LuaGame::start(lua_State *)
 {
     // Load the first map by default if it has not been loaded by the script
     if (!m_mapLoaded && m_availableMaps.size() > 0) {

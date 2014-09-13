@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 
+#include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 #include "lua/lunar.h"
 
@@ -18,13 +19,17 @@ public:
 
 public:
     LuaIntelligence(std::shared_ptr<cClient> client);
-    LuaIntelligence(lua_State *L);
+    LuaIntelligence(lua_State *);
     ~LuaIntelligence();
-    void openLuaFile(std::string luaFilename);
+    std::string openLuaFile(std::string luaFilename);
 
     // Lua interface
     int getSettings(lua_State *L);
     int move(lua_State *L);
+
+    // SIGNALS
+public:
+    mutable cSignal<void (const std::string&)> showMessage;
 
     // SLOTS
 private:

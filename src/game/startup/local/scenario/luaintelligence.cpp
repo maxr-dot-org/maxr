@@ -24,16 +24,13 @@ Lunar<LuaIntelligence>::RegType LuaIntelligence::methods[] = {
 LuaIntelligence::LuaIntelligence(std::shared_ptr<cClient> client) :
     m_client(client)
 {
-//    Log.write("Lua Intelligence construction *****************************************************************", cLog::eLOG_TYPE_DEBUG);
-
     // Connect to the client signals
     m_signalConnectionManager.connect(m_client->finishedTurnEndProcess, std::bind (&LuaIntelligence::newTurn, this));
     m_signalConnectionManager.connect(m_client->moveJobsFinished, std::bind (&LuaIntelligence::moveJobsFinished, this));
 }
 
-LuaIntelligence::LuaIntelligence(lua_State *L)
+LuaIntelligence::LuaIntelligence(lua_State *)
 {
-//    Log.write("Lua Intelligence creation from LUA ERROR *****************************************************************", cLog::eLOG_TYPE_DEBUG);
     // This does not have to be created from Lua !
 }
 
@@ -45,7 +42,7 @@ LuaIntelligence::~LuaIntelligence()
     lua_close(L);
 }
 
-void LuaIntelligence::openLuaFile(std::string luaFilename)
+std::string LuaIntelligence::openLuaFile(std::string luaFilename)
 {
     // Open Lua File
     std::string fullFilename = cSettings::getInstance().getScenariosPath() + PATH_DELIMITER + luaFilename;
@@ -63,12 +60,11 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     }
     if (fpLuaFile == NULL)
     {
-        Log.write("Cannot load intelligence file: \"" + luaFilename + "\"", cLog::eLOG_TYPE_ERROR);
-        return;
+        return "Cannot load intelligence file: \"" + luaFilename + "\"";
     }
     Sint64 fileSize = SDL_RWsize(fpLuaFile);
-    char* luaData = new char[fileSize];
-    SDL_RWread(fpLuaFile, luaData, 1, fileSize);
+    char* luaData = new char[(size_t)fileSize];
+    SDL_RWread(fpLuaFile, luaData, 1, (size_t)fileSize);
     SDL_RWclose (fpLuaFile);
 
     // Create a lua context and run Lua interpreter
@@ -114,22 +110,22 @@ void LuaIntelligence::openLuaFile(std::string luaFilename)
     // TODO_M: should schedule the call to newTurn to be able to react on first game turn
 
     // Load the Lua script
-    int error = luaL_loadbuffer(L, luaData, fileSize, "luaIntelligence") || lua_pcall(L, 0, 0, 0);
+    int error = luaL_loadbuffer(L, luaData, (size_t)fileSize, "luaIntelligence") || lua_pcall(L, 0, 0, 0);
     if (error) {
-        Log.write("//------------------------------------------------------------------------------------------------\n"
-                  "Cannot run intelligence file, check lua syntax: \"" + luaFilename + "\"" +
-                  "\nLua Error: \n" + lua_tostring(L, -1), cLog::eLOG_TYPE_ERROR);
+        std::string errStr = lua_tostring(L, -1);
         lua_pop(L, 1);
+        return "Cannot run intelligence file, check lua syntax: \"" + luaFilename + "\"" + "\nLua Error: \n" + errStr;
     }
     else {
         Log.write("Intelligence loaded successfully.", cLog::eLOG_TYPE_INFO);
     }
     delete[] luaData;
+
+    return "";
 }
 
 int LuaIntelligence::getSettings(lua_State *L)
 {
-//    Log.write("Lua Intelligence get settings *****************************************************************", cLog::eLOG_TYPE_DEBUG);
     LuaSettings *ls = new LuaSettings(m_client->getGameSettings());
     Lunar<LuaSettings>::push(L, ls, true);
     return 1;
@@ -167,7 +163,6 @@ int LuaIntelligence::move(lua_State *L)
 
 void LuaIntelligence::newTurn()
 {
-    Log.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", cLog::eLOG_TYPE_DEBUG);
     Log.write("New turn begin, will call ai script : " + std::to_string(m_client->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
 
     // Add turn count as a global variable
@@ -177,9 +172,7 @@ void LuaIntelligence::newTurn()
     // Call Lua function "newTurn" from ai;
     lua_getglobal(L, "newTurn");
     if (lua_pcall(L, 0, 1, 0) != 0) {
-        // TODO_M: find better way for visibility of Lua Errors: should popup a dialog in MAXR
-        Log.write("****************************************************************************************************************************************************** \n"
-                  "Error calling newTurn : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
+        showMessage("Error calling newTurn : " + std::string(lua_tostring(L, -1)));
         return;
     }
 }
@@ -189,9 +182,7 @@ void LuaIntelligence::moveJobsFinished()
     // Call Lua function "movesFinished" from ai;
     lua_getglobal(L, "movesFinished");
     if (lua_pcall(L, 0, 1, 0) != 0) {
-        // TODO_M: find better way for visibility of Lua Errors: should popup a dialog in MAXR
-        Log.write("****************************************************************************************************************************************************** \n"
-                  "Error calling movesFinished : " + std::string(lua_tostring(L, -1)), cLog::eLOG_TYPE_ERROR);
+        showMessage("Error calling movesFinished : " + std::string(lua_tostring(L, -1)));
         return;
     }
 }

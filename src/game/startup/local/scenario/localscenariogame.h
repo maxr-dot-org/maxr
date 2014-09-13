@@ -31,8 +31,6 @@ enum StartingStatus {
     Cancelled
 };
 
-// TODO_M: where to place translations
-// TODO_M: where to place scenarios
 class cLocalScenarioGame : public cGame
 {
 public:
@@ -65,7 +63,7 @@ public:
 
     // Slots:
     void turnChanged();
-
+    void popupMessage(std::string message);
 
 private:
     cApplication* m_application;
@@ -73,6 +71,7 @@ private:
     lua_State* L;
     StartingStatus m_startStatus;
     bool m_scenarioFinished;
+    std::string aiErrMsg;
 
     cSignalConnectionManager m_signalConnectionManager;
     std::unique_ptr<cServer> m_server;

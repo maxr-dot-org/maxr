@@ -22,6 +22,7 @@
 #include "game/logic/server.h"
 #include "game/logic/savegame.h"
 #include "ui/graphical/menu/dialogs/dialogscenarioend.h"
+#include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/menu/windows/windowclanselection/windowclanselection.h"
 #include "ui/graphical/application.h"
@@ -112,8 +113,8 @@ void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
         return;
     }
     Sint64 fileSize = SDL_RWsize(fpLuaFile);
-    char* luaData = new char[fileSize];
-    SDL_RWread(fpLuaFile, luaData, 1, fileSize);
+    char* luaData = new char[(size_t)fileSize];
+    SDL_RWread(fpLuaFile, luaData, 1, (size_t)fileSize);
     SDL_RWclose (fpLuaFile);
 
     // Create a lua context and run Lua interpreter
@@ -129,10 +130,10 @@ void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
     lua_setglobal(L, "game");
 
     // Load the Lua script
-    int error = luaL_loadbuffer(L, luaData, fileSize, "luaScenario") || lua_pcall(L, 0, 0, 0);
+    int error = luaL_loadbuffer(L, luaData, (size_t)fileSize, "luaScenario") || lua_pcall(L, 0, 0, 0);
     if (error) {
-        Log.write("Cannot run scenario file, check lua syntax: \"" + luaFilename + "\"" +
-                  "\nLua Error: \n" + lua_tostring(L, -1), cLog::eLOG_TYPE_ERROR);
+        popupMessage("Cannot run scenario file, check lua syntax: \"" + luaFilename + "\"" +
+                     "\nLua Error: \n" + lua_tostring(L, -1));
         lua_pop(L, 1);
     }
     else {
@@ -269,6 +270,7 @@ void cLocalScenarioGame::startGame()
     m_gameGuiController->addPlayerGameGuiState (*player, std::move (playerGameGuiState));
 
     m_gameGuiController->start ();
+    if (aiErrMsg.size() > 0) popupMessage(aiErrMsg);
 
     using namespace std::placeholders;
     m_signalConnectionManager.connect (m_gameGuiController->triggeredSave, std::bind (&cLocalScenarioGame::save, this, _1, _2));
@@ -286,8 +288,10 @@ void cLocalScenarioGame::loadAiScript(std::string playerName, std::string luaFil
     for (size_t i = 0; i != m_iaClients.size(); ++i) {
         if (m_iaClients[i]->getActivePlayer().getName() != playerName) continue;
         std::shared_ptr<LuaIntelligence> ai = std::make_shared<LuaIntelligence>(m_iaClients[i]);
+        using namespace std::placeholders;
+        m_signalConnectionManager.connect(ai->showMessage, std::bind (&cLocalScenarioGame::popupMessage, this, _1));
         m_intelligences.push_back(ai);
-        ai->openLuaFile(luaFileName);
+        aiErrMsg = ai->openLuaFile(luaFileName);
         break;
     }
 }
@@ -345,5 +349,10 @@ void cLocalScenarioGame::turnChanged()
             });
         }
     }
+}
+
+void cLocalScenarioGame::popupMessage(std::string message)
+{
+    m_application->show(std::make_shared<cDialogOk>(message));
 }
 
