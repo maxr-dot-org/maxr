@@ -1288,7 +1288,7 @@ void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 	{
 		for (int y = 0; y != player.getMapSize ().y (); ++y)
 		{
-			if (!str.compare (x + y * player.getMapSize ().y (), 1, "1")) player.exploreResource (cPosition (x, y));
+			if (!str.compare (x * player.getMapSize ().y () + y, 1, "1")) player.exploreResource (cPosition (x, y));
 		}
 	}
 }
