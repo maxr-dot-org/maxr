@@ -32,8 +32,8 @@ class cMapField;
 class cPlayer;
 class cServer;
 class cVehicle;
-template<typename T>
-class cBox;
+template<typename> class cBox;
+class cSoundManager;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -51,6 +51,8 @@ public:
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const = 0;
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const = 0;
 	virtual std::string getStatusStr (const cPlayer* player) const = 0;
+
+	virtual void makeReport (cSoundManager& soundManager) const = 0;
 
 	virtual const cPosition& getMovementOffset() const { static const cPosition dummy(0, 0); return dummy; }
 

@@ -170,6 +170,9 @@ public:
 
 	int playStream();
 	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
+
+	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
+
 	/**
 	* refreshes the shotsCur of this building
 	*@author alzi alias DoctorDeath

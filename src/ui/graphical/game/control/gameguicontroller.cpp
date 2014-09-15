@@ -948,6 +948,10 @@ void cGameGuiController::showResearchDialog (const cUnit& unit)
 	if (unit.getOwner () != player.get ()) return;
 	if (!player) return;
 
+	// clear list with research areas finished this turn.
+	// NOTE: do we really want to do this here?
+	unit.getOwner ()->setCurrentTurnResearchAreasFinished (std::vector<int> ());
+
 	auto researchDialog = application.show (std::make_shared<cDialogResearch> (*player));
 	researchDialog->done.connect ([&, researchDialog]()
 	{

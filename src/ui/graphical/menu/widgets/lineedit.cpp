@@ -159,11 +159,10 @@ bool cLineEdit::handleGetKeyFocus (cApplication& application)
 	hasKeyFocus = true;
 
 	showCursor = true;
+	lastCursorBlinkTime = std::chrono::steady_clock::now ();
 
 	if (!hadKeyFocus)
 	{
-		lastCursorBlinkTime = std::chrono::steady_clock::now ();
-
 		cursorPos = (int)text.length ();
 		while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
 		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);

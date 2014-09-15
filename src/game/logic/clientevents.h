@@ -87,6 +87,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UPGRADED_VEHICLES,		// the vehicles in the msg have been upgraded to the current version
 	GAME_EV_RESEARCH_SETTINGS,		// the research centers were newly assigned to research areas
 	GAME_EV_RESEARCH_LEVEL,			// the research level reached by a player
+	GAME_EV_FINISHED_RESEARCH_AREAS,
 	GAME_EV_REFRESH_RESEARCH_COUNT,	// the client has to refresh the researchCount and the research sums for the areas after a resync
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	GAME_EV_COMMANDO_ANSWER,		// information about the result of a commando action

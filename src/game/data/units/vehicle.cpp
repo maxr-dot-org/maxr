@@ -664,7 +664,7 @@ void cVehicle::doSurvey (const cServer& server)
 //-----------------------------------------------------------------------------
 /** Makes the report */
 //-----------------------------------------------------------------------------
-void cVehicle::makeReport (cSoundManager& soundManager)
+void cVehicle::makeReport (cSoundManager& soundManager) const
 {
 	if (isDisabled())
 	{

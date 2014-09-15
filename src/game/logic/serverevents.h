@@ -286,6 +286,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, const cPlayer& receiver);
 void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<cResearch::ResearchArea>& newAreasForResearchCenters, const cPlayer& receiver);
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver);
+void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver);
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
 void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList);
 void sendGameTime (cServer& server, const cPlayer& receiver, int gameTime);

@@ -737,6 +737,18 @@ void sendResearchLevel (cServer& server, const cResearch& researchLevel, const c
 }
 
 //------------------------------------------------------------------------------
+void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver)
+{
+	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_RESEARCH_AREAS));
+	for (size_t i = 0; i < areas.size (); ++i)
+	{
+		message->pushInt32 (areas[i]);
+	}
+	message->pushInt32 (areas.size ());
+	server.sendNetMessage (message, &receiver);
+}
+
+//------------------------------------------------------------------------------
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_REFRESH_RESEARCH_COUNT));

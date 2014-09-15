@@ -40,6 +40,9 @@
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "utility/random.h"
 
+#include "ui/sound/soundmanager.h"
+#include "ui/sound/effects/soundeffectvoice.h"
+
 using namespace std;
 
 
@@ -282,6 +285,16 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 		return lngPack.i18n ("Text~Comp~ReactionFireOff");
 
 	return lngPack.i18n ("Text~Comp~Waits");
+}
+
+
+//--------------------------------------------------------------------------
+void cBuilding::makeReport (cSoundManager& soundManager) const
+{
+	if (data.canResearch && isUnitWorking () && getOwner () && getOwner ()->isCurrentTurnResearchAreaFinished (getResearchArea ()))
+	{
+		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
+	}
 }
 
 //--------------------------------------------------------------------------

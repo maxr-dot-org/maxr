@@ -3861,7 +3861,8 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	// send credits
 	sendCredits (*this, player.getCredits (), player);
 	// send research
-	sendResearchLevel (*this, player.getResearchState(), player);
+	sendResearchLevel (*this, player.getResearchState (), player);
+	sendFinishedResearchAreas (*this, player.getCurrentTurnResearchAreasFinished (), player);
 	sendRefreshResearchCount (*this, player);
 
 	// send all players' score histories & eco-counts

@@ -626,6 +626,19 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 		XMLElement* researchLevelNode = researchNode->FirstChildElement ("ResearchLevel");
 		if (researchLevelNode)
 			loadResearchLevel (researchLevelNode, Player->getResearchState());
+
+		XMLElement* finishedResearchAreasNode = researchNode->FirstChildElement ("FinishedResearchAreas");
+		if (finishedResearchAreasNode)
+		{
+			std::vector<int> areas;
+			const XMLElement* areaNode = finishedResearchAreasNode->FirstChildElement ("Area");
+			while (areaNode)
+			{
+				areas.push_back(areaNode->IntAttribute ("num"));
+				areaNode = areaNode->NextSiblingElement ("Area");
+			}
+			Player->setCurrentTurnResearchAreasFinished (std::move (areas));
+		}
 	}
 
 	if (XMLElement* const subbasesNode = playerNode->FirstChildElement ("Subbases"))
@@ -1420,7 +1433,18 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 
 	XMLElement* researchNode = addMainElement (playerNode, "Research");
 	XMLElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
-	writeResearchLevel (researchLevelNode, Player.getResearchState());
+	writeResearchLevel (researchLevelNode, Player.getResearchState ());
+
+	const auto& finishedResearchAreas = Player.getCurrentTurnResearchAreasFinished ();
+
+	if (!finishedResearchAreas.empty ())
+	{
+		XMLElement* finishedResearchAreasNode = addMainElement (researchNode, "FinishedResearchAreas");
+		for (size_t i = 0; i < finishedResearchAreas.size (); ++i)
+		{
+			addAttributeElement (finishedResearchAreasNode, "Area", "num", iToStr(finishedResearchAreas[i]));
+		}
+	}
 
 	// write subbases
 	XMLElement* subbasesNode = addMainElement (playerNode, "Subbases");
