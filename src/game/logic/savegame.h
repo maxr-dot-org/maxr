@@ -51,7 +51,8 @@ struct sID;
 // 0.6 - changed gui state format
 // 0.7 - changed saving player color
 // 0.8 - added finished research areas information
-#define SAVE_FORMAT_VERSION		((std::string)"0.8")
+// 0.9 - changed how building data is written for path building units
+#define SAVE_FORMAT_VERSION		((std::string)"0.9")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad

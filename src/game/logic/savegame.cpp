@@ -794,7 +794,14 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
-		vehicle.setBuildingABuilding(true);
+		if (version < cVersion (0, 9))
+		{
+			vehicle.setBuildingABuilding (true);
+		}
+		else
+		{
+			vehicle.setBuildingABuilding (element->BoolAttribute ("building"));
+		}
 		if (element->Attribute ("type_id") != NULL)
 		{
 			sID temp;
@@ -822,6 +829,14 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			vehicle.setBuildCostsStart (element->IntAttribute ("costsstart"));
 			element->QueryIntAttribute ("endx", &vehicle.bandPosition.x());
 			element->QueryIntAttribute ("endy", &vehicle.bandPosition.y());
+
+			if (!vehicle.isUnitBuildingABuilding())
+			{
+				server.addJob (new cStartBuildJob (vehicle, vehicle.getPosition (), vehicle.data.isBig));
+				vehicle.setBuildingABuilding (true);
+				vehicle.setBuildCosts (vehicle.getBuildCostsStart ());
+				vehicle.setBuildTurns (vehicle.getBuildTurnsStart ());
+			}
 		}
 	}
 	if (XMLElement* const element = unitNode->FirstChildElement ("Clearing"))
@@ -1551,9 +1566,10 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	if (vehicle.isManualFireActive()) addMainElement (unitNode, "ManualFire");
 	if (vehicle.hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
 
-	if (vehicle.isUnitBuildingABuilding ())
+	if (vehicle.isUnitBuildingABuilding () || vehicle.BuildPath)
 	{
 		XMLElement* element = addMainElement (unitNode, "Building");
+		element->SetAttribute ("building", bToStr (vehicle.isUnitBuildingABuilding ()).c_str());
 		element->SetAttribute ("type_id", vehicle.getBuildingType ().getText ().c_str ());
 		element->SetAttribute ("turns", iToStr (vehicle.getBuildTurns()).c_str());
 		element->SetAttribute ("costs", iToStr (vehicle.getBuildCosts()).c_str());
