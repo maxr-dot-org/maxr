@@ -3138,8 +3138,6 @@ void cServer::makeTurnEnd()
 				isModified = true;
 			}
 			isModified |= vehicle->refreshData ();
-			isModified |= vehicle->refreshData_Build (*this);
-			isModified |= vehicle->refreshData_Clear (*this);
 
 			if (isModified)
 			{
@@ -3149,7 +3147,6 @@ void cServer::makeTurnEnd()
 				}
 				sendUnitData (*this, *vehicle, *vehicle->getOwner ());
 			}
-			if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
 		}
 	}
 
@@ -3182,6 +3179,33 @@ void cServer::makeTurnEnd()
 	for (size_t i = 0; i != playerList.size (); ++i)
 	{
 		playerList[i]->accumulateScore (*this);
+	}
+
+	// finish building and clearing
+	// NOTE: this has come after new materials have been generated to avoid new materials being
+	//       put into storage units that have not been finished in the last turn.
+	for (size_t i = 0; i != playerList.size (); ++i)
+	{
+		cPlayer& player = *playerList[i];
+		const auto& vehicles = player.getVehicles ();
+		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+		{
+			const auto& vehicle = *i;
+
+			bool isModified = false;
+			isModified |= vehicle->refreshData_Build (*this);
+			isModified |= vehicle->refreshData_Clear (*this);
+
+			if (isModified)
+			{
+				for (size_t k = 0; k != vehicle->seenByPlayerList.size (); ++k)
+				{
+					sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[k]);
+				}
+				sendUnitData (*this, *vehicle, *vehicle->getOwner ());
+			}
+			if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
+		}
 	}
 
 	// Gun'em down:
