@@ -66,6 +66,11 @@ void cNetworkHostGameSaved::start (cApplication& application)
 	}
 	localClient->setPlayers (players, serverListLocalPlayerIndex);
 
+	if (server->getGameSettings()->getGameType () == eGameSettingsGameType::Turns)
+	{
+		sendWaitFor (*server, *server->getActiveTurnPlayer (), nullptr);
+	}
+
 	server->start ();
 
 	sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getNr ());

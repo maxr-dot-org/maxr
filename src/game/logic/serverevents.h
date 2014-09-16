@@ -264,7 +264,7 @@ void sendUnfreeze (cServer& server, eFreezeMode mode);
 * sends that a client has to wait for another player to end his turn
 *@author alzi alias DoctorDeath
 */
-void sendWaitFor (cServer& server, int waitForPlayerNr, const cPlayer* receiver);
+void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver);
 /**
 * sends that a player has to be deleted
 *@author alzi alias DoctorDeath

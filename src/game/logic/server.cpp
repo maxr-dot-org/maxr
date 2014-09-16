@@ -1547,7 +1547,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	}
 	DisconnectedPlayerList.clear();
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame ()) sendWaitFor (*this, activeTurnPlayer->getNr(), nullptr);
+	if (isTurnBasedGame ()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1591,7 +1591,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 	resyncPlayer (*player);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame ()) sendWaitFor (*this, activeTurnPlayer->getNr(), nullptr);
+	if (isTurnBasedGame ()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -2876,6 +2876,8 @@ void cServer::handleEnd (cPlayer& player)
 			checkDefeats ();
 			turnClock->increaseTurn ();
 		}
+
+		if(isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 
 		makeTurnStart (*activeTurnPlayer);
 	}

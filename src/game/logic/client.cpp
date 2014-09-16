@@ -448,9 +448,13 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WAIT_FOR);
 
-	const int nextPlayerNum = message.popInt16();
+	const int nextPlayerNum = message.popInt32();
 
-	if (nextPlayerNum != ActivePlayer->getNr())
+	if (nextPlayerNum == ActivePlayer->getNr ())
+	{
+		disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+	}
+	else
 	{
 		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 	}

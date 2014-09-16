@@ -632,10 +632,10 @@ void sendUnfreeze (cServer& server, eFreezeMode mode)
 }
 
 //------------------------------------------------------------------------------
-void sendWaitFor (cServer& server, int waitForPlayerNr, const cPlayer* receiver)
+void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_WAIT_FOR));
-	message->pushInt16 (waitForPlayerNr);
+	message->pushInt32 (player.getNr());
 	server.sendNetMessage (message, receiver);
 }
 
