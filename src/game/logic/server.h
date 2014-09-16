@@ -395,12 +395,11 @@ private:
 	* handles the pressed end of a player
 	*@author alzi alias DoctorDeath
 	*/
-	void handleEnd (const cPlayer& player);
+	void handleEnd (cPlayer& player);
 	/**
-	* executes everything for a turnend
-	*@author alzi alias DoctorDeath
-	*/
-	void makeTurnEnd();
+	 * executes everything for a turn start
+	 */
+	void makeTurnStart (cPlayer& player);
 	/**
 	* checks whether a player is defeated
 	*@author alzi alias DoctorDeath
@@ -414,13 +413,16 @@ private:
 	void handleWantEnd();
 
 	/**
-	* checks whether some units are moving and restarts remaining movements
-	*@author alzi alias DoctorDeath
-	*@param player The player who will receive the messages
-	*       when the turn can't be finished now; nullptr for all players
-	*@return true if there were found some moving units
-	*/
-	bool checkEndActions (const cPlayer* player);
+	 * checks whether some units are moving and restarts remaining movements
+	 *
+	 * @author alzi alias DoctorDeath
+	 * @param player The player who will receive the messages
+	 *       when the turn can't be finished now; nullptr for all players
+	 * @return true if there were found some moving units
+	 */
+	bool checkRemainingMoveJobs (const cPlayer* player);
+
+	bool executeRemainingMoveJobs (const cPlayer& player);
 
 	/**
 	* checks whether the deadline has run down
@@ -496,8 +498,8 @@ private:
 	cFlatSet<std::shared_ptr<cBuilding>, sUnitLess<cBuilding>> neutralBuildings;
 	/** number of active player in turn based multiplayer game */
 	cPlayer* activeTurnPlayer;
-	/** a list with the numbers of all players who have ended their turn */
-	std::vector<const cPlayer*> PlayerEndList;
+	/** a list with the numbers of all players who have ended their turn. Valid only for simultaneous games */
+	std::vector<const cPlayer*> playerEndList;
 
 	std::shared_ptr<cTurnClock> turnClock;
 
@@ -507,9 +509,14 @@ private:
 
 	/** stores the gametime of the last turn end. */
 	unsigned int lastTurnEnd;
-	/** Number of the Player who wants to end his turn;
-	 * -1 for no player, -2 for undefined player */
-	int iWantPlayerEndNum;
+
+	/**
+	 * Number of the Player who wants to end his turn:
+	 * -1 for no player
+	 * -2 for undefined player
+	 */
+	int pendingEndTurnPlayerNumber;
+
 	/** The next unique ID for the unit creation */
 	unsigned int iNextUnitID;
 	/** if this is true the map will be opened for a defeated player */

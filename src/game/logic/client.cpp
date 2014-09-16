@@ -468,7 +468,6 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	{
 		getPlayerList() [i]->setHasFinishedTurn(false);
 	}
-	finishedTurnEndProcess ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
@@ -1780,7 +1779,6 @@ void cClient::handleEnd()
 	if (isFreezed()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn (*this);
-	startedTurnEndProcess ();
 }
 
 
@@ -2026,15 +2024,22 @@ void cClient::runJobs()
 //------------------------------------------------------------------------------
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
+	const auto wasEnabled = freezeModes.isEnable (mode);
+	const auto oldPlayerNumber = freezeModes.getPlayerNumber ();
+
 	freezeModes.enable (mode, playerNumber);
-	freezeModeChanged ();
+
+	if (!wasEnabled || oldPlayerNumber != playerNumber) freezeModeChanged (mode);
 }
 
 //------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
+	const auto wasDisabled = !freezeModes.isEnable (mode);
+
 	freezeModes.disable (mode);
-	freezeModeChanged ();
+
+	if (!wasDisabled) freezeModeChanged (mode);
 }
 
 //------------------------------------------------------------------------------

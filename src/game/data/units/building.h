@@ -163,7 +163,6 @@ public:
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
 	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
 	int DamageFXPointX, DamageFXPointY, DamageFXPointX2, DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
-	int lastShots;   //A disabled unit gets this amount of shots back, when it it captured
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking;
 	int points;     // accumulated eco-sphere points
@@ -178,7 +177,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*@return 1 if there has been refreshed something, else 0.
 	*/
-	int refreshData();
+	bool refreshData();
 	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
 	void updateNeighbours (const cMap& map);
 	void CheckNeighbours (const cMap& Map);

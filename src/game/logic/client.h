@@ -201,9 +201,6 @@ public:
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer () const { return gameTimer; }
 
-	mutable cSignal<void ()> startedTurnEndProcess;
-	mutable cSignal<void ()> finishedTurnEndProcess;
-
 	mutable cSignal<void (int, int)> playerFinishedTurn;
 
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;

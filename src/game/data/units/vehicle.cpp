@@ -85,8 +85,6 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	MoveJobActive = false;
 	BuildPath = false;
 	bigBetonAlpha = 0;
-	lastShots = 0;
-	lastSpeed = 0;
 
 	DamageFXPointX = random (7) + 26 - 3;
 	DamageFXPointY = random (7) + 26 - 3;
@@ -306,7 +304,7 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 	render_simple (surface, dest, zoomFactor, alpha);
 }
 
-bool cVehicle::refreshData_Build (cServer& server)
+bool cVehicle::proceedBuilding (cServer& server)
 {
 	if (isUnitBuildingABuilding () == false || getBuildTurns () == 0) return false;
 
@@ -394,7 +392,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 	return true;
 }
 
-bool cVehicle::refreshData_Clear (cServer& server)
+bool cVehicle::proceedClearing (cServer& server)
 {
 	if (isUnitClearing () == false || getClearingTurns () == 0) return false;
 
@@ -435,24 +433,12 @@ bool cVehicle::refreshData_Clear (cServer& server)
 
 bool cVehicle::refreshData()
 {
-	if (isDisabled())
-	{
-		lastSpeed = data.speedMax;
-		lastShots = std::min (data.getAmmo (), data.shotsMax);
-		return true;
-	}
+	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
+
 	if (data.speedCur < data.speedMax || data.getShots () < data.shotsMax)
 	{
 		data.speedCur = data.speedMax;
 		data.setShots (std::min (data.getAmmo (), data.shotsMax));
-
-#if 0
-		// Regeneration:
-		if (data.is_alien && data.hitpointsCur < data.hitpointsMax)
-		{
-			data.hitpointsCur++;
-		}
-#endif
 		return true;
 	}
 	return false;
