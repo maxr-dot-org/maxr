@@ -1994,7 +1994,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		srcVehicle->InSentryRange (*this);
 	}
 	srcVehicle->data.setShots(srcVehicle->data.getShots()-1);
-	sendUnitData (*this, *srcVehicle, *srcVehicle->getOwner ());
+	sendUnitData (*this, *srcVehicle);
 	sendCommandoAnswer (*this, success, steal, *srcVehicle, *srcVehicle->getOwner ());
 }
 
