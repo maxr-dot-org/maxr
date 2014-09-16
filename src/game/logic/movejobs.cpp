@@ -412,11 +412,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	{
 		Vehicle->getOwner ()->deleteSentry (*Vehicle);
 	}
-	sendUnitData (*server, *Vehicle, *Vehicle->getOwner ());
-	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
-	{
-		sendUnitData (*server, *Vehicle, *Vehicle->seenByPlayerList[i]);
-	}
+	sendUnitData (*server, *Vehicle);
 
 	if (Vehicle->ServerMoveJob)
 	{
@@ -752,11 +748,7 @@ void cServerMoveJob::doEndMoveVehicle()
 		if (bResult)
 		{
 			// send new unit values
-			sendUnitData (*server, *Vehicle, *Vehicle->getOwner ());
-			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
-			{
-				sendUnitData (*server, *Vehicle, *Vehicle->seenByPlayerList[i]);
-			}
+			sendUnitData (*server, *Vehicle);
 		}
 	}
 

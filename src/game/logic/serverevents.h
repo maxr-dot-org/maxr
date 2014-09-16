@@ -139,12 +139,19 @@ void sendTurnStartTime (cServer& server, unsigned int gameTime);
 void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
 
 /**
-* Sends the data values of this unit to the client
-*@author alzi alias DoctorDeath
-*@param unit The unit from which the data should be taken
-*@param player The player who should receive this message
-*/
+ * Sends the data values of this unit to the client
+ *
+ * @param unit The unit from which the data should be taken
+ * @param player The player who should receive this message
+ */
 void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver);
+/**
+ * Sends the unit data to the owner of the unit (if there is one) and to
+ * all players that can see the unit.
+ *
+ * @param unit The unit from which the data should be taken
+ */ 
+void sendUnitData (cServer& server, const cUnit& unit);
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 

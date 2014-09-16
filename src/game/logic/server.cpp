@@ -753,11 +753,7 @@ void cServer::handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 
 	if (result)
 	{
-		sendUnitData (*this, *Vehicle, *Vehicle->getOwner ());
-		for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-		{
-			sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[i]);
-		}
+		sendUnitData (*this, *Vehicle);
 	}
 }
 
@@ -887,15 +883,6 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 		// refresh SeenByPlayerLists
 		checkPlayerUnits();
 	}
-
-#if 0
-	// send new vehicle status and position //done implicitly by addMoveJob()
-	sendUnitData (Vehicle, Vehicle->owner->Nr);
-	for (size_t i = 0; i < Vehicle->seenByPlayerList.size(); ++i)
-	{
-		sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
-	}
-#endif
 
 	// drive away from the building lot
 	addMoveJob (Vehicle->getPosition(), escapePosition, Vehicle);
@@ -1228,9 +1215,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Vehicle->getOwner ()->deleteSentry (*Vehicle);
 		}
 
-		sendUnitData (*this, *Vehicle, *Vehicle->getOwner ());
-		for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[i]);
+		sendUnitData (*this, *Vehicle);
 	}
 	else // building
 	{
@@ -1243,9 +1228,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Building->getOwner ()->deleteSentry (*Building);
 		}
 
-		sendUnitData (*this, *Building, *Building->getOwner ());
-		for (size_t i = 0; i != Building->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *Building, *Building->seenByPlayerList[i]);
+		sendUnitData (*this, *Building);
 	}
 }
 
@@ -1269,11 +1252,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			vehicle->setManualFireActive(false);
 		}
 
-		sendUnitData (*this, *vehicle, *vehicle->getOwner ());
-		for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
-		{
-			sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[i]);
-		}
+		sendUnitData (*this, *vehicle);
 	}
 	else // building
 	{
@@ -1290,11 +1269,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			building->setManualFireActive (false);
 		}
 
-		sendUnitData (*this, *building, *building->getOwner ());
-		for (size_t i = 0; i != building->seenByPlayerList.size(); ++i)
-		{
-			sendUnitData (*this, *building, *building->seenByPlayerList[i]);
-		}
+		sendUnitData (*this, *building);
 	}
 }
 
@@ -2002,11 +1977,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				destBuilding->ServerStopWork (*this, true);
 				sendDoStopWork (*this, *destBuilding);
 			}
-			sendUnitData (*this, *destUnit, *destUnit->getOwner ());
-			for (size_t i = 0; i != destUnit->seenByPlayerList.size(); ++i)
-			{
-				sendUnitData (*this, *destUnit, *destUnit->seenByPlayerList[i]);
-			}
+			sendUnitData (*this, *destUnit);
 			destUnit->getOwner ()->doScan ();
 			checkPlayerUnits();
 		}
@@ -2105,9 +2076,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 	if (unit == 0) return;
 
 	unit->changeName (message.popString());
-	for (size_t i = 0; i != unit->seenByPlayerList.size(); ++i)
-		sendUnitData (*this, *unit, *unit->seenByPlayerList[i]);
-	sendUnitData (*this, *unit, *unit->getOwner ());
+	sendUnitData (*this, *unit);
 }
 
 //------------------------------------------------------------------------------
@@ -3113,11 +3082,7 @@ void cServer::makeTurnEnd()
 			}
 			if ((building->data.canAttack && building->refreshData ()) || forceSendUnitData)
 			{
-				for (size_t k = 0; k != building->seenByPlayerList.size (); ++k)
-				{
-					sendUnitData (*this, *building, *building->seenByPlayerList[k]);
-				}
-				sendUnitData (*this, *building, *building->getOwner ());
+				sendUnitData (*this, *building);
 			}
 		}
 	}
@@ -3141,11 +3106,7 @@ void cServer::makeTurnEnd()
 
 			if (isModified)
 			{
-				for (size_t k = 0; k != vehicle->seenByPlayerList.size (); ++k)
-				{
-					sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[k]);
-				}
-				sendUnitData (*this, *vehicle, *vehicle->getOwner ());
+				sendUnitData (*this, *vehicle);
 			}
 		}
 	}
@@ -3198,11 +3159,7 @@ void cServer::makeTurnEnd()
 
 			if (isModified)
 			{
-				for (size_t k = 0; k != vehicle->seenByPlayerList.size (); ++k)
-				{
-					sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[k]);
-				}
-				sendUnitData (*this, *vehicle, *vehicle->getOwner ());
+				sendUnitData (*this, *vehicle);
 			}
 			if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
 		}

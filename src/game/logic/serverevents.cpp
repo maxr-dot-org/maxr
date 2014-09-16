@@ -235,6 +235,19 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 }
 
 //------------------------------------------------------------------------------
+void sendUnitData (cServer& server, const cUnit& unit)
+{
+    if (unit.getOwner ())
+    {
+        sendUnitData (server, unit, *unit.getOwner ());
+    }
+    for (size_t i = 0; i < unit.seenByPlayerList.size (); ++i)
+    {
+        sendUnitData (server, unit, *unit.seenByPlayerList[i]);
+    }
+}
+
+//------------------------------------------------------------------------------
 void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SPECIFIC_UNIT_DATA));

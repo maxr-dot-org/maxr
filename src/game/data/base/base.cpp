@@ -818,11 +818,7 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 	const auto newHitPoints = building.data.getHitpoints() + Round (((float) building.data.hitpointsMax / building.data.buildCosts) * 4);
 	building.data.setHitpoints(std::min (building.data.hitpointsMax, newHitPoints));
 	addMetal (server, -1);
-	sendUnitData (server, building, *owner);
-	for (size_t j = 0; j != building.seenByPlayerList.size(); ++j)
-	{
-		sendUnitData (server, building, *building.seenByPlayerList[j]);
-	}
+	sendUnitData (server, building);
 }
 
 void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
