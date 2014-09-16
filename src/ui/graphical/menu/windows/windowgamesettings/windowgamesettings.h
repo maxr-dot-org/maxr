@@ -28,6 +28,7 @@ class cGameSettings;
 
 class cCheckBox;
 class cLineEdit;
+class cLabel;
 
 class cWindowGameSettings : public cWindow
 {
@@ -41,6 +42,8 @@ public:
 	cSignal<void ()> done;
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	bool forHotSeatGame;
 
 	cCheckBox* metalLimitedCheckBox;
 	cCheckBox* metalNormalCheckBox;
@@ -107,9 +110,14 @@ private:
 	cCheckBox* turnEndTurnDeadline5CheckBox;
 	cCheckBox* turnEndTurnDeadlineCustomCheckBox;
 	cLineEdit* turnEndTurnDeadlineLineEdit;
+	cLabel* turnEndDeadlineLabel;
+	cLabel* turnEndDeadlineSecondsLabel;
 
 	void okClicked ();
 	void backClicked ();
+
+	void disableTurnEndDeadlineOptions ();
+	void enableTurnEndDeadlineOptions ();
 };
 
 #endif // ui_graphical_menu_windows_windowgamesettings_windowgamesettingsH
