@@ -26,6 +26,9 @@
 class cAnimationTimer;
 class cVehicle;
 
+/**
+ * Animation to fade in the concrete of building lots.
+ */
 class cAnimationStartUpBuildingSite : public cAnimation
 {
 public:

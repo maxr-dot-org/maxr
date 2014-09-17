@@ -26,6 +26,9 @@
 class cAnimationTimer;
 class cBuilding;
 
+/**
+ * Animation for the alpha effect of working units.
+ */
 class cAnimationWork : public cAnimation
 {
 public:

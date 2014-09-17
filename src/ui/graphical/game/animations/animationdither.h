@@ -26,6 +26,9 @@
 class cAnimationTimer;
 class cVehicle;
 
+/**
+ * Simple dither animation for flying planes.
+ */
 class cAnimationDither : public cAnimation
 {
 public:

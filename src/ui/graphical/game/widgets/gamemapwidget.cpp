@@ -1975,6 +1975,7 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 	const auto tileDrawingArea = cBox<cPosition> (tileDrawingRange.first, tileDrawingRange.second - cPosition(1,1));
 	const auto oldTileDrawingArea = cBox<cPosition> (oldTileDrawingRange.first, oldTileDrawingRange.second - cPosition (1, 1));
 
+	// delete finished animations or animations that are no longer in the visible area.
 	for (auto i = animations.begin (); i != animations.end (); /*erase in loop*/)
 	{
 		auto& animation = **i;
@@ -1988,6 +1989,7 @@ void cGameMapWidget::updateActiveAnimations (const std::pair<cPosition, cPositio
 		}
 	}
 
+	// add animations for units that just entered the visible area.
 	if (dynamicMap)
 	{
 		std::vector<cUnit*> units;

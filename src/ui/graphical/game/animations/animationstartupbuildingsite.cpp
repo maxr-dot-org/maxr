@@ -27,6 +27,7 @@ cAnimationStartUpBuildingSite::cAnimationStartUpBuildingSite (cAnimationTimer& a
 	animationTimer (animationTimer_),
 	vehicle (&vehicle_)
 {
+	// register the animation to build status changes
 	signalConnectionManager.connect (vehicle->buildingChanged, [this]()
 	{
 		if (vehicle->isUnitBuildingABuilding ())

@@ -25,23 +25,67 @@
 #include "utility/signal/signal.h"
 #include "utility/runnable.h"
 
+/**
+ * Central class to get animation timers from.
+ *
+ * This class implements the runnable interface so that the execution
+ * of animation callbacks can be put into the main game loop.
+ *
+ * Hence the callbacks will be synchronized with the drawing thread which
+ * makes extra synchronization unnecessary.
+ */
 class cAnimationTimer : public cRunnable
 {
 public:
 	cAnimationTimer ();
 	~cAnimationTimer ();
 
+	/**
+	 * Increases the internal timer.
+	 *
+	 * For internal use only!
+	 */
 	void increaseTimer ();
 
+	/**
+	 * Returns the animation time since the animation timer has been started in 100ms steps.
+	 */
 	unsigned long long getAnimationTime () const;
 
+	/**
+	 * Checks the time since the last call and emits the
+	 * signals according to this interval.
+	 */
 	virtual void run () MAXR_OVERRIDE_FUNCTION;
 
+	/*
+	 * The following signals get called during the run method.
+	 *
+	 * Lets take the 10ms signal as example.
+	 * It gets triggered exactly once when the time since the last
+	 * exceeds 10ms.
+	 * To make it absolutely clear: only one call even if 95ms
+	 * have been passed since the last call. But not one call if only 5ms
+	 * have passed.
+	 */
 	cSignal<void ()> triggered10ms;
 	cSignal<void ()> triggered50ms;
 	cSignal<void ()> triggered100ms;
 	cSignal<void ()> triggered400ms;
-
+	
+	/*
+	 * The following signals get called during the run method.
+	 *
+	 * These signals do catch up if the FPS drop below the time
+	 * of the signal.
+	 *
+	 * Lets take the 10ms signal as example.
+	 * It gets triggered for every period of 10ms between the last
+	 * and the current calls.
+	 * To make it absolutely clear: if 95ms passed since the last call
+	 * the signal will be called 9 times in a row. But not one call if only 5ms
+	 * have passed.
+	 */
 	cSignal<void ()> triggered10msCatchUp;
 	cSignal<void ()> triggered50msCatchUp;
 	cSignal<void ()> triggered100msCatchUp;
