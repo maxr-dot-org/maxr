@@ -29,6 +29,7 @@ public:
     int addPlayer(lua_State *L);
     int setSettings(lua_State *L);
     int start(lua_State *);
+    int message(lua_State *L);
 
     // C interface
     void setHumanClan(int clan);

@@ -23,6 +23,7 @@ Lunar<LuaGame>::RegType LuaGame::methods[] = {
     LUNAR_DECLARE_METHOD(LuaGame, addPlayer),
     LUNAR_DECLARE_METHOD(LuaGame, setSettings),
     LUNAR_DECLARE_METHOD(LuaGame, start),
+    LUNAR_DECLARE_METHOD(LuaGame, message),
     {0,0}
 };
 
@@ -169,6 +170,16 @@ int LuaGame::start(lua_State *)
     if (m_game->startingStatus() == Cancelled) m_game->exit();      // Release ressource
     if (m_game->startingStatus() == WaitingHuman) { }               // Wait for human to interract (choose clan, ...)
 
+    return 0;
+}
+
+int LuaGame::message(lua_State *L)
+{
+    int nbParams = lua_gettop(L);
+    if (nbParams > 0 || lua_isstring(L, 1)) {
+        std::string m = lua_tostring(L, 1);
+        m_game->popupMessage(m);
+    }
     return 0;
 }
 
