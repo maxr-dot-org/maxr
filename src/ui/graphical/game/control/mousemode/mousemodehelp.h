@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mousemode_mousemodehelpH
-#define ui_graphical_game_widgets_mousemode_mousemodehelpH
+#ifndef ui_graphical_game_control_mousemode_mousemodehelpH
+#define ui_graphical_game_control_mousemode_mousemodehelpH
 
 #include "maxrconfig.h"
-#include "ui/graphical/game/widgets/mousemode/mousemode.h"
+#include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeHelp : public cMouseMode
 {
@@ -35,4 +35,4 @@ public:
 	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 };
 
-#endif // ui_graphical_game_widgets_mousemode_mousemodehelpH
+#endif // ui_graphical_game_control_mousemode_mousemodehelpH

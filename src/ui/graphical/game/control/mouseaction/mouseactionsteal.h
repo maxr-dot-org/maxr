@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mouseaction_mouseactionstealH
-#define ui_graphical_game_widgets_mouseaction_mouseactionstealH
+#ifndef ui_graphical_game_control_mouseaction_mouseactionstealH
+#define ui_graphical_game_control_mouseaction_mouseactionstealH
 
 #include "maxrconfig.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseaction.h"
+#include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionSteal : public cMouseAction
 {
@@ -33,4 +33,4 @@ public:
 	virtual bool isSingleAction () const MAXR_OVERRIDE_FUNCTION;
 };
 
-#endif // ui_graphical_game_widgets_mouseaction_mouseactionstealH
+#endif // ui_graphical_game_control_mouseaction_mouseactionstealH

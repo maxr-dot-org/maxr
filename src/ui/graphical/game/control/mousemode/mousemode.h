@@ -17,12 +17,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mousemode_mousemodeH
-#define ui_graphical_game_widgets_mousemode_mousemodeH
+#ifndef ui_graphical_game_control_mousemode_mousemodeH
+#define ui_graphical_game_control_mousemode_mousemodeH
 
 #include <memory>
 
-#include "ui/graphical/game/widgets/mousemode/mousemodetype.h"
+#include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
 
@@ -70,4 +70,4 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 };
 
-#endif // ui_graphical_game_widgets_mousemode_mousemodeH
+#endif // ui_graphical_game_control_mousemode_mousemodeH

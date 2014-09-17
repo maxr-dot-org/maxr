@@ -17,13 +17,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/widgets/mousemode/mousemodedefault.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionattack.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionsteal.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactiondisable.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionselect.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionmove.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionactivatefinished.h"
+#include "ui/graphical/game/control/mousemode/mousemodedefault.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionattack.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionsteal.h"
+#include "ui/graphical/game/control/mouseaction/mouseactiondisable.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionselect.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionmove.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionactivatefinished.h"
 #include "ui/graphical/game/unitselection.h"
 #include "game/data/map/map.h"
 #include "keys.h"

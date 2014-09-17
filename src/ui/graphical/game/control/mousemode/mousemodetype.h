@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mousemode_mousemodetypeH
-#define ui_graphical_game_widgets_mousemode_mousemodetypeH
+#ifndef ui_graphical_game_control_mousemode_mousemodetypeH
+#define ui_graphical_game_control_mousemode_mousemodetypeH
 
 enum class eMouseModeType
 {
@@ -36,4 +36,4 @@ enum class eMouseModeType
 	Help
 };
 
-#endif // ui_graphical_game_widgets_mousemode_mousemodetypeH
+#endif // ui_graphical_game_control_mousemode_mousemodetypeH

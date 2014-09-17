@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mousemode_mousemodedefaultH
-#define ui_graphical_game_widgets_mousemode_mousemodedefaultH
+#ifndef ui_graphical_game_control_mousemode_mousemodedefaultH
+#define ui_graphical_game_control_mousemode_mousemodedefaultH
 
 #include "maxrconfig.h"
-#include "ui/graphical/game/widgets/mousemode/mousemode.h"
+#include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeDefault : public cMouseMode
 {
@@ -55,4 +55,4 @@ private:
 	void updateFieldUnitConnections (const cMapField& field);
 };
 
-#endif // ui_graphical_game_widgets_mousemode_mousemodeH
+#endif // ui_graphical_game_control_mousemode_mousemodeH

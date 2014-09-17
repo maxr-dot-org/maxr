@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_gamemapwidgetH
 #define ui_graphical_game_widgets_gamemapwidgetH
 
-#include "ui/graphical/game/widgets/mousemode/mousemodetype.h"
+#include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
 #include "ui/graphical/game/unitlocklist.h"

@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mouseaction_mouseactionH
-#define ui_graphical_game_widgets_mouseaction_mouseactionH
+#ifndef ui_graphical_game_control_mouseaction_mouseactionH
+#define ui_graphical_game_control_mouseaction_mouseactionH
 
 class cMouse;
 class cMap;
@@ -36,4 +36,4 @@ public:
 	virtual bool isSingleAction () const = 0;
 };
 
-#endif // ui_graphical_game_widgets_mouseaction_mouseactionH
+#endif // ui_graphical_game_control_mouseaction_mouseactionH

@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/widgets/mousemode/mousemodeselectbuildpathdestination.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionselectbuildpathdestination.h"
+#include "ui/graphical/game/control/mousemode/mousemodeselectbuildpathdestination.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionselectbuildpathdestination.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 

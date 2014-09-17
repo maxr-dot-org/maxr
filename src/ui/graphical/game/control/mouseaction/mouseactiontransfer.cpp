@@ -17,7 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/widgets/mouseaction/mouseactiontransfer.h"
+#include "ui/graphical/game/control/mouseaction/mouseactiontransfer.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
 #include "ui/graphical/game/unitselection.h"
 #include "game/data/map/map.h"

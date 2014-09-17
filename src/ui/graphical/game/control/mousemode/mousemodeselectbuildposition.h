@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mousemode_mousemodeselectbuildpositionH
-#define ui_graphical_game_widgets_mousemode_mousemodeselectbuildpositionH
+#ifndef ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
+#define ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH
 
 #include "maxrconfig.h"
-#include "ui/graphical/game/widgets/mousemode/mousemode.h"
+#include "ui/graphical/game/control/mousemode/mousemode.h"
 #include "main.h"
 
 class cMouseModeSelectBuildPosition : public cMouseMode
@@ -41,4 +41,4 @@ private:
 	sID buildId;
 };
 
-#endif // ui_graphical_game_widgets_mousemode_mousemodeselectbuildpositionH
+#endif // ui_graphical_game_control_mousemode_mousemodeselectbuildpositionH

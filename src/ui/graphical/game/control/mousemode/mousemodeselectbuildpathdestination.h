@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mousemode_mousemodeselectbuildpathdestinationH
-#define ui_graphical_game_widgets_mousemode_mousemodeselectbuildpathdestinationH
+#ifndef ui_graphical_game_control_mousemode_mousemodeselectbuildpathdestinationH
+#define ui_graphical_game_control_mousemode_mousemodeselectbuildpathdestinationH
 
 #include "maxrconfig.h"
-#include "ui/graphical/game/widgets/mousemode/mousemode.h"
+#include "ui/graphical/game/control/mousemode/mousemode.h"
 
 class cMouseModeSelectBuildPathDestination : public cMouseMode
 {
@@ -35,4 +35,4 @@ public:
 	virtual std::unique_ptr<cMouseAction> getMouseAction (const cPosition& mapPosition) const MAXR_OVERRIDE_FUNCTION;
 };
 
-#endif // ui_graphical_game_widgets_mousemode_mousemodeselectbuildpathdestinationH
+#endif // ui_graphical_game_control_mousemode_mousemodeselectbuildpathdestinationH

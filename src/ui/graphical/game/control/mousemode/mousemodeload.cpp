@@ -17,8 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/widgets/mousemode/mousemodeload.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseactionload.h"
+#include "ui/graphical/game/control/mousemode/mousemodeload.h"
+#include "ui/graphical/game/control/mouseaction/mouseactionload.h"
 #include "ui/graphical/game/unitselection.h"
 #include "game/data/map/map.h"
 #include "game/data/units/vehicle.h"

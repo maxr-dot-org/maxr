@@ -17,11 +17,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ui_graphical_game_widgets_mouseaction_mouseactionactivateloadedH
-#define ui_graphical_game_widgets_mouseaction_mouseactionactivateloadedH
+#ifndef ui_graphical_game_control_mouseaction_mouseactionactivateloadedH
+#define ui_graphical_game_control_mouseaction_mouseactionactivateloadedH
 
 #include "maxrconfig.h"
-#include "ui/graphical/game/widgets/mouseaction/mouseaction.h"
+#include "ui/graphical/game/control/mouseaction/mouseaction.h"
 
 class cMouseActionActivateLoaded : public cMouseAction
 {
@@ -38,4 +38,4 @@ private:
 	int vehicleToActivateIndex;
 };
 
-#endif // ui_graphical_game_widgets_mouseaction_mouseactionactivateloadedH
+#endif // ui_graphical_game_control_mouseaction_mouseactionactivateloadedH
