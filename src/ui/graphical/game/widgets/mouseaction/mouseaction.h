@@ -29,7 +29,7 @@ class cUnitSelection;
 class cMouseAction
 {
 public:
-	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const = 0;
+	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const = 0;
 
 	virtual bool doesChangeState () const = 0;
 

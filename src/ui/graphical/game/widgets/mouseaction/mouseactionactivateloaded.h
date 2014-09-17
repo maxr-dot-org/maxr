@@ -28,7 +28,7 @@ class cMouseActionActivateLoaded : public cMouseAction
 public:
 	cMouseActionActivateLoaded (int vehicleToActivateIndex);
 
-	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const MAXR_OVERRIDE_FUNCTION;
+	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool doesChangeState () const MAXR_OVERRIDE_FUNCTION;
 

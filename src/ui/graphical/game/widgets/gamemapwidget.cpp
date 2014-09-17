@@ -72,6 +72,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	dynamicMap (nullptr),
 	player (nullptr),
 	unitDrawingEngine (animationTimer),
+	changeAllowed (true),
 	pixelOffset (0, 0),
 	internalZoomFactor (1.f),
 	shouldDrawSurvey (false),
@@ -1799,8 +1800,6 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 
 	const auto& field = dynamicMap->getField (tilePosition);
 
-	bool changeAllowed = true;
-
 	// Some useful aliases
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
@@ -1904,7 +1903,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 		auto action = mouseMode->getMouseAction (tilePosition);
 		if (action && (changeAllowed || !action->doesChangeState()))
 		{
-			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection);
+			consumed = action->executeLeftClick (*this, *dynamicMap, tilePosition, unitSelection, changeAllowed);
 
 			if (action->isSingleAction () && mouseMode->getType() != eMouseModeType::Default)
 			{
@@ -2106,6 +2105,12 @@ void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 	{
 		mouseMode->setCursor (mouse, getMapTilePosition (mouse.getPosition ()));
 	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::setChangeAllowed (bool value)
+{
+	changeAllowed = value;
 }
 
 //------------------------------------------------------------------------------

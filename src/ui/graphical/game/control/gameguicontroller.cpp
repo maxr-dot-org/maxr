@@ -701,6 +701,8 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			gameGui->setInfoTexts ("", "");
 		}
+
+		gameGui->getGameMap ().setChangeAllowed (!client.isFreezed ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitStored, [&](const cUnit& storingUnit, const cUnit& /*storedUnit*/)
