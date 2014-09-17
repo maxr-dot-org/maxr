@@ -20,6 +20,9 @@
 #ifndef ui_graphical_game_control_mousemode_mousemodetypeH
 #define ui_graphical_game_control_mousemode_mousemodetypeH
 
+/**
+ * Enumeration with the mouse modes that have been implemented.
+ */
 enum class eMouseModeType
 {
 	Default,

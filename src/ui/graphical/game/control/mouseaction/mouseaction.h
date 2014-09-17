@@ -26,13 +26,36 @@ class cPosition;
 class cGameMapWidget;
 class cUnitSelection;
 
+/**
+ * Interface for mouse actions.
+ *
+ * A mouse action gets selected/created by the current mouse mode.
+ */
 class cMouseAction
 {
 public:
+	/**
+	 * Executes the action on a left click.
+	 *
+	 * @param gameMapWidget The game map widget to execute the action on.
+	 * @param map The current map.
+	 * @param mapPosition The map position on that the action should be executed.
+	 * @param unitSelection The current unit selection.
+	 * @param changeAllowed True if changes on the game state are currently allowed. False if not (e.g. when the client is currently frozen).
+	 *
+	 * @return True if the action has been executed successfully.
+	 */
 	virtual bool executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const = 0;
 
+	/**
+	 * Should return true if the action does change the game state and therefore should not be executed while e.g. the client is frozen.
+	 */
 	virtual bool doesChangeState () const = 0;
 
+	/**
+	 * Should return true if the action is a single action, which means the mouse mode should return to the default mouse mode
+	 * after the action has been executed.
+	 */
 	virtual bool isSingleAction () const = 0;
 };
 

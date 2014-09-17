@@ -247,7 +247,7 @@ void cVideo::initSplash()
 	sdlWindow = SDL_CreateWindow (sVersion.c_str(),
 								  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 								  getSplashW(), getSplashH(),
-								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
+								  SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_OPENGL*/);
 	SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)).get());
 	SDL_SetWindowFullscreen (sdlWindow, !getWindowMode());
 	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);

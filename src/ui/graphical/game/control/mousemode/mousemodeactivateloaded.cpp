@@ -31,7 +31,7 @@ cMouseModeActivateLoaded::cMouseModeActivateLoaded (const cMap* map_, const cUni
 	cMouseMode (map_, unitSelection_, player_),
 	vehicleToActivateIndex (vehicleToActivateIndex_)
 {
-	updateSelectedUnitConnections ();
+	establishUnitSelectionConnections ();
 }
 
 //------------------------------------------------------------------------------
