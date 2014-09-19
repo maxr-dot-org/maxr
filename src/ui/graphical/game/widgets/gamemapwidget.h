@@ -103,6 +103,8 @@ public:
 	void updateMouseCursor ();
 	void updateMouseCursor (cMouse& mouse);
 
+	void setChangeAllowed (bool value);
+
 	cDrawingCache& getDrawingCache ();
 	const cDrawingCache& getDrawingCache () const;
 
@@ -187,6 +189,8 @@ private:
 	cUnitContextMenuWidget* unitMenu;
 
 	std::unique_ptr<cMouseMode> mouseMode;
+
+	bool changeAllowed;
 
 	std::vector<std::shared_ptr<cFx>> effects;
 

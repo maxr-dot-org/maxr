@@ -151,8 +151,6 @@ public:
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
 	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	unsigned int WalkFrame; // Frame der Geh-Annimation
-	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
-	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
@@ -160,13 +158,13 @@ public:
 	*@return true if there has been refreshed something else false.
 	*/
 	bool refreshData();
-	bool refreshData_Build (cServer& server);
-	bool refreshData_Clear (cServer& server);
+	bool proceedBuilding (cServer& server);
+	bool proceedClearing (cServer& server);
 
 	virtual std::string getStatusStr (const cPlayer* player) const MAXR_OVERRIDE_FUNCTION;
 	void DecSpeed (int value);
 	void doSurvey (const cServer& server);
-	void makeReport (cSoundManager& soundManager);
+	virtual void makeReport (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 	virtual bool canTransferTo (const cPosition& position, const cMapField& overUnitField) const MAXR_OVERRIDE_FUNCTION;
 	bool InSentryRange (cServer& server);
 	virtual bool canExitTo (const cPosition& position, const cMap& map, const sUnitData& unitData) const MAXR_OVERRIDE_FUNCTION;

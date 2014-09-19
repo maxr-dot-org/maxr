@@ -448,9 +448,13 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WAIT_FOR);
 
-	const int nextPlayerNum = message.popInt16();
+	const int nextPlayerNum = message.popInt32();
 
-	if (nextPlayerNum != ActivePlayer->getNr())
+	if (nextPlayerNum == ActivePlayer->getNr ())
+	{
+		disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+	}
+	else
 	{
 		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 	}
@@ -468,7 +472,6 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	{
 		getPlayerList() [i]->setHasFinishedTurn(false);
 	}
-	finishedTurnEndProcess ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
@@ -1402,11 +1405,23 @@ void cClient::HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message)
 
 	for (int area = cResearch::kNrResearchAreas - 1; area >= 0; area--)
 	{
-		const int newCurPoints = message.popInt16();
-		const int newLevel = message.popInt16();
-		ActivePlayer->getResearchState().setCurResearchLevel (newLevel, area);
-		ActivePlayer->getResearchState().setCurResearchPoints (newCurPoints, area);
+		const int newCurPoints = message.popInt16 ();
+		const int newLevel = message.popInt16 ();
+		ActivePlayer->getResearchState ().setCurResearchLevel (newLevel, area);
+		ActivePlayer->getResearchState ().setCurResearchPoints (newCurPoints, area);
 	}
+}
+
+void cClient::HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (cNetMessage& message)
+{
+	assert (message.iType == GAME_EV_FINISHED_RESEARCH_AREAS);
+
+	std::vector<int> areas (message.popInt32());
+	for (size_t i = 0; i < areas.size (); ++i)
+	{
+		areas[i] = message.popInt32 ();
+	}
+	ActivePlayer->setCurrentTurnResearchAreasFinished (std::move (areas));
 }
 
 void cClient::HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message)
@@ -1635,6 +1650,7 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (message); break;
 		case GAME_EV_RESEARCH_SETTINGS: HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (message); break;
 		case GAME_EV_RESEARCH_LEVEL: HandleNetMessage_GAME_EV_RESEARCH_LEVEL (message); break;
+		case GAME_EV_FINISHED_RESEARCH_AREAS: HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (message); break;
 		case GAME_EV_REFRESH_RESEARCH_COUNT: // sent, when the player was resynced (or a game was loaded)
 			HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (message); break;
 		case GAME_EV_SET_AUTOMOVE: HandleNetMessage_GAME_EV_SET_AUTOMOVE (message); break;
@@ -1767,7 +1783,6 @@ void cClient::handleEnd()
 	if (isFreezed()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn (*this);
-	startedTurnEndProcess ();
 }
 
 
@@ -2014,15 +2029,22 @@ void cClient::runJobs()
 //------------------------------------------------------------------------------
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
+	const auto wasEnabled = freezeModes.isEnable (mode);
+	const auto oldPlayerNumber = freezeModes.getPlayerNumber ();
+
 	freezeModes.enable (mode, playerNumber);
-	freezeModeChanged ();
+
+	if (!wasEnabled || oldPlayerNumber != playerNumber) freezeModeChanged (mode);
 }
 
 //------------------------------------------------------------------------------
 void cClient::disableFreezeMode (eFreezeMode mode)
 {
+	const auto wasDisabled = !freezeModes.isEnable (mode);
+
 	freezeModes.disable (mode);
-	freezeModeChanged ();
+
+	if (!wasDisabled) freezeModeChanged (mode);
 }
 
 //------------------------------------------------------------------------------

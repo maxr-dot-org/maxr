@@ -235,6 +235,19 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 }
 
 //------------------------------------------------------------------------------
+void sendUnitData (cServer& server, const cUnit& unit)
+{
+    if (unit.getOwner ())
+    {
+        sendUnitData (server, unit, *unit.getOwner ());
+    }
+    for (size_t i = 0; i < unit.seenByPlayerList.size (); ++i)
+    {
+        sendUnitData (server, unit, *unit.seenByPlayerList[i]);
+    }
+}
+
+//------------------------------------------------------------------------------
 void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_SPECIFIC_UNIT_DATA));
@@ -619,10 +632,10 @@ void sendUnfreeze (cServer& server, eFreezeMode mode)
 }
 
 //------------------------------------------------------------------------------
-void sendWaitFor (cServer& server, int waitForPlayerNr, const cPlayer* receiver)
+void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_WAIT_FOR));
-	message->pushInt16 (waitForPlayerNr);
+	message->pushInt32 (player.getNr());
 	server.sendNetMessage (message, receiver);
 }
 
@@ -733,6 +746,18 @@ void sendResearchLevel (cServer& server, const cResearch& researchLevel, const c
 		message->pushInt16 (researchLevel.getCurResearchLevel (area));
 		message->pushInt16 (researchLevel.getCurResearchPoints (area));
 	}
+	server.sendNetMessage (message, &receiver);
+}
+
+//------------------------------------------------------------------------------
+void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver)
+{
+	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_FINISHED_RESEARCH_AREAS));
+	for (size_t i = 0; i < areas.size (); ++i)
+	{
+		message->pushInt32 (areas[i]);
+	}
+	message->pushInt32 (areas.size ());
 	server.sendNetMessage (message, &receiver);
 }
 

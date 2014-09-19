@@ -139,12 +139,19 @@ void sendTurnStartTime (cServer& server, unsigned int gameTime);
 void sendTurnEndDeadlineStartTime (cServer& server, unsigned int gameTime);
 
 /**
-* Sends the data values of this unit to the client
-*@author alzi alias DoctorDeath
-*@param unit The unit from which the data should be taken
-*@param player The player who should receive this message
-*/
+ * Sends the data values of this unit to the client
+ *
+ * @param unit The unit from which the data should be taken
+ * @param player The player who should receive this message
+ */
 void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver);
+/**
+ * Sends the unit data to the owner of the unit (if there is one) and to
+ * all players that can see the unit.
+ *
+ * @param unit The unit from which the data should be taken
+ */ 
+void sendUnitData (cServer& server, const cUnit& unit);
 
 void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 
@@ -257,7 +264,7 @@ void sendUnfreeze (cServer& server, eFreezeMode mode);
 * sends that a client has to wait for another player to end his turn
 *@author alzi alias DoctorDeath
 */
-void sendWaitFor (cServer& server, int waitForPlayerNr, const cPlayer* receiver);
+void sendWaitFor (cServer& server, const cPlayer& player, const cPlayer* receiver);
 /**
 * sends that a player has to be deleted
 *@author alzi alias DoctorDeath
@@ -286,6 +293,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, const cPlayer& receiver);
 void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<cResearch::ResearchArea>& newAreasForResearchCenters, const cPlayer& receiver);
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, const cPlayer& receiver);
+void sendFinishedResearchAreas (cServer& server, const std::vector<int>& areas, const cPlayer& receiver);
 void sendRefreshResearchCount (cServer& server, const cPlayer& receiver);
 void sendClansToClients (cServer& server, const std::vector<std::unique_ptr<cPlayer>>& playerList);
 void sendGameTime (cServer& server, const cPlayer& receiver, int gameTime);

@@ -21,7 +21,6 @@
 #define ui_sound_soundmanagerH
 
 #include <set>
-#include <list>
 
 #include "utility/position.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -72,7 +71,7 @@ private:
 	std::shared_ptr<const cGameTimer> gameTimer;
 
 	cRecursiveMutex playingSoundsMutex;
-	std::list<sStoredSound> playingSounds;
+	std::vector<sStoredSound> playingSounds;
 
 	cPosition listenerPosition;
 	int maxListeningDistance;

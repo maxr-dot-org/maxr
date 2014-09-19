@@ -759,16 +759,27 @@ bool sSubBase::checkEnergy (cServer& server)
 	return true;
 }
 
-void sSubBase::prepareTurnend (cServer& server)
+bool sSubBase::checkTurnEnd (cServer& server)
 {
+	bool changedSomething = false;
+
 	if (checkMetalConsumer (server))
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalLow), owner);
+		changedSomething = true;
+	}
 
 	if (checkHumanConsumer (server))
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::TeamLow), owner);
+		changedSomething = true;
+	}
 
 	if (checkGoldConsumer (server))
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldLow), owner);
+		changedSomething = true;
+	}
 
 	// there is a loop around checkOil/checkEnergy,
 	// because a lack of energy can lead to less fuel,
@@ -783,30 +794,47 @@ void sSubBase::prepareTurnend (cServer& server)
 		{
 			changed = true;
 			oilMissing = true;
+			changedSomething = true;
 		}
 
 		if (checkEnergy (server))
 		{
 			changed = true;
 			energyMissing = true;
+			changedSomething = true;
 		}
 	}
 	if (oilMissing)
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::FuelLow), owner);
+		changedSomething = true;
+	}
+
 	if (energyMissing)
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::EnergyLow), owner);
+		changedSomething = true;
+	}
 
 	// recheck metal and gold,
 	// because metal and gold producers could have been shut down,
 	// due to a lack of energy
 	if (checkMetalConsumer (server))
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::MetalLow), owner);
+		changedSomething = true;
+	}
 
 	if (checkGoldConsumer (server))
+	{
 		sendSavedReport (server, cSavedReportSimple (eSavedReportType::GoldLow), owner);
+		changedSomething = true;
+	}
+
+	return changedSomething;
 }
 
-void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
+void sSubBase::makeTurnStartRepairs (cServer& server, cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
 	if (building.data.getHitpoints () >= building.data.hitpointsMax
@@ -818,14 +846,10 @@ void sSubBase::makeTurnend_reparation (cServer& server, cBuilding& building)
 	const auto newHitPoints = building.data.getHitpoints() + Round (((float) building.data.hitpointsMax / building.data.buildCosts) * 4);
 	building.data.setHitpoints(std::min (building.data.hitpointsMax, newHitPoints));
 	addMetal (server, -1);
-	sendUnitData (server, building, *owner);
-	for (size_t j = 0; j != building.seenByPlayerList.size(); ++j)
-	{
-		sendUnitData (server, building, *building.seenByPlayerList[j]);
-	}
+	sendUnitData (server, building);
 }
 
-void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
+void sSubBase::makeTurnStartReload (cServer& server, cBuilding& building)
 {
 	// reload:
 	if (building.data.canAttack && building.data.getAmmo () == 0 && getMetal () > 0)
@@ -837,7 +861,7 @@ void sSubBase::makeTurnend_reload (cServer& server, cBuilding& building)
 	}
 }
 
-void sSubBase::makeTurnend_build (cServer& server, cBuilding& building)
+void sSubBase::makeTurnStartBuild (cServer& server, cBuilding& building)
 {
 	// build:
 	if (!building.isUnitWorking () || building.data.canBuild.empty () || building.isBuildListEmpty())
@@ -869,10 +893,8 @@ void sSubBase::makeTurnend_build (cServer& server, cBuilding& building)
 	}
 }
 
-void sSubBase::makeTurnend (cServer& server)
+void sSubBase::makeTurnStart (cServer& server)
 {
-	prepareTurnend (server);
-
 	// produce ressources
 	addOil (server, OilProd - OilNeed);
 	addMetal (server, MetalProd - MetalNeed);
@@ -890,10 +912,10 @@ void sSubBase::makeTurnend (cServer& server)
 	{
 		cBuilding& building = *buildings[i];
 
-		makeTurnend_reparation (server, building);
-		building.setHasBeenAttacked(false);
-		makeTurnend_reload (server, building);
-		makeTurnend_build (server, building);
+		makeTurnStartRepairs (server, building);
+		building.setHasBeenAttacked (false);
+		makeTurnStartReload (server, building);
+		makeTurnStartBuild (server, building);
 	}
 
 	// check maximum storage limits
@@ -1256,11 +1278,24 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 	delete sb;
 }
 
-void cBase::handleTurnend (cServer& server)
+bool cBase::checkTurnEnd (cServer& server)
 {
-	for (size_t i = 0; i != SubBases.size(); ++i)
+	bool changed = false;
+	for (size_t i = 0; i != SubBases.size (); ++i)
 	{
-		SubBases[i]->makeTurnend (server);
+		if (SubBases[i]->checkTurnEnd (server))
+		{
+			changed = true;
+		}
+	}
+	return changed;
+}
+
+void cBase::makeTurnStart (cServer& server)
+{
+	for (size_t i = 0; i != SubBases.size (); ++i)
+	{
+		SubBases[i]->makeTurnStart (server);
 	}
 }
 

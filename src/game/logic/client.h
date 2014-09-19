@@ -201,9 +201,6 @@ public:
 
 	const std::shared_ptr<cGameTimerClient>& getGameTimer () const { return gameTimer; }
 
-	mutable cSignal<void ()> startedTurnEndProcess;
-	mutable cSignal<void ()> finishedTurnEndProcess;
-
 	mutable cSignal<void (int, int)> playerFinishedTurn;
 
 	mutable cSignal<void (eFreezeMode)> freezeModeChanged;
@@ -311,6 +308,7 @@ private:
 	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_FINISHED_RESEARCH_AREAS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message);

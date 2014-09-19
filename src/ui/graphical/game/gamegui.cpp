@@ -143,8 +143,8 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	{
 		if (!player) return;
 
-		auto vehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
-		if (vehicle && vehicle->getOwner () == player.get ()) vehicle->makeReport (*soundManager);
+		auto unit = gameMap->getUnitSelection ().getSelectedUnit ();
+		if (unit && unit->getOwner () == player.get ()) unit->makeReport (*soundManager);
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });

@@ -40,6 +40,9 @@
 #include "game/data/report/special/savedreportresourcechanged.h"
 #include "utility/random.h"
 
+#include "ui/sound/soundmanager.h"
+#include "ui/sound/effects/soundeffectvoice.h"
+
 using namespace std;
 
 
@@ -126,7 +129,6 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	researchArea = cResearch::kAttackResearch;
 	uiData = b ? UnitsData.getBuildingUI (b->ID) : 0;
 	points = 0;
-	lastShots = 0;
 
 	if (Owner == NULL || b == NULL)
 	{
@@ -284,23 +286,29 @@ string cBuilding::getStatusStr (const cPlayer* player) const
 	return lngPack.i18n ("Text~Comp~Waits");
 }
 
+
+//--------------------------------------------------------------------------
+void cBuilding::makeReport (cSoundManager& soundManager) const
+{
+	if (data.canResearch && isUnitWorking () && getOwner () && getOwner ()->isCurrentTurnResearchAreaFinished (getResearchArea ()))
+	{
+		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIResearchComplete));
+	}
+}
+
 //--------------------------------------------------------------------------
 /** Refreshs all data to the maximum values */
 //--------------------------------------------------------------------------
-int cBuilding::refreshData()
+bool cBuilding::refreshData()
 {
-	if (isDisabled())
-	{
-		lastShots = std::min (this->data.shotsMax, this->data.getAmmo());
-		return 1;
-	}
+	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
 
 	if (data.getShots () < data.shotsMax)
 	{
 		data.setShots(std::min (this->data.shotsMax, this->data.getAmmo()));
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 void cBuilding::render_rubble (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const

@@ -626,6 +626,19 @@ std::unique_ptr<cPlayer> cSavegame::loadPlayer (XMLElement* playerNode, cMap& ma
 		XMLElement* researchLevelNode = researchNode->FirstChildElement ("ResearchLevel");
 		if (researchLevelNode)
 			loadResearchLevel (researchLevelNode, Player->getResearchState());
+
+		XMLElement* finishedResearchAreasNode = researchNode->FirstChildElement ("FinishedResearchAreas");
+		if (finishedResearchAreasNode)
+		{
+			std::vector<int> areas;
+			const XMLElement* areaNode = finishedResearchAreasNode->FirstChildElement ("Area");
+			while (areaNode)
+			{
+				areas.push_back(areaNode->IntAttribute ("num"));
+				areaNode = areaNode->NextSiblingElement ("Area");
+			}
+			Player->setCurrentTurnResearchAreasFinished (std::move (areas));
+		}
 	}
 
 	if (XMLElement* const subbasesNode = playerNode->FirstChildElement ("Subbases"))
@@ -781,7 +794,14 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 
 	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
-		vehicle.setBuildingABuilding(true);
+		if (version < cVersion (0, 9))
+		{
+			vehicle.setBuildingABuilding (true);
+		}
+		else
+		{
+			vehicle.setBuildingABuilding (element->BoolAttribute ("building"));
+		}
 		if (element->Attribute ("type_id") != NULL)
 		{
 			sID temp;
@@ -809,6 +829,14 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 			vehicle.setBuildCostsStart (element->IntAttribute ("costsstart"));
 			element->QueryIntAttribute ("endx", &vehicle.bandPosition.x());
 			element->QueryIntAttribute ("endy", &vehicle.bandPosition.y());
+
+			if (!vehicle.isUnitBuildingABuilding())
+			{
+				server.addJob (new cStartBuildJob (vehicle, vehicle.getPosition (), vehicle.data.isBig));
+				vehicle.setBuildingABuilding (true);
+				vehicle.setBuildCosts (vehicle.getBuildCostsStart ());
+				vehicle.setBuildTurns (vehicle.getBuildTurnsStart ());
+			}
 		}
 	}
 	if (XMLElement* const element = unitNode->FirstChildElement ("Clearing"))
@@ -1288,7 +1316,7 @@ void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 	{
 		for (int y = 0; y != player.getMapSize ().y (); ++y)
 		{
-			if (!str.compare (x + y * player.getMapSize ().y (), 1, "1")) player.exploreResource (cPosition (x, y));
+			if (!str.compare (x * player.getMapSize ().y () + y, 1, "1")) player.exploreResource (cPosition (x, y));
 		}
 	}
 }
@@ -1420,7 +1448,18 @@ void cSavegame::writePlayer (const cPlayer& Player, int number)
 
 	XMLElement* researchNode = addMainElement (playerNode, "Research");
 	XMLElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
-	writeResearchLevel (researchLevelNode, Player.getResearchState());
+	writeResearchLevel (researchLevelNode, Player.getResearchState ());
+
+	const auto& finishedResearchAreas = Player.getCurrentTurnResearchAreasFinished ();
+
+	if (!finishedResearchAreas.empty ())
+	{
+		XMLElement* finishedResearchAreasNode = addMainElement (researchNode, "FinishedResearchAreas");
+		for (size_t i = 0; i < finishedResearchAreas.size (); ++i)
+		{
+			addAttributeElement (finishedResearchAreasNode, "Area", "num", iToStr(finishedResearchAreas[i]));
+		}
+	}
 
 	// write subbases
 	XMLElement* subbasesNode = addMainElement (playerNode, "Subbases");
@@ -1527,9 +1566,10 @@ XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle
 	if (vehicle.isManualFireActive()) addMainElement (unitNode, "ManualFire");
 	if (vehicle.hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
 
-	if (vehicle.isUnitBuildingABuilding ())
+	if (vehicle.isUnitBuildingABuilding () || vehicle.BuildPath)
 	{
 		XMLElement* element = addMainElement (unitNode, "Building");
+		element->SetAttribute ("building", bToStr (vehicle.isUnitBuildingABuilding ()).c_str());
 		element->SetAttribute ("type_id", vehicle.getBuildingType ().getText ().c_str ());
 		element->SetAttribute ("turns", iToStr (vehicle.getBuildTurns()).c_str());
 		element->SetAttribute ("costs", iToStr (vehicle.getBuildCosts()).c_str());

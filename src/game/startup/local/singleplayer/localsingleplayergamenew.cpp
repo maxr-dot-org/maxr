@@ -74,6 +74,11 @@ void cLocalSingleplayerGameNew::start (cApplication& application)
 	players.push_back (player);
 	client->setPlayers (players, 0);
 
+	if (gameSettings->getGameType () == eGameSettingsGameType::Turns)
+	{
+		server->setActiveTurnPlayer (*server->playerList[0]);
+	}
+
 	auto& clientPlayer = client->getActivePlayer ();
 	if (playerClan != -1) clientPlayer.setClan (playerClan);
 

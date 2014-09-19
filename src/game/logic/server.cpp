@@ -82,7 +82,7 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 	openMapDefeat = true;
 	activeTurnPlayer = nullptr;
 	iNextUnitID = 1;
-	iWantPlayerEndNum = -1;
+    pendingEndTurnPlayerNumber = -1;
 	savingID = 0;
 	savingIndex = -1;
 
@@ -125,7 +125,7 @@ cServer::cServer (std::shared_ptr<cTCP> network_) :
 			turnEndDeadline = nullptr;
 		}
 		else if (gameSettings->getGameType () != eGameSettingsGameType::Turns && gameSettings->getGameType () != eGameSettingsGameType::HotSeat &&
-				 gameSettings->isTurnEndDeadlineActive () && !turnEndDeadline && !PlayerEndList.empty ())
+				 gameSettings->isTurnEndDeadlineActive () && !turnEndDeadline && !playerEndList.empty ())
 		{
 			turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
 			sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime ());
@@ -527,6 +527,9 @@ void cServer::handleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 	{
 		if (activeTurnPlayer->getNr() != message.iPlayerNr) return;
 	}
+
+    if (player.base.checkTurnEnd (*this)) return;
+
 	handleEnd (player);
 }
 
@@ -753,11 +756,7 @@ void cServer::handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 
 	if (result)
 	{
-		sendUnitData (*this, *Vehicle, *Vehicle->getOwner ());
-		for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-		{
-			sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[i]);
-		}
+		sendUnitData (*this, *Vehicle);
 	}
 }
 
@@ -887,15 +886,6 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 		// refresh SeenByPlayerLists
 		checkPlayerUnits();
 	}
-
-#if 0
-	// send new vehicle status and position //done implicitly by addMoveJob()
-	sendUnitData (Vehicle, Vehicle->owner->Nr);
-	for (size_t i = 0; i < Vehicle->seenByPlayerList.size(); ++i)
-	{
-		sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
-	}
-#endif
 
 	// drive away from the building lot
 	addMoveJob (Vehicle->getPosition(), escapePosition, Vehicle);
@@ -1228,9 +1218,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Vehicle->getOwner ()->deleteSentry (*Vehicle);
 		}
 
-		sendUnitData (*this, *Vehicle, *Vehicle->getOwner ());
-		for (size_t i = 0; i != Vehicle->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *Vehicle, *Vehicle->seenByPlayerList[i]);
+		sendUnitData (*this, *Vehicle);
 	}
 	else // building
 	{
@@ -1243,9 +1231,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Building->getOwner ()->deleteSentry (*Building);
 		}
 
-		sendUnitData (*this, *Building, *Building->getOwner ());
-		for (size_t i = 0; i != Building->seenByPlayerList.size(); ++i)
-			sendUnitData (*this, *Building, *Building->seenByPlayerList[i]);
+		sendUnitData (*this, *Building);
 	}
 }
 
@@ -1269,11 +1255,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			vehicle->setManualFireActive(false);
 		}
 
-		sendUnitData (*this, *vehicle, *vehicle->getOwner ());
-		for (size_t i = 0; i != vehicle->seenByPlayerList.size(); ++i)
-		{
-			sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[i]);
-		}
+		sendUnitData (*this, *vehicle);
 	}
 	else // building
 	{
@@ -1290,11 +1272,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			building->setManualFireActive (false);
 		}
 
-		sendUnitData (*this, *building, *building->getOwner ());
-		for (size_t i = 0; i != building->seenByPlayerList.size(); ++i)
-		{
-			sendUnitData (*this, *building, *building->seenByPlayerList[i]);
-		}
+		sendUnitData (*this, *building);
 	}
 }
 
@@ -1569,7 +1547,7 @@ void cServer::handleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	}
 	DisconnectedPlayerList.clear();
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame ()) sendWaitFor (*this, activeTurnPlayer->getNr(), nullptr);
+	if (isTurnBasedGame ()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1613,7 +1591,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 	resyncPlayer (*player);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (isTurnBasedGame ()) sendWaitFor (*this, activeTurnPlayer->getNr(), nullptr);
+	if (isTurnBasedGame ()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1982,31 +1960,16 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			destUnit->setDisabledTurns(strength);
 			if (destVehicle)
 			{
-				// save speed and number of shots before disabling
-				destVehicle->lastSpeed = destVehicle->data.speedCur;
-				destVehicle->lastShots = destVehicle->data.getShots ();
-
-				destVehicle->data.speedCur = 0;
-				destVehicle->data.setShots(0);
-
 				if (destVehicle->isUnitBuildingABuilding ()) stopVehicleBuilding (*destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 			}
 			else if (destBuilding)
 			{
-				// save number of shots before disabling
-				destBuilding->lastShots = destBuilding->data.getShots ();
-
-				destBuilding->data.setShots(0);
 				destBuilding->wasWorking = destBuilding->isUnitWorking ();
 				destBuilding->ServerStopWork (*this, true);
 				sendDoStopWork (*this, *destBuilding);
 			}
-			sendUnitData (*this, *destUnit, *destUnit->getOwner ());
-			for (size_t i = 0; i != destUnit->seenByPlayerList.size(); ++i)
-			{
-				sendUnitData (*this, *destUnit, *destUnit->seenByPlayerList[i]);
-			}
+			sendUnitData (*this, *destUnit);
 			destUnit->getOwner ()->doScan ();
 			checkPlayerUnits();
 		}
@@ -2031,7 +1994,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		srcVehicle->InSentryRange (*this);
 	}
 	srcVehicle->data.setShots(srcVehicle->data.getShots()-1);
-	sendUnitData (*this, *srcVehicle, *srcVehicle->getOwner ());
+	sendUnitData (*this, *srcVehicle);
 	sendCommandoAnswer (*this, success, steal, *srcVehicle, *srcVehicle->getOwner ());
 }
 
@@ -2105,9 +2068,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 	if (unit == 0) return;
 
 	unit->changeName (message.popString());
-	for (size_t i = 0; i != unit->seenByPlayerList.size(); ++i)
-		sendUnitData (*this, *unit, *unit->seenByPlayerList[i]);
-	sendUnitData (*this, *unit, *unit->getOwner ());
+	sendUnitData (*this, *unit);
 }
 
 //------------------------------------------------------------------------------
@@ -2862,48 +2823,63 @@ cPlayer* cServer::getActiveTurnPlayer ()
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleEnd (const cPlayer& player)
+void cServer::handleEnd (cPlayer& player)
 {
-	const eGameTypes gameType = getGameType();
+	const eGameTypes gameType = getGameType ();
 
 	if (gameType == GAME_TYPE_SINGLE)
 	{
 		sendTurnFinished (*this, player, nullptr);
-		if (checkEndActions (&player))
+		if (checkRemainingMoveJobs (&player))
 		{
-			iWantPlayerEndNum = player.getNr();
-			return;
-		}
-		
-		iWantPlayerEndNum = -1;
-		makeTurnEnd();
-	}
-	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame())
-	{
-		if (checkEndActions (&player))
-		{
-			iWantPlayerEndNum = player.getNr();
+			pendingEndTurnPlayerNumber = player.getNr ();
 			return;
 		}
 
-		iWantPlayerEndNum = -1;
+		pendingEndTurnPlayerNumber = -1;
+
+		checkDefeats ();
+		turnClock->increaseTurn ();
+
+		makeTurnStart (player);
+	}
+	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame ())
+	{
+		if (checkRemainingMoveJobs (&player))
+		{
+			pendingEndTurnPlayerNumber = player.getNr ();
+			return;
+		}
+
+		pendingEndTurnPlayerNumber = -1;
 
 		// select next player
-		auto nextPlayerIter = std::find_if (playerList.begin (), playerList.end (), [this](const std::unique_ptr<cPlayer>& player){return player.get() == activeTurnPlayer; });
+		auto nextPlayerIter = std::find_if (playerList.begin (), playerList.end (), [this](const std::unique_ptr<cPlayer>& player){return player.get () == activeTurnPlayer; });
 		assert (nextPlayerIter != playerList.end ());
 		++nextPlayerIter;
 
+		bool newTurn = false;
 		if (nextPlayerIter == playerList.end ())
 		{
 			activeTurnPlayer = playerList.front ().get ();
-
-			makeTurnEnd();
+			newTurn = true;
 		}
 		else
 		{
 			activeTurnPlayer = nextPlayerIter->get ();
 		}
+
 		sendTurnFinished (*this, player, activeTurnPlayer);
+
+		if (newTurn)
+		{
+			checkDefeats ();
+			turnClock->increaseTurn ();
+		}
+
+		if(isTurnBasedGame()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
+
+		makeTurnStart (*activeTurnPlayer);
 	}
 	else // it's a simultaneous TCP/IP multiplayer game
 	{
@@ -2911,60 +2887,68 @@ void cServer::handleEnd (const cPlayer& player)
 		if (player.isDefeated) return;
 
 		// check whether this player has already finished his turn
-		for (size_t i = 0; i != PlayerEndList.size(); ++i)
+		for (size_t i = 0; i != playerEndList.size (); ++i)
 		{
-			if (PlayerEndList[i]->getNr() == player.getNr()) return;
+			if (playerEndList[i]->getNr () == player.getNr ()) return;
 		}
-		PlayerEndList.push_back (&player);
-		const bool firstTimeEnded = PlayerEndList.size() == 1;
+		playerEndList.push_back (&player);
+		const bool firstTimeEnded = playerEndList.size () == 1;
 
 		// make sure that all defeated players are added to the endlist
-		for (size_t i = 0; i != playerList.size(); ++i)
+		for (size_t i = 0; i != playerList.size (); ++i)
 		{
 			auto& currentPlayer = *playerList[i];
 			if (currentPlayer.isDefeated)
 			{
-				if (Contains (PlayerEndList, &currentPlayer) == false)
-					PlayerEndList.push_back (&currentPlayer);
+				if (!Contains (playerEndList, &currentPlayer))
+				{
+					playerEndList.push_back (&currentPlayer);
+				}
 			}
 		}
 
-		if (iWantPlayerEndNum == -1)
+		if (pendingEndTurnPlayerNumber == -1)
 		{
 			sendTurnFinished (*this, player, nullptr);
 
 			// When playing with dedicated server
 			// where a player is not connected, play without a deadline,
 			// but wait till all players pressed "End".
-			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty()))
+			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.empty ()))
 			{
 				if (gameSettings->getGameType () != eGameSettingsGameType::Turns && gameSettings->getGameType () != eGameSettingsGameType::HotSeat && gameSettings->isTurnEndDeadlineActive ())
 				{
 					turnEndDeadline = turnTimeClock->startNewDeadlineFromNow (gameSettings->getTurnEndDeadline ());
-					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime());
+					sendTurnEndDeadlineStartTime (*this, turnEndDeadline->getStartGameTime ());
 				}
 			}
 		}
 
-		if (PlayerEndList.size() >= playerList.size())
+		if (playerEndList.size () >= playerList.size ())
 		{
-			if (checkEndActions (nullptr))
+			if (checkRemainingMoveJobs (nullptr))
 			{
-				iWantPlayerEndNum = player.getNr ();
+				pendingEndTurnPlayerNumber = -2;
 				return;
 			}
 
-			iWantPlayerEndNum = -1;
+			pendingEndTurnPlayerNumber = -1;
 
-			PlayerEndList.clear();
+			playerEndList.clear ();
 
-			makeTurnEnd();
+			checkDefeats ();
+			turnClock->increaseTurn ();
+
+			for (size_t i = 0; i < playerList.size (); ++i)
+			{
+				makeTurnStart (*playerList[i]);
+			}
 		}
 	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::handleWantEnd()
+void cServer::handleWantEnd ()
 {
 	if (!gameTimer->timer50ms) return;
 
@@ -3009,49 +2993,41 @@ void cServer::handleWantEnd()
 		disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	}
 
-	if (iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2)
+	if (pendingEndTurnPlayerNumber != -1 && pendingEndTurnPlayerNumber != -2)
 	{
-		for (size_t i = 0; i != PlayerEndList.size(); ++i)
-		{
-			if (iWantPlayerEndNum == PlayerEndList[i]->getNr())
-			{
-				PlayerEndList.erase (PlayerEndList.begin() + i);
-				break;
-			}
-		}
-		handleEnd (getPlayerFromNumber(iWantPlayerEndNum));
+		playerEndList.erase (std::remove_if (playerEndList.begin (), playerEndList.end (), [=](const cPlayer* player){ return player->getNr () == pendingEndTurnPlayerNumber; }), playerEndList.end ());
+
+		handleEnd (getPlayerFromNumber (pendingEndTurnPlayerNumber));
 	}
 }
 
 //------------------------------------------------------------------------------
-bool cServer::checkEndActions (const cPlayer* player)
+bool cServer::checkRemainingMoveJobs (const cPlayer* player)
 {
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 
 	executingRemainingMovements = false;
-	bool remainingAutomove = false;
-	if (!ActiveMJobs.empty())
+	bool startedNewMoveJobs = false;
+	if (!ActiveMJobs.empty ())
 	{
 		executingRemainingMovements = true;
 	}
 	else
 	{
-		for (size_t i = 0; i != playerList.size (); ++i)
+		if (player)
 		{
-			cPlayer& checkPlayer = *playerList[i];
-
-			if (player != nullptr && player != &checkPlayer) continue;
-
-			const auto& vehicles = checkPlayer.getVehicles ();
-			for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+			if (executeRemainingMoveJobs (*player))
 			{
-				const auto& vehicle = *i;
-				if (vehicle->ServerMoveJob && vehicle->data.speedCur > 0 && !vehicle->isUnitMoving ())
+				executingRemainingMovements = startedNewMoveJobs = true;
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i != playerList.size (); ++i)
+			{
+				if (executeRemainingMoveJobs (*playerList[i]))
 				{
-					// restart movejob
-					vehicle->ServerMoveJob->resume ();
-					executingRemainingMovements = true;
-					remainingAutomove = true;
+					executingRemainingMovements = startedNewMoveJobs = true;
 				}
 			}
 		}
@@ -3060,20 +3036,20 @@ bool cServer::checkEndActions (const cPlayer* player)
 	{
 		if (player != nullptr)
 		{
-			if (iWantPlayerEndNum == -1)
+			if (pendingEndTurnPlayerNumber == -1)
 			{
-				if (remainingAutomove) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), player);
+				if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), player);
 				else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), player);
-				
+
 			}
 		}
 		else
 		{
-			if (iWantPlayerEndNum == -1)
+			if (pendingEndTurnPlayerNumber == -1)
 			{
-				for (size_t i = 0; i != playerList.size(); ++i)
+				for (size_t i = 0; i != playerList.size (); ++i)
 				{
-					if (remainingAutomove) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), playerList[i].get ());
+					if (startedNewMoveJobs) sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnAutoMove), playerList[i].get ());
 					else sendSavedReport (*this, cSavedReportSimple (eSavedReportType::TurnWait), playerList[i].get ());
 				}
 			}
@@ -3084,117 +3060,102 @@ bool cServer::checkEndActions (const cPlayer* player)
 }
 
 //------------------------------------------------------------------------------
-void cServer::makeTurnEnd()
+bool cServer::executeRemainingMoveJobs (const cPlayer& player)
 {
-	turnClock->increaseTurn ();
+	bool hasStartedMoveJobs = false;
 
+	const auto& vehicles = player.getVehicles ();
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+	{
+		const auto& vehicle = *i;
+		if (vehicle->ServerMoveJob && vehicle->data.speedCur > 0 && !vehicle->isUnitMoving ())
+		{
+			// restart movejob
+			vehicle->ServerMoveJob->resume ();
+			hasStartedMoveJobs = true;
+		}
+	}
+
+	return hasStartedMoveJobs;
+}
+
+//------------------------------------------------------------------------------
+void cServer::makeTurnStart (cPlayer& player)
+{
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	lastTurnEnd = gameTimer->gameTime;
 
-	// reload all buildings
-	for (size_t i = 0; i != playerList.size (); ++i)
-	{
-		cPlayer& player = *playerList[i];
-		const auto& buildings = player.getBuildings ();
-		for (auto i = buildings.begin (); i != buildings.end (); ++i)
-		{
-			const auto& building = *i;
+	player.base.checkTurnEnd (*this);
 
-			bool forceSendUnitData = false;
-			if (building->isDisabled ())
+	player.base.makeTurnStart (*this);
+
+	// reload all buildings
+	const auto& buildings = player.getBuildings ();
+	for (auto i = buildings.begin (); i != buildings.end (); ++i)
+	{
+		const auto& building = *i;
+
+		bool forceSendUnitData = false;
+		if (building->isDisabled ())
+		{
+			building->setDisabledTurns (building->getDisabledTurns () - 1);
+			if (building->isDisabled () == false && building->wasWorking)
 			{
-				building->setDisabledTurns (building->getDisabledTurns () - 1);
-				if (building->isDisabled () == false && building->wasWorking)
-				{
-					building->ServerStartWork (*this);
-					building->wasWorking = false;
-				}
-				forceSendUnitData = true;
+				building->ServerStartWork (*this);
+				building->wasWorking = false;
 			}
-			if ((building->data.canAttack && building->refreshData ()) || forceSendUnitData)
-			{
-				for (size_t k = 0; k != building->seenByPlayerList.size (); ++k)
-				{
-					sendUnitData (*this, *building, *building->seenByPlayerList[k]);
-				}
-				sendUnitData (*this, *building, *building->getOwner ());
-			}
+			forceSendUnitData = true;
+		}
+		if (building->data.canAttack && building->refreshData ())
+		{
+			sendUnitData (*this, *building);
 		}
 	}
 
 	// reload all vehicles
-	for (size_t i = 0; i != playerList.size (); ++i)
+	const auto& vehicles = player.getVehicles ();
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
-		cPlayer& player = *playerList[i];
-		const auto& vehicles = player.getVehicles ();
-		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
+		const auto& vehicle = *i;
+
+		bool isModified = false;
+		if (vehicle->isDisabled ())
 		{
-			const auto& vehicle = *i;
-
-			bool isModified = false;
-			if (vehicle->isDisabled ())
-			{
-				vehicle->setDisabledTurns (vehicle->getDisabledTurns () - 1);
-				isModified = true;
-			}
-			isModified |= vehicle->refreshData ();
-			isModified |= vehicle->refreshData_Build (*this);
-			isModified |= vehicle->refreshData_Clear (*this);
-
-			if (isModified)
-			{
-				for (size_t k = 0; k != vehicle->seenByPlayerList.size (); ++k)
-				{
-					sendUnitData (*this, *vehicle, *vehicle->seenByPlayerList[k]);
-				}
-				sendUnitData (*this, *vehicle, *vehicle->getOwner ());
-			}
-			if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
+			vehicle->setDisabledTurns (vehicle->getDisabledTurns () - 1);
+			isModified = true;
 		}
+		isModified |= vehicle->refreshData ();
+		isModified |= vehicle->proceedBuilding (*this);
+		isModified |= vehicle->proceedClearing (*this);
+
+		if (isModified)
+		{
+			sendUnitData (*this, *vehicle);
+		}
+		if (vehicle->ServerMoveJob) vehicle->ServerMoveJob->bEndForNow = false;
 	}
 
 	// hide stealth units
-	for (size_t i = 0; i != playerList.size (); ++i)
-	{
-		cPlayer& player = *playerList[i];
-		player.doScan(); // make sure the detection maps are up to date
+	player.doScan(); // make sure the detection maps are up to date
 
-		const auto& vehicles = player.getVehicles ();
-		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
-		{
-			const auto& vehicle = *i;
-			vehicle->clearDetectedInThisTurnPlayerList();
-			vehicle->makeDetection (*this);
-		}
-	}
-
-	// produce resources
-	for (size_t i = 0; i != playerList.size (); ++i)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
-		playerList[i]->base.handleTurnend (*this);
+		const auto& vehicle = *i;
+		vehicle->clearDetectedInThisTurnPlayerList();
+		vehicle->makeDetection (*this);
 	}
 
 	// do research:
-	for (size_t i = 0; i != playerList.size (); ++i)
-		playerList[i]->doResearch (*this);
+	player.doResearch (*this);
 
 	// eco-spheres:
-	for (size_t i = 0; i != playerList.size (); ++i)
-	{
-		playerList[i]->accumulateScore (*this);
-	}
+	player.accumulateScore (*this);
 
 	// Gun'em down:
-	for (size_t i = 0; i != playerList.size (); ++i)
+	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
-		cPlayer& player = *playerList[i];
-
-		const auto& vehicles = player.getVehicles ();
-		for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
-		{
-			const auto& vehicle = *i;
-			vehicle->InSentryRange (*this);
-		}
+		const auto& vehicle = *i;
+		vehicle->InSentryRange (*this);
 	}
 
 	if (DEDICATED_SERVER == false)
@@ -3214,8 +3175,6 @@ void cServer::makeTurnEnd()
 		cDedicatedServer::instance().doAutoSave (*this);
 	}
 #endif
-
-	checkDefeats();
 }
 
 //------------------------------------------------------------------------------
@@ -3353,19 +3312,24 @@ void cServer::checkDeadline()
 	}
 	else
 	{
-		if (checkEndActions (nullptr))
+		if (checkRemainingMoveJobs (nullptr))
 		{
-			iWantPlayerEndNum = -2;
+			pendingEndTurnPlayerNumber = -2;
 			return;
 		}
-		else
+
+		pendingEndTurnPlayerNumber = -1;
+
+		playerEndList.clear ();
+
+		turnClock->increaseTurn ();
+
+		for (size_t i = 0; i < playerList.size (); ++i)
 		{
-			iWantPlayerEndNum = -1;
+			makeTurnStart (*playerList[i]);
 		}
 
-		PlayerEndList.clear ();
-
-		makeTurnEnd ();
+		checkDefeats ();
 	}
 	turnTimeClock->clearAllDeadlines ();
 }
@@ -3861,7 +3825,8 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	// send credits
 	sendCredits (*this, player.getCredits (), player);
 	// send research
-	sendResearchLevel (*this, player.getResearchState(), player);
+	sendResearchLevel (*this, player.getResearchState (), player);
+	sendFinishedResearchAreas (*this, player.getCurrentTurnResearchAreasFinished (), player);
 	sendRefreshResearchCount (*this, player);
 
 	// send all players' score histories & eco-counts
@@ -3946,11 +3911,6 @@ void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 	newOwner.addUnit (owningVehiclePtr);
 
 	//the vehicle is fully operational for the new owner
-	if (vehicle.isDisabled())
-	{
-		vehicle.data.speedCur = vehicle.lastSpeed;
-		vehicle.data.setShots(vehicle.lastShots);
-	}
 	vehicle.setDisabledTurns (0);
 
 	// delete the unit on the clients and add it with new owner again

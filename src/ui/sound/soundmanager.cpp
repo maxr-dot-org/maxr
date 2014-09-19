@@ -151,7 +151,8 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	cLockGuard<cRecursiveMutex> playingSoundsLock (playingSoundsMutex);
 
-	playingSounds.remove_if ([](const sStoredSound& storedSound){ return !storedSound.active; });
+	playingSounds.erase(std::remove_if(playingSounds.begin(), playingSounds.end(),
+		[](const sStoredSound& storedSound){ return !storedSound.active; }), playingSounds.end());
 
 	const unsigned int currentGameTime = gameTimer ? gameTimer->gameTime : 0;
 
@@ -165,7 +166,7 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 		};
 
 		// count conflicts and erase sounds that are no longer active
-		auto conflicts = std::count_if (playingSounds.begin (), playingSounds.end (), isInConflict);
+		std::size_t conflicts = std::count_if (playingSounds.begin (), playingSounds.end (), isInConflict);
 
 		if (conflicts > sound->getMaxConcurrentConflictedCount ())
 		{
@@ -196,16 +197,15 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 
 	sound->play (channel, loop);
 
-	playingSounds.emplace_back (std::move (sound), currentGameTime, true);
-	auto& soundRef = *playingSounds.back ().sound;
+	sStoredSound playingSound(std::move (sound), currentGameTime, true);
+	// Sound list is always sorted by start game time.
+	auto it = std::lower_bound(playingSounds.begin (), playingSounds.end (), playingSound);
+	it = playingSounds.insert(it, std::move(playingSound));
+	auto& soundRef = *it->sound;
 	signalConnectionManager.connect (soundRef.stopped, std::bind (&cSoundManager::finishedSound, this, std::ref (soundRef)));
 
 	updateSoundPosition (soundRef);
-	playingSounds.back ().signalConnectionManager.connect (soundRef.positionChanged, std::bind (&cSoundManager::updateSoundPosition, this, std::ref (soundRef)));
-
-	// Sound list is always sorted by start game time.
-	// Push order is kept by stable sort to handle sounds that are played at same game time
-	std::stable_sort (playingSounds.begin (), playingSounds.end ());
+	it->signalConnectionManager.connect (soundRef.positionChanged, std::bind (&cSoundManager::updateSoundPosition, this, std::ref (soundRef)));
 }
 
 //--------------------------------------------------------------------------

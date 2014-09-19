@@ -72,45 +72,16 @@ public:
 	*/
 	bool increaseEnergyProd (cServer& server, int value);
 
-	//-----------------------------------
-	//turn end management:
+	/**
+	 * Checks, if there are consumers, that have to be shut down,
+	 * due to a lack of a resources
+	 */
+	bool checkTurnEnd (cServer& server);
 
 	/**
-	* checks if consumers have to be switched off, due to a lack of resources
-	* @return returns true, if consumers have been shut down
-	* @author eiko
-	*/
-	bool checkGoldConsumer (cServer& server);
-	bool checkHumanConsumer (cServer& server);
-	bool checkMetalConsumer (cServer& server);
-	/**
-	* - switches off unneeded fuel consumers(=energy producers)
-	* - sets the optimal amount of generators and stations
-	*   to minimize fuel consumption
-	* - increases oil production, if necessary
-	* - switches off oil consumers, if too few oil is available
-	* @return: returns true, if oil consumers have been shut down,
-	*          due to a lack of oil
-	* @author eiko
-	*/
-	bool checkOil (cServer& server);
-	/**
-	* switches off energy consumers, if necessary
-	* @return returns true, if a energy consumers have been shut down
-	* @author eiko
-	*/
-	bool checkEnergy (cServer& server);
-	/**
-	* checks, if there are consumers, that have to be shut down,
-	* due to a lack of a resources
-	* @author eiko
-	*/
-	void prepareTurnend (cServer& server);
-	/**
-	* produce resources, repair/reload buildings etc.
-	* @author eiko
-	*/
-	void makeTurnend (cServer& server);
+	 * Produces resources, builds units and repairs/reloads units at turn start.
+	 */
+	void makeTurnStart (cServer& server);
 
 	//------------------------------------
 	//resource management:
@@ -164,9 +135,38 @@ public:
 	mutable cSignal<void ()> goldChanged;
 private:
 
-	void makeTurnend_reparation (cServer& server, cBuilding& building);
-	void makeTurnend_reload (cServer& server, cBuilding& building);
-	void makeTurnend_build (cServer& server, cBuilding& building);
+	//-----------------------------------
+	//turn end management:
+
+	/**
+	 * checks if consumers have to be switched off, due to a lack of resources
+	 * @return returns true, if consumers have been shut down
+	 * @author eiko
+	 */
+	bool checkGoldConsumer (cServer& server);
+	bool checkHumanConsumer (cServer& server);
+	bool checkMetalConsumer (cServer& server);
+	/**
+	 * - switches off unneeded fuel consumers(=energy producers)
+	 * - sets the optimal amount of generators and stations
+	 *   to minimize fuel consumption
+	 * - increases oil production, if necessary
+	 * - switches off oil consumers, if too few oil is available
+	 * @return: returns true, if oil consumers have been shut down,
+	 *          due to a lack of oil
+	 * @author eiko
+	 */
+	bool checkOil (cServer& server);
+	/**
+	 * switches off energy consumers, if necessary
+	 * @return returns true, if a energy consumers have been shut down
+	 * @author eiko
+	 */
+	bool checkEnergy (cServer& server);
+
+	void makeTurnStartRepairs (cServer& server, cBuilding& building);
+	void makeTurnStartReload (cServer& server, cBuilding& building);
+	void makeTurnStartBuild (cServer& server, cBuilding& building);
 
 
 	/**
@@ -243,12 +243,22 @@ public:
 	* @author eiko
 	*/
 	void deleteBuilding (cBuilding* building, cServer* server);
-	void handleTurnend (cServer& server);
+
+	bool checkTurnEnd (cServer& server);
+
+	/**
+	 * Handles the turn start for all sub bases.
+	 *
+	 * This produces resources, builds units and repairs/reloads units.
+	 */
+	void makeTurnStart (cServer& server);
+
 	/**
 	* recalculates the values of all subbases
 	*@author eiko
 	*/
-	void refreshSubbases();
+	void refreshSubbases ();
+
 	sSubBase* checkNeighbour (const cPosition& position, const cBuilding& Building);
 
 public:

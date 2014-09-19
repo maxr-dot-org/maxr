@@ -25,7 +25,7 @@
 #include "input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
+bool cMouseActionMove::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 

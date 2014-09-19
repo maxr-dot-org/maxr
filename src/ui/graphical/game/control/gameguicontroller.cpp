@@ -643,16 +643,6 @@ void cGameGuiController::connectClient (cClient& client)
 	//
 	// client to GUI (reaction)
 	//
-	clientSignalConnectionManager.connect (client.startedTurnEndProcess, [&]()
-	{
-		gameGui->getHud ().lockEndButton ();
-	});
-
-	clientSignalConnectionManager.connect (client.finishedTurnEndProcess, [&]()
-	{
-		gameGui->getHud ().unlockEndButton ();
-	});
-
 	clientSignalConnectionManager.connect (client.playerFinishedTurn, [&](int currentPlayerNumber, int nextPlayerNumber)
 	{
 		if (currentPlayerNumber != client.getActivePlayer ().getNr ()) return;
@@ -679,9 +669,9 @@ void cGameGuiController::connectClient (cClient& client)
 		const int playerNumber = client.getFreezeInfoPlayerNumber ();
 		const cPlayer* player = client.getPlayerFromNumber (playerNumber);
 
-		if (mode == FREEZE_WAIT_FOR_OTHERS)
+		if (mode == FREEZE_WAIT_FOR_OTHERS || mode == FREEZE_WAIT_FOR_TURNEND)
 		{
-			if (client.getFreezeMode (FREEZE_WAIT_FOR_OTHERS)) gameGui->getHud ().lockEndButton ();
+			if (client.getFreezeMode (FREEZE_WAIT_FOR_OTHERS) || client.getFreezeMode (FREEZE_WAIT_FOR_TURNEND)) gameGui->getHud ().lockEndButton ();
 			else gameGui->getHud ().unlockEndButton ();
 		}
 
@@ -716,6 +706,8 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			gameGui->setInfoTexts ("", "");
 		}
+
+		gameGui->getGameMap ().setChangeAllowed (!client.isFreezed ());
 	});
 
 	clientSignalConnectionManager.connect (client.unitStored, [&](const cUnit& storingUnit, const cUnit& /*storedUnit*/)
@@ -952,6 +944,10 @@ void cGameGuiController::showResearchDialog (const cUnit& unit)
 	const auto player = getActivePlayer ();
 	if (unit.getOwner () != player.get ()) return;
 	if (!player) return;
+
+	// clear list with research areas finished this turn.
+	// NOTE: do we really want to do this here?
+	unit.getOwner ()->setCurrentTurnResearchAreasFinished (std::vector<int> ());
 
 	auto researchDialog = application.show (std::make_shared<cDialogResearch> (*player));
 	researchDialog->done.connect ([&, researchDialog]()

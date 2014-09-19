@@ -26,7 +26,7 @@
 #include "input/mouse/cursor/mousecursorsimple.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionLoad::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
+bool cMouseActionLoad::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedUnit = unitSelection.getSelectedUnit ();
 

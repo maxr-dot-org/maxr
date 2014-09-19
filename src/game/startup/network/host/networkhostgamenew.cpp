@@ -74,6 +74,11 @@ void cNetworkHostGameNew::start (cApplication& application)
 
 	sendReadyToStart (*localClient);
 
+	if (gameSettings->getGameType () == eGameSettingsGameType::Turns)
+	{
+		sendWaitFor (*server, *server->getActiveTurnPlayer (), nullptr);
+	}
+
 	server->startTurnTimers ();
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);

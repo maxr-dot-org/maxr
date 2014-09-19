@@ -29,7 +29,7 @@
 
 
 //------------------------------------------------------------------------------
-bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
+bool cMouseActionHelp::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto& field = map.getField (mapPosition);
 

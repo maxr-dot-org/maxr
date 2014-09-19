@@ -58,8 +58,6 @@ cPlayer::cPlayer (const cPlayerBasicData& splayer_) :
 
 	isDefeated = false;
 
-	researchFinished = false;
-
 	splayer.nameChanged.connect ([this](){ nameChanged (); });
 	splayer.colorChanged.connect ([this](){ colorChanged (); });
 }
@@ -680,6 +678,7 @@ void cPlayer::doResearch (cServer& server)
 			sendUnitUpgrades (server, *upgradedUnitDatas[i], *this);
 	}
 	sendResearchLevel (server, researchState, *this);
+	sendFinishedResearchAreas (server, currentTurnResearchAreasFinished, *this);
 }
 
 void cPlayer::accumulateScore (cServer& server)
@@ -940,6 +939,18 @@ const std::vector<sTurnstartReport>& cPlayer::getCurrentTurnUnitReports () const
 const std::vector<int>& cPlayer::getCurrentTurnResearchAreasFinished () const
 {
 	return currentTurnResearchAreasFinished;
+}
+
+//------------------------------------------------------------------------------
+void cPlayer::setCurrentTurnResearchAreasFinished (std::vector<int> areas)
+{
+	currentTurnResearchAreasFinished = std::move (areas);
+}
+
+//------------------------------------------------------------------------------
+bool cPlayer::isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const
+{
+	return std::find (currentTurnResearchAreasFinished.begin (), currentTurnResearchAreasFinished.end (), area) != currentTurnResearchAreasFinished.end ();
 }
 
 //------------------------------------------------------------------------------

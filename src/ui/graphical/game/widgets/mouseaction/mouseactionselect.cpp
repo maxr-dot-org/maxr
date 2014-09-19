@@ -28,7 +28,7 @@
 #include "input/mouse/mouse.h"
 
 //------------------------------------------------------------------------------
-bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection) const
+bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const cMap& map, const cPosition& mapPosition, cUnitSelection& unitSelection, bool changeAllowed) const
 {
 	const auto selectedVehicle = unitSelection.getSelectedVehicle ();
 	const auto selectedBuilding = unitSelection.getSelectedBuilding ();
@@ -38,8 +38,6 @@ bool cMouseActionSelect::executeLeftClick (cGameMapWidget& gameMapWidget, const 
 	const auto overVehicle = field.getVehicle ();
 	const auto overBuilding = field.getBuilding ();
 	const auto overBaseBuilding = field.getBaseBuilding ();
-
-	const bool changeAllowed = true; // FIXME: parameter?!
 
 	if (KeysList.getMouseStyle () == eMouseStyle::OldSchool && unitSelection.selectUnitAt (field, false))
 	{

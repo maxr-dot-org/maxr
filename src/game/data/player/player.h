@@ -159,6 +159,9 @@ public:
 	const std::vector<sTurnstartReport>& getCurrentTurnUnitReports () const;
 
 	const std::vector<int>& getCurrentTurnResearchAreasFinished () const;
+	void setCurrentTurnResearchAreasFinished (std::vector<int> areas);
+
+	bool isCurrentTurnResearchAreaFinished (cResearch::ResearchArea area) const;
 	
 	const cResearch& getResearchState () const;
 	cResearch& getResearchState ();
@@ -233,7 +236,6 @@ public:
 	std::vector<std::unique_ptr<cSavedReport>> savedReportsList;
 	bool isDefeated;        // true if the player has been defeated
 	int numEcos;            // number of ecospheres. call countEcoSpheres on server to update.
-	bool researchFinished;
 	unsigned int lastDeletedUnit;  /*!< used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 private:
 	int clan;
