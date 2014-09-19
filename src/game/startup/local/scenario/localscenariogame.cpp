@@ -45,6 +45,7 @@
 
 cLocalScenarioGame::cLocalScenarioGame(cApplication* application) :
     m_application(application),
+    L(00),
     m_startStatus(Ready),
     m_scenarioFinished(false)
 {
@@ -72,7 +73,7 @@ cLocalScenarioGame::~cLocalScenarioGame()
     }
 
     // Close Lua context
-    lua_close(L);
+    if (L) lua_close(L);
 }
 
 void cLocalScenarioGame::run()
