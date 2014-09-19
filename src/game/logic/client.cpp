@@ -472,6 +472,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	{
 		getPlayerList() [i]->setHasFinishedTurn(false);
 	}
+    finishedTurnEndProcess ();
 }
 
 void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
@@ -1783,6 +1784,7 @@ void cClient::handleEnd()
 	if (isFreezed()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn (*this);
+    startedTurnEndProcess ();
 }
 
 
