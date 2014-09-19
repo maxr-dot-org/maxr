@@ -33,7 +33,7 @@ private:
 	cSignalConnectionManager signalConnectionManager;
 
 	void newGameClicked ();
-    void newScenarioGameClicked();
+    void newScenarioGameClicked ();
 	void loadGameClicked ();
 	void backClicked ();
 };

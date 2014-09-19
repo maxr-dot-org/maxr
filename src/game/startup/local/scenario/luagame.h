@@ -11,16 +11,16 @@
 
 class cWindowClanSelection;
 
-class LuaGame
+class cLuaGame
 {
 public:
     static const char className[];
-    static Lunar<LuaGame>::RegType methods[];
+    static Lunar<cLuaGame>::RegType methods[];
 
 public:
-    LuaGame(cLocalScenarioGame* game);
-    LuaGame(lua_State *);
-    ~LuaGame();
+    cLuaGame(cLocalScenarioGame* game);
+    cLuaGame(lua_State *);
+    ~cLuaGame();
 
     // Lua interface
     int getAvailableMaps(lua_State *L);
@@ -39,13 +39,13 @@ private:
     void buildGame();
 
 private:
-    cLocalScenarioGame* m_game;
-    std::vector<std::string> m_availableMaps;
-    std::vector<LuaPlayer*> m_players;
+    cLocalScenarioGame* game;
+    std::vector<std::string> availableMaps;
+    std::vector<cLuaPlayer*> players;
 
-    bool m_mapLoaded;
-    std::shared_ptr<cWindowClanSelection> m_clanWindow;
-    int m_humanClan;
+    bool mapLoaded;
+    std::shared_ptr<cWindowClanSelection> clanWindow;
+    int humanClan;
 };
 
 #endif // LUAGAME_H

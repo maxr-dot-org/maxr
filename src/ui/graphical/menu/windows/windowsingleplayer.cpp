@@ -235,7 +235,7 @@ void cWindowSinglePlayer::newScenarioGameClicked()
     windowScenario->done.connect ([=]() {
         // Load scenario file
         std::string luaFilename = windowScenario->getSelectedScenario();
-        game->loadLuaScript(luaFilename);
+        game->loadLuaScript (luaFilename);
         windowScenario->close();
     });
 }

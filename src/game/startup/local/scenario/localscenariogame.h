@@ -20,10 +20,10 @@ class cPlayer;
 class cUnitUpgrade;
 class cServer;
 class cClient;
-class LuaGame;
+class cLuaGame;
 struct lua_State;
 class cWindowClanSelection;
-class LuaIntelligence;
+class cLuaIntelligence;
 
 enum StartingStatus {
     WaitingHuman,
@@ -42,15 +42,15 @@ public:
     virtual void save (int saveNumber, const std::string& saveName) MAXR_OVERRIDE_FUNCTION;
 
     void loadLuaScript(std::string luaFilename);
-    void setGameSettings(std::shared_ptr<cGameSettings> settings) { m_gameSettings = settings; }
+    void setGameSettings(std::shared_ptr<cGameSettings> settings) { gameSettings = settings; }
     void openClanWindow();
-    StartingStatus startingStatus() const { return m_startStatus; }
+    StartingStatus startingStatus() const { return startStatus; }
 
     bool loadMap(std::string mapName);
     cPlayer *humanPlayer();
     cPlayer *addPlayer(std::string playerName);
-    int playerCount() { return m_players.size(); }
-    void setGuiPosition(const cPosition& pos) { m_guiPosition = pos; }
+    int playerCount() { return players.size(); }
+    void setGuiPosition(const cPosition& pos) { guiPosition = pos; }
     unsigned int addUnit(const sID &id, const std::string &playerName, const cPosition &pos);
     unsigned int addBuilding(const sID &id, const std::string &playerName, const cPosition &pos);
     void setPlayerClan(std::string playerName, int clan);
@@ -66,27 +66,27 @@ public:
     void popupMessage(std::string message);
 
 private:
-    cApplication* m_application;
-    std::shared_ptr<LuaGame> m_luaGame;
+    cApplication* application;
+    std::shared_ptr<cLuaGame> luaGame;
     lua_State* L;
-    StartingStatus m_startStatus;
-    bool m_scenarioFinished;
+    StartingStatus startStatus;
+    bool scenarioFinished;
     std::string aiErrMsg;
 
-    cSignalConnectionManager m_signalConnectionManager;
-    std::unique_ptr<cServer> m_server;
-    std::shared_ptr<cClient> m_guiClient;
-    std::vector< std::shared_ptr<cClient> > m_iaClients;
-    std::vector<cPlayerBasicData> m_players;        // First one is the GUI player
-    std::vector< std::shared_ptr<LuaIntelligence> > m_intelligences;
+    cSignalConnectionManager signalConnectionManager;
+    std::unique_ptr<cServer> server;
+    std::shared_ptr<cClient> guiClient;
+    std::vector< std::shared_ptr<cClient> > iaClients;
+    std::vector<cPlayerBasicData> players;        // First one is the GUI player
+    std::vector< std::shared_ptr<cLuaIntelligence> > intelligences;
 
-    std::vector<std::string> m_availableMaps;
-    std::shared_ptr<cStaticMap> m_map;
+    std::vector<std::string> availableMaps;
+    std::shared_ptr<cStaticMap> map;
 
-    std::shared_ptr<cGameSettings> m_gameSettings;
-    std::unique_ptr<cGameGuiController> m_gameGuiController;
-    cPosition m_guiPosition;
-    std::shared_ptr<cWindowClanSelection> m_clanWindow;
+    std::shared_ptr<cGameSettings> gameSettings;
+    std::unique_ptr<cGameGuiController> gameGuiController;
+    cPosition guiPosition;
+    std::shared_ptr<cWindowClanSelection> clanWindow;
 };
 
 #endif // LOCALSCENARIOGAME_H

@@ -5,17 +5,17 @@
 #include "lua/lunar.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 
-class LuaSettings
+class cLuaSettings
 {
 public:
     static const char className[];
-    static Lunar<LuaSettings>::RegType methods[];
+    static Lunar<cLuaSettings>::RegType methods[];
 
 public:
     // Lua interface
-    LuaSettings(lua_State *L);
-    LuaSettings(std::shared_ptr<const cGameSettings> settings);
-    ~LuaSettings();
+    cLuaSettings(lua_State *);
+    cLuaSettings(std::shared_ptr<const cGameSettings> settings);
+    ~cLuaSettings();
     int setHumanChooseClan(lua_State *L);
     int setStartingCredits(lua_State *L);
     int setClansEnabled(lua_State *L);
@@ -25,13 +25,13 @@ public:
     int getBridgeHeadDefinite(lua_State *L);
 
     // C++ interface
-    std::shared_ptr<cGameSettings> getGameSettings() const { return m_gameSettings; }
-    bool humanChooseClan() const { return m_humanChooseClan; }
+    std::shared_ptr<cGameSettings> getGameSettings() const { return gameSettings; }
+    bool isHumanChooseClan() const { return humanChooseClan; }
 
 private:
-    std::shared_ptr<cGameSettings> m_gameSettings;
-    std::shared_ptr<const cGameSettings> m_constSettings;
-    bool m_humanChooseClan;
+    std::shared_ptr<cGameSettings> gameSettings;
+    std::shared_ptr<const cGameSettings> constSettings;
+    bool humanChooseClan;
 };
 
 #endif // LUASETTINGS_H

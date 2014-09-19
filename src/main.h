@@ -248,15 +248,15 @@ public: // TODO: private
 	// the standard version without clan modifications
 	std::vector<sUnitData> svehicles;
 	std::vector<sVehicleUIData> vehicleUIs;
-    std::map<std::string, sID> m_vehiclesIDs;
-    std::map<std::string, sID> m_buildingsIDs;
-    std::map<sID, std::string> m_vehiclesNames;
-    std::map<sID, std::string> m_buildingsNames;
+    std::map<std::string, sID> vehiclesIDs;
+    std::map<sID, std::string> vehiclesNames;
 
 	// Buildings
 	// the standard version without clan modifications
 	std::vector<sUnitData> sbuildings;
 	std::vector<sBuildingUIData> buildingUIs;
+    std::map<std::string, sID> buildingsIDs;
+    std::map<sID, std::string> buildingsNames;
 
 	AutoSurface dirt_small_org;
 	AutoSurface dirt_small;

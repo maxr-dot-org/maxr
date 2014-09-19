@@ -1,11 +1,11 @@
 #include "luaposition.h"
 
-void LuaPosition::pushPosition(lua_State *L, const cPosition &pos)
+void cLuaPosition::pushPosition(lua_State *L, const cPosition &pos)
 {
     pushPosition(L, pos.x(), pos.y());
 }
 
-void LuaPosition::pushPosition(lua_State *L, int x, int y)
+void cLuaPosition::pushPosition(lua_State *L, int x, int y)
 {
     lua_newtable(L);
 
@@ -16,12 +16,12 @@ void LuaPosition::pushPosition(lua_State *L, int x, int y)
     lua_setfield(L, -2, "y");
 }
 
-bool LuaPosition::getPosition(lua_State *L, cPosition &pos)
+bool cLuaPosition::getPosition(lua_State *L, cPosition &pos)
 {
     return getPosition(L, pos.x(), pos.y());
 }
 
-bool LuaPosition::getPosition(lua_State *L, int &x, int &y)
+bool cLuaPosition::getPosition(lua_State *L, int &x, int &y)
 {
     int nbParams = lua_gettop(L);
     if (nbParams >= 1 && lua_istable(L, -1)) {

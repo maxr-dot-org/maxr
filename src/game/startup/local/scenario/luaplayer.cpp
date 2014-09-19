@@ -9,91 +9,91 @@
 #include "utility/log.h"
 #include "main.h"
 
-const char LuaPlayer::className[] = "LuaPlayer";
+const char cLuaPlayer::className[] = "LuaPlayer";
 
-Lunar<LuaPlayer>::RegType LuaPlayer::methods[] = {
-    LUNAR_DECLARE_METHOD(LuaPlayer, getName),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getLandingPosition),
-    LUNAR_DECLARE_METHOD(LuaPlayer, setLandingPosition),
-    LUNAR_DECLARE_METHOD(LuaPlayer, addLandingUnit),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getClan),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getVehicleCount),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getVehicleIdList),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getVehicleById),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getBuildingCount),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getBuildingIdList),
-    LUNAR_DECLARE_METHOD(LuaPlayer, getBuildingById),
-    LUNAR_DECLARE_METHOD(LuaPlayer, setClan),
-    LUNAR_DECLARE_METHOD(LuaPlayer, addUnit),
-    LUNAR_DECLARE_METHOD(LuaPlayer, addBuilding),
-    LUNAR_DECLARE_METHOD(LuaPlayer, setIaScript),
+Lunar<cLuaPlayer>::RegType cLuaPlayer::methods[] = {
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getName),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getLandingPosition),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, setLandingPosition),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, addLandingUnit),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getClan),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getVehicleCount),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getVehicleIdList),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getVehicleById),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getBuildingCount),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getBuildingIdList),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, getBuildingById),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, setClan),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, addUnit),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, addBuilding),
+    LUNAR_DECLARE_METHOD(cLuaPlayer, setIaScript),
     {0,0}
 };
 
-LuaPlayer::LuaPlayer(lua_State *L) :
-    m_player(00)
+cLuaPlayer::cLuaPlayer(lua_State *) :
+    player(00)
 {
     // Only here for Lunar registration, should not be created from Lua code
 }
 
-LuaPlayer::LuaPlayer(cPlayer *player) :
-    m_player(player)
+cLuaPlayer::cLuaPlayer(cPlayer *player) :
+    player(player)
 {
 }
 
-int LuaPlayer::getName(lua_State *L)
+int cLuaPlayer::getName(lua_State *L)
 {
     lua_pushstring(L, getName().c_str());
     return 1;
 }
 
-int LuaPlayer::getLandingPosition(lua_State *L)
+int cLuaPlayer::getLandingPosition(lua_State *L)
 {
-    LuaPosition::pushPosition(L, m_player->getLandingPosX(), m_player->getLandingPosY());
+    cLuaPosition::pushPosition(L, player->getLandingPosX(), player->getLandingPosY());
     return 1;
 }
 
-int LuaPlayer::setLandingPosition(lua_State *L)
+int cLuaPlayer::setLandingPosition(lua_State *L)
 {
     int x, y;
-    if (LuaPosition::getPosition(L, x, y)) {
-        m_player->setLandingPos(x, y);
+    if (cLuaPosition::getPosition(L, x, y)) {
+        player->setLandingPos(x, y);
     }
     return 0;
 }
 
-int LuaPlayer::getClan(lua_State *L)
+int cLuaPlayer::getClan(lua_State *L)
 {
-    lua_pushinteger(L, m_player->getClan());
+    lua_pushinteger(L, player->getClan());
     return 1;
 }
 
-int LuaPlayer::getVehicleCount(lua_State *L)
+int cLuaPlayer::getVehicleCount(lua_State *L)
 {
-    lua_pushinteger(L, m_player->getVehicles().size());
+    lua_pushinteger(L, player->getVehicles().size());
     return 1;
 }
 
 // Fill a table indexed by iId of units of the player and content is unit type name
-int LuaPlayer::getVehicleIdList(lua_State *L)
+int cLuaPlayer::getVehicleIdList(lua_State *L)
 {
     lua_newtable(L);
-    for (auto it = m_player->getVehicles().begin(); it != m_player->getVehicles().end(); ++it) {
+    for (auto it = player->getVehicles().begin(); it != player->getVehicles().end(); ++it) {
         std::shared_ptr<cVehicle> vehicle = *it;
         lua_pushnumber(L, vehicle->iID);
-        std::string unitName = UnitsData.m_vehiclesNames.at(vehicle->data.ID);
+        std::string unitName = UnitsData.vehiclesNames.at(vehicle->data.ID);
         lua_pushstring(L, unitName.c_str());
         lua_settable(L, -3);
     }
     return 1;
 }
 
-int LuaPlayer::getVehicleById(lua_State *L)
+int cLuaPlayer::getVehicleById(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams < 1 || !lua_isnumber(L, 1)) return 0;
     unsigned int iID = lua_tointeger(L, 1);
-    cVehicle *v = m_player->getVehicleFromId(iID);
+    cVehicle *v = player->getVehicleFromId(iID);
     if (v == 00) return 0;
 
     // Build a table with all vehicle data inside
@@ -101,19 +101,19 @@ int LuaPlayer::getVehicleById(lua_State *L)
     pushUnitData(L, v);
 
     lua_pushstring(L, "type");
-    std::string unitName = UnitsData.m_vehiclesNames.at(v->data.ID);
+    std::string unitName = UnitsData.vehiclesNames.at(v->data.ID);
     lua_pushstring(L, unitName.c_str());
     lua_settable(L, -3);
 
     return 1;
 }
 
-void LuaPlayer::pushUnitData(lua_State *L, cUnit *unit)
+void cLuaPlayer::pushUnitData(lua_State *L, cUnit *unit)
 {
-    lua_pushstring(L, m_player->getName().c_str());
+    lua_pushstring(L, player->getName().c_str());
     lua_setfield(L, -2, "owner");
 
-    LuaPosition::pushPosition(L, unit->getPosition());
+    cLuaPosition::pushPosition(L, unit->getPosition());
     lua_setfield(L, -2, "pos");
 
     lua_pushboolean(L, unit->isDisabled());
@@ -168,39 +168,39 @@ void LuaPlayer::pushUnitData(lua_State *L, cUnit *unit)
     lua_setfield(L, -2, "storedUnits");
 }
 
-int LuaPlayer::getBuildingCount(lua_State *L)
+int cLuaPlayer::getBuildingCount(lua_State *L)
 {
-    lua_pushinteger(L, m_player->getBuildings().size());
+    lua_pushinteger(L, player->getBuildings().size());
     return 1;
 }
 
 // Return table {iID, unitName}
-int LuaPlayer::getBuildingIdList(lua_State *L)
+int cLuaPlayer::getBuildingIdList(lua_State *L)
 {
     lua_newtable(L);
-    for (auto it = m_player->getBuildings().cbegin(); it != m_player->getBuildings().cend(); ++it) {
+    for (auto it = player->getBuildings().cbegin(); it != player->getBuildings().cend(); ++it) {
         std::shared_ptr<cBuilding> building = *it;
         lua_pushnumber(L, building->iID);
-        std::string unitName = UnitsData.m_buildingsNames.at(building->data.ID);
+        std::string unitName = UnitsData.buildingsNames.at(building->data.ID);
         lua_pushstring(L, unitName.c_str());
         lua_settable(L, -3);
     }
     return 1;
 }
 
-int LuaPlayer::getBuildingById(lua_State *L)
+int cLuaPlayer::getBuildingById(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams < 1 || !lua_isnumber(L, 1)) return 0;
     unsigned int iID = lua_tointeger(L, 1);
-    cBuilding *b = m_player->getBuildingFromId(iID);
+    cBuilding *b = player->getBuildingFromId(iID);
 
     // Build a table with all vehicle data inside
     lua_newtable(L);
     pushUnitData(L, b);
 
     lua_pushstring(L, "type");
-    std::string unitName = UnitsData.m_buildingsNames.at(b->data.ID);
+    std::string unitName = UnitsData.buildingsNames.at(b->data.ID);
     lua_pushstring(L, unitName.c_str());
     lua_settable(L, -3);
 
@@ -215,7 +215,7 @@ int LuaPlayer::getBuildingById(lua_State *L)
     return 1;
 }
 
-int LuaPlayer::addLandingUnit(lua_State *L)
+int cLuaPlayer::addLandingUnit(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     sID unitId;
@@ -226,7 +226,7 @@ int LuaPlayer::addLandingUnit(lua_State *L)
         // Get the sID from the unit string
         std::string unitName = lua_tostring(L, 1);
         try {
-            unitId = UnitsData.m_vehiclesIDs.at(unitName);
+            unitId = UnitsData.vehiclesIDs.at(unitName);
         }
         catch (const std::out_of_range& oor) {
             Log.write("Impossible to add landing unit, does not exists : " + unitName + "\n" + oor.what(), cLog::eLOG_TYPE_WARNING);
@@ -244,13 +244,13 @@ int LuaPlayer::addLandingUnit(lua_State *L)
     }
 
     sLandingUnit unit = { unitId, cargo };
-    m_landingUnits.push_back(unit);
+    landingUnits.push_back(unit);
 
     return 0;
 }
 
 // TODO_M: it would be nice if these 2 could return the iId of the unit just created !
-int LuaPlayer::addUnit(lua_State *L)
+int cLuaPlayer::addUnit(lua_State *L)
 {
     std::string unitName;
 
@@ -259,19 +259,19 @@ int LuaPlayer::addUnit(lua_State *L)
         unitName = lua_tostring(L, 1);
 
         sPlayerUnit pu;
-        if (!LuaPosition::getPosition(L, pu.position)) {
+        if (!cLuaPosition::getPosition(L, pu.position)) {
             Log.write("addUnit parameters error ", cLog::eLOG_TYPE_WARNING);
             return 0;
         }
 
-        pu.unitID = UnitsData.m_vehiclesIDs.at(unitName);
-        m_otherUnits.push_back(pu);
+        pu.unitID = UnitsData.vehiclesIDs.at(unitName);
+        otherUnits.push_back(pu);
     }
 
     return 0;
 }
 
-int LuaPlayer::addBuilding(lua_State *L)
+int cLuaPlayer::addBuilding(lua_State *L)
 {
     std::string buildingName;
 
@@ -280,60 +280,60 @@ int LuaPlayer::addBuilding(lua_State *L)
         buildingName = lua_tostring(L, 1);
 
         sPlayerUnit pu;
-        if (!LuaPosition::getPosition(L, pu.position)) {
+        if (!cLuaPosition::getPosition(L, pu.position)) {
             Log.write("addBuilding parameters error ", cLog::eLOG_TYPE_WARNING);
             return 0;
         }
 
-        pu.unitID = UnitsData.m_buildingsIDs.at(buildingName);
-        m_buildings.push_back(pu);
+        pu.unitID = UnitsData.buildingsIDs.at(buildingName);
+        buildings.push_back(pu);
     }
 
     return 0;
 }
 
-int LuaPlayer::setIaScript(lua_State *L)
+int cLuaPlayer::setIaScript(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams == 1 && lua_isstring(L, 1)) {
-        m_iaScriptName = lua_tostring(L, 1);
+        iaScriptName = lua_tostring(L, 1);
     }
     return 0;
 }
 
-std::string LuaPlayer::getName() const
+std::string cLuaPlayer::getName() const
 {
-    return m_player->getName();
+    return player->getName();
 }
 
-int LuaPlayer::getClan() const
+int cLuaPlayer::getClan() const
 {
-    return m_player->getClan();
+    return player->getClan();
 }
 
-cPosition LuaPlayer::landingPosition() const
+cPosition cLuaPlayer::landingPosition() const
 {
-    return cPosition(m_player->getLandingPosX(), m_player->getLandingPosY());
+    return cPosition(player->getLandingPosX(), player->getLandingPosY());
 }
 
-int LuaPlayer::setClan(lua_State *L)
+int cLuaPlayer::setClan(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams == 1 && lua_isnumber(L, 1)) {
         int clan = (int)lua_tonumber(L, 1);
         if (clan >= 0 && clan < 8) {
-            m_player->setClan(clan);
+            player->setClan(clan);
         }
     }
     return 0;
 }
 
-void LuaPlayer::sendInformations(const cClient &client)
+void cLuaPlayer::sendInformations(const cClient &client)
 {
     sendClan(client);
-    sendLandingUnits(client, m_landingUnits);
+    sendLandingUnits(client, landingUnits);
     sendUnitUpgrades(client);
-    sendLandingCoords(client, cPosition(m_player->getLandingPosX(), m_player->getLandingPosY()));
+    sendLandingCoords(client, cPosition(player->getLandingPosX(), player->getLandingPosY()));
     sendReadyToStart(client);
 }
 

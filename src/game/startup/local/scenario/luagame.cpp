@@ -14,75 +14,75 @@
 #include "ui/graphical/game/gamegui.h"
 #include "loaddata.h"
 
-const char LuaGame::className[] = "LuaGame";
+const char cLuaGame::className[] = "LuaGame";
 
-Lunar<LuaGame>::RegType LuaGame::methods[] = {
-    LUNAR_DECLARE_METHOD(LuaGame, getAvailableMaps),
-    LUNAR_DECLARE_METHOD(LuaGame, loadMap),
-    LUNAR_DECLARE_METHOD(LuaGame, getHumanPlayer),
-    LUNAR_DECLARE_METHOD(LuaGame, addPlayer),
-    LUNAR_DECLARE_METHOD(LuaGame, setSettings),
-    LUNAR_DECLARE_METHOD(LuaGame, start),
-    LUNAR_DECLARE_METHOD(LuaGame, message),
+Lunar<cLuaGame>::RegType cLuaGame::methods[] = {
+    LUNAR_DECLARE_METHOD(cLuaGame, getAvailableMaps),
+    LUNAR_DECLARE_METHOD(cLuaGame, loadMap),
+    LUNAR_DECLARE_METHOD(cLuaGame, getHumanPlayer),
+    LUNAR_DECLARE_METHOD(cLuaGame, addPlayer),
+    LUNAR_DECLARE_METHOD(cLuaGame, setSettings),
+    LUNAR_DECLARE_METHOD(cLuaGame, start),
+    LUNAR_DECLARE_METHOD(cLuaGame, message),
     {0,0}
 };
 
-LuaGame::LuaGame(lua_State *) :
-    m_mapLoaded(false),
-    m_game(00),
-    m_humanClan(-1)
+cLuaGame::cLuaGame(lua_State *) :
+    mapLoaded(false),
+    game(00),
+    humanClan(-1)
 {
     Log.write("LuaGame construction from Lua, should never happen !", cLog::eLOG_TYPE_ERROR);
 }
 
 // LuaGame needs to be instantiated by C++ code, not by Lua !
-LuaGame::LuaGame(cLocalScenarioGame *game) :
-    m_mapLoaded(false),
-    m_game(game),
-    m_humanClan(-1)
+cLuaGame::cLuaGame(cLocalScenarioGame *game) :
+    mapLoaded(false),
+    game(game),
+    humanClan(-1)
 {
     // List all available map : this is copy-paste from cWindowMapSelection --> refactoring
-    m_availableMaps = getFilesOfDirectory (cSettings::getInstance ().getMapsPath ());
+    availableMaps = getFilesOfDirectory (cSettings::getInstance ().getMapsPath ());
     if (!getUserMapsDir ().empty ())
     {
         std::vector<std::string> userMaps (getFilesOfDirectory (getUserMapsDir ()));
         for (size_t i = 0; i != userMaps.size (); ++i)
         {
-            if (std::find (m_availableMaps.begin (), m_availableMaps.end (), userMaps[i]) == m_availableMaps.end ())
+            if (std::find (availableMaps.begin (), availableMaps.end (), userMaps[i]) == availableMaps.end ())
             {
-                m_availableMaps.push_back (userMaps[i]);
+                availableMaps.push_back (userMaps[i]);
             }
         }
     }
-    for (size_t i = 0; i != m_availableMaps.size (); ++i)
+    for (size_t i = 0; i != availableMaps.size (); ++i)
     {
-        const std::string& map = m_availableMaps[i];
+        const std::string& map = availableMaps[i];
         if (map.compare (map.length () - 3, 3, "WRL") != 0 && map.compare (map.length () - 3, 3, "wrl") != 0)
         {
-            m_availableMaps.erase (m_availableMaps.begin () + i);
+            availableMaps.erase (availableMaps.begin () + i);
             i--;
         }
     }
 
-    LuaPlayer* humanPlayer = new LuaPlayer(m_game->humanPlayer());
-    m_players.push_back(humanPlayer);
+    cLuaPlayer* humanPlayer = new cLuaPlayer(game->humanPlayer());
+    players.push_back(humanPlayer);
 }
 
-LuaGame::~LuaGame()
+cLuaGame::~cLuaGame()
 {
     Log.write("LuaGame destructor", cLog::eLOG_TYPE_DEBUG);
-    for (unsigned int i = 0; i < m_players.size(); i++) {
-        LuaPlayer *lp = m_players[i];
+    for (unsigned int i = 0; i < players.size(); i++) {
+        cLuaPlayer *lp = players[i];
         delete lp;
     }
 }
 
-int LuaGame::getAvailableMaps(lua_State *L)
+int cLuaGame::getAvailableMaps(lua_State *L)
 {
     lua_newtable(L);
-    for (unsigned int i = 0; i < m_availableMaps.size(); i++) {
+    for (unsigned int i = 0; i < availableMaps.size(); i++) {
         lua_pushnumber(L, i);
-        lua_pushstring(L, m_availableMaps[i].c_str());
+        lua_pushstring(L, availableMaps[i].c_str());
         lua_settable(L, -3);
     }
     return 1;
@@ -90,31 +90,31 @@ int LuaGame::getAvailableMaps(lua_State *L)
 
 // Load the map, set it in server and clients
 // param string filename of the map
-int LuaGame::loadMap(lua_State *L)
+int cLuaGame::loadMap(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams == 1 && lua_isstring(L, 1)) {
         std::string mapName = lua_tostring(L, 1);
         Log.write("Scenario map to load : " + mapName, cLog::eLOG_TYPE_INFO);
-        m_mapLoaded |= m_game->loadMap(mapName);
+        mapLoaded |= game->loadMap(mapName);
     }
     return 0;
 }
 
-int LuaGame::getHumanPlayer(lua_State *L)
+int cLuaGame::getHumanPlayer(lua_State *L)
 {
-    Lunar<LuaPlayer>::push(L, m_players[0]);
+    Lunar<cLuaPlayer>::push(L, players[0]);
     return 1;
 }
 
 // Add a AI player (and its client)
 // optionnal param string: name of the player
-int LuaGame::addPlayer(lua_State *L)
+int cLuaGame::addPlayer(lua_State *L)
 {
     // Default name
     std::string playerName = "IA_Player_";
     char tmp[2];
-    TIXML_SNPRINTF(tmp, sizeof(tmp), "%.1d", m_game->playerCount());
+    TIXML_SNPRINTF(tmp, sizeof(tmp), "%.1d", game->playerCount());
     playerName.append(tmp);
 
     // Lua name if provided
@@ -124,33 +124,33 @@ int LuaGame::addPlayer(lua_State *L)
     }
 
     // Add player to the game
-    cPlayer *player = m_game->addPlayer(playerName);
+    cPlayer *player = game->addPlayer(playerName);
 
     // Return a LuaPlayer object
-    LuaPlayer* lp = new LuaPlayer(player);
-    Lunar<LuaPlayer>::push(L, lp);      // silent false means we are deleting LuaPlayer from C++
-    m_players.push_back(lp);
+    cLuaPlayer* lp = new cLuaPlayer(player);
+    Lunar<cLuaPlayer>::push(L, lp);      // silent false means we are deleting LuaPlayer from C++
+    players.push_back(lp);
     return 1;
 }
 
 // Load settings in server and clients
-int LuaGame::setSettings(lua_State *L)
+int cLuaGame::setSettings(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams == 1 && lua_isuserdata(L, 1)) {
-        LuaSettings* settings = Lunar<LuaSettings>::check(L, 1);
-        m_game->setGameSettings(settings->getGameSettings());
-        if (settings->humanChooseClan()) m_game->openClanWindow();
+        cLuaSettings* settings = Lunar<cLuaSettings>::check(L, 1);
+        game->setGameSettings(settings->getGameSettings());
+        if (settings->isHumanChooseClan()) game->openClanWindow();
     }
     return 0;
 }
 
 // Start the game
-int LuaGame::start(lua_State *)
+int cLuaGame::start(lua_State *)
 {
     // Load the first map by default if it has not been loaded by the script
-    if (!m_mapLoaded && m_availableMaps.size() > 0) {
-        if (! m_game->loadMap(m_availableMaps.at(0))) return 0;
+    if (!mapLoaded && availableMaps.size() > 0) {
+        if (! game->loadMap(availableMaps.at(0))) return 0;
     }
 
     // TODO_M: script unit upgrades from LUA
@@ -166,69 +166,69 @@ int LuaGame::start(lua_State *)
 //        windowLandingUnitSelection->close();
     }
 
-    if (m_game->startingStatus() == Ready) buildGame();             // Start game immediately
-    if (m_game->startingStatus() == Cancelled) m_game->exit();      // Release ressource
-    if (m_game->startingStatus() == WaitingHuman) { }               // Wait for human to interract (choose clan, ...)
+    if (game->startingStatus() == Ready) buildGame();             // Start game immediately
+    if (game->startingStatus() == Cancelled) game->exit();      // Release ressource
+    if (game->startingStatus() == WaitingHuman) { }               // Wait for human to interract (choose clan, ...)
 
     return 0;
 }
 
-int LuaGame::message(lua_State *L)
+int cLuaGame::message(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams > 0 || lua_isstring(L, 1)) {
         std::string m = lua_tostring(L, 1);
-        m_game->popupMessage(m);
+        game->popupMessage(m);
     }
     return 0;
 }
 
-void LuaGame::setHumanClan(int clan)
+void cLuaGame::setHumanClan(int clan)
 {
-    m_humanClan = clan;
+    humanClan = clan;
 }
 
-void LuaGame::gameReady()
+void cLuaGame::gameReady()
 {
     buildGame();
 }
 
-void LuaGame::buildGame()
+void cLuaGame::buildGame()
 {
-    m_game->startServer();
+    game->startServer();
 
-    for (unsigned int i = 0; i < m_players.size(); i++) {
-        LuaPlayer *lp = m_players[i];
+    for (unsigned int i = 0; i < players.size(); i++) {
+        cLuaPlayer *lp = players[i];
 
         // Set clan
-        if (i == 0 && m_humanClan >= 0) m_game->setPlayerClan(lp->getName(), m_humanClan);
-        else m_game->setPlayerClan(lp->getName(), lp->getClan());
+        if (i == 0 && humanClan >= 0) game->setPlayerClan(lp->getName(), humanClan);
+        else game->setPlayerClan(lp->getName(), lp->getClan());
 
         // Add buildings to the game
         std::vector<sPlayerUnit> buildings = lp->getBuildings();
         for (unsigned int j = 0; j < buildings.size(); j++) {
             sPlayerUnit pu = buildings[j];
-            m_game->addBuilding(pu.unitID, lp->getName(), pu.position);
+            game->addBuilding(pu.unitID, lp->getName(), pu.position);
         }
 
         // Add other units to the game
         std::vector<sPlayerUnit> units = lp->getUnits();
         for (unsigned int j = 0; j < units.size(); j++) {
             sPlayerUnit pu = units[j];
-            m_game->addUnit(pu.unitID, lp->getName(), pu.position);
+            game->addUnit(pu.unitID, lp->getName(), pu.position);
         }
 
         // Send player informations: landing units etc...
-        lp->sendInformations(m_game->getClient(i));
+        lp->sendInformations(game->getClient(i));
 
         // Load AI scripts for each player
-        if (lp->getIaScript() != "") m_game->loadAiScript(lp->getName(), lp->getIaScript());
+        if (lp->getIaScript() != "") game->loadAiScript(lp->getName(), lp->getIaScript());
     }
 
-    m_game->setGuiPosition(m_players[0]->landingPosition());
+    game->setGuiPosition(players[0]->landingPosition());
 
     // Start definitely the game
-    m_game->startGame();
+    game->startGame();
     Log.write("Scenario game started successfully", cLog::eLOG_TYPE_INFO);
 }
 

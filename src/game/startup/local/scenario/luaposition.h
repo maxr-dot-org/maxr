@@ -4,7 +4,7 @@
 #include "utility/position.h"
 #include "lua/lua.hpp"
 
-class LuaPosition
+class cLuaPosition
 {
 public:
     static void pushPosition(lua_State *L, const cPosition &pos);

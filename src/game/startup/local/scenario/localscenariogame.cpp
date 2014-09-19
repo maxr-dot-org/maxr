@@ -44,31 +44,31 @@
 #include "game/startup/local/scenario/luaintelligence.h"
 
 cLocalScenarioGame::cLocalScenarioGame(cApplication* application) :
-    m_application(application),
+    application(application),
     L(00),
-    m_startStatus(Ready),
-    m_scenarioFinished(false)
+    startStatus(Ready),
+    scenarioFinished(false)
 {
     // Build the server
-    m_server = std::make_unique<cServer>(nullptr);
+    server = std::make_unique<cServer>(nullptr);
 
     // Build the GUI client and player
-    m_guiClient = std::make_shared<cClient>(m_server.get(), nullptr);
+    guiClient = std::make_shared<cClient>(server.get(), nullptr);
     cPlayerBasicData player(cSettings::getInstance().getPlayerName(), cPlayerColor(cPlayerColor::predefinedColors[0]), 0);
     player.setLocal ();
-    m_server->addPlayer(std::make_unique<cPlayer>(player));
-    m_players.push_back(player);
+    server->addPlayer(std::make_unique<cPlayer>(player));
+    players.push_back(player);
 
     // Connect to the new turn signal
-    m_signalConnectionManager.connect(m_server->getTurnClock()->turnChanged, std::bind (&cLocalScenarioGame::turnChanged, this));
+    signalConnectionManager.connect(server->getTurnClock()->turnChanged, std::bind (&cLocalScenarioGame::turnChanged, this));
 }
 
 cLocalScenarioGame::~cLocalScenarioGame()
 {
     Log.write("cLocalScenarioGame destructor", cLog::eLOG_TYPE_DEBUG);
-    if (m_server)
+    if (server)
     {
-        m_server->stop ();
+        server->stop ();
         reloadUnitValues ();
     }
 
@@ -78,19 +78,19 @@ cLocalScenarioGame::~cLocalScenarioGame()
 
 void cLocalScenarioGame::run()
 {
-    if (m_guiClient) m_guiClient->getGameTimer()->run();
-    for (size_t i = 0; i != m_iaClients.size(); ++i) {
-        m_iaClients[i]->getGameTimer()->run();
+    if (guiClient) guiClient->getGameTimer()->run();
+    for (size_t i = 0; i != iaClients.size(); ++i) {
+        iaClients[i]->getGameTimer()->run();
     }
 }
 
 void cLocalScenarioGame::save(int saveNumber, const std::string &saveName)
 {
-    if (!m_server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
+    if (!server) throw std::runtime_error ("Game not started!"); // should never happen (hence a translation is not necessary).
 
     cSavegame savegame(saveNumber);
-    savegame.save(*m_server, saveName);
-    m_server->makeAdditionalSaveRequest(saveNumber);
+    savegame.save(*server, saveName);
+    server->makeAdditionalSaveRequest(saveNumber);
 }
 
 void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
@@ -121,13 +121,13 @@ void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
     // Create a lua context and run Lua interpreter
     L = luaL_newstate();
     luaL_openlibs(L);
-    Lunar<LuaGame>::Register(L);
-    Lunar<LuaPlayer>::Register(L);
-    Lunar<LuaSettings>::Register(L);
+    Lunar<cLuaGame>::Register(L);
+    Lunar<cLuaPlayer>::Register(L);
+    Lunar<cLuaSettings>::Register(L);
 
     // Create the game in a global variable "game"
-    m_luaGame = std::make_shared<LuaGame>(this);
-    Lunar<LuaGame>::push(L, m_luaGame.get());               // luaGame has to be deleted from C++
+    luaGame = std::make_shared<cLuaGame>(this);
+    Lunar<cLuaGame>::push(L, luaGame.get());               // luaGame has to be deleted from C++
     lua_setglobal(L, "game");
 
     // Load the Lua script
@@ -149,44 +149,44 @@ void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
 
     // Add this as a runnable to application
     terminate = false;
-    m_application->addRunnable (shared_from_this ());
+    application->addRunnable (shared_from_this ());
 }
 
 void cLocalScenarioGame::openClanWindow()
 {
-    m_startStatus = WaitingHuman;
-    m_clanWindow = std::make_shared<cWindowClanSelection>();
-    m_application->show (m_clanWindow);
+    startStatus = WaitingHuman;
+    clanWindow = std::make_shared<cWindowClanSelection>();
+    application->show (clanWindow);
 
     // Connection to further code: but the functions returns immediately
-    m_clanWindow->done.connect ([&]()
+    clanWindow->done.connect ([&]()
     {
         // We go here ONLY after the user clicked the ok button
-        m_luaGame->setHumanClan(m_clanWindow->getSelectedClan());
-        m_startStatus = Ready;
-        m_clanWindow->close ();
-        m_luaGame->gameReady();
+        luaGame->setHumanClan(clanWindow->getSelectedClan());
+        startStatus = Ready;
+        clanWindow->close ();
+        luaGame->gameReady();
     });
-    m_clanWindow->canceled.connect ([&]()
+    clanWindow->canceled.connect ([&]()
     {
-        m_startStatus = Cancelled;
-        m_clanWindow->close ();
+        startStatus = Cancelled;
+        clanWindow->close ();
     });
 
 }
 
 bool cLocalScenarioGame::loadMap(std::string mapName)
 {
-    if (!m_map) m_map = std::make_shared<cStaticMap>();
-    if (!m_map->loadMap(mapName)) {
+    if (!map) map = std::make_shared<cStaticMap>();
+    if (!map->loadMap(mapName)) {
         Log.write ("couldn't load map: " + mapName, cLog::eLOG_TYPE_ERROR);
         return false;
     }
     else {
-        if (m_server) m_server->setMap(m_map);
-        if (m_guiClient) m_guiClient->setMap(m_map);
-        for (size_t i = 0; i != m_iaClients.size(); ++i) {
-            m_iaClients[i]->setMap(m_map);
+        if (server) server->setMap(map);
+        if (guiClient) guiClient->setMap(map);
+        for (size_t i = 0; i != iaClients.size(); ++i) {
+            iaClients[i]->setMap(map);
         }
     }
     return true;
@@ -194,104 +194,104 @@ bool cLocalScenarioGame::loadMap(std::string mapName)
 
 cPlayer *cLocalScenarioGame::humanPlayer()
 {
-    return m_server->getPlayerFromString(m_players[0].getName());
+    return server->getPlayerFromString(players[0].getName());
 }
 
 cPlayer* cLocalScenarioGame::addPlayer(std::string playerName)
 {
     // Create client and player
-    std::shared_ptr<cClient> client = std::make_shared<cClient>(m_server.get(), nullptr);
-    if (m_map) client->setMap(m_map);
-    cPlayerBasicData ia_player(playerName, cPlayerColor(cPlayerColor::predefinedColors[m_players.size()]), m_players.size());
+    std::shared_ptr<cClient> client = std::make_shared<cClient>(server.get(), nullptr);
+    if (map) client->setMap(map);
+    cPlayerBasicData ia_player(playerName, cPlayerColor(cPlayerColor::predefinedColors[players.size()]), players.size());
     ia_player.setLocal();
-    m_server->addPlayer (std::make_unique<cPlayer>(ia_player));
-    m_players.push_back(ia_player);
-    m_iaClients.push_back(std::move(client));
-    return m_server->getPlayerFromString(playerName);
+    server->addPlayer (std::make_unique<cPlayer>(ia_player));
+    players.push_back(ia_player);
+    iaClients.push_back(std::move(client));
+    return server->getPlayerFromString(playerName);
 }
 
 unsigned int cLocalScenarioGame::addUnit(const sID &id, const std::string &playerName, const cPosition &pos)
 {
-    cVehicle& v = m_server->addVehicle(pos, id, m_server->getPlayerFromString(playerName), false);
+    cVehicle& v = server->addVehicle(pos, id, server->getPlayerFromString(playerName), false);
     return v.iID;
 }
 
 unsigned int cLocalScenarioGame::addBuilding(const sID &id, const std::string &playerName, const cPosition &pos)
 {
-    cBuilding& b = m_server->addBuilding(pos, id, m_server->getPlayerFromString(playerName), false);
+    cBuilding& b = server->addBuilding(pos, id, server->getPlayerFromString(playerName), false);
     return b.iID;
 }
 
 void cLocalScenarioGame::setPlayerClan(std::string playerName, int clan)
 {
     Log.write (playerName + " set clan : " + std::to_string(clan), cLog::eLOG_TYPE_DEBUG);
-    m_server->getPlayerFromString(playerName)->setClan(clan);
+    server->getPlayerFromString(playerName)->setClan(clan);
     // BUG_M: clan does not seems to work...
     // They work but only on units added after clan is set ! Not on landing units... maybe those need to be updated manually ?
 }
 
 void cLocalScenarioGame::startServer()
 {
-    if (!m_map) {
+    if (!map) {
         Log.write ("Scenario game error: no map loaded !", cLog::eLOG_TYPE_ERROR);
         return;
     }
 
     // Load default settings if no settings have been loaded by the script
-    if (!m_gameSettings) {
-        m_gameSettings = std::make_shared<cGameSettings>();
-        m_gameSettings->setStartCredits(0);
-        m_gameSettings->setClansEnabled(true);
-        m_gameSettings->setBridgeheadType(eGameSettingsBridgeheadType::Mobile);      // Mobile will remove the initial mining station building
+    if (!gameSettings) {
+        gameSettings = std::make_shared<cGameSettings>();
+        gameSettings->setStartCredits(0);
+        gameSettings->setClansEnabled(true);
+        gameSettings->setBridgeheadType(eGameSettingsBridgeheadType::Mobile);      // Mobile will remove the initial mining station building
     }
-    m_server->setGameSettings(*m_gameSettings);
-    m_guiClient->setGameSettings(*m_gameSettings);
-    for (size_t i = 0; i != m_iaClients.size(); ++i) m_iaClients[i]->setGameSettings(*m_gameSettings);
+    server->setGameSettings(*gameSettings);
+    guiClient->setGameSettings(*gameSettings);
+    for (size_t i = 0; i != iaClients.size(); ++i) iaClients[i]->setGameSettings(*gameSettings);
 
     // Set player list to the clients
-    m_guiClient->setPlayers(m_players, 0);
-    for (size_t i = 0; i != m_iaClients.size(); ++i) m_iaClients[i]->setPlayers(m_players, i+1);
+    guiClient->setPlayers(players, 0);
+    for (size_t i = 0; i != iaClients.size(); ++i) iaClients[i]->setPlayers(players, i+1);
 
     // Start server and send data to clients
-    m_server->start();
+    server->start();
 }
 
 void cLocalScenarioGame::startGame()
 {
     // Everybody is Ready, let's go !
-    m_server->startTurnTimers();
+    server->startTurnTimers();
 
     // Show GUI
-    m_gameGuiController = std::make_unique<cGameGuiController> (*m_application, m_map);
-    m_gameGuiController->setSingleClient (m_guiClient);
+    gameGuiController = std::make_unique<cGameGuiController> (*application, map);
+    gameGuiController->setSingleClient (guiClient);
 
     cGameGuiState playerGameGuiState;
-    const auto& player = m_guiClient->getPlayerList()[0];
-    playerGameGuiState.setMapPosition (m_guiPosition);
-    m_gameGuiController->addPlayerGameGuiState (*player, std::move (playerGameGuiState));
+    const auto& player = guiClient->getPlayerList()[0];
+    playerGameGuiState.setMapPosition (guiPosition);
+    gameGuiController->addPlayerGameGuiState (*player, std::move (playerGameGuiState));
 
-    m_gameGuiController->start ();
+    gameGuiController->start ();
     if (aiErrMsg.size() > 0) popupMessage(aiErrMsg);
 
     using namespace std::placeholders;
-    m_signalConnectionManager.connect (m_gameGuiController->triggeredSave, std::bind (&cLocalScenarioGame::save, this, _1, _2));
-    m_signalConnectionManager.connect (m_gameGuiController->terminated, [&]() { terminate = true; });
+    signalConnectionManager.connect (gameGuiController->triggeredSave, std::bind (&cLocalScenarioGame::save, this, _1, _2));
+    signalConnectionManager.connect (gameGuiController->terminated, [&]() { terminate = true; });
 }
 
 void cLocalScenarioGame::exit()
 {
-    m_gameGuiController->exit();
+    gameGuiController->exit();
 }
 
 void cLocalScenarioGame::loadAiScript(std::string playerName, std::string luaFileName)
 {
     // Search the client that has this player as active player
-    for (size_t i = 0; i != m_iaClients.size(); ++i) {
-        if (m_iaClients[i]->getActivePlayer().getName() != playerName) continue;
-        std::shared_ptr<LuaIntelligence> ai = std::make_shared<LuaIntelligence>(m_iaClients[i]);
+    for (size_t i = 0; i != iaClients.size(); ++i) {
+        if (iaClients[i]->getActivePlayer().getName() != playerName) continue;
+        std::shared_ptr<cLuaIntelligence> ai = std::make_shared<cLuaIntelligence>(iaClients[i]);
         using namespace std::placeholders;
-        m_signalConnectionManager.connect(ai->showMessage, std::bind (&cLocalScenarioGame::popupMessage, this, _1));
-        m_intelligences.push_back(ai);
+        signalConnectionManager.connect(ai->showMessage, std::bind (&cLocalScenarioGame::popupMessage, this, _1));
+        intelligences.push_back(ai);
         aiErrMsg = ai->openLuaFile(luaFileName);
         break;
     }
@@ -299,18 +299,18 @@ void cLocalScenarioGame::loadAiScript(std::string playerName, std::string luaFil
 
 const cClient &cLocalScenarioGame::getClient(int index)
 {
-    if (index == 0) return *m_guiClient;
-    else return *m_iaClients[index - 1];
+    if (index == 0) return *guiClient;
+    else return *iaClients[index - 1];
 }
 
 void cLocalScenarioGame::turnChanged()
 {
-    if (m_scenarioFinished) return;
+    if (scenarioFinished) return;
 
-    Log.write("New turn begin, will call scenario victory condition script : " + std::to_string(m_server->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
+    Log.write("New turn begin, will call scenario victory condition script : " + std::to_string(server->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
 
     // Add turn count as a global variable
-    lua_pushinteger(L, m_server->getTurnClock()->getTurn());
+    lua_pushinteger(L, server->getTurnClock()->getTurn());
     lua_setglobal(L, "turnCount");
 
     /* TODO_M: list of other datas that could be added to the context for the victory condition
@@ -340,13 +340,13 @@ void cLocalScenarioGame::turnChanged()
         // Scenario end !
         if (v != 0) {
             // Avoid to display the dialog endlessly in case of user want to continue the game
-            m_scenarioFinished = true;
+            scenarioFinished = true;
 
             // Option to either return to game (endless play) or exit scenario.
-            auto scenarioDialog = m_application->show (std::make_shared<cDialogScenarioEnd> (v > 0));
-            m_signalConnectionManager.connect (scenarioDialog->exitClicked, [&]()
+            auto scenarioDialog = application->show (std::make_shared<cDialogScenarioEnd> (v > 0));
+            signalConnectionManager.connect (scenarioDialog->exitClicked, [&]()
             {
-                m_gameGuiController->exit ();
+                gameGuiController->exit ();
             });
         }
     }
@@ -354,6 +354,6 @@ void cLocalScenarioGame::turnChanged()
 
 void cLocalScenarioGame::popupMessage(std::string message)
 {
-    m_application->show(std::make_shared<cDialogOk>(message));
+    application->show(std::make_shared<cDialogOk>(message));
 }
 

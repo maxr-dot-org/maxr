@@ -13,28 +13,28 @@
 #include "game/startup/local/scenario/luaplayer.h"
 #include "game/startup/local/scenario/luasettings.h"
 
-const char LuaIntelligence::className[] = "LuaIntelligence";
+const char cLuaIntelligence::className[] = "LuaIntelligence";
 
-Lunar<LuaIntelligence>::RegType LuaIntelligence::methods[] = {
-    LUNAR_DECLARE_METHOD(LuaIntelligence, getSettings),
-    LUNAR_DECLARE_METHOD(LuaIntelligence, move),
+Lunar<cLuaIntelligence>::RegType cLuaIntelligence::methods[] = {
+    LUNAR_DECLARE_METHOD(cLuaIntelligence, getSettings),
+    LUNAR_DECLARE_METHOD(cLuaIntelligence, move),
     {0,0}
 };
 
-LuaIntelligence::LuaIntelligence(std::shared_ptr<cClient> client) :
-    m_client(client)
+cLuaIntelligence::cLuaIntelligence(std::shared_ptr<cClient> client) :
+    client(client)
 {
     // Connect to the client signals
-    m_signalConnectionManager.connect(m_client->finishedTurnEndProcess, std::bind (&LuaIntelligence::newTurn, this));
-    m_signalConnectionManager.connect(m_client->moveJobsFinished, std::bind (&LuaIntelligence::moveJobsFinished, this));
+    signalConnectionManager.connect(client->finishedTurnEndProcess, std::bind (&cLuaIntelligence::newTurn, this));
+    signalConnectionManager.connect(client->moveJobsFinished, std::bind (&cLuaIntelligence::moveJobsFinished, this));
 }
 
-LuaIntelligence::LuaIntelligence(lua_State *)
+cLuaIntelligence::cLuaIntelligence(lua_State *)
 {
     // This does not have to be created from Lua !
 }
 
-LuaIntelligence::~LuaIntelligence()
+cLuaIntelligence::~cLuaIntelligence()
 {
     Log.write("LuaIntelligence destructor", cLog::eLOG_TYPE_DEBUG);
 
@@ -42,7 +42,7 @@ LuaIntelligence::~LuaIntelligence()
     lua_close(L);
 }
 
-std::string LuaIntelligence::openLuaFile(std::string luaFilename)
+std::string cLuaIntelligence::openLuaFile(std::string luaFilename)
 {
     // Open Lua File
     std::string fullFilename = cSettings::getInstance().getScenariosPath() + PATH_DELIMITER + luaFilename;
@@ -70,12 +70,12 @@ std::string LuaIntelligence::openLuaFile(std::string luaFilename)
     // Create a lua context and run Lua interpreter
     L = luaL_newstate();
     luaL_openlibs(L);
-    Lunar<LuaPlayer>::Register(L);
-    Lunar<LuaSettings>::Register(L);
-    Lunar<LuaIntelligence>::Register(L);
+    Lunar<cLuaPlayer>::Register(L);
+    Lunar<cLuaSettings>::Register(L);
+    Lunar<cLuaIntelligence>::Register(L);
 
     // Create the global variable "game" that will point to this
-    Lunar<LuaIntelligence>::push(L, this);
+    Lunar<cLuaIntelligence>::push(L, this);
     lua_setglobal(L, "game");
 
     // Set the path to the AI modules
@@ -91,17 +91,17 @@ std::string LuaIntelligence::openLuaFile(std::string luaFilename)
 
 
     // Add the AI player (that is us, the active player from the client) and others to the Lua script.
-    const std::vector<std::shared_ptr<cPlayer>>& players = m_client->getPlayerList();
+    const std::vector<std::shared_ptr<cPlayer>>& players = client->getPlayerList();
     lua_newtable(L);
     for (unsigned int i = 0; i < players.size(); i++) {
-        LuaPlayer *lp = new LuaPlayer(players[i].get());
-        if (players[i]->getNr() == m_client->getActivePlayer().getNr()) {
-            Lunar<LuaPlayer>::push(L, lp, true);
+        cLuaPlayer *lp = new cLuaPlayer(players[i].get());
+        if (players[i]->getNr() == client->getActivePlayer().getNr()) {
+            Lunar<cLuaPlayer>::push(L, lp, true);
             lua_setglobal(L, "ai");
         }
         else {
             lua_pushstring(L, lp->getName().c_str());
-            Lunar<LuaPlayer>::push(L, lp, true);
+            Lunar<cLuaPlayer>::push(L, lp, true);
             lua_settable(L, -3);
         }
     }
@@ -124,15 +124,15 @@ std::string LuaIntelligence::openLuaFile(std::string luaFilename)
     return "";
 }
 
-int LuaIntelligence::getSettings(lua_State *L)
+int cLuaIntelligence::getSettings(lua_State *L)
 {
-    LuaSettings *ls = new LuaSettings(m_client->getGameSettings());
-    Lunar<LuaSettings>::push(L, ls, true);
+    cLuaSettings *ls = new cLuaSettings(client->getGameSettings());
+    Lunar<cLuaSettings>::push(L, ls, true);
     return 1;
 }
 
 // Take iID and destination as argument (LuaPosition or x, y)
-int LuaIntelligence::move(lua_State *L)
+int cLuaIntelligence::move(lua_State *L)
 {
     int nbParams = lua_gettop(L);
     if (nbParams < 2 || !lua_isnumber(L, 1)) {
@@ -144,15 +144,15 @@ int LuaIntelligence::move(lua_State *L)
     unsigned int iID = (unsigned int)lua_tointeger(L, 1);
 
     cPosition pos;
-    bool posOk = LuaPosition::getPosition(L, pos);
-    cVehicle *v = m_client->getVehicleFromID(iID);
+    bool posOk = cLuaPosition::getPosition(L, pos);
+    cVehicle *v = client->getVehicleFromID(iID);
     if (!posOk || v == 00) {
         lua_pushboolean(L, false);
         lua_pushstring(L, "Move could not get vehicle or position");
         return 2;
     }
 
-    bool success = m_client->addMoveJob(*v, pos);
+    bool success = client->addMoveJob(*v, pos);
     lua_pushboolean(L, success);
     if (success) return 1;
     else {
@@ -161,12 +161,12 @@ int LuaIntelligence::move(lua_State *L)
     }
 }
 
-void LuaIntelligence::newTurn()
+void cLuaIntelligence::newTurn()
 {
-    Log.write("New turn begin, will call ai script : " + std::to_string(m_client->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
+    Log.write("New turn begin, will call ai script : " + std::to_string(client->getTurnClock()->getTurn()), cLog::eLOG_TYPE_DEBUG);
 
     // Add turn count as a global variable
-    lua_pushinteger(L, m_client->getTurnClock()->getTurn());
+    lua_pushinteger(L, client->getTurnClock()->getTurn());
     lua_setglobal(L, "turnCount");
 
     // Call Lua function "newTurn" from ai;
@@ -177,7 +177,7 @@ void LuaIntelligence::newTurn()
     }
 }
 
-void LuaIntelligence::moveJobsFinished()
+void cLuaIntelligence::moveJobsFinished()
 {
     // Call Lua function "movesFinished" from ai;
     lua_getglobal(L, "movesFinished");

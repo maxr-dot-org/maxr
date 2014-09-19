@@ -1725,7 +1725,7 @@ void cSettings::setMvePath (const char* mvePath, bool save)
 	if (save) saveSetting ("Options~Game~Paths~MVEs", mvePath);
 }
 
-const std::string &cSettings::getScenariosPath() const
+const std::string& cSettings::getScenariosPath() const
 {
     return scenariosPath;
 }

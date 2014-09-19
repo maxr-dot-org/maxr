@@ -11,16 +11,16 @@
 class cClient;
 struct lua_State;
 
-class LuaIntelligence
+class cLuaIntelligence
 {
 public:
     static const char className[];
-    static Lunar<LuaIntelligence>::RegType methods[];
+    static Lunar<cLuaIntelligence>::RegType methods[];
 
 public:
-    LuaIntelligence(std::shared_ptr<cClient> client);
-    LuaIntelligence(lua_State *);
-    ~LuaIntelligence();
+    cLuaIntelligence(std::shared_ptr<cClient> client);
+    cLuaIntelligence(lua_State *);
+    ~cLuaIntelligence();
     std::string openLuaFile(std::string luaFilename);
 
     // Lua interface
@@ -37,8 +37,8 @@ private:
     void moveJobsFinished();
 
 private:
-    cSignalConnectionManager m_signalConnectionManager;
-    std::shared_ptr<cClient> m_client;
+    cSignalConnectionManager signalConnectionManager;
+    std::shared_ptr<cClient> client;
     lua_State* L;
 };
 

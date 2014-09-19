@@ -17,15 +17,15 @@ struct sPlayerUnit {
     cPosition position;
 };
 
-class LuaPlayer
+class cLuaPlayer
 {
 public:
     static const char className[];
-    static Lunar<LuaPlayer>::RegType methods[];
+    static Lunar<cLuaPlayer>::RegType methods[];
 
 public:
-    LuaPlayer(lua_State *L);
-    LuaPlayer(cPlayer* player);
+    cLuaPlayer(lua_State *);
+    cLuaPlayer(cPlayer* player);
 
     // Lua interface
     int getName(lua_State *L);
@@ -50,20 +50,20 @@ public:
     std::string getName() const;
     int getClan() const;
     cPosition landingPosition() const;
-    std::vector<sPlayerUnit> getUnits() const { return m_otherUnits; }
-    std::vector<sPlayerUnit> getBuildings() const { return m_buildings; }
-    std::string getIaScript() const { return m_iaScriptName; }
+    std::vector<sPlayerUnit> getUnits() const { return otherUnits; }
+    std::vector<sPlayerUnit> getBuildings() const { return buildings; }
+    std::string getIaScript() const { return iaScriptName; }
     void sendInformations(const cClient& client);
 
 private:
     void pushUnitData(lua_State *L, cUnit *unit);
 
 private:
-    cPlayer *m_player;
-    std::vector<sLandingUnit> m_landingUnits;
-    std::vector<sPlayerUnit> m_otherUnits;
-    std::vector<sPlayerUnit> m_buildings;
-    std::string m_iaScriptName;
+    cPlayer *player;
+    std::vector<sLandingUnit> landingUnits;
+    std::vector<sPlayerUnit> otherUnits;
+    std::vector<sPlayerUnit> buildings;
+    std::string iaScriptName;
 };
 
 #endif // LUAPLAYER_H

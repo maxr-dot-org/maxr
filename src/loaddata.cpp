@@ -919,8 +919,8 @@ static int LoadVehicles()
 	// read vehicles.xml
 	std::vector<std::string> VehicleList;
 	std::vector<int> IDList;
-    UnitsData.m_vehiclesIDs.clear();
-    UnitsData.m_vehiclesNames.clear();
+    UnitsData.vehiclesIDs.clear();
+    UnitsData.vehiclesNames.clear();
     xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement)
 	{
@@ -933,13 +933,13 @@ static int LoadVehicles()
 			Log.write (msg, LOG_TYPE_WARNING);
 		}
         if (xmlElement->Attribute ("num")) {
-            int elNum = xmlElement->IntAttribute("num");
-            IDList.push_back(elNum);
+            int elNum = xmlElement->IntAttribute ("num");
+            IDList.push_back (elNum);
             sID unitId;
             unitId.iFirstPart = 0;
             unitId.iSecondPart = elNum;
-            UnitsData.m_vehiclesIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
-            UnitsData.m_vehiclesNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
+            UnitsData.vehiclesIDs.insert (std::pair<std::string, sID>(std::string(directory), unitId));
+            UnitsData.vehiclesNames.insert (std::pair<sID, std::string>(unitId, std::string(directory)));
         }
 		else
 		{
@@ -965,13 +965,13 @@ static int LoadVehicles()
 		}
 
         if (xmlElement->Attribute ("num")) {
-            int elNum = xmlElement->IntAttribute("num");
-            IDList.push_back(elNum);
+            int elNum = xmlElement->IntAttribute ("num");
+            IDList.push_back (elNum);
             sID unitId;
             unitId.iFirstPart = 0;
             unitId.iSecondPart = elNum;
-            UnitsData.m_vehiclesIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
-            UnitsData.m_vehiclesNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
+            UnitsData.vehiclesIDs.insert (std::pair<std::string, sID>(std::string(directory), unitId));
+            UnitsData.vehiclesNames.insert (std::pair<sID, std::string>(unitId, std::string(directory)));
         }
         else
 		{
@@ -1452,8 +1452,8 @@ static int LoadBuildings()
 	}
 	std::vector<std::string> BuildingList;
 	std::vector<int> IDList;
-    UnitsData.m_buildingsIDs.clear();
-    UnitsData.m_buildingsNames.clear();
+    UnitsData.buildingsIDs.clear();
+    UnitsData.buildingsNames.clear();
 	xmlElement = xmlElement->FirstChildElement();
 	if (xmlElement == NULL)
 	{
@@ -1471,13 +1471,13 @@ static int LoadBuildings()
 	}
 
     if (xmlElement->Attribute ("num")) {
-        int elNum = xmlElement->IntAttribute("num");
-        IDList.push_back(elNum);
+        int elNum = xmlElement->IntAttribute ("num");
+        IDList.push_back (elNum);
         sID unitId;
         unitId.iFirstPart = 1;
         unitId.iSecondPart = elNum;
-        UnitsData.m_buildingsIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
-        UnitsData.m_buildingsNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
+        UnitsData.buildingsIDs.insert (std::pair<std::string, sID>(std::string(directory), unitId));
+        UnitsData.buildingsNames.insert (std::pair<sID, std::string>(unitId, std::string(directory)));
     }
 	else
 	{
@@ -1514,13 +1514,13 @@ static int LoadBuildings()
 		}
 
         if (xmlElement->Attribute ("num")) {
-            int elNum = xmlElement->IntAttribute("num");
-            IDList.push_back(elNum);
+            int elNum = xmlElement->IntAttribute ("num");
+            IDList.push_back (elNum);
             sID unitId;
             unitId.iFirstPart = 1;
             unitId.iSecondPart = elNum;
-            UnitsData.m_buildingsIDs.insert(std::pair<std::string, sID>(std::string(directory), unitId));
-            UnitsData.m_buildingsNames.insert(std::pair<sID, std::string>(unitId, std::string(directory)));
+            UnitsData.buildingsIDs.insert (std::pair<std::string, sID>(std::string(directory), unitId));
+            UnitsData.buildingsNames.insert (std::pair<sID, std::string>(unitId, std::string(directory)));
         }
 		else
 		{
