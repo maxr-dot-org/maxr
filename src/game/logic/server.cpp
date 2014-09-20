@@ -2841,7 +2841,10 @@ void cServer::handleEnd (cPlayer& player)
 		checkDefeats ();
 		turnClock->increaseTurn ();
 
-		makeTurnStart (player);
+        for (const auto& player : playerList)
+        {
+            makeTurnStart (*player);
+        }
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || isTurnBasedGame ())
 	{
