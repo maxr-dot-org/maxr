@@ -220,6 +220,15 @@
     <Filter Include="src\utility\thread">
       <UniqueIdentifier>{c6c39d9d-6bcb-4151-9d1a-2a92eff327ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\lua">
+      <UniqueIdentifier>{510ee1fd-1df9-4c88-b2d7-05c81f444f2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\game\startup\scenario">
+      <UniqueIdentifier>{40af2c39-7d5c-4598-b1d8-7991f819eed5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\graphical\menu\windows\windowscenario">
+      <UniqueIdentifier>{a748c1a1-c7d9-4c7b-a760-336292c34698}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\dedicatedserver.cpp">
@@ -910,6 +919,126 @@
       <Filter>src\ui\graphical\menu\widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialogcolorpicker.cpp">
+      <Filter>src\ui\graphical\menu\dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lapi.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lauxlib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lbaselib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lbitlib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lcode.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lcorolib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lctype.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ldblib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ldebug.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ldo.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ldump.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lfunc.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lgc.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\linit.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\liolib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\llex.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lmathlib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lmem.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\loadlib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lobject.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lopcodes.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\loslib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lparser.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lstate.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lstring.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lstrlib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ltable.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ltablib.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ltm.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lundump.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lvm.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lzio.c">
+      <Filter>src\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\startup\local\scenario\localscenariogame.cpp">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\startup\local\scenario\luagame.cpp">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\startup\local\scenario\luaintelligence.cpp">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\startup\local\scenario\luaplayer.cpp">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\startup\local\scenario\luaposition.cpp">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\startup\local\scenario\luasettings.cpp">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\menu\windows\windowscenario\windowscenario.cpp">
+      <Filter>src\ui\graphical\menu\windows\windowscenario</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialogscenarioend.cpp">
       <Filter>src\ui\graphical\menu\dialogs</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1852,6 +1981,108 @@
     </ClInclude>
     <ClInclude Include="..\..\src\utility\thread\concurrentqueue.h">
       <Filter>src\utility\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lapi.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lauxlib.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lcode.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lctype.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\ldebug.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\ldo.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lfunc.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lgc.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\llex.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\llimits.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lmem.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lobject.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lopcodes.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lparser.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lstate.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lstring.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\ltable.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\ltm.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lua.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lua.hpp">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\luaconf.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lualib.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lunar.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lundump.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lvm.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lzio.h">
+      <Filter>src\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\startup\local\scenario\localscenariogame.h">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\startup\local\scenario\luagame.h">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\startup\local\scenario\luaintelligence.h">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\startup\local\scenario\luaplayer.h">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\startup\local\scenario\luaposition.h">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\startup\local\scenario\luasettings.h">
+      <Filter>src\game\startup\scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\menu\windows\windowscenario\windowscenario.h">
+      <Filter>src\ui\graphical\menu\windows\windowscenario</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogscenarioend.h">
+      <Filter>src\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
