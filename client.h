@@ -161,7 +161,7 @@ public:
 	*/
 	int HandleNetMessage (cNetMessage& message, cMenu* activeMenu);
 
-	void addFx (cFx* fx);
+	void addFx(cFx* fx, bool playSound = true);
 
 	/**
 	* destroys a unit

@@ -15,18 +15,27 @@
 
 #include "attackJob2.h"
 
-//TODO: unit locking
-//TODO: sync isAttacking and isAttacked flags in sendUnitData()
-//TODO: expl mines
-//TODO: cluster attack
+//TODO: target member umbenennen
+//TODO: target locking
+//TODO: unlocking bei allen gelegenheiten, wo eine Unit verschwindet/bewegt
+
+
 //TODO: debug output
-//TODO: uncover stealth units, when firing
-//TODO: uncover stealth units, when hit
 //TODO: sentry attacks
 //TODO: text and voice messages
 //TODO: load/save attackjobs + isAttacking/isAttacked
-//TODO: resync attackjobs
-//TODO: server.cpp:2547
+
+/*tests:
+- angreifer außer sichtweite
+- ziel außer sichtweite
+- angreifer unsichtbar
+- ziel unsichtbar
+- sentry
+- mehrfaches Sentry auf ein Feld
+- sentry einer Unit auf mehrere Ziele
+- sounds nur bei sichtbaren Quellen
+
+*/
 
 
 //--------------------------------------------------------------------------
@@ -93,7 +102,6 @@ void cAttackJob::runAttackJobs(std::vector<cAttackJob*>& attackJobs, cMenu* acti
 //--------------------------------------------------------------------------
 cAttackJob::cAttackJob(cServer* server_, cUnit* aggressor_, int targetX_, int targetY_) :
 	aggressorID(aggressor_->iID),
-	aggressor(aggressor_),
 	aggressorPlayerNr(aggressor_->owner->getNr()),
 	aggressorPosX(aggressor_->PosX),
 	aggressorPosY(aggressor_->PosY),
@@ -105,7 +113,7 @@ cAttackJob::cAttackJob(cServer* server_, cUnit* aggressor_, int targetX_, int ta
 	server(server_),
 	client(NULL),
 	state(S_ROTATING),
-	target(NULL),
+	destroyedTargets(NULL),
 	fireDir(0)
 {
 	fireDir = calcFireDir();
@@ -115,25 +123,22 @@ cAttackJob::cAttackJob(cServer* server_, cUnit* aggressor_, int targetX_, int ta
 	server->sendNetMessage(message);
 
 	//lock agressor
-	aggressor->attacking = true;
+	aggressor_->attacking = true;
 
 	// make the aggressor visible on all clients
 	// who can see the aggressor offset
 	for (auto player : server->PlayerList)
 	{
-		if (player->canSeeAnyAreaUnder(*aggressor) == false) continue;
-		if (aggressor->owner == player) continue;
+		if (player->canSeeAnyAreaUnder(*aggressor_) == false) continue;
+		if (aggressor_->owner == player) continue;
 
-		aggressor->setDetectedByPlayer(*server, player);
+		aggressor_->setDetectedByPlayer(*server, player);
 	}
-
-	//TODO: synchronize isAttacked and isAttacking flags by send unit data
 }
 
 cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
 	client(client_),
-	server(NULL),
-	aggressor(NULL)
+	server(NULL)
 {
 	state = static_cast<cAttackJob::eAJStates> (message.popInt16());
 	counter = message.popInt16();
@@ -148,7 +153,7 @@ cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
 	fireDir = message.popInt16();
 	aggressorID = message.popInt32();
 
-	aggressor = client->getUnitFromID(aggressorID);
+	cUnit* aggressor = client->getUnitFromID(aggressorID);
 	if (aggressor)
 		aggressor->attacking = true;
 
@@ -214,8 +219,7 @@ void cAttackJob::run(cMenu*activeMenu)
 		case S_EXPLODING:
 			if (counter == 0)
 			{
-				if (server)
-					server->destroyUnit(*target);
+				destroyTarget();
 				state = S_FINISHED;
 			}
 		case S_FINISHED:
@@ -280,16 +284,12 @@ int cAttackJob::calcTimeForRotation()
 
 cUnit* cAttackJob::getAggressor()
 {
-	//TODO: cached aggressor pointer is probably not nessesary when getUnitFromID would have O(log(n))
-	if (aggressor)
-		return aggressor;
-
 	if (server)
-		aggressor = server->getUnitFromID(aggressorID);
+		return server->getUnitFromID(aggressorID);
 	else
-		aggressor = client->getUnitFromID(aggressorID);
+		return client->getUnitFromID(aggressorID);
 
-	return aggressor;
+
 }
 
 void cAttackJob::fire()
@@ -299,7 +299,6 @@ void cAttackJob::fire()
 	//update data
 	if (aggressor)
 	{
-		//TODO: hier, oder gleich zu beinn des Jobs?
 		aggressor->data.shotsCur--;
 		aggressor->data.ammoCur--;
 		if (aggressor->isAVehicle() && aggressor->data.canDriveAndFire == false)
@@ -318,7 +317,7 @@ void cAttackJob::fire()
 	if (client)
 	{
 		if (muzzle)
-			client->addFx (muzzle);
+			client->addFx (muzzle, aggressor != NULL);
 	}
 	else
 	{
@@ -345,10 +344,9 @@ void cAttackJob::fire()
 cFx* cAttackJob::createMuzzleFx()
 {
 	//TODO: this shouldn't be in the attackjob class. But since
-	//the attackjobs doesn't always has an instance of the unit,
+	//the attackjobs doesn't always have an instance of the unit,
 	//it stays here for now
 
-	//TODO: unit offsets berücksichtigen
 	int offx = 0, offy = 0;
 	switch (muzzleType)
 	{
@@ -442,11 +440,67 @@ cFx* cAttackJob::createMuzzleFx()
 
 bool cAttackJob::impact(cMenu* activeMenu)
 {
+	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+		return impactCluster(activeMenu);
+	else
+		return impactSingle(activeMenu, targetX, targetY);
+}
+
+bool cAttackJob::impactCluster(cMenu* activeMenu)
+{
+	const int clusterDamage = attackPoints;
+	bool destroyed = false;
+	std::vector<cUnit*> targets;
+
+	//full damage
+	impactSingle(activeMenu, targetX, targetY, &targets);
+
+	// 3/4 damage
+	attackPoints = (clusterDamage * 3) / 4;
+	destroyed = destroyed || impactSingle(activeMenu, targetX - 1, targetY,     &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX + 1, targetY,     &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX,     targetY - 1, &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX,     targetY + 1, &targets);
+	
+	// 1/2 damage
+	attackPoints = clusterDamage / 2;
+	destroyed = destroyed || impactSingle(activeMenu, targetX + 1, targetY + 1, &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX + 1, targetY - 1, &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX - 1, targetY + 1, &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX - 1, targetY - 1, &targets);
+
+	// 1/3 damage
+	attackPoints = clusterDamage / 3;
+	destroyed = destroyed || impactSingle(activeMenu, targetX - 2, targetY    , &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX + 2, targetY    , &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX    , targetY - 2, &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX    , targetY + 2, &targets);
+
+	return destroyed;
+}
+
+bool cAttackJob::impactSingle(cMenu* activeMenu, int x, int y, std::vector<cUnit*>* avoidTargets)
+{
 	//select target
 	cPlayer* player = client ? client->getPlayerFromNumber(aggressorPlayerNr) : server->getPlayerFromNumber(aggressorPlayerNr);
 	cMap&    map    = client ? *client->getMap() : *server->Map;
+
+	if (!map.isValidPos(x, y))
+		return false;
 	
-	target = selectTarget(targetX, targetY, attackMode, map, player);
+	cUnit* target = selectTarget(x, y, attackMode, map, player);
+
+	//check list of unit that will be ignored as target.
+	//Used to prevent, that cluster attacks hit the same unit multible times
+	if (avoidTargets)
+	{
+		for (auto unit : *avoidTargets)
+		{
+			if (unit == target)
+				return false;
+		}
+		avoidTargets->push_back(target);
+	}
 
 	int offX = 0, offY = 0;
 	if (target && target->isAVehicle())
@@ -459,18 +513,33 @@ bool cAttackJob::impact(cMenu* activeMenu)
 	std::string name;
 	sID unitID;
 
+	// if taget is a stealth unit, make it visible on all clients
+	if (server && target && target->data.isStealthOn != TERRAIN_NONE)
+	{
+		for (auto player : server->PlayerList)
+		{
+			if (target->owner == player) continue;
+			if (!player->canSeeAnyAreaUnder(*target)) continue;
+
+			target->setDetectedByPlayer(*server, player);
+		}
+	}
+
 	//make impact on target
 	if (target)
 	{
 		target->data.hitpointsCur = target->calcHealth(attackPoints);
 		target->hasBeenAttacked = true;
+		target->isBeeingAttacked = false;
 
 		name = target->getDisplayName();
 		unitID = target->data.ID;
 
 		if (target->data.hitpointsCur <= 0)
 		{
+			target->isBeeingAttacked = true;
 			destroyed = true;
+			destroyedTargets.push_back(target);
 			if (client)
 			{
 				if (target->isAVehicle())
@@ -482,7 +551,7 @@ bool cAttackJob::impact(cMenu* activeMenu)
 	}
 
 	auto aggressor = getAggressor();
-	if (aggressor && aggressor->data.explodesOnContact && aggressorPosX == targetX && aggressorPosY == targetY)
+	if (aggressor && aggressor->data.explodesOnContact && aggressorPosX == x && aggressorPosY == y)
 	{
 		if (client)
 		{
@@ -501,13 +570,16 @@ bool cAttackJob::impact(cMenu* activeMenu)
 		}
 		else
 		{
+			// delete unit is only called on server, because it sends 
+			// all nessesary net messages to update the client
 			server->deleteUnit(aggressor, false);
 		}
 		aggressor = NULL;
 	}
 	else if (!destroyed && client)
 	{
-		client->addFx(new cFxHit(targetX * 64 + offX + 32, targetY * 64 + offY + 32));
+		// TODO:  PlayFX (SoundData.hit);
+		client->addFx(new cFxHit(x * 64 + offX + 32, y * 64 + offY + 32), target != NULL);
 	}
 
 	//make message
@@ -544,9 +616,7 @@ void cAttackJob::destroyTarget()
 	// all nessesary net messages to update the client
 	if (server)
 	{
-		if (target->isAVehicle())
-			server->destroyUnit(*static_cast<cVehicle*>(target));
-		else
-			server->destroyUnit(*static_cast<cBuilding*>(target));
+		for (auto target : destroyedTargets)
+			server->destroyUnit(*target);
 	}
 }

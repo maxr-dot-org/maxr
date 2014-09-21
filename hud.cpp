@@ -829,6 +829,18 @@ void cGameGUI::addCoords (const sSavedReportMessage& msg)
 	msgCoordsY = msg.yPos;
 }
 
+void cGameGUI::addEnemyDetectedMessage(cPlayer& activePlayer, const cUnit& unit)
+{
+	const string message = unit.getDisplayName() + " (" + unit.owner->getName() + ") " + lngPack.i18n("Text~Comp~Detected");
+	const sSavedReportMessage& report = activePlayer.addSavedReport(message, sSavedReportMessage::REPORT_TYPE_UNIT, unit.data.ID, unit.PosX, unit.PosY);
+	addCoords(report);
+
+	if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
+		PlayVoice(VoiceData.VOISubDetected.get());
+	else
+		PlayRandomVoice(VoiceData.VOIDetected);
+}
+
 int cGameGUI::show (cClient* client)
 {
 	end = false;

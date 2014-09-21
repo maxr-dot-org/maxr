@@ -14,7 +14,7 @@ class cAttackJob
 private:
 	static const int ROTATION_SPEED = 10; //rotate aggressor every X game time ticks
 	static const int FIRE_DELAY = 10;
-	static const int IMPACT_DELAY = 10; //TODO: delay abhängig von Entfernung u. Rocket/Balistic
+	static const int IMPACT_DELAY = 10;
 	static const int DESTROY_DELAY = 30;
 
 
@@ -30,11 +30,10 @@ private:
 
 	cServer *const server;
 	cClient *const client;
-	cUnit* target;
+	std::vector<cUnit*> destroyedTargets; //not synced. only needed on server
 
 	int fireDir;
 	
-	cUnit* aggressor;
 	int counter;
 	enum eAJStates { S_ROTATING, S_PLAYING_MUZZLE, S_FIRING, S_EXPLODING, S_FINISHED };
 	eAJStates state;
@@ -46,6 +45,8 @@ private:
 	void fire();
 	cFx* createMuzzleFx();
 	bool impact(cMenu* activeMenu);
+	bool impactCluster(cMenu* activeMenu);
+	bool impactSingle(cMenu* activeMenu, int x, int y, std::vector<cUnit*>* avoidTargets = NULL);
 	void destroyTarget();
 
 public:
@@ -57,8 +58,6 @@ public:
 
 	cAttackJob(cServer* server, cUnit* aggressor, int targetX, int targetY);
 	cAttackJob(cClient* client, cNetMessage& message);
-
-	void onRemoveUnit(cUnit& unit_) { if (aggressor == &unit_) aggressor = NULL;} //TODO: remove
 
 	cNetMessage* serialize() const;
 	void run(cMenu* activeMenu);

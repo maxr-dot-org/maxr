@@ -270,10 +270,11 @@ void cClient::runFx()
 	FxList->run();
 }
 
-void cClient::addFx (cFx* fx)
+void cClient::addFx (cFx* fx, bool playSound)
 {
 	FxList->push_back (fx);
-	fx->playSound (*gameGUI);
+	if (playSound)
+		fx->playSound (*gameGUI);
 }
 
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
@@ -571,11 +572,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		}
 		if (Vehicle->PosX != iPosX || Vehicle->PosY != iPosY || Vehicle->data.isBig != bBig)
 		{
-			// if the vehicle is moving it is normal that
-			// the positions may not be the same,
-			// when the vehicle was building it is also normal that
-			// the position should be changed
-			// so the log message will just be a debug one
+			//should never happen
 			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
 			if (Vehicle->IsBuilding || Vehicle->IsClearing || Vehicle->moving) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->PosX) + " Y" + iToStr (Vehicle->PosY) + "; SHOULD: X" + iToStr (iPosX) + " Y" + iToStr (iPosY) + "]", iLogType);
@@ -591,7 +588,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Vehicle->changeName (message.popString());
 
+		Vehicle->attacking = message.popBool();
 		Vehicle->isBeeingAttacked = message.popBool();
+
 		const bool bWasDisabled = Vehicle->isDisabled();
 		Vehicle->turnsDisabled = message.popInt16();
 		Vehicle->CommandoRank = message.popInt16();
@@ -1875,15 +1874,7 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle& addedVehicle, bool bInit,
 	}
 	else if (addedVehicle.owner != ActivePlayer)
 	{
-		// make report
-		const string message = addedVehicle.getDisplayName() + " (" + addedVehicle.owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
-		const sSavedReportMessage& report = getActivePlayer().addSavedReport (message, sSavedReportMessage::REPORT_TYPE_UNIT, addedVehicle.data.ID, iPosX, iPosY);
-		gameGUI->addCoords (report);
-
-		if (addedVehicle.data.isStealthOn & TERRAIN_SEA && addedVehicle.data.canAttack)
-			PlayVoice (VoiceData.VOISubDetected.get());
-		else
-			PlayRandomVoice (VoiceData.VOIDetected);
+		gameGUI->addEnemyDetectedMessage(*ActivePlayer, addedVehicle);
 	}
 }
 
@@ -1956,11 +1947,6 @@ void cClient::deleteUnit(cUnit* unit, cMenu* activeMenu)
 		getMap()->deleteVehicle(*vehicle);
 
 		remove_from_intrusivelist(vehicle->owner->VehicleList, *vehicle);
-	}
-
-	for (unsigned int i = 0; i < attackJobs.size(); i++)
-	{
-		attackJobs[i]->onRemoveUnit(*unit);
 	}
 
 	helperJobs.onRemoveUnit(unit);

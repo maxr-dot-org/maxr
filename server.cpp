@@ -2543,17 +2543,6 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		remove_from_intrusivelist (vehicle->owner->VehicleList, *vehicle);
 	}
 
-	// detach from attack job
-	//TODO: onRemoveUnit, when unitpointer is used
-	//if (unit->attacking)
-	//{
-	//	for (size_t i = 0; i != AJobs.size(); ++i)
-	//	{
-	//		if (AJobs[i]->unit == unit)
-	//			AJobs[i]->unit = 0;
-	//	}
-	//}
-
 	helperJobs.onRemoveUnit (unit);
 
 	// detach from move job
