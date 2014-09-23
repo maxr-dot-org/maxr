@@ -30,7 +30,8 @@ private:
 
 	cServer *const server;
 	cClient *const client;
-	std::vector<cUnit*> destroyedTargets; //not synced. only needed on server
+	std::vector<int> destroyedTargets; //not synced. only needed on server
+	std::vector<int> lockedTargets;    //not synced. TODO: maybe nessesary
 
 	int fireDir;
 	
@@ -42,6 +43,7 @@ private:
 	int calcTimeForRotation();
 	cUnit* getAggressor();
 
+	void lockTarget();
 	void fire();
 	cFx* createMuzzleFx();
 	bool impact(cMenu* activeMenu);

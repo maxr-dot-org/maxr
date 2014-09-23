@@ -627,6 +627,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Building->changeName (message.popString());
 
+		Building->attacking = message.popBool();
+		Building->isBeeingAttacked = message.popBool();
+
 		const bool bWasDisabled = Building->isDisabled();
 		Building->turnsDisabled = message.popInt16();
 		Building->researchArea = message.popInt16();

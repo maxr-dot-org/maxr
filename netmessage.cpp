@@ -473,6 +473,7 @@ string cNetMessage::getTypeAsString() const
 		case GAME_EV_REVEAL_MAP: return "GAME_EV_REVEAL_MAP";
 		case NET_GAME_TIME_SERVER: return "NET_GAME_TIME_SERVER";
 		case NET_GAME_TIME_CLIENT: return "NET_GAME_TIME_CLIENT";
+		case GAME_EV_MOVEJOB_RESUME: return "GAME_EV_MOVEJOB_RESUME";
 		default: return iToStr (iType);
 	}
 }

@@ -15,12 +15,10 @@
 
 #include "attackJob2.h"
 
-//TODO: target member umbenennen
-//TODO: target locking
 //TODO: unlocking bei allen gelegenheiten, wo eine Unit verschwindet/bewegt
 
 
-//TODO: debug output
+//TODO: alien angriff luft + boden
 //TODO: sentry attacks
 //TODO: text and voice messages
 //TODO: load/save attackjobs + isAttacking/isAttacked
@@ -119,6 +117,10 @@ cAttackJob::cAttackJob(cServer* server_, cUnit* aggressor_, int targetX_, int ta
 	fireDir = calcFireDir();
 	counter = calcTimeForRotation() + FIRE_DELAY;
 
+	Log.write(" Server: Created AttackJob. Aggressor: " + aggressor_->getDisplayName() + " (ID: " + iToStr(aggressor_->iID) + ") at (" + iToStr(aggressorPosX) + "," + iToStr(aggressorPosY) + "). Target: (" + iToStr(targetX) + "," + iToStr(targetY) + ")." , cLog::eLOG_TYPE_NET_DEBUG);
+
+	lockTarget();
+
 	AutoPtr<cNetMessage> message(serialize());
 	server->sendNetMessage(message);
 
@@ -156,6 +158,13 @@ cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
 	cUnit* aggressor = client->getUnitFromID(aggressorID);
 	if (aggressor)
 		aggressor->attacking = true;
+
+	if (aggressor)
+		Log.write(" Client: Received AttackJob. Aggressor: " + aggressor->getDisplayName() + " (ID: " + iToStr(aggressor->iID) + ") at (" + iToStr(aggressorPosX) + "," + iToStr(aggressorPosY) + "). Target: (" + iToStr(targetX) + "," + iToStr(targetY) + ").", cLog::eLOG_TYPE_NET_DEBUG);
+	else
+		Log.write(" Client: Received AttackJob. Aggressor: instance not present on client (ID: " + iToStr(aggressor->iID) + ") at(" + iToStr(aggressorPosX) + ", " + iToStr(aggressorPosY) + ").Target: (" + iToStr(targetX) + ", " + iToStr(targetY) + ").", cLog::eLOG_TYPE_NET_DEBUG);
+
+	lockTarget();
 
 }
 
@@ -288,8 +297,33 @@ cUnit* cAttackJob::getAggressor()
 		return server->getUnitFromID(aggressorID);
 	else
 		return client->getUnitFromID(aggressorID);
+}
 
+void cAttackJob::lockTarget()
+{
+	cPlayer* player = client ? client->getPlayerFromNumber(aggressorPlayerNr) : server->getPlayerFromNumber(aggressorPlayerNr);
+	cMap&    map = client ? *client->getMap() : *server->Map;
 
+	int range = 0;
+	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+		range = 2; 
+		
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+			if (abs(x) + abs(y) <= range && map.isValidPos(targetX + x, targetY + y))
+			{
+				cUnit* target = selectTarget(targetX + x, targetY + y, attackMode, map, player);
+				if (target)
+				{
+					target->isBeeingAttacked = true;
+					lockedTargets.push_back(target->iID);
+					Log.write(" AttackJob locked target " + target->getDisplayName() + " (ID: " + iToStr(target->iID) + ") at (" + iToStr(targetX + x) + "," + iToStr(targetY + y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+				}
+			}
+		}
+	}
 }
 
 void cAttackJob::fire()
@@ -444,6 +478,20 @@ bool cAttackJob::impact(cMenu* activeMenu)
 		return impactCluster(activeMenu);
 	else
 		return impactSingle(activeMenu, targetX, targetY);
+
+	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
+	// for example a plane flies on the target field and takes the shot in place of the original plane
+	for (auto unitId : lockedTargets)
+	{
+		cUnit* unit;
+		if (server)
+			unit = server->getUnitFromID(unitId);
+		else
+			unit = client->getUnitFromID(unitId);
+		
+		if (unit)
+			unit->isBeeingAttacked = false;
+	}
 }
 
 bool cAttackJob::impactCluster(cMenu* activeMenu)
@@ -490,7 +538,7 @@ bool cAttackJob::impactSingle(cMenu* activeMenu, int x, int y, std::vector<cUnit
 	
 	cUnit* target = selectTarget(x, y, attackMode, map, player);
 
-	//check list of unit that will be ignored as target.
+	//check list of units that will be ignored as target.
 	//Used to prevent, that cluster attacks hit the same unit multible times
 	if (avoidTargets)
 	{
@@ -539,7 +587,7 @@ bool cAttackJob::impactSingle(cMenu* activeMenu, int x, int y, std::vector<cUnit
 		{
 			target->isBeeingAttacked = true;
 			destroyed = true;
-			destroyedTargets.push_back(target);
+			destroyedTargets.push_back(target->iID);
 			if (client)
 			{
 				if (target->isAVehicle())
@@ -607,6 +655,12 @@ bool cAttackJob::impactSingle(cMenu* activeMenu, int x, int y, std::vector<cUnit
 	if (client)
 		client->getGameGUI().updateMouseCursor();
 
+	if (target)
+		Log.write(std::string(server ? " Server: " : " Client: ") + "AttackJob Impact. Target: " + target->getDisplayName() + " (ID: " + iToStr(target->iID) + ") at (" + iToStr(targetX) + "," + iToStr(targetY) + "), Remaining HP: " + iToStr(target->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
+	else
+		Log.write(std::string(server ? " Server: " : " Client: ") + " AttackJob Impact. Target: none (" + iToStr(targetX) + "," + iToStr(targetY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+
+
 	return destroyed;
 }
 
@@ -616,7 +670,14 @@ void cAttackJob::destroyTarget()
 	// all nessesary net messages to update the client
 	if (server)
 	{
-		for (auto target : destroyedTargets)
-			server->destroyUnit(*target);
+		for (auto targetId : destroyedTargets)
+		{
+			cUnit* unit = server->getUnitFromID(targetId);
+			if (unit)
+			{
+				Log.write(" Server: AttackJob destroyed unit " + unit->getDisplayName() + " (ID: " + iToStr(unit->iID) + ") at (" + iToStr(unit->PosX) + "," + iToStr(unit->PosY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+				server->destroyUnit(*unit);
+			}
+		}
 	}
 }

@@ -2042,6 +2042,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (message.popInt16());
 	if (!building || building->owner->getNr() != message.iPlayerNr) return;
 
+	if (building->isBeeingAttacked) return;
+
 	sendSelfDestroy (*this, *building);
 	destroyUnit (*building);
 }
