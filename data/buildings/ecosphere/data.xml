@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 35" name="eco-sphere">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Eco-sphere\n\nYour primary goal is the construction of eco-spheres. Each eco-sphere gives you one colony point per turn.
+    \n\nDefend your eco-spheres well, because if one is destroyed, you lose all the points it generated for you!
+  </Description>
+
+  <Production>
+    <Built_Costs Num="20"/>
+    <Build_As String="BigBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Is_Big YN="Yes"/>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="12"/>
+    <Hitpoints Num="56"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Does_Self_Repair YN="Yes"/>
+    <Can_Self_Destroy YN="Yes"/>
+    <Needs_Energy Num="1"/>
+    <Needs_Humans Num="1"/>
+    <Is_Activatable YN="Yes"/>
+    <Can_Score YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

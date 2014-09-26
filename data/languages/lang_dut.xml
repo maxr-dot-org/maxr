@@ -1,0 +1,472 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- * The English attributes are not needed. They are not interpreted.      -->
+<!-- * The "%s" is a placeholder for another part of the text.               -->
+<!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
+<!--   they are needed.                                                      -->
+<!-- * All other line feeds within a text block will be replaced by a single -->
+<!--   blank.                                                                -->
+<MAX_Language_File lang="dut" encoding="utf8" direction="left-to-right">
+	<Text>
+		<Main>
+			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Origineel van Interplay)"/>
+			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded gebaseerd op Interplays Mechanized Assault and Exploration"/>
+			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X." localized="M.A.X."/>
+			<Version ENG="version v%s" localized="versie v%s"/>
+			<Remarks>
+				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) nog niet geïmplementeerd"/>
+			</Remarks>
+		</Main>
+		<Init>
+			<Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
+			<Clans ENG="Loading clans..." localized="Laden clans..."/>
+			<Effects ENG="Loading effects..." localized="Laden effecten..."/>
+			<Fonts ENG="Loading fonts..." localized="Laden lettertypes..."/>
+			<GFX ENG="Loading gfx..." localized="Laden gfx..."/>
+			<Keys ENG="Loading keys..." localized="Laden toetsen..."/>
+			<Lang ENG="Loading language pack..." localized="Laden taalpakket..."/>
+			<Music ENG="Loading music..." localized="Laden muziek..."/>
+			<Sounds ENG="Loading sounds..." localized="Laden geluiden..."/>
+			<Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
+			<Voices ENG="Loading voices..." localized="Laden stemmen..."/>
+		</Init>
+		<Title>
+			<Alien_Tech ENG="Alientechnology" localized="Buitenaardse technologie"/>
+			<BridgeHead ENG="Bridgehead" localized="Hoofdbrug"/>
+			
+			
+			<Cargo ENG="Cargo" localized="Vracht"/>
+			
+			<Choose_Planet ENG="Planetchoosing" localized="Planeetkeuze"/>
+			
+			<Clan ENG="Clan" localized="Clan"/>
+			<Clans ENG="Clans" localized="Clans"/>
+			<Color ENG="Color:" localized="Kleur:"/>
+			<Computer ENG="Computer" localized="Computer"/>
+			<Connect ENG="Connect" localized="Verbinden"/>
+			<Credits ENG="Credits" localized="Goud"/>
+			
+			<Game_Type ENG="Game Type" localized="Speltype"/>
+			<Gold ENG="Gold" localized="Goud"/>
+			
+			<Human ENG="Human" localized="Mens"/>
+			<IP ENG="IP" localized="IP"/>
+			<Labs ENG="Researchmenu" localized="Onderzoeksmenu"/>
+			<Load ENG="Load Menu" localized="Menu laden"/>
+			<LoadSave ENG="Load/Save Menu" localized="Menu Laden/Opslaan"/>
+			<MainMenu ENG="Main Menu" localized="Hoofdmenu"/>
+			<Map ENG="Map" localized="Kaart"/>
+			<Metal ENG="Metal" localized="Metaal"/>
+			<Mine ENG="Minemanager" localized="Mijnmanager"/>
+			<Nobody ENG="Nobody" localized="Niemand"/>
+			<Oil ENG="Oil" localized="Olie"/>
+			<Options ENG="Options" localized="Opties"/>
+			<Player_Name ENG="Playername:" localized="Spelernaam:"/>
+			<Player_Select ENG="Playeroptions" localized="Speleropties"/>
+			
+			<Port ENG="Port" localized="Poort"/>
+			<Resource ENG="Resources" localized="Bronnen"/>
+			<Resource_Density ENG="Resources Density" localized="Brondichtheid"/>
+			
+			<Send ENG="Send" localized="Zenden"/>
+			<Team ENG="Team" localized="Team"/>
+			<Unitinfo ENG="Unitinformations" localized="Eenhedeninformatie"/>
+			<Updates ENG="Updatemenu" localized="Updatemenu"/>
+		</Title>
+		<Others>
+			<Active ENG="Active" localized="Actief"/>
+			<Active_7 ENG="Activ." localized="Actief"/>
+			
+			<Air_Units ENG="Airunits" localized="Lucht-eenheden"/>
+			<Ammo ENG="Ammunition" localized="Munitie"/>
+			<Ammo_7 ENG="Ammo" localized="Munitie"/>
+			<Armor_7 ENG="Armor" localized="Pantser"/>
+			<Attack ENG="Attack" localized="Aanval"/>
+			<Attack_7 ENG="Attack" localized="Aanval"/>
+			<Auto_7 ENG="Auto" localized="Auto"/>
+			<Back ENG="Back" localized="Terug"/>
+			<Build_7 ENG="Build" localized="Bouw"/>
+			<Buy ENG="Buy" localized="Kopen"/>
+			<Cancel ENG="Cancel" localized="Afbreken"/>
+			<Cargo_7 ENG="Cargo" localized="Vracht"/>
+			<Chat ENG="Chat" localized="Chat"/>
+			<Clear_7 ENG="Clear" localized="opruim."/>
+			<Color ENG="Color" localized="Kleur"/>
+			<Costs ENG="Costs" localized="Kosten"/>
+			<Damaged_Units ENG="Damaged units" localized="Beschadigte eenheden"/>
+			<Destroy_7 ENG="Delete" localized="Verwijd."/>
+			<Disable_7 ENG="Disable" localized="Uitschak."/>
+			<Disadvantages_8cut ENG="Disadvantages" localized="Nadeel"/>
+			<Distribution_7 ENG="Distr." localized="Distr."/>
+			<Done ENG="Done" localized="Gedaan"/>
+			<Done_7 ENG="Done" localized="Gedaan"/>
+			<End ENG="End" localized="Einde"/>
+			<Exit ENG="Exit" localized="Einde"/>
+			<Fight_Units ENG="Fighting units" localized="Gevechts-eenheden"/>
+			<Files ENG="Files" localized="Bestanden"/>
+			<Fog ENG="Fog" localized="Mist"/>
+			<Game_Load ENG="Load Game" localized="Spel laden"/>
+			<Game_New ENG="New Game" localized="Nieuw Spel"/>
+			<Game_Options ENG="Game Options" localized="Spelopties"/>
+			<Grid ENG="Grid" localized="Rooster"/>
+			<Ground_Units ENG="Landunits" localized="Land-eenheden"/>
+			<Hitpoints ENG="Hitpoints" localized="Treffers"/>
+			<Hitpoints_7 ENG="Hits" localized="Treffers"/>
+			<Host_Start ENG="Start Host" localized="Start Host"/>
+			<Hot ENG="Hot" localized="Scherp"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
+			<Included ENG="Included" localized="Bijgevoegd"/>
+			<Info_7 ENG="Info" localized="Info"/>
+			<Limited_To ENG="Limited to" localized="Gelimiteerd tot"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Load_7 ENG="Load" localized="Laden"/>
+			<Log ENG="Log" localized="Log"/>
+			<Mani ENG="Manifestation" localized="Manifestering"/>
+			
+			<Multi_Player ENG="Multiplayer" localized="Meerspeler"/>
+			<No ENG="No" localized="Nee"/>
+			<OK ENG="OK" localized="Ok"/>
+			<Path ENG="Path" localized="Pad"/>
+			<Power ENG="Power" localized="Energie"/>
+			<Proceed_4 ENG="Do" localized="Doe"/> <!-- it's for the " « [DO] » "above the log-button -->
+			<Produce_7 ENG="Produces" localized="Maakt"/>
+			<Produce_Units ENG="Producing units" localized="Producerende eenheden"/>
+			<Range ENG="Range" localized="Bereik"/>
+			<Range_7 ENG="Range" localized="Bereik"/>
+			<Reload ENG="Reload" localized="Herladen"/>
+			<Reload_7 ENG="Reload" localized="Herladen"/>
+			
+			<Repair ENG="Repair" localized="Repareer"/>
+			<Repair_7 ENG="Repair" localized="Repareer"/>
+			
+			<Reports ENG="Reports" localized="Raporten"/>
+			<Research ENG="Research" localized="Onderzoek"/>
+			<Save ENG="Save" localized="Opslaan"/>
+			<Scan ENG="Scan" localized="Radar"/>
+			<Scan_7 ENG="Scan" localized="Radar"/>
+			<Score ENG="Score" localized="Punten"/>
+			<Sea_Units ENG="Seaunits" localized="Zee-eenheden"/>
+			<Seed ENG="Seed" localized="Strooi"/>
+			<Seed_7 ENG="Seed" localized="Strooi"/>
+			<Sentry ENG="Sentry" localized="Wacht"/>
+			<Settings ENG="Settings" localized="Instellingen"/>
+			<Shots ENG="Shoots" localized="Schoten"/>
+			<Shots_7 ENG="Shots" localized="Schoten"/>
+			<Single_Player ENG="Singleplayer" localized="Enkelspeler"/>
+			<Speed ENG="Speed" localized="Snelheid"/>
+			<Speed_7 ENG="Speed" localized="Snelheid"/>
+			<Start_7 ENG="Start" localized="Start"/>
+			<Stationary_Units ENG="Stationary Units" localized="Gestationeerde eenheden"/>
+			<Status ENG="Status" localized="Status"/>
+			<Steal_7 ENG="Steal" localized="Stelen"/>
+			<Stealth_Units ENG="Stealth units" localized="Stealh-eenheden"/>
+			<Stop_7 ENG="Stop" localized="Stop"/>
+			<Survey ENG="Survey" localized="Bodum"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<Teams_7 ENG="Teams" localized="Teams"/>
+			<Total ENG="Total" localized="Totaal"/>
+			
+			<Units ENG="Units"/>
+			<Upgrade ENG="Upgrade" localized="Verbeter"/>
+			<UpgradeAll_7 ENG="Up.all" localized="Ver.all"/>
+			<UpgradeAll_9 ENG="Upgrd.All" localized="Vern.Alles"/>
+			<Upgrademenu_7 ENG="Up.Menu" localized="Upgrades"/>
+			<Upgradethis_7 ENG="Upgrade" localized="Verbeter"/>
+			<Usage_7 ENG="Usage" localized="Verbr."/>
+			<Yes ENG="Yes" localized="Ja"/>
+		</Others>
+		<Option>
+			<Definite ENG="Built (original)" localized="vaste locatie"/>
+			<Dense ENG="Dense" localized="dicht"/>
+			<High ENG="High" localized="veel"/>
+			<Limited ENG="Limited" localized="weinig"/>
+			<Low ENG="Low" localized="erg weinig"/>
+			<Mobile ENG="Must build" localized="mobiel"/>
+			<More ENG="More" localized="zeer veel"/>
+			<None ENG="None" localized="zeer weinig"/>
+			<Normal ENG="normal" localized="normaal"/>
+			<Off ENG="off" localized="uit"/>
+			<On ENG="on" localized="aan"/>
+			<Sparse ENG="Sparse" localized="dun"/>
+			<TooMuch ENG="Too Much!" localized="hoogst"/>
+			<Type_Simu ENG="Simultaneous" localized="gelijktijdig"/>
+			<Type_Turns ENG="Turn based" localized="om de beurt"/>
+		</Option>
+		<Settings>
+			<Alphaeffects ENG="Alphaeffects" localized="Alpha effecten"/>
+			<Animation ENG="Animations" localized="Animaties"/>
+			<Autosave ENG="Autosave" localized="Auto-opslaan"/>
+			<Disable ENG="Disable" localized="Uitgeschakeld"/>
+			<Effects ENG="Effects" localized="Effecten"/>
+			<Intro ENG="Show intro" localized="Intro afspelen"/>
+			<Music ENG="Music" localized="Muziek"/>
+			<Preferences ENG="Preferences" localized="Voorkeuren"/>
+			<Resolution ENG="Resolution" localized="Resolutie"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Scrollsnelheid"/>
+			<Shadows ENG="Shadows" localized="Schaduwen"/>
+			<ShowDamage ENG="Buildingdamage" localized="Gebouwschade"/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized="Voertuigschade"/>
+			<Tracks ENG="Vehicletracks" localized="Voertuigsporen"/>
+			<Voices ENG="Voices" localized="Stemmen"/>
+			<Volume ENG="Volume" localized="Volume"/>
+			<Window ENG="Windowed" localized="Venstermodus"/>
+		</Settings>
+		<Multiplayer>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, druk F2 om wachten af te breken."/>
+			
+			<Deadline ENG="This turn will end in %s seconds." localized="Deze ronde eindigt in %s seconden."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="U verbinding wordt verbroken omdat uw naam niet in de savgame staat."/>
+			<Go ENG="Let's go" localized="Daar gaat ie"/>
+			<Go_Abort ENG="Go aborted" localized="Start afgebroken"/>
+			<Go_Check ENG="Check for go" localized="Controle voor startklaar"/>
+			<Go_Host ENG="Host wants to go: Ready to go" localized="Host wil starten: Beginnen"/>
+			<Go_Host_No ENG="Host wants to go: No go" localized="Host wil starten: Niet klaar"/>
+			<Go_Ready ENG="Ready to go" localized="Klaar om te starten"/>
+			<Go_Ready_No ENG="not ready to go" localized="niet klaar om te starten"/>
+			<Lost_Connection ENG="Lost connection to %s." localized="Verbinding verbroken tot %s"/>
+			<Map_NoSet ENG="--no map set--" localized="--geen kaart gezet--"/>
+			<MapDL_Cancel ENG="Aborted" localized="Afgebroken"/>
+			<MapDL_Download ENG="map %s from server." localized="map %s van server."/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="orginal M.A.X. map  %s van server (licentie)!"/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Map niet geinstalleerd: Aanvraag tot ophalen van custom map"/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Map niet geinstaleerd: Niet toegestaan om op te halen."/>
+			
+			<MapDL_Percent ENG="Map download: %s%" localized="Map ophalen: %s%"/>
+			<MapDL_Upload ENG="Uploading map to %s..." localized="versturen van map naar %s..."/>
+			
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Opties, map of savegame zijn niet ingesteld"/>
+			<Network_Closed ENG="Connection closed" localized="Verbinding gesloten"/>
+			<Network_Connected ENG="Connected" localized="Verbinding"/>
+			<Network_Connected_Not ENG="Not connected" localized="Niet verbonden"/>
+			<Network_Connecting ENG="Connecting to " localized="Verbinden met "/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Kon niet verbinden met "/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Fout bij openen socket"/>
+			<Network_New ENG="New connection" localized="Nieuwe verbinding"/>
+			<Network_Open ENG="Game open" localized="Spel open"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Synchronizeren..."/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Kan map %s niet laden. Je kan niet starten."/>
+			
+			<Not_Ready ENG="is not ready" localized="is niet gereed"/>
+			<Option_NoSet ENG="--no options set--" localized="--geen opties gezet--"/>
+			
+			<Player ENG="Player" localized="Speler"/>
+			
+			
+			
+			
+			
+			
+			
+			
+			<Player_Amount ENG="Amount of players" localized="Aantal spelers"/>
+			
+			<Player_Few ENG="Not enough players!" localized="Niet genoeg spelers!"/>
+			<Player_Joined ENG="%s has joined" localized="%s voegt zich aan het spel"/>
+			<Player_Left ENG="%s has left the game" localized="%s heeft spel verlaten"/>
+			<Player_Many ENG="Too many players!" localized="Te veel spelers!"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="moet host zijn in om-beurten spel!"/>
+			
+			<Player_Turn ENG="'s turn" localized="'s beurt"/>
+			<Player_Turn_End ENG=" ended turn" localized=" beeindigde de beurt"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Dubbele spelernaam: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Mis een correcte speler naam"/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Dit spel is al gaande. Indien u de verbinding van het spel kwijt bent geraakt, kunt u opnieuw verbinden. Wilt u opnieuw verbinden?"/>
+			
+			<Save_Only_Host ENG="Only the host can save games." localized="Alleen de host kan het spel opslaan."/>
+			
+			
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Wachten voor herverbinding met speler"/>
+			
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Wacht todat %s klaar is met de ronde."/>
+			<Waiting ENG="Waiting for other players..." localized="Wachten op andere spelers..."/>
+		</Multiplayer>
+		<Comp>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Aanpassingen gemaakt: Brandstof mijnen verhoogt met "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Aanpassingen gemaakt: Goud mijnen verlaagt met "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met "/>
+			<Attacked ENG="is under attack" localized="wordt aangevallen"/>
+			
+			
+			<Building_Disabled ENG="Building disabled" localized="Gebouw uitgeschakelt"/>
+			
+			<Cheat ENG="used cheat" localized="valsspelen gebruikt"/>
+			<Clearing ENG="Clearing" localized="Opruimen"/>
+			<Clearing_Fin ENG="clearing done" localized="opruimen klaar"/>
+			<Clearing_Mine ENG="clearing mines" localized="opruimen mijnen"/>
+			<CommandoRank_Average ENG="Average" localized="Normaal"/>
+			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
+			<CommandoRank_Expert ENG="Expert" localized="Expert"/>
+			
+			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Groentje"/>
+			<CommandoRank_Veteran ENG="Veteran" localized="Veteraan"/>
+			<Dated ENG="dated" localized="verouderd"/>
+			<Defeated ENG="defeated" localized="verslagen"/>
+			<Description ENG="Description" localized="Omschrijving"/>
+			<Destroyed ENG="destroyed" localized="vernietigd"/>
+			<Detected ENG="detected" localized="ontdekt"/>
+			<Disabled ENG="disabled" localized="uitgeschakeld"/>
+			
+			
+			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Echt stoppen?\n\nNiet opgeslagen speldata gaat verloren."/>
+			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Niet genoeg energie om te starten!"/>
+			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="Generator kan niet uitgeschakeld worden, de energie is nodig!"/>
+			<Energy_Low ENG="To low energy, disabled consumer!" localized="Te weinig energie, verbruiker uitgeschakeld!"/>
+			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Niet genoeg energie, generator gestart!"/>
+			<Finished ENG="is finished" localized="is klaar"/>
+			<Finished2 ENG="are finished" localized="klaar"/>
+			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Niet genoeg brandstof om te starten!"/>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Te weinig brandstof, generator uitgeschakeld!"/>
+			
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Kan niet starten, goud nodig."/>
+			<Gold_Low ENG="To low gold, disabled consumer!" localized="Te weinig goud, verbruiker uitgeschakeld!"/>
+			
+			<Labs ENG="Labs" localized="Laboratoria"/>
+			
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="De gekozen landings-positie te dicht bij andere speler. Selecteer aub een andere positie."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="De gekozen landings-positie is naarbij een andere speler. Bevestig dit door in de rode kring te klicken, of selecteer een andere positie."/>
+			<Laying ENG="laying mines" localized="mijnen leggen"/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Kan niet starten, metaal nodig."/>
+			<Metal_Low ENG="To low metal, disabled consumer!" localized="Te weinig metaal, verbruiker uitgeschakeld!"/>
+			<Moving ENG="moving" localized="in beweging"/>
+			
+			
+			
+			
+			
+			<Producing ENG="Producing" localized="Produceren"/>
+			
+			<Producing_Fin ENG="finished producing" localized="productie gereed"/>
+			
+			<Repeat ENG="Again" localized="Opnieuw"/>
+			<Reserve ENG="Reserve" localized="Reserve"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Herstart aub 'Mechanized Assault and eXploration Reloaded' voor veranderingen in de video instellingen"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Warschuwing: Niet ondersteunde videomodus in de instellingen"/>
+			
+			<Sentry ENG="on sentry" localized="op wachposten"/>
+			<Stolen ENG="stolen" localized="gestolen"/>
+			
+			<Surveying ENG="surveying" localized="bodum analyseren"/>
+			
+			<Team_Low ENG="To low teams, disabled consumer!" localized="Te weinig teams, verbruiker uitgeschakeld!"/>
+			<Themes ENG="Themes" localized="Themas"/>
+			<Turn_5 ENG="Turn" localized="Beurt"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Uitvoeren overgebleven verplaatsingen"/>
+			<Turn_Start ENG="Start turn" localized="Start beurt"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Wacht tot alle verplaatsingen klaar zijn"/>
+			<Turns ENG="Turns" localized="Beurten"/>
+			
+			
+			<Waits ENG="waits" localized="wacht"/>
+			<Working ENG="working" localized="werkt"/>
+		</Comp>
+		<Error_Messages>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized="Bestand niet gevonden: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geinitialiseerd"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geimplementeerd"/>
+		</Error_Messages>
+	</Text>
+	<Units>
+		<Unit ID="0 1" localized="Lucht Transport">Lucht Transport\n\nGroot vliegtuig, geschikt voor het vervoeren van maximaal drie grondeenheden.</Unit>
+		<Unit ID="0 2" localized="Buitenaardse Aanvalseenheid">Buitenaards Aanvalseenheid\n\nKrachtig plasma wapen bevestigd op een snel, middelmatig-gepantserd onderstel. Hoewel niet zo kwetsbaar als een normale aanvalseenheid, kan de buitenaartse aanvalseenheid toch ook beter vijandelijk vuur ontwijken voor zover mogelijk. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 3" localized="Buitenaards Vliegtuig">Buitenaards Vliegtuig\n\nBuitenaardse gevechts-bommenwerper. Het buitenaards vliegtuig primair bedoeld is om gronddoelen aan te vallen, maar het kan ook raketten afschieten naar andere vliegtuigen. Hoewel het sterk is, is het buitenaards vliegtuig nog steeds kwetsbaar voor anti-luchtdoel vuur. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 4" localized="Buitenaards Ship">Buitenaards Ship\n\nZwaar gepantserd en bewapend oorlogsschip van buitenaards ontwerp. Net als het slagschip is het Buitenaards Ship uitstekend geschikt om andere schepen en gronddoelen in de buurt van de kust te vernietigen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 5" localized="Buitenaardse Tank">Buitenaardse Tank\n\nZwaar gepantserde tank van buitenaards ontwerp. De Buitenaardse Tank kan het best gebruikt worden aan het front om vijandig vuur op te vangen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 6" localized="Personen Transport">Personen Transport\n\nSnel gepantserd voertuig om infanterie en spionnen te vervoeren. Het Personen Transport kan zich zowel over land als langzaam onderwater voortbewegen. Alleen vijandige covettes kunnnen Personen Transport ontdekken die zich onder water bevinden.</Unit>
+		<Unit ID="0 7" localized="Aanvalseenheid">Aanvalseenheid\n\nLicht gepantserd voertuig met een lange afstandswapen dat sterk-explosieve munitie schiet. Snel en efficient bij het aanvallen, maar kwetsbaar.</Unit>
+		<Unit ID="0 8" localized="AWAC">AWAC\n\nRadarvliegtuig. Feitelijk niet veel meer dan een vliegende radarschotel, essentieel om anti-luchtdoel eenheden te ontdekken voordat andere vliegtuigen binnen hun bereik komen.</Unit>
+		<Unit ID="0 9" localized="Bommenwerper">Bommenwerper\n\nEen zwaar vliegtuig vol met gronddoel-raketten. Bommenwerpers zijn kostbaar, maar de voordelen zijn de kosten waard. Hun grote snelheid brengt ze snel op probleempunten, en alleen gevechtsvliegtuigen en luchtdoel-eenheden kunnen ze aanvallen.</Unit>
+		<Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nVoertuig om wrakken op te ruimen en gebouwen af te breken. Bulldozers kunnen materiaal winnen uit wrakstukken.</Unit>
+		<Unit ID="0 11" localized="Vracht Schip">Vracht Schip\n\nSchip om overwerkt materiaal te vervoeren. Handig om pioniers te bevoorraden en om schepen van nieuwe munitie te voorzien.</Unit>
+		<Unit ID="0 12" localized="Raket Lanceerder">Raket Lanceerder\n\nLicht gepanserd voertuig dat middel-lange afstands rakketten kan afschieten die alle eenheden binnen een straal van 2 vierkanten raakt. Meest effectief tegen groepen vijandige eenheden.</Unit>
+		<Unit ID="0 13" localized="Spion">Spion\n\nCommando getrained om onzichtbaar zijn werk te doen. Spionnen kunnen vijandige eenheden uitschakelen of veroveren. Spionnen zijn onzichtbaar tot ze een fout maken bij het veroveren van vijandige eenheden, of tot ze gezien worden door vijandige infantery of spionnen.</Unit>
+		<Unit ID="0 14" localized="Corvette">Corvette\n\nHoge-snelheids boot met torpedo's en een sonar. Corvettes kunnen alle boten aanvallen, maar hun grootste kracht is hun vermogen om vijandige onderzeeers te ontdekken en aan te vallen.</Unit>
+		<Unit ID="0 15" localized="Escort">Escort\n\nHoge-snelheids boot met een goede radar en snel-vurend luchtdoel-kannon. Escorts zijn de ogen van een vloot, en de bescherming van een vloot tegen vliegtuigen.</Unit>
+		<Unit ID="0 16" localized="Straaljager">Straaljager\n\nSnel maar kwetsbaar vliegtuig met een beperkt aantal lucht-lucht raketten. Straaljagers zijn de beste manier om vijandige vliegtuigen uit een gebied te verjagen, en om een bewegende groep eenheden te beschermen. Luchtdoelsystemen op de grond zijn beter om een vast gebied te verdedigen.</Unit>
+		<Unit ID="0 17" localized="Oorlogsschip">Oorlogsschip\n\nZwaar gepantserd schip met een groot kaliber, middel-lange afstands kannon. Uitstekend geschikt om andere schepen te vernietigen en land-doelen dicht bij de kust te bombarderen.</Unit>
+		<Unit ID="0 18" localized="Infanterie">Infanterie\n\nMenselijke soldaten bewapend met lichte anti-tank raketten. Infanterie eenheden kunnen spionnen ontdekken.</Unit>
+		<Unit ID="0 19" localized="Bouwer">Bouwer\n\nGroot bouwvoertuig geschikt om grote gebouwen te bouwen, zoals mijnen en fabrieken. Een bouwer verbruikt twee materiaal per beurt tijdens het bouwen.</Unit>
+		<Unit ID="0 20" localized="Mijnen legger">Mijnen legger\n\nMijnen leggers zijn speciaal gebouwde voertuigen om mijnen te leggen, ondekken en op te pakken. Mijnen leggers maken zelf hun mijnen met ruw materiaal dat ze vervoeren. Ze kunnen deze mijnen later ook weer oppakken en terug omzetten naar ruw materiaal. Ze kunnen vijandige mijnenvelden niet opruimen, deze moeten vernietigd worden door ze met andere eenheden aan te vallen.</Unit>
+		<Unit ID="0 21" localized="Raket Kruiper">Raket Kruiper\n\nEen licht gepantserde mobiele raketlanceerinstallatie. De Raket Kruiper is iets minder robuust dan de vaste lanceerinstallatie, en heeft meer materiaal nodig om gebouwd te worden. Maar de mogelijkheid om hem te verplaatsen maakt hem veel flexibeler.</Unit>
+		<Unit ID="0 22" localized="Raket Cruiser">Raket Cruiser\n\nEen varende raketlanceerinstallatie. Een uitstekend bereik, hoge aanvalskracht en middelmatige pantsering waardoor dit een krachtige eenheid is.</Unit>
+		<Unit ID="0 23" localized="Mobiele Luchtafweer">Mobiele Luchtafweer\n\nLicht en snel met een snel-vurend luchtafweer kanon. Mobiele Luchtafweer zijn vooral bedoeld voor verdediging, aangezien ze niet zo snel zijn als vliegtuigen en niet tegelijk kunnen bewegen en schieten. Te gebruiken om een gebied te beschermen wanneer straaljagers vijandige bommenwerpers verjaagd hebben.</Unit>
+		<Unit ID="0 24" localized="Pionier">Pionier\n\nKlein bouwvoertuig om kleinen gebouwen en wapengebouwen mee te bouwen.</Unit>
+		<Unit ID="0 25" localized="Reparatie Eenheid">Reparatie Eenheid\n\nLicht voertuig dat snel grondeenheden en gebouwen kan repareren. Voor de reparaties is ruw materiaal nodig. Hoe zwaarder de schade, des te meer materiaal er nodig is. Depots, werven, hangars en kazernes kunnen ook eenheden repareren.</Unit>
+		<Unit ID="0 26" localized="Radarvoertuig">Radarvoertuig\n\nMobiele radar. Trager en duurder dan een verkenner, maar met een beter radar-bereik. Een Radarvoertuig is een uitstekende manier om doelen voor lange-afstandswapens zoals Raket Kruipers te vinden.</Unit>
+		<Unit ID="0 27" localized="Verkenner">Verkenner\n\nHoge snelheids verkenningsvoertuig voor verkenning en het vinden van vijandige eenheden. Kan over water manouvreren zonder dat er een brug nodig is, maar is sneller op land.\n\nZeer snel en een goed radar-bereik, maar veel zwakker dan de meeste gevechtseenheden.</Unit>
+		<Unit ID="0 28" localized="Zeemijnen legger">Zeemijnen legger\n\nVarende versie van de mijnen legger. Net als de land-versie kan de zeemijnen legger mijnen maken, leggen, ontdekken, oppakken en terug omzetten naar ruw materiaal.</Unit>
+		<Unit ID="0 29" localized="Varend Transport">Varend Transport\n\nZwaar gepantserd schip met ruimte voor maximaal zes land-eenheden. Varend Transporters zijn veel langzamer dan Lucht Transport, maar hebben veel meer kans om een vijandelijke aanval te overleven.</Unit>
+		<Unit ID="0 30" localized="Onderzeeer">Onderzeeer\n\nDoor zich onder het wateroppervlak te bewegen kunnen onderzeeers dicht naar de vijand toesluipen om vervolgens hun krachtige torpedo's af te schieten. Onderzeeers hebben geen actieve sonar, aangezien dit hun positie zou kunnen verraden. Alleen corvettes kunnen onderzeeers ontdekken voor de aanvallen. Alleen andere onderzeeers, covettes en bommenwerpers kunnen onderzeeers aanvallen.</Unit>
+		<Unit ID="0 31" localized="Bodemonderzoeker">Bodemonderzoeker\n\nLicht amphibievoertuig met geavanceerde sensoren voor het detecteren van ondergrondse voorraden mineralen en vijandige mijnen. In tegenstelling tot de meeste andere amphibievoertuigen verplaatsen ze zich net zo snel over water als over land.</Unit>
+		<Unit ID="0 32" localized="Tank">Tank\n\nZwaar gepantserd gevechtsvoertuig. Kan het beste gebruikt worden aan het front om te voorkomen dat vijandige eenheden licht bepantserde eenheden zoals aanvalseenheden en raket kruipers kunnen bereiken.</Unit>
+		<Unit ID="0 33" localized="Goud Vrachtwagen">Goud Vrachtwagen\n\nEenheid voor het verplaatsen van gouderts van de ene locatie naar de andere.</Unit>
+		<Unit ID="0 34" localized="Bevoorradings Vrachtwagen">Bevoorradings Vrachtwagen\n\nVrachtwagen voor het verplaatsen van ruw materiaal. Nuttig om pioniers en bouwers te bevoorraden en om gevechtseenheden van nieuwe munitie te voorzien.</Unit>
+		<Unit ID="0 35" localized="Brandstof Vrachtwagen">Brandstof Vrachtwagen\n\nVrachtwagen voor het verplaatsen van brandstof.</Unit>
+		<Unit ID="1 1" localized="Kazerne">Kazerne\n\nEen Kazerne huisvest spionnen en infanterie eenheden. Binnen de kazerne bevindt zich een machine voor het repareren en verbeteren van kracht-pakken, en voor het vervaardigen van munitie. De kazerne heeft ruw materiaal nodig voor reparaties, verbeteringen en het bouwen van munitie, waardoor het het beste verbonden kan zijn met een opslageenheid of mijn.</Unit>
+		<Unit ID="1 2" localized="Betonblok">Betonblok\n\nGehard en gepantserd blok voor het blokkeren van vijandige bewegingen.</Unit>
+		<Unit ID="1 3" localized="Brug">Brug\n\nPonton brug voor het oversteken van water. Bruggen blokkeren, in tegenstelling tot platvormen, geen schepen.</Unit>
+		<Unit ID="1 4" localized="Pijpleiding">Pijpleiding\n\nGebouwen moeten verbonden worden om energie, brandstof, ruw materiaal en goud te delen. Je kunt gebouwen verbinden door ze tegen elkaar aan te bouwen, of door het bouwen van pijpleidingen tussen de gebouwen.</Unit>
+		<Unit ID="1 5" localized="Depot">Depot\n\nEen depot kan schade repareren, munitie bouwen en grondtroepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal.</Unit>
+		<Unit ID="1 6" localized="Werf">Werf\n\nEen werf kan schade aan schepen repareren, munitie bouwen en schepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal.</Unit>
+		<Unit ID="1 7" localized="Energie Station">Energie Station\n\nEen energie station verbruikt zes brandstof per beurt, en levert genoeg energie voor zes fabrieken of mijnen.</Unit>
+		<Unit ID="1 8" localized="Energie Generator">Energie Generator\n\nEen energie generator verbruikt twee brandstof per beurt, en levert genoeg energie voor 1 fabriek of mijn. De energie generator moet verbonden zijn met de brandstof leverancier (mijn of brandstof opslag) en met het gebouw dat de energie nodig heeft.</Unit>
+		<Unit ID="1 9" localized="Vliegtuig Fabriek">Vliegtuig Fabriek\n\nBouwt straaljagers, bommenwerpers AWACs en lucht transport. Een vliegtuig fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 10" localized="Buitenaardse Fabriek">Buitenaardse Fabriek\n\nFabriek voor het bouwen van buitenaardse eenheden.</Unit>
+		<Unit ID="1 11" localized="Zware Voertuigen Fabriek">Zware Voertuigen Fabriek\n\nBouwt bouwers, radarvoertuigen en zware gevechtseenheden:  Tanks, aanvalseenheden, raket lanceerders en raket kruipers. Een zware voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 12" localized="Scheepswerf">Scheepswerf\n\nScheepswerven bouwen schepen, zoals onderzeeers, varend transport en raket cruisers. Een scheepswerf heeft drie materiaal en een brandstof per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 13" localized="Lichte Voertuigen Fabriek">Lichte Voertuigen Fabriek\n\nBouwt lichte voertuigen: Pioniers, vrachtwagens, reparatie eenheden, verkenners en mobiel luchtafweer. Een lichte voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 14" localized="Goud Raffinaderij">Goud Raffinaderij\n\nRaffinaderij voor het omzet van gouderts in krediet. Krediet is nodig om verbeteringen te kopen. Om zijn werk te doen heeft een goud raffinaderij een bron van gouderts nodig. Een mijn kan gouderts delven als het zich boven een goudader bevindt.</Unit>
+		<Unit ID="1 15" localized="Luchtafweer">Luchtafweer\n\nKlein kaliber, hoge snelheids luchtafweer kanon. Luchtafweer rekent effectief af met vliegtuigen, maar kan geen gronddoelen aanvallen.</Unit>
+		<Unit ID="1 16" localized="Artillerie">Artillerie\n\nKrachtig vaststaand kanon. Artillerie is een compromis tussen de goedkope, robuuste geweerkoepel en de dure, lange-afstands raket koepel.</Unit>
+		<Unit ID="1 17" localized="Raket Koepel">Raket Koepel\n\nLange afstands lanceerinstallatie op een vaste basis. Uitstekend bereik en vuurkracht, maar slechts bepert beter bepantserd dan de mobiele versie. Het is aan te bevelen om de raket koepel te omgeven met geweerkoepels en luchtafweer.</Unit>
+		<Unit ID="1 18" localized="Geweerkoepel">Geweerkoepel\n\nZwaar gepantserd vaststaande geweerkoepel. Geweerkoepels hebben een goede vuurkracht, zwaar pantser en een gemiddeld bereik. Omdat ze snel te bouwen zijn zijn ze een goede keuze als je snel verdediging nodig hebt.</Unit>
+		<Unit ID="1 19" localized="Verblijf">Verblijf\n\nVerblijven huisvesten kolonisten. Elk verblijf huisvest genoeg kolonisten om drie laboratoria, trainingskampen of kassen te bemannen. Deze gebouwen moeten met het verblijf verbonden zijn voor ze gebruikt kunnen worden.</Unit>
+		<Unit ID="1 20" localized="Hangaar">Hangaar\n\nEen hangaar kan vliegtuigen repareren, munitie maken en vliegtuigen van de nieuwste technologie voorzien. Al deze bewerkingen hebben ruw materiaal nodig, dus een hangaar kan het beste verbonden worden met opgeslagen ruw materiaal.</Unit>
+		<Unit ID="1 21" localized="Landmijn">Landmijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen.</Unit>
+		<Unit ID="1 22" localized="Mijn">Mijn\n\nWint iedere beurt ruw materiaal, brandstof en gouderts uit de grond. Gebouwen moeten met een mijn verbonden zijn om deze grondstoffen te gebruiken. Als er niet genoeg opslagruimte is voor het gewonnen materiaal dan gaat dat verloren.</Unit>
+		<Unit ID="1 23" localized="Diepe Mijn">Diepe Mijn\n\n...</Unit>
+		<Unit ID="1 24" localized="Landing Platform">Landing Platform\n\nLandingsplaats voor vliegtuigen. Voert geen reparaties uit en vult geen munitie of brandstof aan. Om een vliegtuig op een landing platform te bevoorraden kan een vrachtwagen of opslagplaats gebruikt worden.</Unit>
+		<Unit ID="1 25" localized="Water Platform">Water Platform\n\nLevert een oppervlak boven water, waarop gebouwen gebouwd kunnen worden. Pioniers kunnen water platformen bouwen op de kust en op open water. Water platformen zijn voornamelijk belangrijk op eiland kaarten en wanneer er zich kostbare grondstof onder water bevindt.</Unit>
+		<Unit ID="1 26" localized="Radar">Radar\n\nVaststaand lange-afstands radar. Lange-afstands eenheden zoals raket lanceerders en artillerie kunnen niet schieten op wat ze niet kunnen zien, dus het is belangrijk om een radarvoertuig of radar in de buurt te hebben.</Unit>
+		<Unit ID="1 27" localized="Laboratorium">Laboratorium\n\nLaboratoria onderzoeken manieren om je eenheden te verbeteren. In tegenstelling tot verbeteringen die gekocht kunnen worden door gouderts te verwerken kost onderzoek tijd en zijn de verbeteringen klein. Maar onderzoek heeft wel effect op alle type eenheden in plaats van slechts een enkel type. Bovendien is er voor onderzoek geen gouderts nodig. Een laboratorium heeft kolonisten van een verblijf nodig om zijn werk te kunnen doen, en heeft bovendien energie nodig.</Unit>
+		<Unit ID="1 28" localized="Weg">Weg\n\nEenheden verplaatsen zich twee keer zo snel over een weg.</Unit>
+		<Unit ID="1 29" localized="Zeemijn">Zeemijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen.</Unit>
+		<Unit ID="1 30" localized="Schild">Schild\n\n</Unit>
+		<Unit ID="1 31" localized="Goud Pakhuis">Goud Pakhuis\n\nKan gebruikt worden om gouderts op te slaan. Mijnen produceren elke beurt goud, indien ze boven een goudader gebouwd zijn. Om deze gouderts op te slaan moet een mijn verbonden zijn met een goud pakhuis.</Unit>
+		<Unit ID="1 32" localized="Opslag Eenheid">Opslag Eenheid\n\nKan gebruikt worden om ruw materiaal op te slaan. Mijnen produceren elke beurt ruw materiaal, indien ze boven een plek met ruw materiaal gebouwd zijn. Om extra materiaal op te slaan moet een mijn verbonden zijn met een opslag eenheid.</Unit>
+		<Unit ID="1 33" localized="Brandstof Tank">Brandstof Tank\n\nKan gebruikt worden om brandstof op te slaan. Mijnen produceren elke beurt brandstof, indien ze boven een olie-bron gebouwd zijn. Om extra brandstof op te slaan moet de mijn met een brandstof tank verbonden zijn.</Unit>
+		<Unit ID="1 34" localized="Trainingskamp">Trainingskamp\n\nOpleidingsplek voor spionnen die eenheden kunnen uitschakelen en veroveren, en voor infanterie om tegen spionnen te waken. Een trainingskamp heeft kolonisten uit een verblijf nodig om zijn werk te doen. Ook heeft een trainingskamp energie nodig.</Unit>
+		
+	</Units>
+	<Clans>
+		<Dummy/>
+		
+		
+		
+		
+		
+		
+		
+	</Clans>
+	<Graphic>
+		<Dummy/>
+	</Graphic>
+	<Speech>
+		<Dummy/>
+	</Speech>
+	<Footer>
+		<Author name="Arnoud Jagerman A.Jagerman@xs4all.nl">
+			<Editor name="Unknown" time="2008-03-08 09:35:00"/>
+			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-02-21 17:00:00"/>
+			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-09-18 16:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
+			<Editor name="nonsinn" time="2014-02-21 15:00:00"/>
+		</Author>
+		<Game_Version time="2007-09-18 16:04:00"/>
+	</Footer>
+</MAX_Language_File>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 31" name="storage-gold">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Gold Vault\n\nHolds unrefined gold ore. Minig stations produce gold every turn, if they have gold ore underneath them. To store the ore, a mining station must be connected to a gold vault.
+  </Description>
+
+  <Production>
+    <Built_Costs Num="4"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="14"/>
+    <Scan_Range Num="3"/>
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+
+  <Storage>
+    <Capacity_Resources Num="50"/>
+    <Capacity_Res_Type Const="Gold"/>
+  </Storage>
+</Unit>
+
+

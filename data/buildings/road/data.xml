@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 28" name="road">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Road\n\nUnits move twice as fast over road squares.
+  </Description>
+
+
+  <Production>
+    <Built_Costs Num="2"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="1"/>
+    <Hitpoints Num="2"/>
+    <Scan_Range Num="1"/>
+    <Can_Self_Destroy YN="Yes"/>
+    <Modifies_Speed Num="0.5"/>
+    <Can_Be_Overbuild Const="YesNRemove"/>
+
+
+    <Surface_Position Const="Base"/>
+  </Abilities>
+
+</Unit>
+
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="1 15" name="antiaircraft">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+  <Description lang="ENG">
+    Anti Aircraft\n\nLow caliber, high speed anti aircraft cannon. Anti aircraft make short work of planes, but cannot attack ground units.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Med_Long"/>
+    <Ammo_Quantity Num="20"/>
+    <Can_Attack Num="1"/>
+    <Shots Num="2"/>
+    <Range Num="8"/>
+    <Damage Num="16"/>
+  </Weapon>
+  
+  <Production>
+    <Built_Costs Num="12"/>
+    <Build_As String="SmallBuilding"/>
+  </Production>
+
+  <Movement>
+    <Factor_Ground Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Connects_To_Base YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="4"/>
+    <Can_Self_Destroy YN="Yes"/>
+  </Abilities>
+</Unit>
+
+

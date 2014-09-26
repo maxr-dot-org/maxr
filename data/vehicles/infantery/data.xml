@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Unit ID="0 18" name="infantery">
+  <Header>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
+    </Author>
+    <Game_Version text="0.2.5"/>
+  </Header>
+
+  <Description lang="ENG">
+    Infantery\n\nHuman soldiers equipped with light anti-tank shoulder weapons. Infantery can spot enemy infiltrators.
+  </Description>
+
+  <Weapon>
+    <Muzzle_Type Const="Rocket"/>
+    <Ammo_Quantity Num="4"/>
+    <Can_Attack Num="6"/>
+    <Shots Num="1"/>
+    <Range Num="4"/>
+    <Damage Num="16"/>
+  </Weapon>
+
+  <Production>
+    <Built_Costs Num="2"/>
+    <Build_As String="Human"/>
+  </Production>
+
+  <Movement>
+    <Movement_Sum Num="5"/>
+    <Factor_Ground Num="1"/>
+    <Factor_Coast Num="1"/>
+  </Movement>
+
+  <Abilities>
+    <Armor Num="2"/>
+    <Hitpoints Num="8"/>
+    <Scan_Range Num="4"/>
+    <Is_Human YN="Yes"/>
+
+    <Can_Detect_Stealth_On Num="12"/>
+  </Abilities>
+
+  <Storage>
+    <Is_Storage_Type String="Human"/>
+  </Storage>
+</Unit>
