@@ -1773,6 +1773,7 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
+	//TODO: make voice / text massage for owner and player
 	bool wasDetected = (detectedByPlayerList.empty() == false);
 
 	if (!isDetectedByPlayer (player))

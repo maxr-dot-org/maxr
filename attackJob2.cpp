@@ -20,12 +20,11 @@
 
 //TODO: alien angriff luft + boden
 //TODO: sentry attacks
-//TODO: text and voice messages
 //TODO: load/save attackjobs + isAttacking/isAttacked
 
 /*tests:
-- angreifer außer sichtweite
-- ziel außer sichtweite
++ angreifer außer sichtweite
++ ziel außer sichtweite
 - angreifer unsichtbar
 - ziel unsichtbar
 - sentry
@@ -162,7 +161,7 @@ cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
 	if (aggressor)
 		Log.write(" Client: Received AttackJob. Aggressor: " + aggressor->getDisplayName() + " (ID: " + iToStr(aggressor->iID) + ") at (" + iToStr(aggressorPosX) + "," + iToStr(aggressorPosY) + "). Target: (" + iToStr(targetX) + "," + iToStr(targetY) + ").", cLog::eLOG_TYPE_NET_DEBUG);
 	else
-		Log.write(" Client: Received AttackJob. Aggressor: instance not present on client (ID: " + iToStr(aggressor->iID) + ") at(" + iToStr(aggressorPosX) + ", " + iToStr(aggressorPosY) + ").Target: (" + iToStr(targetX) + ", " + iToStr(targetY) + ").", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write(" Client: Received AttackJob. Aggressor: instance not present on client (ID: " + iToStr(aggressorID) + ") at(" + iToStr(aggressorPosX) + ", " + iToStr(aggressorPosY) + ").Target: (" + iToStr(targetX) + ", " + iToStr(targetY) + ").", cLog::eLOG_TYPE_NET_DEBUG);
 
 	lockTarget();
 
@@ -363,7 +362,7 @@ void cAttackJob::fire()
 	{
 		if (aggressor->isAVehicle())
 		{
-			//TODO: play sound only for active clients
+			//TODO: play sound only for clients with active GUI
 			PlayFX (static_cast<cVehicle*> (aggressor)->uiData->Attack);
 		}
 		else
@@ -501,7 +500,7 @@ bool cAttackJob::impactCluster(cMenu* activeMenu)
 	std::vector<cUnit*> targets;
 
 	//full damage
-	impactSingle(activeMenu, targetX, targetY, &targets);
+	destroyed = destroyed || impactSingle(activeMenu, targetX, targetY, &targets);
 
 	// 3/4 damage
 	attackPoints = (clusterDamage * 3) / 4;
@@ -626,7 +625,7 @@ bool cAttackJob::impactSingle(cMenu* activeMenu, int x, int y, std::vector<cUnit
 	}
 	else if (!destroyed && client)
 	{
-		// TODO:  PlayFX (SoundData.hit);
+		// TODO:  PlayFX (SoundData.hit); in cFxHit!
 		client->addFx(new cFxHit(x * 64 + offX + 32, y * 64 + offY + 32), target != NULL);
 	}
 
