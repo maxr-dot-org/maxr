@@ -20,7 +20,6 @@
 
 #include "vehicles.h"
 
-#include "attackJobs.h"
 #include "attackJob2.h"
 #include "automjobs.h"
 #include "buildings.h"

@@ -21,7 +21,6 @@
 
 #include "unit.h"
 
-#include "attackJobs.h"
 #include "attackJob2.h"
 #include "client.h"
 #include "clientevents.h"

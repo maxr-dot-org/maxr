@@ -21,7 +21,6 @@
 
 #include "hud.h"
 
-#include "attackJobs.h"
 #include "attackJob2.h"
 #include "autosurface.h"
 #include "buildings.h"
