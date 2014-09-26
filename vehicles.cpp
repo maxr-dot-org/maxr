@@ -20,7 +20,7 @@
 
 #include "vehicles.h"
 
-#include "attackJobs.h"
+#include "attackJob2.h"
 #include "automjobs.h"
 #include "buildings.h"
 #include "client.h"
@@ -1280,12 +1280,12 @@ bool cVehicle::CanTransferTo (int x, int y, cMapField* OverUnitField) const
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, *server.Map);
+	const cUnit* target = cAttackJob::selectTarget (PosX, PosY, opponentUnit->data.canAttack, *server.Map ,opponentUnit->owner);
 	if (target != this) return false;
 
-	int iOff = server.Map->getOffset (PosX, PosY);
-	Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, iOff, true));
+	Log.write (" Server: " + reasonForLog + ": attacking (" + iToStr (PosX) + "," + iToStr(PosY) + "), Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+
+	server.addAttackJob(opponentUnit, PosX, PosY);
 	if (ServerMoveJob != 0)
 		ServerMoveJob->bFinished = true;
 	return true;
@@ -1349,7 +1349,7 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, *server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, *server.Map);
+		cUnit* target = cAttackJob::selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, *server.Map, owner);
 		if (target == &otherUnit)
 			return true;
 	}
@@ -1772,6 +1772,7 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
+	//TODO: make voice / text massage for owner and player
 	bool wasDetected = (detectedByPlayerList.empty() == false);
 
 	if (!isDetectedByPlayer (player))

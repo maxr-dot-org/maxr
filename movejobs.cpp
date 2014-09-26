@@ -21,7 +21,7 @@
 
 #include "movejobs.h"
 
-#include "attackJobs.h"
+#include "attackJob2.h"
 #include "buildings.h"
 #include "client.h"
 #include "clientevents.h"
@@ -741,7 +741,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	cBuilding* mine = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getMine();
 	if (Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner)
 	{
-		server->AJobs.push_back (new cServerAttackJob (*server, mine, Map->getOffset (Vehicle->PosX, Vehicle->PosY), false));
+		server->addAttackJob(mine, Vehicle->PosX, Vehicle->PosY);
 		bEndForNow = true;
 	}
 
@@ -850,14 +850,12 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 void cEndMoveAction::executeAttackAction (cServer& server)
 {
 	// get the target unit
-	const cUnit* destUnit = server.getVehicleFromID (destID_);
-	if (destUnit == NULL) destUnit = server.getBuildingFromID (destID_);
+	const cUnit* destUnit = server.getUnitFromID (destID_);
 	if (destUnit == NULL) return;
 
 	int x = destUnit->PosX;
 	int y = destUnit->PosY;
 	cMap& map = *server.Map;
-	const int offset = map.getOffset (x, y);
 
 	// check, whether the attack is now possible
 	if (!vehicle_->canAttackObjectAt (x, y, map, true, true)) return;
@@ -865,7 +863,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	// is the target in sight?
 	if (!vehicle_->owner->canSeeAnyAreaUnder (*destUnit)) return;
 
-	server.AJobs.push_back (new cServerAttackJob (server, vehicle_, offset, false));
+	server.addAttackJob(vehicle_, x, y);
 }
 
 cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle) :
@@ -992,6 +990,11 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 			Vehicle->moving = true;
 			Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
+			
+			Vehicle->data.speedCur += this->iSavedSpeed;
+			this->iSavedSpeed = 0;
+			Vehicle->DecSpeed(Waypoints->next->Costs);
+
 			//Vehicle->owner->doScan();
 			Vehicle->OffX = 0;
 			Vehicle->OffY = 0;
@@ -1069,6 +1072,10 @@ void cClientMoveJob::moveVehicle()
 			stopMoveSound();
 			return;
 		}
+
+		Vehicle->data.speedCur += iSavedSpeed;
+		iSavedSpeed = 0;
+		Vehicle->DecSpeed(Waypoints->next->Costs);
 
 		Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
 		Vehicle->owner->doScan();
@@ -1177,9 +1184,6 @@ void cClientMoveJob::doEndMoveVehicle()
 		return;
 	}
 
-	Vehicle->data.speedCur += iSavedSpeed;
-	iSavedSpeed = 0;
-	Vehicle->DecSpeed (Waypoints->next->Costs);
 	Vehicle->WalkFrame = 0;
 
 	sWaypoint* Waypoint = Waypoints;

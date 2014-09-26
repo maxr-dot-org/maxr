@@ -29,7 +29,7 @@
 
 class cBuilding;
 class cCasualtiesTracker;
-class cClientAttackJob;
+class cAttackJob;
 class cClientMoveJob;
 class cEventHandling;
 class cFx;
@@ -130,8 +130,7 @@ public:
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteUnit (cBuilding* Building, cMenu* activeMenu);
-	void deleteUnit (cVehicle* Vehicle, cMenu* activeMenu);
+	void deleteUnit (cUnit* unit, cMenu* activeMenu);
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!
@@ -144,8 +143,9 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle* getVehicleFromID (unsigned int iID);
-	cBuilding* getBuildingFromID (unsigned int iID);
+	cVehicle* getVehicleFromID (unsigned int iID)const ;
+	cBuilding* getBuildingFromID (unsigned int iID) const;
+	cUnit* getUnitFromID(unsigned int iID) const;
 
 	/**
 	* handles move and attack jobs
@@ -161,14 +161,14 @@ public:
 	*/
 	int HandleNetMessage (cNetMessage& message, cMenu* activeMenu);
 
-	void addFx (cFx* fx);
+	void addFx(cFx* fx, bool playSound = true);
 
 	/**
 	* destroys a unit
-	* play FX, add rubble and delete Unit
+	* play FX
 	*/
-	void destroyUnit (cVehicle& vehicle);
-	void destroyUnit (cBuilding& building);
+	void addDestroyFx (cVehicle& vehicle);
+	void addDestroyFx(cBuilding& building);
 
 	int getTurn() const;
 	unsigned int getRemainingTimeInSecond() const;
@@ -234,9 +234,6 @@ private:
 	void HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
@@ -319,7 +316,7 @@ public:
 	/** lists with all FX-Animation */
 	AutoPtr<cFxContainer> FxList;
 	/** list with the running clientAttackJobs */
-	std::vector<cClientAttackJob*> attackJobs;
+	std::vector<cAttackJob*> attackJobs;
 	/** List with all active movejobs */
 	std::vector<cClientMoveJob*> ActiveMJobs;
 

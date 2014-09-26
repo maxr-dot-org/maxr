@@ -21,7 +21,7 @@
 
 #include "hud.h"
 
-#include "attackJobs.h"
+#include "attackJob2.h"
 #include "autosurface.h"
 #include "buildings.h"
 #include "client.h"
@@ -94,7 +94,7 @@ cDebugOutput::cDebugOutput() :
 	debugPlayers = false;
 	showFPS = false;
 	debugCache = false;
-	debugSync = false;
+	debugSync = true;
 }
 
 void cDebugOutput::setClient (cClient* client_)
@@ -826,6 +826,18 @@ void cGameGUI::addCoords (const sSavedReportMessage& msg)
 	addMessage (str);
 	msgCoordsX = msg.xPos;
 	msgCoordsY = msg.yPos;
+}
+
+void cGameGUI::addEnemyDetectedMessage(cPlayer& activePlayer, const cUnit& unit)
+{
+	const string message = unit.getDisplayName() + " (" + unit.owner->getName() + ") " + lngPack.i18n("Text~Comp~Detected");
+	const sSavedReportMessage& report = activePlayer.addSavedReport(message, sSavedReportMessage::REPORT_TYPE_UNIT, unit.data.ID, unit.PosX, unit.PosY);
+	addCoords(report);
+
+	if (unit.data.isStealthOn & TERRAIN_SEA && unit.data.canAttack)
+		PlayVoice(VoiceData.VOISubDetected.get());
+	else
+		PlayRandomVoice(VoiceData.VOIDetected);
 }
 
 int cGameGUI::show (cClient* client)
@@ -2370,16 +2382,16 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				// check, if the player wants to attack:
 				if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack.get() && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
 				{
-					cUnit* target = selectTarget (mouseMapX, mouseMapY, selectedVehicle->data.canAttack, *client->getMap());
+					cUnit* target = cAttackJob::selectTarget (mouseMapX, mouseMapY, selectedVehicle->data.canAttack, *client->getMap(), selectedVehicle->owner);
 
 					if (selectedVehicle->isInRange (mouseMapX, mouseMapY))
 					{
 						// find target ID
 						int targetId = 0;
-						if (target && target->isAVehicle()) targetId = target->iID;
+						if (target) targetId = target->iID;
 
-						Log.write (" Client: want to attack " + iToStr (mouseMapX) + ":" + iToStr (mouseMapY) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-						sendWantAttack (*client, targetId, client->getMap()->getOffset (mouseMapX, mouseMapY), selectedVehicle->iID, true);
+						Log.write (" Client: want to attack " + iToStr (mouseMapX) + ":" + iToStr (mouseMapY) + ", Unit ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
+						sendWantAttack (*client, selectedVehicle->iID, mouseMapX, mouseMapY, targetId);
 					}
 					else if (target)
 					{
@@ -2399,13 +2411,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack.get() && selectedBuilding && !selectedBuilding->attacking)
 				{
 					// find target ID
+					cUnit* target = cAttackJob::selectTarget (mouseMapX, mouseMapY, selectedBuilding->data.canAttack, *client->getMap(), selectedBuilding->owner);
+					
 					int targetId = 0;
-					cUnit* target = selectTarget (mouseMapX, mouseMapY, selectedBuilding->data.canAttack, *client->getMap());
-					if (target && target->isAVehicle()) targetId = target->iID;
-					const cMap& map = *client->getMap();
+					if (target) targetId = target->iID;
 
-					const int offset = map.getOffset (selectedBuilding->PosX, selectedBuilding->PosY);
-					sendWantAttack (*client, targetId, map.getOffset (mouseMapX, mouseMapY), offset, false);
+					sendWantAttack (*client, selectedBuilding->iID, mouseMapX, mouseMapY, targetId);
 				}
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Csteal.get() && selectedVehicle)
 				{
@@ -3623,7 +3634,7 @@ void cGameGUI::drawAttackCursor (int x, int y) const
 		return;
 	}
 	const sUnitData& data = selectedUnit->data;
-	const cUnit* target = selectTarget (x, y, data.canAttack, *client->getMap());
+	const cUnit* target = cAttackJob::selectTarget (x, y, data.canAttack, *client->getMap(), selectedUnit->owner);
 
 	if (!target || (target == selectedUnit))
 	{

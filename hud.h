@@ -462,6 +462,8 @@ public:
 	/** displays a message with 'goto' coordinates */
 	void addCoords (const sSavedReportMessage& msg);
 
+	void addEnemyDetectedMessage(cPlayer& activePlayer, const cUnit& unit);
+
 	void setClient (cClient* client);
 	void setHotSeatClients (const std::vector<cClient*>& hotSeatClients);
 

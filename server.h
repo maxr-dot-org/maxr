@@ -33,7 +33,7 @@ class cBuilding;
 class cCasualtiesTracker;
 class cNetMessage;
 class cPlayer;
-class cServerAttackJob;
+class cAttackJob;
 class cServerMoveJob;
 class cTCP;
 class cUnit;
@@ -214,11 +214,8 @@ public:
 	/**
 	* deletes a unit (and additional units on the same field if necessary)
 	* from the game, creates rubble
-	* does not notify the client!
-	* the caller has to take care of the necessary actions on the client
 	*/
-	void destroyUnit (cVehicle& vehicle);
-	void destroyUnit (cBuilding& building);
+	void destroyUnit (cUnit& unit);
 
 	/**
 	* adds the unit to the map and player.
@@ -340,7 +337,6 @@ private:
 	void handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
-	void handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message);
 	void handleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
 	void handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
 	void handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
@@ -451,11 +447,10 @@ private:
 	void stopVehicleBuilding (cVehicle& vehicle);
 
 	/**
-	 * Helper for destroyUnit(cBuilding) that deletes all buildings
+	 * Helper for destroyUnit() that deletes all buildings
 	 * and returns the generated rubble value.
-	 * @author Paul Grathwohl
 	 */
-	int deleteBuildings (std::vector<cBuilding*>& buildings);
+	int deleteBuildings(cMapField& field, bool deleteConnector);
 
 	void runJobs();
 
@@ -520,11 +515,12 @@ private:
 	AutoPtr<sSettings> gameSetting;
 	AutoPtr<cCasualtiesTracker> casualtiesTracker;
 	sFreezeModes freezeModes;
+	/** List with all attackjobs */
+	std::vector<cAttackJob*> AJobs;
 public:
+	void addAttackJob(cUnit* aggressor, int targetX, int targetY); //TODO: so oder anders?
 	/** the map */
 	AutoPtr<cMap> Map;
-	/** List with all attackjobs */
-	std::vector<cServerAttackJob*> AJobs;
 	/** List with all active movejobs */
 	std::vector<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */

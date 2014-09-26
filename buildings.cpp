@@ -20,7 +20,6 @@
 
 #include "buildings.h"
 
-#include "attackJobs.h"
 #include "client.h"
 #include "clientevents.h"
 #include "clist.h"
