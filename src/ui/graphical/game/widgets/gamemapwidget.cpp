@@ -502,7 +502,7 @@ void cGameMapWidget::draw ()
 
 	drawEffects (true);
 
-	//dCache.resetStatistics ();
+	unitDrawingEngine.drawingCache.resetStatistics();
 
 	drawBaseUnits ();
 	drawTopBuildings ();
