@@ -64,6 +64,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   endif()
   
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  add_definitions( -DNOMINMAX )
 else()
   message(FATAL_ERROR "You are using an unsupported C++ compiler.")
 endif()
