@@ -21,7 +21,7 @@
 
 #include "game/logic/client.h"
 
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
@@ -303,10 +303,10 @@ void cClient::runFx()
 	effectsList->run ();
 }
 
-void cClient::addFx (std::shared_ptr<cFx> fx)
+void cClient::addFx (std::shared_ptr<cFx> fx, bool playSound)
 {
 	effectsList->push_back (fx);
-	addedEffect (fx);
+	addedEffect (fx, playSound);
 }
 
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
@@ -555,11 +555,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		}
 		if (Vehicle->getPosition() != position || Vehicle->data.isBig != bBig)
 		{
-			// if the vehicle is moving it is normal that
-			// the positions may not be the same,
-			// when the vehicle was building it is also normal that
-			// the position should be changed
-			// so the log message will just be a debug one
+			// should never happen
 			int iLogType = cLog::eLOG_TYPE_NET_WARNING;
 			if (Vehicle->isUnitBuildingABuilding () || Vehicle->isUnitClearing () || Vehicle->isUnitMoving ()) iLogType = cLog::eLOG_TYPE_NET_DEBUG;
 			Log.write (" Client: Vehicle identificated by ID (" + iToStr (iID) + ") but has wrong position [IS: X" + iToStr (Vehicle->getPosition().x()) + " Y" + iToStr (Vehicle->getPosition().y()) + "; SHOULD: X" + iToStr (position.x()) + " Y" + iToStr (position.y()) + "]", iLogType);
@@ -575,7 +571,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if (message.popBool()) Vehicle->changeName (message.popString());
 
+		Vehicle->setAttacking (message.popBool ());
 		Vehicle->setIsBeeinAttacked(message.popBool());
+
 		const bool bWasDisabled = Vehicle->isDisabled();
 		Vehicle->setDisabledTurns(message.popInt16 ());
 		Vehicle->setCommandoRank(message.popInt16());
@@ -608,6 +606,9 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		}
 
 		if (message.popBool()) Building->changeName (message.popString());
+
+		Building->setAttacking (message.popBool ());
+		Building->setIsBeeinAttacked (message.popBool ());
 
 		const bool bWasDisabled = Building->isDisabled();
 		Building->setDisabledTurns (message.popInt16 ());
@@ -748,31 +749,6 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 		else Log.write (" Client: Vehicle with ID " + iToStr (iID) + "has no movejob", cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: request sync of vehicle
 	}
-}
-
-void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_LOCK_TARGET);
-
-	cClientAttackJob::lockTarget (*this, message);
-}
-
-void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_FIRE);
-
-	cClientAttackJob* job = new cClientAttackJob (this, message);
-	attackJobs.push_back (job);
-}
-
-void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_IMPACT);
-
-	const int id = message.popInt16();
-	const int remainingHP = message.popInt16();
-	const auto position = message.popPosition();
-	cClientAttackJob::makeImpact (*this, position, remainingHP, id);
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
@@ -1538,7 +1514,7 @@ void cClient::HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (message.popInt16());
 	if (!building) return;
 
-	destroyUnit (*building);
+	addDestroyFx (*building);
 }
 
 void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message)
@@ -1606,6 +1582,7 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_ADD_VEHICLE: HandleNetMessage_GAME_EV_ADD_VEHICLE (message); break;
 		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (message); break;
 		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (message); break;
+		case GAME_EV_ATTACKJOB: attackJobs.push_back (new cAttackJob (this, message)); break;
 		case GAME_EV_ADD_ENEM_VEHICLE: HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (message); break;
 		case GAME_EV_ADD_ENEM_BUILDING: HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (message); break;
 		case GAME_EV_WAIT_FOR: HandleNetMessage_GAME_EV_WAIT_FOR (message); break;
@@ -1619,9 +1596,6 @@ int cClient::handleNetMessage (cNetMessage& message)
 		case GAME_EV_DO_STOP_WORK: HandleNetMessage_GAME_EV_DO_STOP_WORK (message); break;
 		case GAME_EV_MOVE_JOB_SERVER: HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (message); break;
 		case GAME_EV_NEXT_MOVE: HandleNetMessage_GAME_EV_NEXT_MOVE (message); break;
-		case GAME_EV_ATTACKJOB_LOCK_TARGET: HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (message); break;
-		case GAME_EV_ATTACKJOB_FIRE: HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (message); break;
-		case GAME_EV_ATTACKJOB_IMPACT: HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (message); break;
 		case GAME_EV_RESOURCES: HandleNetMessage_GAME_EV_RESOURCES (message); break;
 		case GAME_EV_BUILD_ANSWER: HandleNetMessage_GAME_EV_BUILD_ANSWER (message); break;
 		case GAME_EV_STOP_BUILD: HandleNetMessage_GAME_EV_STOP_BUILD (message); break;
@@ -1726,56 +1700,42 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	return NULL;
 }
 
-void cClient::deleteUnit (cBuilding* building)
+void cClient::deleteUnit (cUnit* unit)
 {
-	if (!building) return;
+	if (!unit) return;
 
-	getMap ()->deleteBuilding (*building);
+	const auto owner = unit->getOwner ();
 
-	if (!building->getOwner ())
+	if (unit->isABuilding ())
 	{
-		auto iter = neutralBuildings.find (*building);
-		assert (iter != neutralBuildings.end());
-		if (iter != neutralBuildings.end ()) neutralBuildings.erase (iter);
-		return;
-	}
+		cBuilding* building = static_cast<cBuilding*>(unit);
+		getMap ()->deleteBuilding (*building);
 
-	for (unsigned int i = 0; i < attackJobs.size(); i++)
+		if (!owner)
+		{
+			auto iter = neutralBuildings.find (*building);
+			assert (iter != neutralBuildings.end ());
+			if (iter != neutralBuildings.end ()) neutralBuildings.erase (iter);
+			return;
+		}
+
+		if (owner == ActivePlayer)
+		{
+			owner->base.deleteBuilding (building, NULL);
+		}
+
+		owner->removeUnit (*building);
+	}
+	else
 	{
-		attackJobs[i]->onRemoveUnit (*building);
+		owner->removeUnit (*static_cast<cVehicle*>(unit));
 	}
+	helperJobs.onRemoveUnit (unit);
 
-	auto owner = building->getOwner ();
-
-	if (owner == ActivePlayer)
+	if (owner)
 	{
-		owner->base.deleteBuilding (building, NULL);
+		owner->doScan ();
 	}
-
-	owner->removeUnit (*building);
-
-	owner->doScan();
-}
-
-void cClient::deleteUnit (cVehicle* vehicle)
-{
-	if (!vehicle) return;
-
-	getMap ()->deleteVehicle (*vehicle);
-
-	for (unsigned int i = 0; i < attackJobs.size(); i++)
-	{
-		attackJobs[i]->onRemoveUnit (*vehicle);
-	}
-	helperJobs.onRemoveUnit (vehicle);
-
-	auto owner = vehicle->getOwner ();
-
-	owner->lastDeletedUnit = vehicle->iID;
-
-	owner->removeUnit (*vehicle);
-
-	owner->doScan();
 }
 
 void cClient::handleEnd()
@@ -1914,7 +1874,7 @@ void cClient::handleAutoMoveJobs ()
 	}
 }
 
-cVehicle* cClient::getVehicleFromID (unsigned int id)
+cVehicle* cClient::getVehicleFromID (unsigned int id) const
 {
 	for (unsigned int i = 0; i < getPlayerList ().size (); i++)
 	{
@@ -1925,7 +1885,7 @@ cVehicle* cClient::getVehicleFromID (unsigned int id)
 	return nullptr;
 }
 
-cBuilding* cClient::getBuildingFromID (unsigned int id)
+cBuilding* cClient::getBuildingFromID (unsigned int id) const
 {
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
@@ -1937,13 +1897,21 @@ cBuilding* cClient::getBuildingFromID (unsigned int id)
 	return iter == neutralBuildings.end () ? nullptr : iter->get ();
 }
 
+cUnit* cClient::getUnitFromID (unsigned int id) const
+{
+	cUnit* result = getVehicleFromID (id);
+
+	if (result == nullptr)
+		result = getBuildingFromID (id);
+	return result;
+}
+
 void cClient::doGameActions ()
 {
 	runFx();
 
 	// run attackJobs
-	if (gameTimer->timer50ms)
-		cClientAttackJob::handleAttackJobs (*this);
+	cAttackJob::runAttackJobs (attackJobs);
 
 	// run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();
@@ -1965,7 +1933,7 @@ sSubBase* cClient::getSubBaseFromID (int iID)
 	return NULL;
 }
 
-void cClient::destroyUnit (cVehicle& vehicle)
+void cClient::addDestroyFx (cVehicle& vehicle)
 {
 	// play explosion
 	if (vehicle.data.isBig)
@@ -1992,7 +1960,7 @@ void cClient::destroyUnit (cVehicle& vehicle)
 	}
 }
 
-void cClient::destroyUnit (cBuilding& building)
+void cClient::addDestroyFx (cBuilding& building)
 {
 	// play explosion animation
 	cBuilding* topBuilding = getMap()->getField(building.getPosition()).getBuilding();

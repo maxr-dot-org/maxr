@@ -318,23 +318,12 @@ void sendMoveJobResume (const cClient& client, int unitId)
 	client.sendNetMessage (message);
 }
 
-void sendWantVehicleAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressorID)
+void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_ATTACK);
-	message->pushInt32 (targetID);
-	message->pushPosition (targetPosition);
 	message->pushInt32 (aggressorID);
-	message->pushBool (true);
-	client.sendNetMessage (message);
-}
-
-void sendWantBuildingAttack (const cClient& client, int targetID, const cPosition& targetPosition, const cPosition& aggressorPosition)
-{
-	cNetMessage* message = new cNetMessage (GAME_EV_WANT_ATTACK);
-	message->pushInt32 (targetID);
 	message->pushPosition (targetPosition);
-	message->pushPosition (aggressorPosition);
-	message->pushBool (false);
+	message->pushInt32 (targetID);
 	client.sendNetMessage (message);
 }
 

@@ -70,7 +70,7 @@
 #include "utility/log.h"
 #include "netmessage.h"
 #include "network.h"
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
@@ -587,16 +587,16 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			const auto& vehicle = static_cast<const cVehicle&>(unit);
 
-			cUnit* target = selectTarget (position, vehicle.data.canAttack, *client.getMap ());
+			cUnit* target = cAttackJob::selectTarget (position, vehicle.data.canAttack, *client.getMap (), vehicle.getOwner());
 
 			if (vehicle.isInRange (position))
 			{
 				// find target ID
 				int targetId = 0;
-				if (target && target->isAVehicle ()) targetId = target->iID;
+				if (target) targetId = target->iID;
 
 				Log.write (" Client: want to attack " + iToStr (position.x ()) + ":" + iToStr (position.y ()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-				sendWantVehicleAttack (client, targetId, position, vehicle.iID);
+				sendWantAttack (client, vehicle.iID, position, targetId);
 			}
 			else if (target)
 			{
@@ -619,10 +619,11 @@ void cGameGuiController::connectClient (cClient& client)
 			const cMap& map = *client.getMap ();
 
 			int targetId = 0;
-			cUnit* target = selectTarget (position, building.data.canAttack, map);
-			if (target && target->isAVehicle ()) targetId = target->iID;
+			cUnit* target = cAttackJob::selectTarget (position, building.data.canAttack, map, building.getOwner());
+			
+			if (target) targetId = target->iID;
 
-			sendWantBuildingAttack (client, targetId, position, building.getPosition ());
+			sendWantAttack (client, building.iID, position, targetId);
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap ().triggeredSteal, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
@@ -742,9 +743,9 @@ void cGameGuiController::connectClient (cClient& client)
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
 	});
 
-	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect)
+	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect, bool playSound)
 	{
-		gameGui->getGameMap ().addEffect (effect);
+		gameGui->getGameMap ().addEffect (effect, playSound);
 	});
 
 	clientSignalConnectionManager.connect (client.getTurnTimeClock ()->alertTimeReached, [this]()

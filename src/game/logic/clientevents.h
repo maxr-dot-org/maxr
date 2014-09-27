@@ -56,9 +56,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DO_STOP_WORK,			// stops a building
 	GAME_EV_NEXT_MOVE,				// infos about the next move
 	GAME_EV_MOVE_JOB_SERVER,		// a message with all waypoints
-	GAME_EV_ATTACKJOB_LOCK_TARGET,	// prepares a mapsquare for beeing attacked
-	GAME_EV_ATTACKJOB_FIRE,			// plays the muzzle flash on a client
-	GAME_EV_ATTACKJOB_IMPACT,		// makes impact and target unlocking of an attackjob
+	GAME_EV_ATTACKJOB,				// sends an cAttackJob object to a client
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
@@ -165,13 +163,8 @@ void sendMoveJobResume (const cClient& client, int unitId);
 /**
 * sends all necessary information to identify aggressor
 * and target of an attack to the server
-*@param targetID ID of the target if it is a vehicle, 0 otherwise.
-*@param targetPosition the position, where the player has aimed
-*@param aggressor ID of the aggressor, if it is a vehicle. Offset os the aggressor if it is a building
-*@author Eiko
 */
-void sendWantVehicleAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressorID);
-void sendWantBuildingAttack (const cClient& client, int targetID, const cPosition& targetPosition, const cPosition& aggressorPosition);
+void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetId);
 
 /**
 * sends whether a minelayer is laying or clearing mines

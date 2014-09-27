@@ -20,7 +20,6 @@
 
 #include "game/data/units/building.h"
 
-#include "game/logic/attackjobs.h"
 #include "game/logic/client.h"
 #include "game/logic/clientevents.h"
 #include "utility/listhelpers.h"

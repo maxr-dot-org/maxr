@@ -211,8 +211,8 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 
 	message->pushInt16 (unit.getDisabledTurns());
 
-	if (unit.isAVehicle())
-		message->pushBool (unit.isBeeingAttacked ());
+	message->pushBool (unit.isBeeingAttacked ());
+	message->pushBool (unit.isAttacking ());
 
 	if (unit.isNameOriginal() == false)
 	{

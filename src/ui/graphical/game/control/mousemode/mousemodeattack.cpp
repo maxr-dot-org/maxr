@@ -23,7 +23,6 @@
 #include "game/data/map/map.h"
 #include "game/data/units/vehicle.h"
 #include "game/data/units/building.h"
-#include "game/logic/attackjobs.h"
 #include "input/mouse/mouse.h"
 #include "input/mouse/cursor/mousecursorsimple.h"
 #include "input/mouse/cursor/mousecursorattack.h"

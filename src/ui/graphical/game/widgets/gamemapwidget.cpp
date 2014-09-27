@@ -51,7 +51,6 @@
 #include "game/data/units/building.h"
 #include "keys.h"
 #include "utility/listhelpers.h"
-#include "game/logic/attackjobs.h"
 #include "sound.h"
 #include "game/logic/movejobs.h"
 #include "utility/indexiterator.h"
@@ -869,11 +868,11 @@ void cGameMapWidget::startActivateVehicle (const cUnit& unit, size_t index)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect)
+void cGameMapWidget::addEffect (std::shared_ptr<cFx> effect, bool playSound)
 {
 	if (effect != nullptr)
 	{
-		effect->playSound (*soundManager);
+		if (playSound) effect->playSound (*soundManager);
 		effects.push_back (std::move (effect));
 	}
 }

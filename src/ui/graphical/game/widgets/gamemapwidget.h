@@ -83,7 +83,7 @@ public:
 	void startFindPathBuildPosition ();
 	void startActivateVehicle (const cUnit& unit, size_t index);
 
-	void addEffect (std::shared_ptr<cFx> effect);
+	void addEffect (std::shared_ptr<cFx> effect, bool playSound = true);
 
 	void setDrawSurvey (bool drawSurvey);
 	void setDrawHits (bool drawHits);

@@ -51,7 +51,6 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/logic/clientevents.h"
-#include "game/logic/attackjobs.h"
 #include "utility/log.h"
 #include "netmessage.h"
 #include "game/startup/game.h"

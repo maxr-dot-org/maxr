@@ -20,7 +20,7 @@
 
 #include "game/data/units/vehicle.h"
 
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
@@ -780,11 +780,13 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = selectTarget (getPosition(), opponentUnit->data.canAttack, *server.Map);
+	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->data.canAttack, *server.Map, getOwner());
 	if (target != this) return false;
 
-	Log.write (" Server: " + reasonForLog + ": attacking position " + iToStr (getPosition().x()) + "x" + iToStr (getPosition().y()) + " Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, getPosition(), true));
+	Log.write (" Server: " + reasonForLog + ": attacking (" + iToStr (getPosition ().x ()) + "," + iToStr (getPosition ().y()) + "), Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+
+	server.addAttackJob (opponentUnit, getPosition ());
+
 	if (ServerMoveJob != 0)
 		ServerMoveJob->bFinished = true;
 	return true;
@@ -851,7 +853,7 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 		&& canAttackObjectAt (otherUnit.getPosition(), *server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = selectTarget (otherUnit.getPosition(), data.canAttack, *server.Map);
+		cUnit* target = cAttackJob::selectTarget (otherUnit.getPosition(), data.canAttack, *server.Map, getOwner());
 		if (target == &otherUnit)
 			return true;
 	}
@@ -1234,6 +1236,7 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
+	//TODO: make voice / text massage for owner and player
 	bool wasDetected = (detectedByPlayerList.empty() == false);
 
 	if (!isDetectedByPlayer (player))

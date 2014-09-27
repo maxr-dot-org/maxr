@@ -37,7 +37,7 @@
 
 class cBuilding;
 class cCasualtiesTracker;
-class cClientAttackJob;
+class cAttackJob;
 class cClientMoveJob;
 class cAutoMJob;
 class cFx;
@@ -136,8 +136,7 @@ public:
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteUnit (cBuilding* Building);
-	void deleteUnit (cVehicle* Vehicle);
+	void deleteUnit (cUnit* unit);
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!
@@ -150,8 +149,9 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle* getVehicleFromID (unsigned int iID);
-	cBuilding* getBuildingFromID (unsigned int iID);
+	cVehicle* getVehicleFromID (unsigned int id) const;
+	cBuilding* getBuildingFromID (unsigned int id) const;
+	cUnit* getUnitFromID (unsigned int id) const;
 
 	/**
 	* handles move and attack jobs
@@ -169,14 +169,14 @@ public:
 	*/
 	int handleNetMessage (cNetMessage& message);
 
-	void addFx (std::shared_ptr<cFx> fx);
+	void addFx (std::shared_ptr<cFx> fx, bool playSound = true);
 
 	/**
 	* destroys a unit
 	* play FX, add rubble and delete Unit
 	*/
-	void destroyUnit (cVehicle& vehicle);
-	void destroyUnit (cBuilding& building);
+	void addDestroyFx (cVehicle& vehicle);
+	void addDestroyFx (cBuilding& building);
 
     void deletePlayer (cPlayer& player);
 
@@ -222,7 +222,7 @@ public:
 
 	mutable cSignal<void (const cVehicle&)> moveJobBlocked;
 
-	mutable cSignal<void (const std::shared_ptr<cFx>&)> addedEffect;
+	mutable cSignal<void (const std::shared_ptr<cFx>&, bool)> addedEffect;
 
 	mutable cSignal<void (int)> additionalSaveInfoRequested;
 	mutable cSignal<void (const cGameGuiState&)> gameGuiStateReceived;
@@ -276,9 +276,6 @@ private:
 	void HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
@@ -366,7 +363,7 @@ private:
 	std::list<std::weak_ptr<cAutoMJob>> autoMoveJobs;
 public:
 	/** list with the running clientAttackJobs */
-	std::vector<cClientAttackJob*> attackJobs;
+	std::vector<cAttackJob*> attackJobs;
 	/** List with all active movejobs */
 	std::vector<cClientMoveJob*> ActiveMJobs;
 

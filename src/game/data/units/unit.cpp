@@ -21,7 +21,7 @@
 
 #include "game/data/units/unit.h"
 
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/logic/client.h"
 #include "game/logic/clientevents.h"
 #include "game/data/map/map.h"
@@ -297,7 +297,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map.isWaterOrCoast (position) == false)
 		return false;
 
-	const cUnit* target = selectTarget (position, data.canAttack, map);
+	const cUnit* target = cAttackJob::selectTarget (position, data.canAttack, map, owner);
 
 	if (target && target->iID == iID)  // a unit cannot fire on itself
 		return false;

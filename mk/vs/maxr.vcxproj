@@ -198,7 +198,7 @@
     <ClCompile Include="..\..\src\game\data\units\unit.cpp" />
     <ClCompile Include="..\..\src\game\data\units\unitdata.cpp" />
     <ClCompile Include="..\..\src\game\data\units\vehicle.cpp" />
-    <ClCompile Include="..\..\src\game\logic\attackjobs.cpp" />
+    <ClCompile Include="..\..\src\game\logic\attackjob.cpp" />
     <ClCompile Include="..\..\src\game\logic\automjobs.cpp" />
     <ClCompile Include="..\..\src\game\logic\casualtiestracker.cpp" />
     <ClCompile Include="..\..\src\game\logic\client.cpp" />
@@ -451,7 +451,7 @@
     <ClInclude Include="..\..\src\game\data\units\unit.h" />
     <ClInclude Include="..\..\src\game\data\units\unitdata.h" />
     <ClInclude Include="..\..\src\game\data\units\vehicle.h" />
-    <ClInclude Include="..\..\src\game\logic\attackjobs.h" />
+    <ClInclude Include="..\..\src\game\logic\attackjob.h" />
     <ClInclude Include="..\..\src\game\logic\automjobs.h" />
     <ClInclude Include="..\..\src\game\logic\casualtiestracker.h" />
     <ClInclude Include="..\..\src\game\logic\client.h" />
