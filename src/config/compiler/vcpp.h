@@ -17,9 +17,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#if _MSC_VER < 1600
+#if _MSC_VER < 1800
 #   ifndef MAXR_NO_ASSERT_CONFIG
-#       error "Visual C++ version < 16.0 (Visual Studio < 2010) will not be able to compile this code because of missing C++11 features."
+#       error "Visual C++ version < 18.0 (Visual Studio < 2013) will not be able to compile this code because of missing C++11 features."
 #   endif
 #endif
 
