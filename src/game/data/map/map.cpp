@@ -902,6 +902,19 @@ void cMap::deleteVehicle (const cVehicle& vehicle)
 	removedUnit (vehicle);
 }
 
+void cMap::deleteUnit (const cUnit& unit)
+{
+	if (unit.isABuilding ())
+	{
+		deleteBuilding (static_cast<const cBuilding&>(unit));
+	}
+	else
+	{
+		assert (unit.isAVehicle ());
+		deleteVehicle (static_cast<const cVehicle&>(unit));
+	}
+}
+
 void cMap::moveVehicle (cVehicle& vehicle, const cPosition& position, int height)
 {
 	const auto oldPosition = vehicle.getPosition();

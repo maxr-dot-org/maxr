@@ -249,6 +249,7 @@ public:
 
 	void deleteBuilding (const cBuilding& building);
 	void deleteVehicle (const cVehicle& vehicle);
+	void deleteUnit (const cUnit& unit);
 
 	static int getMapLevel (const cBuilding& building);
 	static int getMapLevel (const cVehicle& vehicle);

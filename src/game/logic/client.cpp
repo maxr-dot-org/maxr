@@ -1706,10 +1706,13 @@ void cClient::deleteUnit (cUnit* unit)
 
 	const auto owner = unit->getOwner ();
 
+	helperJobs.onRemoveUnit (unit);
+
+	getMap ()->deleteUnit (*unit);
+
 	if (unit->isABuilding ())
 	{
 		cBuilding* building = static_cast<cBuilding*>(unit);
-		getMap ()->deleteBuilding (*building);
 
 		if (!owner)
 		{
@@ -1728,9 +1731,9 @@ void cClient::deleteUnit (cUnit* unit)
 	}
 	else
 	{
+		assert (owner != nullptr);
 		owner->removeUnit (*static_cast<cVehicle*>(unit));
 	}
-	helperJobs.onRemoveUnit (unit);
 
 	if (owner)
 	{
