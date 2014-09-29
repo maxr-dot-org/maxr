@@ -77,6 +77,13 @@ file(GLOB_RECURSE maxr_SRCS "src/*.cpp" "src/*.c")
 
 add_executable(maxr ${maxr_SRCS})
 
+# set linker flags for target
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+endif()
+
+
+
 # ============================================
 # === Additional Packages
 # ============================================

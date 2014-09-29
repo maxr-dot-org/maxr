@@ -129,7 +129,7 @@
 # ifdef RELEASE
 #  define PACKAGE_REV "Releaseversion"
 # else
-#  define PACKAGE_REV "SVN Rev 3093"
+#    define PACKAGE_REV "GIT Hash unknown"
 # endif
 #endif
 
