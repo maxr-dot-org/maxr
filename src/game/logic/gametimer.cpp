@@ -353,15 +353,18 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 				crc = calcCheckSum (vehicle->data.getHitpoints (), crc);
 				crc = calcCheckSum (vehicle->data.speedCur, crc);
 				crc = calcCheckSum (vehicle->getFlightHeight (), crc);
-				crc = calcCheckSum (vehicle->iID,  crc);
-				crc = calcCheckSum (vehicle->getPosition().x(), crc);
-				crc = calcCheckSum (vehicle->getPosition().y(), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
-				crc = calcCheckSum (vehicle->dir,  crc);
+				crc = calcCheckSum (vehicle->iID, crc);
+				crc = calcCheckSum (vehicle->getPosition ().x (), crc);
+				crc = calcCheckSum (vehicle->getPosition ().y (), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset ().x (), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset ().y (), crc);
+				crc = calcCheckSum (vehicle->dir, crc);
 			}
+		}
 
-			for (const auto& building : playerList[i]->getBuildings ())
+		for (const auto& building : playerList[i]->getBuildings ())
+		{
+			if (Contains (building->seenByPlayerList, player) || building->getOwner () == player)
 			{
 				crc = calcCheckSum (building->iID, crc);
 				crc = calcCheckSum (building->data.getShots (), crc);
