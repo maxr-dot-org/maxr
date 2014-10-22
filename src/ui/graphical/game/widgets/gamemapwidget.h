@@ -42,6 +42,7 @@ class cMouseMode;
 class cSoundManager;
 class cDrawingCache;
 class cAnimation;
+class cRightMouseButtonScrollerWidget;
 
 class cGameMapWidget : public cClickableWidget
 {
@@ -116,6 +117,8 @@ public:
 
 	cSignal<void ()> mouseInputModeChanged;
 
+	cSignal<void ()> mouseFocusReleased;
+
 	//
 	// Game commands
 	//
@@ -159,6 +162,8 @@ public:
 
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
@@ -211,6 +216,8 @@ private:
 	bool lockActive;
 
 	float windDirection;
+
+	cRightMouseButtonScrollerWidget* rightMouseButtonScrollerWidget;
 
 	//
 	// draw methods

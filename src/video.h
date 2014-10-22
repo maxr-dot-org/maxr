@@ -23,6 +23,7 @@
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "settings.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;

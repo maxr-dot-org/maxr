@@ -42,6 +42,7 @@
 #include "ui/sound/soundmanager.h"
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "ui/graphical/application.h"
+#include "ui/graphical/game/control/rightmousebuttonscroller.h"
 #include "game/data/map/map.h"
 #include "settings.h"
 #include "video.h"
@@ -64,26 +65,28 @@
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_) :
-	cClickableWidget (area),
-	animationTimer (animationTimer_),
-	soundManager (soundManager_),
-	staticMap (std::move (staticMap_)),
-	dynamicMap (nullptr),
-	player (nullptr),
-	unitDrawingEngine (animationTimer),
-	changeAllowed (true),
-	pixelOffset (0, 0),
-	internalZoomFactor (1.f),
-	shouldDrawSurvey (false),
-	shouldDrawScan (false),
-	shouldDrawGrid (false),
-	shouldDrawRange (false),
-	shouldDrawFog (false),
-	lockActive (false)
+cClickableWidget (area),
+animationTimer (animationTimer_),
+soundManager (soundManager_),
+staticMap (std::move (staticMap_)),
+dynamicMap (nullptr),
+player (nullptr),
+unitDrawingEngine (animationTimer),
+changeAllowed (true),
+pixelOffset (0, 0),
+internalZoomFactor (1.f),
+shouldDrawSurvey (false),
+shouldDrawScan (false),
+shouldDrawGrid (false),
+shouldDrawRange (false),
+shouldDrawFog (false),
+lockActive (false)
 {
 	assert (staticMap != nullptr);
 	assert (animationTimer != nullptr);
 	assert (soundManager != nullptr);
+
+	using namespace std::placeholders;
 
 	signalConnectionManager.connect (cSettings::getInstance ().animationsChanged, [this]()
 	{
@@ -114,6 +117,10 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	unitMenu = addChild (std::make_unique<cUnitContextMenuWidget> ());
 	unitMenu->disable ();
 	unitMenu->hide ();
+
+	rightMouseButtonScrollerWidget = addChild (std::make_unique<cRightMouseButtonScrollerWidget> (animationTimer));
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, std::bind (&cGameMapWidget::scroll, this, _1));
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this](){ mouseFocusReleased (); });
 
 	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
 
@@ -1752,8 +1759,8 @@ bool cGameMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse,
 //------------------------------------------------------------------------------
 bool cGameMapWidget::handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (!unitSelectionBox.isValidStart () && isAt (mouse.getPosition ()) &&
-		button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right))
+	if (button == eMouseButtonType::Left && !mouse.isButtonPressed (eMouseButtonType::Right) &&
+		!unitSelectionBox.isValidStart () && isAt (mouse.getPosition ()))
 	{
 		const auto zoomedTileSize = getZoomedTileSize ();
 
@@ -1780,6 +1787,12 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 		unitSelectionBox.invalidate ();
 		return cClickableWidget::handleMouseReleased (application, mouse, button);
 	}
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::handleLooseMouseFocus (cApplication& application)
+{
+	mouseFocusReleased ();
 }
 
 //------------------------------------------------------------------------------

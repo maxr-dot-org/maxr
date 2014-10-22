@@ -135,6 +135,17 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudCoordinates, this, _1));
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudUnitName, this, _1));
 
+	signalConnectionManager.connect (gameMap->mouseFocusReleased, [this]()
+	{
+		auto mouse = getActiveMouse ();
+		if (mouse)
+		{
+			if (hud->isAt (mouse->getPosition ())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+			else if (chatBox->isAt (mouse->getPosition ())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+			else gameMap->updateMouseCursor (*mouse);
+		}
+	});
+
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cGameGui::connectSelectedUnit, this));
@@ -580,7 +591,7 @@ bool cGameGui::handleMouseMoved (cApplication& application, cMouse& mouse, const
 	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
 	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
 	else if (hud->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-    else if (chatBox->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+	else if (chatBox->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 
 	return cWindow::handleMouseMoved (application, mouse, offset);
 }

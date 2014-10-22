@@ -261,6 +261,7 @@
     <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesteal.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesupplyammo.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetransfer.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\gamegui.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\gameguistate.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\hud.cpp" />
@@ -520,6 +521,7 @@
     <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesupplyammo.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetransfer.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetype.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\gamegui.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\gameguistate.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\hud.h" />

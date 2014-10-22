@@ -912,6 +912,9 @@
     <ClCompile Include="..\..\src\game\logic\attackjob.cpp">
       <Filter>src\game\logic</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.cpp">
+      <Filter>src\ui\graphical\game\control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\dedicatedserver.h">
@@ -1852,6 +1855,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\logic\attackjob.h">
       <Filter>src\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.h">
+      <Filter>src\ui\graphical\game\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -129,10 +129,10 @@ void cMouse::hide()
 }
 
 //------------------------------------------------------------------------------
-//eMouseCursorType cMouse::getCursorType() const
-//{
-//	return cursorType;
-//}
+const cMouseCursor* cMouse::getCursor() const
+{
+	return cursor.get();
+}
 
 //------------------------------------------------------------------------------
 bool cMouse::isButtonPressed(eMouseButtonType button) const
