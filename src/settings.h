@@ -62,6 +62,7 @@ public:
 	// have to be written to the configuration file.
 	void saveResolution();
 	void saveColorDepth();
+	void saveDisplayIndex();
 	void saveWindowMode();
 
 	// Game

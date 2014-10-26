@@ -85,7 +85,8 @@ int main (int argc, char* argv[])
 
 	if (!DEDICATED_SERVER)
 	{
-		Video.initSplash(); // show splashscreen
+		Video.init();
+		Video.showSplashScreen(); // show splashscreen
 		initSound(); // now config is loaded and we can init sound and net
 	}
 	initNet();
@@ -140,7 +141,7 @@ int main (int argc, char* argv[])
 	}
 	else
 	{
-		Video.setResolution (Video.getResolutionX(), Video.getResolutionY(), true);
+		Video.prepareGameScreen ();
 		Video.clearBuffer();
 
 		cMouse mouse;

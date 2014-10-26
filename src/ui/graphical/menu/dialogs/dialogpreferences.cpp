@@ -155,12 +155,13 @@ void cDialogPreferences::loadValues ()
 	}
 
 	resolutionsComboBox->clearItems ();
-	const auto videoModeCount = Video.getVideoSize ();
-	for (size_t i = 0; i < videoModeCount; ++i)
+	const auto& resolutions = Video.getDetectedResolutions ();
+	for (const auto& resolution : resolutions)
 	{
-		resolutionsComboBox->addItem (Video.getVideoMode (i));
+		resolutionsComboBox->addItem (iToStr (resolution.first) + "x" + iToStr (resolution.second));
 	}
-	resolutionsComboBox->setSelectedIndex (Video.validateMode (Video.getResolutionX (), Video.getResolutionY ()));
+	const auto currentResolutionIndex = Video.validateResolution (Video.getResolutionX (), Video.getResolutionY ());
+	if (currentResolutionIndex != -1) resolutionsComboBox->setSelectedIndex (currentResolutionIndex);
 
 	storePreviewValues ();
 }

@@ -465,6 +465,19 @@ void cSettings::initialize()
 		}
 
 		// =====================================================================
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Display", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
+		{
+			Log.write ("Can't load display index from config file: using default value", LOG_TYPE_WARNING);
+			Video.setDisplayIndex (0);
+			saveDisplayIndex ();
+		}
+		else
+		{
+			Video.setDisplayIndex (xmlElement->IntAttribute ("Num"));
+		}
+
+		// =====================================================================
 		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Fastmode", NULL);
 		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
@@ -1099,6 +1112,12 @@ void cSettings::saveColorDepth()
 {
 	saveSetting ("Options~Start~ColorDepth", Video.getColDepth());
 }
+//------------------------------------------------------------------------------
+void cSettings::saveDisplayIndex ()
+{
+    saveSetting ("Options~Start~Display", Video.getDisplayIndex());
+}
+
 
 
 //------------------------------------------------------------------------------
