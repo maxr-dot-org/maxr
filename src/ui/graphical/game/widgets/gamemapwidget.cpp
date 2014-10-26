@@ -65,22 +65,22 @@
 
 //------------------------------------------------------------------------------
 cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_) :
-cClickableWidget (area),
-animationTimer (animationTimer_),
-soundManager (soundManager_),
-staticMap (std::move (staticMap_)),
-dynamicMap (nullptr),
-player (nullptr),
-unitDrawingEngine (animationTimer),
-changeAllowed (true),
-pixelOffset (0, 0),
-internalZoomFactor (1.f),
-shouldDrawSurvey (false),
-shouldDrawScan (false),
-shouldDrawGrid (false),
-shouldDrawRange (false),
-shouldDrawFog (false),
-lockActive (false)
+	cClickableWidget (area),
+	animationTimer (animationTimer_),
+	soundManager (soundManager_),
+	staticMap (std::move (staticMap_)),
+	dynamicMap (nullptr),
+	player (nullptr),
+	unitDrawingEngine (animationTimer),
+	changeAllowed (true),
+	pixelOffset (0, 0),
+	internalZoomFactor (1.f),
+	shouldDrawSurvey (false),
+	shouldDrawScan (false),
+	shouldDrawGrid (false),
+	shouldDrawRange (false),
+	shouldDrawFog (false),
+	lockActive (false)
 {
 	assert (staticMap != nullptr);
 	assert (animationTimer != nullptr);
@@ -1709,7 +1709,7 @@ cPosition cGameMapWidget::getMapTilePosition (const cPosition& pixelPosition) co
 	const auto x = (int)((pixelPosition.x () - getPosition ().x () + pixelOffset.x () * getZoomFactor ()) / zoomedTileSize.x ());
 	const auto y = (int)((pixelPosition.y () - getPosition ().y () + pixelOffset.y () * getZoomFactor ()) / zoomedTileSize.y ());
 
-	const cPosition tilePosition (std::min (x, staticMap->getSize ().x ()-1), std::min(y, staticMap->getSize ().y ()-1));
+	const cPosition tilePosition (std::max(std::min (x, staticMap->getSize ().x ()-1), 0), std::max(std::min(y, staticMap->getSize ().y ()-1), 0));
 
 	return tilePosition;
 }
@@ -1793,6 +1793,12 @@ bool cGameMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 void cGameMapWidget::handleLooseMouseFocus (cApplication& application)
 {
 	mouseFocusReleased ();
+}
+
+//------------------------------------------------------------------------------
+void cGameMapWidget::handleResized (const cPosition& oldSize)
+{
+	setZoomFactor (internalZoomFactor, true); // revalidates zoom and offset
 }
 
 //------------------------------------------------------------------------------
