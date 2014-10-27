@@ -60,6 +60,12 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 }
 
 //------------------------------------------------------------------------------
+bool cRightMouseButtonScrollerWidget::isScrolling () const
+{
+	return hasStartedScrolling;
+}
+
+//------------------------------------------------------------------------------
 bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
 	if (hasStartedScrolling)
@@ -109,6 +115,7 @@ bool cRightMouseButtonScrollerWidget::handleMousePressed (cApplication& applicat
 					application.grapMouseFocus (*this);
 					startIndicator->moveTo (startPosition - startIndicator->getSize () / 2);
 					startIndicator->show ();
+					startedScrolling ();
 				}
 
 				if (hasStartedScrolling)
@@ -132,6 +139,7 @@ bool cRightMouseButtonScrollerWidget::handleMouseReleased (cApplication& applica
 		application.releaseMouseFocus (*this);
 		hasStartedScrolling = false;
 		startIndicator->hide ();
+		stoppedScrolling ();
 		return true;
 	}
 	return false;

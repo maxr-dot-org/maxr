@@ -36,9 +36,14 @@ class cRightMouseButtonScrollerWidget : public cWidget
 public:
 	cRightMouseButtonScrollerWidget (std::shared_ptr<cAnimationTimer> animationTimer);
 
+	bool isScrolling () const;
+
 	mutable cSignal<void (const cPosition&)> scroll;
 
 	mutable cSignal<void ()> mouseFocusReleased;
+
+	mutable cSignal<void ()> startedScrolling;
+	mutable cSignal<void ()> stoppedScrolling;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 

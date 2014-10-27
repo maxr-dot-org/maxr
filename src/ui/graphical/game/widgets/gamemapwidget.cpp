@@ -121,6 +121,7 @@ cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<con
 	rightMouseButtonScrollerWidget = addChild (std::make_unique<cRightMouseButtonScrollerWidget> (animationTimer));
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->scroll, std::bind (&cGameMapWidget::scroll, this, _1));
 	signalConnectionManager.connect (rightMouseButtonScrollerWidget->mouseFocusReleased, [this](){ mouseFocusReleased (); });
+	signalConnectionManager.connect (rightMouseButtonScrollerWidget->stoppedScrolling, [this](){ updateMouseCursor (); });
 	rightMouseButtonScrollerWidget->disable (); // mouse events will be forwarded explicitly
 
 	mouseInputModeChanged.connect (std::bind (static_cast<void (cGameMapWidget::*)()>(&cGameMapWidget::updateMouseCursor), this));
@@ -2121,6 +2122,8 @@ void cGameMapWidget::updateMouseCursor ()
 void cGameMapWidget::updateMouseCursor (cMouse& mouse)
 {
 	if (!isAt (mouse.getPosition ())) return;
+
+	if (rightMouseButtonScrollerWidget->isScrolling ()) return;
 
 	if (!staticMap || (unitMenu->isEnabled () && !unitMenu->isHidden () && unitMenu->isAt (mouse.getPosition ())))
 	{
