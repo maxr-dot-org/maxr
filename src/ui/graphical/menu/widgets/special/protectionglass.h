@@ -35,7 +35,7 @@ public:
 
 	cSignal<void ()> opened;
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 private:
 	cSignalConnectionManager signalConnectionManager;

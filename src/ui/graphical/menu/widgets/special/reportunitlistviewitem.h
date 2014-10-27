@@ -33,7 +33,7 @@ public:
 
 	cUnit& getUnit () const;
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 protected:
 	cImage* unitImage;

@@ -42,7 +42,7 @@ class cSliderHandle : public cWidget
 public:
 	cSliderHandle (const cPosition& position, eSliderHandleType sliderHandleType, eOrientationType orientation);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	void setMinMaxPosition (int minPosition, int maxPosition);
 

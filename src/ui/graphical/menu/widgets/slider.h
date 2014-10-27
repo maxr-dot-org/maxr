@@ -43,7 +43,7 @@ public:
 	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderType sliderType = eSliderType::Default);
 	cSlider (const cBox<cPosition>& area, int minValue, int maxValue, eOrientationType orientation, eSliderHandleType handleType, eSliderType sliderType = eSliderType::Default);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleMoved (const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 

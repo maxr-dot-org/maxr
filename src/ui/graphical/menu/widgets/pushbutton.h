@@ -81,7 +81,7 @@ public:
 	cPushButton (const cPosition& position, ePushButtonType buttonType, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
 	cPushButton (const cPosition& position, ePushButtonType buttonType, cSoundChunk* clickSound, const std::string& text, eUnicodeFontType fontType = FONT_LATIN_BIG);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;

@@ -45,7 +45,7 @@ class cChatBox : public cWidget
 public:
 	cChatBox (const cBox<cPosition>& area);
 
-	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 
