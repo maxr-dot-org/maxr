@@ -55,7 +55,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, true));
 	auto sendButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
 	signalConnectionManager.connect (sendButton->clicked, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, false));
-	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition () + cPosition (14, 284), getPosition () + cPosition (14 + 439, 284 + 124))));
+	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition () + cPosition (14, 284), getPosition () + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic));
 	chatList->disableSelectable ();
 	chatList->setBeginMargin (cPosition (12, 12));
 	chatList->setEndMargin (cPosition (10, 10));
@@ -83,11 +83,11 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	});
 	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit](eValidatorState){localPlayer->setName (nameLineEdit->getText ()); });
 
-	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition () + cPosition (465, 284), getPosition () + cPosition (465 + 167, 284 + 124))));
+	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition () + cPosition (465, 284), getPosition () + cPosition (465 + 167, 284 + 124)), eScrollBarStyle::Classic));
 	playersList->disableSelectable ();
 	playersList->setBeginMargin (cPosition (12, 12));
 	playersList->setEndMargin (cPosition (10, 10));
-	playersList->setItemDistance (cPosition (0, 4));
+	playersList->setItemDistance (4);
 
 	auto selectColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectColorButton->clicked, [this]()

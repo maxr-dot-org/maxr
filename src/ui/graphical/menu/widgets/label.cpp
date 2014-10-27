@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ui/graphical/menu/widgets/label.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeFontType fontType_, AlignmentFlags alignment_) :
@@ -26,6 +27,10 @@ cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeF
 	alignment (alignment_),
 	wordWrap (false)
 {
+	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+
 	setText (text_);
 }
 
@@ -175,27 +180,28 @@ void cLabel::updateDisplayInformation ()
 	{
 		drawLines.push_back (text);
 	}
-}
 
-//------------------------------------------------------------------------------
-void cLabel::draw ()
-{
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+
 	const auto height = font->getFontHeight (fontType) * drawLines.size ();
 
 	int drawPositionY;
 	if (alignment & eAlignmentType::Bottom)
 	{
-		drawPositionY = getEndPosition ().y () - height;
+		drawPositionY = getSize ().y () - height;
 	}
 	else if (alignment & eAlignmentType::CenterVerical)
 	{
-		drawPositionY = getPosition ().y () + getSize ().y () / 2 - height / 2;
+		drawPositionY = getSize ().y () / 2 - height / 2;
 	}
 	else
 	{
-		drawPositionY = getPosition ().y ();
+		drawPositionY = 0;
 	}
 
+	auto originalTargetSurface = font->getTargetSurface ();
+	auto fontTargetSurfaceResetter = makeScopedOperation ([originalTargetSurface](){ font->setTargetSurface (originalTargetSurface); });
+	font->setTargetSurface (surface.get ());
 	for (size_t i = 0; i < drawLines.size (); ++i)
 	{
 		const auto& line = drawLines[i];
@@ -205,29 +211,42 @@ void cLabel::draw ()
 		int drawPositionX;
 		if (alignment & eAlignmentType::Right)
 		{
-			drawPositionX = getEndPosition ().x () - width;
+			drawPositionX = getSize ().x () - width;
 		}
 		else if (alignment & eAlignmentType::CenterHorizontal)
 		{
-			drawPositionX = getPosition ().x () + getSize ().x () / 2 - width / 2;
+			drawPositionX = getSize ().x () / 2 - width / 2;
 		}
 		else
 		{
-			drawPositionX = getPosition ().x ();
+			drawPositionX = 0;
 		}
 
 		font->showText (drawPositionX, drawPositionY, line, fontType);
 
 		drawPositionY += font->getFontHeight (fontType);
 	}
+}
 
-	cWidget::draw ();
+//------------------------------------------------------------------------------
+void cLabel::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
+{
+	if (surface && getArea ().intersects (clipRect))
+	{
+		blitClipped (*surface, getArea(), destination, clipRect);
+	}
+
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
 void cLabel::handleResized (const cPosition& oldSize)
 {
 	cWidget::handleResized (oldSize);
+
+	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	updateDisplayInformation ();
 }

@@ -35,7 +35,6 @@ public:
 	cAbstractListViewItem ();
 
 	explicit cAbstractListViewItem (const cPosition& size);
-
 protected:
 	void select ();
 	void deselect ();

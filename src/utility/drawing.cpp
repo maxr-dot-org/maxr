@@ -117,6 +117,22 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 }
 
 //------------------------------------------------------------------------------
+void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize, const cBox<cPosition>& clipRect)
+{
+	if (!rectangle.intersects (clipRect)) return;
+
+	const cPosition size = rectangle.getSize ();
+	AutoSurface tempSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), 32, 0, 0, 0, 0));
+	SDL_FillRect (tempSurface.get (), NULL, 0xFF00FF);
+	SDL_SetColorKey (tempSurface.get (), SDL_TRUE, 0xFF00FF);
+
+	auto rectangle2 = cBox<cPosition> (cPosition (0, 0), rectangle.getMaxCorner () - rectangle.getMinCorner ());
+	drawSelectionCorner (*tempSurface, rectangle2, color, cornerSize);
+
+	blitClipped (*tempSurface, rectangle, surface, clipRect);
+}
+
+//------------------------------------------------------------------------------
 Uint32 getPixel (const SDL_Surface& surface, const cPosition& position)
 {
 	int bpp = surface.format->BytesPerPixel;
@@ -219,4 +235,18 @@ void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRg
 	//	}
 	//}
 	//SDL_UnlockSurface (&surface);
+}
+
+void blitClipped (SDL_Surface& source, const cBox<cPosition>& area, SDL_Surface& destination, const cBox<cPosition>& clipRect)
+{
+	auto clipedArea = area.intersection (clipRect);
+
+	SDL_Rect position = clipedArea.toSdlRect ();
+
+	clipedArea.getMinCorner () -= area.getMinCorner ();
+	clipedArea.getMaxCorner () -= area.getMinCorner ();
+
+	SDL_Rect sourceRect = clipedArea.toSdlRect ();
+
+	SDL_BlitSurface (&source, &sourceRect, &destination, &position);
 }

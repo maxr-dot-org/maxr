@@ -232,14 +232,22 @@ bool cWidget::isAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-void cWidget::draw ()
+void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (isHidden ()) return;
 
-	if (frameSurface != nullptr)
+	if (frameSurface && getArea().intersects(clipRect))
 	{
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (frameSurface.get (), NULL, cVideo::buffer, &position);
+		auto clipedArea = getArea ().intersection (clipRect);
+
+		SDL_Rect position = clipedArea.toSdlRect ();
+
+		clipedArea.getMinCorner () -= getPosition ();
+		clipedArea.getMaxCorner () -= getPosition ();
+
+		SDL_Rect source = clipedArea.toSdlRect ();
+
+		SDL_BlitSurface (frameSurface.get (), &source, &destination, &position);
 	}
 
 	for (auto i = children.begin (); i != children.end (); ++i)
@@ -248,7 +256,10 @@ void cWidget::draw ()
 
 		if (child.isHidden ()) continue;
 
-		child.draw ();
+		if (child.getArea ().intersects (clipRect))
+		{
+			child.draw (destination, child.getArea ().intersection (clipRect));
+		}
 	}
 }
 

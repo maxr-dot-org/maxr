@@ -144,7 +144,7 @@ cPosition cMiniMapWidget::computeMapPosition (const cPosition& screenPosition)
 }
 
 //------------------------------------------------------------------------------
-void cMiniMapWidget::draw ()
+void cMiniMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if(surfaceOutdated) renewSurface ();
 	if(viewWindowSurfaeOutdated) renewViewWindowSurface ();
@@ -152,14 +152,14 @@ void cMiniMapWidget::draw ()
 	if (surface != nullptr)
 	{
 		auto position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 	if (viewWindowSurface != nullptr)
 	{
 		auto position = getArea ().toSdlRect ();
-		SDL_BlitSurface (viewWindowSurface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (viewWindowSurface.get (), nullptr, &destination, &position);
 	}
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

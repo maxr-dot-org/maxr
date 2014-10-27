@@ -71,16 +71,16 @@ cReportUnitListViewItem::cReportUnitListViewItem (cUnit& unit_) :
 }
 
 //------------------------------------------------------------------------------
-void cReportUnitListViewItem::draw ()
+void cReportUnitListViewItem::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	cAbstractListViewItem::draw ();
+	cAbstractListViewItem::draw (destination, clipRect);
 
 	if (isSelected ())
 	{
 		auto dest = unitImage->getArea ();
 		dest.getMinCorner () -= cPosition (1, 1);
 		dest.getMaxCorner () += cPosition (1, 1);
-		drawSelectionCorner (*cVideo::buffer, dest, cRgbColor(224, 224, 224), 8);
+		drawSelectionCorner (destination, dest, cRgbColor (224, 224, 224), 8, cBox<cPosition> (clipRect.getMinCorner () - 1, clipRect.getMaxCorner () + 1));
 	}
 }
 

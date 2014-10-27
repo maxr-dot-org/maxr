@@ -67,17 +67,17 @@ void cUnitDetailsHud::setGameSettings (std::shared_ptr<const cGameSettings> game
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsHud::draw ()
+void cUnitDetailsHud::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		reset ();
 
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

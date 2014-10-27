@@ -28,7 +28,7 @@ cGameMessageListView::cGameMessageListView (const cBox<cPosition>& area) :
 	listView = addChild (std::make_unique<cListView<cGameMessageListViewItem>> (area, false, nullptr));
 	listView->setBeginMargin (cPosition (0, 0));
 	listView->setEndMargin (cPosition (0, 0));
-	listView->setItemDistance (cPosition (0, 0));
+	listView->setItemDistance (0);
 }
 
 //------------------------------------------------------------------------------

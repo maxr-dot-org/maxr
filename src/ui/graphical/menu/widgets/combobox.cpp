@@ -30,18 +30,18 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 	cWidget (area),
 	maxVisibleItems (5)
 {
-	const cBox<cPosition> listViewArea (cPosition (area.getMinCorner ().x (), area.getMaxCorner ().y ()), cPosition (area.getMaxCorner ().x (), area.getMaxCorner ().y () + 5));
-	listView = addChild (std::make_unique<cListView<cTextListViewItem>> (listViewArea));
+	const cBox<cPosition> listViewArea (cPosition (area.getMinCorner ().x (), area.getMaxCorner ().y ()-1), cPosition (area.getMaxCorner ().x ()-3, area.getMaxCorner ().y () + 5));
+	listView = addChild (std::make_unique<cListView<cTextListViewItem>> (listViewArea, eScrollBarStyle::Modern));
 	listView->setBeginMargin (cPosition (2, 2));
 	listView->setEndMargin (cPosition (2, 0));
-	listView->setItemDistance (cPosition (0, 0));
+	listView->setItemDistance (0);
 	listView->hide ();
 	listView->disable ();
 
 	downButton = addChild (std::make_unique<cCheckBox> (getEndPosition (), eCheckBoxType::ArrowDownSmall));
 	downButton->move (downButton->getSize () * -1);
 
-	const cBox<cPosition> lineEditArea (getPosition () + cPosition (2, (area.getSize ().y ()-font->getFontHeight (FONT_LATIN_NORMAL))/2)+1, cPosition (getEndPosition ().x() - downButton->getSize ().x () - 2, font->getFontHeight (FONT_LATIN_NORMAL)));
+	const cBox<cPosition> lineEditArea (getPosition () + cPosition (2, (area.getSize ().y ()-font->getFontHeight (FONT_LATIN_NORMAL))/2)+1, cPosition (getEndPosition ().x () - downButton->getSize ().x () - 2, getPosition ().y() + (area.getSize ().y ()-font->getFontHeight (FONT_LATIN_NORMAL))/2+font->getFontHeight (FONT_LATIN_NORMAL)));
 	lineEdit = addChild (std::make_unique<cLineEdit> (lineEditArea));
 	lineEdit->setReadOnly (true);
 
@@ -84,22 +84,22 @@ cComboBox::cComboBox (const cBox<cPosition>& area) :
 
 
 //------------------------------------------------------------------------------
-void cComboBox::draw ()
+void cComboBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (!listView->isHidden() && listViewBackground != nullptr)
 	{
 		SDL_Rect position = listView->getArea ().toSdlRect ();
-		SDL_BlitSurface (listViewBackground.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (listViewBackground.get (), nullptr, &destination, &position);
 	}
 	if (lineEditBackground != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
 		position.w = lineEditBackground->w;
 		position.h = lineEditBackground->h;
-		SDL_BlitSurface (lineEditBackground.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (lineEditBackground.get (), nullptr, &destination, &position);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ void cComboBox::updateListViewSize ()
 
 	const auto itemHeight = font->getFontHeight (FONT_LATIN_NORMAL)+1;
 
-	const auto requiredSize = listView->getBeginMargin ().y () + listView->getEndMargin ().y () + itemHeight*visibleItems + (visibleItems > 0 ? (listView->getItemDistance ().y ()*(visibleItems-1)) : 0) + 1;
+	const auto requiredSize = listView->getBeginMargin ().y () + listView->getEndMargin ().y () + itemHeight*visibleItems + (visibleItems > 0 ? (listView->getItemDistance ()*(visibleItems-1)) : 0) + 1;
 	
 	const auto currentSize = listView->getSize ();
 
@@ -134,7 +134,7 @@ void cComboBox::updateLineEditBackground ()
 
 	SDL_FillRect (lineEditBackground.get (), nullptr, 0x181818);
 
-	drawRectangle (*listViewBackground, cBox<cPosition> (cPosition (0, 0), cPosition (lineEditBackground->w, lineEditBackground->h)), cRgbColor::black());
+	drawRectangle (*lineEditBackground, cBox<cPosition> (cPosition (0, 0), cPosition (lineEditBackground->w, lineEditBackground->h)), cRgbColor::black ());
 }
 
 //------------------------------------------------------------------------------

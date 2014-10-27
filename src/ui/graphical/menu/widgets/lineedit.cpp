@@ -119,12 +119,12 @@ void cLineEdit::finishEditingInternal ()
 	}
 }
 //------------------------------------------------------------------------------
-void cLineEdit::draw ()
+void cLineEdit::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 
 	const auto offsetRect = getTextDrawOffset ();
@@ -146,7 +146,7 @@ void cLineEdit::draw ()
 		if (showCursor) font->showText (textPosition.x () + cursorXOffset + font->getTextWide (text.substr (startOffset, cursorPos - startOffset), fontType), textPosition.y (), "|", fontType);
 	}
 
-	cClickableWidget::draw ();
+	cClickableWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

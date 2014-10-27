@@ -155,7 +155,7 @@ void cApplication::execute ()
 				//                - use non-busy waiting if there is nothing to be done
 				if (!cSettings::getInstance ().shouldUseFastMode ()) SDL_Delay (1);
 
-				activeWindow->draw ();
+				activeWindow->draw (*cVideo::buffer, activeWindow->getArea());
 				lastActiveWindow = activeWindow;
 
 				SDL_Rect dest = {0, 0, 55, 10};

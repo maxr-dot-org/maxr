@@ -109,7 +109,7 @@ public:
 
 	virtual bool isAt (const cPosition& position) const;
 
-	virtual void draw ();
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect);
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset);
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button);

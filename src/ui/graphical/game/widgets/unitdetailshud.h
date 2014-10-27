@@ -36,7 +36,7 @@ class cUnitDetailsHud : public cWidget
 public:
 	explicit cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines = false);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
 
 	void setUnit (const cUnit* unit);
 

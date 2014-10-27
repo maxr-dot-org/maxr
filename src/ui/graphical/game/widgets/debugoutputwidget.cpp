@@ -128,7 +128,7 @@ void cDebugOutputWidget::setDebugSync (bool value)
 }
 
 //------------------------------------------------------------------------------
-void cDebugOutputWidget::draw ()
+void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (!client) return;
 
@@ -154,27 +154,27 @@ void cDebugOutputWidget::draw ()
 
 			if (playerList[i]->getHasFinishedTurn() /* && playerList[i] != &player*/)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, cVideo::buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, &destination, &rDotDest);
 			}
 #if 0
 			else if (playerList[i] == &player && client->bWantToEnd)
 			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, cVideo::buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, &destination, &rDotDest);
 			}
 #endif
 			else
 			{
 				rDot.x = 0; // for red dot
-				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, cVideo::buffer, &rDotDest);
+				SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &rDot, &destination, &rDotDest);
 			}
 
-			SDL_BlitSurface (playerList[i]->getColor().getTexture (), &rSrc, cVideo::buffer, &rDest);
+			SDL_BlitSurface (playerList[i]->getColor ().getTexture (), &rSrc, &destination, &rDest);
 			if (playerList[i].get() == &player)
 			{
 				std::string sTmpLine = " " + playerList[i]->getName () + ", nr: " + iToStr (playerList[i]->getNr ()) + " << you! ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
+				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
 				font->showText (rBlackOut.x, drawPositionY + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			else
@@ -182,7 +182,7 @@ void cDebugOutputWidget::draw ()
 				std::string sTmpLine = " " + playerList[i]->getName () + ", nr: " + iToStr (playerList[i]->getNr ()) + " ";
 				// black out background for better recognizing
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);
-				SDL_FillRect (cVideo::buffer, &rBlackOut, 0xFF000000);
+				SDL_FillRect (&destination, &rBlackOut, 0xFF000000);
 				font->showText (rBlackOut.x, drawPositionY + 1, sTmpLine, FONT_LATIN_SMALL_WHITE);
 			}
 			// use 10 for pixel high of dots instead of text high

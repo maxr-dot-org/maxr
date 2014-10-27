@@ -38,7 +38,7 @@ class cUnitDetails : public cWidget
 public:
 	explicit cUnitDetails (const cPosition& position);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;;
 
 	const sID* getCurrentUnitId ();
 

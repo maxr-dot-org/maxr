@@ -500,7 +500,7 @@ void cGameMapWidget::setPlayer (std::shared_ptr<const cPlayer> player_)
 }
 
 //------------------------------------------------------------------------------
-void cGameMapWidget::draw ()
+void cGameMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	drawTerrain();
 
@@ -545,7 +545,7 @@ void cGameMapWidget::draw ()
 
 	//displayMessages ();
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

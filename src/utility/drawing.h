@@ -34,10 +34,24 @@ void drawRectangle (SDL_Surface& surface, const cBox<cPosition>& rectangle, cons
 
 void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize);
 
+void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle, const cRgbColor& color, int cornerSize, const cBox<cPosition>& clipRect);
+
 Uint32 getPixel (const SDL_Surface& surface, const cPosition& position);
 
 void putPixel (SDL_Surface& surface, const cPosition& position, Uint32 pixel);
 
 void replaceColor (SDL_Surface& surface, const cRgbColor& sourceColor, const cRgbColor& destinationColor);
+
+/**
+ * Blits a surface onto an other one at a given destination area.
+ *
+ * Additionally the destination area where the surface pixels will be changed will be clipped by an additional input area.
+ *
+ * @param source The surface to blit onto the the destination surface.
+ * @param area The area in the destination where the source should be blit to.
+ * @param destination The surface on which the source should be blit onto.
+ * @param clipRect The clipping area.
+ */
+void blitClipped (SDL_Surface& source, const cBox<cPosition>& area, SDL_Surface& destination, const cBox<cPosition>& clipRect);
 
 #endif // utility_drawingH

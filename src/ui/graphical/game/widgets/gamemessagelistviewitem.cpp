@@ -47,17 +47,17 @@ std::chrono::steady_clock::time_point cGameMessageListViewItem::getCreationTime 
 }
 
 //------------------------------------------------------------------------------
-void cGameMessageListViewItem::draw ()
+void cGameMessageListViewItem::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (cSettings::getInstance ().isAlphaEffects ())
 	{
 		auto rect = getArea ().toSdlRect ();
 
-		if (background != nullptr) SDL_BlitSurface (background.get (), nullptr, Video.buffer, &rect);
-		else Video.applyShadow (&rect);
+		if (background != nullptr) SDL_BlitSurface (background.get (), nullptr, &destination, &rect);
+		else Video.applyShadow (&rect, destination);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

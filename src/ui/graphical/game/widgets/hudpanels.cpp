@@ -60,7 +60,7 @@ void cHudPanels::close ()
 }
 
 //------------------------------------------------------------------------------
-void cHudPanels::draw ()
+void cHudPanels::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	SDL_Rect top = {getPosition ().x (), getPosition ().y () + (getSize ().y () / 2) - GraphicsData.gfx_panel_top->h, GraphicsData.gfx_panel_top->w, GraphicsData.gfx_panel_top->h};
 	SDL_Rect bottom = {getPosition ().x (), getPosition ().y () + (getSize ().y () / 2), GraphicsData.gfx_panel_bottom->w, GraphicsData.gfx_panel_top->h};
@@ -70,8 +70,8 @@ void cHudPanels::draw ()
 	top.y -= offset;
 	bottom.y += offset;
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), NULL, cVideo::buffer, &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), NULL, cVideo::buffer, &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), nullptr, &destination, &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), nullptr, &destination, &bottom);
 }
 
 //------------------------------------------------------------------------------

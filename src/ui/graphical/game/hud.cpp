@@ -200,16 +200,16 @@ bool cHud::isAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-void cHud::draw ()
+void cHud::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		auto position = getArea ().toSdlRect ();
 		//SDL_Rect rect = {0, getEndPosition ().y () - panelBottomHeight * 2, getSize ().x (), panelBottomHeight * 2};
-		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

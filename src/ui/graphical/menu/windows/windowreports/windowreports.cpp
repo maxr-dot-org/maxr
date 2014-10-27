@@ -128,7 +128,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 	unitsFrame = addChild (std::make_unique<cFrame> (frameArea));
 	unitsList = unitsFrame->addChild (std::make_unique<cListView<cReportUnitListViewItem>> (frameArea));
 	unitsList->setBeginMargin (cPosition (5, 4));
-	unitsList->setItemDistance (cPosition (0, 6));
+	unitsList->setItemDistance (6);
 	signalConnectionManager.connect (unitsList->itemClicked, std::bind (&cWindowReports::handleUnitClicked, this, _1));
 
 	disadvantagesFrame = addChild (std::make_unique<cFrame> (frameArea));
@@ -180,7 +180,7 @@ cWindowReports::cWindowReports (std::vector<std::shared_ptr<const cPlayer>> play
 
 	reportsFrame = addChild (std::make_unique<cFrame> (frameArea));
 	reportsList = reportsFrame->addChild (std::make_unique<cListView<cReportMessageListViewItem>> (frameArea));
-	reportsList->setItemDistance (cPosition (0, 6));
+	reportsList->setItemDistance (6);
 	signalConnectionManager.connect (reportsList->itemClicked, std::bind (&cWindowReports::handleReportClicked, this, _1));
 
 	updateActiveFrame ();

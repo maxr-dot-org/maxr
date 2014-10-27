@@ -67,6 +67,7 @@ void cWindowHangar::initialize ()
 	using namespace std::placeholders;
 
 	selectionUnitList = addChild (std::make_unique<cListView<cUnitListViewItemBuy>> (cBox<cPosition> (getPosition () + cPosition (477, 50), getPosition () + cPosition (477 + 154, 50 + 326))));
+	selectionUnitList->setEndMargin (cPosition (2, 10));
 	signalConnectionManager.connect (selectionUnitList->itemClicked, std::bind (&cWindowHangar::selectionUnitClicked, this, _1));
 	signalConnectionManager.connect (selectionUnitList->selectionChanged, std::bind (&cWindowHangar::handleSelectionChanged, this));
 

@@ -59,16 +59,16 @@ cReportMessageListViewItem::cReportMessageListViewItem (const cSavedReport& repo
 }
 
 //------------------------------------------------------------------------------
-void cReportMessageListViewItem::draw ()
+void cReportMessageListViewItem::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
-	cAbstractListViewItem::draw ();
+	cAbstractListViewItem::draw (destination, clipRect);
 
 	if (isSelected ())
 	{
 		auto dest = getArea ();
 		dest.getMinCorner () -= cPosition (1, 1);
 		dest.getMaxCorner () += cPosition (1, 1);
-		drawRectangle (*cVideo::buffer, dest, cRgbColor (0xE0, 0xE0, 0xE0));
+		drawRectangle (destination, dest, cRgbColor (0xE0, 0xE0, 0xE0));
 	}
 }
 

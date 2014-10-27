@@ -46,7 +46,7 @@ cWindowBuildVehicles::cWindowBuildVehicles (const cBuilding& building_, const cM
 	speedHandler = addChild (std::make_unique<cBuildSpeedHandlerWidget> (getPosition () + cPosition (292, 345)));
 
 	selectionUnitList->resize (cPosition(154,380));
-	selectionUnitList->setItemDistance (cPosition (0, 2));
+	selectionUnitList->setItemDistance (2);
 
 	selectionListUpButton->moveTo (getPosition () + cPosition (471, 440));
 	selectionListDownButton->moveTo (getPosition () + cPosition (491, 440));

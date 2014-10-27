@@ -163,7 +163,7 @@ public:
 
 	void takeScreenShot (const std::string& filename) const;
 
-	void applyShadow (const SDL_Rect* rect);
+	void applyShadow (const SDL_Rect* rect, SDL_Surface& destination);
 
 	mutable cSignal<void(const std::string&)> screenShotTaken;
 
