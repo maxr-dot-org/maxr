@@ -25,6 +25,16 @@
 #include "utility/drawing.h"
 #include "utility/color.h"
 
+/*static*/ bool cWidget::drawDebugFrames = false;
+/*static*/ cSignal<void ()> cWidget::drawDebugFramesChanged;
+
+//------------------------------------------------------------------------------
+/*static*/ void cWidget::toggleDrawDebugFrames ()
+{
+	drawDebugFrames = !drawDebugFrames;
+	drawDebugFramesChanged ();
+}
+
 //------------------------------------------------------------------------------
 cWidget::cWidget () :
 	parent (nullptr),
@@ -33,6 +43,8 @@ cWidget::cWidget () :
 	area (cPosition (0, 0), cPosition (0, 0))
 {
 	createFrameSurface ();
+
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
 }
 
 //------------------------------------------------------------------------------
@@ -43,6 +55,8 @@ cWidget::cWidget (const cPosition& position) :
 	area (position, position)
 {
 	createFrameSurface ();
+
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
 }
 
 //------------------------------------------------------------------------------
@@ -53,6 +67,8 @@ cWidget::cWidget (const cBox<cPosition>& area_) :
 	area (area_)
 {
 	createFrameSurface ();
+
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
 }
 
 //------------------------------------------------------------------------------
@@ -401,8 +417,7 @@ cApplication* cWidget::getActiveApplication () const
 //------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
-	const bool debugDrawFrame = false;
-	if (debugDrawFrame)
+	if (drawDebugFrames)
 	{
 		const auto size = getSize();
 
@@ -414,6 +429,10 @@ void cWidget::createFrameSurface ()
 		SDL_FillRect (frameSurface.get (), NULL, 0xFF00FF);
 
 		drawRectangle (*frameSurface, cBox<cPosition> (cPosition (0, 0), size), cRgbColor::red());
+	}
+	else
+	{
+		frameSurface = nullptr;
 	}
 }
 

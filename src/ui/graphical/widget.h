@@ -32,6 +32,7 @@
 #include "utility/autosurface.h"
 #include "maxrconfig.h"
 #include "ui/graphical/shortcut.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cMouse;
 class cKeyboard;
@@ -42,6 +43,8 @@ class cShortcut;
 class cWidget
 {
 public:
+	static void toggleDrawDebugFrames ();
+
 	cWidget ();
 	explicit cWidget (const cPosition& position);
 	explicit cWidget (const cBox<cPosition>& area);
@@ -169,8 +172,13 @@ protected:
 
 	virtual cApplication* getActiveApplication () const;
 private:
+	static bool drawDebugFrames;
+	static cSignal<void ()> drawDebugFramesChanged;
+
 	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
 	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;
+
+	cSignalConnectionManager signalConnectionManager;
 
 	cWidget* parent;
 

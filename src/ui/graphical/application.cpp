@@ -38,8 +38,8 @@ cApplication::cApplication () :
 	activeMouse (nullptr),
 	activeKeyboard (nullptr),
 	keyFocusWidget (nullptr),
-	mouseFocusWidget (nullptr)
-	//underMouseWidget (nullptr)
+	mouseFocusWidget (nullptr),
+	shouldDrawFramesPerSecond (false)
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{
@@ -158,9 +158,7 @@ void cApplication::execute ()
 				activeWindow->draw (*cVideo::buffer, activeWindow->getArea());
 				lastActiveWindow = activeWindow;
 
-				SDL_Rect dest = {0, 0, 55, 10};
-				SDL_FillRect (cVideo::buffer, &dest, 0);
-				font->showText (0, 0, "FPS: " + iToStr (frameCounter.getFramesPerSecond ()));
+				if (shouldDrawFramesPerSecond) drawFramesPerSecond (frameCounter.getFramesPerSecond());
 
 				Video.draw ();
 				frameCounter.frameDrawn ();
@@ -392,6 +390,23 @@ void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 //------------------------------------------------------------------------------
 void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
+	if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight) &&
+		keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight))
+	{
+		switch (key)
+		{
+		// Toggle frames per second
+		case SDLK_f:
+			if (shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
+			shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
+			break;
+		// Toggle debug frames
+		case SDLK_d:
+			cWidget::toggleDrawDebugFrames ();
+			break;
+		}
+	}
+
 	auto widget = getKeyFocusWidget ();
 
 	// TODO: catch TAB event and may switch key focus widget
@@ -509,4 +524,12 @@ bool cApplication::hitShortcuts (cKeySequence& keySequence)
 		keySequence.reset ();
 	}
 	return anyMatch;
+}
+
+//------------------------------------------------------------------------------
+void cApplication::drawFramesPerSecond (unsigned int fps, bool draw)
+{
+	SDL_Rect dest = {0, 0, 55, 10};
+	SDL_FillRect (cVideo::buffer, &dest, 0);
+	if (draw) font->showText (0, 0, "FPS: " + iToStr (fps));
 }

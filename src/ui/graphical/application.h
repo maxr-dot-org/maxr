@@ -100,6 +100,8 @@ private:
 
 	std::list<std::shared_ptr<cRunnable>> runnables;
 
+	bool shouldDrawFramesPerSecond;
+
 	void center (cWindow& window);
 
 	cWindow* getActiveWindow ();
@@ -120,6 +122,8 @@ private:
 	void assignKeyFocus (cWidget* widget);
 
 	bool hitShortcuts (cKeySequence& shortcut);
+
+	void drawFramesPerSecond (unsigned int fps, bool draw = true);
 };
 
 //------------------------------------------------------------------------------
