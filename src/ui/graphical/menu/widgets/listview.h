@@ -534,6 +534,7 @@ void cListView<ItemType>::handleResized (const cPosition& oldSize)
 	if (scrollBar)
 	{
 		scrollBar->resize (cPosition (scrollBar->getSize ().x (), getSize ().y ()));
+		scrollBar->moveTo (getPosition() + cPosition (getSize ().x () - scrollBar->getSize ().x () + 1, 0));
 	}
 
 	for (size_t i = 0; i < items.size (); ++i)
