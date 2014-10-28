@@ -26,6 +26,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
@@ -73,8 +74,7 @@ void cUnitDetailsHud::draw (SDL_Surface& destination, const cBox<cPosition>& cli
 	{
 		reset ();
 
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
+		blitClipped (*surface, getArea (), destination, clipRect);
 	}
 
 	cWidget::draw (destination, clipRect);
