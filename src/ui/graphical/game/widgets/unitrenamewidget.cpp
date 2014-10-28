@@ -31,7 +31,7 @@ cUnitRenameWidget::cUnitRenameWidget (const cPosition& position, int width) :
 	activeUnit (nullptr),
 	player (nullptr)
 {
-	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 10), getPosition () + cPosition (width, 10)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::Left));
+	selectedUnitStatusLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 10), getPosition () + cPosition (width, 10 + 110)), "", FONT_LATIN_SMALL_WHITE, eAlignmentType::Left));
 	selectedUnitNamePrefixLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (width, 10)), "", FONT_LATIN_SMALL_GREEN, eAlignmentType::Left));
 	selectedUnitNameEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition (), getPosition () + cPosition (width, 10)), eLineEditFrameType::None, FONT_LATIN_SMALL_GREEN));
 
