@@ -78,8 +78,16 @@ cWidget::~cWidget ()
 
 	if (application)
 	{
-		if (application->hasKeyFocus (*this)) application->releaseKeyFocus (*this);
-		if (application->hasMouseFocus (*this)) application->releaseMouseFocus (*this);
+		// release the mouse or key focus of this widget or any of its children.
+		// We have to release the focus of the children as well because after the parent is deleted
+		// the children have no possibility to access the application anymore
+		releaseFocusRecursive (*application);
+	}
+
+	// just to make sure the children will not access the parent during their clean up.
+	for (auto& child : children)
+	{
+		child->setParent (nullptr);
 	}
 }
 
@@ -476,4 +484,19 @@ bool cWidget::hitShortcuts (cKeySequence& keySequence)
 		}
 	}
 	return false;
+}
+
+//------------------------------------------------------------------------------
+void cWidget::releaseFocusRecursive (cApplication& application)
+{
+	if (application.hasKeyFocus (*this)) application.releaseKeyFocus (*this);
+	if (application.hasMouseFocus (*this)) application.releaseMouseFocus (*this);
+
+	if (application.hasKeyFocus () || application.hasMouseFocus ())
+	{
+		for (auto& child : children)
+		{
+			child->releaseFocusRecursive (application);
+		}
+	}
 }

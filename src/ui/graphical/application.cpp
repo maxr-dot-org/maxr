@@ -134,8 +134,6 @@ void cApplication::execute ()
 			{
 				if (lastActiveWindow != nullptr) lastActiveWindow->handleDeactivated (*this, false);
 				activeWindow->handleActivated (*this, !lastClosed);
-				keyFocusWidget = nullptr;
-				mouseFocusWidget = nullptr;
 				lastClosed = false;
 			}
 
@@ -146,6 +144,8 @@ void cApplication::execute ()
 				activeWindowOwned->handleDeactivated (*this, true);
 				lastActiveWindow = nullptr;
 				lastClosed = true;
+				keyFocusWidget = nullptr;
+				mouseFocusWidget = nullptr;
 			}
 			else
 			{
@@ -215,6 +215,12 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
+bool cApplication::hasMouseFocus () const
+{
+	return mouseFocusWidget != nullptr;
+}
+
+//------------------------------------------------------------------------------
 void cApplication::grapKeyFocus (cWidget& widget)
 {
 	assignKeyFocus (&widget);
@@ -233,6 +239,12 @@ void cApplication::releaseKeyFocus (const cWidget& widget)
 bool cApplication::hasKeyFocus (const cWidget& widget) const
 {
 	return keyFocusWidget == &widget;
+}
+
+//------------------------------------------------------------------------------
+bool cApplication::hasKeyFocus () const
+{
+	return keyFocusWidget != nullptr;
 }
 
 //------------------------------------------------------------------------------

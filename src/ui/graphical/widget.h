@@ -194,6 +194,8 @@ private:
 	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 
 	void createFrameSurface ();
+
+	void releaseFocusRecursive (cApplication& application);
 };
 
 //------------------------------------------------------------------------------

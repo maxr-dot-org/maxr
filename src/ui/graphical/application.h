@@ -68,10 +68,12 @@ public:
 	void grapMouseFocus (cWidget& widget);
 	void releaseMouseFocus (const cWidget& widget);
 	bool hasMouseFocus (const cWidget& widget) const;
+	bool hasMouseFocus () const;
 
 	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
 	bool hasKeyFocus (const cWidget& widget) const;
+	bool hasKeyFocus () const;
 
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
     std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
