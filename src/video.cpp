@@ -27,7 +27,7 @@
 
 #include "main.h"
 #include "video.h"
-
+#include "maxrversion.h"
 #include "defines.h"
 #include "utility/log.h"
 #include "pcx.h"

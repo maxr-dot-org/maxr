@@ -19,7 +19,6 @@ include_directories(src)
 # === Global defines
 # ============================================
 
-#add_definitions( -DTIXML_USE_STL )
 
 if(MAXR_BUILD_DEDICATED_SERVER)
   add_definitions( -DDEDICATED_SERVER_APPLICATION )
@@ -72,6 +71,25 @@ else()
 endif()
 
 # ============================================
+# === Add GIT Revision
+# ============================================
+
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
+include(GetGitRevisionDescription)
+git_describe(GIT_DESC --always)
+
+if (GIT_DESC)
+  message("Setting cpp define PACKAGE_REV to ${GIT_DESC}")
+  add_definitions("-DHAVE_AUTOVERSION_H")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+else()
+  message("Could not automativally set the maxr PACKAGE_REV from git. Set cmake variable GIT_EXECUTABLE to use this feature.")
+endif()
+
+# ============================================
 # === Target
 # ============================================
 
@@ -105,7 +123,6 @@ endif()
 # ============================================
 # === Additional Packages
 # ============================================
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
 
 # ---------------------------------------
 # SDL2

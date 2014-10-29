@@ -35,7 +35,7 @@
 #endif
 
 #include "loaddata.h"
-
+#include "maxrversion.h"
 #include "utility/autosurface.h"
 #include "game/data/units/building.h"
 #include "game/data/player/clans.h"

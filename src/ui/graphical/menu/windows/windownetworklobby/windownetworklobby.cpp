@@ -36,6 +36,7 @@
 #include "game/logic/savegame.h"
 #include "network.h"
 #include "menuevents.h"
+#include "maxrversion.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :

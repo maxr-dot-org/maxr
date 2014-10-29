@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "game/logic/savegame.h"
-
+#include "maxrversion.h"
 #include "game/data/units/building.h"
 #include "game/logic/casualtiestracker.h"
 #include "utility/files.h"
