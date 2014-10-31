@@ -790,7 +790,7 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer
 void sendCredits (cServer& server, int newCredits, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_CREDITS_CHANGED));
-	message->pushInt16 (newCredits);
+	message->pushInt32 (newCredits);
 	server.sendNetMessage (message, &receiver);
 }
 

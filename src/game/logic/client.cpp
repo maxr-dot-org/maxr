@@ -1292,7 +1292,7 @@ void cClient::HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CREDITS_CHANGED);
 
-	ActivePlayer->setCredits(message.popInt16());
+	ActivePlayer->setCredits(message.popInt32());
 }
 
 void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
