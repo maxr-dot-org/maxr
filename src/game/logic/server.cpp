@@ -918,6 +918,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 	else
 	{
 		if (SrcVehicle->data.storeResType != iType) return;
+		if (SrcVehicle->isUnitBuildingABuilding() || SrcVehicle->isUnitClearing()) return;
 		if (SrcVehicle->data.getStoredResources () - iTranfer > SrcVehicle->data.storageResMax || SrcVehicle->data.getStoredResources () - iTranfer < 0) return;
 		if (DestBuilding)
 		{
