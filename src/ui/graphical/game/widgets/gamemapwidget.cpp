@@ -1804,6 +1804,8 @@ void cGameMapWidget::handleLooseMouseFocus (cApplication& application)
 //------------------------------------------------------------------------------
 void cGameMapWidget::handleResized (const cPosition& oldSize)
 {
+	cClickableWidget::handleResized (oldSize);
+
 	setZoomFactor (internalZoomFactor, true); // revalidates zoom and offset
 }
 

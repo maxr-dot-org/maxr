@@ -90,8 +90,9 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
 
-	debugOutput = addChild (std::make_unique<cDebugOutputWidget> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), getSize ().x () - cHud::panelTotalWidth - 8));
+	debugOutput = addChild (std::make_unique<cDebugOutputWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 8, getEndPosition ().y () - cHud::panelBottomHeight - 8))));
 	debugOutput->setGameMap (gameMap);
+	debugOutput->disable ();
 
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition (), getSize ().y (), animationTimer));
 
@@ -847,6 +848,8 @@ void cGameGui::handleResolutionChange ()
 
 	resize (hud->getSize ());
 
+	// TODO: remove duplication of widget areas with the ones during initialization
+
 	hudPanels->resize (cPosition (hudPanels->getSize ().x (), getSize ().y ()));
 
 	gameMap->resize (getSize () - cPosition (cHud::panelTotalWidth, cHud::panelTopHeight));
@@ -854,4 +857,9 @@ void cGameGui::handleResolutionChange ()
 	messageList->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200)));
 
 	chatBox->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
+
+	primiaryInfoLabel->setArea(cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition ().x () - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG))));
+	additionalInfoLabel->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (FONT_LATIN_BIG)), cPosition (getEndPosition ().x () - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG) + font->getFontHeight (FONT_LATIN_NORMAL))));
+
+	debugOutput->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 8, getEndPosition ().y () - cHud::panelBottomHeight - 8)));
 }

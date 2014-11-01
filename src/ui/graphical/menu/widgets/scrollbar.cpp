@@ -85,13 +85,13 @@ cScrollBar::cScrollBar (const cPosition& position, int width, eScrollBarStyle st
 //------------------------------------------------------------------------------
 void cScrollBar::handleResized (const cPosition& oldSize)
 {
+	cWidget::handleResized (oldSize);
+
 	const cPosition forwardButtonPosition = getPosition () + (orientation == eOrientationType::Horizontal ? cPosition (getSize ().x () - forwardButton->getSize ().x (), 0) : cPosition (0, getSize ().y () - forwardButton->getSize ().y ()));
 	forwardButton->moveTo (forwardButtonPosition);
 
 	cPosition sliderNewSize = (orientation == eOrientationType::Horizontal ? cPosition (getSize ().x () - backButton->getSize ().x () - forwardButton->getSize ().x (), slider->getSize ().y ()) : cPosition (slider->getSize ().x (), getSize ().y () - backButton->getSize ().y () - forwardButton->getSize ().y ()));
 	slider->resize (sliderNewSize);
-
-	cWidget::handleResized (oldSize);
 }
 
 //------------------------------------------------------------------------------

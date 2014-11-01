@@ -60,6 +60,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	chatList->disableSelectable ();
 	chatList->setBeginMargin (cPosition (12, 12));
 	chatList->setEndMargin (cPosition (10, 10));
+	chatList->setScrollOffset (font->getFontHeight () + 3);
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (20, 245), getPosition () + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (228, 245), getPosition () + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), FONT_LATIN_NORMAL, eAlignmentType::Left));

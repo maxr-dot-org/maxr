@@ -266,7 +266,19 @@ ItemType* cListView<ItemType>::addItem (std::unique_ptr<ItemType> item)
 
 	addedItem.setParent (this);
 
-	//signalConnectionManager.connect (addedItem.resized, [ ]() { });
+	const auto itemPtr = &addedItem;
+	signalConnectionManager.connect (addedItem.resized, [this, itemPtr](const cPosition& oldSize)
+	{
+		const auto offset = itemPtr->getSize ().y () - oldSize.y ();
+		if (offset == 0) return;
+
+		auto iter = std::find_if (items.begin (), items.end (), [=](const std::pair<int, std::unique_ptr<ItemType>>& entry){ return entry.second.get () == itemPtr; });
+		if (iter != items.end ()) ++iter;
+		for (; iter != items.end (); ++iter)
+		{
+			iter->first += offset;
+		}
+	});
 
 	if (scrollBar)
 	{
@@ -744,14 +756,14 @@ void cListView<ItemType>::updateDisplayItems ()
 	iter = std::upper_bound (items.begin (), items.end (), pixelOffset, [ ](int offset, const std::pair<int, std::unique_ptr<ItemType>>& entry){ return offset < entry.first; });
 	if (iter == items.end ())
 	{
-		iter = items.begin ();
+		beginDisplayItem = items.size () - 1;
 	}
 	else
 	{
 		assert (iter != items.begin ());
 		--iter;
+		beginDisplayItem = iter - items.begin ();
 	}
-	beginDisplayItem = iter - items.begin ();
 
 	for (size_t i = 0; i < items.size (); ++i)
 	{

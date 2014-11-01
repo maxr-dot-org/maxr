@@ -24,6 +24,7 @@
 #include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "settings.h"
 #include "video.h"
+#include "utility/signal/signal.h"
 
 #include "ui/graphical/application.h"
 
@@ -35,6 +36,10 @@ public:
 	cAbstractListViewItem ();
 
 	explicit cAbstractListViewItem (const cPosition& size);
+
+	cSignal<void (const cPosition&)> resized;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:
 	void select ();
 	void deselect ();

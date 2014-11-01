@@ -30,8 +30,8 @@
 #include "game/data/units/vehicle.h"
 
 //------------------------------------------------------------------------------
-cDebugOutputWidget::cDebugOutputWidget (const cPosition& position, int width) :
-	cWidget (position),
+cDebugOutputWidget::cDebugOutputWidget (const cBox<cPosition>& area) :
+	cWidget (area),
 	server (nullptr),
 	client (nullptr),
 	gameMap (nullptr),
@@ -45,9 +45,7 @@ cDebugOutputWidget::cDebugOutputWidget (const cPosition& position, int width) :
 	debugPlayers (false),
 	debugCache (false),
 	debugSync (false)
-{
-	resize (cPosition (width, 1));
-}
+{}
 
 //------------------------------------------------------------------------------
 void cDebugOutputWidget::setClient (const cClient* client_)
@@ -130,6 +128,8 @@ void cDebugOutputWidget::setDebugSync (bool value)
 //------------------------------------------------------------------------------
 void cDebugOutputWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
+	cWidget::draw (destination, clipRect);
+
 	if (!client) return;
 
 	const cPlayer& player = client->getActivePlayer ();

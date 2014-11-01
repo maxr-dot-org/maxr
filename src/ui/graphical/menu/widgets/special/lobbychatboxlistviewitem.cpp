@@ -37,9 +37,18 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& text) :
 cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerName, const std::string& text) :
 	cAbstractListViewItem (cPosition (50, 0))
 {
-	const auto playerNameText = playerName + ": ";
-	const auto playerNameTextWidth = font->getTextWide (playerNameText);
-	playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
+	int playerNameTextWidth;
+	if (!playerName.empty ())
+	{
+		const auto playerNameText = playerName + ": ";
+		playerNameTextWidth = font->getTextWide (playerNameText);
+		playerNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition (), getPosition () + cPosition (playerNameTextWidth, 10)), playerNameText));
+	}
+	else
+	{
+		playerNameTextWidth = 0;
+		playerNameLabel = nullptr;
+	}
 
 	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (playerNameTextWidth, 0), getPosition () + cPosition (getSize ().x ()-1, 0)), text));
 	messageLabel->setWordWrap (true);
@@ -51,7 +60,7 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerN
 //------------------------------------------------------------------------------
 void cLobbyChatBoxListViewItem::handleResized (const cPosition& oldSize)
 {
-	cWidget::handleResized (oldSize);
+	cAbstractListViewItem::handleResized (oldSize);
 
 	if (oldSize.x () == getSize ().x ()) return;
 

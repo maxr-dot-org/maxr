@@ -41,7 +41,7 @@ class cGameMapWidget;
 class cDebugOutputWidget : public cWidget
 {
 public:
-	cDebugOutputWidget (const cPosition& position, int width);
+	cDebugOutputWidget (const cBox<cPosition>& area);
 
 	void setClient (const cClient* client);
 	void setServer (const cServer* server);

@@ -84,7 +84,7 @@ void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn ()
 //------------------------------------------------------------------------------
 void cChatBoxPlayerListViewItem::handleResized (const cPosition& oldSize)
 {
-	cWidget::handleResized (oldSize);
+	cAbstractListViewItem::handleResized (oldSize);
 
 	if (oldSize.x () == getSize ().x ()) return;
 

@@ -1102,10 +1102,40 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 	// Special commands start with a '/'
 	if (command[0] == '/')
 	{
+		if (command.compare ("/help") == 0)
+		{
+			gameGui->getChatBox ().addChatMessage ("",
+												   "Available commands:\n"
+												   "- /help"
+												   "- /base [client/server/off]\n"
+												   "- /sentry [server/off]\n"
+												   "- /fx [on/off]\n"
+												   "- /trace [client/server/off]\n"
+												   "- /ajobs [on/off]\n"
+												   "- /players [on/off]\n"
+												   "- /singlestep\n"
+												   "- /cache size <size>\n"
+												   "- /cache flush\n"
+												   "- /cache debug [on/off]\n"
+												   "- /sync debug [on/off]\n"
+												   "- /kick <playerID>\n"
+												   "- /credits <playerID> <credits>\n"
+												   "- /disconnect <playerID>\n"
+												   "- /deadline <seconds>\n"
+												   "- /limit <seconds>\n"
+												   "- /resync <playerID>\n"
+												   "- /mark\n"
+												   "- /color <colorNum>\n"
+												   "- /fog off <playerID>\n"
+												   "- /survey\n"
+												   "- /pause\n"
+												   "- /resume"
+												   );
+		}
 		//
 		// commands that control the GUI itself
 		//
-		if (command.compare ("/base client") == 0) { gameGui->getDebugOutput ().setDebugBaseClient (true);  gameGui->getDebugOutput ().setDebugBaseServer (false); }
+		else if (command.compare ("/base client") == 0) { gameGui->getDebugOutput ().setDebugBaseClient (true);  gameGui->getDebugOutput ().setDebugBaseServer (false); }
 		else if (command.compare ("/base server") == 0) { gameGui->getDebugOutput ().setDebugBaseServer (true);  gameGui->getDebugOutput ().setDebugBaseClient (false); }
 		else if (command.compare ("/base off") == 0) { gameGui->getDebugOutput ().setDebugBaseServer (false);  gameGui->getDebugOutput ().setDebugBaseClient (false); }
 		else if (command.compare ("/sentry server") == 0) { gameGui->getDebugOutput ().setDebugSentry (true); }
