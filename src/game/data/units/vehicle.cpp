@@ -1582,7 +1582,7 @@ void cVehicle::executeLayMinesCommand (const cClient& client)
 //-----------------------------------------------------------------------------
 void cVehicle::executeClearMinesCommand (const cClient& client)
 {
-	setClearing (!isUnitClearingMines ());
+    setClearMines (!isUnitClearingMines ());
 	setLayMines(false);
 	sendMineLayerStatus (client, *this);
 }
