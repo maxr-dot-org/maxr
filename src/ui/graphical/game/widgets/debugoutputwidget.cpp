@@ -46,7 +46,7 @@ cDebugOutputWidget::cDebugOutputWidget (const cPosition& position, int width) :
 	debugCache (false),
 	debugSync (false)
 {
-	resize (cPosition (width, 0));
+	resize (cPosition (width, 1));
 }
 
 //------------------------------------------------------------------------------
