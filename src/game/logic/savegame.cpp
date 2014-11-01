@@ -52,6 +52,7 @@ cSavegame::cSavegame (int number) :
 //--------------------------------------------------------------------------
 int cSavegame::save (const cServer& server, const string& saveName)
 {
+	SaveFile.LinkEndChild (SaveFile.NewDeclaration ());
 	XMLElement* rootnode = SaveFile.NewElement ("MAXR_SAVE_FILE");
 	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
 	SaveFile.LinkEndChild (rootnode);

@@ -26,6 +26,7 @@
 #include "settings.h"
 #include "video.h"
 #include "input/mouse/mouse.h"
+#include "utility/log.h"
 
 //------------------------------------------------------------------------------
 cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_, eUnicodeFontType fontType_) :
@@ -265,6 +266,12 @@ void cLineEdit::doPosIncrease (int& value, int pos)
 		else if ((c & 0xC0) == 0xC0) value += 2;
 		else value += 1;
 	}
+
+	if (value > (int)text.length ())
+	{
+		value = (int)text.length ();
+		Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", LOG_TYPE_WARNING);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -275,6 +282,12 @@ void cLineEdit::doPosDecrease (int& pos)
 		unsigned char c = text[pos - 1];
 		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
 		{
+			if (pos <= 1)
+			{
+				Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", LOG_TYPE_WARNING);
+				break;
+			}
+
 			pos--;
 			c = text[pos - 1];
 		}
@@ -303,6 +316,7 @@ void cLineEdit::scrollRight ()
 {
 	// makes the cursor go right
 	if (cursorPos < (int)text.length ()) doPosIncrease (cursorPos, cursorPos);
+	assert (cursorPos <= (int)text.length ());
 	while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
 	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
 }
@@ -316,6 +330,12 @@ void cLineEdit::deleteLeft ()
 		unsigned char c = text[cursorPos - 1];
 		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
 		{
+			if (cursorPos <= 1)
+			{
+				Log.write ("Invalid UTF-8 string in line edit: '" + text + "'", LOG_TYPE_WARNING);
+				break;
+			}
+
 			text.erase (cursorPos - 1, 1);
 			cursorPos--;
 			c = text[cursorPos - 1];

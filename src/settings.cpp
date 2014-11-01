@@ -372,6 +372,8 @@ bool cSettings::createConfigFile()
 {
 	configFile.Clear();
 
+	configFile.LinkEndChild (configFile.NewDeclaration ());
+
 	configFile.LinkEndChild (configFile.NewElement ("Options"));
 
 	// create new empty config
