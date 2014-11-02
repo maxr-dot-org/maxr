@@ -50,7 +50,10 @@ cLobbyChatBoxListViewItem::cLobbyChatBoxListViewItem (const std::string& playerN
 		playerNameLabel = nullptr;
 	}
 
-	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (playerNameTextWidth, 0), getPosition () + cPosition (getSize ().x ()-1, 0)), text));
+	const cPosition messageLabelBeginPos = getPosition () + cPosition (playerNameTextWidth, 0);
+	const cPosition messageLabelEndPos (std::max (getPosition ().x () + getSize ().x ()-1, messageLabelBeginPos.x()+1), getPosition ().y () + 5);
+
+	messageLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (messageLabelBeginPos, messageLabelEndPos), text));
 	messageLabel->setWordWrap (true);
 	messageLabel->resizeToTextHeight ();
 
