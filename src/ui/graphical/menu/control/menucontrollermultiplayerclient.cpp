@@ -572,7 +572,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 
 		std::vector<cPlayerBasicData> players;
 		players.push_back (cPlayerBasicData (windowNetworkLobby->getLocalPlayer ()->getName (), cPlayerColor (localPlayerColor), localPlayerNumber));
-		auto& localPlayer = players.back ();
+		const auto localPlayer = players.back ();
 		while (playerCount > 1)
 		{
 			const auto playerName = message.popString ();
