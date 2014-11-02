@@ -66,6 +66,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   add_definitions( -DNOMINMAX )
   add_definitions(/ZI)
   add_definitions(/MP)
+  set(RESSOURCE_FILE src/maxr.rc)
 else()
   message(FATAL_ERROR "You are using an unsupported C++ compiler.")
 endif()
@@ -111,7 +112,7 @@ endmacro()
 
 GroupSources(src)
 
-add_executable(maxr ${maxr_SRCS})
+add_executable(maxr ${maxr_SRCS} ${RESSOURCE_FILE})
 
 # set linker flags for target
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

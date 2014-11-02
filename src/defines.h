@@ -106,11 +106,9 @@
 #define KEYS_XMLGame (cSettings::getInstance().getDataDir() + "keys.xml").c_str()
 #define KEYS_XMLUsers (cSettings::getInstance().getHomeDir() + "keys.xml").c_str()
 #define SPLASH_BACKGROUND (cSettings::getInstance().getDataDir() + "init.pcx")
-#ifdef MAC
-# define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr_mac.bmp").c_str()
-#else
-# define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
-#endif
+
+#define MAXR_ICON (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
+
 
 
 //#define DEDICATED_SERVER_APPLICATION 1

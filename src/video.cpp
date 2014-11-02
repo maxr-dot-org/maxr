@@ -88,7 +88,11 @@ void cVideo::init ()
 								  MINWIDTH, MINHEIGHT,
 								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
 
-	SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)).get ());
+	{
+		auto icon = AutoSurface(SDL_LoadBMP(MAXR_ICON));
+		SDL_SetColorKey(icon.get(), 1, 0xFF00FF);
+		SDL_SetWindowIcon(sdlWindow, icon.get());
+	}
 
 	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
 

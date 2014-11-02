@@ -1860,4 +1860,9 @@
       <Filter>src\ui\graphical\game\control</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\maxr.rc">
+      <Filter>src</Filter>
+    </ResourceCompile>
+  </ItemGroup>
 </Project>

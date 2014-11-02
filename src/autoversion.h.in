@@ -3,5 +3,5 @@
 # ifdef RELEASE
 #  define PACKAGE_REV "Releaseversion"
 # else
-#    define PACKAGE_REV "${GIT_DESC}"
+#    define PACKAGE_REV "GIT Hash ${GIT_DESC}"
 # endif
