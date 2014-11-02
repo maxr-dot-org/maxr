@@ -27,9 +27,16 @@ cLabel::cLabel (const cBox<cPosition>& area, const std::string& text_, eUnicodeF
 	alignment (alignment_),
 	wordWrap (false)
 {
-	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
-	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	if (getSize ().x () < 0 || getSize ().y () < 0)
+	{
+		surface = nullptr;
+	}
+	else
+	{
+		surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
+		SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
+		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+	}
 
 	setText (text_);
 }
@@ -170,6 +177,8 @@ void cLabel::breakText (const std::string& text, std::vector<std::string>& lines
 //------------------------------------------------------------------------------
 void cLabel::updateDisplayInformation ()
 {
+	if (surface == nullptr) return;
+
 	drawLines.clear ();
 
 	if (wordWrap)
@@ -243,6 +252,12 @@ void cLabel::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 void cLabel::handleResized (const cPosition& oldSize)
 {
 	cWidget::handleResized (oldSize);
+
+	if (getSize ().x () < 0 || getSize ().y () < 0)
+	{
+		surface = nullptr;
+		return;
+	}
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), 32, 0, 0, 0, 0));
 	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
