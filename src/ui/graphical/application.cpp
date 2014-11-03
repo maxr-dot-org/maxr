@@ -45,11 +45,25 @@ cApplication::cApplication () :
 	{
 		for (auto i = modalWindows.rbegin (); i != modalWindows.rend (); ++i)
 		{
-			if ((*i)->wantsCentered ())
+			const auto& modalWindow = *i;
+			if (modalWindow->wantsCentered ())
 			{
-				center (*(*i));
+				center (*modalWindow);
 			}
 		}
+	});
+
+	const auto fpsShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight | eKeyModifierType::AltLeft | eKeyModifierType::AltRight, SDLK_f))));
+	signalConnectionManager.connect (fpsShortcut->triggered, [this]()
+	{
+		shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
+		if (!shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
+	});
+
+	const auto widgetFramesShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_w))));
+	signalConnectionManager.connect (widgetFramesShortcut->triggered, [this]()
+	{
+		cWidget::toggleDrawDebugFrames ();
 	});
 }
 
@@ -402,24 +416,7 @@ void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 //------------------------------------------------------------------------------
 void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
-	if (keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight) &&
-		keyboard.isAnyModifierActive (toEnumFlag (eKeyModifierType::AltLeft) | eKeyModifierType::AltRight))
-	{
-		switch (key)
-		{
-		// Toggle frames per second
-		case SDLK_f:
-			if (shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
-			shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
-			break;
-		// Toggle debug frames
-		case SDLK_d:
-			cWidget::toggleDrawDebugFrames ();
-			break;
-		}
-	}
-
-	auto widget = getKeyFocusWidget ();
+	const auto widget = getKeyFocusWidget ();
 
 	// TODO: catch TAB event and may switch key focus widget
 
@@ -427,30 +424,32 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 
 	if (isShortcutKey) currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers (), key));
 
+	bool eventHandled = false;
 	if (widget)
 	{
-		if (isShortcutKey)
-		{
-			if (widget->hitShortcuts (currentKeySequence)) return;
-		}
-
-		if (widget->handleKeyPressed (*this, keyboard, key)) return;
+		eventHandled = widget->handleKeyPressed (*this, keyboard, key);
 	}
 
-	auto window = getActiveWindow ();
+	const auto window = getActiveWindow ();
 	if (window)
 	{
-		if (isShortcutKey)
+		if (!eventHandled)
 		{
-			if (window->hitShortcuts (currentKeySequence)) return;
+			eventHandled = window->handleKeyPressed (*this, keyboard, key);
 		}
 
-		if (window->handleKeyPressed (*this, keyboard, key)) return;
+		if (isShortcutKey && !eventHandled)
+		{
+			window->hitShortcuts (currentKeySequence);
+		}
 	}
 
 	if (isShortcutKey)
 	{
-		if (hitShortcuts (currentKeySequence)) return;
+		if (!eventHandled)
+		{
+			hitShortcuts (currentKeySequence);
+		}
 
 		while (currentKeySequence.length () >= maximalShortcutSequenceLength)
 		{
@@ -503,14 +502,16 @@ cShortcut* cApplication::addShortcut (std::unique_ptr<cShortcut> shortcut)
 }
 
 //------------------------------------------------------------------------------
-bool cApplication::hitShortcuts (cKeySequence& keySequence)
+bool cApplication::hitShortcuts (const cKeySequence& keySequence)
 {
 	// TODO: remove code duplication with cWidget::hitShortcuts
 
 	bool anyMatch = false;
-	for (size_t i = 0; i < shortcuts.size (); ++i)
+	for (const auto& shortcut : shortcuts)
 	{
-		const auto& shortcutSequence = shortcuts[i]->getKeySequence ();
+		if (!shortcut->isActive ()) continue;
+
+		const auto& shortcutSequence = shortcut->getKeySequence ();
 
 		if (shortcutSequence.length () > keySequence.length ()) continue;
 
@@ -526,15 +527,11 @@ bool cApplication::hitShortcuts (cKeySequence& keySequence)
 
 		if (match)
 		{
-			shortcuts[i]->triggered ();
+			shortcut->triggered ();
 			anyMatch = true;
 		}
 	}
 
-	if (anyMatch)
-	{
-		keySequence.reset ();
-	}
 	return anyMatch;
 }
 

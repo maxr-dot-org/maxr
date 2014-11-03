@@ -36,6 +36,32 @@ public:
 	void setUnit (const cUnit* unit, eMouseModeType mouseInputMode, const cPlayer* player, const cMap* dynamicMap);
 	const cUnit* getUnit ();
 
+	static bool unitHasAttackEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasBuildEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasDistributeEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasTransferEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasStartEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasAutoEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasStopEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasRemoveEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasManualFireEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasSentryEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasActivateEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasLoadEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasResearchEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasBuyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasUpgradeThisEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasUpgradeAllEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasSelfDestroyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasSupplyEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasRepairEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasLayMinesEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasCollectMinesEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasSabotageEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasStealEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasInfoEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+	static bool unitHasDoneEntry (const cUnit* unit, const cPlayer* player, const cMap* dynamicMap);
+
 	cSignal<void ()> attackToggled;
 	cSignal<void ()> buildClicked;
 	cSignal<void ()> distributeClicked;

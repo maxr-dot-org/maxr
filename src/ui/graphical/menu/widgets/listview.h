@@ -458,8 +458,6 @@ bool cListView<ItemType>::handleKeyPressed (cApplication& application, cKeyboard
 
 	switch (key)
 	{
-	//case SDLK_ESC:
-	//	return true;
 	case SDLK_UP:
 		if (selectable)
 		{

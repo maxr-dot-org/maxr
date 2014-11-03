@@ -30,9 +30,16 @@ public:
 
 	const cKeySequence& getKeySequence () const;
 
-	cSignal<void ()> triggered;
+	void activate ();
+	void deactivate ();
+
+	bool isActive () const;
+
+	mutable cSignal<void ()> triggered;
 private:
 	cKeySequence keySequence;
+
+	bool active;
 };
 
 #endif // ui_graphical_shortcut_H

@@ -113,6 +113,9 @@ public:
 
 	void resizeToResolution ();
 
+	void activateShortcuts ();
+	void deactivateShortcuts ();
+
 	mutable cSignal<void ()> zoomChanged;
 
 	mutable cSignal<void ()> surveyToggled;
@@ -176,6 +179,16 @@ private:
 	cCheckBox* rangeButton;
 	cCheckBox* fogButton;
 	cCheckBox* lockButton;
+
+	cShortcut* surveyShortcut;
+	cShortcut* hitsShortcut;
+	cShortcut* scanShortcut;
+	cShortcut* statusShortcut;
+	cShortcut* ammoShortcut;
+	cShortcut* gridShortcut;
+	cShortcut* colorShortcut;
+	cShortcut* rangeShortcut;
+	cShortcut* fogShortcut;
 
 	cCheckBox* miniMapZoomFactorButton;
 	cCheckBox* miniMapAttackUnitsOnlyButton;

@@ -20,6 +20,9 @@
 #ifndef ui_graphical_game_widgets_gamemapwidgetH
 #define ui_graphical_game_widgets_gamemapwidgetH
 
+#include <map>
+#include <set>
+
 #include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
@@ -109,6 +112,9 @@ public:
 	cDrawingCache& getDrawingCache ();
 	const cDrawingCache& getDrawingCache () const;
 
+	void updateActiveUnitCommandShortcuts ();
+	void deactivateUnitCommandShortcuts ();
+
 	cSignal<void ()> scrolled;
 	cSignal<void ()> zoomFactorChanged;
 
@@ -178,6 +184,7 @@ private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager mouseModeSignalConnectionManager;
 	cSignalConnectionManager unitContextMenuSignalConnectionManager;
+	cSignalConnectionManager selectedUnitSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	std::shared_ptr<cSoundManager> soundManager;
@@ -202,6 +209,34 @@ private:
 	std::vector<std::shared_ptr<cFx>> effects;
 
 	std::vector<std::unique_ptr<cAnimation>> animations;
+
+	//
+	// unit command shortcuts
+	//
+	cShortcut* attackShortcut;
+	cShortcut* buildShortcut;
+	cShortcut* transferShortcut;
+	cShortcut* automoveShortcut;
+	cShortcut* startShortcut;
+	cShortcut* stopShortcut;
+	cShortcut* clearShortcut;
+	cShortcut* sentryShortcut;
+	cShortcut* manualFireShortcut;
+	cShortcut* activateShortcut;
+	cShortcut* loadShortcut;
+	cShortcut* relaodShortcut;
+	cShortcut* repairShortcut;
+	cShortcut* layMineShortcut;
+	cShortcut* clearMineShortcut;
+	cShortcut* disableShortcut;
+	cShortcut* stealShortcut;
+	cShortcut* infoShortcut;
+	cShortcut* distributeShortcut;
+	cShortcut* researchShortcut;
+	cShortcut* upgradeShortcut;
+	cShortcut* destroyShortcut;
+
+	std::map<const cShortcut*, std::set<const cShortcut*>> collidingUnitCommandShortcuts;
 
 	//
 	// drawing information data
@@ -291,6 +326,9 @@ private:
 
 	void setWindDirection (int direction);
 	void changeWindDirection ();
+
+	void buildCollidingShortcutsMap ();
+	void activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
 };
 
 #endif // ui_graphical_game_widgets_gamemapwidgetH

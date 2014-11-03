@@ -136,7 +136,7 @@ public:
 
 	virtual void handleResized (const cPosition& oldSize);
 
-	virtual bool hitShortcuts (cKeySequence& keySequence);
+	virtual bool hitShortcuts (const cKeySequence& keySequence);
 
 protected:
 	/**

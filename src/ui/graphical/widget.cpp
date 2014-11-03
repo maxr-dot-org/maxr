@@ -445,12 +445,16 @@ void cWidget::createFrameSurface ()
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::hitShortcuts (cKeySequence& keySequence)
+bool cWidget::hitShortcuts (const cKeySequence& keySequence)
 {
+	// TODO: remove code duplication with cApplication::hitShortcuts
+
 	bool anyMatch = false;
-	for (size_t i = 0; i < shortcuts.size (); ++i)
+	for (const auto& shortcut : shortcuts)
 	{
-		const auto& shortcutSequence = shortcuts[i]->getKeySequence ();
+		if (!shortcut->isActive ()) continue;
+
+		const auto& shortcutSequence = shortcut->getKeySequence ();
 
 		if (shortcutSequence.length () > keySequence.length ()) continue;
 
@@ -466,24 +470,16 @@ bool cWidget::hitShortcuts (cKeySequence& keySequence)
 
 		if (match)
 		{
-			shortcuts[i]->triggered ();
+			shortcut->triggered ();
 			anyMatch = true;
 		}
 	}
 
-	if (anyMatch)
+	for (const auto& child : children)
 	{
-		keySequence.reset ();
-		return true;
+		anyMatch = child->hitShortcuts (keySequence) || anyMatch;
 	}
-	else
-	{
-		for (size_t i = 0; i < children.size (); ++i)
-		{
-			if (children[i]->hitShortcuts (keySequence)) return true;
-		}
-	}
-	return false;
+	return anyMatch;
 }
 
 //------------------------------------------------------------------------------

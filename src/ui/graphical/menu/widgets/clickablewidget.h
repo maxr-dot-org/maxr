@@ -27,6 +27,7 @@
 #include "utility/signal/signalconnectionmanager.h"
 
 class cKeySequence;
+class cShortcut;
 
 class cClickableWidget : public cWidget
 {
@@ -35,7 +36,7 @@ public:
 	explicit cClickableWidget (const cPosition& position);
 	explicit cClickableWidget (const cBox<cPosition>& area);
 
-	void addClickShortcut (cKeySequence keySequence, eMouseButtonType button = eMouseButtonType::Left);
+	cShortcut& addClickShortcut (cKeySequence keySequence, eMouseButtonType button = eMouseButtonType::Left);
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 

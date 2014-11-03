@@ -45,7 +45,7 @@ cClickableWidget::cClickableWidget (const cBox<cPosition>& area) :
 {}
 
 //------------------------------------------------------------------------------
-void cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseButtonType button)
+cShortcut& cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseButtonType button)
 {
 	auto shortcut = addShortcut (std::make_unique<cShortcut>(keySequence));
 	signalConnectionManager.connect (shortcut->triggered, [button,this]()
@@ -57,6 +57,7 @@ void cClickableWidget::addClickShortcut (cKeySequence keySequence, eMouseButtonT
 
 		this->handleClicked (*application, *mouse, button);
 	});
+	return *shortcut;
 }
 
 //------------------------------------------------------------------------------

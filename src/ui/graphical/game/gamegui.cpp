@@ -110,6 +110,9 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		hudPanels->hide ();
 	});
 
+	hud->activateShortcuts ();
+	gameMap->deactivateUnitCommandShortcuts ();
+
 	using namespace std::placeholders;
 
 	signalConnectionManager.connect (hud->zoomChanged, [&](){ gameMap->setZoomFactor (hud->getZoomFactor (), true); });
@@ -156,6 +159,17 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 		auto unit = gameMap->getUnitSelection ().getSelectedUnit ();
 		if (unit && unit->getOwner () == player.get ()) unit->makeReport (*soundManager);
+	});
+	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&]()
+	{
+		if (gameMap->getUnitSelection ().getSelectedUnit () == nullptr)
+		{
+			hud->activateShortcuts ();
+		}
+		else
+		{
+			hud->deactivateShortcuts ();
+		}
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });

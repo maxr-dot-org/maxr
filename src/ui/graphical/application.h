@@ -123,7 +123,7 @@ private:
 
 	void assignKeyFocus (cWidget* widget);
 
-	bool hitShortcuts (cKeySequence& shortcut);
+	bool hitShortcuts (const cKeySequence& keySequence);
 
 	void drawFramesPerSecond (unsigned int fps, bool draw = true);
 };

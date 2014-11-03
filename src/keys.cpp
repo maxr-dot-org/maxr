@@ -144,9 +144,6 @@ cKeysList::cKeysList () :
 	keyUnitMenuResearch (cKeyCombination (eKeyModifierType::None, SDLK_r)),
 	keyUnitMenuUpgrade (cKeyCombination (eKeyModifierType::None, SDLK_u)),
 	keyUnitMenuDestroy (cKeyCombination (eKeyModifierType::None, SDLK_d)),
-	copyToClipboard (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_c)),
-	cutToClipboard (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_x)),
-	pasteFromClipboard (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_v)),
 	mouseStyle (eMouseStyle::Modern)
 {}
 
