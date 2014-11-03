@@ -1,6 +1,23 @@
-Mechanized Assault & eXploration Reloaded 0.2.9
+Mechanized Assault & eXploration Reloaded NEXT
 =======================================================================
 -migrated from sdl to sdl2
+-new, synchronized attack jobs code
+-new code behind the menus and the in-game GUI
+-new chat box, including chat log and player list
+-implemented RETURN and ESC shortcuts in menues and dialogs where appropriate
+-implemented mouse wheel scroll support in all lists
+-implemented colorpicker for player colors (removes 8 player limit)
+-implemented position dependent, stereo "3D" sound effects
+-implemented hot seat mode
+-implemented turn time limit
+-improved right mouse button scroll
+-improved possible key combinations for hot keys
+-improved turn time clock
+-fixed round based mode
+-fixed resolution detection (multiple display support)
+-fixed various missing status updates in GUI
+-fixed various situations where a wrong cursor has been displayed
+-tons of bugs and crashes fixed
 
 Mechanized Assault & eXploration Reloaded 0.2.8
 =======================================================================
