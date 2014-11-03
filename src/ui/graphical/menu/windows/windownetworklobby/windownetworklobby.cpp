@@ -227,6 +227,7 @@ void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std
 {
 	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
 	chatList->scrollToItem (addedItem);
+	cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------

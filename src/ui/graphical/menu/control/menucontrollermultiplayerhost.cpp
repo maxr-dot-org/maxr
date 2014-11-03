@@ -536,7 +536,6 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cNetMessage& 
 	else
 	{
 		windowNetworkLobby->addChatEntry (player.getName (), chatText);
-		//PlayFX (SoundData.SNDChat.get ());
 	}
 	// send to other clients
 	for (size_t i = 1; i != players.size (); ++i)
