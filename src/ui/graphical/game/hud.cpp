@@ -107,8 +107,8 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
 	signalConnectionManager.connect (reportsButton->clicked, [&](){ reportsClicked (); });
-    auto chatButton = addChild (std::make_unique<cPushButton> (cPosition (51, 252), ePushButtonType::HudChat, lngPack.i18n ("Text~Others~Chat")));
-    signalConnectionManager.connect (chatButton->clicked, [&](){ chatClicked (); });
+	chatButton = addChild (std::make_unique<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat));
+	signalConnectionManager.connect (chatButton->toggled, [&](){ chatToggled (); });
 
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));
 	nextButton->addClickShortcut (KeysList.keyUnitNext);
@@ -452,6 +452,18 @@ void cHud::setLockActive (bool value)
 bool cHud::getLockActive () const
 {
 	return lockButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::setChatActive (bool value)
+{
+	chatButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
+bool cHud::getChatActive () const
+{
+	return chatButton->isChecked ();
 }
 
 //------------------------------------------------------------------------------

@@ -51,6 +51,7 @@ enum class eCheckBoxType
 	HudIndex_21,
 	HudIndex_22,
 
+	HudChat,
 	HudLock,
 
 	HudTnt,

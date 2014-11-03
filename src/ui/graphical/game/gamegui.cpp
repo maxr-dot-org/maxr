@@ -129,7 +129,19 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (hud->lockToggled, [&](){ gameMap->setLockActive (hud->getLockActive ()); });
 
 	signalConnectionManager.connect (hud->helpClicked, [&](){ gameMap->toggleHelpMode (); });
-	signalConnectionManager.connect (hud->chatClicked, std::bind (&cGameGui::toggleChatBox, this));
+	signalConnectionManager.connect (hud->chatToggled, [&]()
+	{
+		if (hud->getChatActive())
+		{
+			chatBox->show ();
+			chatBox->enable ();
+		}
+		else
+		{
+			chatBox->hide ();
+			chatBox->disable ();
+		}
+	});
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [&](){ miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly ()); });
@@ -363,6 +375,7 @@ cGameGuiState cGameGui::getCurrentState () const
 	state.setMiniMapZoomFactorActive (hud->getMiniMapZoomFactorActive ());
 	state.setMiniMapAttackUnitsOnly (hud->getMiniMapAttackUnitsOnly ());
 	state.setUnitVideoPlaying (hud->isUnitVideoPlaying ());
+	state.setChatActive (hud->getChatActive ());
 
 	state.setSelectedUnits (gameMap->getUnitSelection ());
 	state.setLockedUnits (gameMap->getUnitLockList ());
@@ -388,6 +401,7 @@ void cGameGui::restoreState (const cGameGuiState& state)
 	hud->setLockActive (state.getLockActive ());
 	hud->setMiniMapZoomFactorActive (state.getMiniMapZoomFactorActive ());
 	hud->setMiniMapAttackUnitsOnly (state.getMiniMapAttackUnitsOnly ());
+	hud->setChatActive (state.getChatActive ());
 	if (state.getUnitVideoPlaying ()) hud->startUnitVideo ();
 	else hud->stopUnitVideo ();
 
@@ -707,21 +721,6 @@ void cGameGui::resetMiniMapViewWindow ()
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::toggleChatBox ()
-{
-    if (chatBox->isHidden ())
-    {
-        chatBox->show ();
-        chatBox->enable ();
-    }
-    else
-    {
-        chatBox->hide ();
-        chatBox->disable ();
-    }
-}
-
-//------------------------------------------------------------------------------
 void cGameGui::updateSelectedUnitIdleSound ()
 {
 	auto selectedUnit = gameMap->getUnitSelection().getSelectedUnit ();
@@ -849,8 +848,7 @@ void cGameGui::initShortcuts ()
 	auto chatShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyChat));
 	signalConnectionManager.connect (chatShortcut->triggered, [&]()
 	{
-		chatBox->show ();
-		chatBox->enable ();
+		hud->setChatActive (true);
 		chatBox->focus ();
 	});
 }

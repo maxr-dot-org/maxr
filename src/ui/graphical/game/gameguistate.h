@@ -80,6 +80,9 @@ public:
 	void setUnitVideoPlaying (bool value);
 	bool getUnitVideoPlaying () const;
 
+	void setChatActive (bool value);
+	bool getChatActive () const;
+
 	void setSelectedUnits (const cUnitSelection& unitSelection);
 	const std::vector<unsigned int>& getSelectedUnitIds () const;
 
@@ -108,6 +111,7 @@ private:
 	bool miniMapZoomFactorActive;
 	bool miniMapAttackUnitsOnly;
 	bool unitVideoPlaying;
+	bool chatActive;
 
 	std::vector<unsigned int> selectedUnitIds;
 	std::vector<unsigned int> lockedUnitIds;

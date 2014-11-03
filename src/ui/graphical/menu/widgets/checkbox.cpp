@@ -118,6 +118,7 @@ void cCheckBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 	case eCheckBoxType::HudIndex_10:
 	case eCheckBoxType::HudIndex_11:
 	case eCheckBoxType::HudIndex_12:
+	case eCheckBoxType::HudChat:
 		if (textDesty != 7) textDesty = 6;
 	case eCheckBoxType::HudIndex_20:
 	case eCheckBoxType::HudIndex_21:
@@ -306,6 +307,11 @@ void cCheckBox::renewSurface ()
 		size = cPosition (27, 28);
 		src.x = (checked || isPressed) ? 362 : 334;
 		src.y = 53;
+		break;
+	case eCheckBoxType::HudChat:
+		size = cPosition (49, 20);
+		src.x = (checked || isPressed) ? 160 : 196;
+		src.y = (checked || isPressed) ? 21 : 129;
 		break;
 	case eCheckBoxType::HudPlayers:
 		size = cPosition (27, 28);

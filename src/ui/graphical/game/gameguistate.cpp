@@ -41,7 +41,8 @@ cGameGuiState::cGameGuiState () :
 	lockActive (false),
 	miniMapZoomFactorActive (false),
 	miniMapAttackUnitsOnly (false),
-	unitVideoPlaying (true)
+	unitVideoPlaying (true),
+	chatActive (true)
 {}
 
 //------------------------------------------------------------------------------
@@ -225,6 +226,18 @@ bool cGameGuiState::getUnitVideoPlaying () const
 }
 
 //------------------------------------------------------------------------------
+void cGameGuiState::setChatActive (bool value)
+{
+	chatActive = value;
+}
+
+//------------------------------------------------------------------------------
+bool cGameGuiState::getChatActive () const
+{
+	return chatActive;
+}
+
+//------------------------------------------------------------------------------
 void cGameGuiState::setSelectedUnits (const cUnitSelection& unitSelection)
 {
 	selectedUnitIds.clear ();
@@ -276,6 +289,7 @@ void cGameGuiState::pushInto (cNetMessage& message) const
 	message.pushBool (miniMapZoomFactorActive);
 	message.pushBool (miniMapAttackUnitsOnly);
 	message.pushBool (unitVideoPlaying);
+	message.pushBool (chatActive);
 
 	for (size_t i = 0; i < selectedUnitIds.size (); ++i)
 	{
@@ -305,6 +319,7 @@ void cGameGuiState::popFrom (cNetMessage& message)
 		selectedUnitIds[i] = message.popInt32 ();
 	}
 
+	chatActive = message.popBool ();
 	unitVideoPlaying = message.popBool ();
 	miniMapAttackUnitsOnly = message.popBool ();
 	miniMapZoomFactorActive = message.popBool ();
@@ -341,6 +356,7 @@ void cGameGuiState::pushInto (tinyxml2::XMLElement& element) const
 	if (hitsActive) cSavegame::addMainElement (&element, "Hitpoints");
 	if (miniMapAttackUnitsOnly) cSavegame::addMainElement (&element, "TNT");
 	if (unitVideoPlaying) cSavegame::addMainElement (&element, "UnitVideoPlaying");
+	if (chatActive) cSavegame::addMainElement (&element, "ChatActive");
 
 	if (!selectedUnitIds.empty ())
 	{
@@ -378,6 +394,7 @@ void cGameGuiState::popFrom (const tinyxml2::XMLElement& element, const cVersion
 	lockActive = element.FirstChildElement ("Lock") != nullptr;
 	hitsActive = element.FirstChildElement ("Hitpoints") != nullptr;
 	miniMapAttackUnitsOnly = element.FirstChildElement ("TNT") != nullptr;
+	chatActive = element.FirstChildElement ("ChatActive") != nullptr;
 
 	selectedUnitIds.clear ();
 	lockedUnitIds.clear ();

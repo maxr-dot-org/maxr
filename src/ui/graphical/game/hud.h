@@ -98,6 +98,9 @@ public:
 	void setLockActive (bool value);
 	bool getLockActive () const;
 
+	void setChatActive (bool value);
+	bool getChatActive () const;
+
 	void setMiniMapZoomFactorActive (bool value);
 	bool getMiniMapZoomFactorActive () const;
 
@@ -128,12 +131,12 @@ public:
 	mutable cSignal<void ()> rangeToggled;
 	mutable cSignal<void ()> fogToggled;
 	mutable cSignal<void ()> lockToggled;
+	mutable cSignal<void ()> chatToggled;
 
 	mutable cSignal<void ()> centerClicked;
 	mutable cSignal<void ()> helpClicked;
 
 	mutable cSignal<void ()> reportsClicked;
-	mutable cSignal<void ()> chatClicked;
 
 	mutable cSignal<void ()> miniMapZoomFactorToggled;
 	mutable cSignal<void ()> miniMapAttackUnitsOnlyToggled;
@@ -179,6 +182,7 @@ private:
 	cCheckBox* rangeButton;
 	cCheckBox* fogButton;
 	cCheckBox* lockButton;
+	cCheckBox* chatButton;
 
 	cShortcut* surveyShortcut;
 	cShortcut* hitsShortcut;

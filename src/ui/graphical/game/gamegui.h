@@ -135,8 +135,6 @@ private:
 
 	void resetMiniMapViewWindow ();
 
-    void toggleChatBox ();
-
 	void updateHudCoordinates (const cPosition& tilePosition);
 	void updateHudUnitName (const cPosition& tilePosition);
 
