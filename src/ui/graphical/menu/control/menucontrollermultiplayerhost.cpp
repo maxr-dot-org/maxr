@@ -542,7 +542,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_CHAT (cNetMessage& 
 	for (size_t i = 1; i != players.size (); ++i)
 	{
 		if (players[i]->getNr () == message.iPlayerNr) continue;
-		sendMenuChatMessage (*network, chatText, players[i].get (), -1, translationText);
+		sendMenuChatMessage (*network, chatText, players[i].get (), message.iPlayerNr, translationText);
 	}
 }
 
