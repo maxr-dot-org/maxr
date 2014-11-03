@@ -36,14 +36,24 @@ cReportDisadvantagesListViewItem::cReportDisadvantagesListViewItem (const sID& u
 {
 	const auto totalHeight = std::max (unitImageHeight, (int)(disadvantages.size () / maxItemsInRow + 1) * font->getFontHeight ());
 
-	AutoSurface unitSurface;
-	if (unitId.isABuilding ())
+	AutoSurface unitSurface (SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth (), 0, 0, 0, 0));
+	SDL_SetColorKey (unitSurface.get (), SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (unitSurface.get (), nullptr, 0x00FF00FF);
+	SDL_Rect dest = {0, 0, 0, 0};
+
+	const auto& data = *unitId.getUnitDataOriginalVersion ();
+	if (unitId.isAVehicle ())
 	{
-        unitSurface = AutoSurface (scaleSurface (UnitsData.getBuildingUI (unitId)->img_org.get (), nullptr, unitImageWidth, unitImageHeight));
+		const float zoomFactor = unitImageWidth / 64.0f;
+		const auto& uiData = *UnitsData.getVehicleUI (unitId);
+		cVehicle::render_simple (unitSurface.get (), dest, zoomFactor, data, uiData, nullptr);
+		cVehicle::drawOverlayAnimation (unitSurface.get (), dest, zoomFactor, data, uiData);
 	}
-	else if (unitId.isAVehicle ())
+	else if (unitId.isABuilding ())
 	{
-        unitSurface = AutoSurface (scaleSurface (UnitsData.getVehicleUI (unitId)->img_org[0].get (), nullptr, unitImageWidth, unitImageHeight));
+		const float zoomFactor = unitImageWidth / (data.isBig ? 128.0f : 64.0f);
+		const auto& uiData = *UnitsData.getBuildingUI (unitId);
+		cBuilding::render_simple (unitSurface.get (), dest, zoomFactor, data, uiData, nullptr);
 	}
 	auto unitImage = addChild (std::make_unique<cImage> (cPosition (0, (totalHeight - unitImageHeight) / 2), unitSurface.get ()));
 

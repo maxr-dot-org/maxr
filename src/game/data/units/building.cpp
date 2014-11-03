@@ -388,7 +388,19 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 	}
 }
 
-void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
+void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int animationTime, int alpha) const
+{
+	int frameNr = dir;
+	if (data.hasFrames && data.isAnimated && cSettings::getInstance ().isAnimations () &&
+		isDisabled () == false)
+	{
+		frameNr = (animationTime % data.hasFrames);
+	}
+
+	render_simple (surface, dest, zoomFactor, data, *uiData, getOwner (), frameNr, alpha);
+}
+
+/*static*/ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sBuildingUIData& uiData, const cPlayer* owner, int frameNr, int alpha)
 {
 	// read the size:
 	SDL_Rect src;
@@ -401,39 +413,39 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 	else
 	{
-		src.w = (int) (uiData->img_org->w * zoomFactor);
-		src.h = (int) (uiData->img_org->h * zoomFactor);
+		src.w = (int) (uiData.img_org->w * zoomFactor);
+		src.h = (int) (uiData.img_org->h * zoomFactor);
 	}
 
 	// blit the players color and building graphic
-	if (data.hasPlayerColor) SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	if (data.hasPlayerColor && owner) SDL_BlitSurface (owner->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
 	else SDL_FillRect (GraphicsData.gfx_tmp.get (), NULL, 0x00FF00FF);
 
 	if (data.hasFrames)
 	{
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
-		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
-		SDL_BlitSurface (uiData->img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
+		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
+		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
 
 		src.x = 0;
 	}
 	else if (data.hasClanLogos)
 	{
-		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
+		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
 		src.x = 0;
 		src.y = 0;
 		src.w = (int) (128 * zoomFactor);
 		src.h = (int) (128 * zoomFactor);
 		// select clan image
-		if (getOwner ()->getClan () != -1)
-			src.x = (int)((getOwner ()->getClan () + 1) * 128 * zoomFactor);
-		SDL_BlitSurface (uiData->img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
+		if (owner && owner->getClan () != -1)
+			src.x = (int)((owner->getClan () + 1) * 128 * zoomFactor);
+		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
 	}
 	else
 	{
-		CHECK_SCALING (*uiData->img, *uiData->img_org, zoomFactor);
-		SDL_BlitSurface (uiData->img.get (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
+		SDL_BlitSurface (uiData.img.get (), NULL, GraphicsData.gfx_tmp.get (), NULL);
 	}
 
 	// draw the building
@@ -484,14 +496,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 		blittAlphaSurface (uiData->shw.get (), NULL, surface, &tmp);
 	}
 
-	int frameNr = dir;
-	if (data.hasFrames && data.isAnimated && cSettings::getInstance().isAnimations() &&
-		isDisabled() == false)
-	{
-		frameNr = (animationTime % data.hasFrames);
-	}
-
-	render_simple (surface, dest, zoomFactor, frameNr, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
+	render_simple (surface, dest, zoomFactor, animationTime, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
 }
 
 //--------------------------------------------------------------------------

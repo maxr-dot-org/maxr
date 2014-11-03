@@ -31,31 +31,28 @@ cUnitListViewItem::cUnitListViewItem (unsigned int width, const sID& unitId_, co
 	unitId (unitId_)
 {
 	const int unitImageSize = 32;
-	auto surface = SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth (), 0, 0, 0, 0);
-	SDL_SetColorKey (surface, SDL_TRUE, 0x00FF00FF);
-	SDL_FillRect (surface, NULL, 0x00FF00FF);
+	AutoSurface surface (SDL_CreateRGBSurface (0, unitImageSize, unitImageSize, Video.getColDepth (), 0, 0, 0, 0));
+	SDL_SetColorKey (surface.get (), SDL_TRUE, 0x00FF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0x00FF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	// TODO: very very bad...
-	//        why do we need to create a full vehicle/building object to draw it?!
-	//        Currently the const_cast is okay here because the player state is not changed during the render
-	//        method of the units.
+	const auto& data = *unitId.getUnitDataOriginalVersion ();
 	if (unitId.isAVehicle ())
 	{
-		cVehicle vehicle (*unitId.getUnitDataOriginalVersion (), const_cast<cPlayer*>(&owner), 0);
 		const float zoomFactor = unitImageSize / 64.0f;
-		vehicle.render_simple (surface, dest, zoomFactor);
-		vehicle.drawOverlayAnimation (surface, dest, zoomFactor, 0);
+		const auto& uiData = *UnitsData.getVehicleUI (unitId);
+		cVehicle::render_simple (surface.get (), dest, zoomFactor, data, uiData, &owner);
+		cVehicle::drawOverlayAnimation (surface.get (), dest, zoomFactor, data, uiData);
 	}
 	else if (unitId.isABuilding ())
 	{
-		cBuilding building (unitId.getUnitDataOriginalVersion (), const_cast<cPlayer*>(&owner), 0);
-		const float zoomFactor = unitImageSize / (building.data.isBig ? 128.0f : 64.0f);
-		building.render_simple (surface, dest, zoomFactor, 0);
+		const float zoomFactor = unitImageSize / (data.isBig ? 128.0f : 64.0f);
+		const auto& uiData = *UnitsData.getBuildingUI (unitId);
+		cBuilding::render_simple (surface.get (), dest, zoomFactor, data, uiData, &owner);
 	}
-	else surface = NULL;
+	else surface = nullptr;
 
-	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface));
+	unitImage = addChild (std::make_unique<cImage> (cPosition (0, 0), surface.get ()));
 	unitImage->setConsumeClick (false);
 
 	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (unitImage->getEndPosition ().x ()+3, 0), cPosition (width, unitImage->getEndPosition ().y ())), owner.getUnitDataCurrentVersion (unitId)->name, FONT_LATIN_SMALL_WHITE, toEnumFlag (eAlignmentType::Left) | eAlignmentType::CenterVerical));
