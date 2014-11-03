@@ -65,7 +65,7 @@ void cLocalHotSeatGameSaved::start (cApplication& application)
 
 	for (size_t i = 0; i < clients.size (); ++i)
 	{
-		sendRequestResync (*clients[i], clients[i]->getActivePlayer().getNr());
+		sendRequestResync (*clients[i], clients[i]->getActivePlayer().getNr(), true);
 	}
 
 	// TODO: move that in server

@@ -1529,7 +1529,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 		}
 	}
 	if (player == nullptr) return;
-	resyncPlayer (*player);
+	resyncPlayer (*player, false, true);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (isTurnBasedGame ()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
@@ -1645,8 +1645,9 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_RESYNC);
 
-	auto& player = getPlayerFromNumber (message.popChar());
-	resyncPlayer (player, true);
+	auto& player = getPlayerFromNumber (message.popInt32());
+	const auto newGame = message.popBool ();
+	resyncPlayer (player, !newGame, newGame);
 }
 
 //------------------------------------------------------------------------------
@@ -3610,7 +3611,7 @@ void cServer::deletePlayer (cPlayer& player)
 }
 
 //------------------------------------------------------------------------------
-void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
+void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState)
 {
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	if (firstDelete)
@@ -3723,7 +3724,12 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 		sendNetMessage (message);
 	}
 
-	sendGameGuiState (*this, getPlayerGameGuiState (player), player);
+	sendCasualtiesReport (*this, &player);
+
+	if (withGuiState)
+	{
+		sendGameGuiState (*this, getPlayerGameGuiState (player), player);
+	}
 
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }

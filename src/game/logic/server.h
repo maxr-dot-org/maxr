@@ -264,7 +264,7 @@ public:
 	*/
 	void deleteRubble (cBuilding* rubble);
 
-	void resyncPlayer (cPlayer& player, bool firstDelete = false);
+	void resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState);
 	void resyncVehicle (const cVehicle& Vehicle, const cPlayer& Player);
 	/**
 	* deletes a player and all his units

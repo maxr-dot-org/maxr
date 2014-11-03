@@ -473,10 +473,11 @@ void sendWantActivate (const cClient& client, int unitid, bool vehicle, int acti
 	client.sendNetMessage (message);
 }
 
-void sendRequestResync (const cClient& client, char playerNr)
+void sendRequestResync (const cClient& client, char playerNumber, bool newGame)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_REQUEST_RESYNC);
-	message->pushChar (playerNr);
+	message->pushBool (newGame);
+	message->pushInt32 (playerNumber);
 	client.sendNetMessage (message);
 }
 

@@ -1346,7 +1346,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						gameGui->getGameMessageList().addMessage ("Wrong parameter");
 						return;
 					}
-					sendRequestResync (*activeClient, player->getNr ());
+					sendRequestResync (*activeClient, player->getNr (), false);
 				}
 				else
 				{
@@ -1355,12 +1355,12 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						const auto& playerList = server->playerList;
 						for (unsigned int i = 0; i < playerList.size (); i++)
 						{
-							sendRequestResync (*activeClient, playerList[i]->getNr ());
+							sendRequestResync (*activeClient, playerList[i]->getNr (), false);
 						}
 					}
 					else
 					{
-						sendRequestResync (*activeClient, activeClient->getActivePlayer ().getNr ());
+						sendRequestResync (*activeClient, activeClient->getActivePlayer ().getNr (), false);
 					}
 				}
 			}

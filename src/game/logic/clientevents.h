@@ -258,7 +258,7 @@ void sendWantActivate (const cClient& client, int unitid, bool vehicle, int acti
 /**
 * sends a request to resync the player
 */
-void sendRequestResync (const cClient& client, char PlayerNr);
+void sendRequestResync (const cClient& client, char playerNumber, bool newGame);
 
 void sendRequestCasualtiesReport (const cClient& client);
 

@@ -59,7 +59,7 @@ void cLocalSingleplayerGameSaved::start (cApplication& application)
 
 	// in single player only the first player is important
 	serverPlayerList[player]->setLocal ();
-	sendRequestResync (*client, serverPlayerList[player]->getNr ());
+	sendRequestResync (*client, serverPlayerList[player]->getNr (), true);
 
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)
