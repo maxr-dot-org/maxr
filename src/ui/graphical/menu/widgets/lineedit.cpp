@@ -27,6 +27,7 @@
 #include "video.h"
 #include "input/mouse/mouse.h"
 #include "utility/log.h"
+#include "keys.h"
 
 //------------------------------------------------------------------------------
 cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_, eUnicodeFontType fontType_) :
@@ -44,6 +45,49 @@ cLineEdit::cLineEdit (const cBox<cPosition>& area, eLineEditFrameType frameType_
 	showCursor (false)
 {
 	createBackground ();
+
+	const auto copyShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.copyToClipboard));
+	copyShortcut->triggered.connect ([this]()
+	{
+		SDL_SetClipboardText (text.c_str ());
+	});
+
+	const auto cutShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.cutToClipboard));
+	cutShortcut->triggered.connect ([this]()
+	{
+		SDL_SetClipboardText (text.c_str ());
+		text.clear ();
+		resetTextPosition ();
+	});
+
+	const auto pasteShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.pasteFromClipboard));
+	pasteShortcut->triggered.connect ([this]()
+	{
+		if (SDL_HasClipboardText ())
+		{
+			const auto clipboardText = SDL_GetClipboardText ();
+
+			if (clipboardText == nullptr) return;
+
+			const auto clipboardFree = makeScopedOperation ([clipboardText](){ SDL_free (clipboardText); });
+
+			std::string insertText (clipboardText);
+
+			if (validator)
+			{
+				const auto state = validator->validate (insertText);
+				if (state == eValidatorState::Invalid) return;
+			}
+
+			text.insert (cursorPos, insertText);
+
+			cursorPos += insertText.size();
+
+			endOffset = cursorPos;
+
+			while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > getSize ().x () - getBorderSize ()) doPosIncrease (startOffset, startOffset);
+		}
+	});
 }
 
 //------------------------------------------------------------------------------

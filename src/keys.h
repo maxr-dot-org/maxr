@@ -97,6 +97,10 @@ public:
 	cKeySequence keyUnitMenuResearch;
 	cKeySequence keyUnitMenuUpgrade;
 	cKeySequence keyUnitMenuDestroy;
+
+	cKeySequence copyToClipboard;
+	cKeySequence cutToClipboard;
+	cKeySequence pasteFromClipboard;
 private:
 
 	const static std::string keyExitName;

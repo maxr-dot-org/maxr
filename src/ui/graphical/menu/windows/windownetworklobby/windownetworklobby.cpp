@@ -26,6 +26,7 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
+#include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "game/data/player/player.h"
 #include "pcx.h"
@@ -75,6 +76,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	}
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (230, 260), getPosition () + cPosition (230 + 95, 260 + 10))));
 	portLineEdit->setText (iToStr (cSettings::getInstance ().getPort ()));
+	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
 	
 	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (353, 260), getPosition () + cPosition (353 + 95, 260 + 10))));
 	nameLineEdit->setText (localPlayer->getName ());
