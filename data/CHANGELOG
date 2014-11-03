@@ -19,7 +19,7 @@ Mechanized Assault & eXploration Reloaded NEXT
 -fixed various situations where a wrong cursor has been displayed
 -tons of bugs and crashes fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.8
+Mechanized Assault & eXploration Reloaded 0.2.8 (May 5, 2012)
 =======================================================================
 -implemented reaction fire 
 -Implemented "statistics" feature 
@@ -41,7 +41,7 @@ Mechanized Assault & eXploration Reloaded 0.2.8
 
 
 
-Mechanized Assault & eXploration Reloaded 0.2.7
+Mechanized Assault & eXploration Reloaded 0.2.7 (Dec 2, 2011)
 =======================================================================
 -implemented ecospheres/biodomes
 -implemented new victory condition with points system
@@ -79,7 +79,7 @@ Mechanized Assault & eXploration Reloaded 0.2.7
 -fixed infiltrators
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.6
+Mechanized Assault & eXploration Reloaded 0.2.6 (Aug 20, 2009)
 =======================================================================
 -new features:
 	*8 clans
@@ -93,7 +93,7 @@ Mechanized Assault & eXploration Reloaded 0.2.6
 -fixed energy, fuel, human, etc. management
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.5
+Mechanized Assault & eXploration Reloaded 0.2.5 (Apr 29, 2009)
 =======================================================================
 -new features:
 	*gold upgrades
@@ -105,7 +105,7 @@ Mechanized Assault & eXploration Reloaded 0.2.5
 -fixed stealth
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.4
+Mechanized Assault & eXploration Reloaded 0.2.4 (Feb 16, 2009)
 =======================================================================
 -added player overview "P" (formally hack /players on)
 -improved input event system
@@ -125,7 +125,7 @@ Mechanized Assault & eXploration Reloaded 0.2.4
 -fixed gamedata path detection on linux
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.3
+Mechanized Assault & eXploration Reloaded 0.2.3 (Jan 5, 2009)
 =======================================================================
 new features:
 	*implemented loading of units (depots, transporters)
@@ -137,7 +137,7 @@ new features:
 -fixed reconnecting of disconnected players
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.2
+Mechanized Assault & eXploration Reloaded 0.2.2 (Dec 23, 2008)
 =======================================================================
 -added load/safe
 -added load/safe multiplayer
@@ -153,7 +153,7 @@ Mechanized Assault & eXploration Reloaded 0.2.2
 -fixed stealh units
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.1
+Mechanized Assault & eXploration Reloaded 0.2.1 (Oct 17, 2008)
 =======================================================================
 new features:
 	*implemented rearming
@@ -168,7 +168,7 @@ new features:
 -tons of crashes fixed
 -tons of 'out of sync'-situations fixed
 
-Mechanized Assault & eXploration Reloaded 0.2.0
+Mechanized Assault & eXploration Reloaded 0.2.0 (Aug 11, 2008)
 =======================================================================
 -added support for original WRL mapfiles
 -added TCP/IP network code
@@ -184,7 +184,7 @@ Mechanized Assault & eXploration Reloaded 0.2.0
 -disabled all other functions that are not yet ready for new structure
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.1.5
+Mechanized Assault & eXploration Reloaded 0.1.5 (Feb 6, 2008)
 =======================================================================
 -added new language hungarian (HUN)
 -added iso-8559-2 fonts
@@ -194,7 +194,7 @@ Mechanized Assault & eXploration Reloaded 0.1.5
 -disabled network games for release (not fully implemented yet)
 -tons of bugs fixed
 
-Mechanized Assault & eXploration Reloaded 0.1.4
+Mechanized Assault & eXploration Reloaded 0.1.4 (Dec 30, 2007)
 =======================================================================
 -added new language russian (RUS)
 -added sentry mode for turrets
@@ -206,7 +206,7 @@ Mechanized Assault & eXploration Reloaded 0.1.4
 -some more bugs fixed
 
 
-Mechanized Assault & eXploration Reloaded 0.1.3
+Mechanized Assault & eXploration Reloaded 0.1.3 (Dec 23, 2007)
 =======================================================================
 -added unique TCP/IP msg ids and resend system
 -implemented nearly all networking messages (not playable yet)
@@ -219,7 +219,7 @@ Mechanized Assault & eXploration Reloaded 0.1.3
 -tons of bugs fixed
 
 
-Mechanized Assault & eXploration Reloaded 0.1.2
+Mechanized Assault & eXploration Reloaded 0.1.2 (Nov 26, 2007)
 =======================================================================
 -surveyor AI for automoves added
 -overworked menu, dialog, cursor and intro graphics
