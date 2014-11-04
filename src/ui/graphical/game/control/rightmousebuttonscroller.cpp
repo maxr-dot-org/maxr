@@ -36,6 +36,11 @@ cRightMouseButtonScrollerWidget::cRightMouseButtonScrollerWidget (std::shared_pt
 	animationTimer (animationTimer_),
 	hasStartedScrolling (false)
 {
+	signalConnectionManager.connect (Video.resolutionChanged, [this]()
+	{
+		resize (cPosition (Video.getResolutionX (), Video.getResolutionY ()));
+	});
+
     // TODO: read nice image from file
 	AutoSurface image (SDL_CreateRGBSurface (0, 18, 18, Video.getColDepth (), 0, 0, 0, 0));
     SDL_FillRect (image.get (), nullptr, 0xFF00FF);
@@ -98,11 +103,11 @@ bool cRightMouseButtonScrollerWidget::handleMousePressed (cApplication& applicat
 	if (button == eMouseButtonType::Right && !mouse.isButtonPressed (eMouseButtonType::Left) && !hasStartedScrolling)
 	{
 		startPosition = getCursorCenter(mouse);
-		signalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this, &mouse, &application]()
+		animationTimerSignalConnectionManager.connect (animationTimer->triggered10msCatchUp, [this, &mouse, &application]()
 		{
 			if (!mouse.isButtonPressed (eMouseButtonType::Right) || mouse.isButtonPressed (eMouseButtonType::Left))
 			{
-				signalConnectionManager.disconnectAll ();
+				animationTimerSignalConnectionManager.disconnectAll ();
 			}
 
 			const cPosition offset = getCursorCenter (mouse) - startPosition;
@@ -133,7 +138,7 @@ bool cRightMouseButtonScrollerWidget::handleMousePressed (cApplication& applicat
 //------------------------------------------------------------------------------
 bool cRightMouseButtonScrollerWidget::handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	signalConnectionManager.disconnectAll ();
+	animationTimerSignalConnectionManager.disconnectAll ();
 	if (hasStartedScrolling && button == eMouseButtonType::Right && !mouse.isButtonPressed (eMouseButtonType::Left))
 	{
 		application.releaseMouseFocus (*this);

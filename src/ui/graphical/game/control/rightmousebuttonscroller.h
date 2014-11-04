@@ -56,6 +56,7 @@ private:
 	static const double minDistanceSquared;
 
 	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager animationTimerSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 
