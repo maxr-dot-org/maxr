@@ -349,7 +349,7 @@ cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType sym
 		size.y () = 8;
 		break;
 	case eUnitDataSymbolType::TransportAir:
-		position.x () = 138;
+		position.x () = 186;
 		size.x () = 21;
 		size.y () = 8;
 		break;
