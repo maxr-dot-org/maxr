@@ -82,7 +82,7 @@ cGameGuiController::cGameGuiController (cApplication& application_, std::shared_
 	application (application_),
 	soundManager (std::make_shared<cSoundManager> ()),
 	animationTimer (std::make_shared<cAnimationTimer> ()),
-	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer)),
+	gameGui (std::make_shared<cGameGui> (std::move (staticMap), soundManager, animationTimer, application_.frameCounter)),
 	savedReportPosition (false, cPosition ())
 {
 	connectGuiStaticCommands ();

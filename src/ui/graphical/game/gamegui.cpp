@@ -66,7 +66,7 @@
 #include "utility/indexiterator.h"
 
 //------------------------------------------------------------------------------
-cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<cAnimationTimer> animationTimer_) :
+cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
 	cWindow (nullptr),
 	animationTimer (std::move (animationTimer_)),
 	soundManager (std::move (soundManager_)),
@@ -78,7 +78,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	resize (hudOwning->getSize ());
 
-	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer, soundManager));
+	gameMap = addChild (std::make_unique<cGameMapWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), staticMap, animationTimer, soundManager, frameCounter));
 
 	messageList = addChild (std::make_unique<cGameMessageListView> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200))));
 

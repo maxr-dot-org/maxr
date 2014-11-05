@@ -55,11 +55,12 @@ class cSoundEffect;
 class cGameGuiState;
 struct sID;
 class cBuildListItem;
+class cFrameCounter;
 
 class cGameGui : public cWindow
 {
 public:
-	cGameGui (std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<cAnimationTimer> animationTimer);
+	cGameGui (std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
 
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);

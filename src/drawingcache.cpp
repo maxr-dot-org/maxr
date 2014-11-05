@@ -29,8 +29,10 @@
 #include "game/data/units/vehicle.h"
 #include "game/data/map/map.h"
 #include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/framecounter.h"
 
-void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_)
+
+void sDrawingCacheEntry::init(const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom_, unsigned long long frameNr)
 {
 	dir = vehicle.dir;
 	owner = vehicle.getOwner ();
@@ -63,7 +65,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 		stealth = false;
 
 	zoom = zoom_;
-	//lastUsed = gameGUI.getFrame();
+	lastUsed = frameNr;
 
 	//determine needed size of the surface
 	int height = (int) std::max (vehicle.uiData->img_org[vehicle.dir]->h * zoom, vehicle.uiData->shw_org[vehicle.dir]->h * zoom);
@@ -84,7 +86,7 @@ void sDrawingCacheEntry::init (const cVehicle& vehicle, const cMap& map, const c
 	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
-void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
+void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned long long frameNr)
 {
 	BaseN  = building.BaseN;
 	BaseBN = building.BaseBN;
@@ -100,7 +102,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
 	clan = building.getOwner ()->getClan ();
 
 	zoom = zoom_;
-	//lastUsed = gameGUI.getFrame();
+	lastUsed = frameNr;
 
 	//determine needed size of the surface
 	int height = (int) std::max (building.uiData->img_org->h * zoom, building.uiData->shw_org->h * zoom);
@@ -112,8 +114,8 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_)
 	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
-cDrawingCache::cDrawingCache (std::shared_ptr<cAnimationTimer> animationTimer_) :
-	animationTimer (animationTimer_),
+cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_) :
+	frameCounter(frameCounter_),
 	player (nullptr)
 {
 	//assert (animationTimer != nullptr);
@@ -136,7 +138,7 @@ void cDrawingCache::setPlayer (const cPlayer* player_)
 	player = player_;
 }
 
-SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zoom)
+SDL_Surface* cDrawingCache::getCachedImage(const cBuilding& building, double zoom, unsigned long long animationTime)
 {
 	if (!canCache (building)) return NULL;
 
@@ -173,7 +175,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 
 		//cache hit!
 		cacheHits++;
-		//entry.lastUsed = gameGUI->getFrame();
+		entry.lastUsed = frameCounter->getFrame();
 		return entry.surface.get ();
 	}
 
@@ -182,7 +184,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cBuilding& building, double zo
 	return NULL;
 }
 
-SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map)
+SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle)) return NULL;
 
@@ -204,9 +206,10 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 		{
 			if (entry.frame != vehicle.WalkFrame) continue;
 		}
+
 		if (vehicle.isUnitBuildingABuilding () || vehicle.isUnitClearing ())
 		{
-			if (entry.frame != animationTimer->getAnimationTime() % 4) continue;
+			if (entry.frame != animationTime % 4) continue;
 		}
 
 		if (entry.zoom != zoom) continue;
@@ -237,16 +240,17 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 
 		//cache hit!
 		cacheHits++;
-		//entry.lastUsed = gameGUI->getFrame();
+		entry.lastUsed = frameCounter->getFrame();
 		return entry.surface.get ();
 	}
 
 	//cache miss!
+
 	cacheMisses++;
 	return NULL;
 }
 
-SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zoom)
+SDL_Surface* cDrawingCache::createNewEntry(const cBuilding& building, double zoom, unsigned long long animationTime)
 {
 	if (!canCache (building)) return NULL;
 
@@ -256,21 +260,27 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 		cacheSize++;
 
 		//set properties of the cached image
-		entry.init (building, zoom);
+		entry.init (building, zoom, frameCounter->getFrame());
 
 		return entry.surface.get ();
 	}
 
 	//try to find an old entry to reuse
+	int oldest = 0;
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
-		//if (gameGUI->getFrame() - cachedImages[i].lastUsed < 5)  continue;
-		//entry has not been used for 5 frames. Use it for the new entry.
+		if (cachedImages[i].lastUsed < cachedImages[oldest].lastUsed)
+			oldest = i;
+	}
 
-		sDrawingCacheEntry& entry = cachedImages[i];
+	if (frameCounter->getFrame() - cachedImages[oldest].lastUsed > 5)
+	{
+
+		//entry has not been used for 5 frames. Use it for the new entry.
+		sDrawingCacheEntry& entry = cachedImages[oldest];
 
 		//set properties of the cached image
-		entry.init (building, zoom);
+		entry.init(building, zoom, frameCounter->getFrame());
 
 		return entry.surface.get ();
 	}
@@ -279,7 +289,7 @@ SDL_Surface* cDrawingCache::createNewEntry (const cBuilding& building, double zo
 	return NULL;
 }
 
-SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map)
+SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle))
 		return NULL;
@@ -289,22 +299,28 @@ SDL_Surface* cDrawingCache::createNewEntry (const cVehicle& vehicle, double zoom
 		sDrawingCacheEntry& entry = cachedImages[cacheSize];
 
 		//set properties of the cached image
-		entry.init (vehicle, map, player, animationTimer->getAnimationTime (), zoom);
+		entry.init (vehicle, map, player, animationTime, zoom, frameCounter->getFrame());
 
 		cacheSize++;
 		return entry.surface.get ();
 	}
 
 	//try to find an old entry to reuse
+	int oldest = 0;
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
-		//if (gameGUI->getFrame() - cachedImages[i].lastUsed < 5)  continue;
+		if (cachedImages[i].lastUsed < cachedImages[oldest].lastUsed)
+			oldest = i;
+	}
+		
+	if (frameCounter->getFrame() - cachedImages[oldest].lastUsed > 5)
+	{
 
 		//entry has not been used for 5 frames. Use it for the new entry.
-		sDrawingCacheEntry& entry = cachedImages[i];
+		sDrawingCacheEntry& entry = cachedImages[oldest];
 
 		//set properties of the cached image
-		entry.init (vehicle, map, player, animationTimer->getAnimationTime (), zoom);
+		entry.init (vehicle, map, player, animationTime, zoom, frameCounter->getFrame());
 		return entry.surface.get ();
 	}
 
