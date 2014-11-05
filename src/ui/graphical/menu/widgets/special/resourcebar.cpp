@@ -52,7 +52,7 @@ cResourceBar::cResourceBar (const cBox<cPosition>& area, int minValue_, int maxV
 }
 
 //------------------------------------------------------------------------------
-void cResourceBar::draw ()
+void cResourceBar::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr && (maxValue - minValue) > 0)
 	{
@@ -75,10 +75,10 @@ void cResourceBar::draw ()
 			src.x = 0;
 		}
 
-		SDL_BlitSurface (surface.get(), &src, cVideo::buffer, &dest);
+		SDL_BlitSurface (surface.get (), &src, &destination, &dest);
 	}
 
-	cClickableWidget::draw ();
+	cClickableWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

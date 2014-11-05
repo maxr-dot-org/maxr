@@ -51,7 +51,7 @@
 #include "unifonts.h"
 #include "game/data/units/vehicle.h"
 #include "video.h"
-
+#include "maxrversion.h"
 #include "input/mouse/mouse.h"
 #include "input/keyboard/keyboard.h"
 
@@ -85,7 +85,8 @@ int main (int argc, char* argv[])
 
 	if (!DEDICATED_SERVER)
 	{
-		Video.initSplash(); // show splashscreen
+		Video.init();
+		Video.showSplashScreen(); // show splashscreen
 		initSound(); // now config is loaded and we can init sound and net
 	}
 	initNet();
@@ -140,7 +141,7 @@ int main (int argc, char* argv[])
 	}
 	else
 	{
-		Video.setResolution (Video.getResolutionX(), Video.getResolutionY(), true);
+		Video.prepareGameScreen ();
 		Video.clearBuffer();
 
 		cMouse mouse;
@@ -251,19 +252,6 @@ static void logMAXRVersion()
 	Log.write (sVersion, cLog::eLOG_TYPE_INFO);
 	std::string sBuild = "Build: "; sBuild += MAX_BUILD_DATE;
 	Log.write (sBuild, cLog::eLOG_TYPE_INFO);
-#if HAVE_AUTOVERSION_H
-	std::string sBuildVerbose = "On: ";
-	sBuildVerbose += BUILD_UNAME_S;
-	sBuildVerbose += " ";
-	sBuildVerbose += BUILD_UNAME_R;
-	Log.write (sBuildVerbose, cLog::eLOG_TYPE_INFO);
-
-	sBuildVerbose = "From: ";
-	sBuildVerbose += BUILD_USER;
-	sBuildVerbose += " at ";
-	sBuildVerbose += BUILD_UNAME_N;
-	Log.write (sBuildVerbose, cLog::eLOG_TYPE_INFO);
-#endif
 	Log.mark();
 	Log.write (sVersion, cLog::eLOG_TYPE_NET_DEBUG);
 	Log.write (sBuild, cLog::eLOG_TYPE_NET_DEBUG);

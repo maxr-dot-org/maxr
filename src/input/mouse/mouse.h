@@ -107,10 +107,10 @@ public:
 	bool setCursor (std::unique_ptr<cMouseCursor> cursor, bool force = false);
 
 	/**
-	 * Returns the current cursor type.
-	 * @return The cursor type.
+	 * Returns the current cursor.
+	 * @return The cursor.
 	 */
-	//eMouseCursorType getCursorType() const;
+	const cMouseCursor* getCursor () const;
 
 	/**
 	 * Returns whether a mouse button is currently pressed.

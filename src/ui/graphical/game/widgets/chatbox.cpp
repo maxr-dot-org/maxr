@@ -30,25 +30,26 @@
 cChatBox::cChatBox (const cBox<cPosition>& area) :
 	cWidget (area)
 {
-	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition (), cPosition (getEndPosition ().x () - 162, getEndPosition ().y () - 16))));
+	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition (), cPosition (getEndPosition ().x () - 162, getEndPosition ().y () - 16)), eScrollBarStyle::Modern));
 	chatList->disableSelectable ();
 	chatList->setBeginMargin (cPosition (2, 2));
 	chatList->setEndMargin (cPosition (2, 2));
+	chatList->setScrollOffset (font->getFontHeight() + 3);
 
 	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (cPosition (getPosition ().x () + 2, getEndPosition ().y () - 12), cPosition (getEndPosition ().x () - 164, getEndPosition ().y () - 2))));
 	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cChatBox::sendCommand, this));
 
-	playersList = addChild (std::make_unique<cListView<cChatBoxPlayerListViewItem>> (cBox<cPosition> (cPosition (getEndPosition ().x () - 158, getPosition ().y ()), getEndPosition ())));
+	playersList = addChild (std::make_unique<cListView<cChatBoxPlayerListViewItem>> (cBox<cPosition> (cPosition (getEndPosition ().x () - 158, getPosition ().y ()), getEndPosition ()), eScrollBarStyle::Modern));
 	playersList->disableSelectable ();
 	playersList->setBeginMargin (cPosition (2, 2));
 	playersList->setEndMargin (cPosition (2, 2));
-	playersList->setItemDistance (cPosition (0, 4));
+	playersList->setItemDistance (4);
 
 	createBackground ();
 }
 
 //------------------------------------------------------------------------------
-void cChatBox::draw ()
+void cChatBox::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	auto application = getActiveApplication ();
 
@@ -61,10 +62,10 @@ void cChatBox::draw ()
 	if (background != nullptr)
 	{
 		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (background, NULL, cVideo::buffer, &positionRect);
+		SDL_BlitSurface (background, nullptr, &destination, &positionRect);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

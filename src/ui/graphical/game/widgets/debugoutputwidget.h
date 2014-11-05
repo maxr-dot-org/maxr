@@ -41,7 +41,7 @@ class cGameMapWidget;
 class cDebugOutputWidget : public cWidget
 {
 public:
-	cDebugOutputWidget (const cPosition& position, int width);
+	cDebugOutputWidget (const cBox<cPosition>& area);
 
 	void setClient (const cClient* client);
 	void setServer (const cServer* server);
@@ -58,7 +58,7 @@ public:
 	void setDebugCache (bool value);
 	void setDebugSync (bool value);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 private:
 	const cServer* server;
 	const cClient* client;

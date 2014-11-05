@@ -28,6 +28,7 @@
 #include "input/mouse/mouse.h"
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchannel.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cPushButton::cPushButton (const cBox<cPosition>& area) :
@@ -90,10 +91,10 @@ cPushButton::cPushButton (const cPosition& position, ePushButtonType buttonType_
 }
 
 //------------------------------------------------------------------------------
-void cPushButton::draw ()
+void cPushButton::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	SDL_Rect position = getArea ().toSdlRect ();
-	if (surface != nullptr) SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
+	if (surface != nullptr) SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 
 	if (!text.empty ())
 	{
@@ -106,7 +107,7 @@ void cPushButton::draw ()
 		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset (), text, fontType);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
@@ -313,6 +314,26 @@ void cPushButton::renewSurface ()
 		src.x = (isPressed || isLocked) ? 6 : 15;
 		src.y = (isPressed || isLocked) ? 269 : 13;
 		size = cPosition (59, 56);
+		break;
+	case ePushButtonType::ArrowUpSmallModern:
+		src.x = 224;
+		src.y = (isPressed || isLocked) ? 75 : 83;
+		size = cPosition (16, 8);
+		break;
+	case ePushButtonType::ArrowDownSmallModern:
+		src.x = 224;
+		src.y = (isPressed || isLocked) ? 59 : 67;
+		size = cPosition (16, 8);
+		break;
+	case ePushButtonType::ArrowLeftSmallModern:
+		src.x = (isPressed || isLocked) ? 272 : 264;
+		src.y = 59;
+		size = cPosition (8, 16);
+		break;
+	case ePushButtonType::ArrowRightSmallModern:
+		src.x = (isPressed || isLocked) ? 256 : 248;
+		src.y = 59;
+		size = cPosition (8, 16);
 		break;
 	}
 	resize (size);

@@ -306,7 +306,7 @@ public:
 	XMarkerType& addXMarker (T value);
 	YMarkerType& addYMarker (U value);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 private:
 	const cPosition graphBeginMargin;
 	const cPosition graphEndMargin;
@@ -438,7 +438,7 @@ int cPlot<T, U>::toPixelY (U y)
 
 //------------------------------------------------------------------------------
 template<typename T, typename U>
-void cPlot<T, U>::draw ()
+void cPlot<T, U>::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 
 	const cPosition origin (graphBeginMargin.x (), getSize ().y () - graphBeginMargin.y ());
@@ -462,7 +462,7 @@ void cPlot<T, U>::draw ()
 
 			if (x != lastEvaluationPoint /*|| pixelX == xPixelWidth-1*/)
 			{
-				drawLine (cVideo::buffer, getPosition () + origin + lastPoint, getPosition () + origin + newPoint, graph->getColor ());
+				drawLine (&destination, getPosition () + origin + lastPoint, getPosition () + origin + newPoint, graph->getColor ());
 
 				lastPoint = newPoint;
 			}
@@ -472,12 +472,12 @@ void cPlot<T, U>::draw ()
 	}
 
 	// draw axes
-	drawLine (cVideo::buffer, getPosition () + origin, getPosition () + origin + cPosition (xPixelWidth, 0), xAxis.getColor ());
+	drawLine (&destination, getPosition () + origin, getPosition () + origin + cPosition (xPixelWidth, 0), xAxis.getColor ());
 
 	font->showTextCentered (getPosition () + origin + cPosition (0, 2), iToStr (xAxis.getMinValue ()), FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered (getPosition () + origin + cPosition (xPixelWidth, 2), iToStr (xAxis.getMaxValue ()), FONT_LATIN_SMALL_WHITE);
 
-	drawLine (cVideo::buffer, getPosition () + origin, getPosition () + origin + cPosition (0, -yPixelWidth), yAxis.getColor ());
+	drawLine (&destination, getPosition () + origin, getPosition () + origin + cPosition (0, -yPixelWidth), yAxis.getColor ());
 
 	font->showText (getPosition () + origin + cPosition (-16, -font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (yAxis.getMinValue ()), FONT_LATIN_SMALL_WHITE);
 	font->showText (getPosition () + origin + cPosition (-16, -yPixelWidth - font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (yAxis.getMaxValue ()), FONT_LATIN_SMALL_WHITE);
@@ -488,7 +488,7 @@ void cPlot<T, U>::draw ()
 		if (marker->getValue () < xAxis.getMinValue () || marker->getValue () > xAxis.getMaxValue ()) continue;
 
 		const auto pixelX = toPixelX (marker->getValue ());
-		drawLine (cVideo::buffer, getPosition () + origin + cPosition (pixelX, 0), getPosition () + origin + cPosition (pixelX, -yPixelWidth), marker->getColor ());
+		drawLine (&destination, getPosition () + origin + cPosition (pixelX, 0), getPosition () + origin + cPosition (pixelX, -yPixelWidth), marker->getColor ());
 		
 		font->showTextCentered (getPosition () + origin + cPosition (pixelX, 2), iToStr (marker->getValue ()), FONT_LATIN_SMALL_WHITE);
 	}
@@ -498,11 +498,11 @@ void cPlot<T, U>::draw ()
 		if (marker->getValue () < yAxis.getMinValue () || marker->getValue () > yAxis.getMaxValue ()) continue;
 
 		const auto pixelY = toPixelY (marker->getValue ());
-		drawLine (cVideo::buffer, getPosition () + origin + cPosition (0, -pixelY), getPosition () + origin + cPosition (xPixelWidth, -pixelY), marker->getColor ());
+		drawLine (&destination, getPosition () + origin + cPosition (0, -pixelY), getPosition () + origin + cPosition (xPixelWidth, -pixelY), marker->getColor ());
 
 		font->showText (getPosition () + origin + cPosition (-16, -pixelY - font->getFontHeight (FONT_LATIN_SMALL_WHITE)/2), iToStr (marker->getValue ()), FONT_LATIN_SMALL_WHITE);
 	}
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 #endif // ui_graphical_menu_widgets_plotH

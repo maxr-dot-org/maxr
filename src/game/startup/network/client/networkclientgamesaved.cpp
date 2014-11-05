@@ -38,7 +38,7 @@ void cNetworkClientGameSaved::start (cApplication& application)
 	localClient->setMap (staticMap);
 	localClient->setGameSettings (*gameSettings);
 
-	sendRequestResync (*localClient, localClient->getActivePlayer ().getNr ());
+	sendRequestResync (*localClient, localClient->getActivePlayer ().getNr (), true);
 
 	gameGuiController = std::make_unique<cGameGuiController> (application, staticMap);
 

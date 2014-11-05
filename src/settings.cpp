@@ -372,6 +372,8 @@ bool cSettings::createConfigFile()
 {
 	configFile.Clear();
 
+	configFile.LinkEndChild (configFile.NewDeclaration ());
+
 	configFile.LinkEndChild (configFile.NewElement ("Options"));
 
 	// create new empty config
@@ -462,6 +464,19 @@ void cSettings::initialize()
 		else
 		{
 			Video.setWindowMode (xmlElement->BoolAttribute ("YN"));
+		}
+
+		// =====================================================================
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Display", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
+		{
+			Log.write ("Can't load display index from config file: using default value", LOG_TYPE_WARNING);
+			Video.setDisplayIndex (0);
+			saveDisplayIndex ();
+		}
+		else
+		{
+			Video.setDisplayIndex (xmlElement->IntAttribute ("Num"));
 		}
 
 		// =====================================================================
@@ -1112,6 +1127,12 @@ void cSettings::saveColorDepth()
 {
 	saveSetting ("Options~Start~ColorDepth", Video.getColDepth());
 }
+//------------------------------------------------------------------------------
+void cSettings::saveDisplayIndex ()
+{
+    saveSetting ("Options~Start~Display", Video.getDisplayIndex());
+}
+
 
 
 //------------------------------------------------------------------------------

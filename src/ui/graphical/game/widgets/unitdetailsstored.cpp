@@ -64,15 +64,15 @@ void cUnitDetailsStored::setUnit (const cUnit* unit_)
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsStored::draw ()
+void cUnitDetailsStored::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

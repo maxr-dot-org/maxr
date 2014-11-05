@@ -25,18 +25,49 @@
 class cPosition;
 template<typename> class cBox;
 
+/**
+ * This is the base class of an animation of anything (most probable a unit)
+ * on the game map.
+ *
+ * The class provides an interface that allows to check whether the animation
+ * needs to be active at a given position on the map.
+ *
+ * This allows the map drawing engine to delete animations that are not visible
+ * any longer.
+ *
+ * Further the interface provides access to information about the running state
+ * of the animation.
+ * This allows the drawing engine to remove animation that are finished.
+ */
 class cAnimation
 {
 public:
+	/**
+	 * Initializes the base class animation to be not running and not finished.
+	 */
 	cAnimation () :
 		finished (false),
 		running (false)
 	{}
 	virtual ~cAnimation () {}
 
+	/**
+	 * Should return true when the animation needs to be executed if the
+	 * passed box of the map is visible.
+	 *
+	 * @param box The map section that is currently active.
+	 * @return True if the animation needs to be executed when the given
+	 *         map section is visible.
+	 */
 	virtual bool isLocatedIn (const cBox<cPosition>& box) const = 0;
 
+	/**
+	 * Returns true if the animation is finished and can be removed now.
+	 */
 	bool isFinished () const { return finished; }
+	/**
+	 * Returns true when the animation is currently running.
+	 */
 	bool isRunning () const { return running; }
 
 protected:

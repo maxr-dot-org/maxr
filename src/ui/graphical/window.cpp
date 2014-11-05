@@ -49,7 +49,7 @@ void cWindow::close ()
 }
 
 //------------------------------------------------------------------------------
-void cWindow::draw ()
+void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (!hasBeenDrawnOnce)
 	{
@@ -65,7 +65,7 @@ void cWindow::draw ()
 			// will not work as expected as well.
 			if (cSettings::getInstance ().isAlphaEffects ())
 			{
-				Video.applyShadow (NULL);
+				Video.applyShadow (nullptr, destination);
 			}
 			break;
 		case eWindowBackgrounds::Transparent:
@@ -75,11 +75,11 @@ void cWindow::draw ()
 	}
 
 	SDL_Rect position = getArea().toSdlRect ();
-	if (surface != nullptr) SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
+	if (surface != nullptr) SDL_BlitSurface (surface.get (), NULL, &destination, &position);
 
 	hasBeenDrawnOnce = true;
 
-	cWidget::draw (); // draws all children
+	cWidget::draw (destination, clipRect); // draws all children
 }
 
 //------------------------------------------------------------------------------

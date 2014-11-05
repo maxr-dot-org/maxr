@@ -68,10 +68,12 @@ public:
 	void grapMouseFocus (cWidget& widget);
 	void releaseMouseFocus (const cWidget& widget);
 	bool hasMouseFocus (const cWidget& widget) const;
+	bool hasMouseFocus () const;
 
 	void grapKeyFocus (cWidget& widget);
 	void releaseKeyFocus (const cWidget& widget);
 	bool hasKeyFocus (const cWidget& widget) const;
+	bool hasKeyFocus () const;
 
 	void addRunnable (std::shared_ptr<cRunnable> runnable);
     std::shared_ptr<cRunnable> removeRunnable (const cRunnable& runnable);
@@ -100,6 +102,8 @@ private:
 
 	std::list<std::shared_ptr<cRunnable>> runnables;
 
+	bool shouldDrawFramesPerSecond;
+
 	void center (cWindow& window);
 
 	cWindow* getActiveWindow ();
@@ -119,7 +123,9 @@ private:
 
 	void assignKeyFocus (cWidget* widget);
 
-	bool hitShortcuts (cKeySequence& shortcut);
+	bool hitShortcuts (const cKeySequence& keySequence);
+
+	void drawFramesPerSecond (unsigned int fps, bool draw = true);
 };
 
 //------------------------------------------------------------------------------

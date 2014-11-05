@@ -85,7 +85,7 @@ void cLobbyPlayerListViewItem::updatePlayerReady ()
 //------------------------------------------------------------------------------
 void cLobbyPlayerListViewItem::handleResized (const cPosition& oldSize)
 {
-	cWidget::handleResized (oldSize);
+	cAbstractListViewItem::handleResized (oldSize);
 
 	if (oldSize.x () == getSize ().x ()) return;
 

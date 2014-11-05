@@ -37,15 +37,15 @@ cSliderHandle::cSliderHandle (const cPosition& position, eSliderHandleType slide
 }
 
 //------------------------------------------------------------------------------
-void cSliderHandle::draw ()
+void cSliderHandle::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &positionRect);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &positionRect);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
@@ -73,6 +73,14 @@ void cSliderHandle::createSurface (eSliderHandleType sliderHandleType)
 	case eSliderHandleType::HudZoom:
 		srcPoint = cPosition (132, 0);
 		size = cPosition (25, 15);
+		break;
+	case eSliderHandleType::ModernHorizontal:
+		srcPoint = cPosition (241, 59);
+		size = cPosition (8, 16);
+		break;
+	case eSliderHandleType::ModernVertical:
+		srcPoint = cPosition (224, 91);
+		size = cPosition (16, 8);
 		break;
 	}
 	const cBox<cPosition> src (srcPoint, srcPoint + size);

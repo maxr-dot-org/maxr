@@ -26,6 +26,7 @@
 #include "ui/graphical/menu/widgets/listview.h"
 #include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 #include "ui/graphical/menu/widgets/special/lobbyplayerlistviewitem.h"
+#include "ui/graphical/menu/widgets/tools/validatorint.h"
 #include "ui/graphical/menu/dialogs/dialogcolorpicker.h"
 #include "game/data/player/player.h"
 #include "pcx.h"
@@ -36,6 +37,7 @@
 #include "game/logic/savegame.h"
 #include "network.h"
 #include "menuevents.h"
+#include "maxrversion.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
@@ -55,10 +57,11 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	signalConnectionManager.connect (chatLineEdit->returnPressed, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, true));
 	auto sendButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (470, 416), ePushButtonType::StandardSmall, lngPack.i18n ("Text~Title~Send")));
 	signalConnectionManager.connect (sendButton->clicked, std::bind (&cWindowNetworkLobby::triggerChatMessage, this, false));
-	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition () + cPosition (14, 284), getPosition () + cPosition (14 + 439, 284 + 124))));
+	chatList = addChild (std::make_unique<cListView<cLobbyChatBoxListViewItem>> (cBox<cPosition> (getPosition () + cPosition (14, 284), getPosition () + cPosition (14 + 439, 284 + 124)), eScrollBarStyle::Classic));
 	chatList->disableSelectable ();
 	chatList->setBeginMargin (cPosition (12, 12));
 	chatList->setEndMargin (cPosition (10, 10));
+	chatList->setScrollOffset (font->getFontHeight () + 3);
 
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (20, 245), getPosition () + cPosition (20 + 170, 245 + 10)), lngPack.i18n ("Text~Title~IP"), FONT_LATIN_NORMAL, eAlignmentType::Left));
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (228, 245), getPosition () + cPosition (228 + 90, 245 + 10)), lngPack.i18n ("Text~Title~Port"), FONT_LATIN_NORMAL, eAlignmentType::Left));
@@ -73,6 +76,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	}
 	portLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (230, 260), getPosition () + cPosition (230 + 95, 260 + 10))));
 	portLineEdit->setText (iToStr (cSettings::getInstance ().getPort ()));
+	portLineEdit->setValidator (std::make_unique<cValidatorInt> (0, 65535));
 	
 	auto nameLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (353, 260), getPosition () + cPosition (353 + 95, 260 + 10))));
 	nameLineEdit->setText (localPlayer->getName ());
@@ -83,11 +87,11 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	});
 	signalConnectionManager.connect (nameLineEdit->editingFinished, [&, nameLineEdit](eValidatorState){localPlayer->setName (nameLineEdit->getText ()); });
 
-	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition () + cPosition (465, 284), getPosition () + cPosition (465 + 167, 284 + 124))));
+	playersList = addChild (std::make_unique<cListView<cLobbyPlayerListViewItem>> (cBox<cPosition> (getPosition () + cPosition (465, 284), getPosition () + cPosition (465 + 167, 284 + 124)), eScrollBarStyle::Classic));
 	playersList->disableSelectable ();
 	playersList->setBeginMargin (cPosition (12, 12));
 	playersList->setEndMargin (cPosition (10, 10));
-	playersList->setItemDistance (cPosition (0, 4));
+	playersList->setItemDistance (4);
 
 	auto selectColorButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (596, 256), ePushButtonType::ArrowRightSmall, &SoundData.SNDObjectMenu));
 	signalConnectionManager.connect (selectColorButton->clicked, [this]()
@@ -225,6 +229,7 @@ void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std
 {
 	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
 	chatList->scrollToItem (addedItem);
+	cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------

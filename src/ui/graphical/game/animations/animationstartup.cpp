@@ -27,11 +27,13 @@ cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cU
 	animationTimer (animationTimer_),
 	unit (&unit_)
 {
+	// we start with the unit slightly visible
 	unit->alphaEffectValue = 10;
 
 	running = true;
 	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationStartUp::run, this));
 
+	// make sure the animation does not run on a destroyed unit
 	signalConnectionManager.connect (unit->destroyed, [this]()
 	{
 		animationTimerConnectionManager.disconnectAll ();
@@ -43,6 +45,7 @@ cAnimationStartUp::cAnimationStartUp (cAnimationTimer& animationTimer_, const cU
 //------------------------------------------------------------------------------
 cAnimationStartUp::~cAnimationStartUp ()
 {
+	// make sure the unit is fully visible when the animation gets deleted
 	if (isRunning () && unit)
 	{
 		unit->alphaEffectValue = 0;
@@ -62,6 +65,7 @@ void cAnimationStartUp::run ()
 
 	unit->alphaEffectValue += 25;
 
+	// check whether we reached the maximum and terminate the animation
 	if (unit->alphaEffectValue >= 255)
 	{
 		unit->alphaEffectValue = 0;

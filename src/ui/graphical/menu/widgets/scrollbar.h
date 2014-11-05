@@ -22,14 +22,49 @@
 
 #include "maxrconfig.h"
 #include "ui/graphical/widget.h"
+#include "ui/graphical/orientation.h"
+#include "utility/signal/signalconnectionmanager.h"
+
+class cPushButton;
+class cSlider;
+
+enum class eScrollBarStyle
+{
+	Classic,
+	Modern
+};
 
 class cScrollBar : public cWidget
 {
 public:
-	cScrollBar ();
-	~cScrollBar ();
+	cScrollBar (const cPosition& position, int width, eScrollBarStyle style, eOrientationType orientation = eOrientationType::Vertical);
 
+	void setRange (int range);
+
+	void setOffset (int offset);
+
+	int getOffset ();
+
+	cSignal<void ()> offsetChanged;
+
+	cSignal<void ()> backClicked;
+	cSignal<void ()> forwardClicked;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
+	cSignalConnectionManager signalConnectionManager;
+
+	cPushButton* forwardButton;
+	cPushButton* backButton;
+
+	cSlider* slider;
+
+	eScrollBarStyle style;
+
+	eOrientationType orientation;
+
+	size_t range;
+	size_t offset;
 };
 
 #endif // ui_graphical_menu_widgets_scrollbarH

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
@@ -142,12 +142,6 @@
     <Filter Include="src\ui\graphical\game\widgets">
       <UniqueIdentifier>{8d163996-349e-421d-8cea-301c55c4e652}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\graphical\game\widgets\mousemode">
-      <UniqueIdentifier>{c9549bcf-7a71-4419-a43c-1adad17b9338}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ui\graphical\game\widgets\mouseaction">
-      <UniqueIdentifier>{cac0339e-0ab4-4ba4-894a-66a409497baf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\graphical\game\control">
       <UniqueIdentifier>{f59148d9-bc6f-4350-81fd-4132648e1c1c}</UniqueIdentifier>
     </Filter>
@@ -228,6 +222,11 @@
     </Filter>
     <Filter Include="src\ui\graphical\menu\windows\windowscenario">
       <UniqueIdentifier>{a748c1a1-c7d9-4c7b-a760-336292c34698}</UniqueIdentifier>
+    <Filter Include="src\ui\graphical\game\control\mouseaction">
+      <UniqueIdentifier>{cac0339e-0ab4-4ba4-894a-66a409497baf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\graphical\game\control\mousemode">
+      <UniqueIdentifier>{c9549bcf-7a71-4419-a43c-1adad17b9338}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -480,84 +479,6 @@
     <ClCompile Include="..\..\src\input\mouse\cursor\mousecursoramount.cpp">
       <Filter>src\input\mouse\cursor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodetransfer.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeattack.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedisable.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodehelp.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeload.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemoderepair.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildpathdestination.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildposition.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesteal.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivatefinished.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionload.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivateloaded.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionattack.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiondisable.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionhelp.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionmove.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionrepair.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselect.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildpathdestination.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildposition.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsteal.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.cpp">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedefault.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\menu\windows\windowstorage\windowstorage.cpp">
       <Filter>src\ui\graphical\menu\windows\windowstorage</Filter>
     </ClCompile>
@@ -704,9 +625,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\turntimeclockwidget.cpp">
       <Filter>src\ui\graphical\game\widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemode.cpp">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\game\unitlocklist.cpp">
       <Filter>src\ui\graphical\game</Filter>
@@ -894,9 +812,6 @@
     <ClCompile Include="..\..\src\game\data\units\vehicle.cpp">
       <Filter>src\game\data\units</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\logic\attackjobs.cpp">
-      <Filter>src\game\logic</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\game\logic\serverevents.cpp">
       <Filter>src\game\logic</Filter>
     </ClCompile>
@@ -1040,6 +955,92 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\menu\dialogs\dialogscenarioend.cpp">
       <Filter>src\ui\graphical\menu\dialogs</Filter>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivatefinished.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivateloaded.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionattack.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiondisable.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionhelp.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionload.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionmove.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionrepair.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselect.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildpathdestination.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildposition.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsteal.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsupplyammo.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiontransfer.cpp">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemode.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeactivateloaded.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeattack.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedefault.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedisable.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodehelp.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeload.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemoderepair.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildpathdestination.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildposition.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesteal.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesupplyammo.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetransfer.cpp">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\logic\attackjob.cpp">
+      <Filter>src\game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.cpp">
+      <Filter>src\ui\graphical\game\control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1451,93 +1452,6 @@
     <ClInclude Include="..\..\src\input\mouse\cursor\mousecursorattack.h">
       <Filter>src\input\mouse\cursor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemode.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodetransfer.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeattack.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildposition.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildpathdestination.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeload.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemoderepair.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedisable.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesteal.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodehelp.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseaction.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionattack.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildposition.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildpathdestination.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionhelp.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiondisable.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselect.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionmove.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionload.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivateloaded.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivatefinished.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsteal.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionrepair.h">
-      <Filter>src\ui\graphical\game\widgets\mouseaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedefault.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodetype.h">
-      <Filter>src\ui\graphical\game\widgets\mousemode</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\ui\graphical\menu\windows\windowstorage\windowstorage.h">
       <Filter>src\ui\graphical\menu\windows\windowstorage</Filter>
     </ClInclude>
@@ -1925,9 +1839,6 @@
     <ClInclude Include="..\..\src\game\data\units\vehicle.h">
       <Filter>src\game\data\units</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\game\logic\attackjobs.h">
-      <Filter>src\game\logic</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\game\logic\serverevents.h">
       <Filter>src\game\logic</Filter>
     </ClInclude>
@@ -2084,5 +1995,103 @@
     <ClInclude Include="..\..\src\ui\graphical\menu\dialogs\dialogscenarioend.h">
       <Filter>src\ui\graphical\menu\dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseaction.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivatefinished.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivateloaded.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionattack.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiondisable.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionhelp.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionload.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionmove.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionrepair.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselect.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildpathdestination.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildposition.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsteal.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsupplyammo.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiontransfer.h">
+      <Filter>src\ui\graphical\game\control\mouseaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemode.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeactivateloaded.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeattack.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedefault.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedisable.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodehelp.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeload.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemoderepair.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildpathdestination.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildposition.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesteal.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesupplyammo.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetransfer.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetype.h">
+      <Filter>src\ui\graphical\game\control\mousemode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\logic\attackjob.h">
+      <Filter>src\game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.h">
+      <Filter>src\ui\graphical\game\control</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\maxr.rc">
+      <Filter>src</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

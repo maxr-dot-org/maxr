@@ -106,15 +106,18 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>
       </MinimalRebuild>
+      <AdditionalIncludeDirectories>../../src</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL_Mixer.lib;SDL_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Mixer.lib;SDL2_Net.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,8 +152,9 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,7 +202,7 @@
     <ClCompile Include="..\..\src\game\data\units\unit.cpp" />
     <ClCompile Include="..\..\src\game\data\units\unitdata.cpp" />
     <ClCompile Include="..\..\src\game\data\units\vehicle.cpp" />
-    <ClCompile Include="..\..\src\game\logic\attackjobs.cpp" />
+    <ClCompile Include="..\..\src\game\logic\attackjob.cpp" />
     <ClCompile Include="..\..\src\game\logic\automjobs.cpp" />
     <ClCompile Include="..\..\src\game\logic\casualtiestracker.cpp" />
     <ClCompile Include="..\..\src\game\logic\client.cpp" />
@@ -272,6 +276,34 @@
     <ClCompile Include="..\..\src\ui\graphical\game\animations\animationtimer.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\animations\animationwork.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\control\gameguicontroller.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivatefinished.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivateloaded.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionattack.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiondisable.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionhelp.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionload.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionmove.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionrepair.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselect.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildpathdestination.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildposition.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsteal.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsupplyammo.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiontransfer.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemode.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeactivateloaded.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeattack.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedefault.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedisable.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodehelp.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeload.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemoderepair.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildpathdestination.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildposition.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesteal.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesupplyammo.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetransfer.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\gamegui.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\gameguistate.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\hud.cpp" />
@@ -287,33 +319,6 @@
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\gamemessagelistviewitem.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\hudpanels.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\minimapwidget.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivatefinished.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivateloaded.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionattack.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiondisable.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionhelp.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionload.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionmove.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionrepair.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselect.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildpathdestination.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildposition.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsteal.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemode.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeattack.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedefault.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedisable.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodehelp.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeload.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemoderepair.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildpathdestination.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildposition.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesteal.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodetransfer.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\turntimeclockwidget.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\unitcontextmenuwidget.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\unitdetailshud.cpp" />
@@ -491,7 +496,7 @@
     <ClInclude Include="..\..\src\game\data\units\unit.h" />
     <ClInclude Include="..\..\src\game\data\units\unitdata.h" />
     <ClInclude Include="..\..\src\game\data\units\vehicle.h" />
-    <ClInclude Include="..\..\src\game\logic\attackjobs.h" />
+    <ClInclude Include="..\..\src\game\logic\attackjob.h" />
     <ClInclude Include="..\..\src\game\logic\automjobs.h" />
     <ClInclude Include="..\..\src\game\logic\casualtiestracker.h" />
     <ClInclude Include="..\..\src\game\logic\client.h" />
@@ -563,6 +568,36 @@
     <ClInclude Include="..\..\src\ui\graphical\game\animations\animationtimer.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\animations\animationwork.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\control\gameguicontroller.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseaction.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivatefinished.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionactivateloaded.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionattack.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiondisable.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionhelp.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionload.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionmove.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionrepair.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselect.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildpathdestination.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionselectbuildposition.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsteal.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactionsupplyammo.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mouseaction\mouseactiontransfer.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemode.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeactivateloaded.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeattack.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedefault.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodedisable.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodehelp.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeload.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemoderepair.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildpathdestination.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodeselectbuildposition.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesteal.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodesupplyammo.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetransfer.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\mousemode\mousemodetype.h" />
+    <ClInclude Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\gamegui.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\gameguistate.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\hud.h" />
@@ -578,35 +613,6 @@
     <ClInclude Include="..\..\src\ui\graphical\game\widgets\gamemessagelistviewitem.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\widgets\hudpanels.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\widgets\minimapwidget.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseaction.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivatefinished.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionactivateloaded.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionattack.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiondisable.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionhelp.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionload.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionmove.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionrepair.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselect.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildpathdestination.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionselectbuildposition.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsteal.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactionsupplyammo.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mouseaction\mouseactiontransfer.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemode.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeactivateloaded.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeattack.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedefault.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodedisable.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodehelp.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeload.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemoderepair.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildpathdestination.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodeselectbuildposition.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesteal.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodesupplyammo.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodetransfer.h" />
-    <ClInclude Include="..\..\src\ui\graphical\game\widgets\mousemode\mousemodetype.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\widgets\turntimeclockwidget.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\widgets\unitcontextmenuwidget.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\widgets\unitdetailshud.h" />
@@ -780,6 +786,9 @@
     <ClInclude Include="..\..\src\utility\tounderlyingtype.h" />
     <ClInclude Include="..\..\src\utility\version.h" />
     <ClInclude Include="..\..\src\video.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\maxr.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -73,7 +73,7 @@ void cNetworkHostGameSaved::start (cApplication& application)
 
 	server->start ();
 
-	sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getNr ());
+	sendRequestResync (*localClient, serverPlayerList[serverListLocalPlayerIndex]->getNr (), true);
 
 	// TODO: move that in server
 	for (size_t i = 0; i != serverPlayerList.size (); ++i)

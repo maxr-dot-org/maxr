@@ -23,7 +23,7 @@
 #include "video.h"
 #include "game/data/units/unit.h"
 #include "game/data/map/map.h"
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "utility/position.h"
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ cMouseCursorAttack::cMouseCursorAttack (const cUnit& sourceUnit, const cPosition
 	inRange (sourceUnit.isInRange (targetPosition))
 {
 	const sUnitData& data = sourceUnit.data;
-	const cUnit* target = selectTarget (targetPosition, data.canAttack, map);
+	const cUnit* target = cAttackJob::selectTarget (targetPosition, data.canAttack, map, sourceUnit.getOwner());
 
 	if (target && (target != &sourceUnit))
 	{

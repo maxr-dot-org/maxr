@@ -26,6 +26,11 @@
 class cAnimationTimer;
 class cUnit;
 
+/**
+ * Animation to fade in units.
+ *
+ * This animation gets executed when e.g. a new unit has been build/detected.
+ */
 class cAnimationStartUp : public cAnimation
 {
 public:

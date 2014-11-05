@@ -65,6 +65,24 @@ cKeySequence::cKeySequence (cKeyCombination keyCombination1, cKeyCombination key
 }
 
 //------------------------------------------------------------------------------
+bool cKeySequence::operator==(const cKeySequence& other) const
+{
+	if (keySequence.size () != other.keySequence.size ()) return false;
+
+	for (size_t i = 0; i < keySequence.size (); ++i)
+	{
+		if (keySequence[i] != other.keySequence[i]) return false;
+	}
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool cKeySequence::operator!=(const cKeySequence& other) const
+{
+	return !(*this == other);
+}
+
+//------------------------------------------------------------------------------
 void cKeySequence::addKeyCombination (cKeyCombination keyCombination)
 {
 	keySequence.push_back (std::move(keyCombination));

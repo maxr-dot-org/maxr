@@ -506,7 +506,11 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 												 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 												 dwidth, dheight,
 												 SDL_WINDOW_OPENGL);
-					SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)).get());
+					{
+						auto icon = AutoSurface(SDL_LoadBMP(MAXR_ICON));
+						SDL_SetColorKey(icon.get(), 1, 0xFF00FF);
+						SDL_SetWindowIcon(sdlWindow, icon.get());
+					}
 				}
 				sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
 				//sdlTexture = SDL_CreateTexture(sdlRenderer,

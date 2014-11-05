@@ -70,7 +70,7 @@
 #include "utility/log.h"
 #include "netmessage.h"
 #include "network.h"
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/data/player/player.h"
 #include "game/data/report/savedreportsimple.h"
 #include "game/data/report/savedreportchat.h"
@@ -592,16 +592,16 @@ void cGameGuiController::connectClient (cClient& client)
 		{
 			const auto& vehicle = static_cast<const cVehicle&>(unit);
 
-			cUnit* target = selectTarget (position, vehicle.data.canAttack, *client.getMap ());
+			cUnit* target = cAttackJob::selectTarget (position, vehicle.data.canAttack, *client.getMap (), vehicle.getOwner());
 
 			if (vehicle.isInRange (position))
 			{
 				// find target ID
 				int targetId = 0;
-				if (target && target->isAVehicle ()) targetId = target->iID;
+				if (target) targetId = target->iID;
 
 				Log.write (" Client: want to attack " + iToStr (position.x ()) + ":" + iToStr (position.y ()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-				sendWantVehicleAttack (client, targetId, position, vehicle.iID);
+				sendWantAttack (client, vehicle.iID, position, targetId);
 			}
 			else if (target)
 			{
@@ -624,10 +624,11 @@ void cGameGuiController::connectClient (cClient& client)
 			const cMap& map = *client.getMap ();
 
 			int targetId = 0;
-			cUnit* target = selectTarget (position, building.data.canAttack, map);
-			if (target && target->isAVehicle ()) targetId = target->iID;
+			cUnit* target = cAttackJob::selectTarget (position, building.data.canAttack, map, building.getOwner());
+			
+			if (target) targetId = target->iID;
 
-			sendWantBuildingAttack (client, targetId, position, building.getPosition ());
+			sendWantAttack (client, building.iID, position, targetId);
 		}
 	});
 	clientSignalConnectionManager.connect (gameGui->getGameMap ().triggeredSteal, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
@@ -747,9 +748,9 @@ void cGameGuiController::connectClient (cClient& client)
 		soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceRepair, getRandom (VoiceData.VOIRepaired)));
 	});
 
-	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect)
+	clientSignalConnectionManager.connect (client.addedEffect, [&](const std::shared_ptr<cFx>& effect, bool playSound)
 	{
-		gameGui->getGameMap ().addEffect (effect);
+		gameGui->getGameMap ().addEffect (effect, playSound);
 	});
 
 	clientSignalConnectionManager.connect (client.getTurnTimeClock ()->alertTimeReached, [this]()
@@ -1106,10 +1107,40 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 	// Special commands start with a '/'
 	if (command[0] == '/')
 	{
+		if (command.compare ("/help") == 0)
+		{
+			gameGui->getChatBox ().addChatMessage ("",
+												   "Available commands:\n"
+												   "- /help"
+												   "- /base [client/server/off]\n"
+												   "- /sentry [server/off]\n"
+												   "- /fx [on/off]\n"
+												   "- /trace [client/server/off]\n"
+												   "- /ajobs [on/off]\n"
+												   "- /players [on/off]\n"
+												   "- /singlestep\n"
+												   "- /cache size <size>\n"
+												   "- /cache flush\n"
+												   "- /cache debug [on/off]\n"
+												   "- /sync debug [on/off]\n"
+												   "- /kick <playerID>\n"
+												   "- /credits <playerID> <credits>\n"
+												   "- /disconnect <playerID>\n"
+												   "- /deadline <seconds>\n"
+												   "- /limit <seconds>\n"
+												   "- /resync <playerID>\n"
+												   "- /mark\n"
+												   "- /color <colorNum>\n"
+												   "- /fog off <playerID>\n"
+												   "- /survey\n"
+												   "- /pause\n"
+												   "- /resume"
+												   );
+		}
 		//
 		// commands that control the GUI itself
 		//
-		if (command.compare ("/base client") == 0) { gameGui->getDebugOutput ().setDebugBaseClient (true);  gameGui->getDebugOutput ().setDebugBaseServer (false); }
+		else if (command.compare ("/base client") == 0) { gameGui->getDebugOutput ().setDebugBaseClient (true);  gameGui->getDebugOutput ().setDebugBaseServer (false); }
 		else if (command.compare ("/base server") == 0) { gameGui->getDebugOutput ().setDebugBaseServer (true);  gameGui->getDebugOutput ().setDebugBaseClient (false); }
 		else if (command.compare ("/base off") == 0) { gameGui->getDebugOutput ().setDebugBaseServer (false);  gameGui->getDebugOutput ().setDebugBaseClient (false); }
 		else if (command.compare ("/sentry server") == 0) { gameGui->getDebugOutput ().setDebugSentry (true); }
@@ -1320,7 +1351,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						gameGui->getGameMessageList().addMessage ("Wrong parameter");
 						return;
 					}
-					sendRequestResync (*activeClient, player->getNr ());
+					sendRequestResync (*activeClient, player->getNr (), false);
 				}
 				else
 				{
@@ -1329,12 +1360,12 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 						const auto& playerList = server->playerList;
 						for (unsigned int i = 0; i < playerList.size (); i++)
 						{
-							sendRequestResync (*activeClient, playerList[i]->getNr ());
+							sendRequestResync (*activeClient, playerList[i]->getNr (), false);
 						}
 					}
 					else
 					{
-						sendRequestResync (*activeClient, activeClient->getActivePlayer ().getNr ());
+						sendRequestResync (*activeClient, activeClient->getActivePlayer ().getNr (), false);
 					}
 				}
 			}

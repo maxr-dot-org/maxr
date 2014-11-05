@@ -21,6 +21,7 @@
 #include "ui/graphical/game/animations/animationtimer.h"
 #include "game/data/units/building.h"
 #include "utility/box.h"
+#include "utility/random.h"
 
 //------------------------------------------------------------------------------
 cAnimationWork::cAnimationWork (cAnimationTimer& animationTimer_, const cBuilding& building_) :
@@ -66,7 +67,7 @@ bool cAnimationWork::isLocatedIn (const cBox<cPosition>& box) const
 void cAnimationWork::activate ()
 {
 	if (!building) return;
-	building->effectAlpha = 0;
+	building->effectAlpha = random(220);
 	running = true;
 	animationTimerConnectionManager.connect (animationTimer.triggered100ms, std::bind (&cAnimationWork::run, this));
 }

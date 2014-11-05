@@ -19,7 +19,6 @@ include_directories(src)
 # === Global defines
 # ============================================
 
-#add_definitions( -DTIXML_USE_STL )
 
 if(MAXR_BUILD_DEDICATED_SERVER)
   add_definitions( -DDEDICATED_SERVER_APPLICATION )
@@ -46,9 +45,9 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string)
   string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
   
-#  if (NOT (CLANG_VERSION_STRING VERSION_GREATER 3.1 OR CLANG_VERSION_STRING VERSION_EQUAL 3.1))
-#    message(FATAL_ERROR "${PROJECT_NAME} requires clang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
-#  endif ()
+  if (NOT (CLANG_VERSION_STRING VERSION_GREATER 3.1 OR CLANG_VERSION_STRING VERSION_EQUAL 3.1))
+    message(FATAL_ERROR "${PROJECT_NAME} requires clang 3.1 or greater (is ${CLANG_VERSION_STRING}).")
+  endif ()
   
   if (CLANG_VERSION_STRING VERSION_GREATER 3.4 OR CLANG_VERSION_STRING VERSION_EQUAL 3.4)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -stdlib=libc++")
@@ -64,21 +63,67 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   endif()
   
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  add_definitions( -DNOMINMAX )
+  add_definitions(/ZI)
+  add_definitions(/MP)
+  set(RESSOURCE_FILE src/maxr.rc)
 else()
   message(FATAL_ERROR "You are using an unsupported C++ compiler.")
 endif()
 
 # ============================================
+# === Add GIT Revision
+# ============================================
+
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
+include(GetGitRevisionDescription)
+git_describe(GIT_DESC --always)
+
+if (GIT_DESC)
+  message("Setting cpp define PACKAGE_REV to ${GIT_DESC}")
+  add_definitions("-DHAVE_AUTOVERSION_H")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/autoversion.h.in" "${CMAKE_CURRENT_BINARY_DIR}/autoversion.h")
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+else()
+  message("Could not automativally set the maxr PACKAGE_REV from git. Set cmake variable GIT_EXECUTABLE to use this feature.")
+endif()
+
+# ============================================
 # === Target
 # ============================================
-file(GLOB_RECURSE maxr_SRCS "src/*.cpp" "src/*.c")
 
-add_executable(maxr ${maxr_SRCS})
+file(GLOB_RECURSE maxr_SRCS "src/*.cpp" "src/*.c" "src/*.h")
+ 
+macro(GroupSources curdir)
+  
+  file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
+
+  foreach(child ${children})
+    if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+      GroupSources(${curdir}/${child})
+    else()
+      string(REPLACE "/" "\\" groupname ${curdir})
+      source_group(${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+    endif()
+  endforeach()
+endmacro()
+
+GroupSources(src)
+
+add_executable(maxr ${maxr_SRCS} ${RESSOURCE_FILE})
+
+# set linker flags for target
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set_target_properties(maxr PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+endif()
+
+
 
 # ============================================
 # === Additional Packages
 # ============================================
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/mk/cmake)
 
 # ---------------------------------------
 # SDL2

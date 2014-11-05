@@ -47,17 +47,17 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetails::draw ()
+void cUnitDetails::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		reset ();
 
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

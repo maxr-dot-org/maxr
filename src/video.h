@@ -23,6 +23,7 @@
 #include "utility/autosurface.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
+#include "settings.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -30,12 +31,6 @@ struct SDL_Window;
 struct SDL_Surface;
 
 class cKeyboard;
-
-struct sVidMode
-{
-	unsigned int width;
-	unsigned int height;
-};
 
 /**
  * cVideo class.
@@ -51,14 +46,26 @@ public:
 
 	void clearMemory();
 
+	void init ();
+
+	/**
+	 * Shows the splash screen
+	 */
+	void showSplashScreen ();
+
+	/**
+	 * Prepares the window, buffer and renderer to display the game screen.
+	 */
+	void prepareGameScreen ();
+
 	/**
 	* Sets whether app should appear windowed or in fullscreen mode
+	*
 	* @param bWindowMode pass true if app should work in windowed mode
 	*                    pass false it app should start in fullscreen
 	* @param bApply set to true if app should apply new windowMode too
-	* @return 0 on success
 	*/
-	int setWindowMode (bool bWindowMode, bool bApply = false);
+	void setWindowMode (bool bWindowMode, bool bApply = false);
 
 	/**
 	* Get whether app should appear windowed or in fullscreen mode
@@ -74,7 +81,7 @@ public:
 	* @param bApply  set to true if app should apply new resolution too
 	* @return 0 on success
 	*/
-	int setResolution (int iWidth, int iHeight, bool bApply = false);
+	void setResolution (int iWidth, int iHeight, bool bApply = false);
 
 	/**
 	* @deprecated for compat only - will be removed!
@@ -102,23 +109,28 @@ public:
 	int getColDepth() const;
 
 	/**
+	 * Sets an new display (monitor) as the currently active one.
+	 * @param index The index of the display to be used.
+	 */
+	void setDisplayIndex (int index);
+
+	/**
+	 * Returns the index of the display that is currently used.
+	 * @return The display index.
+	 */
+	int getDisplayIndex () const;
+
+	/**
 	* @return Detected videomodes
 	*/
 	size_t getVideoSize() const;
 
 	/**
-	* @param iMode video mode num from video mode array
-	* @return Videomode as string widthxheight.
-	*         If iMode is unknown minimal needed videomode will be returned.
-	*/
-	std::string getVideoMode (size_t iMode) const;
-
-	/**
-	* Try to autodetect availavle video modes from SDL.
-	*/
-	void doDetection ();
-
-	const std::vector<sVidMode>& getDetectedVideoModes () const;
+	 * Returns the available resolutions for the currently active display.
+	 *
+	 * @return A list with pairs of the supported X and Y resolution components.
+	 */
+	const std::vector<std::pair<int, int>>& getDetectedResolutions () const;
 
 	/**
 	* Check whether the provided mode is known to our video mode list
@@ -126,17 +138,7 @@ public:
 	* @param height Screenheight to look for
 	* @return iMode or -1 on unknown mode
 	*/
-	int validateMode (unsigned int iWidth, unsigned int iHeight) const;
-
-	/**
-	* @return Splash width
-	*/
-	int getSplashW() const;
-
-	/**
-	* @return Splash height
-	*/
-	int getSplashH() const;
+	int validateResolution (int width, int height) const;
 
 	/**
 	* @return Minimal needed screen resolution width
@@ -147,11 +149,6 @@ public:
 	* @return Minimal needed screen resolution height
 	*/
 	int getMinH() const;
-
-	/**
-	* Inits our buffers and draws the splashscreen
-	*/
-	void initSplash();
 
 	/**
 	* clears buffer (black)
@@ -166,7 +163,7 @@ public:
 
 	void takeScreenShot (const std::string& filename) const;
 
-	void applyShadow (const SDL_Rect* rect);
+	void applyShadow (const SDL_Rect* rect, SDL_Surface& destination);
 
 	mutable cSignal<void(const std::string&)> screenShotTaken;
 
@@ -181,21 +178,33 @@ private:
 	* Checks whether our minimal needed videomode has been autodetected
 	* @return true if mininal video mode looks valid
 	*/
-	bool bHaveMinMode() const;
+	bool haveMinMode() const;
 
-	/**
-	* Applys current video settings
-	* @return 0 on success
-	*/
-	int applySettings();
+	void keyPressed (cKeyboard& keyboard, SDL_Keycode key);
 
-	void keyPressed(cKeyboard& keyboard, SDL_Keycode key);
+	void applyResolution ();
+	void applyWindowMode ();
+
+	void initializeBuffer (int width, int height);
+
+	void detectResolutions ();
 private:
 	SDL_Window* sdlWindow;
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* sdlTexture;
 
+	int resolutionX;
+	int resolutionY;
+
+	int displayIndex;
+
+	int colorDepth;
+
+	bool windowMode;
+
 	cSignalConnectionManager signalConnectionManager;
+
+	std::vector<std::vector<std::pair<int, int>>> detectedResolutions;
 };
 
 extern cVideo Video;

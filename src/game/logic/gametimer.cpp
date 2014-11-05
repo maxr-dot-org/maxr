@@ -29,6 +29,7 @@
 #include "game/data/player/player.h"
 #include "game/logic/server.h"
 #include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 
 bool cGameTimer::syncDebugSingleStep = false;
 
@@ -208,7 +209,7 @@ void cGameTimerClient::run ()
 		if (localChecksum != remoteChecksum)
 		{
 			//gameGUI.debugOutput.debugSync = true;
-			//Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+			Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
 		}
 
 		if (syncDebugSingleStep)
@@ -310,16 +311,28 @@ uint32_t calcClientChecksum (const cClient& client)
 	const auto& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		const auto& vehicles = players[i]->getVehicles ();
-		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
+		for (const auto& vehicle : players[i]->getVehicles ())
 		{
-			const auto& vehicle = *j;
+			crc = calcCheckSum (vehicle->data.getShots(), crc);
+			crc = calcCheckSum (vehicle->data.getAmmo(), crc);
+			crc = calcCheckSum (vehicle->data.getHitpoints(), crc);
+			crc = calcCheckSum (vehicle->data.speedCur, crc);
+			crc = calcCheckSum (vehicle->getFlightHeight(), crc);
 			crc = calcCheckSum (vehicle->iID,  crc);
 			crc = calcCheckSum (vehicle->getPosition().x(), crc);
 			crc = calcCheckSum (vehicle->getPosition().y(), crc);
 			crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
 			crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
 			crc = calcCheckSum (vehicle->dir,  crc);
+		}
+
+		for (const auto& building : players[i]->getBuildings ())
+		{
+			crc = calcCheckSum (building->iID, crc);
+			crc = calcCheckSum (building->data.getShots(), crc);
+			crc = calcCheckSum (building->data.getAmmo(), crc);
+			crc = calcCheckSum (building->data.getHitpoints(), crc);
+			crc = calcCheckSum (building->dir, crc);
 		}
 	}
 	return crc;
@@ -331,18 +344,33 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 	const auto& playerList = server.playerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		const auto& vehicles = playerList[i]->getVehicles ();
-		for (auto j = vehicles.begin (); j != vehicles.end (); ++j)
+		for (const auto& vehicle : playerList[i]->getVehicles ())
 		{
-			const auto& vehicle = *j;
 			if (Contains (vehicle->seenByPlayerList, player) || vehicle->getOwner () == player)
 			{
-				crc = calcCheckSum (vehicle->iID,  crc);
-				crc = calcCheckSum (vehicle->getPosition().x(), crc);
-				crc = calcCheckSum (vehicle->getPosition().y(), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset().x(), crc);
-				crc = calcCheckSum (vehicle->getMovementOffset().y(), crc);
-				crc = calcCheckSum (vehicle->dir,  crc);
+				crc = calcCheckSum (vehicle->data.getShots (), crc);
+				crc = calcCheckSum (vehicle->data.getAmmo (), crc);
+				crc = calcCheckSum (vehicle->data.getHitpoints (), crc);
+				crc = calcCheckSum (vehicle->data.speedCur, crc);
+				crc = calcCheckSum (vehicle->getFlightHeight (), crc);
+				crc = calcCheckSum (vehicle->iID, crc);
+				crc = calcCheckSum (vehicle->getPosition ().x (), crc);
+				crc = calcCheckSum (vehicle->getPosition ().y (), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset ().x (), crc);
+				crc = calcCheckSum (vehicle->getMovementOffset ().y (), crc);
+				crc = calcCheckSum (vehicle->dir, crc);
+			}
+		}
+
+		for (const auto& building : playerList[i]->getBuildings ())
+		{
+			if (Contains (building->seenByPlayerList, player) || building->getOwner () == player)
+			{
+				crc = calcCheckSum (building->iID, crc);
+				crc = calcCheckSum (building->data.getShots (), crc);
+				crc = calcCheckSum (building->data.getAmmo (), crc);
+				crc = calcCheckSum (building->data.getHitpoints (), crc);
+				crc = calcCheckSum (building->dir, crc);
 			}
 		}
 	}
@@ -366,6 +394,7 @@ void compareGameData (const cClient& client, const cServer& server)
 			assert (clientVehicle->getPosition() == serverVehicle->getPosition());
 			assert (clientVehicle->getMovementOffset() == serverVehicle->getMovementOffset());
 			assert (clientVehicle->dir == serverVehicle->dir);
+			assert (clientVehicle->data.speedCur == serverVehicle->data.speedCur);
 		}
 	}
 #endif

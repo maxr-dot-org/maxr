@@ -34,15 +34,15 @@ cLandingPositionSelectionMap::cLandingPositionSelectionMap (const cBox<cPosition
 }
 
 //------------------------------------------------------------------------------
-void cLandingPositionSelectionMap::draw ()
+void cLandingPositionSelectionMap::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (mapSurface != nullptr)
 	{
 		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (mapSurface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (mapSurface.get (), nullptr, &destination, &position);
 	}
 
-	cClickableWidget::draw ();
+	cClickableWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

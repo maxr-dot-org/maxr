@@ -57,39 +57,39 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 	signalConnectionManager.connect (filesButton->clicked, [&](){ filesClicked (); });
 
 	surveyButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296), lngPack.i18n ("Text~Others~Survey"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_00, false, &SoundData.SNDHudSwitch));
-	surveyButton->addClickShortcut (KeysList.keySurvey);
+	surveyShortcut = &surveyButton->addClickShortcut (KeysList.keySurvey);
 	signalConnectionManager.connect (surveyButton->toggled, [&](){ surveyToggled (); });
 	
 	hitsButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296), lngPack.i18n ("Text~Others~Hitpoints_7"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_01, false, &SoundData.SNDHudSwitch));
-	hitsButton->addClickShortcut (KeysList.keyHitpoints);
+	hitsShortcut = &hitsButton->addClickShortcut (KeysList.keyHitpoints);
 	signalConnectionManager.connect (hitsButton->toggled, [&](){ hitsToggled (); });
 	
 	scanButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296), lngPack.i18n ("Text~Others~Scan"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_02, false, &SoundData.SNDHudSwitch));
-	scanButton->addClickShortcut (KeysList.keyScan);
+	scanShortcut = &scanButton->addClickShortcut (KeysList.keyScan);
 	signalConnectionManager.connect (scanButton->toggled, [&](){ scanToggled (); });
 	
 	statusButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18), lngPack.i18n ("Text~Others~Status"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_10, false, &SoundData.SNDHudSwitch));
-	statusButton->addClickShortcut (KeysList.keyStatus);
+	statusShortcut = &statusButton->addClickShortcut (KeysList.keyStatus);
 	signalConnectionManager.connect (statusButton->toggled, [&](){ statusToggled (); });
 	
 	ammoButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18), lngPack.i18n ("Text~Others~Ammo"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_11, false, &SoundData.SNDHudSwitch));
-	ammoButton->addClickShortcut (KeysList.keyAmmo);
+	ammoShortcut = &ammoButton->addClickShortcut (KeysList.keyAmmo);
 	signalConnectionManager.connect (ammoButton->toggled, [&](){ ammoToggled (); });
 	
 	gridButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18), lngPack.i18n ("Text~Others~Grid"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_12, false, &SoundData.SNDHudSwitch));
-	gridButton->addClickShortcut (KeysList.keyGrid);
+	gridShortcut = &gridButton->addClickShortcut (KeysList.keyGrid);
 	signalConnectionManager.connect (gridButton->toggled, [&](){ gridToggled (); });
 	
 	colorButton = addChild (std::make_unique<cCheckBox> (cPosition (2, 296 + 18 + 16), lngPack.i18n ("Text~Others~Color"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_20, false, &SoundData.SNDHudSwitch));
-	colorButton->addClickShortcut (KeysList.keyColors);
+	colorShortcut = &colorButton->addClickShortcut (KeysList.keyColors);
 	signalConnectionManager.connect (colorButton->toggled, [&](){ colorToggled (); });
 	
 	rangeButton = addChild (std::make_unique<cCheckBox> (cPosition (57, 296 + 18 + 16), lngPack.i18n ("Text~Others~Range"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
-	rangeButton->addClickShortcut (KeysList.keyRange);
+	rangeShortcut = &rangeButton->addClickShortcut (KeysList.keyRange);
 	signalConnectionManager.connect (rangeButton->toggled, [&](){ rangeToggled (); });
 	
 	fogButton = addChild (std::make_unique<cCheckBox> (cPosition (112, 296 + 18 + 16), lngPack.i18n ("Text~Others~Fog"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudIndex_21, false, &SoundData.SNDHudSwitch));
-	fogButton->addClickShortcut (KeysList.keyFog);
+	fogShortcut = &fogButton->addClickShortcut (KeysList.keyFog);
 	signalConnectionManager.connect (fogButton->toggled, [&](){ fogToggled (); });
 
 	lockButton = addChild (std::make_unique<cCheckBox> (cPosition (32, 227), eCheckBoxType::HudLock, false, &SoundData.SNDHudSwitch));
@@ -107,8 +107,8 @@ cHud::cHud (std::shared_ptr<cAnimationTimer> animationTimer) :
 
 	auto reportsButton = addChild (std::make_unique<cPushButton> (cPosition (101, 252), ePushButtonType::HudReport, lngPack.i18n ("Text~Others~Log")));
 	signalConnectionManager.connect (reportsButton->clicked, [&](){ reportsClicked (); });
-    auto chatButton = addChild (std::make_unique<cPushButton> (cPosition (51, 252), ePushButtonType::HudChat, lngPack.i18n ("Text~Others~Chat")));
-    signalConnectionManager.connect (chatButton->clicked, [&](){ chatClicked (); });
+	chatButton = addChild (std::make_unique<cCheckBox> (cPosition (51, 252), lngPack.i18n ("Text~Others~Chat"), FONT_LATIN_SMALL_WHITE, eCheckBoxTextAnchor::Left, eCheckBoxType::HudChat));
+	signalConnectionManager.connect (chatButton->toggled, [&](){ chatToggled (); });
 
 	auto nextButton = addChild (std::make_unique<cPushButton> (cPosition (124, 227), ePushButtonType::HudNext, ">>"));
 	nextButton->addClickShortcut (KeysList.keyUnitNext);
@@ -200,16 +200,16 @@ bool cHud::isAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-void cHud::draw ()
+void cHud::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		auto position = getArea ().toSdlRect ();
 		//SDL_Rect rect = {0, getEndPosition ().y () - panelBottomHeight * 2, getSize ().x (), panelBottomHeight * 2};
-		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
@@ -455,6 +455,18 @@ bool cHud::getLockActive () const
 }
 
 //------------------------------------------------------------------------------
+void cHud::setChatActive (bool value)
+{
+	chatButton->setChecked (value);
+}
+
+//------------------------------------------------------------------------------
+bool cHud::getChatActive () const
+{
+	return chatButton->isChecked ();
+}
+
+//------------------------------------------------------------------------------
 void cHud::setMiniMapZoomFactorActive (bool value)
 {
 	miniMapZoomFactorButton->setChecked (value);
@@ -516,6 +528,34 @@ void cHud::resizeToResolution ()
 
 	coordsLabel->moveTo (cPosition (265, getEndPosition ().y () - 18));
 	unitNameLabel->moveTo (cPosition (343, getEndPosition ().y () - 18));
+}
+
+//------------------------------------------------------------------------------
+void cHud::activateShortcuts ()
+{
+	surveyShortcut->activate ();
+	hitsShortcut->activate ();
+	scanShortcut->activate ();
+	statusShortcut->activate ();
+	ammoShortcut->activate ();
+	gridShortcut->activate ();
+	colorShortcut->activate ();
+	rangeShortcut->activate ();
+	fogShortcut->activate ();
+}
+
+//------------------------------------------------------------------------------
+void cHud::deactivateShortcuts ()
+{
+	surveyShortcut->deactivate ();
+	hitsShortcut->deactivate ();
+	scanShortcut->deactivate ();
+	statusShortcut->deactivate ();
+	ammoShortcut->deactivate ();
+	gridShortcut->deactivate ();
+	colorShortcut->deactivate ();
+	rangeShortcut->deactivate ();
+	fogShortcut->deactivate ();
 }
 
 //------------------------------------------------------------------------------

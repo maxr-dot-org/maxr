@@ -25,6 +25,16 @@
 #include "utility/drawing.h"
 #include "utility/color.h"
 
+/*static*/ bool cWidget::drawDebugFrames = false;
+/*static*/ cSignal<void ()> cWidget::drawDebugFramesChanged;
+
+//------------------------------------------------------------------------------
+/*static*/ void cWidget::toggleDrawDebugFrames ()
+{
+	drawDebugFrames = !drawDebugFrames;
+	drawDebugFramesChanged ();
+}
+
 //------------------------------------------------------------------------------
 cWidget::cWidget () :
 	parent (nullptr),
@@ -33,6 +43,8 @@ cWidget::cWidget () :
 	area (cPosition (0, 0), cPosition (0, 0))
 {
 	createFrameSurface ();
+
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
 }
 
 //------------------------------------------------------------------------------
@@ -43,6 +55,8 @@ cWidget::cWidget (const cPosition& position) :
 	area (position, position)
 {
 	createFrameSurface ();
+
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
 }
 
 //------------------------------------------------------------------------------
@@ -53,6 +67,8 @@ cWidget::cWidget (const cBox<cPosition>& area_) :
 	area (area_)
 {
 	createFrameSurface ();
+
+	signalConnectionManager.connect (drawDebugFramesChanged, [this]() { createFrameSurface (); });
 }
 
 //------------------------------------------------------------------------------
@@ -62,8 +78,16 @@ cWidget::~cWidget ()
 
 	if (application)
 	{
-		if (application->hasKeyFocus (*this)) application->releaseKeyFocus (*this);
-		if (application->hasMouseFocus (*this)) application->releaseMouseFocus (*this);
+		// release the mouse or key focus of this widget or any of its children.
+		// We have to release the focus of the children as well because after the parent is deleted
+		// the children have no possibility to access the application anymore
+		releaseFocusRecursive (*application);
+	}
+
+	// just to make sure the children will not access the parent during their clean up.
+	for (auto& child : children)
+	{
+		child->setParent (nullptr);
 	}
 }
 
@@ -232,14 +256,22 @@ bool cWidget::isAt (const cPosition& position) const
 }
 
 //------------------------------------------------------------------------------
-void cWidget::draw ()
+void cWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (isHidden ()) return;
 
-	if (frameSurface != nullptr)
+	if (frameSurface && getArea().intersects(clipRect))
 	{
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (frameSurface.get (), NULL, cVideo::buffer, &position);
+		auto clipedArea = getArea ().intersection (clipRect);
+
+		SDL_Rect position = clipedArea.toSdlRect ();
+
+		clipedArea.getMinCorner () -= getPosition ();
+		clipedArea.getMaxCorner () -= getPosition ();
+
+		SDL_Rect source = clipedArea.toSdlRect ();
+
+		SDL_BlitSurface (frameSurface.get (), &source, &destination, &position);
 	}
 
 	for (auto i = children.begin (); i != children.end (); ++i)
@@ -248,7 +280,10 @@ void cWidget::draw ()
 
 		if (child.isHidden ()) continue;
 
-		child.draw ();
+		if (child.getArea ().intersects (clipRect))
+		{
+			child.draw (destination, child.getArea ().intersection (clipRect));
+		}
 	}
 }
 
@@ -390,8 +425,7 @@ cApplication* cWidget::getActiveApplication () const
 //------------------------------------------------------------------------------
 void cWidget::createFrameSurface ()
 {
-	const bool debugDrawFrame = false;
-	if (debugDrawFrame)
+	if (drawDebugFrames)
 	{
 		const auto size = getSize();
 
@@ -404,15 +438,23 @@ void cWidget::createFrameSurface ()
 
 		drawRectangle (*frameSurface, cBox<cPosition> (cPosition (0, 0), size), cRgbColor::red());
 	}
+	else
+	{
+		frameSurface = nullptr;
+	}
 }
 
 //------------------------------------------------------------------------------
-bool cWidget::hitShortcuts (cKeySequence& keySequence)
+bool cWidget::hitShortcuts (const cKeySequence& keySequence)
 {
+	// TODO: remove code duplication with cApplication::hitShortcuts
+
 	bool anyMatch = false;
-	for (size_t i = 0; i < shortcuts.size (); ++i)
+	for (const auto& shortcut : shortcuts)
 	{
-		const auto& shortcutSequence = shortcuts[i]->getKeySequence ();
+		if (!shortcut->isActive ()) continue;
+
+		const auto& shortcutSequence = shortcut->getKeySequence ();
 
 		if (shortcutSequence.length () > keySequence.length ()) continue;
 
@@ -428,22 +470,29 @@ bool cWidget::hitShortcuts (cKeySequence& keySequence)
 
 		if (match)
 		{
-			shortcuts[i]->triggered ();
+			shortcut->triggered ();
 			anyMatch = true;
 		}
 	}
 
-	if (anyMatch)
+	for (const auto& child : children)
 	{
-		keySequence.reset ();
-		return true;
+		anyMatch = child->hitShortcuts (keySequence) || anyMatch;
 	}
-	else
+	return anyMatch;
+}
+
+//------------------------------------------------------------------------------
+void cWidget::releaseFocusRecursive (cApplication& application)
+{
+	if (application.hasKeyFocus (*this)) application.releaseKeyFocus (*this);
+	if (application.hasMouseFocus (*this)) application.releaseMouseFocus (*this);
+
+	if (application.hasKeyFocus () || application.hasMouseFocus ())
 	{
-		for (size_t i = 0; i < children.size (); ++i)
+		for (auto& child : children)
 		{
-			if (children[i]->hitShortcuts (keySequence)) return true;
+			child->releaseFocusRecursive (application);
 		}
 	}
-	return false;
 }

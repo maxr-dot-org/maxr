@@ -27,6 +27,7 @@
 #include "utility/random.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/image.h"
+#include "maxrversion.h"
 
 //------------------------------------------------------------------------------
 cWindowMain::cWindowMain (const std::string& title) :

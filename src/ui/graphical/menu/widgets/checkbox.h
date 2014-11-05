@@ -51,6 +51,7 @@ enum class eCheckBoxType
 	HudIndex_21,
 	HudIndex_22,
 
+	HudChat,
 	HudLock,
 
 	HudTnt,
@@ -84,7 +85,7 @@ public:
 
 	cSignal<void ()> toggled;
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;

@@ -46,15 +46,15 @@ void cProtectionGlass::open ()
 }
 
 //------------------------------------------------------------------------------
-void cProtectionGlass::draw ()
+void cProtectionGlass::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	const auto offset = (int)(getSize ().y () * (100. - percentClosed) / 100);
 
-	SDL_Rect source = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
+	SDL_Rect sourceRect = {0, offset, GraphicsData.gfx_destruction_glas->w, GraphicsData.gfx_destruction_glas->h - offset};
 
-	SDL_Rect destination = {getPosition ().x (), getPosition ().y (), source.w, source.h};
+	SDL_Rect destinationRect = {getPosition ().x (), getPosition ().y (), sourceRect.w, sourceRect.h};
 	
-	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get (), &source, cVideo::buffer, &destination);
+	SDL_BlitSurface (GraphicsData.gfx_destruction_glas.get (), &sourceRect, &destination, &destinationRect);
 }
 
 //------------------------------------------------------------------------------

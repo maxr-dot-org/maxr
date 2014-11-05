@@ -27,7 +27,7 @@
 
 #include "main.h"
 #include "video.h"
-
+#include "maxrversion.h"
 #include "defines.h"
 #include "utility/log.h"
 #include "pcx.h"
@@ -37,51 +37,22 @@
 
 cVideo Video;
 
-/*static*/ SDL_Surface* cVideo::buffer = NULL; // Der Bildschirm-Buffer
+/*static*/ SDL_Surface* cVideo::buffer = nullptr; // the screen buffer
 
-
-/** Slashscreen width  */
-#define SPLASHWIDTH 500
-/** Slashscreen height  */
-#define SPLASHHEIGHT 420
 #define COLOURDEPTH 32
 /** Minimum video mode resultion we need */
 #define MINWIDTH 640
 #define MINHEIGHT 480
 
-static bool operator < (const sVidMode& lhs, const sVidMode& rhs)
-{
-	if (lhs.width != rhs.width) return lhs.width < rhs.width;
-	return lhs.height < rhs.height;
-}
-
-static bool operator == (const sVidMode& lhs, const sVidMode& rhs)
-{
-	return lhs.width == rhs.width && lhs.height == rhs.height;
-}
-
-struct sVidData
-{
-	unsigned int width;
-	unsigned int height;
-	int iColDepth;
-	bool bWindowMode;
-};
-
-/**
-* Will store detected videomodes
-*/
-static std::vector<sVidMode> vVideoMode;
-
-/**
-* Stores our actual video data
-*/
-static sVidData videoData = { MINWIDTH, MINHEIGHT, 32, false };
-
 cVideo::cVideo() :
-	sdlWindow (NULL),
-	sdlRenderer (NULL),
-	sdlTexture (NULL)
+	sdlWindow (nullptr),
+	sdlRenderer (nullptr),
+	sdlTexture (nullptr),
+	resolutionX (MINWIDTH),
+	resolutionY (MINHEIGHT),
+	displayIndex (MINWIDTH),
+	colorDepth (COLOURDEPTH),
+	windowMode (false)
 {
 	using namespace std::placeholders;
 
@@ -108,28 +79,93 @@ void cVideo::clearMemory()
 	sdlWindow = NULL;
 }
 
-int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
+void cVideo::init ()
 {
-	videoData.width = iWidth;
-	videoData.height = iHeight;
+	const auto title = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV " ";
+
+	sdlWindow = SDL_CreateWindow (title,
+								  SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex ()), SDL_WINDOWPOS_CENTERED_DISPLAY (getDisplayIndex ()),
+								  MINWIDTH, MINHEIGHT,
+								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
+
+	{
+		auto icon = AutoSurface(SDL_LoadBMP(MAXR_ICON));
+		SDL_SetColorKey(icon.get(), 1, 0xFF00FF);
+		SDL_SetWindowIcon(sdlWindow, icon.get());
+	}
+
+	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
+
+	// make the scaled rendering look smoother.
+	SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
+	detectResolutions ();
+}
+
+void cVideo::showSplashScreen ()
+{
+	AutoSurface splash (LoadPCX (SPLASH_BACKGROUND));
+
+	SDL_SetWindowBordered (sdlWindow, SDL_FALSE);
+	SDL_SetWindowSize (sdlWindow, splash->w, splash->h);
+	SDL_SetWindowPosition (sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	SDL_SetWindowFullscreen (sdlWindow, 0);
+
+	initializeBuffer (splash->w, splash->h);
+
+	SDL_BlitSurface (splash.get (), nullptr, buffer, nullptr);
+
+	draw ();
+}
+
+void cVideo::prepareGameScreen ()
+{
+	SDL_SetWindowBordered (sdlWindow, SDL_TRUE);
+	SDL_SetWindowSize (sdlWindow, getResolutionX (), getResolutionY ());
+	SDL_SetWindowPosition (sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	SDL_SetWindowFullscreen (sdlWindow, getWindowMode () ? 0 : SDL_WINDOW_FULLSCREEN);
+
+	initializeBuffer (getResolutionX (), getResolutionY ());
+
+	draw ();
+}
+
+void cVideo::initializeBuffer (int width, int height)
+{
+	if (buffer) SDL_FreeSurface (buffer);
+	buffer = SDL_CreateRGBSurface (0, width, height, getColDepth (), 0, 0, 0, 0);
+
+	if (font != nullptr) font->setTargetSurface (buffer);
+
+	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
+	sdlTexture = SDL_CreateTexture (sdlRenderer,
+									SDL_PIXELFORMAT_ARGB8888,
+									SDL_TEXTUREACCESS_STREAMING,
+									width, height);
+
+	SDL_RenderSetLogicalSize (sdlRenderer, width, height);
+}
+
+void cVideo::setResolution (int iWidth, int iHeight, bool bApply)
+{
+	resolutionX = iWidth;
+	resolutionY = iHeight;
 
 	// validate only if we should apply
 	// because the resolution may be set during reading of settings
 	// and at this point does no SDL context exist yet
 	if (bApply)
 	{
-		// detect what modes we have
-		doDetection();
 		// BEGIN SANITY CHECK SCREEN RES
 
-		if (validateMode (iWidth, iHeight) >= 0)
+		if (validateResolution (iWidth, iHeight) >= 0)
 		{
 			Log.write ("cVideo:  => Found requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :)", cLog::eLOG_TYPE_INFO);
 		}
 		else
 		{
 			Log.write ("cVideo:  => Couldn't find requested video mode " + iToStr (iWidth) + "x" + iToStr (iHeight) + " :(", cLog::eLOG_TYPE_WARNING);
-			if (bHaveMinMode())
+			if (haveMinMode ())
 			{
 				Log.write ("cVideo:  => Edit your config and try default video mode " + iToStr (Video.getMinW()) + "x" + iToStr (Video.getMinH()) + " if I crash now!", cLog::eLOG_TYPE_WARNING);
 			}
@@ -140,16 +176,14 @@ int cVideo::setResolution (int iWidth, int iHeight, bool bApply)
 		}
 		// END SANITY CHECK SCREEN RES
 
-		const auto result = applySettings();
+		applyResolution ();
+
 		resolutionChanged ();
-		return result;
 	}
 	else
 	{
 		Log.write ("cVideo: Resolution set to " + iToStr (iWidth) + "x" + iToStr (iHeight) + " but was not applied yet", cLog::eLOG_TYPE_INFO);
 	}
-
-	return 0;
 }
 
 int cVideo::setColDepth (unsigned iDepth)
@@ -164,26 +198,36 @@ int cVideo::setColDepth (unsigned iDepth)
 	else
 	{
 		// TODO: [SDL2] : sanitycheck
-		videoData.iColDepth = iDepth;
+		colorDepth = iDepth;
 	}
 	return 0;
 }
 
 int cVideo::getColDepth() const
 {
-	return videoData.iColDepth;
+	return colorDepth;
 }
 
-int cVideo::setWindowMode (bool bWindowMode, bool bApply)
+void cVideo::setDisplayIndex (int index)
 {
-	videoData.bWindowMode = bWindowMode;
-	Log.write ("cVideo: Window mode settings changed to " + std::string (getWindowMode() ? "windowmode" : "fullscreen"), cLog::eLOG_TYPE_DEBUG);
+	displayIndex = index;
+	// TODO: apply the display index (reassign window to new display)
+}
+
+int cVideo::getDisplayIndex () const
+{
+	return displayIndex;
+}
+
+void cVideo::setWindowMode (bool bWindowMode, bool bApply)
+{
+	windowMode = bWindowMode;
+	Log.write ("cVideo: Window mode settings changed to " + std::string (getWindowMode () ? "windowmode" : "fullscreen"), cLog::eLOG_TYPE_DEBUG);
 
 	if (bApply)
 	{
-		return applySettings();
+		applyWindowMode ();
 	}
-	return 0;
 }
 
 void cVideo::draw()
@@ -201,33 +245,29 @@ void cVideo::draw()
 	SDL_RenderPresent (sdlRenderer);
 }
 
-int cVideo::applySettings()
+void cVideo::applyResolution ()
 {
-	Log.write ("cVideo: Applying new video settings", cLog::eLOG_TYPE_DEBUG);
+	const auto windowFlags = SDL_GetWindowFlags (sdlWindow);
+	const auto isFullscreen = (windowFlags & SDL_WINDOW_FULLSCREEN) != 0;
 
-	SDL_SetWindowBordered (sdlWindow, SDL_TRUE);
-	SDL_SetWindowSize (sdlWindow, getResolutionX(), getResolutionY());
-	// TODO: [SDL2]: manage window mode correctly
-	if (SDL_SetWindowFullscreen (sdlWindow, !getWindowMode()) == -1)
+	if (isFullscreen) SDL_SetWindowFullscreen (sdlWindow, 0);
+
+	SDL_SetWindowSize (sdlWindow, getResolutionX (), getResolutionY ());
+
+	applyWindowMode ();
+
+	initializeBuffer (getResolutionX (), getResolutionY ());
+
+	draw ();
+}
+
+void cVideo::applyWindowMode ()
+{
+	const auto result = SDL_SetWindowFullscreen (sdlWindow, getWindowMode () ? 0 : SDL_WINDOW_FULLSCREEN);
+	if (result == -1)
 	{
-		videoData.width = buffer->w;
-		videoData.height = buffer->h;
-		SDL_SetWindowSize (sdlWindow, getResolutionX(), getResolutionY());
-		return -1;
+		throw std::runtime_error (std::string ("Could not apply window mode: ") + SDL_GetError () + "'");
 	}
-
-	SDL_RenderSetLogicalSize (sdlRenderer, getResolutionX(), getResolutionY());
-	if (buffer) SDL_FreeSurface (buffer);
-	buffer = SDL_CreateRGBSurface (0, getResolutionX(), getResolutionY(), getColDepth(),
-								   0, 0, 0, 0);
-	if (font != NULL) font->setTargetSurface (buffer);
-	if (sdlTexture) SDL_DestroyTexture (sdlTexture);
-	sdlTexture = SDL_CreateTexture (sdlRenderer,
-									SDL_PIXELFORMAT_ARGB8888,
-									SDL_TEXTUREACCESS_STREAMING,
-									getResolutionX(), getResolutionY());
-	draw();
-	return 0;
 }
 
 void cVideo::clearBuffer()
@@ -235,99 +275,67 @@ void cVideo::clearBuffer()
 	SDL_FillRect (buffer, NULL, SDL_MapRGB (buffer->format, 0, 0, 0));
 }
 
-/**
- * Shows splashscreen
- */
-void cVideo::initSplash()
-{
-	AutoSurface splash (LoadPCX (SPLASH_BACKGROUND));
-
-	std::string sVersion = PACKAGE_NAME " " PACKAGE_VERSION " " PACKAGE_REV " ";
-
-	sdlWindow = SDL_CreateWindow (sVersion.c_str(),
-								  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-								  getSplashW(), getSplashH(),
-								  SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
-	SDL_SetWindowIcon (sdlWindow, AutoSurface (SDL_LoadBMP (MAXR_ICON)).get());
-	SDL_SetWindowFullscreen (sdlWindow, !getWindowMode());
-	sdlRenderer = SDL_CreateRenderer (sdlWindow, -1, 0);
-
-	buffer = SDL_CreateRGBSurface (0, getSplashW(), getSplashH(), getColDepth(),
-								   0, 0, 0, 0);
-	if (font != NULL) font->setTargetSurface (buffer);
-
-	SDL_BlitSurface (splash.get(), NULL, buffer, NULL);
-
-	sdlTexture = SDL_CreateTexture (sdlRenderer,
-									SDL_PIXELFORMAT_ARGB8888,
-									SDL_TEXTUREACCESS_STREAMING,
-									getSplashW(), getSplashH());
-	// make the scaled rendering look smoother.
-	SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-	SDL_RenderSetLogicalSize (sdlRenderer, getSplashW(), getSplashH());
-
-	draw();
-}
-
 bool cVideo::getWindowMode() const
 {
-	return videoData.bWindowMode;
+	return windowMode;
 }
 
 int cVideo::getResolutionX() const
 {
-	return videoData.width;
+	return resolutionX;
 }
 
 int cVideo::getResolutionY() const
 {
-	return videoData.height;
+	return resolutionY;
 }
 
-std::string cVideo::getVideoMode (size_t iMode) const
+void cVideo::detectResolutions ()
 {
-	return iToStr (vVideoMode[iMode].width) + "x" + iToStr (vVideoMode[iMode].height);
-}
-
-void cVideo::doDetection()
-{
-	Log.write ("cVideo: Screen resolution detection started. Results may vary!", cLog::eLOG_TYPE_INFO);
-
-	const int displayIndex = sdlWindow ? SDL_GetWindowDisplayIndex (sdlWindow) : 0;
-	const unsigned int modeCount = SDL_GetNumDisplayModes (displayIndex);
-	/* Print and store detected modes */
-	for (unsigned int i = 0; i != modeCount; ++i)
+	const auto numVideoDislplays = SDL_GetNumVideoDisplays ();
+	detectedResolutions.resize (numVideoDislplays);
+	for (int displayIndex = 0; displayIndex < numVideoDislplays; ++displayIndex)
 	{
-		SDL_DisplayMode mode;
-		SDL_GetDisplayMode (displayIndex, i, &mode);
+		const auto numDisplayModes = SDL_GetNumDisplayModes (displayIndex);
 
-		// write detected video modes
-		// (don't write modes *below* the minimum mode'
-		if (mode.w >= MINWIDTH && mode.h >= MINHEIGHT)
+		auto& resolutions = detectedResolutions[displayIndex];
+
+		resolutions.clear ();
+
+		for (int displayModeIndex = 0; displayModeIndex < numDisplayModes; ++displayModeIndex)
 		{
-			const sVidMode tmp = { unsigned (mode.w), unsigned (mode.h) };
-			vVideoMode.push_back (tmp);
+			SDL_DisplayMode mode;
+			SDL_GetDisplayMode (displayIndex, displayModeIndex, &mode);
+
+			// skip modes *below* the minimum mode
+			if (mode.w < MINWIDTH || mode.h < MINHEIGHT) continue;
+
+			resolutions.push_back (std::make_pair (mode.w, mode.h));
+		}
+		std::sort (resolutions.begin (), resolutions.end ()); // lexicographic order
+		resolutions.erase (std::unique (resolutions.begin (), resolutions.end ()), resolutions.end ()); // make sure there are no double entries
+
+		for (size_t i = 0; i < resolutions.size (); ++i)
+		{
+			const auto& resolution = resolutions[i];
+			Log.write ("cVideo: Display" + iToStr (displayIndex) + " is offering detected video mode " + iToStr (i) + " (" + iToStr (resolution.first) + "x" + iToStr (resolution.second) + ")", cLog::eLOG_TYPE_INFO);
 		}
 	}
-	std::sort (vVideoMode.begin(), vVideoMode.end());
-	vVideoMode.erase (std::unique (vVideoMode.begin(), vVideoMode.end()), vVideoMode.end());
-	for (size_t i = 0; i != vVideoMode.size(); ++i)
-	{
-		sVidMode& mode = vVideoMode[i];
-		Log.write ("cVideo: Offering detected video mode " + iToStr (i) + " (" + iToStr (mode.width) + "x" + iToStr (mode.height) + ")", cLog::eLOG_TYPE_INFO);
-	}
 }
 
-const std::vector<sVidMode>& cVideo::getDetectedVideoModes () const
+const std::vector<std::pair<int, int>>& cVideo::getDetectedResolutions () const
 {
-	return vVideoMode;
+	const int displayIndex = sdlWindow ? SDL_GetWindowDisplayIndex (sdlWindow) : 0;
+
+	return detectedResolutions[displayIndex];
 }
 
-bool cVideo::bHaveMinMode() const
+bool cVideo::haveMinMode () const
 {
-	for (unsigned int i = 0; i < vVideoMode.size(); i++)
+	const auto& resolutions = getDetectedResolutions ();
+	for (const auto& resolution : resolutions)
 	{
-		if (vVideoMode[i].width == MINWIDTH && vVideoMode[i].height == MINHEIGHT)
+		if (resolution.first == MINWIDTH && resolution.second == MINHEIGHT)
 		{
 			return true;
 		}
@@ -337,32 +345,18 @@ bool cVideo::bHaveMinMode() const
 	return false;
 }
 
-int cVideo::validateMode (unsigned int iWidth, unsigned int iHeight) const
+int cVideo::validateResolution (int width, int height) const
 {
-	for (unsigned int i = 0; i < vVideoMode.size(); i++)
+	const auto& resolutions = getDetectedResolutions ();
+	for (size_t i = 0; i < resolutions.size (); i++)
 	{
-		if (vVideoMode[i].width == iWidth && vVideoMode[i].height == iHeight)
+		if (resolutions[i].first == width && resolutions[i].second == height)
 		{
-			return i;
+			return static_cast<int>(i);
 		}
 	}
-	Log.write ("cVideo: Configured video mode (" + iToStr (iWidth) + "x" + iToStr (iHeight) + ") not detected. Resume on own risk!", cLog::eLOG_TYPE_WARNING);
+	Log.write ("cVideo: Configured video mode (" + iToStr (width) + "x" + iToStr (height) + ") not detected. Resume on own risk!", cLog::eLOG_TYPE_WARNING);
 	return -1;
-}
-
-size_t cVideo::getVideoSize () const
-{
-	return vVideoMode.size();
-}
-
-int cVideo::getSplashW() const
-{
-	return SPLASHWIDTH;
-}
-
-int cVideo::getSplashH() const
-{
-	return SPLASHHEIGHT;
 }
 
 int cVideo::getMinW() const
@@ -414,13 +408,13 @@ void cVideo::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 	}
 }
 
-void cVideo::applyShadow (const SDL_Rect* rect)
+void cVideo::applyShadow (const SDL_Rect* rect, SDL_Surface& destination)
 {
 	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
 	if (rect == NULL) rect = &fullscreen;
 	SDL_Rect src = { rect->x, rect->y, rect->w, rect->h };
 	SDL_Rect dest = { rect->x, rect->y, 0, 0 };
-	SDL_BlitSurface (GraphicsData.gfx_shadow.get(), &src, cVideo::buffer, &dest);
+	SDL_BlitSurface (GraphicsData.gfx_shadow.get(), &src, &destination, &dest);
 }
 
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)

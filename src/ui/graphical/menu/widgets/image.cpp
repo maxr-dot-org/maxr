@@ -55,15 +55,14 @@ void cImage::setImage (SDL_Surface* image_)
 }
 
 //------------------------------------------------------------------------------
-void cImage::draw ()
+void cImage::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (image != nullptr)
 	{
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (image.get (), NULL, cVideo::buffer, &position);
+		blitClipped (*image, getArea (), destination, clipRect);
 	}
 
-	cClickableWidget::draw ();
+	cClickableWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------

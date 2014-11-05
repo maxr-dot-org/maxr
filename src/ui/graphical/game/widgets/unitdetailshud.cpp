@@ -26,6 +26,7 @@
 #include "game/data/player/player.h"
 #include "game/data/units/building.h"
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cUnitDetailsHud::cUnitDetailsHud (const cBox<cPosition>& area, bool drawLines_) :
@@ -67,17 +68,16 @@ void cUnitDetailsHud::setGameSettings (std::shared_ptr<const cGameSettings> game
 }
 
 //------------------------------------------------------------------------------
-void cUnitDetailsHud::draw ()
+void cUnitDetailsHud::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		reset ();
 
-		SDL_Rect position = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), nullptr, cVideo::buffer, &position);
+		blitClipped (*surface, getArea (), destination, clipRect);
 	}
 
-	cWidget::draw ();
+	cWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
@@ -349,7 +349,7 @@ cBox<cPosition> cUnitDetailsHud::getSmallSymbolPosition (eUnitDataSymbolType sym
 		size.y () = 8;
 		break;
 	case eUnitDataSymbolType::TransportAir:
-		position.x () = 138;
+		position.x () = 186;
 		size.x () = 21;
 		size.y () = 8;
 		break;

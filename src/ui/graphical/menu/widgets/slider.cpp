@@ -27,10 +27,12 @@
 #include "video.h"
 #include "main.h"
 #include "input/mouse/mouse.h"
+#include "utility/drawing.h"
 
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :
 	cClickableWidget (area),
+	type (sliderType),
 	surface (nullptr),
 	currentValue (minValue_),
 	minValue (minValue_),
@@ -49,6 +51,7 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderHandleType handleType, eSliderType sliderType) :
 	cClickableWidget (area),
+	type (sliderType),
 	surface (nullptr),
 	currentValue (minValue_),
 	minValue (minValue_),
@@ -65,14 +68,14 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 }
 
 //------------------------------------------------------------------------------
-void cSlider::draw ()
+void cSlider::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 {
 	if (surface != nullptr)
 	{
 		auto positionRect = getArea ().toSdlRect ();
-		SDL_BlitSurface (surface.get (), NULL, cVideo::buffer, &positionRect);
+		SDL_BlitSurface (surface.get (), nullptr, &destination, &positionRect);
 	}
-	cClickableWidget::draw ();
+	cClickableWidget::draw (destination, clipRect);
 }
 
 //------------------------------------------------------------------------------
@@ -181,43 +184,54 @@ void cSlider::decrease (int offset)
 //------------------------------------------------------------------------------
 void cSlider::createSurface (eSliderType sliderType)
 {
-	if (sliderType == eSliderType::Invisible) return;
-
-	assert (handle != nullptr);
-
-	assert (orientation == eOrientationType::Horizontal); // We do not have graphics for vertical scroll bar yet!
-	
-	const auto offset = handle->getSize ().x () / 2;
-
-	auto size = getSize ();
-
-	//if (size.x () < 6)
-	//{
-	//	size.x () = 6;
-	//}
-
-    surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
-	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
-
-	size.x () -= offset * 2;
-
-	SDL_Rect sourceBegin = {201, 53, 3, 3};
-	SDL_Rect sourceEnd = {259 - 3, 53, 3, 3};
-	SDL_Rect sourcePart = {201 + sourceBegin.w, 53, /*259 - 201 - sourceBegin.w - sourceEnd.w*/ 10, 3};
-
-	SDL_Rect destination = {offset, size.y () / 2 - (sourceBegin.h / 2), sourceBegin.w, sourceBegin.h};
-	SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceBegin, surface.get (), &destination);
-
-	SDL_Rect destinationEnd = {offset + size.x () - sourceEnd.w, size.y () / 2 - (sourceEnd.h / 2), sourceEnd.w, sourceEnd.h};
-	SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceEnd, surface.get (), &destinationEnd);
-
-	SDL_Rect destinationPart = {offset + sourceBegin.w, size.y () / 2 - (sourcePart.h / 2), sourcePart.w, sourcePart.h};
-	while (destinationPart.x < destinationEnd.x)
+	if (sliderType == eSliderType::Default)
 	{
-		if (destinationPart.x + sourcePart.w > destinationEnd.x) sourcePart.w = destinationEnd.x - destinationPart.x;
-		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourcePart, surface.get (), &destinationPart);
-		destinationPart.x += sourcePart.w;
+		assert (handle != nullptr);
+
+		assert (orientation == eOrientationType::Horizontal); // We do not have graphics for vertical scroll bar yet!
+
+		const auto offset = handle->getSize ().x () / 2;
+
+		auto size = getSize ();
+
+		//if (size.x () < 6)
+		//{
+		//	size.x () = 6;
+		//}
+
+		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
+		SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+
+		size.x () -= offset * 2;
+
+		SDL_Rect sourceBegin = {201, 53, 3, 3};
+		SDL_Rect sourceEnd = {259 - 3, 53, 3, 3};
+		SDL_Rect sourcePart = {201 + sourceBegin.w, 53, /*259 - 201 - sourceBegin.w - sourceEnd.w*/ 10, 3};
+
+		SDL_Rect destination = {offset, size.y () / 2 - (sourceBegin.h / 2), sourceBegin.w, sourceBegin.h};
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceBegin, surface.get (), &destination);
+
+		SDL_Rect destinationEnd = {offset + size.x () - sourceEnd.w, size.y () / 2 - (sourceEnd.h / 2), sourceEnd.w, sourceEnd.h};
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourceEnd, surface.get (), &destinationEnd);
+
+		SDL_Rect destinationPart = {offset + sourceBegin.w, size.y () / 2 - (sourcePart.h / 2), sourcePart.w, sourcePart.h};
+		while (destinationPart.x < destinationEnd.x)
+		{
+			if (destinationPart.x + sourcePart.w > destinationEnd.x) sourcePart.w = destinationEnd.x - destinationPart.x;
+			SDL_BlitSurface (GraphicsData.gfx_menu_stuff.get (), &sourcePart, surface.get (), &destinationPart);
+			destinationPart.x += sourcePart.w;
+		}
+	}
+	else if (sliderType == eSliderType::DrawnBackground)
+	{
+		auto size = getSize ();
+
+		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
+		SDL_FillRect (surface.get (), nullptr, cRgbColor::black ().toMappedSdlRGBAColor (surface->format));
+
+		drawLine (surface.get (), cPosition (0, 0), cPosition (0, size.y ()), cRgbColor (140, 102, 61));
+		drawLine (surface.get (), cPosition (size.x ()-1, 0), cPosition (size.x ()-1, size.y ()), cRgbColor (140, 102, 61));
 	}
 }
 
@@ -270,6 +284,10 @@ void cSlider::computeHandleMinMaxPosition (int& minPosition, int& maxPosition) c
 {
 	minPosition = (orientation == eOrientationType::Horizontal ? getPosition ().x () : getPosition ().y ());
 	maxPosition = (orientation == eOrientationType::Horizontal ? getEndPosition ().x () - handle->getSize ().x () : getEndPosition ().y () - handle->getSize ().y ());
+	if (type != eSliderType::Default)
+	{
+		maxPosition += 2;
+	}
 }
 
 //------------------------------------------------------------------------------

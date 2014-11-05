@@ -48,3 +48,11 @@ bool cAbstractListViewItem::isSelected ()
 {
 	return selected;
 }
+
+//------------------------------------------------------------------------------
+void cAbstractListViewItem::handleResized (const cPosition& oldSize)
+{
+	cWidget::handleResized (oldSize);
+
+	resized (oldSize);
+}

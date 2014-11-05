@@ -35,7 +35,7 @@ public:
 	//       Take note of the TODO in the constructor implementation as well.
 	cUnitListViewItem (unsigned int width, const sID& unitId, const cPlayer& owner);
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	const sID& getUnitId () const;
 

@@ -64,39 +64,65 @@ unsigned long long cAnimationTimer::getAnimationTime () const
 //--------------------------------------------------------------------------
 void cAnimationTimer::run ()
 {
+	static const size_t maxCatchUp = 10;
+
 	if (timerTime >= nextTrigger10msTime)
 	{
 		triggered10ms ();
+		size_t count = 0;
 		do
 		{
 			triggered10msCatchUp ();
+			if (count++ >= maxCatchUp)
+			{
+				nextTrigger10msTime = timerTime + 10 / sdlTimerInterval;
+				break;
+			}
 		}
 		while ((nextTrigger10msTime += 10 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger50msTime)
 	{
 		triggered50ms ();
+		size_t count = 0;
 		do
 		{
 			triggered50msCatchUp ();
+			if (count++ >= maxCatchUp)
+			{
+				nextTrigger10msTime = timerTime + 50 / sdlTimerInterval;
+				break;
+			}
 		}
 		while ((nextTrigger50msTime += 50 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger100msTime)
 	{
 		triggered100ms ();
+		size_t count = 0;
 		do
 		{
 			triggered100msCatchUp ();
+			if (count++ >= maxCatchUp)
+			{
+				nextTrigger10msTime = timerTime + 100 / sdlTimerInterval;
+				break;
+			}
 		}
 		while ((nextTrigger100msTime += 100 / sdlTimerInterval) < timerTime);
 	}
 	if (timerTime >= nextTrigger400msTime)
 	{
 		triggered400ms ();
+		size_t count = 0;
 		do
 		{
 			triggered400msCatchUp ();
+			if (count++ >= maxCatchUp)
+			{
+				nextTrigger10msTime = timerTime + 400 / sdlTimerInterval;
+				break;
+			}
 		}
 		while ((nextTrigger400msTime += 400 / sdlTimerInterval) < timerTime);
 	}

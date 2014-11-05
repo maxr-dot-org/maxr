@@ -157,7 +157,7 @@ public:
 
 	const std::string& getName() const { return filename; }
 	cPosition getSize () const { return cPosition (size, size); }
-    int getOffset (const cPosition& pos) const { return pos.y() * size + pos.x(); }
+	int getOffset (const cPosition& pos) const { assert (isValidPosition(pos));  return pos.y () * size + pos.x (); }
 
 	bool isValidPosition (const cPosition& position) const;
 
@@ -249,6 +249,7 @@ public:
 
 	void deleteBuilding (const cBuilding& building);
 	void deleteVehicle (const cVehicle& vehicle);
+	void deleteUnit (const cUnit& unit);
 
 	static int getMapLevel (const cBuilding& building);
 	static int getMapLevel (const cVehicle& vehicle);

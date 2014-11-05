@@ -397,6 +397,11 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			return;
 		dest.x = destination.x + destination.w / 2 - 12;
 		dest.y = destination.y + destination.h / 2 - 12;
+		if (unit.data.isBig)
+		{
+			dest.y += (destination.h / 2);
+			dest.x += (destination.w / 2);
+		}
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &disabledSymbol, cVideo::buffer, &dest);
 	}
 	else

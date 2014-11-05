@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "utility/language.h"
-
+#include "maxrversion.h"
 #include "extendedtinyxml.h"
 #include "utility/log.h"
 #include "main.h"

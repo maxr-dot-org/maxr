@@ -236,7 +236,7 @@ public:
 	void clearDetectedInThisTurnPlayerList();
 	bool wasDetectedInThisTurnByPlayer (const cPlayer* player) const;
 
-	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1) const;
+	static void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
 	void executeAutoMoveJobCommand (cClient& client);
 	void executeLayMinesCommand (const cClient& client);
@@ -255,12 +255,14 @@ public:
 	*/
 	void render (const cMap* map, unsigned long long animationTime, const cPlayer* activePlayer, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const;
 	void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha = 254) const;
+	static void render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, const cPlayer* owner, int dir = 0, int walkFrame = 0, int alpha = 254);
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
 	void drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const;
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha = 254) const;
+	static void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, int frameNr = 0, int alpha = 254);
 
 	bool isUnitLoaded () const { return loaded; }
 

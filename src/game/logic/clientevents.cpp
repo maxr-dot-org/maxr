@@ -318,23 +318,12 @@ void sendMoveJobResume (const cClient& client, int unitId)
 	client.sendNetMessage (message);
 }
 
-void sendWantVehicleAttack (const cClient& client, int targetID, const cPosition& targetPosition, int aggressorID)
+void sendWantAttack (const cClient& client, int aggressorID, const cPosition& targetPosition, int targetID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_ATTACK);
-	message->pushInt32 (targetID);
-	message->pushPosition (targetPosition);
 	message->pushInt32 (aggressorID);
-	message->pushBool (true);
-	client.sendNetMessage (message);
-}
-
-void sendWantBuildingAttack (const cClient& client, int targetID, const cPosition& targetPosition, const cPosition& aggressorPosition)
-{
-	cNetMessage* message = new cNetMessage (GAME_EV_WANT_ATTACK);
-	message->pushInt32 (targetID);
 	message->pushPosition (targetPosition);
-	message->pushPosition (aggressorPosition);
-	message->pushBool (false);
+	message->pushInt32 (targetID);
 	client.sendNetMessage (message);
 }
 
@@ -484,10 +473,11 @@ void sendWantActivate (const cClient& client, int unitid, bool vehicle, int acti
 	client.sendNetMessage (message);
 }
 
-void sendRequestResync (const cClient& client, char playerNr)
+void sendRequestResync (const cClient& client, char playerNumber, bool newGame)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_REQUEST_RESYNC);
-	message->pushChar (playerNr);
+	message->pushBool (newGame);
+	message->pushInt32 (playerNumber);
 	client.sendNetMessage (message);
 }
 

@@ -21,11 +21,30 @@
 
 //------------------------------------------------------------------------------
 cShortcut::cShortcut (cKeySequence keySequence_) :
-	keySequence (keySequence_)
+	keySequence (keySequence_),
+	active (true)
 {}
 
 //------------------------------------------------------------------------------
 const cKeySequence& cShortcut::getKeySequence () const
 {
 	return keySequence;
+}
+
+//------------------------------------------------------------------------------
+void cShortcut::activate ()
+{
+	active = true;
+}
+
+//------------------------------------------------------------------------------
+void cShortcut::deactivate ()
+{
+	active = false;
+}
+
+//------------------------------------------------------------------------------
+bool cShortcut::isActive () const
+{
+	return active;
 }

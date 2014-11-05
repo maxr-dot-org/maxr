@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "output/sound/soundchunk.h"
+#include "utility/log.h"
 
 //--------------------------------------------------------------------------
 cSoundChunk::cSoundChunk ()
@@ -41,7 +42,7 @@ void cSoundChunk::load (const std::string& fileName)
     sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.c_str ()));
     if (sdlSound == nullptr)
     {
-        throw std::runtime_error ("Mix_LoadWAV returned NULL on loading file '" + fileName + "'");
+		Log.write("Mix_LoadWAV returned NULL on loading file '" + fileName + "'. Reason: " + Mix_GetError(), cLog::eLOG_TYPE_ERROR);
     }
 }
 

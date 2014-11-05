@@ -32,6 +32,7 @@
 #include "utility/autosurface.h"
 #include "maxrconfig.h"
 #include "ui/graphical/shortcut.h"
+#include "utility/signal/signalconnectionmanager.h"
 
 class cMouse;
 class cKeyboard;
@@ -42,6 +43,8 @@ class cShortcut;
 class cWidget
 {
 public:
+	static void toggleDrawDebugFrames ();
+
 	cWidget ();
 	explicit cWidget (const cPosition& position);
 	explicit cWidget (const cBox<cPosition>& area);
@@ -109,7 +112,7 @@ public:
 
 	virtual bool isAt (const cPosition& position) const;
 
-	virtual void draw ();
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect);
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset);
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button);
@@ -133,7 +136,7 @@ public:
 
 	virtual void handleResized (const cPosition& oldSize);
 
-	virtual bool hitShortcuts (cKeySequence& keySequence);
+	virtual bool hitShortcuts (const cKeySequence& keySequence);
 
 protected:
 	/**
@@ -169,8 +172,13 @@ protected:
 
 	virtual cApplication* getActiveApplication () const;
 private:
+	static bool drawDebugFrames;
+	static cSignal<void ()> drawDebugFramesChanged;
+
 	cWidget (const cWidget& other) MAXR_DELETE_FUNCTION;
 	cWidget& operator=(const cWidget& other) MAXR_DELETE_FUNCTION;
+
+	cSignalConnectionManager signalConnectionManager;
 
 	cWidget* parent;
 
@@ -186,6 +194,8 @@ private:
 	std::vector<std::unique_ptr<cShortcut>> shortcuts;
 
 	void createFrameSurface ();
+
+	void releaseFocusRecursive (cApplication& application);
 };
 
 //------------------------------------------------------------------------------

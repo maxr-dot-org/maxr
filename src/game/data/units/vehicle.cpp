@@ -20,7 +20,7 @@
 
 #include "game/data/units/vehicle.h"
 
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/logic/automjobs.h"
 #include "game/data/units/building.h"
 #include "game/logic/client.h"
@@ -115,9 +115,14 @@ cVehicle::~cVehicle()
 
 void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int frameNr, int alpha) const
 {
+	drawOverlayAnimation (surface, dest, zoomFactor, data, *uiData, frameNr, alpha);
+}
+
+/*static*/ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, int frameNr, int alpha)
+{
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
-	const Uint16 size = (Uint16) (uiData->overlay_org->h * zoomFactor);
+	const Uint16 size = (Uint16) (uiData.overlay_org->h * zoomFactor);
 	SDL_Rect src = {Sint16 (frameNr * size), 0, size, size};
 
 	SDL_Rect tmp = dest;
@@ -125,8 +130,8 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	tmp.x += offset;
 	tmp.y += offset;
 
-    SDL_SetSurfaceAlphaMod (uiData->overlay.get (), alpha);
-    blitWithPreScale (uiData->overlay_org.get (), uiData->overlay.get (), &src, surface, &tmp, zoomFactor);
+	SDL_SetSurfaceAlphaMod (uiData.overlay.get (), alpha);
+	blitWithPreScale (uiData.overlay_org.get (), uiData.overlay.get (), &src, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor) const
@@ -139,7 +144,7 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 		frameNr = animationTime % (uiData->overlay_org->w / uiData->overlay_org->h);
 	}
 
-	drawOverlayAnimation (surface, dest, zoomFactor, frameNr, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
+	drawOverlayAnimation (surface, dest, zoomFactor, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
 }
 
 void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
@@ -156,7 +161,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 
 	// draw shadow
 	tmp = dest;
-    if (drawShadow) blitWithPreScale (uiData->build_shw_org.get (), uiData->build_shw.get (), NULL, surface, &tmp, zoomFactor);
+	if (drawShadow) blitWithPreScale (uiData->build_shw_org.get (), uiData->build_shw.get (), NULL, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
@@ -164,7 +169,7 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
 	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
-    blitWithPreScale (uiData->build_org.get (), uiData->build.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
+	blitWithPreScale (uiData->build_org.get (), uiData->build.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -181,7 +186,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	// draw shadow
 	SDL_Rect tmp = dest;
 	if (drawShadow)
-        blitWithPreScale (uiData->clear_small_shw_org.get (), uiData->clear_small_shw.get (), NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->clear_small_shw_org.get (), uiData->clear_small_shw.get (), NULL, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
@@ -189,7 +194,7 @@ void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surfa
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
 	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
-    blitWithPreScale (uiData->clear_small_org.get (), uiData->clear_small.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
+	blitWithPreScale (uiData->clear_small_org.get (), uiData->clear_small.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -204,7 +209,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 	if (map.isWater (getPosition()) && (data.isStealthOn & TERRAIN_SEA)) return;
 
 	if (alphaEffectValue && cSettings::getInstance ().isAlphaEffects ()) SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), alphaEffectValue / 5);
-    else SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), 50);
+	else SDL_SetSurfaceAlphaMod (uiData->shw[dir].get (), 50);
 	SDL_Rect tmp = dest;
 
 	// draw shadow
@@ -220,32 +225,40 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 	{
 		const Uint16 size = (int) (uiData->img_org[dir]->h * zoomFactor);
 		SDL_Rect r = {Sint16 (WalkFrame * size), 0, size, size};
-        blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), &r, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), &r, surface, &tmp, zoomFactor);
 	}
 	else
-        blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), NULL, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
 {
+	render_simple (surface, dest, zoomFactor, data, *uiData, getOwner (), dir, WalkFrame, alpha);
+}
+
+/*static*/ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, const sUnitData& data, const sVehicleUIData& uiData, const cPlayer* owner, int dir, int walkFrame, int alpha)
+{
 	// draw player color
-	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	if (owner)
+	{
+		SDL_BlitSurface (owner->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+	}
 
 	// read the size:
 	SDL_Rect src;
-	src.w = (int) (uiData->img_org[dir]->w * zoomFactor);
-	src.h = (int) (uiData->img_org[dir]->h * zoomFactor);
+	src.w = (int) (uiData.img_org[dir]->w * zoomFactor);
+	src.h = (int) (uiData.img_org[dir]->h * zoomFactor);
 
 	if (data.animationMovement)
 	{
 		SDL_Rect tmp;
-		src.w = src.h = tmp.h = tmp.w = (int) (uiData->img_org[dir]->h * zoomFactor);
-		tmp.x = WalkFrame * tmp.w;
+		src.w = src.h = tmp.h = tmp.w = (int) (uiData.img_org[dir]->h * zoomFactor);
+		tmp.x = walkFrame * tmp.w;
 		tmp.y = 0;
-        blitWithPreScale (uiData->img_org[dir].get (), uiData->img[dir].get (), &tmp, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
+		blitWithPreScale (uiData.img_org[dir].get (), uiData.img[dir].get (), &tmp, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
 	}
 	else
-        blitWithPreScale (uiData->img_org[dir].get (), uiData->img[dir].get (), NULL, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
+		blitWithPreScale (uiData.img_org[dir].get (), uiData.img[dir].get (), NULL, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
 
 	// draw the vehicle
 	src.x = 0;
@@ -780,11 +793,13 @@ bool cVehicle::canTransferTo (const cPosition& position, const cMapField& overUn
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	const cUnit* target = selectTarget (getPosition(), opponentUnit->data.canAttack, *server.Map);
+	const cUnit* target = cAttackJob::selectTarget (getPosition(), opponentUnit->data.canAttack, *server.Map, getOwner());
 	if (target != this) return false;
 
-	Log.write (" Server: " + reasonForLog + ": attacking position " + iToStr (getPosition().x()) + "x" + iToStr (getPosition().y()) + " Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-	server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, getPosition(), true));
+	Log.write (" Server: " + reasonForLog + ": attacking (" + iToStr (getPosition ().x ()) + "," + iToStr (getPosition ().y()) + "), Aggressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+
+	server.addAttackJob (opponentUnit, getPosition ());
+
 	if (ServerMoveJob != 0)
 		ServerMoveJob->bFinished = true;
 	return true;
@@ -851,7 +866,7 @@ bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUni
 		&& canAttackObjectAt (otherUnit.getPosition(), *server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cUnit* target = selectTarget (otherUnit.getPosition(), data.canAttack, *server.Map);
+		cUnit* target = cAttackJob::selectTarget (otherUnit.getPosition(), data.canAttack, *server.Map, getOwner());
 		if (target == &otherUnit)
 			return true;
 	}
@@ -1234,6 +1249,7 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
+	//TODO: make voice / text massage for owner and player
 	bool wasDetected = (detectedByPlayerList.empty() == false);
 
 	if (!isDetectedByPlayer (player))
@@ -1486,7 +1502,7 @@ void sVehicleUIData::scaleSurfaces (float factor)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames) const
+void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames)
 {
 	if (!cSettings::getInstance().shouldDoPrescale())
 	{
@@ -1579,7 +1595,7 @@ void cVehicle::executeLayMinesCommand (const cClient& client)
 //-----------------------------------------------------------------------------
 void cVehicle::executeClearMinesCommand (const cClient& client)
 {
-	setClearing (!isUnitClearingMines ());
+    setClearMines (!isUnitClearingMines ());
 	setLayMines(false);
 	sendMineLayerStatus (client, *this);
 }

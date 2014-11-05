@@ -20,7 +20,10 @@
 #ifndef ui_graphical_game_widgets_gamemapwidgetH
 #define ui_graphical_game_widgets_gamemapwidgetH
 
-#include "ui/graphical/game/widgets/mousemode/mousemodetype.h"
+#include <map>
+#include <set>
+
+#include "ui/graphical/game/control/mousemode/mousemodetype.h"
 #include "ui/graphical/game/unitselection.h"
 #include "ui/graphical/game/unitselectionbox.h"
 #include "ui/graphical/game/unitlocklist.h"
@@ -42,6 +45,7 @@ class cMouseMode;
 class cSoundManager;
 class cDrawingCache;
 class cAnimation;
+class cRightMouseButtonScrollerWidget;
 
 class cGameMapWidget : public cClickableWidget
 {
@@ -83,7 +87,7 @@ public:
 	void startFindPathBuildPosition ();
 	void startActivateVehicle (const cUnit& unit, size_t index);
 
-	void addEffect (std::shared_ptr<cFx> effect);
+	void addEffect (std::shared_ptr<cFx> effect, bool playSound = true);
 
 	void setDrawSurvey (bool drawSurvey);
 	void setDrawHits (bool drawHits);
@@ -108,6 +112,9 @@ public:
 	cDrawingCache& getDrawingCache ();
 	const cDrawingCache& getDrawingCache () const;
 
+	void updateActiveUnitCommandShortcuts ();
+	void deactivateUnitCommandShortcuts ();
+
 	cSignal<void ()> scrolled;
 	cSignal<void ()> zoomFactorChanged;
 
@@ -115,6 +122,8 @@ public:
 	cSignal<void (const cPosition&)> tileUnderMouseChanged;
 
 	cSignal<void ()> mouseInputModeChanged;
+
+	cSignal<void ()> mouseFocusReleased;
 
 	//
 	// Game commands
@@ -153,12 +162,16 @@ public:
 	cSignal<void (const cUnit&)> triggeredCollectMines;
 	cSignal<void (const cUnit&)> triggeredUnitDone;
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
+
+	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 protected:
 	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
@@ -171,6 +184,7 @@ private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 	cSignalConnectionManager mouseModeSignalConnectionManager;
 	cSignalConnectionManager unitContextMenuSignalConnectionManager;
+	cSignalConnectionManager selectedUnitSignalConnectionManager;
 
 	std::shared_ptr<cAnimationTimer> animationTimer;
 	std::shared_ptr<cSoundManager> soundManager;
@@ -197,6 +211,34 @@ private:
 	std::vector<std::unique_ptr<cAnimation>> animations;
 
 	//
+	// unit command shortcuts
+	//
+	cShortcut* attackShortcut;
+	cShortcut* buildShortcut;
+	cShortcut* transferShortcut;
+	cShortcut* automoveShortcut;
+	cShortcut* startShortcut;
+	cShortcut* stopShortcut;
+	cShortcut* clearShortcut;
+	cShortcut* sentryShortcut;
+	cShortcut* manualFireShortcut;
+	cShortcut* activateShortcut;
+	cShortcut* loadShortcut;
+	cShortcut* relaodShortcut;
+	cShortcut* repairShortcut;
+	cShortcut* layMineShortcut;
+	cShortcut* clearMineShortcut;
+	cShortcut* disableShortcut;
+	cShortcut* stealShortcut;
+	cShortcut* infoShortcut;
+	cShortcut* distributeShortcut;
+	cShortcut* researchShortcut;
+	cShortcut* upgradeShortcut;
+	cShortcut* destroyShortcut;
+
+	std::map<const cShortcut*, std::set<const cShortcut*>> collidingUnitCommandShortcuts;
+
+	//
 	// drawing information data
 	//
 	cPosition pixelOffset;
@@ -211,6 +253,8 @@ private:
 	bool lockActive;
 
 	float windDirection;
+
+	cRightMouseButtonScrollerWidget* rightMouseButtonScrollerWidget;
 
 	//
 	// draw methods
@@ -282,6 +326,9 @@ private:
 
 	void setWindDirection (int direction);
 	void changeWindDirection ();
+
+	void buildCollidingShortcutsMap ();
+	void activateShortcutConditional (cShortcut& shortcut, std::set<const cShortcut*>& blockedShortcuts, const std::set<const cShortcut*>& collidingShortcuts);
 };
 
 #endif // ui_graphical_game_widgets_gamemapwidgetH

@@ -98,6 +98,9 @@ public:
 	void setLockActive (bool value);
 	bool getLockActive () const;
 
+	void setChatActive (bool value);
+	bool getChatActive () const;
+
 	void setMiniMapZoomFactorActive (bool value);
 	bool getMiniMapZoomFactorActive () const;
 
@@ -113,6 +116,9 @@ public:
 
 	void resizeToResolution ();
 
+	void activateShortcuts ();
+	void deactivateShortcuts ();
+
 	mutable cSignal<void ()> zoomChanged;
 
 	mutable cSignal<void ()> surveyToggled;
@@ -125,12 +131,12 @@ public:
 	mutable cSignal<void ()> rangeToggled;
 	mutable cSignal<void ()> fogToggled;
 	mutable cSignal<void ()> lockToggled;
+	mutable cSignal<void ()> chatToggled;
 
 	mutable cSignal<void ()> centerClicked;
 	mutable cSignal<void ()> helpClicked;
 
 	mutable cSignal<void ()> reportsClicked;
-	mutable cSignal<void ()> chatClicked;
 
 	mutable cSignal<void ()> miniMapZoomFactorToggled;
 	mutable cSignal<void ()> miniMapAttackUnitsOnlyToggled;
@@ -150,7 +156,7 @@ public:
 
 	virtual bool isAt (const cPosition& position) const MAXR_OVERRIDE_FUNCTION;
 
-	virtual void draw () MAXR_OVERRIDE_FUNCTION;
+	virtual void draw (SDL_Surface& destination, const cBox<cPosition>& clipRect) MAXR_OVERRIDE_FUNCTION;
 protected:
 
 private:
@@ -176,6 +182,17 @@ private:
 	cCheckBox* rangeButton;
 	cCheckBox* fogButton;
 	cCheckBox* lockButton;
+	cCheckBox* chatButton;
+
+	cShortcut* surveyShortcut;
+	cShortcut* hitsShortcut;
+	cShortcut* scanShortcut;
+	cShortcut* statusShortcut;
+	cShortcut* ammoShortcut;
+	cShortcut* gridShortcut;
+	cShortcut* colorShortcut;
+	cShortcut* rangeShortcut;
+	cShortcut* fogShortcut;
 
 	cCheckBox* miniMapZoomFactorButton;
 	cCheckBox* miniMapAttackUnitsOnlyButton;

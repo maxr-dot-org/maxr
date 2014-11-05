@@ -37,5 +37,7 @@ const std::string& cTextListViewItem::getText () const
 //------------------------------------------------------------------------------
 void cTextListViewItem::handleResized (const cPosition& oldSize)
 {
+	cAbstractListViewItem::handleResized (oldSize);
+
 	label->resize (getSize ());
 }

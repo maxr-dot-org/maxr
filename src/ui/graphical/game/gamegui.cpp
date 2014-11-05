@@ -51,7 +51,6 @@
 #include "game/logic/client.h"
 #include "game/logic/server.h"
 #include "game/logic/clientevents.h"
-#include "game/logic/attackjobs.h"
 #include "utility/log.h"
 #include "netmessage.h"
 #include "game/startup/game.h"
@@ -91,8 +90,9 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
 
-	debugOutput = addChild (std::make_unique<cDebugOutputWidget> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), getSize ().x () - cHud::panelTotalWidth - 8));
+	debugOutput = addChild (std::make_unique<cDebugOutputWidget> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 8, getEndPosition ().y () - cHud::panelBottomHeight - 8))));
 	debugOutput->setGameMap (gameMap);
+	debugOutput->disable ();
 
 	hudPanels = addChild (std::make_unique<cHudPanels> (getPosition (), getSize ().y (), animationTimer));
 
@@ -110,6 +110,9 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 		hudPanels->hide ();
 	});
 
+	hud->activateShortcuts ();
+	gameMap->deactivateUnitCommandShortcuts ();
+
 	using namespace std::placeholders;
 
 	signalConnectionManager.connect (hud->zoomChanged, [&](){ gameMap->setZoomFactor (hud->getZoomFactor (), true); });
@@ -126,7 +129,20 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (hud->lockToggled, [&](){ gameMap->setLockActive (hud->getLockActive ()); });
 
 	signalConnectionManager.connect (hud->helpClicked, [&](){ gameMap->toggleHelpMode (); });
-	signalConnectionManager.connect (hud->chatClicked, std::bind (&cGameGui::toggleChatBox, this));
+	signalConnectionManager.connect (hud->chatToggled, [&]()
+	{
+		if (hud->getChatActive())
+		{
+			chatBox->show ();
+			chatBox->enable ();
+		}
+		else
+		{
+			chatBox->hide ();
+			chatBox->disable ();
+		}
+	});
+	hud->setChatActive (true);
 
 	signalConnectionManager.connect (hud->miniMapZoomFactorToggled, [&](){ miniMap->setZoomFactor (hud->getMiniMapZoomFactorActive () ? 2 : 1); });
 	signalConnectionManager.connect (hud->miniMapAttackUnitsOnlyToggled, [&](){ miniMap->setAttackUnitsUnly (hud->getMiniMapAttackUnitsOnly ()); });
@@ -135,6 +151,17 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 	signalConnectionManager.connect (gameMap->zoomFactorChanged, std::bind (&cGameGui::resetMiniMapViewWindow, this));
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudCoordinates, this, _1));
 	signalConnectionManager.connect (gameMap->tileUnderMouseChanged, std::bind (&cGameGui::updateHudUnitName, this, _1));
+
+	signalConnectionManager.connect (gameMap->mouseFocusReleased, [this]()
+	{
+		auto mouse = getActiveMouse ();
+		if (mouse)
+		{
+			if (hud->isAt (mouse->getPosition ())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+			else if (chatBox->isAt (mouse->getPosition ())) mouse->setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+			else gameMap->updateMouseCursor (*mouse);
+		}
+	});
 
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&](){ hud->setActiveUnit (gameMap->getUnitSelection ().getSelectedUnit ()); });
 	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, std::bind (&cGameGui::updateSelectedUnitIdleSound, this));
@@ -145,6 +172,17 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 		auto unit = gameMap->getUnitSelection ().getSelectedUnit ();
 		if (unit && unit->getOwner () == player.get ()) unit->makeReport (*soundManager);
+	});
+	signalConnectionManager.connect (gameMap->getUnitSelection ().mainSelectionChanged, [&]()
+	{
+		if (gameMap->getUnitSelection ().getSelectedUnit () == nullptr)
+		{
+			hud->activateShortcuts ();
+		}
+		else
+		{
+			hud->deactivateShortcuts ();
+		}
 	});
 
 	signalConnectionManager.connect (miniMap->focus, [&](const cPosition& position){ gameMap->centerAt (position); });
@@ -338,6 +376,7 @@ cGameGuiState cGameGui::getCurrentState () const
 	state.setMiniMapZoomFactorActive (hud->getMiniMapZoomFactorActive ());
 	state.setMiniMapAttackUnitsOnly (hud->getMiniMapAttackUnitsOnly ());
 	state.setUnitVideoPlaying (hud->isUnitVideoPlaying ());
+	state.setChatActive (hud->getChatActive ());
 
 	state.setSelectedUnits (gameMap->getUnitSelection ());
 	state.setLockedUnits (gameMap->getUnitLockList ());
@@ -363,6 +402,7 @@ void cGameGui::restoreState (const cGameGuiState& state)
 	hud->setLockActive (state.getLockActive ());
 	hud->setMiniMapZoomFactorActive (state.getMiniMapZoomFactorActive ());
 	hud->setMiniMapAttackUnitsOnly (state.getMiniMapAttackUnitsOnly ());
+	hud->setChatActive (state.getChatActive ());
 	if (state.getUnitVideoPlaying ()) hud->startUnitVideo ();
 	else hud->stopUnitVideo ();
 
@@ -581,7 +621,7 @@ bool cGameGui::handleMouseMoved (cApplication& application, cMouse& mouse, const
 	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () > 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftDown));
 	else if (mouseScrollDirection.x () < 0 &&  mouseScrollDirection.y () < 0) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeftUp));
 	else if (hud->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
-    else if (chatBox->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+	else if (chatBox->isAt (currentMousePosition)) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
 
 	return cWindow::handleMouseMoved (application, mouse, offset);
 }
@@ -679,21 +719,6 @@ void cGameGui::startClosePanel ()
 void cGameGui::resetMiniMapViewWindow ()
 {
 	miniMap->setViewWindow (gameMap->getDisplayedMapArea ());
-}
-
-//------------------------------------------------------------------------------
-void cGameGui::toggleChatBox ()
-{
-    if (chatBox->isHidden ())
-    {
-        chatBox->show ();
-        chatBox->enable ();
-    }
-    else
-    {
-        chatBox->hide ();
-        chatBox->disable ();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -824,8 +849,7 @@ void cGameGui::initShortcuts ()
 	auto chatShortcut = addShortcut (std::make_unique<cShortcut> (KeysList.keyChat));
 	signalConnectionManager.connect (chatShortcut->triggered, [&]()
 	{
-		chatBox->show ();
-		chatBox->enable ();
+		hud->setChatActive (true);
 		chatBox->focus ();
 	});
 }
@@ -837,6 +861,8 @@ void cGameGui::handleResolutionChange ()
 
 	resize (hud->getSize ());
 
+	// TODO: remove duplication of widget areas with the ones during initialization
+
 	hudPanels->resize (cPosition (hudPanels->getSize ().x (), getSize ().y ()));
 
 	gameMap->resize (getSize () - cPosition (cHud::panelTotalWidth, cHud::panelTopHeight));
@@ -844,4 +870,9 @@ void cGameGui::handleResolutionChange ()
 	messageList->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 4, cHud::panelTopHeight + 200)));
 
 	chatBox->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12)));
+
+	primiaryInfoLabel->setArea(cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235), cPosition (getEndPosition ().x () - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG))));
+	additionalInfoLabel->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth, 235 + font->getFontHeight (FONT_LATIN_BIG)), cPosition (getEndPosition ().x () - cHud::panelRightWidth, 235 + font->getFontHeight (FONT_LATIN_BIG) + font->getFontHeight (FONT_LATIN_NORMAL))));
+
+	debugOutput->setArea (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, cHud::panelTopHeight + 7), cPosition (getEndPosition ().x () - cHud::panelRightWidth - 8, getEndPosition ().y () - cHud::panelBottomHeight - 8)));
 }

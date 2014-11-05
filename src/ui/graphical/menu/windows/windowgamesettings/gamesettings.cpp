@@ -214,9 +214,9 @@ std::string gameSettingsVictoryConditionToString (eGameSettingsVictoryCondition 
 		switch (condition)
 		{
 		case eGameSettingsVictoryCondition::Turns:
-			return lngPack.i18n ("Text~Comp~Turns");;
+			return lngPack.i18n ("Text~Comp~Turns");
 		case eGameSettingsVictoryCondition::Points:
-			return lngPack.i18n ("Text~Comp~Points");;
+			return lngPack.i18n ("Text~Comp~Points");
 		case eGameSettingsVictoryCondition::Death:
 			return lngPack.i18n ("Text~Comp~NoLimit");
 		}

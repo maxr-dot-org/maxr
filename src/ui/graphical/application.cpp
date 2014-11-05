@@ -38,18 +38,32 @@ cApplication::cApplication () :
 	activeMouse (nullptr),
 	activeKeyboard (nullptr),
 	keyFocusWidget (nullptr),
-	mouseFocusWidget (nullptr)
-	//underMouseWidget (nullptr)
+	mouseFocusWidget (nullptr),
+	shouldDrawFramesPerSecond (false)
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{
 		for (auto i = modalWindows.rbegin (); i != modalWindows.rend (); ++i)
 		{
-			if ((*i)->wantsCentered ())
+			const auto& modalWindow = *i;
+			if (modalWindow->wantsCentered ())
 			{
-				center (*(*i));
+				center (*modalWindow);
 			}
 		}
+	});
+
+	const auto fpsShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight | eKeyModifierType::AltLeft | eKeyModifierType::AltRight, SDLK_f))));
+	signalConnectionManager.connect (fpsShortcut->triggered, [this]()
+	{
+		shouldDrawFramesPerSecond = !shouldDrawFramesPerSecond;
+		if (!shouldDrawFramesPerSecond) drawFramesPerSecond (0, false); // make sure the last fps will not be visible
+	});
+
+	const auto widgetFramesShortcut = addShortcut (std::make_unique<cShortcut> (cKeySequence (cKeyCombination (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight, SDLK_w))));
+	signalConnectionManager.connect (widgetFramesShortcut->triggered, [this]()
+	{
+		cWidget::toggleDrawDebugFrames ();
 	});
 }
 
@@ -134,8 +148,6 @@ void cApplication::execute ()
 			{
 				if (lastActiveWindow != nullptr) lastActiveWindow->handleDeactivated (*this, false);
 				activeWindow->handleActivated (*this, !lastClosed);
-				keyFocusWidget = nullptr;
-				mouseFocusWidget = nullptr;
 				lastClosed = false;
 			}
 
@@ -146,6 +158,8 @@ void cApplication::execute ()
 				activeWindowOwned->handleDeactivated (*this, true);
 				lastActiveWindow = nullptr;
 				lastClosed = true;
+				keyFocusWidget = nullptr;
+				mouseFocusWidget = nullptr;
 			}
 			else
 			{
@@ -155,12 +169,10 @@ void cApplication::execute ()
 				//                - use non-busy waiting if there is nothing to be done
 				if (!cSettings::getInstance ().shouldUseFastMode ()) SDL_Delay (1);
 
-				activeWindow->draw ();
+				activeWindow->draw (*cVideo::buffer, activeWindow->getArea());
 				lastActiveWindow = activeWindow;
 
-				SDL_Rect dest = {0, 0, 55, 10};
-				SDL_FillRect (cVideo::buffer, &dest, 0);
-				font->showText (0, 0, "FPS: " + iToStr (frameCounter.getFramesPerSecond ()));
+				if (shouldDrawFramesPerSecond) drawFramesPerSecond (frameCounter.getFramesPerSecond());
 
 				Video.draw ();
 				frameCounter.frameDrawn ();
@@ -217,6 +229,12 @@ bool cApplication::hasMouseFocus (const cWidget& widget) const
 }
 
 //------------------------------------------------------------------------------
+bool cApplication::hasMouseFocus () const
+{
+	return mouseFocusWidget != nullptr;
+}
+
+//------------------------------------------------------------------------------
 void cApplication::grapKeyFocus (cWidget& widget)
 {
 	assignKeyFocus (&widget);
@@ -235,6 +253,12 @@ void cApplication::releaseKeyFocus (const cWidget& widget)
 bool cApplication::hasKeyFocus (const cWidget& widget) const
 {
 	return keyFocusWidget == &widget;
+}
+
+//------------------------------------------------------------------------------
+bool cApplication::hasKeyFocus () const
+{
+	return keyFocusWidget != nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -392,7 +416,7 @@ void cApplication::mouseMoved (cMouse& mouse, const cPosition& offset)
 //------------------------------------------------------------------------------
 void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 {
-	auto widget = getKeyFocusWidget ();
+	const auto widget = getKeyFocusWidget ();
 
 	// TODO: catch TAB event and may switch key focus widget
 
@@ -400,30 +424,32 @@ void cApplication::keyPressed (cKeyboard& keyboard, SDL_Keycode key)
 
 	if (isShortcutKey) currentKeySequence.addKeyCombination (cKeyCombination (keyboard.getCurrentModifiers (), key));
 
+	bool eventHandled = false;
 	if (widget)
 	{
-		if (isShortcutKey)
-		{
-			if (widget->hitShortcuts (currentKeySequence)) return;
-		}
-
-		if (widget->handleKeyPressed (*this, keyboard, key)) return;
+		eventHandled = widget->handleKeyPressed (*this, keyboard, key);
 	}
 
-	auto window = getActiveWindow ();
+	const auto window = getActiveWindow ();
 	if (window)
 	{
-		if (isShortcutKey)
+		if (!eventHandled)
 		{
-			if (window->hitShortcuts (currentKeySequence)) return;
+			eventHandled = window->handleKeyPressed (*this, keyboard, key);
 		}
 
-		if (window->handleKeyPressed (*this, keyboard, key)) return;
+		if (isShortcutKey && !eventHandled)
+		{
+			window->hitShortcuts (currentKeySequence);
+		}
 	}
 
 	if (isShortcutKey)
 	{
-		if (hitShortcuts (currentKeySequence)) return;
+		if (!eventHandled)
+		{
+			hitShortcuts (currentKeySequence);
+		}
 
 		while (currentKeySequence.length () >= maximalShortcutSequenceLength)
 		{
@@ -476,14 +502,16 @@ cShortcut* cApplication::addShortcut (std::unique_ptr<cShortcut> shortcut)
 }
 
 //------------------------------------------------------------------------------
-bool cApplication::hitShortcuts (cKeySequence& keySequence)
+bool cApplication::hitShortcuts (const cKeySequence& keySequence)
 {
 	// TODO: remove code duplication with cWidget::hitShortcuts
 
 	bool anyMatch = false;
-	for (size_t i = 0; i < shortcuts.size (); ++i)
+	for (const auto& shortcut : shortcuts)
 	{
-		const auto& shortcutSequence = shortcuts[i]->getKeySequence ();
+		if (!shortcut->isActive ()) continue;
+
+		const auto& shortcutSequence = shortcut->getKeySequence ();
 
 		if (shortcutSequence.length () > keySequence.length ()) continue;
 
@@ -499,14 +527,18 @@ bool cApplication::hitShortcuts (cKeySequence& keySequence)
 
 		if (match)
 		{
-			shortcuts[i]->triggered ();
+			shortcut->triggered ();
 			anyMatch = true;
 		}
 	}
 
-	if (anyMatch)
-	{
-		keySequence.reset ();
-	}
 	return anyMatch;
+}
+
+//------------------------------------------------------------------------------
+void cApplication::drawFramesPerSecond (unsigned int fps, bool draw)
+{
+	SDL_Rect dest = {0, 0, 55, 10};
+	SDL_FillRect (cVideo::buffer, &dest, 0);
+	if (draw) font->showText (0, 0, "FPS: " + iToStr (fps));
 }

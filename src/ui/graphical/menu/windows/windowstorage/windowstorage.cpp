@@ -85,7 +85,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 			unitNames[index] = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (17 + x * stepImageX + 5, 9 + y * 236 + 5), getPosition () + cPosition (17 + x * stepImageX + 5 + nameLabelX, 9 + y * 236 + 5 + 118)), ""));
 			unitNames[index]->setWordWrap (true);
 
-			unitDetails[index] = addChild (std::make_unique<cUnitDetailsStored> (cBox<cPosition> (getPosition () + cPosition (17 + x * stepImageX, 145 + y * 236), getPosition () + cPosition (17 + x * stepImageX + 130, 145 + y * 236 + 40))));
+			unitDetails[index] = addChild (std::make_unique<cUnitDetailsStored> (cBox<cPosition> (getPosition () + cPosition (17 + x * stepImageX + (canStorePlanes ? 35 : 0), 145 + y * 236), getPosition () + cPosition (17 + x * stepImageX + 130 + (canStorePlanes ? 35 : 0), 145 + y * 236 + 40))));
 		}
 	}
 

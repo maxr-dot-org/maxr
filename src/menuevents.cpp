@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "menuevents.h"
-
+#include "maxrversion.h"
 #include "utility/log.h"
 #include "mapdownload.h"
 #include "netmessage.h"

@@ -22,7 +22,7 @@
 
 #include "game/logic/server.h"
 
-#include "game/logic/attackjobs.h"
+#include "game/logic/attackjob.h"
 #include "game/data/units/building.h"
 #include "game/data/units/landingunit.h"
 #include "game/logic/casualtiestracker.h"
@@ -351,6 +351,7 @@ void cServer::doGameActions()
 {
 	checkDeadline();
 	handleMoveJobs();
+	cAttackJob::runAttackJobs (AJobs);
 	runJobs();
 	handleWantEnd();
 	checkPlayerUnits();
@@ -624,112 +625,51 @@ void cServer::handleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_ATTACK);
-	// identify aggressor
-	const bool bIsVehicle = message.popBool();
-	cUnit* attackingUnit = NULL;
-	if (bIsVehicle)
-	{
-		const int ID = message.popInt32();
-		attackingUnit = getVehicleFromID (ID);
-		if (attackingUnit == NULL)
-		{
-			Log.write (" Server: vehicle with ID " + iToStr (ID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
-			return;
-		}
-		if (attackingUnit->getOwner ()->getNr () != message.iPlayerNr)
-		{
-			Log.write (" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_WARNING);
-			return;
-		}
-		if (attackingUnit->isBeeingAttacked ()) return;
-	}
-	else
-	{
-		const auto position = message.popPosition ();
-		if (Map->isValidPosition (position) == false)
-		{
-			Log.write (" Server: Invalid aggressor offset", cLog::eLOG_TYPE_NET_WARNING);
-			return;
-		}
-		attackingUnit = Map->getField (position).getTopBuilding ();
-		if (attackingUnit == NULL)
-		{
-			Log.write (" Server: No Building at aggressor offset", cLog::eLOG_TYPE_NET_WARNING);
-			return;
-		}
-		if (attackingUnit->getOwner ()->getNr () != message.iPlayerNr)
-		{
-			Log.write (" Server: Message was not send by building owner!", cLog::eLOG_TYPE_NET_WARNING);
-			return;
-		}
-		if (attackingUnit->isBeeingAttacked ()) return;
-	}
-
-	// find target offset
+	int targetID = message.popInt32 ();
 	auto targetPosition = message.popPosition ();
-	if (Map->isValidPosition (targetPosition) == false)
+	int aggressorID = message.popInt32 ();
+
+	cUnit* aggressor = getUnitFromID (aggressorID);
+	cUnit* target = getUnitFromID (targetID);
+
+	//validate aggressor
+	if (aggressor == NULL)
 	{
-		Log.write (" Server: Invalid target position!", cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Server: vehicle with ID " + iToStr (aggressorID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-
-	const int targetID = message.popInt32();
-	if (targetID != 0)
+	if (aggressor->getOwner()->getNr () != message.iPlayerNr)
 	{
-		cVehicle* targetVehicle = getVehicleFromID (targetID);
-		if (targetVehicle == NULL)
+		Log.write (" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_ERROR);
+		return;
+	}
+	if (aggressor->isBeeingAttacked()) return;
+
+	//validate target
+	if (!Map->isValidPosition (targetPosition))
+	{
+		Log.write (" Server: Invalid target coordinates", cLog::eLOG_TYPE_NET_ERROR);
+	}
+	if (target && !target->isABuilding () && !target->data.isBig)
+	{
+		if (targetPosition != target->getPosition())
 		{
-			Log.write (" Server: vehicle with ID " + iToStr (targetID) + " not found!", cLog::eLOG_TYPE_NET_WARNING);
-			return;
+			Log.write (" Server: target coords changed from (" + iToStr (targetPosition.x ()) + "," + iToStr (targetPosition.y ()) + ") to (" + iToStr (target->getPosition().x()) + "," + iToStr (target->getPosition().y()) + ") to match current unit position", cLog::eLOG_TYPE_NET_DEBUG);
 		}
-		const auto oldPosition = targetPosition;
-		// the target offset doesn't need to match the vehicle position,
-		// when it is big
-		if (!targetVehicle->data.isBig)
-		{
-			targetPosition = targetVehicle->getPosition();
-		}
-		Log.write (" Server: attacking vehicle " + targetVehicle->getDisplayName() + ", " + iToStr (targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
-		if(oldPosition != targetPosition) Log.write(" Server: target offset changed from " + iToStr(oldPosition.x()) + "x" + iToStr(oldPosition.y()) + " to " + iToStr(targetPosition.x()) + "x" + iToStr(targetPosition.y()), cLog::eLOG_TYPE_NET_DEBUG);
+		targetPosition = target->getPosition();
+
+		Log.write (" Server: attacking unit " + target->getDisplayName () + ", " + iToStr (target->iID), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
+
+
 	// check if attack is possible
-	if (attackingUnit->canAttackObjectAt (targetPosition, *Map, true) == false)
+	if (aggressor->canAttackObjectAt (targetPosition, *Map, true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	AJobs.push_back(new cServerAttackJob(*this, attackingUnit, targetPosition, false));
-}
-
-//------------------------------------------------------------------------------
-void cServer::handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ATTACKJOB_FINISHED);
-
-	const int ID = message.popInt16();
-	cServerAttackJob* aJob = NULL;
-
-	unsigned int i = 0;
-	for (; i < AJobs.size(); i++)
-	{
-		if (AJobs[i]->iID == ID)
-		{
-			aJob = AJobs[i];
-			break;
-		}
-	}
-	if (aJob == NULL) // attack job not found
-	{
-		Log.write (" Server: ServerAttackJob not found", cLog::eLOG_TYPE_NET_ERROR);
-		return;
-	}
-	aJob->clientFinished (message.iPlayerNr);
-	if (aJob->executingClients.empty())
-	{
-		AJobs.erase (AJobs.begin() + i);
-		delete aJob;
-	}
+	addAttackJob (aggressor, targetPosition);
 }
 
 //------------------------------------------------------------------------------
@@ -978,6 +918,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 	else
 	{
 		if (SrcVehicle->data.storeResType != iType) return;
+		if (SrcVehicle->isUnitBuildingABuilding() || SrcVehicle->isUnitClearing()) return;
 		if (SrcVehicle->data.getStoredResources () - iTranfer > SrcVehicle->data.storageResMax || SrcVehicle->data.getStoredResources () - iTranfer < 0) return;
 		if (DestBuilding)
 		{
@@ -1588,7 +1529,7 @@ void cServer::handleNetMessage_GAME_EV_RECON_SUCCESS (cNetMessage& message)
 		}
 	}
 	if (player == nullptr) return;
-	resyncPlayer (*player);
+	resyncPlayer (*player, false, true);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (isTurnBasedGame ()) sendWaitFor (*this, *activeTurnPlayer, nullptr);
@@ -1704,8 +1645,9 @@ void cServer::handleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_RESYNC);
 
-	auto& player = getPlayerFromNumber (message.popChar());
-	resyncPlayer (player, true);
+	auto& player = getPlayerFromNumber (message.popInt32());
+	const auto newGame = message.popBool ();
+	resyncPlayer (player, !newGame, newGame);
 }
 
 //------------------------------------------------------------------------------
@@ -2053,6 +1995,8 @@ void cServer::handleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (message.popInt16());
 	if (!building || building->getOwner ()->getNr () != message.iPlayerNr) return;
 
+	if (building->isBeeingAttacked ()) return;
+
 	sendSelfDestroy (*this, *building);
 	destroyUnit (*building);
 }
@@ -2126,7 +2070,6 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_STOP_MOVE: handleNetMessage_GAME_EV_WANT_STOP_MOVE (message); break;
 		case GAME_EV_MOVEJOB_RESUME: handleNetMessage_GAME_EV_MOVEJOB_RESUME (message); break;
 		case GAME_EV_WANT_ATTACK: handleNetMessage_GAME_EV_WANT_ATTACK (message); break;
-		case GAME_EV_ATTACKJOB_FINISHED: handleNetMessage_GAME_EV_ATTACKJOB_FINISHED (message); break;
 		case GAME_EV_MINELAYERSTATUS: handleNetMessage_GAME_EV_MINELAYERSTATUS (message); break;
 		case GAME_EV_WANT_BUILD: handleNetMessage_GAME_EV_WANT_BUILD (message); break;
 		case GAME_EV_END_BUILDING: handleNetMessage_GAME_EV_END_BUILDING (message); break;
@@ -2134,7 +2077,7 @@ int cServer::handleNetMessage (cNetMessage& message)
 		case GAME_EV_WANT_TRANSFER: handleNetMessage_GAME_EV_WANT_TRANSFER (message); break;
 		case GAME_EV_WANT_BUILDLIST: handleNetMessage_GAME_EV_WANT_BUILDLIST (message); break;
 		case GAME_EV_WANT_EXIT_FIN_VEH: handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (message); break;
-		case GAME_EV_CHANGE_RESOURCES: handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
+		case GAME_EV_CHANGE_RESOURCES : handleNetMessage_GAME_EV_CHANGE_RESOURCES (message); break;
 		case GAME_EV_WANT_CHANGE_MANUAL_FIRE: handleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (message); break;
 		case GAME_EV_WANT_CHANGE_SENTRY: handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (message); break;
 		case GAME_EV_WANT_MARK_LOG: handleNetMessage_GAME_EV_WANT_MARK_LOG (message); break;
@@ -2547,16 +2490,6 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		owningPtr = owner->removeUnit (*vehicle);
-	}
-
-	// detach from attack job
-	if (unit->isAttacking ())
-	{
-		for (size_t i = 0; i != AJobs.size(); ++i)
-		{
-			if (AJobs[i]->unit == unit)
-				AJobs[i]->unit = 0;
-		}
 	}
 
 	helperJobs.onRemoveUnit (unit);
@@ -3476,144 +3409,88 @@ cBuilding* cServer::getBuildingFromID (unsigned int id) const
 }
 
 //------------------------------------------------------------------------------
-void cServer::destroyUnit (cVehicle& vehicle)
+void cServer::destroyUnit (cUnit& unit)
 {
-	int value = 0;
-	int oldRubbleValue = 0;
-	bool bigRubble = false;
-	auto rubblePosition = vehicle.getPosition();
+	bool isVehicle = false;
+	const auto position = unit.getPosition ();
+	auto& field = Map->getField (position);
 
-	if (vehicle.data.factorAir > 0 && vehicle.getFlightHeight () != 0)
+	//delete planes immediately
+	if (unit.isAVehicle ())
 	{
-		deleteUnit (&vehicle);
-		return;
-	}
-
-	//delete all buildings on the field, except connectors
-	auto buildings = &Map->getField(vehicle.getPosition()).getBuildings();
-	auto b_it = buildings->begin();
-	if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-
-	while (b_it != buildings->end())
-	{
-		// this seems to be rubble
-		if ((*b_it)->getOwner () == 0 && (*b_it)->RubbleValue > 0)
+		isVehicle = true;
+		auto& vehicle = static_cast<cVehicle&>(unit);
+		if (vehicle.data.factorAir > 0 && vehicle.getFlightHeight() > 0)
 		{
-			oldRubbleValue += (*b_it)->RubbleValue;
-			if ((*b_it)->data.isBig)
-			{
-				rubblePosition = (*b_it)->getPosition();
-				bigRubble = true;
-			}
-		}
-		else // normal unit
-			value += (*b_it)->data.buildCosts;
-		deleteUnit (*b_it);
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-	}
-
-	if (vehicle.data.isBig)
-	{
-		bigRubble = true;
-		buildings = &Map->getField(vehicle.getPosition() + cPosition(1, 0)).getBuildings();
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		while (b_it != buildings->end())
-		{
-			value += (*b_it)->data.buildCosts;
-			deleteUnit (*b_it);
-			b_it = buildings->begin();
-			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		}
-
-		buildings = &Map->getField(vehicle.getPosition() + cPosition(0, 1)).getBuildings();
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		while (b_it != buildings->end())
-		{
-			value += (*b_it)->data.buildCosts;
-			deleteUnit (*b_it);
-			b_it = buildings->begin();
-			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		}
-
-		buildings = &Map->getField(vehicle.getPosition() + cPosition(1, 1)).getBuildings();
-		b_it = buildings->begin();
-		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
-		while (b_it != buildings->end())
-		{
-			value += (*b_it)->data.buildCosts;
-			deleteUnit (*b_it);
-			b_it = buildings->begin();
-			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
+			deleteUnit (&vehicle);
+			return;
 		}
 	}
 
-	if (!vehicle.data.hasCorpse)
+	//check, if there is a big unit on the field
+	bool bigUnit = false;
+	auto topBuilding = field.getTopBuilding ();
+	if (topBuilding && topBuilding->data.isBig || unit.data.isBig)
+		bigUnit = true;
+
+	//delete unit
+	int rubbleValue = 0;
+	if (!unit.data.hasCorpse)
 	{
-		value += vehicle.data.buildCosts;
+		rubbleValue += unit.data.buildCosts;
 		// stored material is always added completely to the rubble
-		if (vehicle.data.storeResType == sUnitData::STORE_RES_METAL)
-			value += vehicle.data.getStoredResources () * 2;
+		if (unit.data.storeResType == sUnitData::STORE_RES_METAL)
+			rubbleValue += unit.data.getStoredResources() * 2;
+	}
+	deleteUnit (&unit);
+
+	//delete all buildings (except connectors, when a vehicle is destroyed)
+	rubbleValue += deleteBuildings (field, !isVehicle);
+	if (bigUnit)
+	{
+		rubbleValue += deleteBuildings (Map->getField (position + cPosition (1, 0)), !isVehicle);
+		rubbleValue += deleteBuildings (Map->getField (position + cPosition (0, 1)), !isVehicle);
+		rubbleValue += deleteBuildings (Map->getField (position + cPosition (1, 1)), !isVehicle);
 	}
 
-	if (value > 0 || oldRubbleValue > 0)
-		addRubble (rubblePosition, value / 2 + oldRubbleValue, bigRubble);
-
-	deleteUnit (&vehicle);
-}
-
-//------------------------------------------------------------------------------
-int cServer::deleteBuildings (const std::vector<cBuilding*>& buildings)
-{
-	int rubble = 0;
-	while (buildings.empty() == false)
+	//add rubble
+	auto rubble = field.getRubble ();
+	if (rubble)
 	{
-		cBuilding* building = buildings[0];
-		if (building->getOwner ())
-		{
-			rubble += building->data.buildCosts;
-			if (building->data.storeResType == sUnitData::STORE_RES_METAL)
-				rubble += building->data.getStoredResources () * 2; // stored material is always added completely to the rubble
-		}
+		rubble->RubbleValue += rubbleValue / 2;
+		if (rubble->data.isBig)
+			rubble->RubbleTyp = random (2);
 		else
-			rubble += building->RubbleValue * 2;
-		deleteUnit (building);
+			rubble->RubbleTyp = random (5);
 	}
-	return rubble;
+	else
+	{
+		if (rubbleValue > 2)
+			addRubble (position, rubbleValue / 2, bigUnit);
+	}
 }
 
 //------------------------------------------------------------------------------
-void cServer::destroyUnit (cBuilding& b)
+int cServer::deleteBuildings (cMapField& field, bool deleteConnector)
 {
-	auto position = b.getPosition();
+	auto buildings = field.getBuildings ();
 	int rubble = 0;
-	bool big = false;
 
-	sUnitData::eSurfacePosition surfacePosition = b.data.surfacePosition;
-
-	cBuilding* topBuilding = Map->getField(position).getTopBuilding();
-	if (topBuilding && topBuilding->data.isBig)
+	for (auto b_it = buildings.begin (); b_it != buildings.end (); ++b_it)
 	{
-		big = true;
-		position = topBuilding->getPosition();
+		if ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE && deleteConnector == false) continue;
+		if ((*b_it)->getOwner() == nullptr) continue;
 
-		auto buildings = &Map->getField(position + cPosition(0, 1)).getBuildings();
-		rubble += deleteBuildings (*buildings);
+		if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE) //no rubble for connectors
+			rubble += (*b_it)->data.buildCosts;
+		if ((*b_it)->data.storeResType == sUnitData::STORE_RES_METAL)
+			rubble += (*b_it)->data.getStoredResources() * 2; // stored material is always added completely to the rubble
 
-		buildings = &Map->getField(position + cPosition(1, 0)).getBuildings();
-		rubble += deleteBuildings (*buildings);
-
-		buildings = &Map->getField(position + cPosition(1, 1)).getBuildings();
-		rubble += deleteBuildings (*buildings);
+		deleteUnit (*b_it);
+		b_it = buildings.begin ();
 	}
 
-	auto buildings = &Map->getField(position).getBuildings();
-	rubble += deleteBuildings (*buildings);
-
-	if (surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2)
-		addRubble (position, rubble / 2, big);
+	return rubble;
 }
 
 //------------------------------------------------------------------------------
@@ -3737,7 +3614,7 @@ void cServer::deletePlayer (cPlayer& player)
 }
 
 //------------------------------------------------------------------------------
-void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
+void cServer::resyncPlayer (cPlayer& player, bool firstDelete, bool withGuiState)
 {
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	if (firstDelete)
@@ -3844,19 +3721,18 @@ void cServer::resyncPlayer (cPlayer& player, bool firstDelete)
 	sendGameSettings (*this, player);
 
 	// send attackJobs
-	for (size_t i = 0; i != AJobs.size(); ++i)
+	for (const auto& attackJob : AJobs)
 	{
-		cServerAttackJob& ajob = *AJobs[i];
-		for (size_t ajobClient = 0; ajobClient != ajob.executingClients.size(); ++ajobClient)
-		{
-			if (ajob.executingClients[ajobClient] == &player)
-			{
-				ajob.sendFireCommand (&player);
-			}
-		}
+		AutoPtr<cNetMessage> message (attackJob->serialize ().release());
+		sendNetMessage (message);
 	}
 
-	sendGameGuiState (*this, getPlayerGameGuiState (player), player);
+	sendCasualtiesReport (*this, &player);
+
+	if (withGuiState)
+	{
+		sendGameGuiState (*this, getPlayerGameGuiState (player), player);
+	}
 
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
@@ -4090,6 +3966,13 @@ void cServer::addJob (cJob* job)
 void cServer::runJobs()
 {
 	helperJobs.run (*gameTimer);
+}
+
+//------------------------------------------------------------------------------
+void cServer::addAttackJob (cUnit* aggressor, const cPosition& targetPosition)
+{
+	cAttackJob* attackJob = new cAttackJob (this, aggressor, targetPosition);
+	AJobs.push_back (attackJob);
 }
 
 void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
