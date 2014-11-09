@@ -155,6 +155,8 @@ int main (int argc, char* argv[])
 		auto startWindow = std::make_shared<cWindowStart>();
 		application.show (startWindow);
 
+		mouse.show ();
+
 		application.execute ();
 	}
 
