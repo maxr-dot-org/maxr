@@ -3,12 +3,12 @@ TARGET = maxr
 INCLUDEPATH += src
 
 # SDL
-INCLUDEPATH += C:/SDL2-2.0.3/include
-LIBS += -LC:/SDL2-2.0.3/lib/x86 -lSDL2 -lSDL2main
-INCLUDEPATH += C:/SDL2_net-2.0.0/include
-LIBS += -LC:/SDL2_net-2.0.0/lib/x86 -lSDL2_net
-INCLUDEPATH += C:/SDL2_mixer-2.0.0/include
-LIBS += -LC:/SDL2_mixer-2.0.0/lib/x86 -lSDL2_mixer
+INCLUDEPATH += C:/tools/SDL2-2.0.3/include
+LIBS += -LC:/tools/SDL2-2.0.3/lib/x86 -lSDL2 -lSDL2main
+INCLUDEPATH += C:/tools/SDL2_net-2.0.0/include
+LIBS += -LC:/tools/SDL2_net-2.0.0/lib/x86 -lSDL2_net
+INCLUDEPATH += C:/tools/SDL2_mixer-2.0.0/include
+LIBS += -LC:/tools/SDL2_mixer-2.0.0/lib/x86 -lSDL2_mixer
 
 # remove entry point of qt because SDL has its own
 release:QMAKE_LIBS_QT_ENTRY -= -lqtmain
@@ -81,6 +81,10 @@ HEADERS += $$files(src/ui/graphical/game/animations/*.h)
 SOURCES += $$files(src/ui/graphical/game/animations/*.cpp)
 HEADERS += $$files(src/ui/graphical/game/control/*.h)
 SOURCES += $$files(src/ui/graphical/game/control/*.cpp)
+HEADERS += $$files(src/ui/graphical/game/control/mouseaction/*.h)
+SOURCES += $$files(src/ui/graphical/game/control/mouseaction/*.cpp)
+HEADERS += $$files(src/ui/graphical/game/control/mousemode/*.h)
+SOURCES += $$files(src/ui/graphical/game/control/mousemode/*.cpp)
 HEADERS += $$files(src/ui/graphical/game/temp/*.h)
 SOURCES += $$files(src/ui/graphical/game/temp/*.cpp)
 HEADERS += $$files(src/ui/graphical/game/widgets/*.h)
