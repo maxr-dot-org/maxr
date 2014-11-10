@@ -38,6 +38,7 @@ class cWindow;
 class cPosition;
 class cRunnable;
 class cShortcut;
+class cFrameCounter;
 
 class cApplication
 {
@@ -82,6 +83,8 @@ public:
 
 	cMouse* getActiveMouse ();
 	cKeyboard* getActiveKeyboard ();
+
+	std::shared_ptr<cFrameCounter> frameCounter;
 private:
 	static const size_t maximalShortcutSequenceLength = 4;
 

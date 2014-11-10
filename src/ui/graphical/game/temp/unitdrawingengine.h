@@ -31,16 +31,16 @@ class cVehicle;
 class cUnit;
 class cPlayer;
 class cAnimationTimer;
-//class cDrawingCache;
 class cUnitSelection;
 struct SDL_Rect;
+class cFrameCounter;
 
 // TODO: remove this temporary class!
 
 class cUnitDrawingEngine
 {
 public:
-	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer);
+	cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<const cFrameCounter> frameCounter);
 
 	void drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);
 	void drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMap& map, const cUnitSelection* unitSelection = nullptr, const cPlayer* player = nullptr);

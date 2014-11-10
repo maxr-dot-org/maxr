@@ -326,10 +326,11 @@ void cServer::run()
 	while (!bExit)
 	{
 		std::unique_ptr<cNetMessage> message;
-		if (eventQueue.try_pop (message))
+		while (eventQueue.try_pop (message))
 		{
 			handleNetMessage (*message);
-			checkPlayerUnits();
+			if (message->iType != NET_GAME_TIME_CLIENT)
+				checkPlayerUnits();
 		}
 
 		// don't do anything if games hasn't been started yet!

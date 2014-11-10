@@ -32,6 +32,7 @@
 
 #include "ui/graphical/widget.h"
 #include "ui/graphical/window.h"
+#include "ui/graphical/framecounter.h"
 
 //------------------------------------------------------------------------------
 cApplication::cApplication () :
@@ -39,7 +40,8 @@ cApplication::cApplication () :
 	activeKeyboard (nullptr),
 	keyFocusWidget (nullptr),
 	mouseFocusWidget (nullptr),
-	shouldDrawFramesPerSecond (false)
+	shouldDrawFramesPerSecond (false),
+	frameCounter(std::make_shared<cFrameCounter>())
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{
@@ -71,55 +73,9 @@ cApplication::cApplication () :
 cApplication::~cApplication ()
 {}
 
-// TODO: find nice place for this class
-class cFrameCounter
-{
-public:
-	cFrameCounter () :
-		frames (0),
-		lastFrames (0),
-		framesPerSecond (0),
-		lastCheckTime ()
-	{}
-
-	void frameDrawn ()
-	{
-		++frames;
-	}
-
-	unsigned int getFramesPerSecond ()
-	{
-		const auto now = std::chrono::steady_clock::now ();
-
-		const auto timeSinceLastCheck = now - lastCheckTime;
-
-		if (timeSinceLastCheck > std::chrono::seconds (1))
-		{
-			const auto passedSeconds = std::chrono::duration_cast<std::chrono::duration<float>>(timeSinceLastCheck).count ();
-
-			const auto framesSinceLastCheck = frames - lastFrames;
-
-			framesPerSecond = static_cast<unsigned int>(Round((float)framesSinceLastCheck / passedSeconds));
-
-			lastFrames = frames;
-			lastCheckTime = now;
-		}
-
-		return framesPerSecond;
-	}
-private:
-	unsigned long long frames;
-	unsigned long long lastFrames;
-
-	unsigned int framesPerSecond;
-
-	std::chrono::steady_clock::time_point lastCheckTime;
-};
-
 //------------------------------------------------------------------------------
 void cApplication::execute ()
 {
-	cFrameCounter frameCounter;
 	cWindow* lastActiveWindow = nullptr;
 	bool lastClosed = false;
 	while (!modalWindows.empty())
@@ -172,10 +128,10 @@ void cApplication::execute ()
 				activeWindow->draw (*cVideo::buffer, activeWindow->getArea());
 				lastActiveWindow = activeWindow;
 
-				if (shouldDrawFramesPerSecond) drawFramesPerSecond (frameCounter.getFramesPerSecond());
+				if (shouldDrawFramesPerSecond) drawFramesPerSecond (frameCounter->getFramesPerSecond());
 
 				Video.draw ();
-				frameCounter.frameDrawn ();
+				frameCounter->frameDrawn ();
 			}
 		}
 	}

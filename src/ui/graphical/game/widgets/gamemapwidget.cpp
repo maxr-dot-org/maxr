@@ -64,14 +64,14 @@
 #include "output/sound/soundchannel.h"
 
 //------------------------------------------------------------------------------
-cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_) :
+cGameMapWidget::cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap_, std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<cSoundManager> soundManager_, std::shared_ptr<const cFrameCounter> frameCounter) :
 	cClickableWidget (area),
 	animationTimer (animationTimer_),
 	soundManager (soundManager_),
 	staticMap (std::move (staticMap_)),
 	dynamicMap (nullptr),
 	player (nullptr),
-	unitDrawingEngine (animationTimer),
+	unitDrawingEngine (animationTimer, frameCounter),
 	changeAllowed (true),
 	pixelOffset (0, 0),
 	internalZoomFactor (1.f),

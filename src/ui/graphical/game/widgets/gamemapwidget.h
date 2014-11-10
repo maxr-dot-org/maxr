@@ -46,12 +46,13 @@ class cSoundManager;
 class cDrawingCache;
 class cAnimation;
 class cRightMouseButtonScrollerWidget;
+class cFrameCounter;
 
 class cGameMapWidget : public cClickableWidget
 {
 	friend class cDebugOutputWidget;
 public:
-	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager);
+	cGameMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap, std::shared_ptr<cAnimationTimer> animationTimer, std::shared_ptr<cSoundManager> soundManager, std::shared_ptr<const cFrameCounter> frameCounter);
 	~cGameMapWidget();
 	void setDynamicMap (std::shared_ptr<const cMap> dynamicMap);
 	void setPlayer (std::shared_ptr<const cPlayer> player);

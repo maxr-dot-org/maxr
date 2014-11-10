@@ -32,13 +32,16 @@ class cNetMessage;
 class cPlayer;
 class cServer;
 
-#define GAME_TICK_TIME 10
-#define MAX_CLIENT_LAG 15
-#define PAUSE_GAME_TIMEOUT 200
-#define MAX_SERVER_EVENT_COUNTER 15
-#define MAX_WAITING_FOR_SERVER 50
+#define GAME_TICK_TIME 10				/** Number of milliseconds of one game time tick */
+#define MAX_CLIENT_LAG 15				/** Maximum ticks, the clients time is allowed to be behind 
+										    the server time */
+#define PAUSE_GAME_TIMEOUT 200			/** Number of ticks, after which the server pauses the game,
+										    when no sync message from a client is received */
+#define MAX_SERVER_EVENT_COUNTER 15		/** When the server is under heavy load, ticks are discarded, 
+											when there are more than MAX_SERVER_EVENT_COUNTER timer events pending */
+#define MAX_WAITING_FOR_SERVER 50		/** The client will display the "Waiting for Server message" when no sync messages are
+											received for MAX_WAITING_FOR_SERVER ticks */
 
-// TODO: comments
 class cGameTimer
 {
 	friend class cDebugOutputWidget;

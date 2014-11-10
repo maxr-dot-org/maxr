@@ -30,6 +30,7 @@ class cVehicle;
 class cBuilding;
 class cAnimationTimer;
 class cMap;
+class cFrameCounter;
 
 /**
 * Stores all properties, which determine the look of the unit.
@@ -62,20 +63,21 @@ struct sDrawingCacheEntry
 	cPlayer* owner;
 	int dir;
 	double zoom;
+	unsigned long long lastUsed;
 
 	AutoSurface surface;
 
 	/**
 	* sets all properties and initialises the surface.
 	*/
-	void init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom);
-	void init (const cBuilding& building, double zoom);
+	void init (const cVehicle& vehicle, const cMap& map, const cPlayer* player, unsigned long long animationTime, double zoom, unsigned long long frameNr);
+	void init (const cBuilding& building, double zoom, unsigned long long frameNr);
 };
 
 class cDrawingCache
 {
 public:
-	cDrawingCache (std::shared_ptr<cAnimationTimer> animationTimer);
+	cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter);
 	~cDrawingCache();
 
 	void setPlayer (const cPlayer* player);
@@ -84,16 +86,16 @@ public:
 	* This method looks for a cached image, that matches the properties of the passed building.
 	* @return a pointer to a surface, which contains the already rendered image of the building or NULL when no matching cache entry exists.
 	*/
-	SDL_Surface* getCachedImage (const cBuilding& building, double zoom);
-	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map);
+	SDL_Surface* getCachedImage (const cBuilding& building, double zoom, unsigned long long animationTime);
+	SDL_Surface* getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime);
 	/**
 	* This method creates a new chace entry, when there is space in the cache.
 	* When there is no free space, an old entry is reused.
 	* When there is no free space and no old entries, NULL is returned.
 	* @return a surface to which the building has to be drawn, after calling this function. Returns NULL when the cache is full.
 	*/
-	SDL_Surface* createNewEntry (const cBuilding& building, double zoom);
-	SDL_Surface* createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map);
+	SDL_Surface* createNewEntry (const cBuilding& building, double zoom, unsigned long long animationTime);
+	SDL_Surface* createNewEntry (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime);
 	/**
 	* Deletes all cache entries.
 	*/
@@ -107,7 +109,8 @@ public:
 	int getCacheMisses() const;
 	int getNotCached() const;
 private:
-	std::shared_ptr<cAnimationTimer> animationTimer;
+
+	std::shared_ptr<const cFrameCounter> frameCounter;
 	const cPlayer* player;
 
 	unsigned int maxCacheSize;

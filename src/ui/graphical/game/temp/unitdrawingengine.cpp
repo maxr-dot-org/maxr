@@ -32,9 +32,9 @@
 #include "utility/box.h"
 
 //--------------------------------------------------------------------------
-cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_) :
+cUnitDrawingEngine::cUnitDrawingEngine (std::shared_ptr<cAnimationTimer> animationTimer_, std::shared_ptr<const cFrameCounter> frameCounter) :
 	animationTimer (std::move (animationTimer_)),
-	drawingCache (animationTimer),
+	drawingCache (frameCounter),
 	blinkColor (cRgbColor::white()),
 	shouldDrawHits (false),
 	shouldDrawStatus (false),
@@ -71,14 +71,17 @@ void cUnitDrawingEngine::setDrawColor (bool drawColor)
 //--------------------------------------------------------------------------
 void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destination, float zoomFactor, const cUnitSelection* unitSelection, const cPlayer* player)
 {
+	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
+	                                                                       //to avoid a changing time within this method
+
 	SDL_Rect dest = {0, 0, 0, 0};
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = drawingCache.getCachedImage (building, zoomFactor);
+	SDL_Surface* drawingSurface = drawingCache.getCachedImage (building, zoomFactor, animationTime);
 	if (drawingSurface == NULL)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = drawingCache.createNewEntry (building, zoomFactor);
+		drawingSurface = drawingCache.createNewEntry (building, zoomFactor, animationTime);
 	}
 
 	if (drawingSurface == NULL)
@@ -90,7 +93,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 
 	if (bDraw)
 	{
-		building.render (animationTimer->getAnimationTime(), drawingSurface, dest, zoomFactor, cSettings::getInstance ().isShadows (), true);
+		building.render(animationTime, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows(), true);
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -122,7 +125,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		const cRgbColor finishedMarkColor = cRgbColor::green();
 		const cBox<cPosition> d (cPosition (dest.x + 2, dest.y + 2), cPosition (dest.x + 2 + (building.data.isBig ? 2 * destination.w - 3 : destination.w - 3), dest.y + 2 + (building.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
-		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTimer->getAnimationTime () % 0x8)), 3);
+		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTime % 0x8)), 3);
 	}
 
 #if 0
@@ -170,23 +173,14 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	{
 		drawStatus (building, destination);
 	}
-
-	// attack job debug output
-	//if (gameGUI.getAJobDebugStatus ())
-	//{
-	//	cServer* server = gameGUI.getClient ()->getServer ();
-	//	const cBuilding* serverBuilding = NULL;
-	//	if (server) serverBuilding = server->Map->fields[server->Map->getOffset (PosX, PosY)].getBuilding ();
-	//	if (building.isBeeingAttacked) font->showText (dest.x + 1, dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
-	//	if (serverBuilding && serverBuilding->isBeeingAttacked) font->showText (dest.x + 1, dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
-	//	if (building.attacking) font->showText (dest.x + 1, dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
-	//	if (serverBuilding && serverBuilding->attacking) font->showText (dest.x + 1, dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW);
-	//}
 }
 
 //--------------------------------------------------------------------------
 void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination, float zoomFactor, const cMap& map, const cUnitSelection* unitSelection, const cPlayer* player)
 {
+	unsigned long long animationTime = animationTimer->getAnimationTime(); //call getAnimationTime only once in this method and save the result,
+	                                                                       //to avoid a changing time within this method
+
 	// calculate screen position
 	int ox = (int)(vehicle.getMovementOffset().x() * zoomFactor);
 	int oy = (int)(vehicle.getMovementOffset().y() * zoomFactor);
@@ -203,12 +197,12 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = drawingCache.getCachedImage (vehicle, zoomFactor, map);
+	SDL_Surface* drawingSurface = drawingCache.getCachedImage(vehicle, zoomFactor, map, animationTime);
 	if (drawingSurface == NULL)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = drawingCache.createNewEntry (vehicle, zoomFactor, map);
+		drawingSurface = drawingCache.createNewEntry(vehicle, zoomFactor, map, animationTime);
 	}
 
 	if (drawingSurface == NULL)
@@ -220,7 +214,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 
 	if (bDraw)
 	{
-		vehicle.render (&map, animationTimer->getAnimationTime(), player, drawingSurface, dest, zoomFactor, cSettings::getInstance ().isShadows ());
+		vehicle.render(&map, animationTime, player, drawingSurface, dest, zoomFactor, cSettings::getInstance().isShadows());
 	}
 
 	// now check, whether the image has to be blitted to screen buffer
@@ -231,7 +225,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	}
 
 	// draw overlay if necessary:
-	vehicle.drawOverlayAnimation (animationTimer->getAnimationTime(), cVideo::buffer, destination, zoomFactor);
+	vehicle.drawOverlayAnimation(animationTime, cVideo::buffer, destination, zoomFactor);
 
 	// remove the dithering for the following operations
 	if (vehicle.getFlightHeight () > 0)
@@ -253,7 +247,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		const cRgbColor finishedMarkColor = cRgbColor::green ();
 		const cBox<cPosition> d (cPosition (destination.x + 2, destination.y + 2), cPosition (destination.x + 2 + (vehicle.data.isBig ? 2 * destination.w - 3 : destination.w - 3), destination.y + 2 + (vehicle.data.isBig ? 2 * destination.h - 3 : destination.h - 3)));
 
-		drawRectangle (*cVideo::buffer, d, finishedMarkColor.exchangeGreen (255 - 16 * (animationTimer->getAnimationTime () % 0x8)), 3);
+		drawRectangle(*cVideo::buffer, d, finishedMarkColor.exchangeGreen(255 - 16 * (animationTime % 0x8)), 3);
 	}
 
 	// Draw the colored frame if necessary
@@ -303,17 +297,6 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 		drawStatus (vehicle, destination);
 	}
 
-	// attack job debug output
-	//if (gameGUI.getAJobDebugStatus ())
-	//{
-	//	cServer* server = gameGUI.getClient ()->getServer ();
-	//	cVehicle* serverVehicle = NULL;
-	//	if (server) serverVehicle = server->Map->fields[server->Map->getOffset (PosX, PosY)].getVehicle ();
-	//	if (isBeeingAttacked) font->showText (destination.x + 1, destination.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
-	//	if (serverVehicle && serverVehicle->isBeeingAttacked) font->showText (destination.x + 1, destination.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
-	//	if (attacking) font->showText (destination.x + 1, destination.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
-	//	if (serverVehicle && serverVehicle->attacking) font->showText (destination.x + 1, destination.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW);
-	//}
 }
 
 //--------------------------------------------------------------------------

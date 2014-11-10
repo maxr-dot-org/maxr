@@ -21,6 +21,7 @@
 #define ui_graphical_game_animations_animationtimerH
 
 #include <SDL_timer.h>
+#include <atomic>
 
 #include "utility/signal/signal.h"
 #include "utility/runnable.h"
@@ -94,7 +95,7 @@ private:
 	const Uint32 sdlTimerInterval;
 	SDL_TimerID timerId;
 
-	unsigned long long timerTime;
+	std::atomic<unsigned long long> timerTime;
 
 	unsigned long long nextTrigger10msTime;
 	unsigned long long nextTrigger50msTime;
