@@ -130,6 +130,10 @@ void cLocalScenarioGame::loadLuaScript(std::string luaFilename)
     Lunar<cLuaGame>::push(L, luaGame.get());               // luaGame has to be deleted from C++
     lua_setglobal(L, "game");
 
+    // Add path for scenario logs as a global variable
+    lua_pushstring(L, getScenarioLogDir().c_str());
+    lua_setglobal(L, "logPath");
+
     // Load the Lua script
     int error = luaL_loadbuffer(L, luaData, (size_t)fileSize, "luaScenario") || lua_pcall(L, 0, 0, 0);
     if (error) {

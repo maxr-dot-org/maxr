@@ -202,6 +202,35 @@ std::string getUserLogDir()
 }
 
 //--------------------------------------------------------------
+std::string getScenarioLogDir()
+{
+#ifdef __amigaos4__
+    return "";
+#elif defined(MAC)
+    char* cHome = getenv ("HOME");  //get $HOME on mac
+    if (cHome == NULL)
+        return "";
+    std::string homeFolder = cHome;
+    if (homeFolder.empty())
+        return "";
+    // store Log directly on the desktop of the user
+    return homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+#else
+    if (cSettings::getInstance().getHomeDir().empty())
+        return "";
+    std::string LogDir = cSettings::getInstance().getHomeDir() + "scenario_log";
+
+    if (!DirExists (LogDir))
+    {
+        if (makeDir (LogDir.c_str()))
+            return LogDir + PATH_DELIMITER;
+        return "";
+    }
+    return LogDir + PATH_DELIMITER;
+#endif
+}
+
+//--------------------------------------------------------------
 uint32_t calcCheckSum (uint32_t data, uint32_t checksum)
 {
 	data = SDL_SwapLE32 (data);// The calculation must be endian safe.

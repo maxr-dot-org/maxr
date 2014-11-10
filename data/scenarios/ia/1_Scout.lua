@@ -2,7 +2,7 @@ local P = require("position")
 local M = require("move")
 
 -- IA file : this file will run in the context of the AI player, will have access to data limited to the data the the user can see.
-io.output("scenarios/log/1_Scout_intel.log")
+io.output(logPath .. "1_Scout_intel.log")
 io.write("Loading AI for scout scenario.\n")
 io.flush()
 

@@ -78,6 +78,10 @@ std::string cLuaIntelligence::openLuaFile(std::string luaFilename)
     Lunar<cLuaIntelligence>::push(L, this);
     lua_setglobal(L, "game");
 
+    // Add path for scenario logs as a global variable
+    lua_pushstring(L, getScenarioLogDir().c_str());
+    lua_setglobal(L, "logPath");
+
     // Set the path to the AI modules
     lua_getglobal( L, "package" );
     lua_getfield( L, -1, "path" );

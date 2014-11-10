@@ -32,7 +32,7 @@ billy:addBuilding("gun_aa", 53, 42)
 game:start()
 
 -- Lua log file
-io.output("Scenario.log")
+io.output(logPath .. "Planes.log")
 io.write("Starting scenario : ", scenarioName, "\n")
 
 -- Victory

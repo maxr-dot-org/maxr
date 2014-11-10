@@ -25,7 +25,7 @@ game:message("Welcome general, we are here to learn a few things togheter !\n" .
              "Good luck general !")
              
 step = 0             
-io.output("scenarios/log/Tutorial.log")
+io.output(logPath .. "Tutorial.log")
                                   
 -- Victory
 function victoryCondition()
@@ -34,7 +34,7 @@ function victoryCondition()
            vehicle = human:getVehicleById(i)
            if (vehicle.pos.x > 26 and vehicle.pos.y < 40) then
                step = 1
-               io.write("step 1 completed")
+               io.write("step 1 completed\n")
                game:message("Caution general, an ennemi tank has been detected !\n" ..
                             "You should prepare to defend your base, build a defense turret between your base and the ennemi.\n")
            end 
@@ -43,7 +43,7 @@ function victoryCondition()
    if step == 1 then
        for i, v in pairs(human:getBuildingIdList()) do
            if (v == "gun_turret" or v == "gun_ari" or v == "gun_missel") then
-               io.write("step 2 completed")
+               io.write("step 2 completed\n")
                step = 2
                game:message("Great general, prepare to defend and kill that tank !.\n")
            end 
