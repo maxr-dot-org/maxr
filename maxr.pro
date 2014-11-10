@@ -20,10 +20,8 @@ win32: LIBS += -lshell32
 # Define to avoid min/max macro of windows.h to clash with std
 DEFINES += NOMINMAX
 
-HEADERS += $$files(src/*.h) \
-    src/game/startup/local/scenario/luaintelligence.h
-SOURCES += $$files(src/*.cpp) \
-    src/game/startup/local/scenario/luaintelligence.cpp
+HEADERS += $$files(src/*.h)
+SOURCES += $$files(src/*.cpp)
 SOURCES += $$files(src/*.c)
 
 HEADERS += $$files(src/config/*.h)
