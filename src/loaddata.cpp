@@ -679,6 +679,9 @@ void cSoundData::load (const char* path)
 	LoadSoundfile (SNDPanelOpen, path, "panel_open.ogg");
 	LoadSoundfile (SNDPanelClose, path, "panel_close.ogg");
 	LoadSoundfile (SNDAbsorb, path, "absorb.ogg");
+	LoadSoundfile(SNDHitSmall, path, "hit_small.ogg");
+	LoadSoundfile(SNDHitMed, path, "hit_med.ogg");
+	LoadSoundfile(SNDHitLarge, path, "hit_large.ogg");
 }
 
 void cVoiceData::load (const char* path)

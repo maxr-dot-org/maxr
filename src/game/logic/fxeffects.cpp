@@ -30,6 +30,8 @@
 #include "utility/random.h"
 #include "ui/sound/soundmanager.h"
 #include "ui/sound/effects/soundeffectposition.h"
+#include "game/data/units/vehicle.h"
+#include "game/data/units/building.h"
 
 cFx::cFx (bool bottom_, const cPosition& position_) :
 	position (position_),
@@ -96,10 +98,11 @@ void cFxContainer::run()
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzle::cFxMuzzle (const cPosition& position_, int dir_) :
+cFxMuzzle::cFxMuzzle(const cPosition& position_, int dir_, sID id_) :
 	cFx (false, position_),
 	pImages (NULL),
-	dir (dir_)
+	dir (dir_),
+	id (id_)
 {}
 
 void cFxMuzzle::draw (float zoom, const cPosition& destination) const
@@ -118,33 +121,41 @@ void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 	SDL_BlitSurface (images[1].get (), &src, cVideo::buffer, &dest);
 }
 
+void cFxMuzzle::playSound(cSoundManager& soundManager) const
+{
+	if (id.isABuilding())
+		soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, UnitsData.getBuildingUI(id)->Attack, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	else
+		soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, UnitsData.getVehicleUI(id)->Attack, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+}
+
 //------------------------------------------------------------------------------
-cFxMuzzleBig::cFxMuzzleBig (const cPosition& position_, int dir_) :
-	cFxMuzzle (position_, dir_)
+cFxMuzzleBig::cFxMuzzleBig(const cPosition& position_, int dir_, sID id_) :
+	cFxMuzzle (position_, dir_, id_)
 {
 	pImages = &EffectsData.fx_muzzle_big;
 	length = 6;
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleMed::cFxMuzzleMed (const cPosition& position_, int dir_) :
-	cFxMuzzle (position_, dir_)
+cFxMuzzleMed::cFxMuzzleMed(const cPosition& position_, int dir_, sID id_) :
+	cFxMuzzle(position_, dir_, id_)
 {
 	pImages = &EffectsData.fx_muzzle_med;
 	length = 6;
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleMedLong::cFxMuzzleMedLong (const cPosition& position_, int dir_) :
-	cFxMuzzle (position_, dir_)
+cFxMuzzleMedLong::cFxMuzzleMedLong(const cPosition& position_, int dir_, sID id_) :
+	cFxMuzzle(position_, dir_, id_)
 {
 	length = 16;
 	pImages = &EffectsData.fx_muzzle_med;
 }
 
 //------------------------------------------------------------------------------
-cFxMuzzleSmall::cFxMuzzleSmall (const cPosition& position_, int dir_) :
-	cFxMuzzle (position_, dir_)
+cFxMuzzleSmall::cFxMuzzleSmall(const cPosition& position_, int dir_, sID id_) :
+	cFxMuzzle(position_, dir_, id_)
 {
 	length = 6;
 	pImages = &EffectsData.fx_muzzle_small;
@@ -237,8 +248,10 @@ void cFxExploWater::playSound (cSoundManager& soundManager) const
 }
 
 //------------------------------------------------------------------------------
-cFxHit::cFxHit (const cPosition& position_) :
-	cFxExplo (position_, 5)
+cFxHit::cFxHit (const cPosition& position_, bool targetHit_, bool big_) :
+	cFxExplo(position_, 5),
+	targetHit(targetHit_),
+	big(big_)
 {
 	length = 50;
 	pImages = &EffectsData.fx_hit;
@@ -246,7 +259,17 @@ cFxHit::cFxHit (const cPosition& position_) :
 
 void cFxHit::playSound (cSoundManager& soundManager) const
 {
-	// TODO:  PlayFX (SoundData.hit);
+	if (targetHit)
+	{
+		if (big)
+			soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, SoundData.SNDHitLarge, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+		else
+			soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, SoundData.SNDHitMed, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	}
+	else
+	{
+		soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, SoundData.SNDHitSmall, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -331,17 +354,26 @@ void cFxTracks::draw (float zoom, const cPosition& destination) const
 }
 
 //------------------------------------------------------------------------------
-cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, int dir_, bool bottom) :
+cFxRocket::cFxRocket (const cPosition& startPosition_, const cPosition& endPosition_, int dir_, bool bottom, sID id_) :
 	cFx (bottom, startPosition_),
 	speed (8),
 	pImages (&EffectsData.fx_rocket),
 	dir (dir_),
 	distance (0),
 	startPosition (startPosition_),
-	endPosition (endPosition_)
+	endPosition (endPosition_),
+	id (id_)
 {
 	distance = static_cast<int>((endPosition - startPosition).l2Norm ());
 	length = distance / speed;
+}
+
+void cFxRocket::playSound(cSoundManager& soundManager) const
+{
+	if (id.isABuilding())
+		soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, UnitsData.getBuildingUI(id)->Attack, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
+	else
+		soundManager.playSound(std::make_shared<cSoundEffectPosition>(eSoundEffectType::EffectExplosion, UnitsData.getVehicleUI(id)->Attack, cPosition(position.x() / cStaticMap::tilePixelWidth, position.y() / cStaticMap::tilePixelHeight)));
 }
 
 cFxRocket::~cFxRocket()

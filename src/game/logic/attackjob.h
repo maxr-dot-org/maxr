@@ -68,7 +68,7 @@ private:
 
 	void lockTarget();
 	void fire();
-	std::unique_ptr<cFx> createMuzzleFx();
+	std::unique_ptr<cFx> createMuzzleFx(cUnit* unit);
 	bool impact();
 	bool impactCluster();
 	bool impactSingle (const cPosition& position, std::vector<cUnit*>* avoidTargets = NULL);

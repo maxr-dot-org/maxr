@@ -57,6 +57,9 @@ public:
 	cSoundChunk SNDRepair;
 	cSoundChunk SNDSeaMineClear;
 	cSoundChunk SNDSeaMinePlace;
+	cSoundChunk SNDHitSmall;
+	cSoundChunk SNDHitMed;
+	cSoundChunk SNDHitLarge;
 
 	// Explosions
     std::array<cSoundChunk, 4> EXPBig;

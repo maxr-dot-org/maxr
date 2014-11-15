@@ -20,11 +20,7 @@
 #include "output/sound/soundchannel.h"
 
 
-//TODO: unlocking bei allen gelegenheiten, wo eine Unit verschwindet/bewegt
-
-
-//TODO: alien angriff luft + boden
-//TODO: sentry attacks
+//TODO: test alien attack (gound & air)
 //TODO: load/save attackjobs + isAttacking/isAttacked
 
 /*tests:
@@ -337,7 +333,7 @@ void cAttackJob::fire()
 	}
 
 	//set timer for next state
-	auto muzzle = createMuzzleFx();
+	auto muzzle = createMuzzleFx(aggressor);
 	if (muzzle)
 		counter = muzzle->getLength() + IMPACT_DELAY;
 
@@ -348,28 +344,41 @@ void cAttackJob::fire()
 			client->addFx (std::move(muzzle), aggressor != NULL);
 	}
 
-	//play sound
-	if (aggressor && client)
+	//make explosive mines explode
+	if (aggressor && aggressor->data.explodesOnContact && aggressorPosition == targetPosition)
 	{
-		if (aggressor->isAVehicle())
+		if (client)
 		{
-			//TODO: play sound only for clients with active GUI
-			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (static_cast<cVehicle*> (aggressor)->uiData->Attack);
+			cMap&    map = client ? *client->getMap() : *server->Map;
+			if (map.isWaterOrCoast(aggressor->getPosition()))
+			{
+				client->addFx(std::make_unique<cFxExploWater>(aggressor->getPosition() * 64 + cPosition(32, 32)));
+			}
+			else
+			{
+				client->addFx(std::make_unique<cFxExploSmall>(aggressor->getPosition() * 64 + cPosition(32, 32)));
+			}
+			client->deleteUnit(aggressor);
 		}
 		else
 		{
-			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (static_cast<cBuilding*> (aggressor)->uiData->Attack);
+			server->deleteUnit(aggressor, false);
 		}
 	}
+	
 
 	
 }
 
-std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
+std::unique_ptr<cFx> cAttackJob::createMuzzleFx(cUnit* aggressor)
 {
 	//TODO: this shouldn't be in the attackjob class. But since
 	//the attackjobs doesn't always have an instance of the unit,
 	//it stays here for now
+
+	sID id;
+	if (aggressor)
+		id = aggressor->data.ID;
 
 	cPosition offset(0, 0);
 	switch (muzzleType)
@@ -406,14 +415,14 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
 					offset.y () = -32;
 					break;
 			}
-			return std::make_unique<cFxMuzzleBig> (aggressorPosition * 64 + offset, fireDir);
+			return std::make_unique<cFxMuzzleBig> (aggressorPosition * 64 + offset, fireDir, id);
 
 		case sUnitData::MUZZLE_TYPE_SMALL:
-			return std::make_unique<cFxMuzzleSmall> (aggressorPosition * 64, fireDir);
+			return std::make_unique<cFxMuzzleSmall> (aggressorPosition * 64, fireDir, id);
 
 		case sUnitData::MUZZLE_TYPE_ROCKET:
 		case sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
-			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition (32, 32), targetPosition * 64 + cPosition (32, 32), fireDir, false);
+			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition (32, 32), targetPosition * 64 + cPosition (32, 32), fireDir, false, id);
 
 		case sUnitData::MUZZLE_TYPE_MED:
 		case sUnitData::MUZZLE_TYPE_MED_LONG:
@@ -449,14 +458,14 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
 					break;
 			}
 			if (muzzleType == sUnitData::MUZZLE_TYPE_MED)
-				return std::make_unique<cFxMuzzleMed> (aggressorPosition * 64 + offset, fireDir);
+				return std::make_unique<cFxMuzzleMed> (aggressorPosition * 64 + offset, fireDir, id);
 			else
-				return std::make_unique<cFxMuzzleMedLong> (aggressorPosition * 64 + offset, fireDir);
+				return std::make_unique<cFxMuzzleMedLong> (aggressorPosition * 64 + offset, fireDir, id);
 
 		case sUnitData::MUZZLE_TYPE_TORPEDO:
-			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition(32, 32), targetPosition * 64 + cPosition(32, 32), fireDir, true);
+			return std::make_unique<cFxRocket> (aggressorPosition * 64 + cPosition(32, 32), targetPosition * 64 + cPosition(32, 32), fireDir, true, id);
 		case sUnitData::MUZZLE_TYPE_SNIPER:
-			//TODO: sniper hat keine animation?!?
+			//TODO: sniper has no animation?!?
 		default:
 			return NULL;
 	}
@@ -464,10 +473,16 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx()
 
 bool cAttackJob::impact()
 {
+	bool destroyed = false;
 	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
-		return impactCluster();
+		destroyed = impactCluster();
 	else
-		return impactSingle(targetPosition);
+		destroyed = impactSingle (targetPosition);
+
+
+	auto aggressor = getAggressor();
+	if (aggressor)
+		aggressor->setAttacking(false);
 
 	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
 	// for example a plane flies on the target field and takes the shot in place of the original plane
@@ -482,6 +497,8 @@ bool cAttackJob::impact()
 		if (unit)
 			unit->setIsBeeinAttacked (false);
 	}
+
+	return destroyed;
 }
 
 bool cAttackJob::impactCluster()
@@ -588,53 +605,28 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 	}
 
 	auto aggressor = getAggressor();
-	if (aggressor && aggressor->data.explodesOnContact && aggressorPosition == position)
+	if (!destroyed && client)
 	{
-		if (client)
-		{
-			cBuilding& b = *static_cast<cBuilding*> (aggressor);
-
-			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (b.uiData->Attack);
-			if (map.isWaterOrCoast(b.getPosition()))
-			{
-				client->addFx(std::make_unique<cFxExploWater>(b.getPosition() * 64 + cPosition(32, 32)));
-			}
-			else
-			{
-				client->addFx (std::make_unique<cFxExploSmall> (b.getPosition () * 64 + cPosition (32, 32)));
-			}
-			client->deleteUnit(aggressor);
-		}
-		else
-		{
-			// delete unit is only called on server, because it sends 
-			// all nessesary net messages to update the client
-			server->deleteUnit(aggressor, false);
-		}
-		aggressor = NULL;
-	}
-	else if (!destroyed && client)
-	{
-		// TODO:  PlayFX (SoundData.hit); in cFxHit!
-		client->addFx(std::make_unique<cFxHit>(position * 64 + offset + cPosition(32, 32)), target != nullptr);
+		bool playSound = client->getActivePlayer().canSeeAt(targetPosition);
+		bool targetHit = target != nullptr;
+		bool bigTarget = false;
+		if (target)
+			bigTarget = target->data.isBig;
+		client->addFx(std::make_unique<cFxHit>(position * 64 + offset + cPosition(32, 32), targetHit, bigTarget), playSound);
 	}
 
 	//make message
-	if (client && target && target->getOwner()->getNr() == client->getActivePlayer().getNr())
+	if (target)
 	{
-		std::string message;
 		if (destroyed)
 		{
-			client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportDestroyed> (*target));
+			target->getOwner()->addSavedReport (std::make_unique<cSavedReportDestroyed> (*target));
 		}
 		else
 		{
-			client->getActivePlayer ().addSavedReport (std::make_unique<cSavedReportAttacked> (*target));
+			target->getOwner()->addSavedReport(std::make_unique<cSavedReportAttacked>(*target));
 		}
 	}
-
-	if (aggressor)
-		aggressor->setAttacking(false);
 
 	if (target)
 		Log.write (std::string (server ? " Server: " : " Client: ") + "AttackJob Impact. Target: " + target->getDisplayName () + " (ID: " + iToStr (target->iID) + ") at (" + iToStr (targetPosition.x ()) + "," + iToStr (targetPosition.y ()) + "), Remaining HP: " + iToStr (target->data.getHitpoints ()), cLog::eLOG_TYPE_NET_DEBUG);
@@ -649,7 +641,7 @@ void cAttackJob::destroyTarget()
 {
 	// destroy unit is only called on server, because it sends 
 	// all nessesary net messages to update the client
-	if (server)
+	if (server)            
 	{
 		for (auto targetId : destroyedTargets)
 		{

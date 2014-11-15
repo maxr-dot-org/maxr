@@ -858,7 +858,6 @@ void cClientMoveJob::init(const cPosition& source_, cVehicle* Vehicle)
 	this->bPlane = (Vehicle->data.factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
-	bSoundRunning = false;
 	iSavedSpeed = 0;
 	bSuspended = false;
 

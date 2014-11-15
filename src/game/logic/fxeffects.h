@@ -25,8 +25,10 @@
 #include "maxrconfig.h"
 #include "utility/autosurface.h"
 #include "utility/position.h"
+#include "main.h"
 
 class cSoundManager;
+class cSoundChunk;
 
 class cFx
 {
@@ -65,36 +67,39 @@ private:
 
 class cFxMuzzle : public cFx
 {
+
 protected:
-	cFxMuzzle (const cPosition& position, int dir_);
+	cFxMuzzle(const cPosition& position, int dir_, sID id);
 	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound(cSoundManager& soundManager) const;
 
 	AutoSurface (*pImages) [2];
 	int dir;
+	const sID id;
 };
 
 class cFxMuzzleBig : public cFxMuzzle
 {
 public:
-	cFxMuzzleBig (const cPosition& position, int dir_);
+	cFxMuzzleBig(const cPosition& position, int dir, sID id);
 };
 
 class cFxMuzzleMed : public cFxMuzzle
 {
 public:
-	cFxMuzzleMed (const cPosition& position, int dir_);
+	cFxMuzzleMed(const cPosition& position, int dir, sID id);
 };
 
 class cFxMuzzleMedLong : public cFxMuzzle
 {
 public:
-	cFxMuzzleMedLong (const cPosition& position, int dir_);
+	cFxMuzzleMedLong(const cPosition& position, int dir, sID id);
 };
 
 class cFxMuzzleSmall : public cFxMuzzle
 {
 public:
-	cFxMuzzleSmall (const cPosition& position, int dir_);
+	cFxMuzzleSmall(const cPosition& position, int dir, sID id);
 };
 
 class cFxExplo : public cFx
@@ -144,8 +149,11 @@ public:
 
 class cFxHit : public cFxExplo
 {
+private:
+	bool targetHit;
+	bool big;
 public:
-	cFxHit (const cPosition& position);
+	cFxHit (const cPosition& position, bool targetHit, bool big);
     virtual void playSound (cSoundManager& soundManager) const MAXR_OVERRIDE_FUNCTION;
 };
 
@@ -202,10 +210,12 @@ private:
 	int distance;
 	const cPosition startPosition;
 	const cPosition endPosition;
+	const sID id;
 public:
-	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom);
+	cFxRocket (const cPosition& startPosition, const cPosition& endPosition, int dir_, bool bottom, sID id);
 	~cFxRocket();
 	virtual void draw (float zoom, const cPosition& destination) const MAXR_OVERRIDE_FUNCTION;
+	virtual void playSound(cSoundManager& soundManager) const;
 	void run();
 	// return true, when the last smoke effect is finished.
 	// getLength() returns only the time until

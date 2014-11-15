@@ -244,7 +244,6 @@ public:
 	int iNextDir;
 	int iSavedSpeed;
 	bool bPlane;
-	bool bSoundRunning;
 
 	sWaypoint* Waypoints;
 

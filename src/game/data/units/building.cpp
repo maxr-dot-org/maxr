@@ -1036,6 +1036,7 @@ void cBuilding::storeVehicle (cVehicle& vehicle, cMap& map)
 	}
 
 	vehicle.setLoaded(true);
+	vehicle.setIsBeeinAttacked(false);
 
 	storedUnits.push_back (&vehicle);
 	data.setStoredUnits(data.getStoredUnits ()+1);
