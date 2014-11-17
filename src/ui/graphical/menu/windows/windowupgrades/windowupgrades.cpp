@@ -209,7 +209,6 @@ void cWindowUpgrades::generateSelectionList (bool select)
 		for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 		{
 			const sUnitData& data = UnitsData.getVehicle (i, getPlayer ().getClan ());
-			if (data.isHuman) continue;
 			if (tnt && !data.canAttack) continue;
 			if (data.factorAir > 0 && !plane) continue;
 			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
