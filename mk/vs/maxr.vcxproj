@@ -232,6 +232,7 @@
     <ClCompile Include="..\..\src\game\startup\network\host\networkhostgamenew.cpp" />
     <ClCompile Include="..\..\src\game\startup\network\host\networkhostgamesaved.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\application.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\framecounter.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\animations\animationdither.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\animations\animationstartup.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\animations\animationstartupbuildingsite.cpp" />
@@ -489,6 +490,7 @@
     <ClInclude Include="..\..\src\game\startup\network\host\networkhostgamesaved.h" />
     <ClInclude Include="..\..\src\ui\graphical\alignment.h" />
     <ClInclude Include="..\..\src\ui\graphical\application.h" />
+    <ClInclude Include="..\..\src\ui\graphical\framecounter.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\animations\animation.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\animations\animationdither.h" />
     <ClInclude Include="..\..\src\ui\graphical\game\animations\animationstartup.h" />
