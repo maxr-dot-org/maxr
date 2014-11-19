@@ -144,7 +144,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t positionIndex)
 {
-	const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (unit.data.ID);
+	const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (storedUnit.data.ID);
 
 	activateButtons[positionIndex]->unlock ();
 	if (storedUnit.data.getAmmo () != storedUnit.data.ammoMax && metalBar->getValue () >= 1) reloadButtons[positionIndex]->unlock ();
