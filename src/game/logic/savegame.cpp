@@ -1140,7 +1140,9 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	if (XMLElement* const Element = unitNode->FirstChildElement ("StoreUnitsTypes"))
 	{
 		string storeUnitsString = Element->Attribute ("string");
+		Data->storeUnitsTypes.clear ();
 		Split (storeUnitsString, "+", Data->storeUnitsTypes);
+		Data->storeUnitsTypes.erase (std::unique (Data->storeUnitsTypes.begin (), Data->storeUnitsTypes.end ()), Data->storeUnitsTypes.end ());
 	}
 
 	if (XMLElement* const Element = unitNode->FirstChildElement ("Needs_Energy"))     Element->QueryIntAttribute ("num", &Data->needsEnergy);   else Data->needsEnergy   = 0;
