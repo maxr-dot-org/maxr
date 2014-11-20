@@ -466,7 +466,7 @@ void cServerMoveJob::stop()
 
 void cServerMoveJob::resume()
 {
-	if (Vehicle && Vehicle->data.speedCur > 0 && !Vehicle->isUnitMoving ())
+	if (Vehicle && Vehicle->data.getSpeed() > 0 && !Vehicle->isUnitMoving ())
 	{
 		// restart movejob
 		calcNextDir();
@@ -605,11 +605,11 @@ bool cServerMoveJob::checkMove()
 	}
 
 	// not enough waypoints for this move?
-	if (Vehicle->data.speedCur < Waypoints->next->Costs)
+	if (Vehicle->data.getSpeed() < Waypoints->next->Costs)
 	{
 		Log.write (" Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), LOG_TYPE_NET_DEBUG);
-		iSavedSpeed += Vehicle->data.speedCur;
-		Vehicle->data.speedCur = 0;
+		iSavedSpeed += Vehicle->data.getSpeed();
+		Vehicle->data.setSpeed(0);
 		bEndForNow = true;
 		return true;
 	}
@@ -644,7 +644,7 @@ bool cServerMoveJob::checkMove()
 	Vehicle->MoveJobActive = true;
 	Vehicle->setMoving (true);
 
-	Vehicle->data.speedCur += iSavedSpeed;
+	Vehicle->data.setSpeed(Vehicle->data.getSpeed() + iSavedSpeed);
 	iSavedSpeed = 0;
 	Vehicle->DecSpeed (Waypoints->next->Costs);
 
@@ -962,7 +962,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			Vehicle->setMoving (true);
 			Map->moveVehicle (*Vehicle, Waypoints->next->position);
 
-			Vehicle->data.speedCur += this->iSavedSpeed;
+			Vehicle->data.setSpeed(Vehicle->data.getSpeed() + this->iSavedSpeed);
 			this->iSavedSpeed = 0;
 			Vehicle->DecSpeed (Waypoints->next->Costs);
 
@@ -984,7 +984,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (Vehicle->isUnitMoving ()) doEndMoveVehicle ();
 			if (bEndForNow) client->addActiveMoveJob (*this);
 			this->iSavedSpeed = iSavedSpeed;
-			Vehicle->data.speedCur = 0;
+			Vehicle->data.setSpeed(0);
 			bSuspended = true;
 			bEndForNow = true;
 		}
@@ -1039,7 +1039,7 @@ void cClientMoveJob::moveVehicle()
 	if (!Vehicle->isUnitMoving ())
 	{
 		//check remaining speed
-		if (Vehicle->data.speedCur < Waypoints->next->Costs)
+		if (Vehicle->data.getSpeed() < Waypoints->next->Costs)
 		{
 			bSuspended = true;
 			bEndForNow = true;
@@ -1047,7 +1047,7 @@ void cClientMoveJob::moveVehicle()
 			return;
 		}
 
-		Vehicle->data.speedCur += iSavedSpeed;
+		Vehicle->data.setSpeed(Vehicle->data.getSpeed() + iSavedSpeed);
 		iSavedSpeed = 0;
 		Vehicle->DecSpeed (Waypoints->next->Costs);
 

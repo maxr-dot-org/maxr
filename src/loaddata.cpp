@@ -1732,8 +1732,8 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	else if (muzzleType.compare ("Sniper") == 0) Data->muzzleType = sUnitData:: MUZZLE_TYPE_SNIPER;
 	else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
 
-	Data->ammoMax = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Ammo_Quantity", NULL);
-	Data->shotsMax = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Shots", NULL);
+	Data->setAmmoMax(getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Ammo_Quantity", NULL));
+	Data->setShotsMax(getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Shots", NULL));
 	Data->setRange(getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Range", NULL));
 	Data->setDamage(getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Damage", NULL));
 	Data->canAttack = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Can_Attack", NULL);
@@ -1756,8 +1756,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	Data->canBuildRepeat = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Can_Build_Repeat", NULL);
 
 	// Movement
-	Data->speedMax = getXMLAttributeInt (unitDataXml, "Unit", "Movement", "Movement_Sum", NULL);
-	Data->speedMax *= 4;
+	Data->setSpeedMax(getXMLAttributeInt (unitDataXml, "Unit", "Movement", "Movement_Sum", NULL) * 4);
 
 	Data->factorGround = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Ground", NULL);
 	Data->factorSea = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Sea", NULL);
@@ -1768,7 +1767,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	Data->isBig = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Is_Big", NULL);
 	Data->connectsToBase = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Connects_To_Base", NULL);
 	Data->setArmor(getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Armor", NULL));
-	Data->hitpointsMax = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Hitpoints", NULL);
+	Data->setHitpointsMax(getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Hitpoints", NULL));
 	Data->setScan(getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Scan_Range", NULL));
 	Data->modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", "Abilities", "Modifies_Speed", NULL);
 	Data->canClearArea = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Clear_Area", NULL);

@@ -137,7 +137,7 @@ void cUnitDetails::reset ()
 		{
 			// Shots:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->shotsMax, lngPack.i18n ("Text~Others~Shots_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->shotsMax, playerOriginalData->shotsMax);
+			drawRow (rowIndex++, eUnitDataSymbolType::Shots, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getShotsMax(), playerOriginalData->getShotsMax());
 
 			// Range:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE) : nullptr;
@@ -145,7 +145,7 @@ void cUnitDetails::reset ()
 
 			// Ammo:
 			upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO) : nullptr;
-			drawRow (rowIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->ammoMax, lngPack.i18n ("Text~Others~Ammo_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->ammoMax, playerOriginalData->ammoMax);
+			drawRow (rowIndex++, eUnitDataSymbolType::Ammo, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getAmmoMax(), lngPack.i18n ("Text~Others~Ammo_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getAmmoMax(), playerOriginalData->getAmmoMax());
 		}
 	}
 
@@ -193,7 +193,7 @@ void cUnitDetails::reset ()
 
 	// Hit points:
 	upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS) : nullptr;
-	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->hitpointsMax, playerOriginalData->hitpointsMax);
+	drawRow (rowIndex++, eUnitDataSymbolType::Hits, upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"), upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getHitpointsMax(), playerOriginalData->getHitpointsMax());
 
 	// Scan:
 	if (unitObjectCurrentData->getScan ())
@@ -203,10 +203,10 @@ void cUnitDetails::reset ()
 	}
 
 	// Speed:
-	if (unitObjectCurrentData->speedMax)
+	if (unitObjectCurrentData->getSpeedMax())
 	{
 		upgrade = upgrades ? upgrades->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED) : nullptr;
-		drawRow (rowIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->speedMax) / 4, lngPack.i18n ("Text~Others~Speed_7"), (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->speedMax) / 4, playerOriginalData->speedMax / 4);
+		drawRow (rowIndex++, eUnitDataSymbolType::Speed, (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getSpeedMax()) / 4, lngPack.i18n ("Text~Others~Speed_7"), (upgrade ? upgrade->getCurValue () : unitObjectCurrentData->getSpeedMax()) / 4, playerOriginalData->getSpeedMax() / 4);
 	}
 
 	// energy consumption:

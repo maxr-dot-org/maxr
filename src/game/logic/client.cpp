@@ -632,19 +632,19 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 	Data->buildCosts = message.popInt16();
 	Data->setAmmo(message.popInt16());
-	Data->ammoMax = message.popInt16();
+	Data->setAmmoMax(message.popInt16());
 	Data->setStoredResources(message.popInt16());
 	Data->storageResMax = message.popInt16();
 	Data->setStoredUnits(message.popInt16());
 	Data->storageUnitsMax = message.popInt16();
 	Data->setDamage(message.popInt16());
 	Data->setShots(message.popInt16());
-	Data->shotsMax = message.popInt16();
+	Data->setShotsMax(message.popInt16());
 	Data->setRange(message.popInt16());
 	Data->setScan(message.popInt16());
 	Data->setArmor(message.popInt16());
 	Data->setHitpoints(message.popInt16());
-	Data->hitpointsMax = message.popInt16();
+	Data->setHitpointsMax(message.popInt16());
 	Data->setVersion(message.popInt16());
 
 	if (bVehicle)
@@ -654,8 +654,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			if (Data->getStoredResources () <= 0) Vehicle->setLayMines (false);
 			if (Data->getStoredResources () >= Data->storageResMax) Vehicle->setClearMines (false);
 		}
-		Data->speedCur = message.popInt16();
-		Data->speedMax = message.popInt16();
+		Data->setSpeed(message.popInt16());
+		Data->setSpeedMax(message.popInt16());
 
 		Vehicle->setFlightHeight(message.popInt16 ());
 	}
@@ -1282,10 +1282,10 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 	Data->setDamage(message.popInt16());
 	Data->buildCosts = message.popInt16();
 	Data->setArmor(message.popInt16());
-	Data->speedMax = message.popInt16();
-	Data->shotsMax = message.popInt16();
-	Data->ammoMax = message.popInt16();
-	Data->hitpointsMax = message.popInt16();
+	Data->setSpeedMax(message.popInt16());
+	Data->setShotsMax(message.popInt16());
+	Data->setAmmoMax(message.popInt16());
+	Data->setHitpointsMax(message.popInt16());
 }
 
 void cClient::HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message)
@@ -1806,7 +1806,7 @@ void cClient::handleMoveJobs()
 		if (Vehicle == NULL) continue;
 
 
-		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speedCur)
+		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.getSpeed())
 		{
 			// rotate vehicle
 			if (gameTimer->timer100ms)

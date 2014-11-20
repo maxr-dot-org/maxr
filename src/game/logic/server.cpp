@@ -417,13 +417,13 @@ void cServer::handleNetMessage_MU_MSG_UPGRADES (cNetMessage& message)
 		sUnitData& unitData = *player.getUnitDataCurrentVersion (ID);
 
 		unitData.setDamage(message.popInt16());
-		unitData.shotsMax = message.popInt16();
+		unitData.setShotsMax(message.popInt16());
 		unitData.setRange(message.popInt16());
-		unitData.ammoMax = message.popInt16();
+		unitData.setAmmoMax(message.popInt16());
 		unitData.setArmor(message.popInt16());
-		unitData.hitpointsMax = message.popInt16();
+		unitData.setHitpointsMax(message.popInt16());
 		unitData.setScan(message.popInt16());
-		if (ID.isAVehicle()) unitData.speedMax = message.popInt16();
+		if (ID.isAVehicle()) unitData.setSpeedMax(message.popInt16());
 		unitData.setVersion(unitData.getVersion()+1);
 	}
 }
@@ -1259,19 +1259,19 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		if (iType == SUPPLY_TYPE_REARM)
 		{
 			SrcVehicle->data.setStoredResources (SrcVehicle->data.getStoredResources()-1);
-			iValue = DestVehicle ? DestVehicle->data.ammoMax : DestBuilding->data.ammoMax;
+			iValue = DestVehicle ? DestVehicle->data.getAmmoMax() : DestBuilding->data.getAmmoMax();
 		}
 		else
 		{
 			sUnitData* DestData = DestVehicle ? &DestVehicle->data : &DestBuilding->data;
 			// reduce cargo for repair and calculate maximal repair value
 			iValue = DestData->getHitpoints ();
-			while (SrcVehicle->data.getStoredResources () > 0 && iValue < DestData->hitpointsMax)
+			while (SrcVehicle->data.getStoredResources () > 0 && iValue < DestData->getHitpointsMax())
 			{
-				iValue += Round (((float)DestData->hitpointsMax / DestData->buildCosts) * 4);
+				iValue += Round (((float)DestData->getHitpointsMax () / DestData->buildCosts) * 4);
 				SrcVehicle->data.setStoredResources (SrcVehicle->data.getStoredResources ()-1);
 			}
-			iValue = std::min (DestData->hitpointsMax, iValue);
+			iValue = std::min (DestData->getHitpointsMax (), iValue);
 		}
 		// the changed values aren't interesting for enemy players,
 		// so only send the new data to the owner
@@ -1287,18 +1287,18 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		{
 			if (SrcBuilding->SubBase->getMetal () < 1) return;
 			SrcBuilding->SubBase->addMetal (*this, -1);
-			iValue = DestVehicle->data.ammoMax;
+			iValue = DestVehicle->data.getAmmoMax();
 		}
 		else
 		{
 			// reduce cargo for repair and calculate maximal repair value
 			iValue = DestVehicle->data.getHitpoints ();
-			while (SrcBuilding->SubBase->getMetal () > 0 && iValue < DestVehicle->data.hitpointsMax)
+			while (SrcBuilding->SubBase->getMetal () > 0 && iValue < DestVehicle->data.getHitpointsMax())
 			{
-				iValue += Round (((float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
+				iValue += Round (((float) DestVehicle->data.getHitpointsMax() / DestVehicle->data.buildCosts) * 4);
 				SrcBuilding->SubBase->addMetal (*this, -1);
 			}
-			iValue = std::min (DestVehicle->data.hitpointsMax, iValue);
+			iValue = std::min (DestVehicle->data.getHitpointsMax(), iValue);
 		}
 		// the changed values aren't interesting for enemy players,
 		// so only send the new data to the owner
@@ -1308,7 +1308,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	// repair or reload the destination unit
 	if (DestVehicle)
 	{
-		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(DestVehicle->data.ammoMax);
+		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.setAmmo(DestVehicle->data.getAmmoMax());
 		else DestVehicle->data.setHitpoints(iValue);
 
 		sendSupply (*this, DestVehicle->iID, true, iValue, iType, *DestVehicle->getOwner ());
@@ -1319,7 +1319,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	}
 	else
 	{
-		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo(DestBuilding->data.ammoMax);
+		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.setAmmo(DestBuilding->data.getAmmoMax());
 		else DestBuilding->data.setHitpoints(iValue);
 
 		sendSupply (*this, DestBuilding->iID, false, iValue, iType, *DestBuilding->getOwner ());
@@ -1686,13 +1686,13 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 			// update the unitData of the player and send an ack-msg
 			// for this upgrade to the player
 			upgradedUnit->setDamage(newDamage);
-			upgradedUnit->shotsMax = newMaxShots;
+			upgradedUnit->setShotsMax(newMaxShots);
 			upgradedUnit->setRange(newRange);
-			upgradedUnit->ammoMax = newMaxAmmo;
+			upgradedUnit->setAmmoMax(newMaxAmmo);
 			upgradedUnit->setArmor(newArmor);
-			upgradedUnit->hitpointsMax = newMaxHitPoints;
+			upgradedUnit->setHitpointsMax(newMaxHitPoints);
 			upgradedUnit->setScan(newScan);
-			if (ID.isAVehicle()) upgradedUnit->speedMax = newMaxSpeed;
+			if (ID.isAVehicle()) upgradedUnit->setSpeedMax(newMaxSpeed);
 			upgradedUnit->setVersion(upgradedUnit->getVersion() + 1);
 
 			player.setCredits(player.getCredits() - costs);
@@ -2137,9 +2137,9 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (newMaxShots > currentVersion->shotsMax)
+	if (newMaxShots > currentVersion->getShotsMax())
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->shotsMax, currentVersion->shotsMax, newMaxShots, cUpgradeCalculator::kShots, player.getResearchState ());
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->getShotsMax(), currentVersion->getShotsMax(), newMaxShots, cUpgradeCalculator::kShots, player.getResearchState ());
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2153,9 +2153,9 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (newMaxAmmo > currentVersion->ammoMax)
+	if (newMaxAmmo > currentVersion->getAmmoMax())
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->ammoMax, currentVersion->ammoMax, newMaxAmmo, cUpgradeCalculator::kAmmo, player.getResearchState ());
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->getAmmoMax (), currentVersion->getAmmoMax (), newMaxAmmo, cUpgradeCalculator::kAmmo, player.getResearchState ());
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2169,9 +2169,9 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (newMaxHitPoints > currentVersion->hitpointsMax)
+	if (newMaxHitPoints > currentVersion->getHitpointsMax())
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->hitpointsMax, currentVersion->hitpointsMax, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player.getResearchState ());
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->getHitpointsMax (), currentVersion->getHitpointsMax (), newMaxHitPoints, cUpgradeCalculator::kHitpoints, player.getResearchState ());
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2185,9 +2185,9 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer& player,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (bVehicle && newMaxSpeed > currentVersion->speedMax)
+	if (bVehicle && newMaxSpeed > currentVersion->getSpeedMax())
 	{
-		const int costForUpgrade = uc.getCostForUpgrade (startVersion->speedMax / 4, currentVersion->speedMax / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player.getResearchState ());
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->getSpeedMax () / 4, currentVersion->getSpeedMax () / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player.getResearchState ());
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -3002,7 +3002,7 @@ bool cServer::executeRemainingMoveJobs (const cPlayer& player)
 	for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
 	{
 		const auto& vehicle = *i;
-		if (vehicle->ServerMoveJob && vehicle->data.speedCur > 0 && !vehicle->isUnitMoving ())
+		if (vehicle->ServerMoveJob && vehicle->data.getSpeed() > 0 && !vehicle->isUnitMoving ())
 		{
 			// restart movejob
 			vehicle->ServerMoveJob->resume ();
@@ -3893,7 +3893,7 @@ void cServer::sideStepStealthUnit(const cPosition& position, const sUnitData& ve
 			// check costs of the move
 			cPathCalculator pathCalculator (cPosition(0, 0), cPosition(0, 0), *Map, *stealthVehicle);
 			int costs = pathCalculator.calcNextCost (position, currentPosition);
-			if (costs > stealthVehicle->data.speedCur) continue;
+			if (costs > stealthVehicle->data.getSpeed()) continue;
 
 			// check whether the vehicle would be detected
 			// on the destination field

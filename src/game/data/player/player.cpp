@@ -440,7 +440,7 @@ cVehicle* cPlayer::getNextVehicle (cVehicle* start) const
 	{
 		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
 			&& !(*it)->isUnitClearing () && !(*it)->isSentryActive () && !(*it)->isUnitLoaded ()
-			&& ((*it)->data.speedCur || (*it)->data.getShots ()))
+			&& ((*it)->data.getSpeed() || (*it)->data.getShots ()))
 		{
 			return it->get ();
 		}
@@ -530,7 +530,7 @@ cVehicle* cPlayer::getPrevVehicle (cVehicle* start) const
 	{
 		if (!(*it)->isMarkedAsDone () && (!(*it)->isUnitBuildingABuilding () || (*it)->getBuildTurns () == 0)
 			&& !(*it)->isUnitClearing () && !(*it)->isSentryActive () && !(*it)->isUnitLoaded ()
-			&& ((*it)->data.speedCur || (*it)->data.getShots ()))
+			&& ((*it)->data.getSpeed() || (*it)->data.getShots ()))
 		{
 			return it->get ();
 		}
@@ -771,12 +771,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			switch (researchArea)
 			{
 				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
-				case cResearch::kShotsResearch: startValue = originalData.shotsMax; break;
+				case cResearch::kShotsResearch: startValue = originalData.getShotsMax(); break;
 				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
 				case cResearch::kArmorResearch: startValue = originalData.getArmor (); break;
-				case cResearch::kHitpointsResearch: startValue = originalData.hitpointsMax; break;
+				case cResearch::kHitpointsResearch: startValue = originalData.getHitpointsMax (); break;
 				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
-				case cResearch::kSpeedResearch: startValue = originalData.speedMax; break;
+				case cResearch::kSpeedResearch: startValue = originalData.getSpeedMax(); break;
 				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
@@ -790,12 +790,12 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 				switch (researchArea)
 				{
 					case cResearch::kAttackResearch: VehicleData[i].setDamage( VehicleData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kShotsResearch: VehicleData[i].shotsMax += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kShotsResearch: VehicleData[i].setShotsMax (VehicleData[i].getShotsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kRangeResearch: VehicleData[i].setRange (VehicleData[i].getRange () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kArmorResearch: VehicleData[i].setArmor (VehicleData[i].getArmor () + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kHitpointsResearch: VehicleData[i].hitpointsMax += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kHitpointsResearch: VehicleData[i].setHitpointsMax (VehicleData[i] .getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kScanResearch: VehicleData[i].setScan (VehicleData[i].getScan () + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kSpeedResearch: VehicleData[i].speedMax += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kSpeedResearch: VehicleData[i].setSpeedMax (VehicleData[i].getSpeed() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kCostResearch: VehicleData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
@@ -821,10 +821,10 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 			switch (researchArea)
 			{
 				case cResearch::kAttackResearch: startValue = originalData.getDamage(); break;
-				case cResearch::kShotsResearch: startValue = originalData.shotsMax; break;
+				case cResearch::kShotsResearch: startValue = originalData.getShotsMax(); break;
 				case cResearch::kRangeResearch: startValue = originalData.getRange(); break;
 				case cResearch::kArmorResearch: startValue = originalData.getArmor (); break;
-				case cResearch::kHitpointsResearch: startValue = originalData.hitpointsMax; break;
+				case cResearch::kHitpointsResearch: startValue = originalData.getHitpointsMax(); break;
 				case cResearch::kScanResearch: startValue = originalData.getScan(); break;
 				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
 			}
@@ -839,10 +839,10 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 				switch (researchArea)
 				{
 					case cResearch::kAttackResearch: BuildingData[i].setDamage( BuildingData[i].getDamage() + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kShotsResearch: BuildingData[i].shotsMax += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kShotsResearch: BuildingData[i].setShotsMax (BuildingData[i] .getShotsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kRangeResearch: BuildingData[i].setRange (BuildingData[i].getRange () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kArmorResearch: BuildingData[i].setArmor (BuildingData[i].getArmor () + newResearchBonus - oldResearchBonus); break;
-					case cResearch::kHitpointsResearch: BuildingData[i].hitpointsMax += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kHitpointsResearch: BuildingData[i].setHitpointsMax (BuildingData[i].getHitpointsMax() + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kScanResearch: BuildingData[i].setScan (BuildingData[i].getScan () + newResearchBonus - oldResearchBonus); break;
 					case cResearch::kCostResearch: BuildingData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}

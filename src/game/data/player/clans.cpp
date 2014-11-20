@@ -78,9 +78,9 @@ string cClanUnitStat::getClanStatsDescription() const
 		{"Damage", "Text~Others~Attack_7", data->getDamage ()},
 		{"Range", "Text~Others~Range", data->getRange()},
 		{"Armor", "Text~Others~Armor_7", data->getArmor()},
-		{"Hitpoints", "Text~Others~Hitpoints_7", data->hitpointsMax},
+		{"Hitpoints", "Text~Others~Hitpoints_7", data->getHitpointsMax ()},
 		{"Scan", "Text~Others~Scan_7", data->getScan()},
-		{"Speed", "Text~Others~Speed_7", data->speedMax / 4},
+		{"Speed", "Text~Others~Speed_7", data->getSpeedMax() / 4},
 	};
 
 	for (int i = 0; i != sizeof (t) / sizeof (*t); ++i)

@@ -76,8 +76,8 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	flightHeight = 0;
 	WalkFrame = 0;
 	buildBigSavedPosition = 0;
-	data.setHitpoints(data.hitpointsMax);
-	data.setAmmo(data.ammoMax);
+	data.setHitpoints (data.getHitpointsMax ());
+	data.setAmmo(data.getAmmoMax());
 	clientMoveJob = nullptr;
 	ServerMoveJob = nullptr;
 	hasAutoMoveJob = false;
@@ -448,10 +448,10 @@ bool cVehicle::refreshData()
 {
 	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
 
-	if (data.speedCur < data.speedMax || data.getShots () < data.shotsMax)
+	if (data.getSpeed() < data.getSpeedMax() || data.getShots () < data.getShotsMax())
 	{
-		data.speedCur = data.speedMax;
-		data.setShots (std::min (data.getAmmo (), data.shotsMax));
+		data.setSpeed(data.getSpeedMax());
+		data.setShots (std::min (data.getAmmo (), data.getShotsMax()));
 		return true;
 	}
 	return false;
@@ -574,11 +574,11 @@ string cVehicle::getStatusStr (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::DecSpeed (int value)
 {
-	data.speedCur -= value;
+	data.setSpeed(data.getSpeed() - value);
 
 	if (data.canAttack == false || data.canDriveAndFire) return;
 
-	const int s = data.speedCur * data.shotsMax / data.speedMax;
+	const int s = data.getSpeed() * data.getShotsMax() / data.getSpeedMax();
 	data.setShots(std::min (data.getShots (), s));
 }
 
@@ -670,7 +670,7 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 		// Disabled:
 		soundManager.playSound (std::make_shared<cSoundEffectVoice>(eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIUnitDisabledByEnemy)));
 	}
-	else if (data.getHitpoints () > data.hitpointsMax / 2)
+	else if (data.getHitpoints () > data.getHitpointsMax() / 2)
 	{
 		// Status green
 		if (clientMoveJob && clientMoveJob->endMoveAction && clientMoveJob->endMoveAction->type_ == EMAT_ATTACK)
@@ -681,7 +681,7 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 		{
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOISurveying)));
 		}
-		else if (data.speedCur == 0)
+		else if (data.getSpeed() == 0)
 		{
 			// no more movement
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOINoSpeed));
@@ -700,7 +700,7 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 			// removing dirt
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, VoiceData.VOIClearing));
 		}
-		else if (data.canAttack && data.getAmmo () <= data.ammoMax / 4 && data.getAmmo () != 0)
+		else if (data.canAttack && data.getAmmo () <= data.getAmmoMax() / 4 && data.getAmmo () != 0)
 		{
 			// red ammo-status but still ammo left
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIAmmoLow)));
@@ -728,7 +728,7 @@ void cVehicle::makeReport (cSoundManager& soundManager) const
 			soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIOK)));
 		}
 	}
-	else if (data.getHitpoints () > data.hitpointsMax / 4)
+	else if (data.getHitpoints () > data.getHitpointsMax() / 4)
 	{
 		// Status yellow:
 		soundManager.playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceUnitStatus, getRandom (VoiceData.VOIStatusYellow)));
@@ -1086,13 +1086,13 @@ bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 	switch (supplyType)
 	{
 		case SUPPLY_TYPE_REARM:
-			if (unit == this || unit->data.canAttack == false || unit->data.getAmmo () >= unit->data.ammoMax
+			if (unit == this || unit->data.canAttack == false || unit->data.getAmmo () >= unit->data.getAmmoMax()
 				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->isAttacking())
 				return false;
 			break;
 		case SUPPLY_TYPE_REPAIR:
-			if (unit == this || unit->data.getHitpoints () >= unit->data.hitpointsMax
+			if (unit == this || unit->data.getHitpoints () >= unit->data.getHitpointsMax()
 				|| (unit->isAVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->isAttacking())
 				return false;

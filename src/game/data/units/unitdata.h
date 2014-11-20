@@ -55,9 +55,6 @@ struct sUnitData
 	};
 	eMuzzleType muzzleType;
 
-	int ammoMax;
-	int shotsMax;
-
 	char canAttack;
 
 	bool canDriveAndFire;
@@ -72,10 +69,6 @@ struct sUnitData
 	bool canBuildPath;
 	bool canBuildRepeat;
 
-	// Movement
-	int speedMax;
-	int speedCur;
-
 	float factorGround;
 	float factorSea;
 	float factorAir;
@@ -84,7 +77,6 @@ struct sUnitData
 	// Abilities
 	bool isBig;
 	bool connectsToBase;
-	int hitpointsMax;
 	float modifiesSpeed;
 	bool canClearArea;
 	bool canBeCaptured;
@@ -181,8 +173,17 @@ struct sUnitData
 	int getVersion () const;
 	void setVersion (int value);
 
+	int getSpeed () const;
+	void setSpeed (int value);
+
+	int getSpeedMax () const;
+	void setSpeedMax (int value);
+
 	int getHitpoints () const;
 	void setHitpoints (int value);
+
+	int getHitpointsMax () const;
+	void setHitpointsMax (int value);
 
 	int getScan () const;
 	void setScan (int value);
@@ -193,8 +194,14 @@ struct sUnitData
 	int getShots () const;
 	void setShots (int value);
 
+	int getShotsMax () const;
+	void setShotsMax (int value);
+
 	int getAmmo () const;
 	void setAmmo (int value);
+
+	int getAmmoMax () const;
+	void setAmmoMax (int value);
 
 	int getDamage () const;
 	void setDamage (int value);
@@ -209,9 +216,14 @@ struct sUnitData
 	void setStoredUnits (int value);
 
 	mutable cSignal<void ()> versionChanged;
+	mutable cSignal<void ()> speedChanged;
+	mutable cSignal<void ()> speedMaxChanged;
 	mutable cSignal<void ()> hitpointsChanged;
+	mutable cSignal<void ()> hitpointsMaxChanged;
 	mutable cSignal<void ()> shotsChanged;
+	mutable cSignal<void ()> shotsMaxChanged;
 	mutable cSignal<void ()> ammoChanged;
+	mutable cSignal<void ()> ammoMaxChanged;
 	mutable cSignal<void ()> scanChanged;
 	mutable cSignal<void ()> rangeChanged;
 	mutable cSignal<void ()> damageChanged;
@@ -221,9 +233,15 @@ struct sUnitData
 private:
 	int version;
 
+	int speedCur;
+	int speedMax;
+
 	int hitpointsCur;
+	int hitpointsMax;
 	int shotsCur;
+	int shotsMax;
 	int ammoCur;
+	int ammoMax;
 
 	int range;
 	int scan;

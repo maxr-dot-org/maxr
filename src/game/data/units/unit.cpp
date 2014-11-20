@@ -332,20 +332,20 @@ void cUnit::upgradeToCurrentVersion()
 	data.setVersion(upgradeVersion->getVersion ());
 
 	// TODO: check behaviour in original
-	if (data.getHitpoints () == data.hitpointsMax)
-		data.setHitpoints (upgradeVersion->hitpointsMax);
-	data.hitpointsMax = upgradeVersion->hitpointsMax;
+	if (data.getHitpoints () == data.getHitpointsMax())
+		data.setHitpoints (upgradeVersion->getHitpointsMax ());
+	data.setHitpointsMax(upgradeVersion->getHitpointsMax ());
 
 	// don't change the current ammo-amount!
-	data.ammoMax = upgradeVersion->ammoMax;
+	data.setAmmoMax(upgradeVersion->getAmmoMax());
 
-	data.speedMax = upgradeVersion->speedMax;
+	data.setSpeedMax(upgradeVersion->getSpeedMax());
 
 	data.setArmor (upgradeVersion->getArmor ());
 	data.setScan (upgradeVersion->getScan ());
 	data.setRange (upgradeVersion->getRange ());
 	// TODO: check behaviour in original
-	data.shotsMax = upgradeVersion->shotsMax;
+	data.setShotsMax(upgradeVersion->getShotsMax());
 	data.setDamage (upgradeVersion->getDamage ());
 	data.buildCosts = upgradeVersion->buildCosts;
 }

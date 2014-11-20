@@ -329,7 +329,7 @@ void cAttackJob::fire()
 		aggressor->data.setShots(aggressor->data.getShots() - 1);
 		aggressor->data.setAmmo(aggressor->data.getAmmo() - 1);
 		if (aggressor->isAVehicle() && aggressor->data.canDriveAndFire == false)
-			aggressor->data.speedCur -= (int) (((float) aggressor->data.speedMax) / aggressor->data.shotsMax);
+			aggressor->data.setSpeed(aggressor->data.getSpeed() - (int) (((float) aggressor->data.getSpeedMax()) / aggressor->data.getShotsMax()));
 	}
 
 	//set timer for next state

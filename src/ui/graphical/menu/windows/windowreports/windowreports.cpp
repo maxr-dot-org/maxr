@@ -299,7 +299,7 @@ bool cWindowReports::checkFilter (const sUnitData& data) const
 
 	if (data.canBuild.empty () && produceCheckBox->isChecked ()) return false;
 	if (!data.canAttack && fightCheckBox->isChecked ()) return false;
-	if (data.getHitpoints () >= data.hitpointsMax && damagedCheckBox->isChecked ()) return false;
+	if (data.getHitpoints () >= data.getHitpointsMax() && damagedCheckBox->isChecked ()) return false;
 	if (!data.isStealthOn && stealthCheckBox->isChecked ()) return false;
 
 	if (data.surfacePosition != sUnitData::SURFACE_POS_GROUND) return false;

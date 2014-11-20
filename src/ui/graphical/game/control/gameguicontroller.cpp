@@ -1047,7 +1047,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];
 
-			if (storedUnit.data.getAmmo () < storedUnit.data.ammoMax)
+			if (storedUnit.data.getAmmo () < storedUnit.data.getAmmoMax())
 			{
 				reloadTriggered (unit, storedUnit);
 				remainingResources--;
@@ -1062,13 +1062,13 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];
 
-			if (storedUnit.data.getHitpoints () < storedUnit.data.hitpointsMax)
+			if (storedUnit.data.getHitpoints () < storedUnit.data.getHitpointsMax())
 			{
 				repairTriggered (unit, storedUnit);
 				auto value = storedUnit.data.getHitpoints ();
-				while (value < storedUnit.data.hitpointsMax && remainingResources > 0)
+				while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
 				{
-					value += Round (((float)storedUnit.data.hitpointsMax / storedUnit.data.buildCosts) * 4);
+					value += Round (((float)storedUnit.data.getHitpointsMax() / storedUnit.data.buildCosts) * 4);
 					remainingResources--;
 				}
 			}
