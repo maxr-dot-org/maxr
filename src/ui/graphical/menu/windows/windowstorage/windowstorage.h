@@ -88,6 +88,7 @@ private:
 
 	void updateUnitsWidgets ();
 	void updateUnitButtons (const cVehicle& unit, size_t positionIndex);
+	void updateUnitName (const cVehicle& unit, size_t positionIndex);
 	void updateGlobalButtons ();
 	void updateUpDownButtons ();
 

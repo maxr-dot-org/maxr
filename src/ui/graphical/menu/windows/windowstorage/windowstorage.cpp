@@ -156,6 +156,19 @@ void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t posit
 }
 
 //------------------------------------------------------------------------------
+void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t positionIndex)
+{
+	auto name = storedUnit.getDisplayName ();
+
+	const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (storedUnit.data.ID);
+	if (storedUnit.data.getVersion () != upgraded.getVersion ())
+	{
+		name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
+	}
+	unitNames[positionIndex]->setText (name);
+}
+
+//------------------------------------------------------------------------------
 void cWindowStorage::updateUnitsWidgets ()
 {
 	unitsSignalConnectionManager.disconnectAll ();
@@ -171,22 +184,16 @@ void cWindowStorage::updateUnitsWidgets ()
 			{
 				const auto& storedUnit = *unit.storedUnits[unitIndex];
 
-				std::string name = storedUnit.getDisplayName ();
-
-				const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (storedUnit.data.ID);
-				if (storedUnit.data.getVersion () != upgraded.getVersion ())
-				{
-					name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
-				}
-				unitNames[positionIndex]->setText (name);
-
 				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
 				SDL_BlitSurface (storedUnit.uiData->storage.get(), NULL, surface.get (), NULL);
 				unitImages[positionIndex]->setImage (surface.get ());
 
 				unitDetails[positionIndex]->setUnit (&storedUnit);
 
+				updateUnitName (storedUnit, positionIndex);
 				updateUnitButtons (storedUnit, positionIndex);
+
+				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateUnitName, this, std::ref (storedUnit), positionIndex));
 
 				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
 				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
