@@ -526,6 +526,7 @@ void cGameGui::connectSelectedUnit ()
 		{
 			connectMoveJob (*selectedVehicle);
 		});
+		connectMoveJob (*selectedVehicle);
 	}
 }
 
