@@ -543,7 +543,7 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle ())
 			{
-				updateSelectedUnitMoveSound ();
+				updateSelectedUnitMoveSound (true);
 			}
 		});
 
@@ -582,7 +582,7 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 
 				if (wasWater != water)
 				{
-					updateSelectedUnitMoveSound ();
+					updateSelectedUnitMoveSound (false);
 				}
 			}
 		});
@@ -770,7 +770,7 @@ void cGameGui::updateSelectedUnitIdleSound ()
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::updateSelectedUnitMoveSound ()
+void cGameGui::updateSelectedUnitMoveSound (bool startedNew)
 {
 	auto selectedVehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
 	if (!selectedVehicle) return;
@@ -783,8 +783,11 @@ void cGameGui::updateSelectedUnitMoveSound ()
 	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 	stopSelectedUnitSound ();
 
-	if (water && vehicle.data.factorSea != 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->StartWater, vehicle));
-	else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->Start, vehicle));
+	if (startedNew)
+	{
+		if (water && vehicle.data.factorSea != 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->StartWater, vehicle));
+		else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->Start, vehicle));
+	}
 
 	if (water && vehicle.data.factorSea != 0)
 		startSelectedUnitSound (vehicle, vehicle.uiData->DriveWater);

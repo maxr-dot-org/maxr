@@ -147,7 +147,7 @@ private:
 	void handleResolutionChange ();
 
 	void updateSelectedUnitIdleSound ();
-	void updateSelectedUnitMoveSound ();
+	void updateSelectedUnitMoveSound (bool startedNew);
 
 	void startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound);
 	void stopSelectedUnitSound ();
