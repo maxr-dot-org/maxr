@@ -797,7 +797,7 @@ void cGameGuiController::showFilesWindow ()
 		{
 			triggeredSave (saveNumber, name);
 
-			cSoundDevice::getInstance ().getFreeVoiceChannel ().play (VoiceData.VOISaved);
+			cSoundDevice::getInstance ().playVoice (VoiceData.VOISaved);
 
 			loadSaveWindow->update ();
 		}
@@ -1456,7 +1456,7 @@ void cGameGuiController::handleReport (const cSavedReport& report)
 		if (player)
 		{
 			gameGui->getChatBox ().addChatMessage (*player, savedChatReport.getText ());
-			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
+			cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
 		}
 		else // message from non in-game player (e.g. dedicated server)
 		{

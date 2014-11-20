@@ -201,7 +201,7 @@ void cCheckBox::setPressed (bool pressed)
 //------------------------------------------------------------------------------
 bool cCheckBox::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
 {
-	if (clickSound) cSoundDevice::getInstance().getFreeSoundEffectChannel().play (*clickSound);
+	if (clickSound) cSoundDevice::getInstance().playSoundEffect (*clickSound);
 
 	toggle ();
 

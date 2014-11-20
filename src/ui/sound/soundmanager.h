@@ -78,7 +78,7 @@ private:
 
 	bool muted;
 
-	cSoundChannel& getChannelForSound (cSoundEffect& sound);
+	cSoundChannel* getChannelForSound (cSoundEffect& sound);
 
 	void finishedSound (cSoundEffect& sound);
 

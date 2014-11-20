@@ -193,9 +193,11 @@ void cSoundManager::playSound (std::shared_ptr<cSoundEffect> sound, bool loop)
 	}
 
 	// start new sound
-	auto& channel = getChannelForSound (*sound);
+	auto channel = getChannelForSound (*sound);
 
-	sound->play (channel, loop);
+	if (channel == nullptr) return;
+
+	sound->play (*channel, loop);
 
 	sStoredSound playingSound(std::move (sound), currentGameTime, true);
 	// Sound list is always sorted by start game time.
@@ -219,7 +221,7 @@ void cSoundManager::stopAllSounds ()
 }
 
 //--------------------------------------------------------------------------
-cSoundChannel& cSoundManager::getChannelForSound (cSoundEffect& sound)
+cSoundChannel* cSoundManager::getChannelForSound (cSoundEffect& sound)
 {
 	switch (sound.getChannelType())
 	{

@@ -204,7 +204,7 @@ bool cResourceBar::handleClicked (cApplication& application, cMouse& mouse, eMou
 {
 	if (button == eMouseButtonType::Left)
 	{
-        if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
+        if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
 
 		const auto valueRange = maxValue - minValue;
 		switch (orientation)

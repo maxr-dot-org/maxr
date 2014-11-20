@@ -96,7 +96,7 @@ bool cImage::handleClicked (cApplication& application, cMouse& mouse, eMouseButt
 {
 	if (button == eMouseButtonType::Left)
 	{
-        if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
+        if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
 		clicked ();
 		return true;
 	}

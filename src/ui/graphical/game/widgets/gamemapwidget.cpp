@@ -1948,13 +1948,13 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				if (!selectedVehicle->isUnitMoving ())
 				{
 					toggleUnitContextMenu (selectedVehicle);
-					cSoundDevice::getInstance().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
+					cSoundDevice::getInstance().playSoundEffect (SoundData.SNDHudButton);
 				}
 			}
 			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 			{
 				toggleUnitContextMenu (selectedBuilding);
-                cSoundDevice::getInstance ().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
+                cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDHudButton);
 			}
 		}
 

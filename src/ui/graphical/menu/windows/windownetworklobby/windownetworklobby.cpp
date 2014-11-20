@@ -229,7 +229,7 @@ void cWindowNetworkLobby::addChatEntry (const std::string& playerName, const std
 {
 	auto addedItem = chatList->addItem (std::make_unique<cLobbyChatBoxListViewItem> (playerName, message));
 	chatList->scrollToItem (addedItem);
-	cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
+	cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
 }
 
 //------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ void cWindowNetworkLobby::addPlayer (const std::shared_ptr<cPlayerBasicData>& pl
 	{
 		signalConnectionManager.connect (item->readyClicked, [player, this]()
 		{
-            cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDHudButton);
+            cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDHudButton);
 			wantLocalPlayerReadyChange ();
 		});
 	}
