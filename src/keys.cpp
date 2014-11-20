@@ -193,63 +193,64 @@ void cKeysList::loadFromFile ()
 		return;
 	}
 
-	tryLoadSingleKey (*keysElement, keyExitName, keyExit);
-	tryLoadSingleKey (*keysElement, keyJumpToActionName, keyJumpToAction);
-	tryLoadSingleKey (*keysElement, keyEndTurnName, keyEndTurn);
-	tryLoadSingleKey (*keysElement, keyChatName, keyChat);
-	tryLoadSingleKey (*keysElement, keyScroll8aName, keyScroll8a);
-	tryLoadSingleKey (*keysElement, keyScroll8bName, keyScroll8b);
-	tryLoadSingleKey (*keysElement, keyScroll2aName, keyScroll2a);
-	tryLoadSingleKey (*keysElement, keyScroll2bName, keyScroll2b);
-	tryLoadSingleKey (*keysElement, keyScroll6aName, keyScroll6a);
-	tryLoadSingleKey (*keysElement, keyScroll6bName, keyScroll6b);
-	tryLoadSingleKey (*keysElement, keyScroll4aName, keyScroll4a);
-	tryLoadSingleKey (*keysElement, keyScroll4bName, keyScroll4b);
-	tryLoadSingleKey (*keysElement, keyScroll7Name, keyScroll7);
-	tryLoadSingleKey (*keysElement, keyScroll9Name, keyScroll9);
-	tryLoadSingleKey (*keysElement, keyScroll1Name, keyScroll1);
-	tryLoadSingleKey (*keysElement, keyScroll3Name, keyScroll3);
-	tryLoadSingleKey (*keysElement, keyZoomInaName, keyZoomIna);
-	tryLoadSingleKey (*keysElement, keyZoomInbName, keyZoomInb);
-	tryLoadSingleKey (*keysElement, keyZoomOutaName, keyZoomOuta);
-	tryLoadSingleKey (*keysElement, keyZoomOutbName, keyZoomOutb);
-	tryLoadSingleKey (*keysElement, keyFogName, keyFog);
-	tryLoadSingleKey (*keysElement, keyGridName, keyGrid);
-	tryLoadSingleKey (*keysElement, keyScanName, keyScan);
-	tryLoadSingleKey (*keysElement, keyRangeName, keyRange);
-	tryLoadSingleKey (*keysElement, keyAmmoName, keyAmmo);
-	tryLoadSingleKey (*keysElement, keyHitpointsName, keyHitpoints);
-	tryLoadSingleKey (*keysElement, keyColorsName, keyColors);
-	tryLoadSingleKey (*keysElement, keyStatusName, keyStatus);
-	tryLoadSingleKey (*keysElement, keySurveyName, keySurvey);
-	tryLoadSingleKey (*keysElement, keyCenterUnitName, keyCenterUnit);
-	tryLoadSingleKey (*keysElement, keyUnitDoneName, keyUnitDone);
-	tryLoadSingleKey (*keysElement, keyUnitDoneAndNextName, keyUnitDoneAndNext);
-	tryLoadSingleKey (*keysElement, keyAllDoneAndNextName, keyAllDoneAndNext);
-	tryLoadSingleKey (*keysElement, keyUnitNextName, keyUnitNext);
-	tryLoadSingleKey (*keysElement, keyUnitPrevName, keyUnitPrev);
-	tryLoadSingleKey (*keysElement, keyUnitMenuAttackName, keyUnitMenuAttack);
-	tryLoadSingleKey (*keysElement, keyUnitMenuBuildName, keyUnitMenuBuild);
-	tryLoadSingleKey (*keysElement, keyUnitMenuTransferName, keyUnitMenuTransfer);
-	tryLoadSingleKey (*keysElement, keyUnitMenuAutomoveName, keyUnitMenuAutomove);
-	tryLoadSingleKey (*keysElement, keyUnitMenuStartName, keyUnitMenuStart);
-	tryLoadSingleKey (*keysElement, keyUnitMenuStopName, keyUnitMenuStop);
-	tryLoadSingleKey (*keysElement, keyUnitMenuClearName, keyUnitMenuClear);
-	tryLoadSingleKey (*keysElement, keyUnitMenuSentryName, keyUnitMenuSentry);
-	tryLoadSingleKey (*keysElement, keyUnitMenuManualFireName, keyUnitMenuManualFire);
-	tryLoadSingleKey (*keysElement, keyUnitMenuActivateName, keyUnitMenuActivate);
-	tryLoadSingleKey (*keysElement, keyUnitMenuLoadName, keyUnitMenuLoad);
-	tryLoadSingleKey (*keysElement, keyUnitMenuReloadName, keyUnitMenuReload);
-	tryLoadSingleKey (*keysElement, keyUnitMenuRepairName, keyUnitMenuRepair);
-	tryLoadSingleKey (*keysElement, keyUnitMenuLayMineName, keyUnitMenuLayMine);
-	tryLoadSingleKey (*keysElement, keyUnitMenuClearMineName, keyUnitMenuClearMine);
-	tryLoadSingleKey (*keysElement, keyUnitMenuDisableName, keyUnitMenuDisable);
-	tryLoadSingleKey (*keysElement, keyUnitMenuStealName, keyUnitMenuSteal);
-	tryLoadSingleKey (*keysElement, keyUnitMenuInfoName, keyUnitMenuInfo);
-	tryLoadSingleKey (*keysElement, keyUnitMenuDistributeName, keyUnitMenuDistribute);
-	tryLoadSingleKey (*keysElement, keyUnitMenuResearchName, keyUnitMenuResearch);
-	tryLoadSingleKey (*keysElement, keyUnitMenuUpgradeName, keyUnitMenuUpgrade);
-	tryLoadSingleKey (*keysElement, keyUnitMenuDestroyName, keyUnitMenuDestroy);
+	bool loadedAll = true;
+	loadedAll = tryLoadSingleKey (*keysElement, keyExitName, keyExit) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyJumpToActionName, keyJumpToAction) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyEndTurnName, keyEndTurn) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyChatName, keyChat) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll8aName, keyScroll8a) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll8bName, keyScroll8b) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll2aName, keyScroll2a) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll2bName, keyScroll2b) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll6aName, keyScroll6a) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll6bName, keyScroll6b) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll4aName, keyScroll4a) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll4bName, keyScroll4b) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll7Name, keyScroll7) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll9Name, keyScroll9) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll1Name, keyScroll1) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScroll3Name, keyScroll3) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyZoomInaName, keyZoomIna) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyZoomInbName, keyZoomInb) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyZoomOutaName, keyZoomOuta) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyZoomOutbName, keyZoomOutb) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyFogName, keyFog) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyGridName, keyGrid) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyScanName, keyScan) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyRangeName, keyRange) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyAmmoName, keyAmmo) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyHitpointsName, keyHitpoints) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyColorsName, keyColors) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyStatusName, keyStatus) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keySurveyName, keySurvey) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyCenterUnitName, keyCenterUnit) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitDoneName, keyUnitDone) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitDoneAndNextName, keyUnitDoneAndNext) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyAllDoneAndNextName, keyAllDoneAndNext) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitNextName, keyUnitNext) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitPrevName, keyUnitPrev) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuAttackName, keyUnitMenuAttack) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuBuildName, keyUnitMenuBuild) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuTransferName, keyUnitMenuTransfer) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuAutomoveName, keyUnitMenuAutomove) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuStartName, keyUnitMenuStart) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuStopName, keyUnitMenuStop) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuClearName, keyUnitMenuClear) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuSentryName, keyUnitMenuSentry) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuManualFireName, keyUnitMenuManualFire) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuActivateName, keyUnitMenuActivate) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuLoadName, keyUnitMenuLoad) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuReloadName, keyUnitMenuReload) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuRepairName, keyUnitMenuRepair) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuLayMineName, keyUnitMenuLayMine) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuClearMineName, keyUnitMenuClearMine) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuDisableName, keyUnitMenuDisable) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuStealName, keyUnitMenuSteal) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuInfoName, keyUnitMenuInfo) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuDistributeName, keyUnitMenuDistribute) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuResearchName, keyUnitMenuResearch) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuUpgradeName, keyUnitMenuUpgrade) && loadedAll;
+	loadedAll = tryLoadSingleKey (*keysElement, keyUnitMenuDestroyName, keyUnitMenuDestroy) && loadedAll;
 
 
 	const auto mouseStyleElement = mouseElement->FirstChildElement ("MOUSE_STYLE");
@@ -276,11 +277,19 @@ void cKeysList::loadFromFile ()
 		else
 		{
 			Log.write ("Could not find XML attribute 'Text' in element 'MOUSE_STYLE' in keys XML. Skipping loading of mouse style.", LOG_TYPE_WARNING);
+			loadedAll = false;
 		}
 	}
 	else
 	{
 		Log.write ("Could not find XML element 'MOUSE_STYLE' in keys XML. Skipping loading of this mouse information.", LOG_TYPE_WARNING);
+		loadedAll = false;
+	}
+
+	// write file completely new if some settings have been missing
+	if (!loadedAll)
+	{
+		saveToFile ();
 	}
 
 	Log.write ("Done", LOG_TYPE_DEBUG);
@@ -328,6 +337,7 @@ void cKeysList::saveToFile ()
 	saveSingleKey (*keysElement, keyCenterUnitName, keyCenterUnit);
 	saveSingleKey (*keysElement, keyUnitDoneName, keyUnitDone);
 	saveSingleKey (*keysElement, keyUnitDoneAndNextName, keyUnitDoneAndNext);
+	saveSingleKey (*keysElement, keyAllDoneAndNextName, keyAllDoneAndNext);
 	saveSingleKey (*keysElement, keyUnitNextName, keyUnitNext);
 	saveSingleKey (*keysElement, keyUnitPrevName, keyUnitPrev);
 	saveSingleKey (*keysElement, keyUnitMenuAttackName, keyUnitMenuAttack);
