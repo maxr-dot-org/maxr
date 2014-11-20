@@ -1954,7 +1954,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 			{
 				toggleUnitContextMenu (selectedBuilding);
-                cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDHudButton);
+				cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDHudButton);
 			}
 		}
 

@@ -23,6 +23,7 @@
 #include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/widgets/minimapwidget.h"
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
@@ -633,6 +634,23 @@ void cGameGuiController::connectClient (cClient& client)
 	clientSignalConnectionManager.connect (gameGui->getGameMap ().triggeredDisable, [&](const cUnit& sourceUnit, const cUnit& destinationUnit)
 	{
 		sendWantComAction (client, sourceUnit.iID, destinationUnit.iID, destinationUnit.isAVehicle (), false);
+	});
+	clientSignalConnectionManager.connect (gameGui->getMiniMap ().triggeredMove, [&](const cPosition& destination)
+	{
+		const auto& unitSelection = gameGui->getGameMap ().getUnitSelection ();
+		const auto selectedVehiclesCount = unitSelection.getSelectedVehiclesCount ();
+		if (selectedVehiclesCount > 1)
+		{
+			client.startGroupMove (unitSelection.getSelectedVehicles (), destination);
+		}
+		else if (selectedVehiclesCount == 1)
+		{
+			const auto successfull = client.addMoveJob (*unitSelection.getSelectedVehicle (), destination);
+			if (!successfull)
+			{
+				soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
+			}
+		}
 	});
 
 

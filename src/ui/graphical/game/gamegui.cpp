@@ -86,7 +86,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	hud->setMinimalZoomFactor (gameMap->computeMinimalZoomFactor ());
 
-    chatBox = addChild (std::make_unique<cChatBox> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+	chatBox = addChild (std::make_unique<cChatBox> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
 
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
 
@@ -300,6 +300,18 @@ cGameMapWidget& cGameGui::getGameMap ()
 const cGameMapWidget& cGameGui::getGameMap () const
 {
 	return *gameMap;
+}
+
+//------------------------------------------------------------------------------
+cMiniMapWidget& cGameGui::getMiniMap ()
+{
+	return *miniMap;
+}
+
+//------------------------------------------------------------------------------
+const cMiniMapWidget& cGameGui::getMiniMap () const
+{
+	return *miniMap;
 }
 
 //------------------------------------------------------------------------------
