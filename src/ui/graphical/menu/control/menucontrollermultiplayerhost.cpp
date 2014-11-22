@@ -96,9 +96,9 @@ void cMenuControllerMultiplayerHost::start ()
 	signalConnectionManager.connect (windowNetworkLobby->triggeredStartHost, std::bind (&cMenuControllerMultiplayerHost::startHost, this));
 	signalConnectionManager.connect (windowNetworkLobby->triggeredStartGame, std::bind (&cMenuControllerMultiplayerHost::checkGameStart, this));
 
-	signalConnectionManager.connect (windowNetworkLobby->staticMapChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber (), nullptr); });
-	signalConnectionManager.connect (windowNetworkLobby->gameSettingsChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber (), nullptr); });
-	signalConnectionManager.connect (windowNetworkLobby->saveGameChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber (), nullptr); });
+	signalConnectionManager.connect (windowNetworkLobby->staticMapChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap().get(), windowNetworkLobby->getGameSettings().get(), windowNetworkLobby->getSaveGamePlayers(), windowNetworkLobby->getSaveGameName()); });
+	signalConnectionManager.connect (windowNetworkLobby->gameSettingsChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap().get(), windowNetworkLobby->getGameSettings().get(), windowNetworkLobby->getSaveGamePlayers(), windowNetworkLobby->getSaveGameName()); });
+	signalConnectionManager.connect (windowNetworkLobby->saveGameChanged, [this](){sendGameData (*network, windowNetworkLobby->getStaticMap().get(), windowNetworkLobby->getGameSettings().get(), windowNetworkLobby->getSaveGamePlayers(), windowNetworkLobby->getSaveGameName()); });
 }
 
 //------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ void cMenuControllerMultiplayerHost::checkGameStart ()
 
 		for (size_t i = 0; i < menuPlayers.size (); ++i)
 		{
-			sendGameData (*network, staticMap.get(), gameSettings.get(), windowNetworkLobby->getSaveGameNumber (), menuPlayers[i].get ());
+			sendGameData (*network, staticMap.get(), gameSettings.get(), windowNetworkLobby->getSaveGamePlayers (), windowNetworkLobby->getSaveGameName(), menuPlayers[i].get ());
 		}
 		saveOptions ();
 
@@ -616,7 +616,7 @@ void cMenuControllerMultiplayerHost::handleNetMessage_MU_MSG_IDENTIFIKATION (cNe
 	checkTakenPlayerAttributes (player);
 
 	sendPlayerList (*network, players);
-	sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGameNumber(), &player);
+	sendGameData (*network, windowNetworkLobby->getStaticMap ().get (), windowNetworkLobby->getGameSettings ().get (), windowNetworkLobby->getSaveGamePlayers(), windowNetworkLobby->getSaveGameName(), &player);
 }
 
 //------------------------------------------------------------------------------

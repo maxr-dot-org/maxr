@@ -137,18 +137,8 @@ bool cSavegame::load (cServer& server)
 {
 	if (!loadFile ()) return false;
 
-	auto versionString = SaveFile.RootElement()->Attribute ("version");
+	if (!loadVersion()) return false;
 
-	// TODO: reorganize the whole save game loading/saving to support exception and do not catch this one internally.
-	try
-	{
-		version.parseFromString (versionString);
-	}
-	catch (std::runtime_error& e)
-	{
-		Log.write (e.what(), cLog::eLOG_TYPE_ERROR);
-		return false;
-	}
 	if (version != cVersion(SAVE_FORMAT_VERSION))
 	{
 		Log.write ("Save file version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING);
@@ -248,12 +238,31 @@ string cSavegame::loadMapName()
 	else return "";
 }
 
+bool cSavegame::loadVersion()
+{
+	auto versionString = SaveFile.RootElement()->Attribute("version");
+
+	// TODO: reorganize the whole save game loading/saving to support exception and do not catch this one internally.
+	try
+	{
+		version.parseFromString(versionString);
+	}
+	catch (std::runtime_error& e)
+	{
+		Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
+		return false;
+	}
+}
+
+
 //--------------------------------------------------------------------------
 std::vector<cPlayerBasicData> cSavegame::loadPlayers ()
 {
 	std::vector<cPlayerBasicData> playerNames;
 
 	if (!loadFile ()) return playerNames;
+
+	if (!loadVersion ()) return playerNames;
 
 	const XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 

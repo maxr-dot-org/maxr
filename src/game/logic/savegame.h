@@ -196,7 +196,11 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void writeStandardUnitValues (const sUnitData& Data, int unitnum);
-
+	/**
+	* loads the version info
+	*@author eikio
+	*/
+	bool loadVersion();
 	/**
 	* loads the main game information
 	*@author alzi alias DoctorDeath

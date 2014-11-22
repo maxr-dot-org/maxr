@@ -21,6 +21,8 @@
 #include "ui/graphical/menu/widgets/pushbutton.h"
 #include "main.h"
 #include "game/data/player/player.h"
+#include "game/logic/savegame.h"
+#include "game/data/map/map.h"
 
 //------------------------------------------------------------------------------
 cWindowNetworkLobbyHost::cWindowNetworkLobbyHost () :
@@ -40,6 +42,9 @@ cWindowNetworkLobbyHost::cWindowNetworkLobbyHost () :
 
 	auto okButton = addChild (std::make_unique<cPushButton> (getPosition () + cPosition (390, 450), ePushButtonType::StandardBig, lngPack.i18n ("Text~Others~OK")));
 	signalConnectionManager.connect (okButton->clicked, std::bind (&cWindowNetworkLobbyHost::handleOkClicked, this));
+
+	signalConnectionManager.connect(staticMapChanged, [this]() {setSaveGame(-1); });
+	signalConnectionManager.connect(gameSettingsChanged, [this]() {setSaveGame(-1); });
 }
 
 //------------------------------------------------------------------------------
@@ -70,4 +75,39 @@ void cWindowNetworkLobbyHost::handleStartClicked ()
 void cWindowNetworkLobbyHost::handleOkClicked ()
 {
 	triggeredStartGame ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowNetworkLobbyHost::setSaveGame(int saveGameNumber_)
+{
+	saveGameNumber = saveGameNumber_;
+
+	if (saveGameNumber >= 0)
+	{
+		cSavegame saveGame(saveGameNumber_);
+
+		saveGame.loadHeader(&saveGameName, nullptr, nullptr);
+		saveGamePlayers = saveGame.loadPlayers();
+
+		staticMap = std::make_shared<cStaticMap>();
+		if (!staticMap->loadMap(saveGame.loadMapName()))
+		{
+			// error dialog
+			staticMap = nullptr;
+		}
+	}
+	else
+	{
+		saveGamePlayers.clear();
+		saveGameName.clear();
+	}
+
+	updateMap();
+	updateSettingsText();
+	saveGameChanged();
+}
+//------------------------------------------------------------------------------
+int cWindowNetworkLobbyHost::getSaveGameNumber() const
+{
+	return saveGameNumber;
 }

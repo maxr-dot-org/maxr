@@ -30,6 +30,8 @@ public:
 	cWindowNetworkLobbyClient ();
 
 	cSignal<void ()> triggeredConnect;
+
+	void setSaveGame(const std::vector<cPlayerBasicData>& players, std::string saveGameName_);
 private:
 	cSignalConnectionManager signalConnectionManager;
 

@@ -411,6 +411,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTINS (cNetMessa
 
 	if (!network || !windowNetworkLobby) return;
 
+	//pop game settings
 	if (message.popBool ())
 	{
 		auto settings = std::make_unique<cGameSettings> ();
@@ -422,6 +423,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTINS (cNetMessa
 		windowNetworkLobby->setGameSettings (nullptr);
 	}
 
+	//pop map setting
 	if (message.popBool ())
 	{
 		auto mapName = message.popString ();
@@ -481,7 +483,18 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTINS (cNetMessa
 		windowNetworkLobby->setStaticMap (nullptr);
 	}
 
-	windowNetworkLobby->setSaveGame (message.popInt32());
+	//pop save geame settings
+	std::vector<cPlayerBasicData> savePlayerList;
+	for (int nr = message.popInt32(); nr > 0; nr--)
+	{
+		std::string playerName = message.popString();
+		int playerNr = message.popInt32();
+		savePlayerList.push_back(cPlayerBasicData(playerName, cPlayerColor(cRgbColor(0, 0, 0)), playerNr));
+	}
+	std::string saveGameName = message.popString();
+
+	windowNetworkLobby->setSaveGame(savePlayerList, saveGameName);
+	
 }
 
 //------------------------------------------------------------------------------
@@ -493,7 +506,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_GO (cNetMessage& 
 
 	saveOptions ();
 
-	if (windowNetworkLobby->getSaveGameNumber () != -1)
+	if (windowNetworkLobby->getSaveGamePlayers().size() != 0)
 	{
 		startSavedGame ();
 	}

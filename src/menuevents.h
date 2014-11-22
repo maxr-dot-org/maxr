@@ -60,7 +60,7 @@ void sendPlayerNumber (cTCP& network, const cPlayerBasicData& player);
 
 void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBasicData>>& players);
 
-void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const cPlayerBasicData* player = NULL);
+void sendGameData(cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::vector<cPlayerBasicData>& savePlayers, const std::string& saveGameName, const cPlayerBasicData* player = NULL);
 
 void sendIdentification (cTCP& network, const cPlayerBasicData& player);
 
