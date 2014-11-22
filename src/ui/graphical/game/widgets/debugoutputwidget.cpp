@@ -379,7 +379,7 @@ void cDebugOutputWidget::traceVehicle (const cVehicle& vehicle, cPosition& drawP
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 
-	tmpString = "dir: " + iToStr (vehicle.dir) + " moving: +" + iToStr (vehicle.isUnitMoving()) + " mjob: " + pToStr (vehicle.getClientMoveJob()) + " speed: " + iToStr (vehicle.data.speedCur) + " mj_active: " + iToStr (vehicle.MoveJobActive);
+	tmpString = "dir: " + iToStr (vehicle.dir) + " moving: +" + iToStr (vehicle.isUnitMoving()) + " mjob: " + pToStr (vehicle.getClientMoveJob()) + " speed: " + iToStr (vehicle.data.getSpeed()) + " mj_active: " + iToStr (vehicle.MoveJobActive);
 	font->showText (drawPosition, tmpString, FONT_LATIN_SMALL_WHITE);
 	drawPosition.y() += 8;
 

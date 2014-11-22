@@ -23,6 +23,7 @@
 #include "ui/graphical/game/gamegui.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/game/widgets/gamemapwidget.h"
+#include "ui/graphical/game/widgets/minimapwidget.h"
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
@@ -634,6 +635,23 @@ void cGameGuiController::connectClient (cClient& client)
 	{
 		sendWantComAction (client, sourceUnit.iID, destinationUnit.iID, destinationUnit.isAVehicle (), false);
 	});
+	clientSignalConnectionManager.connect (gameGui->getMiniMap ().triggeredMove, [&](const cPosition& destination)
+	{
+		const auto& unitSelection = gameGui->getGameMap ().getUnitSelection ();
+		const auto selectedVehiclesCount = unitSelection.getSelectedVehiclesCount ();
+		if (selectedVehiclesCount > 1)
+		{
+			client.startGroupMove (unitSelection.getSelectedVehicles (), destination);
+		}
+		else if (selectedVehiclesCount == 1)
+		{
+			const auto successfull = client.addMoveJob (*unitSelection.getSelectedVehicle (), destination);
+			if (!successfull)
+			{
+				soundManager->playSound (std::make_shared<cSoundEffectVoice> (eSoundEffectType::VoiceNoPath, getRandom (VoiceData.VOINoPath)));
+			}
+		}
+	});
 
 
 	//
@@ -797,7 +815,7 @@ void cGameGuiController::showFilesWindow ()
 		{
 			triggeredSave (saveNumber, name);
 
-			cSoundDevice::getInstance ().getFreeVoiceChannel ().play (VoiceData.VOISaved);
+			cSoundDevice::getInstance ().playVoice (VoiceData.VOISaved);
 
 			loadSaveWindow->update ();
 		}
@@ -1047,7 +1065,7 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];
 
-			if (storedUnit.data.getAmmo () < storedUnit.data.ammoMax)
+			if (storedUnit.data.getAmmo () < storedUnit.data.getAmmoMax())
 			{
 				reloadTriggered (unit, storedUnit);
 				remainingResources--;
@@ -1062,13 +1080,13 @@ void cGameGuiController::showStorageWindow (const cUnit& unit)
 		{
 			const auto& storedUnit = *unit.storedUnits[i];
 
-			if (storedUnit.data.getHitpoints () < storedUnit.data.hitpointsMax)
+			if (storedUnit.data.getHitpoints () < storedUnit.data.getHitpointsMax())
 			{
 				repairTriggered (unit, storedUnit);
 				auto value = storedUnit.data.getHitpoints ();
-				while (value < storedUnit.data.hitpointsMax && remainingResources > 0)
+				while (value < storedUnit.data.getHitpointsMax() && remainingResources > 0)
 				{
-					value += Round (((float)storedUnit.data.hitpointsMax / storedUnit.data.buildCosts) * 4);
+					value += Round (((float)storedUnit.data.getHitpointsMax() / storedUnit.data.buildCosts) * 4);
 					remainingResources--;
 				}
 			}
@@ -1456,7 +1474,7 @@ void cGameGuiController::handleReport (const cSavedReport& report)
 		if (player)
 		{
 			gameGui->getChatBox ().addChatMessage (*player, savedChatReport.getText ());
-			cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDChat);
+			cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
 		}
 		else // message from non in-game player (e.g. dedicated server)
 		{

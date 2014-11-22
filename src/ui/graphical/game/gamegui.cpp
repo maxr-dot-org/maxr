@@ -86,7 +86,7 @@ cGameGui::cGameGui (std::shared_ptr<const cStaticMap> staticMap_, std::shared_pt
 
 	hud->setMinimalZoomFactor (gameMap->computeMinimalZoomFactor ());
 
-    chatBox = addChild (std::make_unique<cChatBox> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+	chatBox = addChild (std::make_unique<cChatBox> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
 
 	miniMap = addChild (std::make_unique<cMiniMapWidget> (cBox<cPosition> (cPosition (15, 356), cPosition (15 + 112, 356 + 112)), staticMap));
 
@@ -300,6 +300,18 @@ cGameMapWidget& cGameGui::getGameMap ()
 const cGameMapWidget& cGameGui::getGameMap () const
 {
 	return *gameMap;
+}
+
+//------------------------------------------------------------------------------
+cMiniMapWidget& cGameGui::getMiniMap ()
+{
+	return *miniMap;
+}
+
+//------------------------------------------------------------------------------
+const cMiniMapWidget& cGameGui::getMiniMap () const
+{
+	return *miniMap;
 }
 
 //------------------------------------------------------------------------------
@@ -526,6 +538,7 @@ void cGameGui::connectSelectedUnit ()
 		{
 			connectMoveJob (*selectedVehicle);
 		});
+		connectMoveJob (*selectedVehicle);
 	}
 }
 
@@ -542,7 +555,7 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 		{
 			if (&vehicle == gameMap->getUnitSelection ().getSelectedVehicle ())
 			{
-				updateSelectedUnitMoveSound ();
+				updateSelectedUnitMoveSound (true);
 			}
 		});
 
@@ -581,7 +594,7 @@ void cGameGui::connectMoveJob (const cVehicle& vehicle)
 
 				if (wasWater != water)
 				{
-					updateSelectedUnitMoveSound ();
+					updateSelectedUnitMoveSound (false);
 				}
 			}
 		});
@@ -769,7 +782,7 @@ void cGameGui::updateSelectedUnitIdleSound ()
 }
 
 //------------------------------------------------------------------------------
-void cGameGui::updateSelectedUnitMoveSound ()
+void cGameGui::updateSelectedUnitMoveSound (bool startedNew)
 {
 	auto selectedVehicle = gameMap->getUnitSelection ().getSelectedVehicle ();
 	if (!selectedVehicle) return;
@@ -782,8 +795,11 @@ void cGameGui::updateSelectedUnitMoveSound ()
 	if (vehicle.data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 	stopSelectedUnitSound ();
 
-	if (water && vehicle.data.factorSea != 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->StartWater, vehicle));
-	else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->Start, vehicle));
+	if (startedNew)
+	{
+		if (water && vehicle.data.factorSea != 0) soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->StartWater, vehicle));
+		else soundManager->playSound (std::make_shared<cSoundEffectUnit> (eSoundEffectType::EffectStartMove, vehicle.uiData->Start, vehicle));
+	}
 
 	if (water && vehicle.data.factorSea != 0)
 		startSelectedUnitSound (vehicle, vehicle.uiData->DriveWater);

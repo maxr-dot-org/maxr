@@ -163,7 +163,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	}
 
 	// draw ammo bar
-	if (shouldDrawAmmo && (!player || building.getOwner () == player) && building.data.canAttack && building.data.ammoMax > 0)
+	if (shouldDrawAmmo && (!player || building.getOwner () == player) && building.data.canAttack && building.data.getAmmoMax() > 0)
 	{
 		drawMunBar (building, destination);
 	}
@@ -320,15 +320,15 @@ void cUnitDrawingEngine::drawHealthBar (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int)(((float)(r1.w - 2) / unit.data.hitpointsMax) * unit.data.getHitpoints ());
+	r2.w = (int)(((float)(r1.w - 2) / unit.data.getHitpointsMax()) * unit.data.getHitpoints ());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
 	Uint32 color;
-	if (unit.data.getHitpoints () > unit.data.hitpointsMax / 2)
+	if (unit.data.getHitpoints () > unit.data.getHitpointsMax() / 2)
 		color = 0xFF04AE04; // green
-	else if (unit.data.getHitpoints () > unit.data.hitpointsMax / 4)
+	else if (unit.data.getHitpoints () > unit.data.getHitpointsMax() / 4)
 		color = 0xFFDBDE00; // orange
 	else
 		color = 0xFFE60000; // red
@@ -353,14 +353,14 @@ void cUnitDrawingEngine::drawMunBar (const cUnit& unit, SDL_Rect destination)
 	SDL_Rect r2;
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
-	r2.w = (int)(((float)(r1.w - 2) / unit.data.ammoMax) * unit.data.getAmmo ());
+	r2.w = (int)(((float)(r1.w - 2) / unit.data.getAmmoMax ()) * unit.data.getAmmo ());
 	r2.h = r1.h - 2;
 
 	SDL_FillRect (cVideo::buffer, &r1, 0xFF000000);
 
-	if (unit.data.getAmmo () > unit.data.ammoMax / 2)
+	if (unit.data.getAmmo () > unit.data.getAmmoMax () / 2)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFF04AE04);
-	else if (unit.data.getAmmo () > unit.data.ammoMax / 4)
+	else if (unit.data.getAmmo () > unit.data.getAmmoMax () / 4)
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFDBDE00);
 	else
 		SDL_FillRect (cVideo::buffer, &r2, 0xFFE60000);
@@ -396,7 +396,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 			dest.y += (destination.h / 2);
 			dest.x += (destination.w / 2);
 		}
-		if (unit.data.speedCur >= 4)
+		if (unit.data.getSpeed() >= 4)
 		{
 			if (unit.data.getShots ())
 				dest.x -= destination.w / 4;
@@ -408,7 +408,7 @@ void cUnitDrawingEngine::drawStatus (const cUnit& unit, SDL_Rect destination)
 		dest.x = destination.x + destination.w / 2 - 4;
 		if (unit.data.getShots ())
 		{
-			if (unit.data.speedCur)
+			if (unit.data.getSpeed())
 				dest.x += destination.w / 4;
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &shotsSymbol, cVideo::buffer, &dest);
 		}

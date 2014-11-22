@@ -316,7 +316,7 @@ uint32_t calcClientChecksum (const cClient& client)
 			crc = calcCheckSum (vehicle->data.getShots(), crc);
 			crc = calcCheckSum (vehicle->data.getAmmo(), crc);
 			crc = calcCheckSum (vehicle->data.getHitpoints(), crc);
-			crc = calcCheckSum (vehicle->data.speedCur, crc);
+			crc = calcCheckSum (vehicle->data.getSpeed(), crc);
 			crc = calcCheckSum (vehicle->getFlightHeight(), crc);
 			crc = calcCheckSum (vehicle->iID,  crc);
 			crc = calcCheckSum (vehicle->getPosition().x(), crc);
@@ -351,7 +351,7 @@ uint32_t calcServerChecksum (const cServer& server, const cPlayer* player)
 				crc = calcCheckSum (vehicle->data.getShots (), crc);
 				crc = calcCheckSum (vehicle->data.getAmmo (), crc);
 				crc = calcCheckSum (vehicle->data.getHitpoints (), crc);
-				crc = calcCheckSum (vehicle->data.speedCur, crc);
+				crc = calcCheckSum (vehicle->data.getSpeed(), crc);
 				crc = calcCheckSum (vehicle->getFlightHeight (), crc);
 				crc = calcCheckSum (vehicle->iID, crc);
 				crc = calcCheckSum (vehicle->getPosition ().x (), crc);
@@ -394,7 +394,7 @@ void compareGameData (const cClient& client, const cServer& server)
 			assert (clientVehicle->getPosition() == serverVehicle->getPosition());
 			assert (clientVehicle->getMovementOffset() == serverVehicle->getMovementOffset());
 			assert (clientVehicle->dir == serverVehicle->dir);
-			assert (clientVehicle->data.speedCur == serverVehicle->data.speedCur);
+			assert (clientVehicle->data.getSpeed() == serverVehicle->data.getSpeed());
 		}
 	}
 #endif

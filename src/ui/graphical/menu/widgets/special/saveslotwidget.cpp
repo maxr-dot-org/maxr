@@ -110,7 +110,7 @@ bool cSaveSlotWidget::handleClicked (cApplication& application, cMouse& mouse, e
 	{
 		clicked ();
 
-        cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDObjectMenu);
+        cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDObjectMenu);
 
 		if (mouse.getButtonClickCount (button) == 2)
 		{

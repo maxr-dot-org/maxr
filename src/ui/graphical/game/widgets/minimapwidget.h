@@ -20,7 +20,7 @@
 #ifndef ui_graphical_game_widgets_minimapwidgetH
 #define ui_graphical_game_widgets_minimapwidgetH
 
-#include "ui/graphical/widget.h"
+#include "ui/graphical/menu/widgets/clickablewidget.h"
 #include "maxrconfig.h"
 #include "utility/signal/signal.h"
 #include "utility/signal/signalconnectionmanager.h"
@@ -31,7 +31,7 @@ class cStaticMap;
 class cMap;
 class cPlayer;
 
-class cMiniMapWidget : public cWidget
+class cMiniMapWidget : public cClickableWidget
 {
 public:
 	cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap);
@@ -52,9 +52,14 @@ public:
 	virtual bool handleMousePressed (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 	virtual bool handleMouseReleased (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
 
-	cSignal<void (const cPosition&)> focus;
-protected:
+	virtual void handleLooseMouseFocus (cApplication& application) MAXR_OVERRIDE_FUNCTION;
 
+	cSignal<void (const cPosition&)> focus;
+	cSignal<void (const cPosition&)> triggeredMove;
+protected:
+	virtual bool handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button) MAXR_OVERRIDE_FUNCTION;
+
+	virtual bool acceptButton (eMouseButtonType button) const MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager dynamicMapSignalConnectionManager;
 
@@ -62,6 +67,8 @@ private:
 	bool surfaceOutdated;
 	AutoSurface viewWindowSurface;
 	bool viewWindowSurfaeOutdated;
+
+	bool startedMoving;
 
 	std::shared_ptr<const cStaticMap> staticMap;
 	std::shared_ptr<const cMap> dynamicMap; // may be null

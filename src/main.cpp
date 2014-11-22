@@ -629,11 +629,11 @@ void cUnitsData::initializeClanUnitData()
 			if (changedStat->hasModification ("Armor"))
 				clanVehicle.setArmor(changedStat->getModificationValue ("Armor"));
 			if (changedStat->hasModification ("Hitpoints"))
-				clanVehicle.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
+				clanVehicle.setHitpointsMax(changedStat->getModificationValue ("Hitpoints"));
 			if (changedStat->hasModification ("Scan"))
 				clanVehicle.setScan(changedStat->getModificationValue ("Scan"));
 			if (changedStat->hasModification ("Speed"))
-				clanVehicle.speedMax = changedStat->getModificationValue ("Speed") * 4;
+				clanVehicle.setSpeedMax(changedStat->getModificationValue ("Speed") * 4);
 			if (changedStat->hasModification ("Built_Costs"))
 				clanVehicle.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}
@@ -654,11 +654,11 @@ void cUnitsData::initializeClanUnitData()
 			if (changedStat->hasModification ("Armor"))
 				clanBuilding.setArmor(changedStat->getModificationValue ("Armor"));
 			if (changedStat->hasModification ("Hitpoints"))
-				clanBuilding.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
+				clanBuilding.setHitpointsMax(changedStat->getModificationValue ("Hitpoints"));
 			if (changedStat->hasModification ("Scan"))
 				clanBuilding.setScan(changedStat->getModificationValue ("Scan"));
 			if (changedStat->hasModification ("Speed"))
-				clanBuilding.speedMax = changedStat->getModificationValue ("Speed") * 4;
+				clanBuilding.setSpeedMax(changedStat->getModificationValue ("Speed") * 4);
 			if (changedStat->hasModification ("Built_Costs"))
 				clanBuilding.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}

@@ -147,8 +147,8 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	data.setHitpoints(data.hitpointsMax);
-	data.setAmmo(data.ammoMax);
+	data.setHitpoints(data.getHitpointsMax());
+	data.setAmmo(data.getAmmoMax());
 	SubBase = NULL;
 	BuildSpeed = 0;
 
@@ -302,9 +302,9 @@ bool cBuilding::refreshData()
 {
 	// NOTE: according to MAX 1.04 units get their shots/movepoints back even if they are disabled
 
-	if (data.getShots () < data.shotsMax)
+	if (data.getShots () < data.getShotsMax())
 	{
-		data.setShots(std::min (this->data.shotsMax, this->data.getAmmo()));
+		data.setShots(std::min (this->data.getShotsMax(), this->data.getAmmo()));
 		return true;
 	}
 	return false;

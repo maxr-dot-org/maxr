@@ -163,23 +163,23 @@ void sendUnitData (cServer& server, const cUnit& unit, const cPlayer& receiver)
 	if (unit.isAVehicle())
 	{
 		message->pushInt16 (static_cast<const cVehicle*> (&unit)->getFlightHeight ());
-		message->pushInt16 (unit.data.speedMax);
-		message->pushInt16 (unit.data.speedCur);
+		message->pushInt16 (unit.data.getSpeedMax());
+		message->pushInt16 (unit.data.getSpeed());
 	}
 	message->pushInt16 (unit.data.getVersion ());
-	message->pushInt16 (unit.data.hitpointsMax);
+	message->pushInt16 (unit.data.getHitpointsMax());
 	message->pushInt16 (unit.data.getHitpoints ());
 	message->pushInt16 (unit.data.getArmor ());
 	message->pushInt16 (unit.data.getScan ());
 	message->pushInt16 (unit.data.getRange ());
-	message->pushInt16 (unit.data.shotsMax);
+	message->pushInt16 (unit.data.getShotsMax());
 	message->pushInt16 (unit.data.getShots ());
 	message->pushInt16 (unit.data.getDamage ());
 	message->pushInt16 (unit.data.storageUnitsMax);
 	message->pushInt16 (unit.data.getStoredUnits ());
 	message->pushInt16 (unit.data.storageResMax);
 	message->pushInt16 (unit.data.getStoredResources ());
-	message->pushInt16 (unit.data.ammoMax);
+	message->pushInt16 (unit.data.getAmmoMax());
 	message->pushInt16 (unit.data.getAmmo ());
 	message->pushInt16 (unit.data.buildCosts);
 
@@ -772,10 +772,10 @@ void sendRefreshResearchCount (cServer& server, const cPlayer& receiver)
 void sendUnitUpgrades (cServer& server, const sUnitData& unitData, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_UNIT_UPGRADE_VALUES));
-	message->pushInt16 (unitData.hitpointsMax);
-	message->pushInt16 (unitData.ammoMax);
-	message->pushInt16 (unitData.shotsMax);
-	message->pushInt16 (unitData.speedMax);
+	message->pushInt16 (unitData.getHitpointsMax());
+	message->pushInt16 (unitData.getAmmoMax());
+	message->pushInt16 (unitData.getShotsMax());
+	message->pushInt16 (unitData.getSpeedMax());
 	message->pushInt16 (unitData.getArmor ());
 	message->pushInt16 (unitData.buildCosts);
 	message->pushInt16 (unitData.getDamage ());

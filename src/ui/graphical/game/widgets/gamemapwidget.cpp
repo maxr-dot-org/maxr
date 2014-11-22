@@ -1634,7 +1634,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 
 	const auto zoomedTileSize = getZoomedTileSize ();
 
-	int sp = vehicle.data.speedCur;
+	int sp = vehicle.data.getSpeed();
 	int save;
 
 	if (sp)
@@ -1670,7 +1670,7 @@ void cGameMapWidget::drawPath (const cVehicle& vehicle)
 		if (sp == 0)
 		{
 			moveJob->drawArrow (dest, &ndest, true);
-			sp += vehicle.data.speedMax + save;
+			sp += vehicle.data.getSpeedMax() + save;
 			save = 0;
 		}
 		else
@@ -1948,13 +1948,13 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				if (!selectedVehicle->isUnitMoving ())
 				{
 					toggleUnitContextMenu (selectedVehicle);
-					cSoundDevice::getInstance().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
+					cSoundDevice::getInstance().playSoundEffect (SoundData.SNDHudButton);
 				}
 			}
 			else if (changeAllowed && selectedBuilding && (overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding))
 			{
 				toggleUnitContextMenu (selectedBuilding);
-                cSoundDevice::getInstance ().getFreeSoundEffectChannel().play (SoundData.SNDHudButton);
+				cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDHudButton);
 			}
 		}
 
@@ -2325,10 +2325,10 @@ void cGameMapWidget::renewDamageEffects ()
 void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 {
 	if (building.data.hasDamageEffect &&
-		building.data.getHitpoints () < building.data.hitpointsMax &&
+		building.data.getHitpoints () < building.data.getHitpointsMax() &&
 		(building.getOwner () == player.get () || (!player || player->canSeeAnyAreaUnder (building))))
 	{
-		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.hitpointsMax));
+		int intense = (int)(200 - 200 * ((float)building.data.getHitpoints () / building.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition(building.getPosition().x() * 64 + building.DamageFXPointX, building.getPosition().y() * 64 + building.DamageFXPointY), intense, windDirection));
 
 		if (building.data.isBig && intense > 50)
@@ -2342,10 +2342,10 @@ void cGameMapWidget::renewDamageEffect (const cBuilding& building)
 //------------------------------------------------------------------------------
 void cGameMapWidget::renewDamageEffect (const cVehicle& vehicle)
 {
-	if (vehicle.data.getHitpoints () < vehicle.data.hitpointsMax &&
+	if (vehicle.data.getHitpoints () < vehicle.data.getHitpointsMax() &&
 		(vehicle.getOwner () == player.get () || (!player || player->canSeeAnyAreaUnder (vehicle))))
 	{
-		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.hitpointsMax));
+		int intense = (int)(100 - 100 * ((float)vehicle.data.getHitpoints () / vehicle.data.getHitpointsMax()));
 		addEffect (std::make_shared<cFxDarkSmoke> (cPosition (vehicle.getPosition().x() * 64 + vehicle.DamageFXPointX + vehicle.getMovementOffset().x(), vehicle.getPosition().y() * 64 + vehicle.DamageFXPointY + vehicle.getMovementOffset().y()), intense, windDirection));
 	}
 }

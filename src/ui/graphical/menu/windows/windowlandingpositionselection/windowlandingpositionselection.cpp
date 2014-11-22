@@ -140,7 +140,7 @@ void cWindowLandingPositionSelection::unlockBack ()
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
-    if (firstTime) cSoundDevice::getInstance ().getFreeVoiceChannel().play (getRandom (VoiceData.VOILanding));
+    if (firstTime) cSoundDevice::getInstance ().playVoice (getRandom (VoiceData.VOILanding));
 	application.addRunnable (animationTimer);
 	cWindow::handleActivated (application, firstTime);
 }
@@ -199,7 +199,7 @@ void cWindowLandingPositionSelection::mapClicked (const cPosition& tilePosition)
 {
 	if (!selectionAllowed) return;
 
-	cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDMenuButton);
+	cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDMenuButton);
 
 	if (reselectionState == eLandingPositionState::Warning && (tilePosition - lastSelectedPosition).l2Norm () < cLandingPositionManager::tooCloseDistance)
 	{

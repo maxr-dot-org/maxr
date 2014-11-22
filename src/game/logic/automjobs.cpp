@@ -89,7 +89,7 @@ void cAutoMJob::doAutoMove (const std::vector<cAutoMJob*>& jobs)
 		{
 			playerMJob = true;
 		}
-		if (vehicle.getClientMoveJob ()->bSuspended && vehicle.data.speedCur)
+		if (vehicle.getClientMoveJob ()->bSuspended && vehicle.data.getSpeed())
 		{
 			client.addMoveJob (vehicle, vehicle.getClientMoveJob ()->destination);
 		}

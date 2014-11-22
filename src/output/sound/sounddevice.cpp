@@ -19,6 +19,7 @@
 
 #include "output/sound/sounddevice.h"
 #include "output/sound/soundchunk.h"
+#include "output/sound/soundchannel.h"
 #include "utility/log.h"
 #include "sound.h"
 #include "utility/random.h"
@@ -32,129 +33,157 @@ const int cSoundDevice::voiceGroupSize = 5;
 
 //--------------------------------------------------------------------------
 cSoundDevice::cSoundDevice () :
-    soundEffectChannelGroup (soundEffectGroupTag),
-    voiceChannelGroup (voiceGroupTag)
+soundEffectChannelGroup (soundEffectGroupTag),
+voiceChannelGroup (voiceGroupTag)
 {}
 
 //--------------------------------------------------------------------------
 void cSoundDevice::SdlMixMusikDeleter::operator ()(Mix_Music* music) const
 {
-    Mix_FreeMusic (music);
+	Mix_FreeMusic (music);
 }
 
 //--------------------------------------------------------------------------
 cSoundDevice& cSoundDevice::getInstance ()
 {
-    static cSoundDevice instance;
-    return instance;
+	static cSoundDevice instance;
+	return instance;
 }
 
 //--------------------------------------------------------------------------
 void musicFinishedHookCallback ()
 {
-    cSoundDevice::getInstance ().startRandomMusic ();
+	cSoundDevice::getInstance ().startRandomMusic ();
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::initialize (int frequency, int chunkSize)
 {
-    if (Mix_OpenAudio (frequency, AUDIO_S16, 2, chunkSize) != 0)
-    {
-        throw std::runtime_error (Mix_GetError ());
-    }
+	if (Mix_OpenAudio (frequency, AUDIO_S16, 2, chunkSize) != 0)
+	{
+		throw std::runtime_error (Mix_GetError ());
+	}
 
-    Mix_AllocateChannels (soundEffectGroupSize + voiceGroupSize);
+	Mix_AllocateChannels (soundEffectGroupSize + voiceGroupSize);
 
-    soundEffectChannelGroup.addChannelRange (0, soundEffectGroupSize-1);
+	soundEffectChannelGroup.addChannelRange (0, soundEffectGroupSize-1);
 	voiceChannelGroup.addChannelRange (soundEffectGroupSize, soundEffectGroupSize+voiceGroupSize-1);
 
-    Mix_HookMusicFinished (musicFinishedHookCallback);
+	Mix_HookMusicFinished (musicFinishedHookCallback);
 
-    setSoundEffectVolume (cSettings::getInstance ().getSoundVol ());
-    setVoiceVolume (cSettings::getInstance ().getVoiceVol ());
-    setMusicVolume (cSettings::getInstance ().getMusicVol ());
+	setSoundEffectVolume (cSettings::getInstance ().getSoundVol ());
+	setVoiceVolume (cSettings::getInstance ().getVoiceVol ());
+	setMusicVolume (cSettings::getInstance ().getMusicVol ());
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::close ()
 {
-    Mix_CloseAudio ();
+	Mix_CloseAudio ();
 }
 
 //--------------------------------------------------------------------------
-cSoundChannel& cSoundDevice::getFreeSoundEffectChannel ()
+cSoundChannel* cSoundDevice::getFreeSoundEffectChannel ()
 {
-    return soundEffectChannelGroup.getFreeChannel ();
+	if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isSoundMute ()) return nullptr;
+
+	return &soundEffectChannelGroup.getFreeChannel ();
 }
 
 //--------------------------------------------------------------------------
-cSoundChannel& cSoundDevice::getFreeVoiceChannel ()
+cSoundChannel* cSoundDevice::getFreeVoiceChannel ()
 {
-    return voiceChannelGroup.getFreeChannel ();
+	if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isVoiceMute ()) return nullptr;
+
+	return &voiceChannelGroup.getFreeChannel ();
+}
+
+//--------------------------------------------------------------------------
+bool cSoundDevice::playSoundEffect (const cSoundChunk& chunk)
+{
+	auto channel = getFreeSoundEffectChannel ();
+
+	if (channel == nullptr) return false;
+
+	channel->play (chunk);
+
+	return true;
+}
+
+//--------------------------------------------------------------------------
+bool cSoundDevice::playVoice (const cSoundChunk& chunk)
+{
+	auto channel = getFreeVoiceChannel ();
+
+	if (channel == nullptr) return false;
+
+	channel->play (chunk);
+
+	return true;
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::startMusic (const std::string& fileName)
 {
-    if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isMusicMute ()) return;
+	if (!cSettings::getInstance ().isSoundEnabled () || cSettings::getInstance ().isMusicMute ()) return;
 
-    musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.c_str ()));
-    if (!musicStream)
-    {
-        Log.write ("Failed opening music stream:", cLog::eLOG_TYPE_WARNING);
-        Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
-        return;
-    }
-    Mix_PlayMusic (musicStream.get (), 0);
+	musicStream = SaveSdlMixMusicPointer (Mix_LoadMUS (fileName.c_str ()));
+	if (!musicStream)
+	{
+		Log.write ("Failed opening music stream:", cLog::eLOG_TYPE_WARNING);
+		Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
+		return;
+	}
+	Mix_PlayMusic (musicStream.get (), 0);
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::startRandomMusic ()
 {
-    if (MusicFiles.empty ()) return;
-    startMusic (MusicFiles[random (MusicFiles.size ())]);
+	if (MusicFiles.empty ()) return;
+	startMusic (MusicFiles[random (MusicFiles.size ())]);
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::stopMusic ()
 {
-    musicStream = nullptr;
+	musicStream = nullptr;
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::setSoundEffectVolume (int volume)
 {
-    soundEffectChannelGroup.setVolume (volume);
+	soundEffectChannelGroup.setVolume (volume);
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::setVoiceVolume (int volume)
 {
-    voiceChannelGroup.setVolume (volume);
+	voiceChannelGroup.setVolume (volume);
 }
 
 //--------------------------------------------------------------------------
 void cSoundDevice::setMusicVolume (int volume)
 {
-    Mix_VolumeMusic (volume);
+	Mix_VolumeMusic (volume);
 }
 
 //--------------------------------------------------------------------------
 //int cSoundDevice::playInGroup (const cSoundChunk& sound, int groupTag)
 //{
-//    if (!cSettings::getInstance ().isSoundEnabled ()) return -1;
+//	if (!cSettings::getInstance ().isSoundEnabled ()) return -1;
 //
-//    int channel = Mix_GroupAvailable (groupTag);
-//    if (channel == -1)
-//    {
-//        channel = Mix_GroupOldest (groupTag);
-//        Mix_HaltChannel (channel);
-//    }
-//    channel = Mix_PlayChannel (channel, sound.getSdlSound (), 0);
-//    if (channel < 0)
-//    {
-//        Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
-//        Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
-//    }
-//    return channel;
+//	int channel = Mix_GroupAvailable (groupTag);
+//	if (channel == -1)
+//	{
+//		channel = Mix_GroupOldest (groupTag);
+//		Mix_HaltChannel (channel);
+//	}
+//	channel = Mix_PlayChannel (channel, sound.getSdlSound (), 0);
+//	if (channel < 0)
+//	{
+//		Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
+//		Log.write (Mix_GetError (), cLog::eLOG_TYPE_WARNING);
+//	}
+//	return channel;
 //}

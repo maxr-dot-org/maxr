@@ -46,7 +46,7 @@ cHudPanels::cHudPanels (const cPosition& position, int height, std::shared_ptr<c
 //------------------------------------------------------------------------------
 void cHudPanels::open ()
 {
-    cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDPanelOpen);
+    cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDPanelOpen);
 
 	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doOpenStep, this));
 }
@@ -54,7 +54,7 @@ void cHudPanels::open ()
 //------------------------------------------------------------------------------
 void cHudPanels::close ()
 {
-    cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (SoundData.SNDPanelClose);
+    cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDPanelClose);
 
 	signalConnectionManager.connect (animationTimer->triggered10msCatchUp, std::bind (&cHudPanels::doCloseStep, this));
 }

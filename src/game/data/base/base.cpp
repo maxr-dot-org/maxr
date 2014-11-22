@@ -837,14 +837,14 @@ bool sSubBase::checkTurnEnd (cServer& server)
 void sSubBase::makeTurnStartRepairs (cServer& server, cBuilding& building)
 {
 	// repair (do not repair buildings that have been attacked in this turn):
-	if (building.data.getHitpoints () >= building.data.hitpointsMax
+	if (building.data.getHitpoints () >= building.data.getHitpointsMax ()
 		|| getMetal () <= 0 || building.hasBeenAttacked ())
 	{
 		return;
 	}
 	// calc new hitpoints
-	const auto newHitPoints = building.data.getHitpoints() + Round (((float) building.data.hitpointsMax / building.data.buildCosts) * 4);
-	building.data.setHitpoints(std::min (building.data.hitpointsMax, newHitPoints));
+	const auto newHitPoints = building.data.getHitpoints () + Round (((float)building.data.getHitpointsMax () / building.data.buildCosts) * 4);
+	building.data.setHitpoints (std::min (building.data.getHitpointsMax (), newHitPoints));
 	addMetal (server, -1);
 	sendUnitData (server, building);
 }
@@ -854,7 +854,7 @@ void sSubBase::makeTurnStartReload (cServer& server, cBuilding& building)
 	// reload:
 	if (building.data.canAttack && building.data.getAmmo () == 0 && getMetal () > 0)
 	{
-		building.data.setAmmo(building.data.ammoMax);
+		building.data.setAmmo(building.data.getAmmoMax());
 		addMetal (server, -1);
 		// ammo is not visible to enemies. So only send to the owner
 		sendUnitData (server, building, *owner);

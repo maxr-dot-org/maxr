@@ -75,6 +75,9 @@ public:
 	cGameMapWidget& getGameMap ();
 	const cGameMapWidget& getGameMap () const;
 
+	cMiniMapWidget& getMiniMap ();
+	const cMiniMapWidget& getMiniMap () const;
+
 	cChatBox& getChatBox ();
 	const cChatBox& getChatBox () const;
 
@@ -119,7 +122,7 @@ private:
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 	cGameMessageListView* messageList;
-    cChatBox* chatBox;
+	cChatBox* chatBox;
 	cDebugOutputWidget* debugOutput;
 
 	cLabel* primiaryInfoLabel;
@@ -147,7 +150,7 @@ private:
 	void handleResolutionChange ();
 
 	void updateSelectedUnitIdleSound ();
-	void updateSelectedUnitMoveSound ();
+	void updateSelectedUnitMoveSound (bool startedNew);
 
 	void startSelectedUnitSound (const cUnit& unit, const cSoundChunk& sound);
 	void stopSelectedUnitSound ();

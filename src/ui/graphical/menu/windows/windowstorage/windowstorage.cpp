@@ -144,15 +144,28 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 //------------------------------------------------------------------------------
 void cWindowStorage::updateUnitButtons (const cVehicle& storedUnit, size_t positionIndex)
 {
-	const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (unit.data.ID);
+	const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (storedUnit.data.ID);
 
 	activateButtons[positionIndex]->unlock ();
-	if (storedUnit.data.getAmmo () != storedUnit.data.ammoMax && metalBar->getValue () >= 1) reloadButtons[positionIndex]->unlock ();
+	if (storedUnit.data.getAmmo () != storedUnit.data.getAmmoMax() && metalBar->getValue () >= 1) reloadButtons[positionIndex]->unlock ();
 	else reloadButtons[positionIndex]->lock ();
-	if (storedUnit.data.getHitpoints () != storedUnit.data.hitpointsMax && metalBar->getValue () >= 1) repairButtons[positionIndex]->unlock ();
+	if (storedUnit.data.getHitpoints () != storedUnit.data.getHitpointsMax() && metalBar->getValue () >= 1) repairButtons[positionIndex]->unlock ();
 	else repairButtons[positionIndex]->lock ();
 	if (storedUnit.data.getVersion () != upgraded.getVersion () && metalBar->getValue () >= 1) upgradeButtons[positionIndex]->unlock ();
 	else upgradeButtons[positionIndex]->lock ();
+}
+
+//------------------------------------------------------------------------------
+void cWindowStorage::updateUnitName (const cVehicle& storedUnit, size_t positionIndex)
+{
+	auto name = storedUnit.getDisplayName ();
+
+	const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (storedUnit.data.ID);
+	if (storedUnit.data.getVersion () != upgraded.getVersion ())
+	{
+		name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
+	}
+	unitNames[positionIndex]->setText (name);
 }
 
 //------------------------------------------------------------------------------
@@ -171,29 +184,27 @@ void cWindowStorage::updateUnitsWidgets ()
 			{
 				const auto& storedUnit = *unit.storedUnits[unitIndex];
 
-				std::string name = storedUnit.getDisplayName ();
-
-				const auto& upgraded = *storedUnit.getOwner ()->getUnitDataCurrentVersion (storedUnit.data.ID);
-				if (storedUnit.data.getVersion () != upgraded.getVersion ())
-				{
-					name += "\n(" + lngPack.i18n ("Text~Comp~Dated") + ")";
-				}
-				unitNames[positionIndex]->setText (name);
-
 				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
 				SDL_BlitSurface (storedUnit.uiData->storage.get(), NULL, surface.get (), NULL);
 				unitImages[positionIndex]->setImage (surface.get ());
 
 				unitDetails[positionIndex]->setUnit (&storedUnit);
 
+				updateUnitName (storedUnit, positionIndex);
 				updateUnitButtons (storedUnit, positionIndex);
+
+				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateUnitName, this, std::ref (storedUnit), positionIndex));
 
 				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
 				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
+				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsMaxChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
+				unitsSignalConnectionManager.connect (storedUnit.data.ammoMaxChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
 				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateUnitButtons, this, std::ref (storedUnit), positionIndex));
 
 				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
 				unitsSignalConnectionManager.connect (storedUnit.data.ammoChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
+				unitsSignalConnectionManager.connect (storedUnit.data.hitpointsMaxChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
+				unitsSignalConnectionManager.connect (storedUnit.data.ammoMaxChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
 				unitsSignalConnectionManager.connect (storedUnit.data.versionChanged, std::bind (&cWindowStorage::updateGlobalButtons, this));
 			}
 			else
@@ -236,8 +247,8 @@ void cWindowStorage::updateGlobalButtons ()
 			const auto& vehicle = *unit.storedUnits[i];
 			const auto& upgraded = *vehicle.getOwner ()->getUnitDataCurrentVersion (vehicle.data.ID);
 
-			if (vehicle.data.getAmmo () != vehicle.data.ammoMax) reloadAllButton->unlock ();
-			if (vehicle.data.getHitpoints () != vehicle.data.hitpointsMax) repairAllButton->unlock ();
+			if (vehicle.data.getAmmo () != vehicle.data.getAmmoMax()) reloadAllButton->unlock ();
+			if (vehicle.data.getHitpoints () != vehicle.data.getHitpointsMax()) repairAllButton->unlock ();
 			if (vehicle.data.getVersion () != upgraded.getVersion ()) upgradeAllButton->unlock ();
 		}
 	}

@@ -579,7 +579,7 @@ bool cListView<ItemType>::handleClicked (cApplication& application, cMouse& mous
 			{
 				removeTookPlace = false;
 				itemClicked (item);
-                if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
+                if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
 				if (removeTookPlace) break;
 
 				if (selectedItems.size () != 1 || selectedItems[0] != &item)

@@ -133,8 +133,8 @@ sUnitData& sUnitData::operator=(const sUnitData& other)
 	description = other.description;
 	version = other.version;
 	muzzleType = other.muzzleType;
-	ammoMax = other.ammoMax;
-	shotsMax = other.shotsMax;
+	ammoMax = other.getAmmoMax();
+	shotsMax = other.getShotsMax();
 	range = other.range;
 	damage = other.damage;
 	canAttack = other.canAttack;
@@ -145,8 +145,8 @@ sUnitData& sUnitData::operator=(const sUnitData& other)
 	maxBuildFactor = other.maxBuildFactor;
 	canBuildPath = other.canBuildPath;
 	canBuildRepeat = other.canBuildRepeat;
-	speedMax = other.speedMax;
-	speedCur = other.speedCur;
+	speedMax = other.getSpeedMax();
+	speedCur = other.getSpeed();
 	factorGround = other.factorGround;
 	factorSea = other.factorSea;
 	factorAir = other.factorAir;
@@ -154,7 +154,7 @@ sUnitData& sUnitData::operator=(const sUnitData& other)
 	isBig = other.isBig;
 	connectsToBase = other.connectsToBase;
 	armor = other.armor;
-	hitpointsMax = other.hitpointsMax;
+	hitpointsMax = other.getHitpointsMax();
 	scan = other.scan;
 	modifiesSpeed = other.modifiesSpeed;
 	canClearArea = other.canClearArea;
@@ -228,6 +228,32 @@ void sUnitData::setVersion (int value)
 }
 
 //------------------------------------------------------------------------------
+int sUnitData::getSpeed () const
+{
+	return speedCur;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setSpeed (int value)
+{
+	std::swap (speedCur, value);
+	if (speedCur != value) speedChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getSpeedMax () const
+{
+	return speedMax;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setSpeedMax (int value)
+{
+	std::swap (speedMax, value);
+	if (speedMax != value) speedMaxChanged ();
+}
+
+//------------------------------------------------------------------------------
 int sUnitData::getHitpoints () const
 {
 	return hitpointsCur;
@@ -238,6 +264,19 @@ void sUnitData::setHitpoints (int value)
 {
 	std::swap (hitpointsCur, value);
 	if (hitpointsCur != value) hitpointsChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getHitpointsMax () const
+{
+	return hitpointsMax;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setHitpointsMax (int value)
+{
+	std::swap (hitpointsMax, value);
+	if (hitpointsMax != value) hitpointsMaxChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -280,6 +319,19 @@ void sUnitData::setShots (int value)
 }
 
 //------------------------------------------------------------------------------
+int sUnitData::getShotsMax () const
+{
+	return shotsMax;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setShotsMax (int value)
+{
+	std::swap (shotsMax, value);
+	if (shotsMax != value) shotsMaxChanged ();
+}
+
+//------------------------------------------------------------------------------
 int sUnitData::getAmmo () const
 {
 	return ammoCur;
@@ -290,6 +342,19 @@ void sUnitData::setAmmo (int value)
 {
 	std::swap (ammoCur, value);
 	if (ammoCur != value) ammoChanged ();
+}
+
+//------------------------------------------------------------------------------
+int sUnitData::getAmmoMax () const
+{
+	return ammoMax;
+}
+
+//------------------------------------------------------------------------------
+void sUnitData::setAmmoMax (int value)
+{
+	std::swap (ammoMax, value);
+	if (ammoMax != value) ammoMaxChanged ();
 }
 
 //------------------------------------------------------------------------------

@@ -35,41 +35,44 @@ class cSoundChannel;
 class cSoundDevice
 {
 public:
-    cSoundDevice ();
+	cSoundDevice ();
 
-    static cSoundDevice& getInstance ();
+	static cSoundDevice& getInstance ();
 
-    void initialize (int frequency, int chunkSize);
-    void close ();
+	void initialize (int frequency, int chunkSize);
+	void close ();
 
-    cSoundChannel& getFreeSoundEffectChannel ();
-    cSoundChannel& getFreeVoiceChannel ();
+	cSoundChannel* getFreeSoundEffectChannel ();
+	cSoundChannel* getFreeVoiceChannel ();
 
-    void startMusic (const std::string& fileName);
-    void startRandomMusic ();
-    void stopMusic ();
+	bool playSoundEffect (const cSoundChunk& chunk);
+	bool playVoice (const cSoundChunk& chunk);
 
-    void setSoundEffectVolume (int volume);
-    void setVoiceVolume (int volume);
-    void setMusicVolume (int volume);
+	void startMusic (const std::string& fileName);
+	void startRandomMusic ();
+	void stopMusic ();
+
+	void setSoundEffectVolume (int volume);
+	void setVoiceVolume (int volume);
+	void setMusicVolume (int volume);
 private:
-    const static int soundEffectGroupTag;
-    const static int voiceGroupTag;
+	const static int soundEffectGroupTag;
+	const static int voiceGroupTag;
 
-    const static int soundEffectGroupSize;
-    const static int voiceGroupSize;
+	const static int soundEffectGroupSize;
+	const static int voiceGroupSize;
 
-    struct SdlMixMusikDeleter
-    {
-        void operator()(Mix_Music*) const;
-    };
+	struct SdlMixMusikDeleter
+	{
+		void operator()(Mix_Music*) const;
+	};
 
-    typedef std::unique_ptr<Mix_Music, SdlMixMusikDeleter> SaveSdlMixMusicPointer;
+	typedef std::unique_ptr<Mix_Music, SdlMixMusikDeleter> SaveSdlMixMusicPointer;
 
-    SaveSdlMixMusicPointer musicStream;
+	SaveSdlMixMusicPointer musicStream;
 
-    cSoundChannelGroup soundEffectChannelGroup;
-    cSoundChannelGroup voiceChannelGroup;
+	cSoundChannelGroup soundEffectChannelGroup;
+	cSoundChannelGroup voiceChannelGroup;
 };
 
 #endif // output_sound_sounddeviceH

@@ -28,9 +28,10 @@
 
 //------------------------------------------------------------------------------
 cMiniMapWidget::cMiniMapWidget (const cBox<cPosition>& area, std::shared_ptr<const cStaticMap> staticMap) :
-	cWidget (area),
+	cClickableWidget (area),
 	surfaceOutdated (true),
 	viewWindowSurfaeOutdated (true),
+	startedMoving (false),
 	staticMap (std::move (staticMap)),
 	dynamicMap (nullptr),
 	player (nullptr),
@@ -165,12 +166,12 @@ void cMiniMapWidget::draw (SDL_Surface& destination, const cBox<cPosition>& clip
 //------------------------------------------------------------------------------
 bool cMiniMapWidget::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	if (application.hasMouseFocus (*this) && isAt (mouse.getPosition ()))
+	if (application.hasMouseFocus (*this) && startedMoving && isAt (mouse.getPosition ()))
 	{
 		focus (computeMapPosition (mouse.getPosition ()));
 		return true;
 	}
-	return false;
+	return cClickableWidget::handleMouseMoved (application, mouse, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -180,9 +181,10 @@ bool cMiniMapWidget::handleMousePressed (cApplication& application, cMouse& mous
 	{
 		application.grapMouseFocus (*this);
 		focus (computeMapPosition (mouse.getPosition ()));
+		startedMoving = true;
 		return true;
 	}
-	return false;
+	return cClickableWidget::handleMousePressed (application, mouse, button);
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +195,31 @@ bool cMiniMapWidget::handleMouseReleased (cApplication& application, cMouse& mou
 		application.releaseMouseFocus (*this);
 		return true;
 	}
+	return cClickableWidget::handleMouseReleased (application, mouse, button);
+}
+
+//------------------------------------------------------------------------------
+void cMiniMapWidget::handleLooseMouseFocus (cApplication& application)
+{
+	startedMoving = false;
+	cClickableWidget::handleLooseMouseFocus (application);
+}
+
+//------------------------------------------------------------------------------
+bool cMiniMapWidget::handleClicked (cApplication& application, cMouse& mouse, eMouseButtonType button)
+{
+	if (button == eMouseButtonType::Right)
+	{
+		triggeredMove (computeMapPosition (mouse.getPosition ()));
+		return true;
+	}
 	return false;
+}
+
+//------------------------------------------------------------------------------
+bool cMiniMapWidget::acceptButton (eMouseButtonType button) const
+{
+	return button == eMouseButtonType::Right;
 }
 
 //------------------------------------------------------------------------------

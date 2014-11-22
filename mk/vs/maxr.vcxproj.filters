@@ -915,6 +915,9 @@
     <ClCompile Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.cpp">
       <Filter>src\ui\graphical\game\control</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\framecounter.cpp">
+      <Filter>src\ui\graphical</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\dedicatedserver.h">
@@ -1858,6 +1861,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ui\graphical\game\control\rightmousebuttonscroller.h">
       <Filter>src\ui\graphical\game\control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\framecounter.h">
+      <Filter>src\ui\graphical</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

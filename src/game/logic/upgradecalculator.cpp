@@ -1549,9 +1549,9 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 		if (!curData.explodesOnContact)
 		{
 			// Shots:
-			upgrades[i].startValue = origData.shotsMax;
-			upgrades[i].curValue = curData.shotsMax;
-			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.shotsMax, origData.shotsMax, cUpgradeCalculator::kShots, researchLevel);
+			upgrades[i].startValue = origData.getShotsMax();
+			upgrades[i].curValue = curData.getShotsMax();
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getShotsMax(), origData.getShotsMax(), cUpgradeCalculator::kShots, researchLevel);
 			upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
 			i++;
 			// Range:
@@ -1561,9 +1561,9 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 			upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_RANGE;
 			i++;
 			// Ammo:
-			upgrades[i].startValue = origData.ammoMax;
-			upgrades[i].curValue = curData.ammoMax;
-			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.ammoMax, origData.ammoMax, cUpgradeCalculator::kAmmo, researchLevel);
+			upgrades[i].startValue = origData.getAmmoMax();
+			upgrades[i].curValue = curData.getAmmoMax();
+			upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getAmmoMax(), origData.getAmmoMax(), cUpgradeCalculator::kAmmo, researchLevel);
 			upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
 			i++;
 		}
@@ -1586,9 +1586,9 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 	i++;
 
 	// Hitpoints:
-	upgrades[i].startValue = origData.hitpointsMax;
-	upgrades[i].curValue = curData.hitpointsMax;
-	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.hitpointsMax, origData.hitpointsMax, cUpgradeCalculator::kHitpoints, researchLevel);
+	upgrades[i].startValue = origData.getHitpointsMax();
+	upgrades[i].curValue = curData.getHitpointsMax();
+	upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getHitpointsMax(), origData.getHitpointsMax(), cUpgradeCalculator::kHitpoints, researchLevel);
 	upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
 	i++;
 
@@ -1603,11 +1603,11 @@ void cUnitUpgrade::init (const sUnitData& origData, const sUnitData& curData, co
 	}
 
 	// Speed:
-	if (curData.speedMax)
+	if (curData.getSpeedMax())
 	{
-		upgrades[i].startValue = origData.speedMax;
-		upgrades[i].curValue = curData.speedMax;
-		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.speedMax / 4, origData.speedMax / 4, cUpgradeCalculator::kSpeed, researchLevel);
+		upgrades[i].startValue = origData.getSpeedMax();
+		upgrades[i].curValue = curData.getSpeedMax();
+		upgrades[i].nextPrice = cUpgradeCalculator::instance().calcPrice (curData.getSpeedMax() / 4, origData.getSpeedMax() / 4, cUpgradeCalculator::kSpeed, researchLevel);
 		upgrades[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
 		i++;
 	}
@@ -1680,25 +1680,25 @@ void cUnitUpgrade::updateUnitData (sUnitData& data) const
 				data.setDamage(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-				data.shotsMax = upgrades[i].curValue;
+				data.setShotsMax(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_RANGE:
 				data.setRange(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-				data.ammoMax = upgrades[i].curValue;
+				data.setAmmoMax(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
 				data.setArmor(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_HITS:
-				data.hitpointsMax = upgrades[i].curValue;
+				data.setHitpointsMax(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_SCAN:
 				data.setScan(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-				data.speedMax = upgrades[i].curValue;
+				data.setSpeedMax(upgrades[i].curValue);
 				break;
 			case sUnitUpgrade::UPGRADE_TYPE_NONE:
 				break;

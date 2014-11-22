@@ -133,7 +133,7 @@ bool cPushButton::handleClicked (cApplication& application, cMouse& mouse, eMous
 {
 	if (button == eMouseButtonType::Left)
 	{
-        if (clickSound) cSoundDevice::getInstance ().getFreeSoundEffectChannel ().play (*clickSound);
+        if (clickSound) cSoundDevice::getInstance ().playSoundEffect (*clickSound);
 		clicked ();
 		return true;
 	}

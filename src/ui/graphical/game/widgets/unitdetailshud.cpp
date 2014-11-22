@@ -102,9 +102,9 @@ void cUnitDetailsHud::reset ()
 
 	const auto& data = unit->data;
 
-	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints (), data.hitpointsMax, lngPack.i18n ("Text~Others~Hitpoints_7"));
+	drawRow (0, eUnitDataSymbolType::Hits, data.getHitpoints (), data.getHitpointsMax(), lngPack.i18n ("Text~Others~Hitpoints_7"));
 
-	if (data.speedMax > 0) drawRow (2, eUnitDataSymbolType::Speed, data.speedCur / 4, data.speedMax / 4, lngPack.i18n ("Text~Others~Speed_7"));
+	if (data.getSpeedMax() > 0) drawRow (2, eUnitDataSymbolType::Speed, data.getSpeed() / 4, data.getSpeedMax() / 4, lngPack.i18n ("Text~Others~Speed_7"));
 
 	if (data.canScore)
 	{
@@ -178,9 +178,9 @@ void cUnitDetailsHud::reset ()
 	}
 	else if (data.canAttack && !data.explodesOnContact)
 	{
-		if (unit->getOwner () == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo (), data.ammoMax, lngPack.i18n ("Text~Others~Ammo_7"));
+		if (unit->getOwner () == player) drawRow (1, eUnitDataSymbolType::Ammo, data.getAmmo (), data.getAmmoMax (), lngPack.i18n ("Text~Others~Ammo_7"));
 
-		drawRow (3, eUnitDataSymbolType::Shots, data.getShots (), data.shotsMax, lngPack.i18n ("Text~Others~Shots_7"));
+		drawRow (3, eUnitDataSymbolType::Shots, data.getShots (), data.getShotsMax(), lngPack.i18n ("Text~Others~Shots_7"));
 	}
 	else if (data.produceEnergy && unit->data.ID.isABuilding ())
 	{
