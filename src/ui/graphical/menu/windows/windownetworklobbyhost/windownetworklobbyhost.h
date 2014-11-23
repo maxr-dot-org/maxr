@@ -35,8 +35,13 @@ public:
 
 	cSignal<void ()> triggeredStartGame;
 	cSignal<void ()> triggeredStartHost;
+
+	void setSaveGame(int saveGameNumber_);
+	int getSaveGameNumber() const;
 private:
 	cSignalConnectionManager signalConnectionManager;
+
+	int saveGameNumber;
 
 	void handleMapClicked ();
 	void handleSettingsClicked ();

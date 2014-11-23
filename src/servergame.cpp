@@ -228,7 +228,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage& message)
 	sendPlayerList (*network, menuPlayers);
 
 	//sendGameData (*network, map.get(), settings, saveGameString, player);
-	sendGameData (*network, map.get(), &settings, -1, &player);
+	sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(),"", &player);
 }
 
 //------------------------------------------------------------------------------
@@ -321,7 +321,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				}
 				if (map != NULL && map->loadMap (mapName))
 				{
-					sendGameData (*network, map.get(), &settings, -1);
+					sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 					string reply = senderPlayer.getName();
 					reply += " changed the map.";
 					sendMenuChatMessage (*network, reply);
@@ -339,7 +339,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 				{
 					int credits = atoi (tokens[1].c_str());
 					settings.setStartCredits(credits);
-					sendGameData (*network, map.get(), &settings, -1);
+					sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 					string reply = senderPlayer.getName();
 					reply += " changed the starting credits.";
 					sendMenuChatMessage (*network, reply);
@@ -411,7 +411,7 @@ void cServerGame::configRessources (vector<string>& tokens, cPlayerBasicData* se
 		if (valid)
 		{
 			settings.setResourceDensity(density);
-			sendGameData (*network, map.get(), &settings, -1);
+			sendGameData(*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
@@ -436,7 +436,7 @@ void cServerGame::configRessources (vector<string>& tokens, cPlayerBasicData* se
 			if (tokens[0].compare ("oil") == 0) settings.setOilAmount(amount);
 			else if (tokens[0].compare ("metal") == 0) settings.setMetalAmount(amount);
 			else if (tokens[0].compare ("gold") == 0) settings.setGoldAmount(amount);
-			sendGameData (*network, map.get(), &settings, -1);
+			sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";
 			reply += tokens[0];

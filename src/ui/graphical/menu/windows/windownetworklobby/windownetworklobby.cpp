@@ -42,8 +42,7 @@
 //------------------------------------------------------------------------------
 cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableIp) :
 	cWindow (LoadPCX (GFXOD_MULT)),
-	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance ().getPlayerName (), cPlayerColor(cSettings::getInstance ().getPlayerColor ()), 0, MAX_CLIENTS)),
-	saveGameNumber (-1)
+	localPlayer (std::make_shared<cPlayerBasicData> (cSettings::getInstance ().getPlayerName (), cPlayerColor(cSettings::getInstance ().getPlayerColor ()), 0, MAX_CLIENTS))
 {
 	addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (0, 11), getPosition () + cPosition (getArea ().getMaxCorner ().x (), 11 + 10)), title, FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
@@ -128,7 +127,7 @@ void cWindowNetworkLobby::updateSettingsText ()
 	std::string text = lngPack.i18n ("Text~Main~Version", PACKAGE_VERSION) + "\n";
 	//text += "Checksum: " + iToStr (cSettings::getInstance().Checksum) + "\n\n";
 
-	if (saveGameNumber != -1)
+	if (saveGamePlayers.size() != 0)
 	{
 		text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameName +  "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n";
 		for (size_t i = 0; i < saveGamePlayers.size (); ++i)
@@ -142,11 +141,11 @@ void cWindowNetworkLobby::updateSettingsText ()
 		text += lngPack.i18n ("Text~Title~Map") + ": " + staticMap->getName ();
 		text += " (" + iToStr (staticMap->getSize ().x ()) + "x" + iToStr (staticMap->getSize ().y ()) + ")\n";
 	}
-	else if (saveGameNumber == -1) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
+	else if (saveGamePlayers.size() == 0) text += lngPack.i18n("Text~Multiplayer~Map_NoSet") + "\n";
 
 	text += "\n";
 
-	if (saveGameNumber == -1)
+	if (saveGamePlayers.size() == 0)
 	{
 		if (gameSettings)
 		{
@@ -291,8 +290,6 @@ void cWindowNetworkLobby::setStaticMap (std::shared_ptr<cStaticMap> staticMap_)
 {
 	staticMap = std::move (staticMap_);
 
-	saveGameNumber = -1;
-
 	updateMap ();
 	updateSettingsText ();
 	staticMapChanged ();
@@ -303,35 +300,8 @@ void cWindowNetworkLobby::setGameSettings (std::unique_ptr<cGameSettings> gameSe
 {
 	gameSettings = std::move (gameSettings_);
 
-	saveGameNumber = -1;
-
 	updateSettingsText ();
 	gameSettingsChanged ();
-}
-
-//------------------------------------------------------------------------------
-void cWindowNetworkLobby::setSaveGame (int saveGameNumber_)
-{
-	saveGameNumber = saveGameNumber_;
-
-	if (saveGameNumber >= 0)
-	{
-		cSavegame saveGame (saveGameNumber_);
-
-		saveGame.loadHeader (&saveGameName, nullptr, nullptr);
-		saveGamePlayers = saveGame.loadPlayers ();
-
-		staticMap = std::make_shared<cStaticMap> ();
-		if (!staticMap->loadMap (saveGame.loadMapName ()))
-		{
-			// error dialog
-			staticMap = nullptr;
-		}
-	}
-
-	updateMap ();
-	updateSettingsText ();
-	saveGameChanged ();
 }
 
 //------------------------------------------------------------------------------
@@ -359,9 +329,15 @@ const std::shared_ptr<cStaticMap>& cWindowNetworkLobby::getStaticMap () const
 }
 
 //------------------------------------------------------------------------------
-int cWindowNetworkLobby::getSaveGameNumber () const
+const std::vector<cPlayerBasicData>& cWindowNetworkLobby::getSaveGamePlayers() const
 {
-	return saveGameNumber;
+	return saveGamePlayers;
+}
+
+//------------------------------------------------------------------------------
+std::string cWindowNetworkLobby::getSaveGameName() const
+{
+	return saveGameName;
 }
 
 //------------------------------------------------------------------------------

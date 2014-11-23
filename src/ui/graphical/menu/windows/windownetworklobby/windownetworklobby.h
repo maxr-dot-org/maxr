@@ -58,7 +58,8 @@ public:
 
 	const std::shared_ptr<cStaticMap>& getStaticMap () const;
 	const std::shared_ptr<cGameSettings>& getGameSettings () const;
-	int getSaveGameNumber () const;
+	const std::vector<cPlayerBasicData>& getSaveGamePlayers() const;
+	std::string getSaveGameName() const;
 
 	const std::shared_ptr<cPlayerBasicData>& getLocalPlayer () const;
 	std::vector<std::shared_ptr<cPlayerBasicData>> getPlayers () const;
@@ -95,12 +96,11 @@ private:
 	cLineEdit* portLineEdit;
 
 	cImage* colorImage;
-
+protected:
 	std::shared_ptr<cPlayerBasicData> localPlayer;
 	std::shared_ptr<cStaticMap> staticMap;
 	std::shared_ptr<cGameSettings> gameSettings;
 
-	int saveGameNumber;
 	std::string saveGameName;
 	std::vector<cPlayerBasicData> saveGamePlayers;
 

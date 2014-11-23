@@ -87,11 +87,17 @@ void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBas
 	sendMessage (network, message);
 }
 
-void sendGameData (cTCP& network, const cStaticMap* map, const cGameSettings* settings, int saveGameNumber, const cPlayerBasicData* player)
+void sendGameData(cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::vector<cPlayerBasicData>& savePlayers, const std::string& saveGameName, const cPlayerBasicData* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
-	message->pushInt32 (saveGameNumber);
+	message->pushString(saveGameName);
+	for (auto player : savePlayers)
+	{
+		message->pushInt32(player.getNr());
+		message->pushString(player.getName());
+	}
+	message->pushInt32 (savePlayers.size());
 
 	if (map)
 	{
