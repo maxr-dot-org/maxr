@@ -49,7 +49,7 @@ cWindowNetworkLobby::cWindowNetworkLobby (const std::string title, bool disableI
 	mapImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (33, 106)));
 	mapNameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (90 - 70, 65), getPosition () + cPosition (90 + 70, 65 + 10)), "", FONT_LATIN_NORMAL, eAlignmentType::CenterHorizontal));
 
-	settingsTextLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (192, 52), getPosition () + cPosition (192 + 246, 52 + 146)), ""));
+	settingsTextLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (192, 52), getPosition () + cPosition (192 + 246, 52 + 175)), ""));
 	settingsTextLabel->setWordWrap (true);
 
 	chatLineEdit = addChild (std::make_unique<cLineEdit> (cBox<cPosition> (getPosition () + cPosition (20, 424), getPosition () + cPosition (20 + 430, 424 + 10))));
@@ -159,6 +159,9 @@ void cWindowNetworkLobby::updateSettingsText ()
 			text += lngPack.i18n ("Text~Title~BridgeHead") + ": " + gameSettingsBridgeheadTypeToString (gameSettings->getBridgeheadType(), true) + "\n";
 			text += std::string ("Clans") + ": " + (gameSettings->getClansEnabled() ? lngPack.i18n ("Text~Option~On") : lngPack.i18n ("Text~Option~Off")) + "\n";
 			text += lngPack.i18n ("Text~Title~Game_Type") + ": " + gameSettingsGameTypeToString (gameSettings->getGameType (), true) + "\n";
+			// TODO: translate
+			text += "Turn limit: " + (gameSettings->isTurnLimitActive () ? iToStr (gameSettings->getTurnLimit ().count ()) + "s" : "No Limit") + "\n";
+			text += "Turn end: " + (gameSettings->isTurnEndDeadlineActive () ? iToStr (gameSettings->getTurnEndDeadline ().count ()) + "s" : "No Limit") + "\n";
 		}
 		else text += lngPack.i18n ("Text~Multiplayer~Option_NoSet") + "\n";
 	}
