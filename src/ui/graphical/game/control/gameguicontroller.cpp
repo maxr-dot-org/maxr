@@ -1124,7 +1124,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 		{
 			gameGui->getChatBox ().addChatMessage ("",
 												   "Available commands:\n"
-												   "- /help"
+												   "- /help\n"
 												   "- /base [client/server/off]\n"
 												   "- /sentry [server/off]\n"
 												   "- /fx [on/off]\n"
@@ -1139,8 +1139,8 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 												   "- /kick <playerID>\n"
 												   "- /credits <playerID> <credits>\n"
 												   "- /disconnect <playerID>\n"
-												   "- /deadline <seconds>\n"
-												   "- /limit <seconds>\n"
+												   "- /turnend <seconds>\n"
+												   "- /turnlimit <seconds>\n"
 												   "- /resync <playerID>\n"
 												   "- /mark\n"
 												   "- /color <colorNum>\n"
@@ -1285,21 +1285,21 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				message->pushInt16 (player->getSocketNum ());
 				server->pushEvent (std::move (message));
 			}
-			else if (command.compare (0, 9, "/deadline") == 0)
+			else if (command.compare (0, 8, "/turnend") == 0)
 			{
 				if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
 				}
-				if (command.length () <= 9)
+				if (command.length () <= 8)
 				{
 					gameGui->getGameMessageList().addMessage ("Wrong parameter");
 					return;
 				}
 
-				const int i = atoi (command.substr (9, command.length ()).c_str ());
-				if (i == 0 && command[10] != '0')
+				const int i = atoi (command.substr (8, command.length ()).c_str ());
+				if (i == 0 && command[9] != '0')
 				{
 					gameGui->getGameMessageList().addMessage ("Wrong parameter");
 					return;
@@ -1317,21 +1317,21 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 				}
 				Log.write ("Deadline changed to " + iToStr (i), cLog::eLOG_TYPE_INFO);
 			}
-			else if (command.compare (0, 6, "/limit") == 0)
+			else if (command.compare (0, 10, "/turnlimit") == 0)
 			{
 				if (!server)
 				{
 					gameGui->getGameMessageList().addMessage ("Command can only be used by Host");
 					return;
 				}
-				if (command.length () <= 6)
+				if (command.length () <= 10)
 				{
 					gameGui->getGameMessageList().addMessage ("Wrong parameter");
 					return;
 				}
 
-				const int i = atoi (command.substr (6, command.length ()).c_str ());
-				if (i == 0 && command[7] != '0')
+				const int i = atoi (command.substr (10, command.length ()).c_str ());
+				if (i == 0 && command[11] != '0')
 				{
 					gameGui->getGameMessageList().addMessage ("Wrong parameter");
 					return;
