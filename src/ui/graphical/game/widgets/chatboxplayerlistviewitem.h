@@ -34,9 +34,11 @@ class cPlayer;
 class cChatBoxPlayerListViewItem : public cAbstractListViewItem
 {
 public:
-    explicit cChatBoxPlayerListViewItem (const cPlayer& player);
+	explicit cChatBoxPlayerListViewItem (const cPlayer& player);
 
-    const cPlayer& getPlayer () const;
+	const cPlayer& getPlayer () const;
+
+	int getPlayerNumber () const;
 
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
@@ -46,7 +48,7 @@ private:
 	cImage* colorImage;
 	cImage* readyImage;
 
-    const cPlayer* player;
+	const cPlayer* player;
 
 	void updatePlayerName ();
 	void updatePlayerColor ();

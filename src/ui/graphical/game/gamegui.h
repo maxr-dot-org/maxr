@@ -33,7 +33,9 @@ class cHud;
 class cGameMapWidget;
 class cMiniMapWidget;
 class cGameMessageListView;
-class cChatBox;
+template<typename, typename> class cChatBox;
+class cLobbyChatBoxListViewItem;
+class cChatBoxPlayerListViewItem;
 class cLabel;
 class cDebugOutputWidget;
 class cStaticMap;
@@ -78,8 +80,8 @@ public:
 	cMiniMapWidget& getMiniMap ();
 	const cMiniMapWidget& getMiniMap () const;
 
-	cChatBox& getChatBox ();
-	const cChatBox& getChatBox () const;
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>& getChatBox ();
+	const cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>& getChatBox () const;
 
 	cGameMessageListView& getGameMessageList ();
 	const cGameMessageListView& getGameMessageList () const;
@@ -122,7 +124,7 @@ private:
 	cGameMapWidget* gameMap;
 	cMiniMapWidget* miniMap;
 	cGameMessageListView* messageList;
-	cChatBox* chatBox;
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxPlayerListViewItem>* chatBox;
 	cDebugOutputWidget* debugOutput;
 
 	cLabel* primiaryInfoLabel;

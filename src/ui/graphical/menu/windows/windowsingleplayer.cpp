@@ -172,7 +172,7 @@ void cWindowSinglePlayer::newGameClicked ()
 						game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
 						game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
 
-						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
+						auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
 
 						signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close (); });
 						windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)
@@ -202,7 +202,7 @@ void cWindowSinglePlayer::newGameClicked ()
 					game->setLandingUnits (windowLandingUnitSelection->getLandingUnits ());
 					game->setUnitUpgrades (windowLandingUnitSelection->getUnitUpgrades ());
 
-					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap));
+					auto windowLandingPositionSelection = application->show (std::make_shared<cWindowLandingPositionSelection> (staticMap, false));
 
 					signalConnectionManager.connect (windowLandingPositionSelection->canceled, [windowLandingPositionSelection]() { windowLandingPositionSelection->close (); });
 					windowLandingPositionSelection->selectedPosition.connect ([=](cPosition landingPosition)

@@ -26,6 +26,9 @@
 #include "ui/graphical/menu/windows/windowgamesettings/gamesettings.h"
 #include "ui/graphical/menu/dialogs/dialogok.h"
 #include "ui/graphical/menu/dialogs/dialogyesno.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
+#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
+#include "ui/graphical/game/widgets/chatbox.h"
 #include "game/startup/network/client/networkclientgamenew.h"
 #include "game/startup/network/client/networkclientgamereconnection.h"
 #include "game/startup/network/client/networkclientgamesaved.h"
@@ -85,6 +88,7 @@ void cMenuControllerMultiplayerClient::reset ()
 	network = nullptr;
 	windowNetworkLobby = nullptr;
 	windowLandingPositionSelection = nullptr;
+	playersLandingStatus.clear ();
 	newGame = nullptr;
 	application.removeRunnable (*this);
 }
@@ -263,15 +267,37 @@ void cMenuControllerMultiplayerClient::startLandingPositionSelection ()
 {
 	if (!newGame || !newGame->getStaticMap () || !network) return;
 
-	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (newGame->getStaticMap ());
+	windowLandingPositionSelection = std::make_shared<cWindowLandingPositionSelection> (newGame->getStaticMap (), true);
+
+	signalConnectionManager.connect (windowLandingPositionSelection->opened, [this]()
+	{
+		sendInLandingPositionSelectionStatus (*network, newGame->getLocalPlayer (), true, nullptr);
+	});
+	signalConnectionManager.connect (windowLandingPositionSelection->closed, [this]()
+	{
+		sendInLandingPositionSelectionStatus (*network, newGame->getLocalPlayer (), false, nullptr);
+	});
+
+	for (const auto& status : playersLandingStatus)
+	{
+		windowLandingPositionSelection->getChatBox ()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*status));
+	}
+
 	application.show (windowLandingPositionSelection);
 
-	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this]() { windowLandingPositionSelection->close (); });
+	signalConnectionManager.connect (windowLandingPositionSelection->canceled, [this](){ windowLandingPositionSelection->close (); });
 	signalConnectionManager.connect (windowLandingPositionSelection->selectedPosition, [this](cPosition landingPosition)
 	{
 		newGame->setLocalPlayerLandingPosition (landingPosition);
 
 		sendLandingPosition (*network, landingPosition, newGame->getLocalPlayer());
+	});
+	signalConnectionManager.connect (windowLandingPositionSelection->getChatBox ()->commandEntered, [this](const std::string& command)
+	{
+		const auto& localPlayer = newGame->getLocalPlayer ();
+		windowLandingPositionSelection->getChatBox ()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (localPlayer.getName (), command));
+		cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
+		sendMenuChatMessage (*network, command, nullptr, localPlayer.getNr ());
 	});
 }
 
@@ -309,6 +335,8 @@ void cMenuControllerMultiplayerClient::handleNetMessage (cNetMessage& message)
 	case MU_MSG_ALL_LANDED: handleNetMessage_MU_MSG_ALL_LANDED (message); break;
 	case GAME_EV_REQ_RECON_IDENT: handleNetMessage_GAME_EV_REQ_RECON_IDENT (message); break;
 	case GAME_EV_RECONNECT_ANSWER: handleNetMessage_GAME_EV_RECONNECT_ANSWER (message); break;
+	case MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS: handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (message); break;
+	case MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION: handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION (message); break;
     default:
         Log.write ("Client Menu Controller: Can not handle message type " + message.getTypeAsString (), cLog::eLOG_TYPE_NET_ERROR);
         break;
@@ -335,17 +363,36 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_CHAT (cNetMessage
 
 	if (!network || !windowNetworkLobby) return;
 
-	auto players = windowNetworkLobby->getPlayers ();
-	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == message.iPlayerNr; });
-	
-	const auto playerName = iter == players.end () ? "unknown" : (*iter)->getName ();
-
 	bool translationText = message.popBool ();
 	auto chatText = message.popString ();
-	if (translationText) windowNetworkLobby->addInfoEntry (lngPack.i18n (chatText));
+
+	auto players = windowNetworkLobby->getPlayers ();
+	auto iter = std::find_if (players.begin (), players.end (), [=](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == message.iPlayerNr; });
+
+	const auto playerName = iter == players.end () ? "unknown" : (*iter)->getName ();
+
+	if (windowLandingPositionSelection)
+	{
+		if (translationText)
+		{
+			windowLandingPositionSelection->getChatBox ()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (lngPack.i18n (chatText)));
+		}
+		else
+		{
+			windowLandingPositionSelection->getChatBox ()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerName, chatText));
+			cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
+		}
+	}
 	else
 	{
-		windowNetworkLobby->addChatEntry (playerName, chatText);
+		if (translationText)
+		{
+			windowNetworkLobby->addInfoEntry (lngPack.i18n (chatText));
+		}
+		else
+		{
+			windowNetworkLobby->addChatEntry (playerName, chatText);
+		}
 	}
 }
 
@@ -610,6 +657,55 @@ void cMenuControllerMultiplayerClient::handleNetMessage_GAME_EV_RECONNECT_ANSWER
 		windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
 		network->close (0);
 	}
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS);
+
+	if (!network || !windowNetworkLobby) return;
+
+	auto players = windowNetworkLobby->getPlayers ();
+
+	const auto isIn = message.popBool ();
+	const auto playerNr = message.popInt32 ();
+
+	if (isIn)
+	{
+		auto players = windowNetworkLobby->getPlayers ();
+		auto iter = std::find_if (players.begin (), players.end (), [playerNr](const std::shared_ptr<cPlayerBasicData>& player){ return player->getNr () == playerNr; });
+
+		assert (iter != players.end ());
+
+		const auto& player = **iter;
+
+		playersLandingStatus.push_back (std::make_unique<cPlayerLandingStatus>(player));
+		if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox ()->addPlayerEntry (std::make_unique<cChatBoxLandingPlayerListViewItem> (*playersLandingStatus.back ()));
+	}
+	else
+	{
+		if (windowLandingPositionSelection) windowLandingPositionSelection->getChatBox ()->removePlayerEntry (playerNr);
+		playersLandingStatus.erase (std::remove_if (playersLandingStatus.begin (), playersLandingStatus.end (), [playerNr](const std::unique_ptr<cPlayerLandingStatus>& status){ return status->getPlayer ().getNr () == playerNr; }), playersLandingStatus.end ());
+	}
+}
+
+//------------------------------------------------------------------------------
+void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION (cNetMessage& message)
+{
+	assert (message.iType == MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION);
+
+	if (!network || !windowNetworkLobby) return;
+
+	const auto playerNr = message.popInt32 ();
+
+	auto iter = std::find_if (playersLandingStatus.begin (), playersLandingStatus.end (), [playerNr](const std::unique_ptr<cPlayerLandingStatus>& entry){ return entry->getPlayer().getNr () == playerNr; });
+
+	assert (iter != playersLandingStatus.end ());
+
+	auto& playerLandingStatus = **iter;
+	
+	playerLandingStatus.setHasSelectedPosition (true);
 }
 
 //------------------------------------------------------------------------------

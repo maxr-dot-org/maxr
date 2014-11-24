@@ -34,6 +34,9 @@ class cPosition;
 class cLandingPositionSelectionMap;
 class cStaticMap;
 class cAnimationTimer;
+template<typename, typename> class cChatBox;
+class cChatBoxLandingPlayerListViewItem;
+class cLobbyChatBoxListViewItem;
 
 struct sTerrain;
 
@@ -41,7 +44,7 @@ struct sTerrain;
 class cWindowLandingPositionSelection : public cWindow
 {
 public:
-	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap);
+	cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap, bool withChatBox);
 	~cWindowLandingPositionSelection ();
 
 	const cPosition& getSelectedPosition () const;
@@ -49,6 +52,8 @@ public:
 	void applyReselectionState (eLandingPositionState state);
 
 	void setInfoMessage (const std::string& message);
+
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* getChatBox ();
 
 	void allowSelection ();
 	void disallowSelection ();
@@ -63,6 +68,9 @@ public:
 	virtual void handleDeactivated (cApplication& application, bool removed) MAXR_OVERRIDE_FUNCTION;
 
 	virtual bool handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset) MAXR_OVERRIDE_FUNCTION;
+
+	mutable cSignal<void ()> opened;
+	mutable cSignal<void ()> closed;
 private:
 	cSignalConnectionManager signalConnectionManager;
 	cSignalConnectionManager circleAnimationConnectionManager;
@@ -78,6 +86,7 @@ private:
 	cPushButton* backButton;
 	cLabel* infoLabel;
 	cImage* circlesImage;
+	cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* chatBox;
 
 	float circleAnimationState;
 

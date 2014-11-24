@@ -53,6 +53,8 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 
 	playerData.needNewPosition = false;
 
+    landingPositionSet (player, landingPosition);
+
 	// wait for all players to choose at least once
 	for (size_t i = 0; i != landingPositions.size (); ++i)
 	{
@@ -84,6 +86,19 @@ bool cLandingPositionManager::setLandingPosition (const cPlayerBasicData& player
 		return true;
 	}
 	return false;
+}
+
+//------------------------------------------------------------------------------
+void cLandingPositionManager::deleteLandingPosition (const cPlayerBasicData& player)
+{
+	auto& playerData = getLandingPositionData (player);
+
+	playerData.lastLandingPosition = cPosition (0, 0);
+	playerData.landingPosition = cPosition (0, 0);
+
+	playerData.needNewPosition = true;
+
+	playerData.state = eLandingPositionState::Unknown;
 }
 
 //------------------------------------------------------------------------------

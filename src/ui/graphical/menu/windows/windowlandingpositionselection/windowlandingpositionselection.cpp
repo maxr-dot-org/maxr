@@ -21,10 +21,14 @@
 #include "ui/graphical/menu/widgets/image.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/pushbutton.h"
+#include "ui/graphical/menu/widgets/checkbox.h"
 #include "ui/graphical/menu/widgets/special/landingpositionselectionmap.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
+#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "ui/graphical/game/hud.h"
 #include "ui/graphical/application.h"
 #include "ui/graphical/game/animations/animationtimer.h"
+#include "ui/graphical/game/widgets/chatbox.h"
 #include "sound.h"
 #include "video.h"
 #include "main.h"
@@ -37,7 +41,7 @@
 #include "utility/random.h"
 
 //------------------------------------------------------------------------------
-cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_) :
+cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_ptr<cStaticMap> staticMap_, bool withChatBox) :
 	cWindow (nullptr),
 	staticMap (std::move(staticMap_)),
 	animationTimer (std::make_shared<cAnimationTimer> ()),
@@ -64,6 +68,28 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 	infoLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (cPosition (cHud::panelLeftWidth, cHud::panelTopHeight), hudImage->getEndPosition () - cPosition (cHud::panelRightWidth, cHud::panelBottomHeight)), "", FONT_LATIN_BIG, toEnumFlag (eAlignmentType::Center)));
 	infoLabel->setWordWrap (true);
 	infoLabel->disable ();
+
+	if (withChatBox)
+	{
+		chatBox = addChild (std::make_unique<cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>> (cBox<cPosition> (cPosition (cHud::panelLeftWidth + 4, hudImage->getEndPosition ().y () - cHud::panelBottomHeight - 12 - 100), hudImage->getEndPosition () - cPosition (cHud::panelRightWidth + 4, cHud::panelBottomHeight + 12))));
+
+		// TODO: translate
+		auto toggleChatBoxButton = addChild (std::make_unique<cCheckBox> (cPosition (35, hudImage->getEndPosition ().y () - 65), "Chat", FONT_LATIN_NORMAL, eCheckBoxTextAnchor::Left, eCheckBoxType::Angular));
+		toggleChatBoxButton->setChecked (true);
+		signalConnectionManager.connect (toggleChatBoxButton->toggled, [this, toggleChatBoxButton]()
+		{
+			if (toggleChatBoxButton->isChecked ())
+			{
+				chatBox->enable ();
+				chatBox->show ();
+			}
+			else
+			{
+				chatBox->disable ();
+				chatBox->hide ();
+			}
+		});
+	}
 
 	signalConnectionManager.connect (selectedPosition, [&](const cPosition& position){ lastSelectedPosition = position; });
 
@@ -99,6 +125,12 @@ void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionSta
 void cWindowLandingPositionSelection::setInfoMessage (const std::string& message)
 {
 	infoLabel->setText (message);
+}
+
+//------------------------------------------------------------------------------
+cChatBox<cLobbyChatBoxListViewItem, cChatBoxLandingPlayerListViewItem>* cWindowLandingPositionSelection::getChatBox ()
+{
+	return chatBox;
 }
 
 //------------------------------------------------------------------------------
@@ -140,9 +172,10 @@ void cWindowLandingPositionSelection::unlockBack ()
 //------------------------------------------------------------------------------
 void cWindowLandingPositionSelection::handleActivated (cApplication& application, bool firstTime)
 {
-    if (firstTime) cSoundDevice::getInstance ().playVoice (getRandom (VoiceData.VOILanding));
+	if (firstTime) cSoundDevice::getInstance ().playVoice (getRandom (VoiceData.VOILanding));
 	application.addRunnable (animationTimer);
 	cWindow::handleActivated (application, firstTime);
+	if (firstTime) opened ();
 }
 
 //------------------------------------------------------------------------------
@@ -150,12 +183,17 @@ void cWindowLandingPositionSelection::handleDeactivated (cApplication& applicati
 {
 	application.removeRunnable (*animationTimer);
 	cWindow::handleDeactivated (application, removed);
+	if (removed) closed ();
 }
 
 //------------------------------------------------------------------------------
 bool cWindowLandingPositionSelection::handleMouseMoved (cApplication& application, cMouse& mouse, const cPosition& offset)
 {
-	if (!selectionAllowed)
+	if (chatBox && !chatBox->isHidden () && chatBox->isAt (mouse.getPosition ()))
+	{
+		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::Hand));
+	}
+	else if (!selectionAllowed)
 	{
 		mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::No));
 	}

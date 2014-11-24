@@ -175,3 +175,22 @@ void sendLandingPosition (cTCP& network, const cPosition& position, const cPlaye
 
 	sendMessage (network, msg);
 }
+
+//------------------------------------------------------------------------------
+void sendInLandingPositionSelectionStatus (cTCP& network, const cPlayerBasicData& player, bool isIn, const cPlayerBasicData* receiver)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS);
+	msg->pushInt32 (player.getNr ());
+	msg->pushBool (isIn);
+
+	sendMessage (network, msg, receiver);
+}
+
+//------------------------------------------------------------------------------
+void sendPlayerHasSelectedLandingPosition (cTCP& network, const cPlayerBasicData& player, const cPlayerBasicData* receiver)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION);
+	msg->pushInt32 (player.getNr ());
+
+	sendMessage (network, msg, receiver);
+}

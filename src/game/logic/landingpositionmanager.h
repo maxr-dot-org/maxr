@@ -68,13 +68,24 @@ public:
 	 * @param player The player to set a new landing position for.
 	 * @param landingPosition The new landing position to set for the player.
 	 * @return true if the passed player was the last one that had an uninitialized or
-	 *         invalid landing position and and now all positions are valid.
+	 *         invalid landing position and now all positions are valid.
 	 *         false if a player needs to select a new landing position, which is the case when
 	 *         he has not selected any position yet, or his last position was in conflict with
 	 *         the position of an other player.
 	 */
 	bool setLandingPosition (const cPlayerBasicData& player, const cPosition& landingPosition);
 
+	/**
+	 * Deletes the landing position of a player.
+	 *
+	 * @param player The player whose landing position to delete.
+	 */
+	void deleteLandingPosition (const cPlayerBasicData& player);
+
+	/**
+	 * Will be triggered when ever a player has selected a new landing position.
+	 */
+	cSignal<void (const cPlayerBasicData&, const cPosition&)> landingPositionSet;
 	/**
 	 * Will be triggered by @ref setLandingPosition when the landing position of a player has changed.
 	 * The arguments are the players whose state has changed and his new state.

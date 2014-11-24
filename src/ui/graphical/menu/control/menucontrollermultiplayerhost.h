@@ -30,10 +30,12 @@
 
 class cApplication;
 class cWindowNetworkLobbyHost;
+class cWindowLandingPositionSelection;
 class cNetworkHostGameNew;
 class cNetMessage;
 class cPlayerBasicData;
 class cMapSender;
+class cPlayerLandingStatus;
 
 class cTCP;
 
@@ -59,6 +61,8 @@ private:
 
 	std::shared_ptr<cWindowNetworkLobbyHost> windowNetworkLobby;
 
+	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
+
 	std::shared_ptr<cLandingPositionManager> landingPositionManager;
 
 	std::shared_ptr<cNetworkHostGameNew> newGame;
@@ -68,6 +72,8 @@ private:
 	std::string triedLoadMapName;
 
 	std::vector<std::unique_ptr<cMapSender>> mapSenders;
+
+	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;
 
 	void reset ();
 
@@ -104,6 +110,7 @@ private:
 	void handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage& message);
 	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage& message);
 	void handleNetMessage_MU_MSG_LANDING_POSITION (cNetMessage& message);
+	void handleNetMessage_MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS (cNetMessage& message);
 
 	void saveOptions ();
 };

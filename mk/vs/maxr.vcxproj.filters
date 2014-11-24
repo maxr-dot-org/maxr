@@ -522,9 +522,6 @@
     <ClCompile Include="..\..\src\game\logic\landingpositionmanager.cpp">
       <Filter>src\game\logic</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\chatbox.cpp">
-      <Filter>src\ui\graphical\game\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\chatboxplayerlistviewitem.cpp">
       <Filter>src\ui\graphical\game\widgets</Filter>
     </ClCompile>
@@ -917,6 +914,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ui\graphical\framecounter.cpp">
       <Filter>src\ui\graphical</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\graphical\menu\widgets\special\chatboxlandingplayerlistviewitem.cpp">
+      <Filter>src\ui\graphical\menu\widgets\special</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1864,6 +1864,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ui\graphical\framecounter.h">
       <Filter>src\ui\graphical</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\chatboxlandingplayerlistviewitem.h">
+      <Filter>src\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

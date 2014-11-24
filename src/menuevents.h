@@ -50,6 +50,8 @@ enum eMenuMessages
 	MU_MSG_LANDING_STATE,       // informs a client about the state of the landing position selection he is currently in
 	MU_MSG_LANDING_POSITION,	// landing position during landing position selection
 	MU_MSG_ALL_LANDED,          // all players have selected there landing points and clients can start game
+	MU_MSG_IN_LANDING_POSITION_SELECTION_STATUS,
+	MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION
 };
 
 void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const cPlayerBasicData* player = NULL, int fromPlayerNr = -1, bool translationText = false);
@@ -75,5 +77,9 @@ void sendLandingState (cTCP& network, eLandingPositionState state, const cPlayer
 void sendAllLanded (cTCP& network);
 
 void sendLandingPosition (cTCP& network, const cPosition& position, const cPlayerBasicData& player);
+
+void sendInLandingPositionSelectionStatus (cTCP& network, const cPlayerBasicData& player, bool isIn, const cPlayerBasicData* receiver);
+
+void sendPlayerHasSelectedLandingPosition (cTCP& network, const cPlayerBasicData& player, const cPlayerBasicData* receiver);
 
 #endif // menueventsH

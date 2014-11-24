@@ -27,6 +27,8 @@
 #include "ui/graphical/game/widgets/gamemessagelistview.h"
 #include "ui/graphical/game/widgets/chatbox.h"
 #include "ui/graphical/game/widgets/debugoutputwidget.h"
+#include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
+#include "ui/graphical/menu/widgets/special/lobbychatboxlistviewitem.h"
 
 #include "ui/graphical/game/animations/animationtimer.h"
 
@@ -1122,7 +1124,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 	{
 		if (command.compare ("/help") == 0)
 		{
-			gameGui->getChatBox ().addChatMessage ("",
+			gameGui->getChatBox ().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem>("",
 												   "Available commands:\n"
 												   "- /help\n"
 												   "- /base [client/server/off]\n"
@@ -1148,7 +1150,7 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 												   "- /survey\n"
 												   "- /pause\n"
 												   "- /resume"
-												   );
+												   ));
 		}
 		//
 		// commands that control the GUI itself
@@ -1469,16 +1471,16 @@ void cGameGuiController::handleReport (const cSavedReport& report)
 	if (report.getType () == eSavedReportType::Chat)
 	{
 		auto& savedChatReport = static_cast<const cSavedReportChat&>(report);
-		auto player = gameGui->getChatBox ().getPlayerFromNumber (savedChatReport.getPlayerNumber ());
+		auto playerEntry = gameGui->getChatBox ().getPlayerEntryFromNumber (savedChatReport.getPlayerNumber ());
 
-		if (player)
+		if (playerEntry)
 		{
-			gameGui->getChatBox ().addChatMessage (*player, savedChatReport.getText ());
+			gameGui->getChatBox ().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (playerEntry->getPlayer ().getName(), savedChatReport.getText ()));
 			cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
 		}
 		else // message from non in-game player (e.g. dedicated server)
 		{
-			gameGui->getChatBox ().addChatMessage (savedChatReport.getPlayerName (), savedChatReport.getText ());
+			gameGui->getChatBox ().addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (savedChatReport.getPlayerName (), savedChatReport.getText ()));
 		}
 	}
 	else if (report.hasPosition ())

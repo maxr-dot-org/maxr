@@ -242,7 +242,7 @@ void cMenuControllerMultiplayerHotSeat::selectLandingPosition (size_t playerInde
 {
 	if (!game) return;
 
-	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection> (game->getStaticMap ());
+	playerLandingSelectionWindows[playerIndex] = std::make_shared<cWindowLandingPositionSelection> (game->getStaticMap (), false);
 
 	auto windowLandingPositionSelection = application.show (playerLandingSelectionWindows[playerIndex]);
 

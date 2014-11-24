@@ -274,7 +274,6 @@
     <ClCompile Include="..\..\src\ui\graphical\game\unitlocklist.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\unitselection.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\unitselectionbox.cpp" />
-    <ClCompile Include="..\..\src\ui\graphical\game\widgets\chatbox.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\chatboxplayerlistviewitem.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\debugoutputwidget.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\game\widgets\gamemapwidget.cpp" />
@@ -314,6 +313,7 @@
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\slider.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\sliderhandle.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\special\buildspeedhandlerwidget.cpp" />
+    <ClCompile Include="..\..\src\ui\graphical\menu\widgets\special\chatboxlandingplayerlistviewitem.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\special\lobbychatboxlistviewitem.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\special\landingpositionselectionmap.cpp" />
     <ClCompile Include="..\..\src\ui\graphical\menu\widgets\special\lobbyplayerlistviewitem.cpp" />
@@ -577,6 +577,7 @@
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\slider.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\sliderhandle.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\buildspeedhandlerwidget.h" />
+    <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\chatboxlandingplayerlistviewitem.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\lobbychatboxlistviewitem.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\landingpositionselectionmap.h" />
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\lobbyplayerlistviewitem.h" />

@@ -17,68 +17,87 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ui/graphical/game/widgets/chatboxplayerlistviewitem.h"
+#include "ui/graphical/menu/widgets/special/chatboxlandingplayerlistviewitem.h"
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "game/data/player/player.h"
 
-//------------------------------------------------------------------------------
-cChatBoxPlayerListViewItem::cChatBoxPlayerListViewItem (const cPlayer& player_) :
-	cAbstractListViewItem (cPosition (50, 0)),
-	player (&player_)
-{
-	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
-
-	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
-
-	updatePlayerColor ();
-	updatePlayerFinishedTurn ();
-
-	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), getPosition () + cPosition (getSize ().x () - readyImage->getSize ().x (), readyImage->getSize ().y ())), player->getName ()));
-
-	fitToChildren ();
-
-	signalConnectionManager.connect (player->nameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
-	signalConnectionManager.connect (player->colorChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerColor, this));
-	signalConnectionManager.connect (player->hasFinishedTurnChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerFinishedTurn, this));
-	signalConnectionManager.connect (player->isRemovedFromGameChanged, std::bind (&cChatBoxPlayerListViewItem::updatePlayerName, this));
-}
 
 //------------------------------------------------------------------------------
-const cPlayer& cChatBoxPlayerListViewItem::getPlayer () const
+cPlayerLandingStatus::cPlayerLandingStatus (const cPlayerBasicData& player_) :
+	player (&player_),
+	selectedPosition (false)
+{}
+
+//------------------------------------------------------------------------------
+const cPlayerBasicData& cPlayerLandingStatus::getPlayer () const
 {
 	return *player;
 }
 
 //------------------------------------------------------------------------------
-int cChatBoxPlayerListViewItem::getPlayerNumber () const
+bool cPlayerLandingStatus::hasSelectedPosition () const
 {
-	return player->getNr ();
+	return selectedPosition;
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerName ()
+void cPlayerLandingStatus::setHasSelectedPosition (bool value)
 {
-	// TODO: find better way to show removed/lost/may be waiting/... players
-	// TODO: else at least: translate
-	nameLabel->setText (player->getIsRemovedFromGame() ? player->getName () + " (out)" : player->getName());
+	std::swap (selectedPosition, value);
+	if (value != selectedPosition) hasSelectedPositionChanged ();
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerColor ()
+cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPlayerLandingStatus& playerLandingStatus_) :
+	cAbstractListViewItem (cPosition (50, 0)),
+	playerLandingStatus (&playerLandingStatus_)
+{
+	const auto& player = playerLandingStatus->getPlayer ();
+
+	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
+
+	colorImage = addChild (std::make_unique<cImage> (getPosition ()));
+
+	updatePlayerColor ();
+	updatePlayerHasSelectedPosition ();
+
+	nameLabel = addChild (std::make_unique<cLabel> (cBox<cPosition> (getPosition () + cPosition (colorImage->getEndPosition ().x () + 4, 0), getPosition () + cPosition (getSize ().x () - readyImage->getSize ().x (), readyImage->getSize ().y ())), player.getName ()));
+
+	fitToChildren ();
+
+	signalConnectionManager.connect (player.nameChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerName, this));
+	signalConnectionManager.connect (player.colorChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerColor, this));
+	signalConnectionManager.connect (playerLandingStatus->hasSelectedPositionChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition, this));
+}
+
+//------------------------------------------------------------------------------
+int cChatBoxLandingPlayerListViewItem::getPlayerNumber () const
+{
+	return playerLandingStatus->getPlayer ().getNr ();
+}
+
+//------------------------------------------------------------------------------
+void cChatBoxLandingPlayerListViewItem::updatePlayerName ()
+{
+	nameLabel->setText (playerLandingStatus->getPlayer().getName ());
+}
+
+//------------------------------------------------------------------------------
+void cChatBoxLandingPlayerListViewItem::updatePlayerColor ()
 {
 	SDL_Rect src = {0, 0, 10, 10};
 
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (player->getColor ().getTexture(), &src, colorSurface.get (), nullptr);
+	SDL_BlitSurface (playerLandingStatus->getPlayer().getColor ().getTexture (), &src, colorSurface.get (), nullptr);
 
 	colorImage->setImage (colorSurface.get ());
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn ()
+void cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition ()
 {
-	SDL_Rect src = {player->getHasFinishedTurn () ? 10 : 0, 0, 10, 10};
+	SDL_Rect src = {playerLandingStatus->hasSelectedPosition() ? 10 : 0, 0, 10, 10};
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
 	SDL_SetColorKey (readySurface.get (), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));
@@ -88,7 +107,7 @@ void cChatBoxPlayerListViewItem::updatePlayerFinishedTurn ()
 }
 
 //------------------------------------------------------------------------------
-void cChatBoxPlayerListViewItem::handleResized (const cPosition& oldSize)
+void cChatBoxLandingPlayerListViewItem::handleResized (const cPosition& oldSize)
 {
 	cAbstractListViewItem::handleResized (oldSize);
 
