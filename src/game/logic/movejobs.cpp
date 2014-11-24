@@ -597,7 +597,7 @@ void cServerMoveJob::release()
 
 bool cServerMoveJob::checkMove()
 {
-	bool bInSentryRange;
+	//bool bInSentryRange;
 	if (!Vehicle || !Waypoints || !Waypoints->next)
 	{
 		bFinished = true;
@@ -614,15 +614,15 @@ bool cServerMoveJob::checkMove()
 		return true;
 	}
 
-	bInSentryRange = Vehicle->InSentryRange (*server);
+	//bInSentryRange = Vehicle->InSentryRange (*server);
 
-	if (!Map->possiblePlace (*Vehicle, Waypoints->next->position) && !bInSentryRange)
+	if (!Map->possiblePlace (*Vehicle, Waypoints->next->position))// && !bInSentryRange)
 	{
 		server->sideStepStealthUnit (Waypoints->next->position, *Vehicle);
 	}
 
 	//when the next field is still blocked, inform the client
-	if (!Map->possiblePlace (*Vehicle, Waypoints->next->position) || bInSentryRange)    //TODO: bInSentryRange?? Why?
+	if (!Map->possiblePlace (*Vehicle, Waypoints->next->position))// || bInSentryRange)    //TODO: bInSentryRange?? Why?
 	{
 		Log.write (" Server: Next point is blocked: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->position.x()) + ", Y: " + iToStr (Waypoints->next->position.y()), LOG_TYPE_NET_DEBUG);
 		// if the next point would be the last, finish the job here

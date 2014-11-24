@@ -83,6 +83,7 @@ public:
 
 	cAttackJob(cServer* server, cUnit* aggressor, const cPosition& targetPosition);
 	cAttackJob(cClient* client, cNetMessage& message);
+	~cAttackJob();
 
 	std::unique_ptr<cNetMessage> serialize() const;
 	void run();

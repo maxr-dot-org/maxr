@@ -23,18 +23,6 @@
 //TODO: test alien attack (gound & air)
 //TODO: load/save attackjobs + isAttacking/isAttacked
 
-/*tests:
-+ angreifer auﬂer sichtweite
-+ ziel auﬂer sichtweite
-- angreifer unsichtbar
-- ziel unsichtbar
-- sentry
-- mehrfaches Sentry auf ein Feld
-- sentry einer Unit auf mehrere Ziele
-- sounds nur bei sichtbaren Quellen
-
-*/
-
 
 //--------------------------------------------------------------------------
 cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const cMap& map, cPlayer* owner)
@@ -84,16 +72,16 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 
 void cAttackJob::runAttackJobs(std::vector<cAttackJob*>& attackJobs)
 {
-	for (auto &attackJob : attackJobs)
+	auto attackJobsTemp = attackJobs;
+	for (auto attackJob : attackJobsTemp)
 	{
-		attackJob->run();
+		attackJob->run(); //this can add new items to 'attackjobs'
 		if (attackJob->finished())
 		{
 			delete attackJob;
-			attackJob = NULL;
+			attackJobs.erase(std::find(attackJobs.begin(), attackJobs.end(), attackJob));
 		}
 	}
-	attackJobs.erase(std::remove(attackJobs.begin(), attackJobs.end(), static_cast<cAttackJob*> (NULL)), attackJobs.end());
 }
 
 //--------------------------------------------------------------------------
@@ -161,6 +149,23 @@ cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
 
 	lockTarget();
 
+}
+
+cAttackJob::~cAttackJob()
+{
+	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
+	// for example a plane flies on the target field and takes the shot in place of the original plane
+	for (auto unitId : lockedTargets)
+	{
+		cUnit* unit;
+		if (server)
+			unit = server->getUnitFromID(unitId);
+		else
+			unit = client->getUnitFromID(unitId);
+
+		if (unit)
+			unit->setIsBeeinAttacked(false);
+	}
 }
 
 std::unique_ptr<cNetMessage> cAttackJob::serialize () const
@@ -479,25 +484,6 @@ bool cAttackJob::impact()
 	else
 		destroyed = impactSingle (targetPosition);
 
-
-	auto aggressor = getAggressor();
-	if (aggressor)
-		aggressor->setAttacking(false);
-
-	// unlock targets in case they were locked at the beginning of the attack, but are not hit by the impact
-	// for example a plane flies on the target field and takes the shot in place of the original plane
-	for (auto unitId : lockedTargets)
-	{
-		cUnit* unit;
-		if (server)
-			unit = server->getUnitFromID(unitId);
-		else
-			unit = client->getUnitFromID(unitId);
-		
-		if (unit)
-			unit->setIsBeeinAttacked (false);
-	}
-
 	return destroyed;
 }
 
@@ -604,7 +590,6 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 		}
 	}
 
-	auto aggressor = getAggressor();
 	if (!destroyed && client)
 	{
 		bool playSound = client->getActivePlayer().canSeeAt(targetPosition);
@@ -614,6 +599,10 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 			bigTarget = target->data.isBig;
 		client->addFx(std::make_unique<cFxHit>(position * 64 + offset + cPosition(32, 32), targetHit, bigTarget), playSound);
 	}
+
+	auto aggressor = getAggressor();
+	if (aggressor)
+		aggressor->setAttacking(false);
 
 	//make message
 	if (target)
@@ -633,6 +622,16 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 	else
 		Log.write (std::string (server ? " Server: " : " Client: ") + " AttackJob Impact. Target: none (" + iToStr (targetPosition.x ()) + "," + iToStr (targetPosition.y ()) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 
+	if (server)
+	{
+		// check whether a following sentry mode attack is possible
+		if (target && target->isAVehicle() && !destroyed)
+			static_cast<cVehicle*> (target)->InSentryRange(*server);
+		
+		// check whether the aggressor is in sentry range
+		if (aggressor && aggressor->isAVehicle())
+			static_cast<cVehicle*> (aggressor)->InSentryRange(*server);
+	}
 
 	return destroyed;
 }
