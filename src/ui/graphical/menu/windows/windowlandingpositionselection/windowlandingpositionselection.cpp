@@ -90,6 +90,10 @@ cWindowLandingPositionSelection::cWindowLandingPositionSelection (std::shared_pt
 			}
 		});
 	}
+	else
+	{
+		chatBox = nullptr;
+	}
 
 	signalConnectionManager.connect (selectedPosition, [&](const cPosition& position){ lastSelectedPosition = position; });
 
