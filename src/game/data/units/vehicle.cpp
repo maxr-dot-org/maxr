@@ -84,7 +84,7 @@ cVehicle::cVehicle (const sUnitData& v, cPlayer* Owner, unsigned int ID) :
 	moving = false;
 	MoveJobActive = false;
 	BuildPath = false;
-	bigBetonAlpha = 0;
+	bigBetonAlpha = 254;
 
 	DamageFXPointX = random (7) + 26 - 3;
 	DamageFXPointY = random (7) + 26 - 3;
