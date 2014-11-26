@@ -673,6 +673,7 @@
     <ClInclude Include="..\..\src\utility\autosurface.h" />
     <ClInclude Include="..\..\src\utility\box.h" />
     <ClInclude Include="..\..\src\utility\color.h" />
+    <ClInclude Include="..\..\src\utility\comparison.h" />
     <ClInclude Include="..\..\src\utility\dependentfalse.h" />
     <ClInclude Include="..\..\src\utility\deref.h" />
     <ClInclude Include="..\..\src\utility\drawing.h" />

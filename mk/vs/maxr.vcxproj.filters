@@ -1868,6 +1868,9 @@
     <ClInclude Include="..\..\src\ui\graphical\menu\widgets\special\chatboxlandingplayerlistviewitem.h">
       <Filter>src\ui\graphical\menu\widgets\special</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\utility\comparison.h">
+      <Filter>src\utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\src\maxr.rc">

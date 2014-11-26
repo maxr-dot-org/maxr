@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "utility/color.h"
+#include "utility/comparison.h"
 
 //------------------------------------------------------------------------------
 cRgbColor::cRgbColor () :
@@ -119,6 +120,40 @@ cHsvColor cRgbColor::toHsv () const
 }
 
 //------------------------------------------------------------------------------
+cLabColor cRgbColor::toLab () const
+{
+	// Convert from RGB to XYZ color space
+	auto r2 = (r / 255.0);
+	auto g2 = (g / 255.0);
+	auto b2 = (b / 255.0);
+
+	if (r2 > 0.04045) r2 = std::pow(((r2 + 0.055) / 1.055), 2.4);
+	else r2 = r2 / 12.92;
+	if (g2 > 0.04045) g2 = std::pow (((g2 + 0.055) / 1.055), 2.4);
+	else g2 = g2 / 12.92;
+	if (b2 > 0.04045) b2 = std::pow (((b2 + 0.055) / 1.055), 2.4);
+	else b2 = b2 / 12.92;
+
+	const auto x = r2 * 0.4124 + g2 * 0.3576 + b2 * 0.1805;
+	const auto y = r2 * 0.2126 + g2 * 0.7152 + b2 * 0.0722;
+	const auto z = r2 * 0.0193 + g2 * 0.1192 + b2 * 0.9505;
+
+	// Convert from XYZ to Lab color space
+	auto x2 = x / 0.95047;
+	auto y2 = y / 1.;
+	auto z2 = z / 1.08883;
+
+	if (x2 > 0.008856) x2 = std::cbrt (x2);
+	else x2 = (7.787 * x2) + (16. / 116.);
+	if (y2 > 0.008856) y2 = std::cbrt (y2);
+	else y2 = (7.787 * y2) + (16. / 116.);
+	if (z2 > 0.008856) z2 = std::cbrt (z2);
+	else z2 = (7.787 * z2) + (16. / 116.);
+
+	return cLabColor ((116 * y2) - 16, 500 * (x2 - y2), 200 * (y2 - z2));
+}
+
+//------------------------------------------------------------------------------
 cHsvColor::cHsvColor () :
 	h (0),
 	s (0),
@@ -205,4 +240,39 @@ cRgbColor cHsvColor::toRgb () const
 		}
 	}
 	return result;
+}
+
+//------------------------------------------------------------------------------
+cLabColor::cLabColor () :
+	L (0),
+	a (0),
+	b (0)
+{}
+
+//------------------------------------------------------------------------------
+cLabColor::cLabColor (double L_, double a_, double b_) :
+	L (L_),
+	a (a_),
+	b (b_)
+{}
+
+//------------------------------------------------------------------------------
+bool cLabColor::operator==(const cLabColor& other) const
+{
+	return equals (L, other.L) && equals (a, other.a) && equals (b, other.b);
+}
+
+//------------------------------------------------------------------------------
+bool cLabColor::operator!=(const cLabColor& other) const
+{
+	return !(*this == other);
+}
+
+//------------------------------------------------------------------------------
+double cLabColor::deltaE (const cLabColor& other) const
+{
+	const auto dL = L - other.L;
+	const auto da = a - other.a;
+	const auto db = b - other.b;
+	return std::sqrt (dL*dL + da*da + db*db);
 }

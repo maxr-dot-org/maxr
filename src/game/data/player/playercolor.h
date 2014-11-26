@@ -30,6 +30,8 @@ public:
 	static const size_t predefinedColorsCount = 8;
 	static const cRgbColor predefinedColors[predefinedColorsCount];
 
+	static size_t findClosestPredefinedColor (const cRgbColor& color);
+
 	cPlayerColor ();
 	explicit cPlayerColor (const cRgbColor& color);
 	cPlayerColor (const cPlayerColor& other);

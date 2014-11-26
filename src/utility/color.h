@@ -27,6 +27,7 @@
 #include <SDL.h>
 
 class cHsvColor;
+class cLabColor;
 
 /**
  * Simple RGBA Color class (RGBA = Red-Green-Blue-Alpha).
@@ -45,6 +46,7 @@ public:
 	Uint32 toMappedSdlRGBAColor (const SDL_PixelFormat* format) const;
 
 	cHsvColor toHsv () const;
+	cLabColor toLab () const;
 
 	cRgbColor exchangeRed (unsigned char red) const;
 	cRgbColor exchangeGreen (unsigned char green) const;
@@ -87,6 +89,22 @@ public:
 	unsigned short h;
 	unsigned char s, v;
 	unsigned char a;
+};
+
+class cLabColor
+{
+public:
+	cLabColor ();
+	cLabColor (double L, double a, double b);
+
+	bool operator==(const cLabColor& other) const;
+	bool operator!=(const cLabColor& other) const;
+
+	double deltaE (const cLabColor& other) const;
+
+	double L;
+	double a;
+	double b;
 };
 
 #endif // utility_colorH

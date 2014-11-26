@@ -235,6 +235,8 @@ void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (cPlayerBasicDat
 	auto players = windowNetworkLobby->getPlayers ();
 	const auto& localPlayer = windowNetworkLobby->getLocalPlayer ();
 
+	const double colorDeltaETolerance = 10;
+
 	for (size_t i = 0; i != players.size (); ++i)
 	{
 		if (players[i].get() == &player) continue;
@@ -245,7 +247,7 @@ void cMenuControllerMultiplayerHost::checkTakenPlayerAttributes (cPlayerBasicDat
 			player.setReady (false);
 			break;
 		}
-		if (players[i]->getColor () == player.getColor ())
+		if (players[i]->getColor ().getColor().toLab().deltaE(player.getColor ().getColor().toLab()) < colorDeltaETolerance)
 		{
 			if (player.getNr () != localPlayer->getNr ()) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Color_Taken", &player, localPlayer->getNr (), true);
 			else windowNetworkLobby->addInfoEntry (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));

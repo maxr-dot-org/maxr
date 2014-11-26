@@ -23,6 +23,7 @@
 #include "main.h" // OtherData
 #include "game/data/player/playercolor.h"
 #include "utility/random.h"
+#include "utility/comparison.h"
 
 const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 {
@@ -35,6 +36,23 @@ const cRgbColor cPlayerColor::predefinedColors[predefinedColorsCount] =
 	cRgbColor (0xFF, 0x00, 0xFE), // purple
 	cRgbColor (0x00, 0xFF, 0xFF)  // aqua
 };
+
+/*static*/ size_t cPlayerColor::findClosestPredefinedColor (const cRgbColor& color)
+{
+	size_t closestColorIndex = 0;
+	double closestColorDistance = std::numeric_limits<double>::max ();
+	const auto labColor = color.toLab ();
+	for (size_t i = 0; i < cPlayerColor::predefinedColorsCount; ++i)
+	{
+		const auto distance = labColor.deltaE (cPlayerColor::predefinedColors[i].toLab ());
+		if (less_than (distance, closestColorDistance))
+		{
+			closestColorIndex = i;
+			closestColorDistance = distance;
+		}
+	}
+	return closestColorIndex;
+}
 
 //------------------------------------------------------------------------------
 cPlayerColor::cPlayerColor ()
