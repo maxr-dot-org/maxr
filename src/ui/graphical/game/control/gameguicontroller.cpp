@@ -288,7 +288,18 @@ void cGameGuiController::connectGuiStaticCommands ()
 
 	signalConnectionManager.connect (gameGui->getHud().nextClicked, std::bind (&cGameGuiController::selectNextUnit, this));
 	signalConnectionManager.connect (gameGui->getHud().prevClicked, std::bind (&cGameGuiController::selectPreviousUnit, this));
-	signalConnectionManager.connect (gameGui->getHud().doneClicked, std::bind (&cGameGuiController::markSelectedUnitAsDone, this));
+	signalConnectionManager.connect (gameGui->getHud ().doneClicked, [this]()
+	{
+		auto keyboard = application.getActiveKeyboard ();
+		if (keyboard && keyboard->isAnyModifierActive (toEnumFlag (eKeyModifierType::CtrlLeft) | eKeyModifierType::CtrlRight))
+		{
+			resumeAllMoveJobsTriggered ();
+		}
+		else
+		{
+			markSelectedUnitAsDone ();
+		}
+	});
 
 	signalConnectionManager.connect (gameGui->getHud().reportsClicked, std::bind (&cGameGuiController::showReportsWindow, this));
 
