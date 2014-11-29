@@ -21,6 +21,7 @@
 #include "ui/graphical/menu/widgets/label.h"
 #include "ui/graphical/menu/widgets/image.h"
 #include "game/data/player/player.h"
+#include "game/logic/landingpositionmanager.h"
 
 
 //------------------------------------------------------------------------------
@@ -51,9 +52,10 @@ void cPlayerLandingStatus::setHasSelectedPosition (bool value)
 //------------------------------------------------------------------------------
 cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPlayerLandingStatus& playerLandingStatus_) :
 	cAbstractListViewItem (cPosition (50, 0)),
-	playerLandingStatus (&playerLandingStatus_)
+	playerLandingStatus (playerLandingStatus_),
+	landingPositionManager (nullptr)
 {
-	const auto& player = playerLandingStatus->getPlayer ();
+	const auto& player = playerLandingStatus.getPlayer ();
 
 	readyImage = addChild (std::make_unique<cImage> (getPosition () + cPosition (getSize ().x () - 10, 0)));
 
@@ -68,19 +70,64 @@ cChatBoxLandingPlayerListViewItem::cChatBoxLandingPlayerListViewItem (const cPla
 
 	signalConnectionManager.connect (player.nameChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerName, this));
 	signalConnectionManager.connect (player.colorChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerColor, this));
-	signalConnectionManager.connect (playerLandingStatus->hasSelectedPositionChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition, this));
+	signalConnectionManager.connect (playerLandingStatus.hasSelectedPositionChanged, std::bind (&cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition, this));
 }
 
 //------------------------------------------------------------------------------
 int cChatBoxLandingPlayerListViewItem::getPlayerNumber () const
 {
-	return playerLandingStatus->getPlayer ().getNr ();
+	return playerLandingStatus.getPlayer ().getNr ();
+}
+
+//------------------------------------------------------------------------------
+void cChatBoxLandingPlayerListViewItem::setLandingPositionManager (const cLandingPositionManager* landingPositionManager_)
+{
+	landingPositionManager = landingPositionManager_;
+
+	managerSignalConnectionManager.disconnectAll ();
+
+	updatePlayerName ();
+
+	managerSignalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this](const cPlayerBasicData& player, eLandingPositionState state)
+	{
+		if (player.getNr () == playerLandingStatus.getPlayer ().getNr ())
+		{
+			updatePlayerName ();
+		}
+	});
 }
 
 //------------------------------------------------------------------------------
 void cChatBoxLandingPlayerListViewItem::updatePlayerName ()
 {
-	nameLabel->setText (playerLandingStatus->getPlayer().getName ());
+	if (landingPositionManager == nullptr)
+	{
+		nameLabel->setText (playerLandingStatus.getPlayer ().getName ());
+	}
+	else
+	{
+		const auto state = landingPositionManager->getPlayerState (playerLandingStatus.getPlayer ());
+		std::string stateName;
+		switch (state)
+		{
+		case eLandingPositionState::Unknown:
+			stateName = "unknown";
+			break;
+		case eLandingPositionState::Clear:
+			stateName = "clear";
+			break;
+		case eLandingPositionState::Warning:
+			stateName = "warning";
+			break;
+		case eLandingPositionState::TooClose:
+			stateName = "too close";
+			break;
+		case eLandingPositionState::Confirmed:
+			stateName = "confirmed";
+			break;
+		}
+		nameLabel->setText (playerLandingStatus.getPlayer ().getName () + " (" + stateName + ")");
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -89,7 +136,7 @@ void cChatBoxLandingPlayerListViewItem::updatePlayerColor ()
 	SDL_Rect src = {0, 0, 10, 10};
 
 	AutoSurface colorSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_BlitSurface (playerLandingStatus->getPlayer().getColor ().getTexture (), &src, colorSurface.get (), nullptr);
+	SDL_BlitSurface (playerLandingStatus.getPlayer().getColor ().getTexture (), &src, colorSurface.get (), nullptr);
 
 	colorImage->setImage (colorSurface.get ());
 }
@@ -97,7 +144,7 @@ void cChatBoxLandingPlayerListViewItem::updatePlayerColor ()
 //------------------------------------------------------------------------------
 void cChatBoxLandingPlayerListViewItem::updatePlayerHasSelectedPosition ()
 {
-	SDL_Rect src = {playerLandingStatus->hasSelectedPosition() ? 10 : 0, 0, 10, 10};
+	SDL_Rect src = {playerLandingStatus.hasSelectedPosition() ? 10 : 0, 0, 10, 10};
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
 	SDL_SetColorKey (readySurface.get (), SDL_TRUE, cRgbColor (0, 1, 0).toMappedSdlRGBAColor (readySurface->format));

@@ -504,10 +504,25 @@ void cMenuControllerMultiplayerHost::startLandingPositionSelection ()
 
 	signalConnectionManager.connect (windowLandingPositionSelection->getChatBox()->commandEntered, [this](const std::string& command)
 	{
-		const auto& localPlayer = newGame->getLocalPlayer ();
-		windowLandingPositionSelection->getChatBox ()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (localPlayer.getName (), command));
-		cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
-		sendMenuChatMessage (*network, command, nullptr, localPlayer.getNr ());
+		if (command == "/details")
+		{
+			const auto& players = newGame->getPlayers ();
+			for (const auto& player : players)
+			{
+				const auto entry = windowLandingPositionSelection->getChatBox ()->getPlayerEntryFromNumber (player.getNr ());
+				if (entry)
+				{
+					entry->setLandingPositionManager (landingPositionManager.get ());
+				}
+			}
+		}
+		else
+		{
+			const auto& localPlayer = newGame->getLocalPlayer ();
+			windowLandingPositionSelection->getChatBox ()->addChatEntry (std::make_unique<cLobbyChatBoxListViewItem> (localPlayer.getName (), command));
+			cSoundDevice::getInstance ().playSoundEffect (SoundData.SNDChat);
+			sendMenuChatMessage (*network, command, nullptr, localPlayer.getNr ());
+		}
 	});
 
 	signalConnectionManager.connect (landingPositionManager->landingPositionStateChanged, [this](const cPlayerBasicData& player, eLandingPositionState state)

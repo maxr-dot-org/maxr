@@ -30,6 +30,7 @@
 class cImage;
 class cLabel;
 class cPlayerBasicData;
+class cLandingPositionManager;
 
 class cPlayerLandingStatus
 {
@@ -54,15 +55,20 @@ public:
 
 	int getPlayerNumber () const;
 
+	void setLandingPositionManager (const cLandingPositionManager* landingPositionManager);
+
 	virtual void handleResized (const cPosition& oldSize) MAXR_OVERRIDE_FUNCTION;
 private:
 	cSignalConnectionManager signalConnectionManager;
+	cSignalConnectionManager managerSignalConnectionManager;
 
 	cLabel* nameLabel;
 	cImage* colorImage;
 	cImage* readyImage;
 
-	const cPlayerLandingStatus* playerLandingStatus;
+	const cPlayerLandingStatus& playerLandingStatus;
+
+	const cLandingPositionManager* landingPositionManager;
 
 	void updatePlayerName ();
 	void updatePlayerColor ();

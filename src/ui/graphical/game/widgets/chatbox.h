@@ -57,7 +57,8 @@ public:
 
 	void addPlayerEntry (std::unique_ptr<PlayerListItemType> player);
 
-	const PlayerListItemType* getPlayerEntryFromNumber (int playerNumber);
+	const PlayerListItemType* getPlayerEntryFromNumber (int playerNumber) const;
+	PlayerListItemType* getPlayerEntryFromNumber (int playerNumber);
 
 	void removePlayerEntry (int playerNumber);
 
@@ -158,7 +159,15 @@ void cChatBox<ChatListItemType, PlayerListItemType>::addPlayerEntry (std::unique
 
 //------------------------------------------------------------------------------
 template<typename ChatListItemType, typename PlayerListItemType>
-const PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPlayerEntryFromNumber (int playerNumber)
+PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPlayerEntryFromNumber (int playerNumber)
+{
+	const cChatBox<ChatListItemType, PlayerListItemType>& constMe = *this;
+	return const_cast<PlayerListItemType*>(constMe.getPlayerEntryFromNumber(playerNumber));
+}
+
+//------------------------------------------------------------------------------
+template<typename ChatListItemType, typename PlayerListItemType>
+const PlayerListItemType* cChatBox<ChatListItemType, PlayerListItemType>::getPlayerEntryFromNumber (int playerNumber) const
 {
 	for (size_t i = 0; i < playersList->getItemsCount (); ++i)
 	{

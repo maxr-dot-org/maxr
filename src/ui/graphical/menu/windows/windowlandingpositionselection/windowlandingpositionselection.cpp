@@ -123,6 +123,7 @@ void cWindowLandingPositionSelection::applyReselectionState (eLandingPositionSta
 
 	if (state == eLandingPositionState::Warning) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Warning"));
 	else if (state == eLandingPositionState::TooClose) setInfoMessage (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
+	else setInfoMessage ("");
 }
 
 //------------------------------------------------------------------------------

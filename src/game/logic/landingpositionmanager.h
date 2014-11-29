@@ -83,27 +83,36 @@ public:
 	void deleteLandingPosition (const cPlayerBasicData& player);
 
 	/**
+	 * Return the current landing state of the player.
+	 *
+	 * @param player The player to get the state for.
+	 * @return The landing state.
+	 */
+	eLandingPositionState getPlayerState (const cPlayerBasicData& player) const;
+
+	/**
 	 * Will be triggered when ever a player has selected a new landing position.
 	 */
-	cSignal<void (const cPlayerBasicData&, const cPosition&)> landingPositionSet;
+	mutable cSignal<void (const cPlayerBasicData&, const cPosition&)> landingPositionSet;
 	/**
 	 * Will be triggered by @ref setLandingPosition when the landing position of a player has changed.
 	 * The arguments are the players whose state has changed and his new state.
 	 * If the new state is not @ref eLandingPositionState::Clear or @ref eLandingPositionState::Confirmed
 	 * The player needs to select a new landing position.
 	 */
-	cSignal<void (const cPlayerBasicData&, eLandingPositionState)> landingPositionStateChanged;
+	mutable cSignal<void (const cPlayerBasicData&, eLandingPositionState)> landingPositionStateChanged;
 	/**
 	 * Will be triggered by @ref setLandingPosition when the last player has selected his position and
 	 * none of the positions are in conflict.
 	 */
-	cSignal<void ()> allPositionsValid;
+	mutable cSignal<void ()> allPositionsValid;
 private:
 	std::vector<sLandingPositionData> landingPositions;
 
 	sLandingPositionData& getLandingPositionData (const cPlayerBasicData& player);
+	const sLandingPositionData& getLandingPositionData (const cPlayerBasicData& player) const;
 
-	void checkPlayerState (const cPlayerBasicData& player);
+	void checkPlayerState (sLandingPositionData& playerData, bool isOtherPlayer);
 };
 
 #endif // game_logic_landingpositionmanagerH
