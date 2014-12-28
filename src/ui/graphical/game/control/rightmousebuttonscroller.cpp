@@ -83,7 +83,7 @@ bool cRightMouseButtonScrollerWidget::handleMouseMoved (cApplication& applicatio
 		if (degrees < 0) degrees += M_PI*2.0;
 		degrees = (degrees * 180) / M_PI;
 
-		if (degrees >= 0 && degrees <= 20 || degrees > 350) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
+		if ((degrees >= 0 && degrees <= 20) || degrees > 350) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowRight));
 		else if (degrees > 160 && degrees <= 200) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowLeft));
 		else if (degrees > 250 && degrees <= 290) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowUp));
 		else if (degrees > 70 && degrees <= 110) mouse.setCursor (std::make_unique<cMouseCursorSimple> (eMouseCursorSimpleType::ArrowDown));

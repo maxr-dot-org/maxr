@@ -252,6 +252,7 @@ bool cSavegame::loadVersion()
 		Log.write(e.what(), cLog::eLOG_TYPE_ERROR);
 		return false;
 	}
+	return true;
 }
 
 
@@ -1381,7 +1382,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 	addAttributeElement (gameinfoNode, "VictoryCondition", "string", gameSettingsVictoryConditionToString (gameSetting.getVictoryCondition ()));
 	if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Turns)	addAttributeElement (gameinfoNode, "VictoryTurns", "num", iToStr (gameSetting.getVictoryTurns ()));
 	else if (gameSetting.getVictoryCondition () == eGameSettingsVictoryCondition::Points) addAttributeElement (gameinfoNode, "VictoryPoints", "num", iToStr (gameSetting.getVictoryPoints ()));
-	
+
 	addAttributeElement (gameinfoNode, "TurnEndDeadline", "num", iToStr (gameSetting.getTurnEndDeadline ().count ()));
 	addAttributeElement (gameinfoNode, "TurnEndDeadlineActive", "bool", bToStr (gameSetting.isTurnEndDeadlineActive()));
 

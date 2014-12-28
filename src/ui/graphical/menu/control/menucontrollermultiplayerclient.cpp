@@ -53,6 +53,11 @@ cMenuControllerMultiplayerClient::cMenuControllerMultiplayerClient (cApplication
 {}
 
 //------------------------------------------------------------------------------
+cMenuControllerMultiplayerClient::~cMenuControllerMultiplayerClient()
+{
+}
+
+//------------------------------------------------------------------------------
 void cMenuControllerMultiplayerClient::start ()
 {
 	network = std::make_shared<cTCP> ();
@@ -541,7 +546,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_OPTINS (cNetMessa
 	std::string saveGameName = message.popString();
 
 	windowNetworkLobby->setSaveGame(savePlayerList, saveGameName);
-	
+
 }
 
 //------------------------------------------------------------------------------
@@ -704,7 +709,7 @@ void cMenuControllerMultiplayerClient::handleNetMessage_MU_MSG_PLAYER_HAS_SELECT
 	assert (iter != playersLandingStatus.end ());
 
 	auto& playerLandingStatus = **iter;
-	
+
 	playerLandingStatus.setHasSelectedPosition (true);
 }
 

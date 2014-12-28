@@ -54,10 +54,10 @@ private:
 	cServer *const server;
 	cClient *const client;
 	std::vector<int> destroyedTargets; //not synced. only needed on server
-	std::vector<int> lockedTargets;    //not synced. TODO: maybe nessesary
+	std::vector<int> lockedTargets;    //not synced. TODO: maybe necessary
 
 	int fireDir;
-	
+
 	int counter;
 	enum eAJStates { S_ROTATING, S_PLAYING_MUZZLE, S_FIRING, S_EXPLODING, S_FINISHED };
 	eAJStates state;
@@ -89,5 +89,5 @@ public:
 	void run();
 	bool finished() const;
 };
-      
+
 #endif // game_logic_attackjobH

@@ -138,12 +138,6 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 {
 	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
 
-	int frameNr = 0;
-	if (isDisabled() == false)
-	{
-		frameNr = animationTime % (uiData->overlay_org->w / uiData->overlay_org->h);
-	}
-
 	drawOverlayAnimation (surface, dest, zoomFactor, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);
 }
 

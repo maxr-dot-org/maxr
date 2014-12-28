@@ -42,6 +42,7 @@ class cMenuControllerMultiplayerClient : public INetMessageReceiver, public cRun
 {
 public:
 	cMenuControllerMultiplayerClient (cApplication& application);
+	~cMenuControllerMultiplayerClient();
 
 	void start ();
 
@@ -62,7 +63,7 @@ private:
 	std::shared_ptr<cWindowLandingPositionSelection> windowLandingPositionSelection;
 
 	std::shared_ptr<cNetworkClientGameNew> newGame;
-	
+
 	std::unique_ptr<cMapReceiver> mapReceiver;
 
 	std::vector<std::unique_ptr<cPlayerLandingStatus>> playersLandingStatus;

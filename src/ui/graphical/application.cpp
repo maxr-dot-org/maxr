@@ -36,12 +36,12 @@
 
 //------------------------------------------------------------------------------
 cApplication::cApplication () :
+	frameCounter(std::make_shared<cFrameCounter>()),
 	activeMouse (nullptr),
 	activeKeyboard (nullptr),
 	keyFocusWidget (nullptr),
 	mouseFocusWidget (nullptr),
-	shouldDrawFramesPerSecond (false),
-	frameCounter(std::make_shared<cFrameCounter>())
+	shouldDrawFramesPerSecond (false)
 {
 	signalConnectionManager.connect (Video.resolutionChanged, [this]()
 	{

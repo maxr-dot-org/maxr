@@ -3029,7 +3029,6 @@ void cServer::makeTurnStart (cPlayer& player)
 	{
 		const auto& building = *i;
 
-		bool forceSendUnitData = false;
 		if (building->isDisabled ())
 		{
 			building->setDisabledTurns (building->getDisabledTurns () - 1);
@@ -3038,7 +3037,6 @@ void cServer::makeTurnStart (cPlayer& player)
 				building->ServerStartWork (*this);
 				building->wasWorking = false;
 			}
-			forceSendUnitData = true;
 		}
 		if (building->data.canAttack && building->refreshData ())
 		{
@@ -3428,7 +3426,7 @@ void cServer::destroyUnit (cUnit& unit)
 	//check, if there is a big unit on the field
 	bool bigUnit = false;
 	auto topBuilding = field.getTopBuilding ();
-	if (topBuilding && topBuilding->data.isBig || unit.data.isBig)
+	if ((topBuilding && topBuilding->data.isBig) || unit.data.isBig)
 		bigUnit = true;
 
 	//delete unit

@@ -32,8 +32,8 @@
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderType sliderType) :
 	cClickableWidget (area),
-	type (sliderType),
 	surface (nullptr),
+	type (sliderType),
 	currentValue (minValue_),
 	minValue (minValue_),
 	maxValue (maxValue_),
@@ -51,8 +51,8 @@ cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOr
 //------------------------------------------------------------------------------
 cSlider::cSlider (const cBox<cPosition>& area, int minValue_, int maxValue_, eOrientationType orientation_, eSliderHandleType handleType, eSliderType sliderType) :
 	cClickableWidget (area),
-	type (sliderType),
 	surface (nullptr),
+	type (sliderType),
 	currentValue (minValue_),
 	minValue (minValue_),
 	maxValue (maxValue_),
@@ -264,7 +264,7 @@ bool cSlider::handleClicked (cApplication& application, cMouse& mouse, eMouseBut
 	if (!handle) return false;
 
 	const auto mousePosition = (orientation == eOrientationType::Horizontal ? mouse.getPosition ().x () : mouse.getPosition ().y ());
-	
+
 	auto newHandlePosition = mousePosition - (orientation == eOrientationType::Horizontal ? handle->getSize ().x () / 2 : handle->getSize ().y () / 2);
 
 	int minPosition, maxPosition;

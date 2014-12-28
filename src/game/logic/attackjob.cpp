@@ -95,9 +95,9 @@ cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& ta
 	targetPosition (targetPosition_),
 	server(server_),
 	client(NULL),
-	state(S_ROTATING),
-	destroyedTargets(NULL),
-	fireDir(0)
+	destroyedTargets(),
+	fireDir(0),
+	state(S_ROTATING)
 {
 	fireDir = calcFireDir();
 	counter = calcTimeForRotation() + FIRE_DELAY;
@@ -124,8 +124,8 @@ cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& ta
 }
 
 cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
-	client(client_),
-	server(NULL)
+	server(NULL),
+	client(client_)
 {
 	state = static_cast<cAttackJob::eAJStates> (message.popInt16());
 	counter = message.popInt16();
@@ -285,7 +285,7 @@ int cAttackJob::calcTimeForRotation()
 {
 	int diff = abs(getAggressor()->dir - fireDir);
 	if (diff > 4) diff = 8 - diff;
-	
+
 	return diff * ROTATION_SPEED;
 }
 
@@ -304,8 +304,8 @@ void cAttackJob::lockTarget()
 
 	int range = 0;
 	if (muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
-		range = 2; 
-		
+		range = 2;
+
 	for (int x = -range; x <= range; x++)
 	{
 		for (int y = -range; y <= range; y++)
@@ -327,7 +327,7 @@ void cAttackJob::lockTarget()
 void cAttackJob::fire()
 {
 	cUnit* aggressor = getAggressor();
-	
+
 	//update data
 	if (aggressor)
 	{
@@ -370,9 +370,9 @@ void cAttackJob::fire()
 			server->deleteUnit(aggressor, false);
 		}
 	}
-	
 
-	
+
+
 }
 
 std::unique_ptr<cFx> cAttackJob::createMuzzleFx(cUnit* aggressor)
@@ -502,7 +502,7 @@ bool cAttackJob::impactCluster()
 	destroyed = destroyed || impactSingle (targetPosition + cPosition (+1, 0), &targets);
 	destroyed = destroyed || impactSingle (targetPosition + cPosition (0, -1), &targets);
 	destroyed = destroyed || impactSingle (targetPosition + cPosition (0, +1), &targets);
-	
+
 	// 1/2 damage
 	attackPoints = clusterDamage / 2;
 	destroyed = destroyed || impactSingle (targetPosition + cPosition (+1, +1), &targets);
@@ -528,7 +528,7 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 
 	if (!map.isValidPosition(position))
 		return false;
-	
+
 	cUnit* target = selectTarget(position, attackMode, map, player);
 
 	//check list of units that will be ignored as target.
@@ -627,7 +627,7 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 		// check whether a following sentry mode attack is possible
 		if (target && target->isAVehicle() && !destroyed)
 			static_cast<cVehicle*> (target)->InSentryRange(*server);
-		
+
 		// check whether the aggressor is in sentry range
 		if (aggressor && aggressor->isAVehicle())
 			static_cast<cVehicle*> (aggressor)->InSentryRange(*server);
@@ -638,9 +638,9 @@ bool cAttackJob::impactSingle (const cPosition& position, std::vector<cUnit*>* a
 
 void cAttackJob::destroyTarget()
 {
-	// destroy unit is only called on server, because it sends 
+	// destroy unit is only called on server, because it sends
 	// all nessesary net messages to update the client
-	if (server)            
+	if (server)
 	{
 		for (auto targetId : destroyedTargets)
 		{
