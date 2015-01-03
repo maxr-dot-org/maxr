@@ -213,11 +213,8 @@ void cClient::initPlayersWithMap()
 	eventQueue.push (std::move (message));
 }
 
-void cClient::sendNetMessage (cNetMessage* message_) const
+void cClient::sendNetMessage (std::unique_ptr<cNetMessage> message) const
 {
-	// TODO: sendNetMessage should take a unique_ptr directly!
-	std::unique_ptr<cNetMessage> message (message_);
-
 	message->iPlayerNr = ActivePlayer->getNr();
 
 	if (message->iType != NET_GAME_TIME_CLIENT)
@@ -1537,9 +1534,9 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 	gameTimer->gameTime = newGameTime;
 
 	//confirm new time to the server
-	cNetMessage* response = new cNetMessage (NET_GAME_TIME_CLIENT);
+	auto response = std::make_unique<cNetMessage> (NET_GAME_TIME_CLIENT);
 	response->pushInt32 (gameTimer->gameTime);
-	sendNetMessage (response);
+	sendNetMessage (std::move (response));
 }
 
 void cClient::HandleNetMessage_GAME_EV_REVEAL_MAP (cNetMessage& message)

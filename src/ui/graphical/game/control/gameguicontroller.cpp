@@ -1399,9 +1399,9 @@ void cGameGuiController::handleChatCommand (const std::string& command)
 			{
 				std::string cmdArg (command);
 				cmdArg.erase (0, 5);
-				cNetMessage* message = new cNetMessage (GAME_EV_WANT_MARK_LOG);
+				auto message = std::make_unique<cNetMessage> (GAME_EV_WANT_MARK_LOG);
 				message->pushString (cmdArg);
-				activeClient->sendNetMessage (message);
+				activeClient->sendNetMessage (std::move (message));
 			}
 			else if (command.compare (0, 7, "/color ") == 0)
 			{

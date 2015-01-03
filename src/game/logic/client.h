@@ -139,11 +139,10 @@ public:
 	void deleteUnit (cUnit* unit);
 	/**
 	* sends the netMessage to the server.
-	* do not try to delete a message after calling this function!
 	*@author Eiko
 	*@param message The netMessage to be send.
 	*/
-	void sendNetMessage (cNetMessage* message) const;
+	void sendNetMessage (std::unique_ptr<cNetMessage> message) const;
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath

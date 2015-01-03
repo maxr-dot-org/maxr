@@ -220,9 +220,9 @@ void cGameTimerClient::run()
 		//send "still alive" message to server
 		//if (gameTime % (PAUSE_GAME_TIMEOUT / 10) == 0)
 		{
-			cNetMessage* message = new cNetMessage (NET_GAME_TIME_CLIENT);
+			auto message = std::make_unique<cNetMessage> (NET_GAME_TIME_CLIENT);
 			message->pushInt32 (gameTime);
-			client->sendNetMessage (message);
+			client->sendNetMessage (std::move (message));
 		}
 		if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
 			break;
