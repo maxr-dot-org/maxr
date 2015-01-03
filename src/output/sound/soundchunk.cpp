@@ -42,7 +42,7 @@ void cSoundChunk::load (const std::string& fileName)
     sdlSound = SaveSdlMixChunkPointer (Mix_LoadWAV (fileName.c_str ()));
     if (sdlSound == nullptr)
     {
-		Log.write("Mix_LoadWAV returned NULL on loading file '" + fileName + "'. Reason: " + Mix_GetError(), cLog::eLOG_TYPE_ERROR);
+		Log.write("Mix_LoadWAV returned nullptr on loading file '" + fileName + "'. Reason: " + Mix_GetError(), cLog::eLOG_TYPE_ERROR);
     }
 }
 

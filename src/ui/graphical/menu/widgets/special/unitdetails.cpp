@@ -40,7 +40,7 @@ cUnitDetails::cUnitDetails (const cPosition& position) :
 	const cPosition size (250, 170);
     surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	resize (size);
@@ -124,7 +124,7 @@ void cUnitDetails::reset ()
 
 	size_t rowIndex = 0;
 
-	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
 
 	if (unitObjectCurrentData->canAttack)

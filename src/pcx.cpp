@@ -34,7 +34,7 @@ class cBufferedFile
 {
 public:
 	cBufferedFile() :
-		file (NULL),
+		file (nullptr),
 		start (0),
 		end (0)
 	{}
@@ -44,15 +44,15 @@ public:
 	bool open (const char* filename, const char* mode)
 	{
 		this->file = SDL_RWFromFile (filename, mode);
-		return this->file != NULL;
+		return this->file != nullptr;
 	}
 
 	void close()
 	{
-		if (this->file != NULL)
+		if (this->file != nullptr)
 		{
 			SDL_RWclose (this->file);
-			this->file = NULL;
+			this->file = nullptr;
 		}
 	}
 
@@ -129,7 +129,7 @@ AutoSurface LoadPCX (const std::string& name)
 	if (!s)
 	{
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_ERROR);
-		return NULL; //app will crash using this
+		return nullptr; //app will crash using this
 	}
     SDL_SetColorKey (s.get (), SDL_TRUE, 0xFF00FF);
 

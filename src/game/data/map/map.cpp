@@ -49,13 +49,13 @@ cMapField::cMapField ()
 
 cVehicle* cMapField::getVehicle() const
 {
-	if (vehicles.empty()) return NULL;
+	if (vehicles.empty()) return nullptr;
 	return vehicles[0];
 }
 
 cVehicle* cMapField::getPlane() const
 {
-	if (planes.empty()) return NULL;
+	if (planes.empty()) return nullptr;
 	return planes[0];
 }
 
@@ -85,20 +85,20 @@ void cMapField::getUnits (std::vector<cUnit*>& units) const
 
 cBuilding* cMapField::getBuilding() const
 {
-	if (buildings.empty()) return NULL;
+	if (buildings.empty()) return nullptr;
 	return buildings[0];
 }
 
 cBuilding* cMapField::getTopBuilding() const
 {
-	if (buildings.empty()) return NULL;
+	if (buildings.empty()) return nullptr;
 	cBuilding* building = *buildings.begin();
 
 	if ((building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
 		 building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
 		 building->getOwner ())
 		return building;
-	return NULL;
+	return nullptr;
 }
 
 cBuilding* cMapField::getBaseBuilding() const
@@ -113,7 +113,7 @@ cBuilding* cMapField::getBaseBuilding() const
 			return building;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 cBuilding* cMapField::getRubble() const
@@ -121,7 +121,7 @@ cBuilding* cMapField::getRubble() const
 	for (size_t i = 0; i != buildings.size(); ++i)
 		if (!buildings[i]->getOwner ())
 			return buildings[i];
-	return NULL;
+	return nullptr;
 }
 
 cBuilding* cMapField::getMine() const
@@ -129,7 +129,7 @@ cBuilding* cMapField::getMine() const
 	for (size_t i = 0; i != buildings.size(); ++i)
 		if (buildings[i]->data.explodesOnContact)
 			return buildings[i];
-	return NULL;
+	return nullptr;
 }
 
 void cMapField::addBuilding (cBuilding& building, size_t index)
@@ -195,7 +195,7 @@ void cMapField::removeAll ()
 
 // cStaticMap //////////////////////////////////////////////////
 
-cStaticMap::cStaticMap() : size (0), terrainCount (0), terrains (NULL)
+cStaticMap::cStaticMap() : size (0), terrainCount (0), terrains (nullptr)
 {
 }
 
@@ -234,7 +234,7 @@ void cStaticMap::clear()
 	filename.clear();
 	size = 0;
 	delete [] terrains;
-	terrains = NULL;
+	terrains = nullptr;
 	terrainCount = 0;
 	Kacheln.clear();
 }
@@ -255,7 +255,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// first try in the factory maps directory
 	std::string fullFilename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + filename;
 	SDL_RWops* fpMapFile = SDL_RWFromFile (fullFilename.c_str(), "rb");
-	if (fpMapFile == NULL)
+	if (fpMapFile == nullptr)
 	{
 		// now try in the user's map directory
 		std::string userMapsDir = getUserMapsDir();
@@ -265,7 +265,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 			fpMapFile = SDL_RWFromFile (fullFilename.c_str(), "rb");
 		}
 	}
-	if (fpMapFile == NULL)
+	if (fpMapFile == nullptr)
 	{
 		Log.write ("Cannot load map file: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
 		clear();
@@ -363,7 +363,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 		//load terrain graphic
 		AutoSurface surface (cStaticMap::loadTerrGraph (fpMapFile, iGraphicsPos, palette, iNum));
-		if (surface == NULL)
+		if (surface == nullptr)
 		{
 			Log.write ("EOF while loading terrain number " + iToStr (iNum), cLog::eLOG_TYPE_WARNING);
 			SDL_RWclose (fpMapFile);
@@ -416,13 +416,13 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// if no factory map of that name exists, try the custom user maps
 
 	SDL_RWops* mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
-	if (mapFile == NULL && !getUserMapsDir().empty())
+	if (mapFile == nullptr && !getUserMapsDir().empty())
 	{
 		mapPath = getUserMapsDir() + mapName;
 		mapFile = SDL_RWFromFile (mapPath.c_str(), "rb");
 	}
 
-	if (mapFile == NULL) return NULL;
+	if (mapFile == nullptr) return nullptr;
 
 	SDL_RWseek (mapFile, 5, SEEK_SET);
 	int size = SDL_ReadLE16 (mapFile);
@@ -450,7 +450,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	if (byteReadCount != size * size)
 	{
 		// error.
-		return NULL;
+		return nullptr;
 	}
 	const int MAPWINSIZE = 112;
 	if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
@@ -458,7 +458,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 		mapSurface = AutoSurface(scaleSurface (mapSurface.get (), nullptr, MAPWINSIZE, MAPWINSIZE));
 	}
 
-	if (mapSize != NULL) *mapSize = size;
+	if (mapSize != nullptr) *mapSize = size;
     return std::move (mapSurface);
 }
 
@@ -470,20 +470,20 @@ void cStaticMap::copySrfToTerData (SDL_Surface& surface, int iNum)
 	//copy the normal terrains
     terrains[iNum].sf_org = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetPaletteColors (terrains[iNum].sf_org->format->palette, surface.format->palette->colors, 0, 256);
-	SDL_BlitSurface (&surface, NULL, terrains[iNum].sf_org.get (), NULL);
+	SDL_BlitSurface (&surface, nullptr, terrains[iNum].sf_org.get (), nullptr);
 
     terrains[iNum].sf = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetPaletteColors (terrains[iNum].sf->format->palette, surface.format->palette->colors, 0, 256);
-	SDL_BlitSurface (&surface, NULL, terrains[iNum].sf.get (), NULL);
+	SDL_BlitSurface (&surface, nullptr, terrains[iNum].sf.get (), nullptr);
 
 	//copy the terrains with fog
     terrains[iNum].shw_org = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetColors (terrains[iNum].shw_org.get (), surface.format->palette->colors, 0, 256);
-	SDL_BlitSurface (&surface, NULL, terrains[iNum].shw_org.get (), NULL);
+	SDL_BlitSurface (&surface, nullptr, terrains[iNum].shw_org.get (), nullptr);
 
     terrains[iNum].shw = AutoSurface (SDL_CreateRGBSurface (0, 64, 64, 8, 0, 0, 0, 0));
 	SDL_SetColors (terrains[iNum].shw.get (), surface.format->palette->colors, 0, 256);
-	SDL_BlitSurface (&surface, NULL, terrains[iNum].shw.get (), NULL);
+	SDL_BlitSurface (&surface, nullptr, terrains[iNum].shw.get (), nullptr);
 
 	//now set the palette for the fog terrains
 	SDL_SetColors (terrains[iNum].shw_org.get (), palette_shw, 0, 256);
@@ -565,8 +565,8 @@ cMap::cMap (std::shared_ptr<cStaticMap> staticMap_) :
 	fields = new cMapField[size];
 	Resources.resize (size);
 
-	resSpots = NULL;
-	resSpotTypes = NULL;
+	resSpots = nullptr;
+	resSpotTypes = nullptr;
 	resSpotCount = 0;
 	resCurrentSpotCount = 0;
 }
@@ -600,7 +600,7 @@ bool cMap::isWaterOrCoast(const cPosition& position) const
 // Platziert die Ressourcen für einen Spieler.
 void cMap::placeRessourcesAddPlayer (const cPosition& position, eGameSettingsResourceDensity desity)
 {
-	if (resSpots == NULL)
+	if (resSpots == nullptr)
 	{
 		resSpotCount = (int)(getSize ().x () * getSize ().y () * 0.003f * (1.5f + getResourceDensityFactor (desity)));
 		resCurrentSpotCount = 0;
@@ -790,7 +790,7 @@ void cMap::placeRessources (eGameSettingsResourceAmount metal, eGameSettingsReso
 	}
 	delete[] resSpots;
 	delete[] resSpotTypes;
-	resSpots = NULL;
+	resSpots = nullptr;
 }
 
 /* static */ int cMap::getMapLevel (const cBuilding& building)

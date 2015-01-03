@@ -225,8 +225,8 @@ AutoSurface cWindowLandingPositionSelection::createHudSurface ()
 	bottom.x = 0;
 	bottom.y = (Video.getResolutionY () / 2);
 
-	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), NULL, hudSurface.get (), &top);
-	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), NULL, hudSurface.get (), &bottom);
+	SDL_BlitSurface (GraphicsData.gfx_panel_top.get (), nullptr, hudSurface.get (), &top);
+	SDL_BlitSurface (GraphicsData.gfx_panel_bottom.get (), nullptr, hudSurface.get (), &bottom);
 
 	return std::move(hudSurface);
 }
@@ -284,7 +284,7 @@ void cWindowLandingPositionSelection::runCircleAnimation (const cPosition& tileP
 void cWindowLandingPositionSelection::updateLandingPositionCircles (const cPosition& tilePosition, float radiusFactor)
 {
 	AutoSurface circleSurface (SDL_CreateRGBSurface (0, mapWidget->getSize ().x (), mapWidget->getSize ().y(), Video.getColDepth (), 0, 0, 0, 0));
-	SDL_FillRect (circleSurface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (circleSurface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (circleSurface.get (), SDL_TRUE, 0xFF00FF);
 
 	const cPosition pixelPosition = tilePosition * mapWidget->getSize () / staticMap->getSize ();

@@ -49,7 +49,7 @@ int serverGameThreadFunction (void* data)
 //------------------------------------------------------------------------------
 cServerGame::cServerGame (std::shared_ptr<cTCP> network_) :
 	network (std::move(network_)),
-	thread (NULL),
+	thread (nullptr),
 	canceled (false),
 	shouldSave (false),
 	saveGameNumber (-1),
@@ -62,7 +62,7 @@ cServerGame::~cServerGame()
 	if (thread != 0)
 	{
 		canceled = true;
-		SDL_WaitThread (thread, NULL);
+		SDL_WaitThread (thread, nullptr);
 		thread = 0;
 	}
 }
@@ -88,7 +88,7 @@ bool cServerGame::loadGame (int saveGameNumber)
 //------------------------------------------------------------------------------
 void cServerGame::saveGame (int saveGameNumber)
 {
-	if (server == NULL)
+	if (server == nullptr)
 	{
 		cout << "Server not running. Can't save game." << endl;
 		return;
@@ -124,7 +124,7 @@ void cServerGame::run()
 		std::unique_ptr<cNetMessage> message;
 		if(eventQueue.try_pop (message))
 		{
-			if (server != NULL)
+			if (server != nullptr)
 			{
 				server->handleNetMessage (*message);
 				server->checkPlayerUnits();
@@ -319,7 +319,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage& message)
 					mapName += " ";
 					mapName += tokens[i];
 				}
-				if (map != NULL && map->loadMap (mapName))
+				if (map != nullptr && map->loadMap (mapName))
 				{
 					sendGameData (*network, map.get(), &settings, std::vector<cPlayerBasicData>(), "");
 					string reply = senderPlayer.getName();
@@ -468,19 +468,19 @@ std::string cServerGame::getGameState() const
 	std::stringstream result;
 	result << "GameState: ";
 
-	if (server == NULL)
+	if (server == nullptr)
 		result << "Game is open for new players" << endl;
 	else if (server->serverState == SERVER_STATE_INITGAME)
 		result << "Game has started, players are setting up" << endl;
 	else if (server->serverState == SERVER_STATE_INGAME)
 		result << "Game is active" << endl;
 
-	result << "Map: " << (map != NULL ? map->getName() : "none") << endl;
-	if (server != NULL)
+	result << "Map: " << (map != nullptr ? map->getName() : "none") << endl;
+	if (server != nullptr)
 		result << "Turn: " << server->getTurnClock ()->getTurn () << endl;
 
 	result << "Players:" << endl;
-	if (server != NULL && server->playerList.empty() == false)
+	if (server != nullptr && server->playerList.empty() == false)
 	{
 		for (size_t i = 0; i != server->playerList.size(); ++i)
 		{
@@ -499,7 +499,7 @@ std::string cServerGame::getGameState() const
 //------------------------------------------------------------------------------
 int cServerGame::getSocketForPlayerNr (int playerNr) const
 {
-	if (server != NULL)
+	if (server != nullptr)
 	{
 		const cPlayer& player = server->getPlayerFromNumber (playerNr);
 		return player.getSocketNum();

@@ -104,12 +104,12 @@ cVehicle::~cVehicle()
 	if (clientMoveJob)
 	{
 		clientMoveJob->release ();
-		clientMoveJob->Vehicle = NULL;
+		clientMoveJob->Vehicle = nullptr;
 	}
 	if (ServerMoveJob)
 	{
 		ServerMoveJob->release();
-		ServerMoveJob->Vehicle = NULL;
+		ServerMoveJob->Vehicle = nullptr;
 	}
 }
 
@@ -143,27 +143,27 @@ void cVehicle::drawOverlayAnimation (unsigned long long animationTime, SDL_Surfa
 
 void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert ((isUnitBuildingABuilding () || (isUnitClearing () && data.isBig)) && job == NULL);
+	assert ((isUnitBuildingABuilding () || (isUnitClearing () && data.isBig)) && job == nullptr);
 	// draw beton if necessary
 	SDL_Rect tmp = dest;
 	if (isUnitBuildingABuilding () && data.isBig && (!map.isWaterOrCoast (getPosition()) || map.getField(getPosition()).getBaseBuilding ()))
 	{
 		SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), bigBetonAlpha);
 		CHECK_SCALING (*GraphicsData.gfx_big_beton, *GraphicsData.gfx_big_beton_org, zoomFactor);
-		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), NULL, surface, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), nullptr, surface, &tmp);
 	}
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow) blitWithPreScale (uiData->build_shw_org.get (), uiData->build_shw.get (), NULL, surface, &tmp, zoomFactor);
+	if (drawShadow) blitWithPreScale (uiData->build_shw_org.get (), uiData->build_shw.get (), nullptr, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
 	src.y = 0;
 	src.h = src.w = (int) (uiData->build_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
-	blitWithPreScale (uiData->build_org.get (), uiData->build.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
+	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
+	blitWithPreScale (uiData->build_org.get (), uiData->build.get (), &src, GraphicsData.gfx_tmp.get (), nullptr, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -175,20 +175,20 @@ void cVehicle::render_BuildingOrBigClearing (const cMap& map, unsigned long long
 
 void cVehicle::render_smallClearing (unsigned long long animationTime, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow) const
 {
-	assert (isUnitClearing () && !data.isBig && job == NULL);
+	assert (isUnitClearing () && !data.isBig && job == nullptr);
 
 	// draw shadow
 	SDL_Rect tmp = dest;
 	if (drawShadow)
-		blitWithPreScale (uiData->clear_small_shw_org.get (), uiData->clear_small_shw.get (), NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->clear_small_shw_org.get (), uiData->clear_small_shw.get (), nullptr, surface, &tmp, zoomFactor);
 
 	// draw player color
 	SDL_Rect src;
 	src.y = 0;
 	src.h = src.w = (int) (uiData->clear_small_org->h * zoomFactor);
 	src.x = (animationTime % 4) * src.w;
-	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
-	blitWithPreScale (uiData->clear_small_org.get (), uiData->clear_small.get (), &src, GraphicsData.gfx_tmp.get (), NULL, zoomFactor, 4);
+	SDL_BlitSurface (getOwner ()->getColor ().getTexture (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
+	blitWithPreScale (uiData->clear_small_org.get (), uiData->clear_small.get (), &src, GraphicsData.gfx_tmp.get (), nullptr, zoomFactor, 4);
 
 	// draw vehicle
 	src.x = 0;
@@ -213,7 +213,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 		tmp.x += high;
 		tmp.y += high;
 
-		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), nullptr, surface, &tmp, zoomFactor);
 	}
 	else if (data.animationMovement)
 	{
@@ -222,7 +222,7 @@ void cVehicle::render_shadow (const cStaticMap& map, SDL_Surface* surface, const
 		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), &r, surface, &tmp, zoomFactor);
 	}
 	else
-		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), NULL, surface, &tmp, zoomFactor);
+		blitWithPreScale (uiData->shw_org[dir].get (), uiData->shw[dir].get (), nullptr, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, int alpha) const
@@ -235,7 +235,7 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 	// draw player color
 	if (owner)
 	{
-		SDL_BlitSurface (owner->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (owner->getColor ().getTexture (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
 	}
 
 	// read the size:
@@ -249,10 +249,10 @@ void cVehicle::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float 
 		src.w = src.h = tmp.h = tmp.w = (int) (uiData.img_org[dir]->h * zoomFactor);
 		tmp.x = walkFrame * tmp.w;
 		tmp.y = 0;
-		blitWithPreScale (uiData.img_org[dir].get (), uiData.img[dir].get (), &tmp, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
+		blitWithPreScale (uiData.img_org[dir].get (), uiData.img[dir].get (), &tmp, GraphicsData.gfx_tmp.get (), nullptr, zoomFactor);
 	}
 	else
-		blitWithPreScale (uiData.img_org[dir].get (), uiData.img[dir].get (), NULL, GraphicsData.gfx_tmp.get (), NULL, zoomFactor);
+		blitWithPreScale (uiData.img_org[dir].get (), uiData.img[dir].get (), nullptr, GraphicsData.gfx_tmp.get (), nullptr, zoomFactor);
 
 	// draw the vehicle
 	src.x = 0;
@@ -269,7 +269,7 @@ void cVehicle::render (const cMap* map, unsigned long long animationTime, const 
 	// make sure to update the caching rules!
 
 	// draw working engineers and bulldozers:
-	if (map && job == NULL)
+	if (map && job == nullptr)
 	{
 		if (isUnitBuildingABuilding () || (isUnitClearing () && data.isBig))
 		{
@@ -1160,7 +1160,7 @@ bool cVehicle::canDoCommandoAction (const cPosition& position, const cMap& map, 
 
 bool cVehicle::canDoCommandoAction (const cUnit* unit, bool steal) const
 {
-	if (unit == NULL) return false;
+	if (unit == nullptr) return false;
 
 	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
@@ -1515,7 +1515,7 @@ void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rec
 
 cBuilding* cVehicle::getContainerBuilding()
 {
-	if (!isUnitLoaded ()) return NULL;
+	if (!isUnitLoaded ()) return nullptr;
 
 	const auto& buildings = getOwner ()->getBuildings ();
     for (auto i = buildings.begin (); i != buildings.end (); ++i)
@@ -1524,12 +1524,12 @@ cBuilding* cVehicle::getContainerBuilding()
         if (Contains (building->storedUnits, this)) return building.get();
     }
 
-	return NULL;
+	return nullptr;
 }
 
 cVehicle* cVehicle::getContainerVehicle()
 {
-	if (!isUnitLoaded()) return NULL;
+	if (!isUnitLoaded()) return nullptr;
 
 	const auto& vehicles = getOwner ()->getVehicles ();
     for (auto i = vehicles.begin (); i != vehicles.end (); ++i)
@@ -1538,7 +1538,7 @@ cVehicle* cVehicle::getContainerVehicle()
         if (Contains (vehicle->storedUnits, this)) return vehicle.get();
     }
 
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------

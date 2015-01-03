@@ -316,8 +316,8 @@ void cResourceBar::createSurface (eResourceBarType type)
     surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
 
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 
 	SDL_Rect src = {srcPosition.x (), srcPosition.y (), size.x (), size.y ()};
-	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, surface.get (), NULL);
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff.get (), &src, surface.get (), nullptr);
 }

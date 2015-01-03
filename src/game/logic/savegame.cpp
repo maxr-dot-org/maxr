@@ -152,7 +152,7 @@ bool cSavegame::load (cServer& server)
 	else
 	{
 		XMLElement* unitValuesNode = SaveFile.RootElement()->FirstChildElement ("UnitValues");
-		if (unitValuesNode != NULL)
+		if (unitValuesNode != nullptr)
 		{
 			int unitnum = 0;
 			XMLElement* unitNode = unitValuesNode->FirstChildElement ("UnitVal_0");
@@ -167,7 +167,7 @@ bool cSavegame::load (cServer& server)
 	}
 
 	string gametype;
-	loadHeader (NULL, &gametype, NULL);
+	loadHeader (nullptr, &gametype, nullptr);
 	if (gametype.compare ("IND") && gametype.compare ("HOT") && gametype.compare ("NET"))
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
@@ -234,7 +234,7 @@ string cSavegame::loadMapName()
 	if (!loadFile ()) return "";
 
 	const XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
-	if (mapNode != NULL) return mapNode->FirstChildElement ("Name")->Attribute ("string");
+	if (mapNode != nullptr) return mapNode->FirstChildElement ("Name")->Attribute ("string");
 	else return "";
 }
 
@@ -495,7 +495,7 @@ void cSavegame::loadGameInfo (cServer& server)
 bool cSavegame::loadMap (cServer& server)
 {
 	XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
-	if (mapNode == NULL) return false;
+	if (mapNode == nullptr) return false;
 
 	auto staticMap = std::make_shared<cStaticMap>();
 	string name = mapNode->FirstChildElement ("Name")->Attribute ("string");
@@ -515,7 +515,7 @@ void cSavegame::loadPlayers (cServer& server)
 	auto& players = server.playerList;
 
 	XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
-	if (playersNode == NULL) return;
+	if (playersNode == nullptr) return;
 
 	int playernum = 0;
 	cMap& map = *server.Map;
@@ -740,7 +740,7 @@ void cSavegame::loadCasualties (cServer& server)
 void cSavegame::loadUnits (cServer& server)
 {
 	XMLElement* unitsNode = SaveFile.RootElement()->FirstChildElement ("Units");
-	if (unitsNode == NULL) return;
+	if (unitsNode == nullptr) return;
 
 	int unitnum = 0;
 	XMLElement* unitNode = unitsNode->FirstChildElement ("Unit_0");
@@ -781,7 +781,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
-	auto& vehicle = server.addVehicle (cPosition(x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	auto& vehicle = server.addVehicle (cPosition(x, y), ID, &owner, true, unitNode->FirstChildElement ("Stored_In") == nullptr, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle.changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -813,14 +813,14 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, const sID& I
 		{
 			vehicle.setBuildingABuilding (element->BoolAttribute ("building"));
 		}
-		if (element->Attribute ("type_id") != NULL)
+		if (element->Attribute ("type_id") != nullptr)
 		{
 			sID temp;
 			temp.generate (element->Attribute ("type_id"));
 			vehicle.setBuildingType (temp);
 		}
 		// be downward compatible and looke for 'type' too
-		else if (element->Attribute ("type") != NULL)
+		else if (element->Attribute ("type") != nullptr)
 		{
 			// element->Attribute ("type", &vehicle.BuildingTyp);
 		}
@@ -966,14 +966,14 @@ void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, const sID& 
 		while (itemElement)
 		{
 			cBuildListItem listitem;
-			if (itemElement->Attribute ("type_id") != NULL)
+			if (itemElement->Attribute ("type_id") != nullptr)
 			{
 				sID id;
 				id.generate (itemElement->Attribute ("type_id"));
 				listitem.setType (id);
 			}
 			// be downward compatible and look for 'type' too
-			else if (itemElement->Attribute ("type") != NULL)
+			else if (itemElement->Attribute ("type") != nullptr)
 			{
 				int typenr;
 				itemElement->QueryIntAttribute ("type", &typenr);
@@ -1069,8 +1069,8 @@ void Split (const std::string& s, const char* seps, std::vector<std::string>& wo
 //--------------------------------------------------------------------------
 void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 {
-	if (unitNode == NULL) return;
-	sUnitData* Data = NULL;
+	if (unitNode == nullptr) return;
+	sUnitData* Data = nullptr;
 
 	// get the unit data
 	sID ID;
@@ -1083,7 +1083,7 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 	{
 		Data = &UnitsData.sbuildings[UnitsData.getBuildingIndexBy (ID)];
 	}
-	if (Data == NULL) return;
+	if (Data == nullptr) return;
 
 	Data->ID = ID;
 
@@ -1254,29 +1254,29 @@ void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 		Data->modifiesSpeed = 0;
 	}
 
-	Data->canBuildPath = unitNode->FirstChildElement ("Can_Build_Path") != NULL;
-	Data->canBuildRepeat = unitNode->FirstChildElement ("Can_Build_Repeat") != NULL;
-	Data->connectsToBase = unitNode->FirstChildElement ("Connects_To_Base") != NULL;
+	Data->canBuildPath = unitNode->FirstChildElement ("Can_Build_Path") != nullptr;
+	Data->canBuildRepeat = unitNode->FirstChildElement ("Can_Build_Repeat") != nullptr;
+	Data->connectsToBase = unitNode->FirstChildElement ("Connects_To_Base") != nullptr;
 
-	Data->canBeCaptured = unitNode->FirstChildElement ("Can_Be_Captured") != NULL;
-	Data->canBeDisabled = unitNode->FirstChildElement ("Can_Be_Disabled") != NULL;
-	Data->canCapture = unitNode->FirstChildElement ("Can_Capture") != NULL;
-	Data->canDisable = unitNode->FirstChildElement ("Can_Disable") != NULL;
-	Data->canSurvey = unitNode->FirstChildElement ("Can_Survey") != NULL;
-	Data->doesSelfRepair = unitNode->FirstChildElement ("Does_Self_Repair") != NULL;
-	Data->canSelfDestroy = unitNode->FirstChildElement ("Can_Self_Destroy") != NULL;
-	Data->explodesOnContact = unitNode->FirstChildElement ("Explodes_On_Contact") != NULL;
-	Data->isHuman = unitNode->FirstChildElement ("Is_Human") != NULL;
-	Data->canBeLandedOn = unitNode->FirstChildElement ("Can_Be_Landed_On") != NULL;
-	Data->canWork = unitNode->FirstChildElement ("Can_Work") != NULL;
+	Data->canBeCaptured = unitNode->FirstChildElement ("Can_Be_Captured") != nullptr;
+	Data->canBeDisabled = unitNode->FirstChildElement ("Can_Be_Disabled") != nullptr;
+	Data->canCapture = unitNode->FirstChildElement ("Can_Capture") != nullptr;
+	Data->canDisable = unitNode->FirstChildElement ("Can_Disable") != nullptr;
+	Data->canSurvey = unitNode->FirstChildElement ("Can_Survey") != nullptr;
+	Data->doesSelfRepair = unitNode->FirstChildElement ("Does_Self_Repair") != nullptr;
+	Data->canSelfDestroy = unitNode->FirstChildElement ("Can_Self_Destroy") != nullptr;
+	Data->explodesOnContact = unitNode->FirstChildElement ("Explodes_On_Contact") != nullptr;
+	Data->isHuman = unitNode->FirstChildElement ("Is_Human") != nullptr;
+	Data->canBeLandedOn = unitNode->FirstChildElement ("Can_Be_Landed_On") != nullptr;
+	Data->canWork = unitNode->FirstChildElement ("Can_Work") != nullptr;
 
-	Data->isBig = unitNode->FirstChildElement ("Is_Big") != NULL;
-	Data->canRepair = unitNode->FirstChildElement ("Can_Repair") != NULL;
-	Data->canRearm = unitNode->FirstChildElement ("Can_Rearm") != NULL;
-	Data->canResearch = unitNode->FirstChildElement ("Can_Research") != NULL;
-	Data->canClearArea = unitNode->FirstChildElement ("Can_Clear") != NULL;
-	Data->canPlaceMines = unitNode->FirstChildElement ("Can_Place_Mines") != NULL;
-	Data->canDriveAndFire = unitNode->FirstChildElement ("Can_Drive_And_Fire") != NULL;
+	Data->isBig = unitNode->FirstChildElement ("Is_Big") != nullptr;
+	Data->canRepair = unitNode->FirstChildElement ("Can_Repair") != nullptr;
+	Data->canRearm = unitNode->FirstChildElement ("Can_Rearm") != nullptr;
+	Data->canResearch = unitNode->FirstChildElement ("Can_Research") != nullptr;
+	Data->canClearArea = unitNode->FirstChildElement ("Can_Clear") != nullptr;
+	Data->canPlaceMines = unitNode->FirstChildElement ("Can_Place_Mines") != nullptr;
+	Data->canDriveAndFire = unitNode->FirstChildElement ("Can_Drive_And_Fire") != nullptr;
 }
 
 //--------------------------------------------------------------------------
@@ -1288,7 +1288,7 @@ void cSavegame::generateMoveJobs (cServer& server)
 		if (!MoveJob->calcPath())
 		{
 			delete MoveJob;
-			MoveJobsLoad[i]->vehicle->ServerMoveJob = NULL;
+			MoveJobsLoad[i]->vehicle->ServerMoveJob = nullptr;
 		}
 		else server.addActiveMoveJob (*MoveJob);
 		delete MoveJobsLoad[i];
@@ -1302,7 +1302,7 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 	{
 		if (PlayerList[i]->getNr() == number) return PlayerList[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
 //--------------------------------------------------------------------------
@@ -1349,7 +1349,7 @@ void cSavegame::writeHeader (const cServer& server, const string& saveName)
 		case GAME_TYPE_TCPIP: addAttributeElement (headerNode, "Type", "string", "NET"); break;
 	}
 	char timestr[21];
-	time_t tTime = time (NULL);
+	time_t tTime = time (nullptr);
 	tm* tmTime = localtime (&tTime);
 	strftime (timestr, 21, "%d.%m.%y %H:%M", tmTime);
 
@@ -1853,7 +1853,7 @@ void cSavegame::writeAdditionalInfo (const cGameGuiState& gameGuiState, std::vec
 	// first get the players node
 	XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	int playernum = 0;
-	XMLElement* playerNode = NULL;
+	XMLElement* playerNode = nullptr;
 	do
 	{
 		playerNode = playersNode->FirstChildElement (("Player_" + iToStr (playernum)).c_str());
@@ -1863,7 +1863,7 @@ void cSavegame::writeAdditionalInfo (const cGameGuiState& gameGuiState, std::vec
 		if (number == player->getNr()) break;
 		playernum++;
 	}
-	while (playerNode != NULL);
+	while (playerNode != nullptr);
 
 	XMLElement* hudNode = addMainElement (playerNode, "Hud");
 	gameGuiState.pushInto (*hudNode);

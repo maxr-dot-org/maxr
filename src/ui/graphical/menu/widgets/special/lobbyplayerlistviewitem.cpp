@@ -76,8 +76,8 @@ void cLobbyPlayerListViewItem::updatePlayerReady ()
 
 	AutoSurface readySurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
 	SDL_SetColorKey (readySurface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (readySurface.get (), NULL, 0xFF00FF);
-	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), NULL);
+	SDL_FillRect (readySurface.get (), nullptr, 0xFF00FF);
+	SDL_BlitSurface (GraphicsData.gfx_player_ready.get (), &src, readySurface.get (), nullptr);
 
 	readyImage->setImage (readySurface.get ());
 }

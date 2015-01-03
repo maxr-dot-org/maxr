@@ -343,7 +343,7 @@ void cPushButton::renewSurface ()
 
     surface = AutoSurface (SDL_CreateRGBSurface (0, src.w, src.h, Video.getColDepth (), 0, 0, 0, 0));
 	SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
-	SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 
 	SDL_Surface* srcSurface = nullptr;
 
@@ -354,7 +354,7 @@ void cPushButton::renewSurface ()
 
 	assert (srcSurface != nullptr);
 
-	SDL_BlitSurface (srcSurface, &src, surface.get (), NULL);
+	SDL_BlitSurface (srcSurface, &src, surface.get (), nullptr);
 
 	text = font->shortenStringToSize (text, size.x() - getBordersSize (), fontType);
 }

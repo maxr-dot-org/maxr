@@ -59,7 +59,7 @@ SDL_Surface* cWindowMain::getRandomInfoImage ()
 	// (and vehicles are way more cool so I prefer them to be shown) -- beko
 	static int lastUnitShow = -1;
 	int unitShow = -1;
-	SDL_Surface* surface = NULL;
+	SDL_Surface* surface = nullptr;
 
 	if (showBuilding == 1 && UnitsData.getNrBuildings () > 0)
 	{
@@ -83,7 +83,7 @@ SDL_Surface* cWindowMain::getRandomInfoImage ()
 		while (unitShow == lastUnitShow && UnitsData.getNrVehicles () > 1);
         surface = UnitsData.vehicleUIs[unitShow].info.get ();
 	}
-	else surface = NULL;
+	else surface = nullptr;
 	lastUnitShow = unitShow; //store shown unit
 	return surface;
 }

@@ -150,7 +150,7 @@ void cWindowMapSelection::updateMaps ()
 			int size;
 			AutoSurface mapSurface (cStaticMap::loadMapPreview (mapName, &size));
 
-			if (mapSurface == NULL) continue;
+			if (mapSurface == nullptr) continue;
 
 			const int mapWinSize = 112;
 			const int selectedColor = 0x00C000;
@@ -159,7 +159,7 @@ void cWindowMapSelection::updateMaps ()
 
 			if (selectedMapIndex == static_cast<int>(mapIndex))
 			{
-				SDL_FillRect (imageSurface.get (), NULL, selectedColor);
+				SDL_FillRect (imageSurface.get (), nullptr, selectedColor);
 
 				if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
@@ -173,7 +173,7 @@ void cWindowMapSelection::updateMaps ()
 			}
 			else
 			{
-				SDL_FillRect (imageSurface.get (), NULL, unselectedColor);
+				SDL_FillRect (imageSurface.get (), nullptr, unselectedColor);
 
 				if (font->getTextWide (">" + mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 				{
@@ -186,14 +186,14 @@ void cWindowMapSelection::updateMaps ()
 				else mapName = mapName.substr (0, mapName.length () - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")";
 			}
 			SDL_Rect dest = {4, 4, mapWinSize, mapWinSize};
-			SDL_BlitSurface (mapSurface.get (), NULL, imageSurface.get (), &dest);
+			SDL_BlitSurface (mapSurface.get (), nullptr, imageSurface.get (), &dest);
 
 			mapImages[i]->setImage (imageSurface.get ());
 			mapTitles[i]->setText (mapName);
 		}
 		else
 		{
-			mapImages[i]->setImage (NULL);
+			mapImages[i]->setImage (nullptr);
 			mapTitles[i]->setText ("");
 		}
 	}

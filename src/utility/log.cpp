@@ -42,7 +42,7 @@
 cLog::cLog() :
 	mutex()
 {
-	logfile = NULL;
+	logfile = nullptr;
 	bNetlogStarted = false;
 	bFirstRun = true;
 }
@@ -52,7 +52,7 @@ bool cLog::open (int TYPE)
 	//check if netlog file name is initialized
 	if (bFirstRun)
 	{
-		time_t tTime = time (NULL);
+		time_t tTime = time (nullptr);
 #if defined (_MSC_VER)
 		tm tm_;
 		tm* tmTime = &tm_;
@@ -68,7 +68,7 @@ bool cLog::open (int TYPE)
 		bFirstRun = false;
 	}
 
-	if (logfile == NULL || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted))
+	if (logfile == nullptr || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted))
 	{
 		if (TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
 		{
@@ -108,7 +108,7 @@ bool cLog::open (int TYPE)
 	{
 		fprintf (stderr, "(EE): Couldn't read maxr.log!\n Please check file/directory permissions\n");
 
-		if (logfile != NULL) return true;
+		if (logfile != nullptr) return true;
 		else return false;
 	}
 	else return true;

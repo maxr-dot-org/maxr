@@ -61,7 +61,7 @@ string cClanUnitStat::getClanStatsDescription() const
 {
 	const sUnitData* data = unitId.getUnitDataOriginalVersion();
 
-	if (data == NULL) return "Unknown";
+	if (data == nullptr) return "Unknown";
 
 	string result = string (data->name) + ": ";
 	const char* const commaSep = ", ";
@@ -188,5 +188,5 @@ cClan* cClanData::getClan (unsigned int num)
 {
 	if (num < clans.size())
 		return clans[num];
-	return NULL;
+	return nullptr;
 }

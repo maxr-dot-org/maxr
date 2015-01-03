@@ -26,13 +26,13 @@ template <typename T>
 class AutoPtr
 {
 public:
-	explicit AutoPtr (T* const p_ = NULL) : p (p_) {}
+	explicit AutoPtr (T* const p_ = nullptr) : p (p_) {}
 	~AutoPtr() { delete p; }
 
 	T* Release()
 	{
 		T* const p_ = p;
-		p = NULL;
+		p = nullptr;
 		return p_;
 	}
 
@@ -48,7 +48,7 @@ public:
 	bool operator == (const T* rhs) const { return p == rhs; }
 	bool operator != (const T* rhs) const { return p != rhs; }
 
-	bool operator !() const { return p == NULL; }
+	bool operator !() const { return p == nullptr; }
 
 	T* get() const { return p; }
 

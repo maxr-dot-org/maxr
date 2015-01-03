@@ -438,7 +438,7 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 
 			// get the unicode place of the character
 			int unicodeplace = 0;
-			if (iso8859_to_uni == NULL)
+			if (iso8859_to_uni == nullptr)
 			{
 				if (charset == CHARSET_ISO8559_ALL) unicodeplace = currentChar;
 				else if (charset == CHARSET_ISO8559_1) unicodeplace = currentChar + 128 + 2 * 16;
@@ -446,8 +446,8 @@ void cUnicodeFont::loadChars (eUnicodeFontCharset charset, eUnicodeFontType font
 			else unicodeplace = iso8859_to_uni[currentChar];
             chars[unicodeplace] = AutoSurface (SDL_CreateRGBSurface (0, Rect.w, Rect.h, 32, 0, 0, 0, 0));
 
-			SDL_FillRect (chars[unicodeplace].get (), NULL, 0xFF00FF);
-			SDL_BlitSurface (surface.get (), &Rect, chars[unicodeplace].get (), NULL);
+			SDL_FillRect (chars[unicodeplace].get (), nullptr, 0xFF00FF);
+			SDL_BlitSurface (surface.get (), &Rect, chars[unicodeplace].get (), nullptr);
 			SDL_SetColorKey (chars[unicodeplace].get (), SDL_TRUE, 0xFF00FF);
 
 			// change color for some fonts
@@ -493,7 +493,7 @@ cUnicodeFont::getFontTypeSurfaces (eUnicodeFontType const fonttype)
 		case FONT_LATIN_SMALL_GREEN: return &charsSmallGreen;
 		case FONT_LATIN_SMALL_YELLOW: return &charsSmallYellow;
 	}
-	return NULL;
+	return nullptr;
 }
 
 AutoSurface cUnicodeFont::loadCharsetSurface (eUnicodeFontCharset charset,
@@ -538,8 +538,8 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)
 {
 	switch (charset)
 	{
-		case CHARSET_ISO8559_ALL: return NULL;
-		case CHARSET_ISO8559_1: return NULL;
+		case CHARSET_ISO8559_ALL: return nullptr;
+		case CHARSET_ISO8559_1: return nullptr;
 		case CHARSET_ISO8559_2: return iso8859_2_2uni;
 		case CHARSET_ISO8559_3: return iso8859_3_2uni;
 		case CHARSET_ISO8559_4: return iso8859_4_2uni;
@@ -549,7 +549,7 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)
 		case CHARSET_ISO8559_8: return iso8859_8_2uni;
 		case CHARSET_ISO8559_9: return iso8859_9_2uni;
 		case CHARSET_ISO8559_10: return iso8859_10_2uni;
-		case CHARSET_ISO8559_11: return NULL;
+		case CHARSET_ISO8559_11: return nullptr;
 		case CHARSET_ISO8559_13: return iso8859_13_2uni;
 		case CHARSET_ISO8559_14: return iso8859_14_2uni;
 		case CHARSET_ISO8559_15: return iso8859_15_2uni;
@@ -558,7 +558,7 @@ const unsigned short* cUnicodeFont::getIsoPage (eUnicodeFontCharset charset)
 			//LOG: unknown iso format
 			break;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void cUnicodeFont::showText (SDL_Rect rDest, const string& sText,
@@ -621,10 +621,10 @@ void cUnicodeFont::showText (int x, int y, const string& text,
 			int increase;
 			Uint16 uni = encodeUTF8Char (p, increase);
 			p += increase;
-			if (chars[uni] != NULL)
+			if (chars[uni] != nullptr)
 			{
 				SDL_Rect rTmp = {Sint16 (offX), Sint16 (offY), 16, 16};
-				SDL_BlitSurface (chars[uni].get (), NULL, surface, &rTmp);
+				SDL_BlitSurface (chars[uni].get (), nullptr, surface, &rTmp);
 
 				// move one px forward for space between signs
 				offX += chars[uni]->w + iSpace;
@@ -835,7 +835,7 @@ SDL_Rect cUnicodeFont::getTextSize (const string& text, eUnicodeFontType fonttyp
 			int increase;
 			Uint16 uni = encodeUTF8Char (p, increase);
 			p += increase;
-			if (chars[uni] != NULL)
+			if (chars[uni] != nullptr)
 			{
 				rTmp.w += chars[uni]->w + iSpace;
 				rTmp.h = chars[uni]->h;
@@ -851,7 +851,7 @@ int cUnicodeFont::getFontHeight (eUnicodeFontType fonttype)
 	// we will return the height of the first character in the list
 	for (int i = 0; i < 0xFFFF; i++)
 	{
-		if (chars[i] != NULL) return chars[i]->h;
+		if (chars[i] != nullptr) return chars[i]->h;
 	}
 	return 0;
 }
@@ -953,7 +953,7 @@ int cUnicodeFont::getUnicodeCharacterWidth (Uint16 unicodeCharacter, eUnicodeFon
 
 	if (unicodeCharacter == ' ') unicodeCharacter = 'a'; // we use the length of 'a' for the length of a space
 
-	if (chars[unicodeCharacter] != NULL)
+	if (chars[unicodeCharacter] != nullptr)
 	{
 		return chars[unicodeCharacter]->w + space;
 	}

@@ -488,20 +488,20 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start) const
 //------------------------------------------------------------------------------
 cUnit* cPlayer::getNextUnit (cUnit* start) const
 {
-	if (start == NULL || start->getOwner () != this)
+	if (start == nullptr || start->getOwner () != this)
 	{
-		cVehicle* nextVehicle = getNextVehicle (NULL);
+		cVehicle* nextVehicle = getNextVehicle (nullptr);
 		if (nextVehicle) return nextVehicle;
-		cBuilding* nextBuilding = getNextBuilding (NULL);
+		cBuilding* nextBuilding = getNextBuilding (nullptr);
 		if (nextBuilding) return nextBuilding;
 	}
 	else if (start->isAVehicle())
 	{
 		cVehicle* nextVehicle = getNextVehicle (static_cast<cVehicle*> (start));
 		if (nextVehicle) return nextVehicle;
-		cBuilding* nextBuilding = getNextBuilding (NULL);
+		cBuilding* nextBuilding = getNextBuilding (nullptr);
 		if (nextBuilding) return nextBuilding;
-		nextVehicle = getNextVehicle (NULL);
+		nextVehicle = getNextVehicle (nullptr);
 		if (nextVehicle) return nextVehicle;
 	}
 	else
@@ -510,14 +510,14 @@ cUnit* cPlayer::getNextUnit (cUnit* start) const
 		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* nextBuilding = getNextBuilding (building);
 		if (nextBuilding) return nextBuilding;
-		cVehicle* nextVehicle = getNextVehicle (NULL);
+		cVehicle* nextVehicle = getNextVehicle (nullptr);
 		if (nextVehicle) return nextVehicle;
-		nextBuilding = getNextBuilding (NULL);
+		nextBuilding = getNextBuilding (nullptr);
 		if (nextBuilding) return nextBuilding;
 	}
 	// finally, return the more recent built Mining station.
 	// since list order is by increasing age, take the first in list.
-	return getNextMiningStation (NULL);
+	return getNextMiningStation (nullptr);
 }
 
 cVehicle* cPlayer::getPrevVehicle (cVehicle* start) const
@@ -580,20 +580,20 @@ cBuilding* cPlayer::getPrevMiningStation (cBuilding* start) const
 //------------------------------------------------------------------------------
 cUnit* cPlayer::getPrevUnit (cUnit* start) const
 {
-	if (start == NULL || start->getOwner () != this)
+	if (start == nullptr || start->getOwner () != this)
 	{
-		cVehicle* prevVehicle = getPrevVehicle (NULL);
+		cVehicle* prevVehicle = getPrevVehicle (nullptr);
 		if (prevVehicle) return prevVehicle;
-		cBuilding* prevBuilding = getPrevBuilding (NULL);
+		cBuilding* prevBuilding = getPrevBuilding (nullptr);
 		if (prevBuilding) return prevBuilding;
 	}
 	else if (start->isAVehicle())
 	{
 		cVehicle* prevVehicle = getPrevVehicle (static_cast<cVehicle*> (start));
 		if (prevVehicle) return prevVehicle;
-		cBuilding* prevBuilding = getPrevBuilding (NULL);
+		cBuilding* prevBuilding = getPrevBuilding (nullptr);
 		if (prevBuilding) return prevBuilding;
-		prevVehicle = getPrevVehicle (NULL);
+		prevVehicle = getPrevVehicle (nullptr);
 		if (prevVehicle) return prevVehicle;
 	}
 	else
@@ -602,14 +602,14 @@ cUnit* cPlayer::getPrevUnit (cUnit* start) const
 		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* prevBuilding = getPrevBuilding (building);
 		if (prevBuilding) return prevBuilding;
-		cVehicle* prevVehicle = getPrevVehicle (NULL);
+		cVehicle* prevVehicle = getPrevVehicle (nullptr);
 		if (prevVehicle) return prevVehicle;
-		prevBuilding = getPrevBuilding (NULL);
+		prevBuilding = getPrevBuilding (nullptr);
 		if (prevBuilding) return prevBuilding;
 	}
 	// finally, return the more recent built Mining station.
 	// since list order is by increasing age, take the first in list.
-	return getNextMiningStation (NULL);
+	return getNextMiningStation (nullptr);
 }
 
 //------------------------------------------------------------------------------

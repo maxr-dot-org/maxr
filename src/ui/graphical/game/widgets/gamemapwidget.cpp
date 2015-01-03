@@ -1416,7 +1416,7 @@ void cGameMapWidget::drawUnitCircles ()
 		}
 	}
 
-	SDL_SetClipRect (cVideo::buffer, NULL);
+	SDL_SetClipRect (cVideo::buffer, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1524,7 +1524,7 @@ void cGameMapWidget::drawBuildBand ()
 			dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * destination.x ();
 			dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * destination.y ();
 			CHECK_SCALING (*GraphicsData.gfx_band_big, *GraphicsData.gfx_band_big_org, getZoomFactor ());
-			SDL_BlitSurface (GraphicsData.gfx_band_big.get (), NULL, cVideo::buffer, &dest);
+			SDL_BlitSurface (GraphicsData.gfx_band_big.get (), nullptr, cVideo::buffer, &dest);
 		}
 		else if (mouseMode->getType () == eMouseModeType::SelectBuildPathDestintaion)
 		{
@@ -1535,7 +1535,7 @@ void cGameMapWidget::drawBuildBand ()
 				dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mouseTilePosition.x ();
 				dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * mouseTilePosition.y ();
 				CHECK_SCALING (*GraphicsData.gfx_band_small, *GraphicsData.gfx_band_small_org, getZoomFactor ());
-				SDL_BlitSurface (GraphicsData.gfx_band_small.get (), NULL, cVideo::buffer, &dest);
+				SDL_BlitSurface (GraphicsData.gfx_band_small.get (), nullptr, cVideo::buffer, &dest);
 			}
 		}
 	}
@@ -1602,7 +1602,7 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 		dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
 		dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * my;
 
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), NULL, cVideo::buffer, &dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), nullptr, cVideo::buffer, &dest);
 
 		if (mx < vehicle.bandPosition.x())
 			mx++;
@@ -1618,7 +1618,7 @@ void cGameMapWidget::drawBuildPath (const cVehicle& vehicle)
 	dest.x = getPosition ().x () - (int)(pixelOffset.x () * getZoomFactor ()) + zoomedTileSize.x () * mx;
 	dest.y = getPosition ().y () - (int)(pixelOffset.y () * getZoomFactor ()) + zoomedTileSize.y () * my;
 
-	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), NULL, cVideo::buffer, &dest);
+	SDL_BlitSurface (OtherData.WayPointPfeileSpecial[sp][64 - zoomedTileSize.x ()].get (), nullptr, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -1867,7 +1867,7 @@ bool cGameMapWidget::handleClicked (cApplication& application, cMouse& mouse, eM
 				if (selectedUnit && selectedUnit->isAbove (tilePosition))
 				{
 					const auto& planes = field.getPlanes ();
-					cUnit* next = NULL;
+					cUnit* next = nullptr;
 
 					if (selectedVehicle)
 					{

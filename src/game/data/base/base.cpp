@@ -1138,7 +1138,7 @@ cBase::~cBase()
 
 sSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& building)
 {
-	if (map->isValidPosition (position) == false) return NULL;
+	if (map->isValidPosition (position) == false) return nullptr;
 	cBuilding* b = map->getField (position).getBuilding ();
 
 	if (b && b->getOwner () == building.getOwner () && b->SubBase)
@@ -1146,7 +1146,7 @@ sSubBase* cBase::checkNeighbour (const cPosition& position, const cBuilding& bui
 		b->CheckNeighbours (*map);
 		return b->SubBase;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void cBase::addBuilding (cBuilding* building, cServer* server)
@@ -1218,7 +1218,7 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 	// remove the current subbase
 	for (size_t i = 0; i != sb->buildings.size(); ++i)
 	{
-		sb->buildings[i]->SubBase = NULL;
+		sb->buildings[i]->SubBase = nullptr;
 	}
 	Remove (SubBases, sb);
 
@@ -1232,7 +1232,7 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 	{
 		cBuilding* n = sb->buildings[i];
 		if (n == building) continue;
-		addBuilding (n, NULL);
+		addBuilding (n, nullptr);
 	}
 
 	//generate list, with the new subbases

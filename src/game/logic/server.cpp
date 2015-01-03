@@ -241,8 +241,8 @@ void cServer::stop()
 	{
 		if (serverThread)
 		{
-			SDL_WaitThread (serverThread, NULL);
-			serverThread = NULL;
+			SDL_WaitThread (serverThread, nullptr);
+			serverThread = nullptr;
 		}
 	}
 }
@@ -480,7 +480,7 @@ void cServer::handleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 		return;
 	network->close (iSocketNumber);
 
-	cPlayer* Player = NULL;
+	cPlayer* Player = nullptr;
 	// resort socket numbers of the players
 	for (size_t i = 0; i != playerList.size(); ++i)
 	{
@@ -543,7 +543,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message)
 	const int iID = message.popInt32();
 	cBuilding* building = getBuildingFromID (iID);
 
-	if (building == NULL || building->getOwner ()->getNr () != message.iPlayerNr) return;
+	if (building == nullptr || building->getOwner ()->getNr () != message.iPlayerNr) return;
 
 	building->ServerStartWork (*this);
 }
@@ -556,7 +556,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message)
 	const int iID = message.popInt32();
 	cBuilding* building = getBuildingFromID (iID);
 
-	if (building == NULL || building->getOwner ()->getNr () != message.iPlayerNr) return;
+	if (building == nullptr || building->getOwner ()->getNr () != message.iPlayerNr) return;
 
 	building->ServerStopWork (*this, false);
 }
@@ -589,7 +589,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_STOP_MOVE);
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == NULL || Vehicle->ServerMoveJob == NULL) return;
+	if (Vehicle == nullptr || Vehicle->ServerMoveJob == nullptr) return;
 
 	Vehicle->ServerMoveJob->stop();
 }
@@ -634,7 +634,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	cUnit* target = getUnitFromID (targetID);
 
 	//validate aggressor
-	if (aggressor == NULL)
+	if (aggressor == nullptr)
 	{
 		Log.write (" Server: vehicle with ID " + iToStr (aggressorID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -707,11 +707,11 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_BUILD);
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == NULL) return;
+	if (Vehicle == nullptr) return;
 	if (Vehicle->isUnitBuildingABuilding () || Vehicle->BuildPath) return;
 
 	const sID BuildingTyp = message.popID();
-	if (BuildingTyp.getUnitDataOriginalVersion() == NULL)
+	if (BuildingTyp.getUnitDataOriginalVersion() == nullptr)
 	{
 		Log.write (" Server: invalid unit: " + iToStr (BuildingTyp.iFirstPart) + "." + iToStr (BuildingTyp.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
 		return;
@@ -797,7 +797,7 @@ void cServer::handleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	assert (message.iType == GAME_EV_END_BUILDING);
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == NULL) return;
+	if (Vehicle == nullptr) return;
 
     const cPosition escapePosition (message.popPosition());
 
@@ -841,7 +841,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_STOP_BUILDING);
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
-	if (Vehicle == NULL) return;
+	if (Vehicle == nullptr) return;
 	if (!Vehicle->isUnitBuildingABuilding ()) return;
 	stopVehicleBuilding (*Vehicle);
 }
@@ -851,10 +851,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_TRANSFER);
 
-	cVehicle* SrcVehicle = NULL;
-	cVehicle* DestVehicle = NULL;
-	cBuilding* SrcBuilding = NULL;
-	cBuilding* DestBuilding = NULL;
+	cVehicle* SrcVehicle = nullptr;
+	cVehicle* DestVehicle = nullptr;
+	cBuilding* SrcBuilding = nullptr;
+	cBuilding* DestBuilding = nullptr;
 
 	if (message.popBool()) SrcVehicle = getVehicleFromID (message.popInt16());
 	else SrcBuilding = getBuildingFromID (message.popInt16());
@@ -967,7 +967,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
 
 	cBuilding* Building = getBuildingFromID (message.popInt16());
-	if (Building == NULL) return;
+	if (Building == nullptr) return;
 
 	// check whether the building has water and land fields around it
 	int iX = Building->getPosition().x() - 2;
@@ -1074,7 +1074,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	assert (message.iType == GAME_EV_WANT_EXIT_FIN_VEH);
 
 	cBuilding* Building = getBuildingFromID (message.popInt16());
-	if (Building == NULL) return;
+	if (Building == nullptr) return;
 
 	const auto position = message.popPosition();
 	if (Map->isValidPosition (position) == false) return;
@@ -1123,7 +1123,7 @@ void cServer::handleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 	assert (message.iType == GAME_EV_CHANGE_RESOURCES);
 
 	cBuilding* Building = getBuildingFromID (message.popInt16());
-	if (Building == NULL) return;
+	if (Building == nullptr) return;
 
 	const unsigned int iMetalProd = message.popInt16();
 	const unsigned int iOilProd = message.popInt16();
@@ -1185,7 +1185,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 	if (message.popBool()) // vehicle
 	{
 		cVehicle* vehicle = getVehicleFromID (message.popInt16());
-		if (vehicle == NULL) return;
+		if (vehicle == nullptr) return;
 
 		if (vehicle->isSentryActive())
 		{
@@ -1202,7 +1202,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 	else // building
 	{
 		cBuilding* building = getBuildingFromID (message.popInt16());
-		if (building == NULL) return;
+		if (building == nullptr) return;
 
 		if (building->isSentryActive())
 		{
@@ -1233,10 +1233,10 @@ void cServer::handleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_SUPPLY);
 
-	cVehicle* SrcVehicle = NULL;
-	cVehicle* DestVehicle = NULL;
-	cBuilding* SrcBuilding = NULL;
-	cBuilding* DestBuilding = NULL;
+	cVehicle* SrcVehicle = nullptr;
+	cVehicle* DestVehicle = nullptr;
+	cBuilding* SrcBuilding = nullptr;
+	cBuilding* DestBuilding = nullptr;
 
 	// get the units
 	const int iType = message.popChar();
@@ -1384,7 +1384,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	const int id = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (id);
-	if (Vehicle == NULL)
+	if (Vehicle == nullptr)
 	{
 		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
 		return;
@@ -1440,7 +1440,7 @@ void cServer::handleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 
 	const int id = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (id);
-	if (Vehicle == NULL)
+	if (Vehicle == nullptr)
 	{
 		Log.write ("Server: Can not find vehicle with id " + iToStr (id) + " for stop clearing", LOG_TYPE_NET_WARNING);
 		return;
@@ -1862,12 +1862,12 @@ void cServer::handleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	cVehicle* srcVehicle = getVehicleFromID (message.popInt16());
 	if (!srcVehicle) return;
 
-	cVehicle* destVehicle = NULL;
-	cBuilding* destBuilding = NULL;
+	cVehicle* destVehicle = nullptr;
+	cBuilding* destBuilding = nullptr;
 	if (message.popBool()) destVehicle = getVehicleFromID (message.popInt16());
 	else destBuilding = getBuildingFromID (message.popInt16());
 	cUnit* destUnit = destVehicle;
-	if (destUnit == NULL) destUnit = destBuilding;
+	if (destUnit == nullptr) destUnit = destBuilding;
 	const bool steal = message.popBool();
 	// check whether the commando action is possible
 	if (! ((destUnit && srcVehicle->canDoCommandoAction (destUnit->getPosition(), *Map, steal)) ||
@@ -2221,7 +2221,7 @@ cVehicle* cServer::landVehicle (const cPosition& landingPosition, int iWidth, in
 			return &addVehicle (landingPosition + cPosition (offX, offY), unitData.ID, &player, true);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2478,7 +2478,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 
 	cPlayer* owner = unit->getOwner ();
 
-	if (unit->getOwner () && casualtiesTracker != NULL && ((unit->isABuilding () && unit->data.buildCosts <= 2) == false))
+	if (unit->getOwner () && casualtiesTracker != nullptr && ((unit->isABuilding () && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->getOwner ()->getNr ());
 
 	std::shared_ptr<cUnit> owningPtr; // keep owning ptr to make sure that unit instance will outlive this method.
@@ -2501,7 +2501,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		if (vehicle->ServerMoveJob)
 		{
-			vehicle->ServerMoveJob->Vehicle = NULL;
+			vehicle->ServerMoveJob->Vehicle = nullptr;
 		}
 	}
 
@@ -3292,12 +3292,12 @@ void cServer::handleMoveJobs()
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			continue;
 		}
-		else if (MoveJob->bFinished || MoveJob->Vehicle == NULL)
+		else if (MoveJob->bFinished || MoveJob->Vehicle == nullptr)
 		{
 			if (Vehicle && Vehicle->ServerMoveJob == MoveJob)
 			{
 				Log.write (" Server: Movejob is finished and will be deleted now", cLog::eLOG_TYPE_NET_DEBUG);
-				Vehicle->ServerMoveJob = NULL;
+				Vehicle->ServerMoveJob = nullptr;
 				Vehicle->setMoving (false);
 				Vehicle->MoveJobActive = false;
 
@@ -3333,7 +3333,7 @@ void cServer::handleMoveJobs()
 			continue;
 		}
 
-		if (Vehicle == NULL) continue;
+		if (Vehicle == nullptr) continue;
 
 		if (!Vehicle->isUnitMoving ())
 		{
@@ -3341,7 +3341,7 @@ void cServer::handleMoveJobs()
 			{
 				ActiveMJobs.erase (ActiveMJobs.begin() + i);
 				delete MoveJob;
-				Vehicle->ServerMoveJob = NULL;
+				Vehicle->ServerMoveJob = nullptr;
 				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG);
 				continue;
 			}
@@ -3377,7 +3377,7 @@ void cServer::handleMoveJobs()
 cUnit* cServer::getUnitFromID (unsigned int iID) const
 {
 	cUnit* result = getVehicleFromID (iID);
-	if (result == NULL)
+	if (result == nullptr)
 		result = getBuildingFromID (iID);
 	return result;
 }
@@ -3757,7 +3757,7 @@ bool cServer::addMoveJob (const cPosition& source, const cPosition& destination,
 	if (!MoveJob->calcPath())
 	{
 		delete MoveJob;
-		vehicle->ServerMoveJob = NULL;
+		vehicle->ServerMoveJob = nullptr;
 		return false;
 	}
 
@@ -3774,7 +3774,7 @@ bool cServer::addMoveJob (const cPosition& source, const cPosition& destination,
 //------------------------------------------------------------------------------
 void cServer::changeUnitOwner (cVehicle& vehicle, cPlayer& newOwner)
 {
-	if (vehicle.getOwner () && casualtiesTracker != NULL)
+	if (vehicle.getOwner () && casualtiesTracker != nullptr)
 		casualtiesTracker->logCasualty (vehicle.data.ID, vehicle.getOwner ()->getNr ());
 
 	// delete vehicle in the list of the old player

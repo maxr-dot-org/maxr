@@ -132,7 +132,7 @@ void cNewDialogTransfer::initUnitImage (cImage& image, const cUnit& unit)
 	const auto zoom = (float)unitImageWidth / (unit.data.isBig ? cStaticMap::tilePixelWidth*2 : cStaticMap::tilePixelWidth);
 
 	AutoSurface unitImageSurface(SDL_CreateRGBSurface (0, unitImageWidth, unitImageHeight, Video.getColDepth (), 0, 0, 0, 0));
-	SDL_FillRect (unitImageSurface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (unitImageSurface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (unitImageSurface.get (), SDL_TRUE, 0xFF00FF);
 
 	SDL_Rect dest = {0, 0, 0, 0};
@@ -244,7 +244,7 @@ void cNewDialogTransfer::transferValueChanged ()
 		const Sint16 x = arrowImage->getPosition ().x () - getPosition ().x (); // 140
 		const Sint16 y = arrowImage->getPosition ().y () - getPosition ().y (); //  77
 		SDL_Rect src = {x, y, w, h};
-		SDL_BlitSurface (getSurface (), &src, arrowSurface.get (), NULL);
+		SDL_BlitSurface (getSurface (), &src, arrowSurface.get (), nullptr);
 		FlipSurfaceHorizontally (arrowSurface.get ());
 
 		arrowImage->setImage (arrowSurface.get ());

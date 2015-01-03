@@ -83,7 +83,7 @@ void sDrawingCacheEntry::init(const cVehicle& vehicle, const cMap& map, const cP
 	}
 	surface = AutoSurface(SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get (), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned long long frameNr)
@@ -111,7 +111,7 @@ void sDrawingCacheEntry::init (const cBuilding& building, double zoom_, unsigned
 
 	surface = AutoSurface (SDL_CreateRGBSurface (0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000));
 
-	SDL_FillRect (surface.get (), NULL, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
+	SDL_FillRect (surface.get (), nullptr, SDL_MapRGBA (surface->format, 0, 0, 0, 0));
 }
 
 cDrawingCache::cDrawingCache (std::shared_ptr<const cFrameCounter> frameCounter_) :
@@ -140,7 +140,7 @@ void cDrawingCache::setPlayer (const cPlayer* player_)
 
 SDL_Surface* cDrawingCache::getCachedImage(const cBuilding& building, double zoom, unsigned long long animationTime)
 {
-	if (!canCache (building)) return NULL;
+	if (!canCache (building)) return nullptr;
 
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
@@ -181,12 +181,12 @@ SDL_Surface* cDrawingCache::getCachedImage(const cBuilding& building, double zoo
 
 	//cache miss!
 	cacheMisses++;
-	return NULL;
+	return nullptr;
 }
 
 SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
 {
-	if (!canCache (vehicle)) return NULL;
+	if (!canCache (vehicle)) return nullptr;
 
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
@@ -247,12 +247,12 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle, double zoom
 	//cache miss!
 
 	cacheMisses++;
-	return NULL;
+	return nullptr;
 }
 
 SDL_Surface* cDrawingCache::createNewEntry(const cBuilding& building, double zoom, unsigned long long animationTime)
 {
-	if (!canCache (building)) return NULL;
+	if (!canCache (building)) return nullptr;
 
 	if (cacheSize < maxCacheSize)   //cache hasn't reached the max size, so allocate a new entry
 	{
@@ -286,13 +286,13 @@ SDL_Surface* cDrawingCache::createNewEntry(const cBuilding& building, double zoo
 	}
 
 	//there are no old entries in the cache.
-	return NULL;
+	return nullptr;
 }
 
 SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom, const cMap& map, unsigned long long animationTime)
 {
 	if (!canCache (vehicle))
-		return NULL;
+		return nullptr;
 
 	if (cacheSize < maxCacheSize)   //cache hasn't reached the max size, so allocate a new entry
 	{
@@ -325,7 +325,7 @@ SDL_Surface* cDrawingCache::createNewEntry(const cVehicle& vehicle, double zoom,
 	}
 
 	//there are no old entries in the cache.
-	return NULL;
+	return nullptr;
 }
 
 void cDrawingCache::flush()

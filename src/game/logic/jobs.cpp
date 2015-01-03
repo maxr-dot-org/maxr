@@ -62,7 +62,7 @@ std::vector<cJob*>::iterator cJobContainer::releaseJob (std::vector<cJob*>::iter
 	if (it == jobs.end()) return jobs.end();
 	cJob* job = *it;
 	assert (job->vehicle->job == job);
-	job->vehicle->job = NULL;
+	job->vehicle->job = nullptr;
 	it = jobs.erase (it);
 	delete job;
 	return it;

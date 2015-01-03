@@ -77,7 +77,7 @@ struct sID
 	 *        into consideration for modifications of the unit's values.
 	 * @return the sUnitData of the owner without upgrades
 	 *         (but with the owner's clan modifications) */
-	const sUnitData* getUnitDataOriginalVersion (const cPlayer* Owner = NULL) const;
+	const sUnitData* getUnitDataOriginalVersion (const cPlayer* Owner = nullptr) const;
 
 	bool operator== (const sID& ID) const;
 	bool operator!= (const sID& rhs) const { return !(*this == rhs); }

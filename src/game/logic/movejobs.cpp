@@ -76,7 +76,7 @@ int cPathDestHandler::heuristicCost(const cPosition& source) const
 
 cPathCalculator::cPathCalculator(const cPosition& source, const cPosition& destination, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
 {
-	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, destination, NULL, NULL);
+	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, destination, nullptr, nullptr);
 	init (source, Map, Vehicle, group);
 }
 
@@ -84,13 +84,13 @@ cPathCalculator::cPathCalculator(const cPosition& source, const cPosition& desti
 cPathCalculator::cPathCalculator(const cPosition& source, const cUnit& destUnit, const cMap& Map, const cVehicle& Vehicle, bool load)
 {
 	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, cPosition(0, 0), &Vehicle, &destUnit);
-	init (source, Map, Vehicle, NULL);
+	init (source, Map, Vehicle, nullptr);
 }
 
 cPathCalculator::cPathCalculator(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const cPosition& attack)
 {
-	destHandler = new cPathDestHandler (PATH_DEST_TYPE_ATTACK, attack, &Vehicle, NULL);
-	init (source, Map, Vehicle, NULL);
+	destHandler = new cPathDestHandler (PATH_DEST_TYPE_ATTACK, attack, &Vehicle, nullptr);
+	init (source, Map, Vehicle, nullptr);
 }
 
 void cPathCalculator::init(const cPosition& source, const cMap& Map, const cVehicle& Vehicle, const std::vector<cVehicle*>* group)
@@ -102,8 +102,8 @@ void cPathCalculator::init(const cPosition& source, const cMap& Map, const cVehi
 	bPlane = Vehicle.data.factorAir > 0;
 	bShip = Vehicle.data.factorSea > 0 && Vehicle.data.factorGround == 0;
 
-	Waypoints = NULL;
-	MemBlocks = NULL;
+	Waypoints = nullptr;
+	MemBlocks = nullptr;
 
 	blocknum = 0;
 	blocksize = 0;
@@ -113,7 +113,7 @@ void cPathCalculator::init(const cPosition& source, const cMap& Map, const cVehi
 cPathCalculator::~cPathCalculator()
 {
 	delete destHandler;
-	if (MemBlocks != NULL)
+	if (MemBlocks != nullptr)
 	{
 		for (int i = 0; i < blocknum; i++)
 		{
@@ -126,9 +126,9 @@ cPathCalculator::~cPathCalculator()
 sWaypoint* cPathCalculator::calcPath()
 {
 	// generate open and closed list
-	nodesHeap.resize (Map->getSize ().x() * Map->getSize ().y() + 1, NULL);
-	openList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, NULL);
-	closedList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, NULL);
+	nodesHeap.resize (Map->getSize ().x() * Map->getSize ().y() + 1, nullptr);
+	openList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, nullptr);
+	closedList.resize (Map->getSize ().x() * Map->getSize ().y() + 1, nullptr);
 
 	// generate startnode
 	sPathNode* StartNode = allocNode();
@@ -137,7 +137,7 @@ sWaypoint* cPathCalculator::calcPath()
 	StartNode->costH = destHandler->heuristicCost (source);
 	StartNode->costF = StartNode->costG + StartNode->costH;
 
-	StartNode->prev = NULL;
+	StartNode->prev = nullptr;
 	openList[Map->getOffset (source)] = StartNode;
 	insertToHeap (StartNode, false);
 
@@ -147,7 +147,7 @@ sWaypoint* cPathCalculator::calcPath()
 		sPathNode* CurrentNode = nodesHeap[1];
 
 		// move it from the open to the closed list
-		openList[Map->getOffset (CurrentNode->position)] = NULL;
+		openList[Map->getOffset (CurrentNode->position)] = nullptr;
 		closedList[Map->getOffset(CurrentNode->position)] = CurrentNode;
 		deleteFirstFromHeap();
 
@@ -158,13 +158,13 @@ sWaypoint* cPathCalculator::calcPath()
 			Waypoints = new sWaypoint;
 
 			sPathNode* NextNode = CurrentNode;
-			NextNode->next = NULL;
+			NextNode->next = nullptr;
 			do
 			{
 				NextNode->prev->next = NextNode;
 				NextNode = NextNode->prev;
 			}
-			while (NextNode->prev != NULL);
+			while (NextNode->prev != nullptr);
 
 
 			NextWaypoint = Waypoints;
@@ -179,9 +179,9 @@ sWaypoint* cPathCalculator::calcPath()
 				NextWaypoint->next->Costs = calcNextCost (NextNode->prev->position, NextWaypoint->next->position);
 				NextWaypoint = NextWaypoint->next;
 			}
-			while (NextNode->next != NULL);
+			while (NextNode->next != nullptr);
 
-			NextWaypoint->next = NULL;
+			NextWaypoint->next = nullptr;
 
 			return Waypoints;
 		}
@@ -191,7 +191,7 @@ sWaypoint* cPathCalculator::calcPath()
 	}
 
 	// there is no path to the destination field
-	Waypoints = NULL;
+	Waypoints = nullptr;
 	return Waypoints;
 }
 
@@ -225,9 +225,9 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				}
 				else continue;
 			}
-			if(closedList[Map->getOffset(currentPosition)] != NULL) continue;
+			if(closedList[Map->getOffset(currentPosition)] != nullptr) continue;
 
-			if(openList[Map->getOffset(currentPosition)] == NULL)
+			if(openList[Map->getOffset(currentPosition)] == nullptr)
 			{
 				// generate new node
 				sPathNode* NewNode = allocNode();
@@ -312,7 +312,7 @@ void cPathCalculator::deleteFirstFromHeap()
 {
 	// overwrite the first node by the last one
 	nodesHeap[1] = nodesHeap[heapCount];
-	nodesHeap[heapCount] = NULL;
+	nodesHeap[heapCount] = nullptr;
 	heapCount--;
 	int v = 1;
 	while (true)
@@ -404,8 +404,8 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
-	Waypoints = NULL;
-	endAction = NULL;
+	Waypoints = nullptr;
+	endAction = nullptr;
 
 	// unset sentry status when moving vehicle
 	if (Vehicle->isSentryActive())
@@ -420,7 +420,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, const cPosition& source_, cons
 		Vehicle->ServerMoveJob->release();
 		Vehicle->setMoving (false);
 		Vehicle->MoveJobActive = false;
-		Vehicle->ServerMoveJob->Vehicle = NULL;
+		Vehicle->ServerMoveJob->Vehicle = nullptr;
 	}
 	Vehicle->ServerMoveJob = this;
 }
@@ -434,7 +434,7 @@ cServerMoveJob::~cServerMoveJob()
 		delete Waypoints;
 		Waypoints = NextWaypoint;
 	}
-	Waypoints = NULL;
+	Waypoints = nullptr;
 
 	delete endAction;
 }
@@ -448,7 +448,7 @@ void cServerMoveJob::stop()
 	if (Waypoints && Waypoints->next && Waypoints->next->next)
 	{
 		sWaypoint* wayPoint = Waypoints->next->next;
-		Waypoints->next->next = NULL;
+		Waypoints->next->next = nullptr;
 		while (wayPoint)
 		{
 			sWaypoint* nextWayPoint = wayPoint->next;
@@ -487,47 +487,47 @@ void cServerMoveJob::addEndAction (int destID, eEndMoveActionType type)
 
 cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessage& message)
 {
-	if (message.iType != GAME_EV_MOVE_JOB_CLIENT) return NULL;
+	if (message.iType != GAME_EV_MOVE_JOB_CLIENT) return nullptr;
 
 	int iVehicleID = message.popInt32();
 	cVehicle* vehicle = server.getVehicleFromID (iVehicleID);
-	if (vehicle == NULL)
+	if (vehicle == nullptr)
 	{
 		Log.write (" Server: Can't find vehicle with id " + iToStr (iVehicleID), cLog::eLOG_TYPE_NET_WARNING);
-		return NULL;
+		return nullptr;
 	}
 
 	// TODO: is this check really needed?
 	if (vehicle->isBeeingAttacked ())
 	{
 		Log.write (" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG);
-		return NULL;
+		return nullptr;
 	}
 	if (vehicle->isAttacking())
 	{
 		Log.write (" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG);
-		return NULL;
+		return nullptr;
 	}
 	if (vehicle->isUnitBuildingABuilding () || (vehicle->BuildPath && vehicle->ServerMoveJob))
 	{
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
-		return NULL;
+		return nullptr;
 	}
 	if (vehicle->isUnitClearing ())
 	{
 		Log.write (" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG);
-		return NULL;
+		return nullptr;
 	}
 
 	// reconstruct path
-	sWaypoint* path = NULL;
-	sWaypoint* dest = NULL;
+	sWaypoint* path = nullptr;
+	sWaypoint* dest = nullptr;
 	int iCount = 0;
 	int iReceivedCount = message.popInt16();
 
 	if (iReceivedCount == 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	while (iCount < iReceivedCount)
@@ -555,7 +555,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessag
 			path = path->next;
 			delete waypoint;
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	//everything is ok. Construct the movejob
@@ -711,7 +711,7 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	Vehicle->setMovementOffset(cPosition(0, 0));
 
-	if (Waypoints->next == NULL)
+	if (Waypoints->next == nullptr)
 	{
 		bFinished = true;
 	}
@@ -933,7 +933,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 	// the client is faster than the server and has already
 	// reached the last field or the next will be the last,
 	// then stop the vehicle
-	if (Waypoints == NULL || Waypoints->next == NULL)
+	if (Waypoints == nullptr || Waypoints->next == nullptr)
 	{
 		Log.write (" Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG);
 		bEndForNow = true;
@@ -1027,10 +1027,10 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 void cClientMoveJob::moveVehicle()
 {
-	if (Vehicle == NULL || Vehicle->getClientMoveJob () != this) return;
+	if (Vehicle == nullptr || Vehicle->getClientMoveJob () != this) return;
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
-	if (Waypoints == NULL || Waypoints->next == NULL)
+	if (Waypoints == nullptr || Waypoints->next == nullptr)
 	{
 		stopped (*Vehicle);
 		return;
@@ -1143,9 +1143,9 @@ void cClientMoveJob::moveVehicle()
 
 void cClientMoveJob::doEndMoveVehicle()
 {
-	if (Vehicle == NULL || Vehicle->getClientMoveJob () != this) return;
+	if (Vehicle == nullptr || Vehicle->getClientMoveJob () != this) return;
 
-	if (Waypoints->next == NULL)
+	if (Waypoints->next == nullptr)
 	{
 		// this is just to avoid errors, this should normaly never happen.
 		bFinished = true;
@@ -1195,10 +1195,10 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (bSpezial)
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - Dest.w].get (), NULL, cVideo::buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - Dest.w].get (), nullptr, cVideo::buffer, &Dest);
 	}
 	else
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - Dest.w].get (), NULL, cVideo::buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - Dest.w].get (), nullptr, cVideo::buffer, &Dest);
 	}
 }

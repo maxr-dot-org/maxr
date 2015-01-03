@@ -382,7 +382,7 @@ private:
 	*@param iHeight iHeight of the field.
 	*@param unitData Vehicle to land.
 	*@param player Player whose vehicle should be land.
-	*@return NULL if the vehicle could not be landed,
+	*@return nullptr if the vehicle could not be landed,
 	*        else a pointer to the vehicle.
 	*/
 	cVehicle* landVehicle (const cPosition& landingPosition, int iWidth, int iHeight, const sUnitData& unitData, cPlayer& player);

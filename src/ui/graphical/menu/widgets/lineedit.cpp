@@ -214,7 +214,7 @@ void cLineEdit::createBackground ()
 	{
 		//surface = SDL_CreateRGBSurface (0, getSize ().x (), getSize ().y (), Video.getColDepth (), 0, 0, 0, 0);
 
-		//SDL_FillRect (surface, NULL, 0xFF00FF);
+		//SDL_FillRect (surface, nullptr, 0xFF00FF);
 		//SDL_SetColorKey (surface, SDL_TRUE, 0xFF00FF);
 	}
 	else

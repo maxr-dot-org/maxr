@@ -28,7 +28,7 @@
 
 /** Loads an image to a surface
  * @param name path to img
- * @return surface with img<br>or empty surface on error<br>or <b>NULL</b> if SDL couldn't create a surface
+ * @return surface with img<br>or empty surface on error<br>or <b>nullptr</b> if SDL couldn't create a surface
  */
 AutoSurface LoadPCX (const std::string& name);
 

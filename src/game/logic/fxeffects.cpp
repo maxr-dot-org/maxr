@@ -100,14 +100,14 @@ void cFxContainer::run()
 //------------------------------------------------------------------------------
 cFxMuzzle::cFxMuzzle(const cPosition& position_, int dir_, sID id_) :
 	cFx (false, position_),
-	pImages (NULL),
+	pImages (nullptr),
 	dir (dir_),
 	id (id_)
 {}
 
 void cFxMuzzle::draw (float zoom, const cPosition& destination) const
 {
-	if (pImages == NULL) return;
+	if (pImages == nullptr) return;
 	AutoSurface (&images) [2] (*pImages);
 	CHECK_SCALING (*images[1], *images[0], zoom);
 
@@ -164,7 +164,7 @@ cFxMuzzleSmall::cFxMuzzleSmall(const cPosition& position_, int dir_, sID id_) :
 //------------------------------------------------------------------------------
 cFxExplo::cFxExplo (const cPosition& position_, int frames_) :
 	cFx (false, position_),
-	pImages (NULL),
+	pImages (nullptr),
 	frames (frames_)
 {}
 
@@ -288,7 +288,7 @@ void cFxAbsorb::playSound (cSoundManager& soundManager) const
 //------------------------------------------------------------------------------
 cFxFade::cFxFade (const cPosition& position_, bool bottom, int start, int end) :
 	cFx (bottom, position_),
-	pImages (NULL),
+	pImages (nullptr),
 	alphaStart (start),
 	alphaEnd (end)
 {}
@@ -303,7 +303,7 @@ void cFxFade::draw (float zoom, const cPosition& destination) const
 	SDL_SetSurfaceAlphaMod (images[1].get (), alpha);
 
 	SDL_Rect dest = {destination.x () - static_cast<int>((images[0]->w / 2) * zoom), destination.y () - static_cast<int>((images[0]->h / 2) * zoom), 0, 0};
-	SDL_BlitSurface (images[1].get (), NULL, cVideo::buffer, &dest);
+	SDL_BlitSurface (images[1].get (), nullptr, cVideo::buffer, &dest);
 }
 
 //------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ cFxCorpse::cFxCorpse (const cPosition& position_) :
 //------------------------------------------------------------------------------
 cFxTracks::cFxTracks (const cPosition& position_, int dir_) :
 	cFx (true, position_),
-	pImages (NULL),
+	pImages (nullptr),
 	alphaStart (100),
 	alphaEnd (0),
 	dir (dir_)

@@ -129,7 +129,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	uiData = b ? UnitsData.getBuildingUI (b->ID) : 0;
 	points = 0;
 
-	if (Owner == NULL || b == NULL)
+	if (Owner == nullptr || b == nullptr)
 	{
 		return;
 	}
@@ -149,7 +149,7 @@ cBuilding::cBuilding (const sUnitData* b, cPlayer* Owner, unsigned int ID) :
 	MaxOilProd = 0;
 	data.setHitpoints(data.getHitpointsMax());
 	data.setAmmo(data.getAmmoMax());
-	SubBase = NULL;
+	SubBase = nullptr;
 	BuildSpeed = 0;
 
 	if (data.isBig)
@@ -373,7 +373,7 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 		else
 			SDL_SetSurfaceAlphaMod (GraphicsData.gfx_big_beton.get (), 254);
 
-		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), NULL, surface, &tmp);
+		SDL_BlitSurface (GraphicsData.gfx_big_beton.get (), nullptr, surface, &tmp);
 	}
 	else
 	{
@@ -383,7 +383,7 @@ void cBuilding::render_beton (SDL_Surface* surface, const SDL_Rect& dest, float 
 		else
 			SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
 
-		SDL_BlitSurface (UnitsData.ptr_small_beton, NULL, surface, &tmp);
+		SDL_BlitSurface (UnitsData.ptr_small_beton, nullptr, surface, &tmp);
 		SDL_SetSurfaceAlphaMod (UnitsData.ptr_small_beton, 254);
 	}
 }
@@ -418,15 +418,15 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 	}
 
 	// blit the players color and building graphic
-	if (data.hasPlayerColor && owner) SDL_BlitSurface (owner->getColor ().getTexture (), NULL, GraphicsData.gfx_tmp.get (), NULL);
-	else SDL_FillRect (GraphicsData.gfx_tmp.get (), NULL, 0x00FF00FF);
+	if (data.hasPlayerColor && owner) SDL_BlitSurface (owner->getColor ().getTexture (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
+	else SDL_FillRect (GraphicsData.gfx_tmp.get (), nullptr, 0x00FF00FF);
 
 	if (data.hasFrames)
 	{
 		src.x = frameNr * Round (64.0f * zoomFactor);
 
 		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
-		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), nullptr);
 
 		src.x = 0;
 	}
@@ -440,12 +440,12 @@ void cBuilding::render_simple (SDL_Surface* surface, const SDL_Rect& dest, float
 		// select clan image
 		if (owner && owner->getClan () != -1)
 			src.x = (int)((owner->getClan () + 1) * 128 * zoomFactor);
-		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (uiData.img.get (), &src, GraphicsData.gfx_tmp.get (), nullptr);
 	}
 	else
 	{
 		CHECK_SCALING (*uiData.img, *uiData.img_org, zoomFactor);
-		SDL_BlitSurface (uiData.img.get (), NULL, GraphicsData.gfx_tmp.get (), NULL);
+		SDL_BlitSurface (uiData.img.get (), nullptr, GraphicsData.gfx_tmp.get (), nullptr);
 	}
 
 	// draw the building
@@ -493,7 +493,7 @@ void cBuilding::render (unsigned long long animationTime, SDL_Surface* surface, 
 			SDL_SetSurfaceAlphaMod (uiData->shw.get (), 50);
 
 		CHECK_SCALING (*uiData->shw, *uiData->shw_org, zoomFactor);
-		blittAlphaSurface (uiData->shw.get (), NULL, surface, &tmp);
+		blittAlphaSurface (uiData->shw.get (), nullptr, surface, &tmp);
 	}
 
 	render_simple (surface, dest, zoomFactor, animationTime, alphaEffectValue && cSettings::getInstance ().isAlphaEffects () ? alphaEffectValue : 254);

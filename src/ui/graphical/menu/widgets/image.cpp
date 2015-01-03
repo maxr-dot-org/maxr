@@ -40,10 +40,10 @@ void cImage::setImage (SDL_Surface* image_)
 	{
         image = AutoSurface (SDL_CreateRGBSurface (0, image_->w, image_->h, Video.getColDepth (), 0, 0, 0, 0));
 
-		SDL_FillRect (image.get (), NULL, 0xFF00FF);
+		SDL_FillRect (image.get (), nullptr, 0xFF00FF);
 		SDL_SetColorKey (image.get (), SDL_TRUE, 0xFF00FF);
 
-		SDL_BlitSurface (image_, NULL, image.get (), NULL);
+		SDL_BlitSurface (image_, nullptr, image.get (), nullptr);
 
 		resize (cPosition (image->w, image->h));
 	}

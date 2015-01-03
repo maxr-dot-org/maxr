@@ -39,7 +39,7 @@ using namespace std;
 cUnit::cUnit (const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
 	, dir (0)
-	, job (NULL)
+	, job (nullptr)
 	, alphaEffectValue (0)
 	, owner (owner)
 	, position (0,0)
@@ -197,7 +197,7 @@ static std::string to_roman (unsigned int value)
 		{ 10, "X"}, { 9, "IX"},
 		{ 5, "V"}, { 4, "IV"},
 		{ 1, "I"},
-		{ 0, NULL} // end marker
+		{ 0, nullptr} // end marker
 	};
 
 	std::string result;
@@ -308,7 +308,7 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 	if (forceAttack)
 		return true;
 
-	if (target == NULL)
+	if (target == nullptr)
 		return false;
 
 	// do not fire on e.g. platforms, connectors etc.
@@ -325,9 +325,9 @@ bool cUnit::canAttackObjectAt (const cPosition& position, const cMap& map, bool 
 //------------------------------------------------------------------------------
 void cUnit::upgradeToCurrentVersion()
 {
-	if (owner == NULL) return;
+	if (owner == nullptr) return;
 	const sUnitData* upgradeVersion = owner->getUnitDataCurrentVersion (data.ID);
-	if (upgradeVersion == NULL) return;
+	if (upgradeVersion == nullptr) return;
 
 	data.setVersion(upgradeVersion->getVersion ());
 

@@ -54,7 +54,7 @@ enum eMenuMessages
 	MU_MSG_PLAYER_HAS_SELECTED_LANDING_POSITION
 };
 
-void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const cPlayerBasicData* player = NULL, int fromPlayerNr = -1, bool translationText = false);
+void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const cPlayerBasicData* player = nullptr, int fromPlayerNr = -1, bool translationText = false);
 
 void sendRequestIdentification (cTCP& network, const cPlayerBasicData& player);
 
@@ -62,7 +62,7 @@ void sendPlayerNumber (cTCP& network, const cPlayerBasicData& player);
 
 void sendPlayerList (cTCP& network, const std::vector<std::shared_ptr<cPlayerBasicData>>& players);
 
-void sendGameData(cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::vector<cPlayerBasicData>& savePlayers, const std::string& saveGameName, const cPlayerBasicData* player = NULL);
+void sendGameData(cTCP& network, const cStaticMap* map, const cGameSettings* settings, const std::vector<cPlayerBasicData>& savePlayers, const std::string& saveGameName, const cPlayerBasicData* player = nullptr);
 
 void sendIdentification (cTCP& network, const cPlayerBasicData& player);
 

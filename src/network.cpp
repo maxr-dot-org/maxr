@@ -82,7 +82,7 @@ void sDataBuffer::deleteFront (int n)
 //------------------------------------------------------------------------
 cTCP::cTCP() :
 	TCPMutex(),
-	messageReceiver (NULL)
+	messageReceiver (nullptr)
 {
 	SocketSet = SDLNet_AllocSocketSet (MAX_CLIENTS);
 
@@ -97,14 +97,14 @@ cTCP::cTCP() :
 cTCP::~cTCP()
 {
 	bExit = true;
-	SDL_WaitThread (TCPHandleThread, NULL);
+	SDL_WaitThread (TCPHandleThread, nullptr);
 }
 
 //------------------------------------------------------------------------
 int cTCP::create (int iPort)
 {
 	cLockGuard<cMutex> tl (TCPMutex);
-	if (SDLNet_ResolveHost (&ipaddr, NULL, iPort) == -1) { return -1; }
+	if (SDLNet_ResolveHost (&ipaddr, nullptr, iPort) == -1) { return -1; }
 
 	const int iNum = getFreeSocket();
 	if (iNum == -1) { return -1; }
@@ -231,7 +231,7 @@ void cTCP::HandleNetworkThread_SERVER (unsigned int socketIndex)
 	cLockGuard<cMutex> tl (TCPMutex);
 	TCPsocket socket = SDLNet_TCP_Accept (Sockets[socketIndex].socket);
 
-	if (socket == NULL) return;
+	if (socket == nullptr) return;
 
 	Log.write ("Incoming connection!", cLog::eLOG_TYPE_NET_DEBUG);
 	const int iNum = getFreeSocket();
@@ -360,7 +360,7 @@ void cTCP::HandleNetworkThread()
 //------------------------------------------------------------------------
 void cTCP::pushEvent (std::unique_ptr<cNetMessage> message)
 {
-	if (messageReceiver == NULL)
+	if (messageReceiver == nullptr)
 	{
 		Log.write ("Discarded message: no receiver!", LOG_TYPE_NET_ERROR);
 		return;

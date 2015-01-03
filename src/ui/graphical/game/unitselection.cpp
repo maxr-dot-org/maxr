@@ -46,7 +46,7 @@ bool cUnitSelection::selectUnitAt (const cMapField& field, bool base)
 		return selectUnit (*topBuilding);
 	}
 	cBuilding* baseBuilding = field.getBaseBuilding ();
-	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->getOwner () != NULL)
+	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->getOwner () != nullptr)
 	{
 		return selectUnit (*baseBuilding);
 	}

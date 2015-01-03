@@ -105,13 +105,13 @@ void sendGameData(cTCP& network, const cStaticMap* map, const cGameSettings* set
 		message->pushInt32 (MapDownload::calculateCheckSum (mapName));
 		message->pushString (mapName);
 	}
-	message->pushBool (map != NULL);
+	message->pushBool (map != nullptr);
 
 	if (settings)
 	{
 		settings->pushInto (*message);
 	}
-	message->pushBool (settings != NULL);
+	message->pushBool (settings != nullptr);
 
 	sendMessage (network, message, player);
 }

@@ -56,7 +56,7 @@ void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 		switch (backgroundType)
 		{
 		case eWindowBackgrounds::Black:
-			SDL_FillRect (cVideo::buffer, NULL, 0xFF000000);
+			SDL_FillRect (cVideo::buffer, nullptr, 0xFF000000);
 			break;
 		case eWindowBackgrounds::Alpha:
 			// NOTE: this is not fully robust yet! It will not work if an
@@ -75,7 +75,7 @@ void cWindow::draw (SDL_Surface& destination, const cBox<cPosition>& clipRect)
 	}
 
 	SDL_Rect position = getArea().toSdlRect ();
-	if (surface != nullptr) SDL_BlitSurface (surface.get (), NULL, &destination, &position);
+	if (surface != nullptr) SDL_BlitSurface (surface.get (), nullptr, &destination, &position);
 
 	hasBeenDrawnOnce = true;
 

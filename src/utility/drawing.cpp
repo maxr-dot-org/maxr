@@ -123,7 +123,7 @@ void drawSelectionCorner (SDL_Surface& surface, const cBox<cPosition>& rectangle
 
 	const cPosition size = rectangle.getSize ();
 	AutoSurface tempSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), 32, 0, 0, 0, 0));
-	SDL_FillRect (tempSurface.get (), NULL, 0xFF00FF);
+	SDL_FillRect (tempSurface.get (), nullptr, 0xFF00FF);
 	SDL_SetColorKey (tempSurface.get (), SDL_TRUE, 0xFF00FF);
 
 	auto rectangle2 = cBox<cPosition> (cPosition (0, 0), rectangle.getMaxCorner () - rectangle.getMinCorner ());

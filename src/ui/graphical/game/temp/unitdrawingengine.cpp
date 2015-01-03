@@ -77,14 +77,14 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	SDL_Rect dest = {0, 0, 0, 0};
 	bool bDraw = false;
 	SDL_Surface* drawingSurface = drawingCache.getCachedImage (building, zoomFactor, animationTime);
-	if (drawingSurface == NULL)
+	if (drawingSurface == nullptr)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
 		drawingSurface = drawingCache.createNewEntry (building, zoomFactor, animationTime);
 	}
 
-	if (drawingSurface == NULL)
+	if (drawingSurface == nullptr)
 	{
 		// image will not be cached. So blitt directly to the screen buffer.
 		dest = destination;
@@ -100,7 +100,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 	if (drawingSurface != cVideo::buffer)
 	{
 		dest = destination;
-		SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
+		SDL_BlitSurface (drawingSurface, nullptr, cVideo::buffer, &dest);
 
 		// all following graphic operations are drawn directly to buffer
 		dest = destination;
@@ -115,7 +115,7 @@ void cUnitDrawingEngine::drawUnit (const cBuilding& building, SDL_Rect destinati
 		SDL_SetSurfaceAlphaMod (building.uiData->eff.get(), building.effectAlpha);
 
 		CHECK_SCALING (*building.uiData->eff, *building.uiData->eff_org, zoomFactor);
-        SDL_BlitSurface (building.uiData->eff.get (), NULL, cVideo::buffer, &tmp);
+        SDL_BlitSurface (building.uiData->eff.get (), nullptr, cVideo::buffer, &tmp);
 	}
 
 	// draw the mark, when a build order is finished
@@ -198,14 +198,14 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	dest.x = dest.y = 0;
 	bool bDraw = false;
 	SDL_Surface* drawingSurface = drawingCache.getCachedImage(vehicle, zoomFactor, map, animationTime);
-	if (drawingSurface == NULL)
+	if (drawingSurface == nullptr)
 	{
 		// no cached image found. building needs to be redrawn.
 		bDraw = true;
 		drawingSurface = drawingCache.createNewEntry(vehicle, zoomFactor, map, animationTime);
 	}
 
-	if (drawingSurface == NULL)
+	if (drawingSurface == nullptr)
 	{
 		// image will not be cached. So blitt directly to the screen buffer.
 		dest = destination;
@@ -221,7 +221,7 @@ void cUnitDrawingEngine::drawUnit (const cVehicle& vehicle, SDL_Rect destination
 	if (drawingSurface != cVideo::buffer)
 	{
 		dest = destination;
-		SDL_BlitSurface (drawingSurface, NULL, cVideo::buffer, &dest);
+		SDL_BlitSurface (drawingSurface, nullptr, cVideo::buffer, &dest);
 	}
 
 	// draw overlay if necessary:

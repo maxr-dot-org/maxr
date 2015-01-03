@@ -155,7 +155,7 @@ cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize) :
 	mapName (mapName),
 	mapSize (mapSize),
 	bytesReceived (0),
-	readBuffer (NULL)
+	readBuffer (nullptr)
 {
 	if (mapSize > 0)
 		readBuffer = new char [mapSize];
@@ -173,7 +173,7 @@ bool cMapReceiver::receiveData (cNetMessage& message)
 	assert (message.iType == MU_MSG_MAP_DOWNLOAD_DATA);
 
 	const int bytesInMsg = message.popInt32();
-	if (readBuffer == NULL || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
+	if (readBuffer == nullptr || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
 		return false;
 
 	for (int i = bytesInMsg - 1; i >= 0; i--)
@@ -234,8 +234,8 @@ cMapSender::cMapSender (cTCP& network_, int toSocket,
 	mapName (mapName),
 	mapSize (0),
 	bytesSent (0),
-	sendBuffer (NULL),
-	thread (NULL),
+	sendBuffer (nullptr),
+	thread (nullptr),
 	canceled (false)
 {
 }
@@ -243,13 +243,13 @@ cMapSender::cMapSender (cTCP& network_, int toSocket,
 //------------------------------------------------------------------------------
 cMapSender::~cMapSender()
 {
-	if (thread != NULL)
+	if (thread != nullptr)
 	{
 		canceled = true;
-		SDL_WaitThread (thread, NULL);
-		thread = NULL;
+		SDL_WaitThread (thread, nullptr);
+		thread = nullptr;
 	}
-	if (sendBuffer != NULL)
+	if (sendBuffer != nullptr)
 	{
 		delete[] sendBuffer;
 		// the thread was not finished yet
@@ -329,7 +329,7 @@ void cMapSender::run()
 
 	// finished
 	delete[] sendBuffer;
-	sendBuffer = NULL;
+	sendBuffer = nullptr;
 
 	cNetMessage msg (MU_MSG_FINISHED_MAP_DOWNLOAD);
 	msg.pushString (receivingPlayerName);

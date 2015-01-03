@@ -217,7 +217,7 @@ AutoSurface cHud::generateSurface ()
 {
 	AutoSurface surface(SDL_CreateRGBSurface (0, Video.getResolutionX (), Video.getResolutionY (), Video.getColDepth (), 0, 0, 0, 0));
 
-	SDL_FillRect (surface.get(), NULL, 0x00FF00FF);
+	SDL_FillRect (surface.get(), nullptr, 0x00FF00FF);
 	SDL_SetColorKey (surface.get(), SDL_TRUE, 0x00FF00FF);
 
 	const std::string gfxPath = cSettings::getInstance ().getGfxPath () + PATH_DELIMITER;
@@ -225,7 +225,7 @@ AutoSurface cHud::generateSurface ()
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_left.pcx"));
 		if (tmpSurface != nullptr)
 		{
-			SDL_BlitSurface (tmpSurface.get (), NULL, surface.get(), NULL);
+			SDL_BlitSurface (tmpSurface.get (), nullptr, surface.get(), nullptr);
 		}
 	}
 
@@ -286,7 +286,7 @@ AutoSurface cHud::generateSurface ()
 		{
 			dest.x = 9;
 			dest.y = Video.getResolutionY () - panelTotalHeight - 15;
-			SDL_BlitSurface (tmpSurface.get (), NULL, surface.get (), &dest);
+			SDL_BlitSurface (tmpSurface.get (), nullptr, surface.get (), &dest);
 		}
 	}
 	return std::move(surface);

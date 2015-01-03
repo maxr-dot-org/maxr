@@ -108,8 +108,8 @@ static Uint8 SAMPLESIZE16 = 0;
 
 /* screen mvebuffers */
 static std::vector<Uint8> v_backbuf;
-static Uint8* frame_hot = NULL;
-static Uint8* frame_cold = NULL;
+static Uint8* frame_hot = nullptr;
+static Uint8* frame_cold = nullptr;
 
 /* target time between frames */
 static float ms_per_frame = 0;
@@ -155,12 +155,12 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 	Uint16 height_blocks = 0;
 	std::vector<Uint8> map;
 	std::vector<Uint8> video;
-	SDL_Window* sdlWindow = NULL;
-	SDL_Renderer* sdlRenderer = NULL;
-	SDL_Texture* sdlTexture = NULL;
+	SDL_Window* sdlWindow = nullptr;
+	SDL_Renderer* sdlRenderer = nullptr;
+	SDL_Texture* sdlTexture = nullptr;
 
 	/* file handle */
-	SDL_RWops* mve = NULL;
+	SDL_RWops* mve = nullptr;
 
 	/* data structures to handle file reads */
 	chunk ch;
@@ -301,7 +301,7 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 					SAMPLESIZE16 = 1;
 
 				/* initialize the audio mode */
-				if (SDL_OpenAudio (desired.get(), NULL) < 0)
+				if (SDL_OpenAudio (desired.get(), nullptr) < 0)
 				{
 					return COULD_NOT_OPEN_AUDIO;
 				}
@@ -384,9 +384,9 @@ int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, in
 
 				// TODO: [SDL2] replace SDL_CreateTextureFromSurface ?
 				sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, frame_buf.get());
-				//SDL_UpdateTexture(sdlTexture, NULL, frame_buf->pixels, frame_buf->pitch);
+				//SDL_UpdateTexture(sdlTexture, nullptr, frame_buf->pixels, frame_buf->pitch);
 
-				SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+				SDL_RenderCopy(sdlRenderer, sdlTexture, nullptr, nullptr);
 
 				// increment start time
 				// this is now our target frame output time
@@ -721,7 +721,7 @@ void MVEPlayerDecodeAudio (mvebuffer* in)
 /**************************************/
 void MVEPlayerDecodeVideo (Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* pMap)
 {
-	Uint8 encoding = 0, *new_frame = NULL, *current = NULL, *temp = NULL;
+	Uint8 encoding = 0, *new_frame = nullptr, *current = nullptr, *temp = nullptr;
 	Uint8* map = pMap;
 
 	/* there are 14 undocumented bytes at head of video stream */

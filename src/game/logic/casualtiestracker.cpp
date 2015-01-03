@@ -189,7 +189,7 @@ void cCasualtiesTracker::debugPrint()
 		for (unsigned int entryIdx = 0; entryIdx < casualties.size(); entryIdx++)
 		{
 			const sUnitData* unitData = casualties[entryIdx].unitID.getUnitDataOriginalVersion();
-			if (unitData != NULL)
+			if (unitData != nullptr)
 				Log.write ("  " + unitData->name + ": " + iToStr (casualties[entryIdx].numberOfLosses), cLog::eLOG_TYPE_DEBUG);
 			else
 				Log.write ("Invalid Casualty: Can't get unitData from sID", cLog::eLOG_TYPE_DEBUG);
@@ -200,7 +200,7 @@ void cCasualtiesTracker::debugPrint()
 //--------------------------------------------------------------------------
 void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 {
-	if (message == NULL)
+	if (message == nullptr)
 		return;
 	const int dataSetsInMessage = message->popInt16();
 	for (int dataSet = 0; dataSet < dataSetsInMessage; dataSet++)

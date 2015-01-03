@@ -49,7 +49,7 @@ cWindowStorage::cWindowStorage (const cUnit& unit_, std::shared_ptr<const cTurnT
 	if (!canStorePlanes)
 	{
 		AutoSurface surface (LoadPCX (GFXOD_STORAGE_GROUND));
-		SDL_BlitSurface (surface.get (), NULL, background.get (), NULL);
+		SDL_BlitSurface (surface.get (), nullptr, background.get (), nullptr);
 	}
 	setSurface (std::move(background));
 
@@ -185,7 +185,7 @@ void cWindowStorage::updateUnitsWidgets ()
 				const auto& storedUnit = *unit.storedUnits[unitIndex];
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, storedUnit.uiData->storage->w, storedUnit.uiData->storage->h, Video.getColDepth (), 0, 0, 0, 0));
-				SDL_BlitSurface (storedUnit.uiData->storage.get(), NULL, surface.get (), NULL);
+				SDL_BlitSurface (storedUnit.uiData->storage.get(), nullptr, surface.get (), nullptr);
 				unitImages[positionIndex]->setImage (surface.get ());
 
 				unitDetails[positionIndex]->setUnit (&storedUnit);
@@ -217,7 +217,7 @@ void cWindowStorage::updateUnitsWidgets ()
 				else srcSurface = GraphicsData.gfx_edepot.get ();
 
 				AutoSurface surface (SDL_CreateRGBSurface (0, srcSurface->w, srcSurface->h, Video.getColDepth (), 0, 0, 0, 0));
-				SDL_BlitSurface (srcSurface, NULL, surface.get (), NULL);
+				SDL_BlitSurface (srcSurface, nullptr, surface.get (), nullptr);
 				unitImages[positionIndex]->setImage (surface.get ());
 
 				unitDetails[positionIndex]->setUnit (nullptr);

@@ -1632,7 +1632,7 @@ sUnitUpgrade* cUnitUpgrade::getUpgrade (sUnitUpgrade::eUpgradeTypes type)
 	{
 		if (upgrades[i].type == type) return &upgrades[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
 //--------------------------------------------------

@@ -71,7 +71,7 @@ void cUnitVideoWidget::setUnit (const cUnit* unit)
 			const auto& vehicle = *static_cast<const cVehicle*>(unit);
 			if (FileExists (vehicle.uiData->FLCFile.c_str()))
 			{
-				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (vehicle.uiData->FLCFile.c_str(), "rb"), NULL), FLI_Close);
+				fliAnimation = FliAnimationPointerType (FLI_Open (SDL_RWFromFile (vehicle.uiData->FLCFile.c_str(), "rb"), nullptr), FLI_Close);
 				FLI_Rewind (fliAnimation.get());
 				FLI_NextFrame (fliAnimation.get ());
 				currentFrameImage->setImage (fliAnimation->surface);

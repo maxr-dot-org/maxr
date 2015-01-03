@@ -62,7 +62,7 @@ void sendLandingUnits (const cClient& client, const std::vector<sLandingUnit>& l
 void sendUnitUpgrades (const cClient& client)
 {
 	const cPlayer& player = client.getActivePlayer();
-	cNetMessage* message = NULL;
+	cNetMessage* message = nullptr;
 	int count = 0;
 
 	// send vehicles
@@ -81,7 +81,7 @@ void sendUnitUpgrades (const cClient& client)
 		{
 			continue;
 		}
-		if (message == NULL)
+		if (message == nullptr)
 		{
 			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
@@ -102,16 +102,16 @@ void sendUnitUpgrades (const cClient& client)
 			message->pushInt16 (count);
 			message->pushInt16 (player.getNr());
 			client.sendNetMessage (message);
-			message = NULL;
+			message = nullptr;
 			count = 0;
 		}
 	}
-	if (message != NULL)
+	if (message != nullptr)
 	{
 		message->pushInt16 (count);
 		message->pushInt16 (player.getNr());
 		client.sendNetMessage (message);
-		message = NULL;
+		message = nullptr;
 		count = 0;
 	}
 
@@ -130,7 +130,7 @@ void sendUnitUpgrades (const cClient& client)
 		{
 			continue;
 		}
-		if (message == NULL)
+		if (message == nullptr)
 		{
 			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
@@ -150,11 +150,11 @@ void sendUnitUpgrades (const cClient& client)
 			message->pushInt16 (count);
 			message->pushInt16 (player.getNr());
 			client.sendNetMessage (message);
-			message = NULL;
+			message = nullptr;
 			count = 0;
 		}
 	}
-	if (message != NULL)
+	if (message != nullptr)
 	{
 		message->pushInt16 (count);
 		message->pushInt16 (player.getNr());
@@ -173,7 +173,7 @@ void sendReconnectionSuccess (const cClient& client)
 void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, cUnitUpgrade>>& unitUpgrades)
 {
 	const cPlayer& player = client.getActivePlayer();
-	cNetMessage* msg = NULL;
+	cNetMessage* msg = nullptr;
 	int iCount = 0;
 
 	for (size_t i = 0; i < unitUpgrades.size(); ++i)
@@ -183,7 +183,7 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 
 		if (!curUpgrade.hasBeenPurchased()) continue;
 
-		if (msg == NULL)
+		if (msg == nullptr)
 		{
 			msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
 			iCount = 0;
@@ -211,11 +211,11 @@ void sendTakenUpgrades (const cClient& client, const std::vector<std::pair<sID, 
 			msg->pushInt16 (iCount);
 			msg->pushInt16 (player.getNr());
 			client.sendNetMessage (msg);
-			msg = NULL;
+			msg = nullptr;
 		}
 	}
 
-	if (msg != NULL)
+	if (msg != nullptr)
 	{
 		msg->pushInt16 (iCount);
 		msg->pushInt16 (player.getNr());

@@ -462,7 +462,7 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 void sendGameSettings (cServer& server, const cPlayer& receiver)
 {
 	AutoPtr<cNetMessage> message (new cNetMessage (GAME_EV_GAME_SETTINGS));
-	
+
 	const auto& gameSettings = server.getGameSettings ();
 
 	if (!gameSettings) return;
@@ -802,7 +802,7 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 	int buildingsInMsg = 0;
 	for (unsigned int i = 0; i < upgradedBuildings.size(); i++)
 	{
-		if (message == NULL)
+		if (message == nullptr)
 		{
 			message = new cNetMessage (GAME_EV_UPGRADED_BUILDINGS);
 			buildingsInMsg = 0;
@@ -815,15 +815,15 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 			message->pushInt16 ((totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 			message->pushInt16 (buildingsInMsg);
 			server.sendNetMessage (message, &receiver);
-			message = NULL;
+			message = nullptr;
 		}
 	}
-	if (message != NULL)
+	if (message != nullptr)
 	{
 		message->pushInt16 ((int) (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 		message->pushInt16 (buildingsInMsg);
 		server.sendNetMessage (message, &receiver);
-		message = NULL;
+		message = nullptr;
 	}
 
 	// send to other players
@@ -873,7 +873,7 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 	int buildingsInMsg = 0;
 	for (unsigned int i = 0; i < researchCentersToChangeArea.size(); i++)
 	{
-		if (message == NULL)
+		if (message == nullptr)
 		{
 			message = new cNetMessage (GAME_EV_RESEARCH_SETTINGS);
 			buildingsInMsg = 0;
@@ -886,14 +886,14 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 		{
 			message->pushInt16 (buildingsInMsg);
 			server.sendNetMessage (message, &receiver);
-			message = NULL;
+			message = nullptr;
 		}
 	}
-	if (message != NULL)
+	if (message != nullptr)
 	{
 		message->pushInt16 (buildingsInMsg);
 		server.sendNetMessage (message, &receiver);
-		message = NULL;
+		message = nullptr;
 	}
 }
 

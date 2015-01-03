@@ -201,7 +201,7 @@ void cSlider::createSurface (eSliderType sliderType)
 
 		surface = AutoSurface (SDL_CreateRGBSurface (0, size.x (), size.y (), Video.getColDepth (), 0, 0, 0, 0));
 		SDL_SetColorKey (surface.get (), SDL_TRUE, 0xFF00FF);
-		SDL_FillRect (surface.get (), NULL, 0xFF00FF);
+		SDL_FillRect (surface.get (), nullptr, 0xFF00FF);
 
 		size.x () -= offset * 2;
 

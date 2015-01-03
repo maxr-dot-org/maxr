@@ -107,7 +107,7 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	bool addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = NULL);
+	bool addMoveJob (cVehicle& vehicle, const cPosition& destination, const std::vector<cVehicle*>* group = nullptr);
 	void startGroupMove(const std::vector<cVehicle*>& group_, const cPosition& mainDestination);
 	/**
 	* adds a new movejob

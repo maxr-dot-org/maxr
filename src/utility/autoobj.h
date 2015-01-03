@@ -32,7 +32,7 @@ public:
 	T* Release()
 	{
 		T* const p = p_;
-		p_ = NULL;
+		p_ = nullptr;
 		return p;
 	}
 
@@ -48,7 +48,7 @@ public:
 	bool operator == (const T* rhs) const { return p_ == rhs; }
 	bool operator != (const T* rhs) const { return p_ != rhs; }
 
-	bool operator !() const { return p_ == NULL; }
+	bool operator !() const { return p_ == nullptr; }
 
 	T* get() const { return p_; }
 

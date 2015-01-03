@@ -73,10 +73,10 @@ void cVideo::clearMemory()
 	SDL_DestroyTexture (sdlTexture);
 	SDL_DestroyRenderer (sdlRenderer);
 	SDL_DestroyWindow (sdlWindow);
-	cVideo::buffer = NULL;
-	sdlTexture = NULL;
-	sdlRenderer = NULL;
-	sdlWindow = NULL;
+	cVideo::buffer = nullptr;
+	sdlTexture = nullptr;
+	sdlRenderer = nullptr;
+	sdlWindow = nullptr;
 }
 
 void cVideo::init ()
@@ -239,9 +239,9 @@ void cVideo::draw()
 
 	// TODO: add sanity check to redraw function
 
-	SDL_UpdateTexture (sdlTexture, NULL, buffer->pixels, buffer->pitch);
+	SDL_UpdateTexture (sdlTexture, nullptr, buffer->pixels, buffer->pitch);
 	SDL_RenderClear (sdlRenderer);
-	SDL_RenderCopy (sdlRenderer, sdlTexture, NULL, NULL);
+	SDL_RenderCopy (sdlRenderer, sdlTexture, nullptr, nullptr);
 	SDL_RenderPresent (sdlRenderer);
 }
 
@@ -272,7 +272,7 @@ void cVideo::applyWindowMode ()
 
 void cVideo::clearBuffer()
 {
-	SDL_FillRect (buffer, NULL, SDL_MapRGB (buffer->format, 0, 0, 0));
+	SDL_FillRect (buffer, nullptr, SDL_MapRGB (buffer->format, 0, 0, 0));
 }
 
 bool cVideo::getWindowMode() const
@@ -389,7 +389,7 @@ void cVideo::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 			time_t tTime;
 			tm* tmTime;
 			char timestr[18];
-			tTime = time(NULL);
+			tTime = time(nullptr);
 			tmTime = localtime(&tTime);
 			strftime(timestr, sizeof (timestr), "%Y-%m-%d_%H%M%S", tmTime);
 			std::string screenshotfile;
@@ -411,7 +411,7 @@ void cVideo::keyPressed(cKeyboard& keyboard, SDL_Keycode key)
 void cVideo::applyShadow (const SDL_Rect* rect, SDL_Surface& destination)
 {
 	const SDL_Rect fullscreen = {0, 0, getResolutionX(), getResolutionY()};
-	if (rect == NULL) rect = &fullscreen;
+	if (rect == nullptr) rect = &fullscreen;
 	SDL_Rect src = { rect->x, rect->y, rect->w, rect->h };
 	SDL_Rect dest = { rect->x, rect->y, 0, 0 };
 	SDL_BlitSurface (GraphicsData.gfx_shadow.get(), &src, &destination, &dest);
@@ -425,9 +425,9 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 
 	// check surface formats
 	if (!dst->format->Amask || src->format->Amask) return;
-	if (SDL_GetSurfaceAlphaMod (src, NULL) != 0) return;
+	if (SDL_GetSurfaceAlphaMod (src, nullptr) != 0) return;
 
-	if (srcrect == NULL)
+	if (srcrect == nullptr)
 	{
 		srcrect = &temp1;
 		srcrect->x = 0;
@@ -436,7 +436,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 		srcrect->w = src->w;
 	}
 
-	if (dstrect == NULL)
+	if (dstrect == nullptr)
 	{
 		dstrect = &temp2;
 		dstrect->x = 0;
@@ -559,7 +559,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
 {
 	// TODO: [SDL2] special blitSurface seems useless.
-	if (dst->format->Amask && SDL_GetSurfaceAlphaMod (src, NULL) == 0)
+	if (dst->format->Amask && SDL_GetSurfaceAlphaMod (src, nullptr) == 0)
 		blittPerSurfaceAlphaToAlphaChannel (src, srcrect, dst, dstrect);
 	else
 		SDL_BlitSurface (src, srcrect, dst, dstrect);
@@ -607,7 +607,7 @@ drawpixel:
 
 SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height)
 {
-	if (width <= 0 || height <= 0 || !scr) return NULL;
+	if (width <= 0 || height <= 0 || !scr) return nullptr;
 	SDL_Surface* surface;
 
 	// can not enlage an existing surface
@@ -615,7 +615,7 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	if (height > scr->h && dest) height = scr->h;
 
 	// generate new surface if necessary
-	if (dest == NULL) surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+	if (dest == nullptr) surface = SDL_CreateRGBSurface (0, width, height, scr->format->BitsPerPixel, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
 	else
 	{
 		// else set the size of the old one
@@ -631,7 +631,7 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	// just blit the surface when the new size is identic to the old one
 	if (scr->w == width && scr->h == height)
 	{
-		SDL_BlitSurface (scr, NULL, surface, NULL);
+		SDL_BlitSurface (scr, nullptr, surface, nullptr);
 		return surface;
 	}
 #endif
@@ -733,7 +733,7 @@ AutoSurface CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, u
 {
     AutoSurface sf (SDL_CreateRGBSurface (0, size, size, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey (sf.get(), SDL_TRUE, 0x00FF00FF);
-    SDL_FillRect (sf.get (), NULL, 0x00FF00FF);
+    SDL_FillRect (sf.get (), nullptr, 0x00FF00FF);
     SDL_LockSurface (sf.get ());
 
 	const float fak = size / 64.0f;

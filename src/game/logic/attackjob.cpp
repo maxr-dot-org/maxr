@@ -27,8 +27,8 @@
 //--------------------------------------------------------------------------
 cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, const cMap& map, cPlayer* owner)
 {
-	cVehicle* targetVehicle = NULL;
-	cBuilding* targetBuilding = NULL;
+	cVehicle* targetVehicle = nullptr;
+	cBuilding* targetBuilding = nullptr;
 	const cMapField& mapField = map.getField(position);
 
 	//planes
@@ -39,7 +39,7 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 		if (plane->getFlightHeight() >  0 && !(attackMode & TERRAIN_AIR))    continue;
 		if (plane->getFlightHeight () == 0 && !(attackMode & TERRAIN_GROUND)) continue;
 
-		if (targetVehicle == NULL)
+		if (targetVehicle == nullptr)
 		{
 			targetVehicle = plane;
 		}
@@ -56,14 +56,14 @@ cUnit* cAttackJob::selectTarget (const cPosition& position, char attackMode, con
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map.isWater (position) && ! (attackMode & AREA_SUB)) targetVehicle = NULL;
+		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map.isWater (position) && ! (attackMode & AREA_SUB)) targetVehicle = nullptr;
 	}
 
 	// buildings
 	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
 		targetBuilding = mapField.getBuilding();
-		if (targetBuilding && !targetBuilding->getOwner()) targetBuilding = NULL;
+		if (targetBuilding && !targetBuilding->getOwner()) targetBuilding = nullptr;
 	}
 
 	if (targetVehicle) return targetVehicle;
@@ -94,7 +94,7 @@ cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& ta
 	attackPoints(aggressor_->data.getDamage()),
 	targetPosition (targetPosition_),
 	server(server_),
-	client(NULL),
+	client(nullptr),
 	destroyedTargets(),
 	fireDir(0),
 	state(S_ROTATING)
@@ -124,7 +124,7 @@ cAttackJob::cAttackJob (cServer* server_, cUnit* aggressor_, const cPosition& ta
 }
 
 cAttackJob::cAttackJob(cClient* client_, cNetMessage& message) :
-	server(NULL),
+	server(nullptr),
 	client(client_)
 {
 	state = static_cast<cAttackJob::eAJStates> (message.popInt16());
@@ -346,7 +346,7 @@ void cAttackJob::fire()
 	if (client)
 	{
 		if (muzzle)
-			client->addFx (std::move(muzzle), aggressor != NULL);
+			client->addFx (std::move(muzzle), aggressor != nullptr);
 	}
 
 	//make explosive mines explode
@@ -472,7 +472,7 @@ std::unique_ptr<cFx> cAttackJob::createMuzzleFx(cUnit* aggressor)
 		case sUnitData::MUZZLE_TYPE_SNIPER:
 			//TODO: sniper has no animation?!?
 		default:
-			return NULL;
+			return nullptr;
 	}
 }
 

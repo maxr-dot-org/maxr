@@ -71,7 +71,7 @@ private:
 	std::unique_ptr<cFx> createMuzzleFx(cUnit* unit);
 	bool impact();
 	bool impactCluster();
-	bool impactSingle (const cPosition& position, std::vector<cUnit*>* avoidTargets = NULL);
+	bool impactSingle (const cPosition& position, std::vector<cUnit*>* avoidTargets = nullptr);
 	void destroyTarget();
 
 public:

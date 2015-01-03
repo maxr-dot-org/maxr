@@ -78,9 +78,9 @@ public:
 
 	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding() const;
-	/** returns a pointer to the top building or NULL if the first building is a base type */
+	/** returns a pointer to the top building or nullptr if the first building is a base type */
 	cBuilding* getTopBuilding() const;
-	/** returns a pointer to the first base building or NULL if there is no base building */
+	/** returns a pointer to the first base building or nullptr if there is no base building */
 	cBuilding* getBaseBuilding() const;
 	/** returns a pointer to a rubble object, if there is one. */
 	cBuilding* getRubble() const;
@@ -170,7 +170,7 @@ public:
 	AutoSurface createBigSurface (int sizex, int sizey) const;
 	void generateNextAnimationFrame();
 	void scaleSurfaces (int pixelSize);
-	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = NULL);
+	static AutoSurface loadMapPreview (const std::string& mapPath, int* mapSize = nullptr);
 private:
     static AutoSurface loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, const SDL_Color (&colors)[256], int iNum);
 	void copySrfToTerData (SDL_Surface& surface, int iNum);
@@ -266,8 +266,8 @@ public:
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	* note, that the function can only check for map border overflows (with margin), if you pass xy coordinates instead of an offset
 	*/
-	bool possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = NULL) const;
-	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuilding (const sUnitData& buildingData, const cPosition& position, const cVehicle* vehicle = nullptr) const;
+	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, const cPosition& position, int margin, const cVehicle* vehicle = nullptr) const;
 
 	/**
 	* removes all units from the map structure

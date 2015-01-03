@@ -49,7 +49,7 @@ bool FileExists (const char* path)
 {
 	SDL_RWops* file = SDL_RWFromFile (path, "r");
 
-	if (file == NULL)
+	if (file == nullptr)
 	{
 		if(Log.isInitialized())
 		{
@@ -151,7 +151,7 @@ std::string getUserScreenshotsDir()
 	return "";
 #elif defined(MAC)
 	char* cHome = getenv ("HOME");  //get $HOME on mac
-	if (cHome == NULL)
+	if (cHome == nullptr)
 		return "";
 	std::string homeFolder = cHome;
 	if (homeFolder.empty())
@@ -179,7 +179,7 @@ std::string getUserLogDir()
 	return "";
 #elif defined(MAC)
 	char* cHome = getenv ("HOME");  //get $HOME on mac
-	if (cHome == NULL)
+	if (cHome == nullptr)
 		return "";
 	std::string homeFolder = cHome;
 	if (homeFolder.empty())
@@ -222,7 +222,7 @@ void copyFile (const std::string& source, const std::string& dest)
 {
 	SDL_RWops* sourceFile = SDL_RWFromFile (source.c_str(), "rb");
 	SDL_RWops* destFile = SDL_RWFromFile (dest.c_str(), "wb");
-	if (destFile == NULL)
+	if (destFile == nullptr)
 	{
 		return;
 	}
@@ -230,7 +230,7 @@ void copyFile (const std::string& source, const std::string& dest)
 	SDL_RWseek (sourceFile, 0, SEEK_END);
 	const long int size = SDL_RWtell (sourceFile);
 	unsigned char* buffer = new unsigned char [size];
-	if (buffer == NULL)
+	if (buffer == nullptr)
 	{
 		std::cout << "Out of memory\n";
 		exit (-1);

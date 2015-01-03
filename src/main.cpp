@@ -101,7 +101,7 @@ int main (int argc, char* argv[])
 		if (loadingState == LOAD_ERROR)
 		{
 			Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
-			SDL_WaitThread (dataThread, NULL);
+			SDL_WaitThread (dataThread, nullptr);
 			Quit();
 		}
 		while (SDL_PollEvent (&event))
@@ -133,7 +133,7 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	SDL_WaitThread (dataThread, NULL);
+	SDL_WaitThread (dataThread, nullptr);
 
 	if (DEDICATED_SERVER)
 	{
@@ -619,7 +619,7 @@ void cUnitsData::initializeClanUnitData()
 			const sUnitData& curVehicle = svehicles[j];
 			const cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.ID);
 
-			if (changedStat == NULL) continue;
+			if (changedStat == nullptr) continue;
 
 			sUnitData& clanVehicle = clanListVehicles[j];
 			if (changedStat->hasModification ("Damage"))
@@ -645,7 +645,7 @@ void cUnitsData::initializeClanUnitData()
 		{
 			const sUnitData& curBuilding = sbuildings[j];
 			const cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.ID);
-			if (changedStat == NULL) continue;
+			if (changedStat == nullptr) continue;
 			sUnitData& clanBuilding = clanListBuildings[j];
 			if (changedStat->hasModification ("Damage"))
 				clanBuilding.setDamage(changedStat->getModificationValue ("Damage"));
